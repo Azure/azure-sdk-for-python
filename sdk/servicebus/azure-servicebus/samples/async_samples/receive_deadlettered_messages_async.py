@@ -13,7 +13,7 @@ Example to show receiving dead-lettered messages from a Service Bus Queue asynch
 
 import os
 import asyncio
-from azure.servicebus import ServiceBusMessage, SubQueue
+from azure.servicebus import ServiceBusMessage, ServiceBusSubQueue
 from azure.servicebus.aio import ServiceBusClient
 
 
@@ -40,7 +40,7 @@ async def main():
 
         print('receiving deadlettered messages')
         dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
-                                                            sub_queue=SubQueue.DeadLetter,
+                                                            sub_queue=ServiceBusSubQueue.DEAD_LETTER,
                                                             prefetch_count=10)
         async with dlq_receiver:
             received_msgs = await dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)

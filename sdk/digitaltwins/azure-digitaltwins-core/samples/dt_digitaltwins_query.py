@@ -34,7 +34,7 @@ try:
     query_result = service_client.query_twins(query_expression)
     print('DigitalTwins:')
     for twin in query_result:
-        print("    -: {}".format(twin["$dtId"]))
+        print(twin)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

@@ -27,10 +27,12 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class HealthState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Possible health states of a monitor.
+    """One of health states - healthy, critical, warning, unknown, none, disabled.
     """
 
     HEALTHY = "Healthy"
     CRITICAL = "Critical"
     WARNING = "Warning"
     UNKNOWN = "Unknown"
+    DISABLED = "Disabled"
+    NONE = "None"

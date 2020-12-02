@@ -63,25 +63,6 @@ az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryE
 #### Types of credentials
 The `credential` parameter may be provided in a number of different forms, depending on the type of authorization you wish to use:
 
-##### Creating the client from a SAS token
-To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()`
-   functions to create a sas token for the account or table:
-
-```python
-    from datetime import datetime, timedelta
-    from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
-
-    sas_token = generate_account_sas(
-        account_name="<account-name>",
-        account_key="<account-access-key>",
-        resource_types=ResourceTypes(service=True),
-        permission=AccountSasPermissions(read=True),
-        expiry=datetime.utcnow() + timedelta(hours=1)
-    )
-
-    table_service_client = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential=sas_token)
-```
-
 ##### Creating the client from a shared key
 To use an account [shared key][azure_shared_key] (aka account key or access key), provide the key as a string. This can be found in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
 
@@ -108,6 +89,25 @@ The connection string to your account can be found in the Azure Portal under the
 
 ```bash
 az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
+```
+
+##### Creating the client from a SAS token
+To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()`
+   functions to create a sas token for the account or table:
+
+```python
+    from datetime import datetime, timedelta
+    from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+
+    sas_token = generate_account_sas(
+        account_name="<account-name>",
+        account_key="<account-access-key>",
+        resource_types=ResourceTypes(service=True),
+        permission=AccountSasPermissions(read=True),
+        expiry=datetime.utcnow() + timedelta(hours=1)
+    )
+
+    table_service_client = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential=sas_token)
 ```
 
 #### Looking up the account URL
@@ -138,18 +138,28 @@ use of a dedicated client object.
 
 ### Clients
 Two different clients are provided to interact with the various components of the Table Service:
-1. `TableServiceClient` -
+1. **`TableServiceClient`** -
     this client represents interaction with the Azure account itself, and allows you to acquire preconfigured
     client instances to access the tables within. It provides operations to retrieve and configure the account
     properties as well as query, create, and delete tables within the account. To perform operations on a specific table,
     retrieve a client using the `get_table_client` method.
-2. `TableClient` -
+2. **`TableClient`** -
     this client represents interaction with a specific table (which need not exist yet). It provides operations to
     create, delete, or update a table and includes operations to query, get, and upsert entities
     within it.
 
 ### Entities
-Entities are similar to rows. An entity has a primary key, a row key and a set of properties. A property is a name value pair, similar to a column.
+Entities are similar to rows. An entity has a **`PartitionKey`**, a **`RowKey`** and a set of properties. A property is a name value pair, similar to a column.
+Entities can be represented as dictionaries like this as an example:
+```python
+entity = {
+    'PartitionKey': 'color',
+    'RowKey': 'brand',
+    'text': 'Marker',
+    'color': 'Purple',
+    'price': '5'
+}
+```
 * **Create** - Adds an entity to the table.
 * **Delete** - Deletes an entity from the table.
 * **Update** - Updates an entities information by either merging or replacing the existing entity.
@@ -179,9 +189,13 @@ table_service_client.create_table(table_name="myTable")
 Create entities in the table
 
 ```python
-from azure.data.tables import TableClient
+from azure.data.tables import TableServiceClient
+
 my_entity = {'PartitionKey':'part','RowKey':'row'}
-table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="myTable")
+
+table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
+table_client = table_service_client.get_table_client(table_name="myTable")
+
 entity = table_client.create_entity(entity=my_entity)
 ```
 
@@ -300,6 +314,7 @@ These code samples show common scenario operations with the Azure Data tables cl
 * Insert and delete entities: [sample_insert_delete_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py))
 * Query and list entities: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))
 * Update, upsert, and merge entities: [sample_update_upsert_merge_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py))
+* Committing many requests in a single batch: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
 
 ### Additional documentation
 For more extensive documentation on Azure Data Tables, see the [Azure Data Tables documentation][Tables_product_doc] on docs.microsoft.com.
@@ -323,7 +338,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 
 [azure_subscription]:https://azure.microsoft.com/free/
 [azure_storage_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
-[azure_cosmos_account]: https://docs.microsoft.com/azure/cosmos-db/account-overview
+[azure_cosmos_account]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
 [pip_link]:https://pypi.org/project/pip/
 
 [azure_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal

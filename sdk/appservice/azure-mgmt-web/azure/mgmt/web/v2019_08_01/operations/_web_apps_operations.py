@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class WebAppsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class WebAppsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WebAppCollection"]
+        # type: (...) -> Iterable["_models.WebAppCollection"]
         """Get all apps for a subscription.
 
         Description for Get all apps for a subscription.
@@ -61,7 +61,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,7 +106,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -123,7 +123,7 @@ class WebAppsOperations(object):
         include_slots=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WebAppCollection"]
+        # type: (...) -> Iterable["_models.WebAppCollection"]
         """Gets all web, mobile, and API apps in the specified resource group.
 
         Description for Gets all web, mobile, and API apps in the specified resource group.
@@ -138,7 +138,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -186,7 +186,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -203,7 +203,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Site"]
+        # type: (...) -> Optional["_models.Site"]
         """Gets the details of a web, mobile, or API app.
 
         Description for Gets the details of a web, mobile, or API app.
@@ -217,7 +217,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Site or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Site"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Site"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -248,7 +248,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -265,11 +265,11 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_envelope,  # type: "models.Site"
+        site_envelope,  # type: "_models.Site"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Site"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
+        # type: (...) -> "_models.Site"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -305,7 +305,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -324,10 +324,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_envelope,  # type: "models.Site"
+        site_envelope,  # type: "_models.Site"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Site"]
+        # type: (...) -> LROPoller["_models.Site"]
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing app.
 
         Description for Creates a new web, mobile, or API app in an existing resource group, or updates
@@ -351,7 +351,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -376,7 +376,13 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -452,7 +458,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -464,10 +470,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_envelope,  # type: "models.SitePatchResource"
+        site_envelope,  # type: "_models.SitePatchResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Site"
+        # type: (...) -> "_models.Site"
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing app.
 
         Description for Creates a new web, mobile, or API app in an existing resource group, or updates
@@ -485,7 +491,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Site
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -521,7 +527,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -543,7 +549,7 @@ class WebAppsOperations(object):
         host_name=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CustomHostnameAnalysisResult"
+        # type: (...) -> "_models.CustomHostnameAnalysisResult"
         """Analyze a custom hostname.
 
         Description for Analyze a custom hostname.
@@ -559,7 +565,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CustomHostnameAnalysisResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomHostnameAnalysisResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomHostnameAnalysisResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -592,7 +598,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CustomHostnameAnalysisResult', pipeline_response)
@@ -607,7 +613,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        slot_swap_entity,  # type: "models.CsmSlotEntity"
+        slot_swap_entity,  # type: "_models.CsmSlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -662,7 +668,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -674,10 +680,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        request,  # type: "models.BackupRequest"
+        request,  # type: "_models.BackupRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupItem"
+        # type: (...) -> "_models.BackupItem"
         """Creates a backup of an app.
 
         Description for Creates a backup of an app.
@@ -694,7 +700,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItem"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -730,7 +736,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -747,7 +753,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BackupItemCollection"]
+        # type: (...) -> Iterable["_models.BackupItemCollection"]
         """Gets existing backups of an app.
 
         Description for Gets existing backups of an app.
@@ -761,7 +767,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.BackupItemCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItemCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItemCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -808,7 +814,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -826,7 +832,7 @@ class WebAppsOperations(object):
         backup_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupItem"
+        # type: (...) -> "_models.BackupItem"
         """Gets a backup of an app by its ID.
 
         Description for Gets a backup of an app by its ID.
@@ -842,7 +848,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItem"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -874,7 +880,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -940,7 +946,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -953,10 +959,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         backup_id,  # type: str
-        request,  # type: "models.BackupRequest"
+        request,  # type: "_models.BackupRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupItem"
+        # type: (...) -> "_models.BackupItem"
         """Gets status of a web app backup that may be in progress, including secrets associated with the backup, such as the Azure Storage SAS URL. Also can be used to update the SAS URL for the backup if a new URL is passed in the request body.
 
         Description for Gets status of a web app backup that may be in progress, including secrets
@@ -976,7 +982,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItem"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1013,7 +1019,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -1029,7 +1035,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         backup_id,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1070,7 +1076,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1083,7 +1089,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         backup_id,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -1133,7 +1139,14 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'backupId': self._serialize.url("backup_id", backup_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1153,7 +1166,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CsmPublishingCredentialsPoliciesCollection"
+        # type: (...) -> "_models.CsmPublishingCredentialsPoliciesCollection"
         """Returns whether Scm basic auth is allowed and whether Ftp is allowed for a given site.
 
         Description for Returns whether Scm basic auth is allowed and whether Ftp is allowed for a
@@ -1168,7 +1181,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CsmPublishingCredentialsPoliciesCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmPublishingCredentialsPoliciesCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmPublishingCredentialsPoliciesCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1199,7 +1212,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesCollection', pipeline_response)
@@ -1216,7 +1229,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CsmPublishingCredentialsPoliciesEntity"
+        # type: (...) -> "_models.CsmPublishingCredentialsPoliciesEntity"
         """Returns whether FTP is allowed on the site or not.
 
         Description for Returns whether FTP is allowed on the site or not.
@@ -1230,7 +1243,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CsmPublishingCredentialsPoliciesEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmPublishingCredentialsPoliciesEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmPublishingCredentialsPoliciesEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1261,7 +1274,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesEntity', pipeline_response)
@@ -1276,10 +1289,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        csm_publishing_access_policies_entity,  # type: "models.CsmPublishingCredentialsPoliciesEntity"
+        csm_publishing_access_policies_entity,  # type: "_models.CsmPublishingCredentialsPoliciesEntity"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CsmPublishingCredentialsPoliciesEntity"
+        # type: (...) -> "_models.CsmPublishingCredentialsPoliciesEntity"
         """Updates whether FTP is allowed on the site or not.
 
         Description for Updates whether FTP is allowed on the site or not.
@@ -1295,7 +1308,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CsmPublishingCredentialsPoliciesEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmPublishingCredentialsPoliciesEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmPublishingCredentialsPoliciesEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1331,7 +1344,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesEntity', pipeline_response)
@@ -1348,7 +1361,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CsmPublishingCredentialsPoliciesEntity"
+        # type: (...) -> "_models.CsmPublishingCredentialsPoliciesEntity"
         """Returns whether Scm basic auth is allowed on the site or not.
 
         Description for Returns whether Scm basic auth is allowed on the site or not.
@@ -1362,7 +1375,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CsmPublishingCredentialsPoliciesEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmPublishingCredentialsPoliciesEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmPublishingCredentialsPoliciesEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1393,7 +1406,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesEntity', pipeline_response)
@@ -1408,10 +1421,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        csm_publishing_access_policies_entity,  # type: "models.CsmPublishingCredentialsPoliciesEntity"
+        csm_publishing_access_policies_entity,  # type: "_models.CsmPublishingCredentialsPoliciesEntity"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CsmPublishingCredentialsPoliciesEntity"
+        # type: (...) -> "_models.CsmPublishingCredentialsPoliciesEntity"
         """Updates whether user publishing credentials are allowed on the site or not.
 
         Description for Updates whether user publishing credentials are allowed on the site or not.
@@ -1427,7 +1440,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CsmPublishingCredentialsPoliciesEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmPublishingCredentialsPoliciesEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmPublishingCredentialsPoliciesEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1463,7 +1476,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesEntity', pipeline_response)
@@ -1480,7 +1493,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SiteConfigResourceCollection"]
+        # type: (...) -> Iterable["_models.SiteConfigResourceCollection"]
         """List the configurations of an app.
 
         Description for List the configurations of an app.
@@ -1494,7 +1507,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SiteConfigResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1541,7 +1554,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1556,10 +1569,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        app_settings,  # type: "models.StringDictionary"
+        app_settings,  # type: "_models.StringDictionary"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Replaces the application settings of an app.
 
         Description for Replaces the application settings of an app.
@@ -1575,7 +1588,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1611,7 +1624,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -1628,7 +1641,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Gets the application settings of an app.
 
         Description for Gets the application settings of an app.
@@ -1642,7 +1655,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1673,7 +1686,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -1688,10 +1701,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_auth_settings,  # type: "models.SiteAuthSettings"
+        site_auth_settings,  # type: "_models.SiteAuthSettings"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteAuthSettings"
+        # type: (...) -> "_models.SiteAuthSettings"
         """Updates the Authentication / Authorization settings associated with web app.
 
         Description for Updates the Authentication / Authorization settings associated with web app.
@@ -1707,7 +1720,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteAuthSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteAuthSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1743,7 +1756,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
@@ -1760,7 +1773,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteAuthSettings"
+        # type: (...) -> "_models.SiteAuthSettings"
         """Gets the Authentication/Authorization settings of an app.
 
         Description for Gets the Authentication/Authorization settings of an app.
@@ -1774,7 +1787,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteAuthSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteAuthSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1805,7 +1818,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
@@ -1820,10 +1833,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        azure_storage_accounts,  # type: "models.AzureStoragePropertyDictionaryResource"
+        azure_storage_accounts,  # type: "_models.AzureStoragePropertyDictionaryResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AzureStoragePropertyDictionaryResource"
+        # type: (...) -> "_models.AzureStoragePropertyDictionaryResource"
         """Updates the Azure storage account configurations of an app.
 
         Description for Updates the Azure storage account configurations of an app.
@@ -1839,7 +1852,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AzureStoragePropertyDictionaryResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureStoragePropertyDictionaryResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureStoragePropertyDictionaryResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1875,7 +1888,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
@@ -1892,7 +1905,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AzureStoragePropertyDictionaryResource"
+        # type: (...) -> "_models.AzureStoragePropertyDictionaryResource"
         """Gets the Azure storage account configurations of an app.
 
         Description for Gets the Azure storage account configurations of an app.
@@ -1906,7 +1919,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AzureStoragePropertyDictionaryResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureStoragePropertyDictionaryResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureStoragePropertyDictionaryResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1937,7 +1950,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
@@ -1952,10 +1965,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        request,  # type: "models.BackupRequest"
+        request,  # type: "_models.BackupRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupRequest"
+        # type: (...) -> "_models.BackupRequest"
         """Updates the backup configuration of an app.
 
         Description for Updates the backup configuration of an app.
@@ -1971,7 +1984,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2007,7 +2020,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
@@ -2069,7 +2082,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -2083,7 +2096,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupRequest"
+        # type: (...) -> "_models.BackupRequest"
         """Gets the backup configuration of an app.
 
         Description for Gets the backup configuration of an app.
@@ -2097,7 +2110,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2128,7 +2141,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
@@ -2145,7 +2158,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyVaultReferenceCollection"
+        # type: (...) -> "_models.KeyVaultReferenceCollection"
         """Gets the config reference app settings and status of an app.
 
         Description for Gets the config reference app settings and status of an app.
@@ -2159,7 +2172,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.KeyVaultReferenceCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyVaultReferenceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyVaultReferenceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2190,7 +2203,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('KeyVaultReferenceCollection', pipeline_response)
@@ -2208,7 +2221,7 @@ class WebAppsOperations(object):
         app_setting_key,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyVaultReferenceResource"
+        # type: (...) -> "_models.KeyVaultReferenceResource"
         """Gets the config reference and status of an app.
 
         Description for Gets the config reference and status of an app.
@@ -2224,7 +2237,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.KeyVaultReferenceResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyVaultReferenceResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyVaultReferenceResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2256,7 +2269,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('KeyVaultReferenceResource', pipeline_response)
@@ -2271,10 +2284,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        connection_strings,  # type: "models.ConnectionStringDictionary"
+        connection_strings,  # type: "_models.ConnectionStringDictionary"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConnectionStringDictionary"
+        # type: (...) -> "_models.ConnectionStringDictionary"
         """Replaces the connection strings of an app.
 
         Description for Replaces the connection strings of an app.
@@ -2290,7 +2303,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ConnectionStringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionStringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionStringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2326,7 +2339,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
@@ -2343,7 +2356,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConnectionStringDictionary"
+        # type: (...) -> "_models.ConnectionStringDictionary"
         """Gets the connection strings of an app.
 
         Description for Gets the connection strings of an app.
@@ -2357,7 +2370,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ConnectionStringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionStringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionStringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2388,7 +2401,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
@@ -2405,7 +2418,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteLogsConfig"
+        # type: (...) -> "_models.SiteLogsConfig"
         """Gets the logging configuration of an app.
 
         Description for Gets the logging configuration of an app.
@@ -2419,7 +2432,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteLogsConfig"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteLogsConfig"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2450,7 +2463,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
@@ -2465,10 +2478,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_logs_config,  # type: "models.SiteLogsConfig"
+        site_logs_config,  # type: "_models.SiteLogsConfig"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteLogsConfig"
+        # type: (...) -> "_models.SiteLogsConfig"
         """Updates the logging configuration of an app.
 
         Description for Updates the logging configuration of an app.
@@ -2485,7 +2498,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteLogsConfig"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteLogsConfig"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2521,7 +2534,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
@@ -2536,10 +2549,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        metadata,  # type: "models.StringDictionary"
+        metadata,  # type: "_models.StringDictionary"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Replaces the metadata of an app.
 
         Description for Replaces the metadata of an app.
@@ -2555,7 +2568,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2591,7 +2604,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -2608,7 +2621,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Gets the metadata of an app.
 
         Description for Gets the metadata of an app.
@@ -2622,7 +2635,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2653,7 +2666,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -2670,8 +2683,8 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.User"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        # type: (...) -> "_models.User"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2702,7 +2715,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -2719,7 +2732,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.User"]
+        # type: (...) -> LROPoller["_models.User"]
         """Gets the Git/FTP publishing credentials of an app.
 
         Description for Gets the Git/FTP publishing credentials of an app.
@@ -2739,7 +2752,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2763,7 +2776,13 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2781,10 +2800,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        push_settings,  # type: "models.PushSettings"
+        push_settings,  # type: "_models.PushSettings"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PushSettings"
+        # type: (...) -> "_models.PushSettings"
         """Updates the Push settings associated with web app.
 
         Description for Updates the Push settings associated with web app.
@@ -2800,7 +2819,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PushSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PushSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PushSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2836,7 +2855,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
@@ -2853,7 +2872,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PushSettings"
+        # type: (...) -> "_models.PushSettings"
         """Gets the Push settings associated with web app.
 
         Description for Gets the Push settings associated with web app.
@@ -2867,7 +2886,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PushSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PushSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PushSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2898,7 +2917,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
@@ -2915,7 +2934,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SlotConfigNamesResource"
+        # type: (...) -> "_models.SlotConfigNamesResource"
         """Gets the names of app settings and connection strings that stick to the slot (not swapped).
 
         Description for Gets the names of app settings and connection strings that stick to the slot
@@ -2930,7 +2949,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SlotConfigNamesResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SlotConfigNamesResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SlotConfigNamesResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2961,7 +2980,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SlotConfigNamesResource', pipeline_response)
@@ -2976,10 +2995,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        slot_config_names,  # type: "models.SlotConfigNamesResource"
+        slot_config_names,  # type: "_models.SlotConfigNamesResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SlotConfigNamesResource"
+        # type: (...) -> "_models.SlotConfigNamesResource"
         """Updates the names of application settings and connection string that remain with the slot during swap operation.
 
         Description for Updates the names of application settings and connection string that remain
@@ -2996,7 +3015,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SlotConfigNamesResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SlotConfigNamesResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SlotConfigNamesResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3032,7 +3051,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SlotConfigNamesResource', pipeline_response)
@@ -3049,7 +3068,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteConfigResource"
+        # type: (...) -> "_models.SiteConfigResource"
         """Gets the configuration of an app, such as platform version and bitness, default documents, virtual applications, Always On, etc.
 
         Description for Gets the configuration of an app, such as platform version and bitness, default
@@ -3064,7 +3083,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3095,7 +3114,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -3110,10 +3129,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_config,  # type: "models.SiteConfigResource"
+        site_config,  # type: "_models.SiteConfigResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteConfigResource"
+        # type: (...) -> "_models.SiteConfigResource"
         """Updates the configuration of an app.
 
         Description for Updates the configuration of an app.
@@ -3129,7 +3148,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3165,7 +3184,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -3180,10 +3199,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_config,  # type: "models.SiteConfigResource"
+        site_config,  # type: "_models.SiteConfigResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteConfigResource"
+        # type: (...) -> "_models.SiteConfigResource"
         """Updates the configuration of an app.
 
         Description for Updates the configuration of an app.
@@ -3199,7 +3218,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3235,7 +3254,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -3252,7 +3271,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SiteConfigurationSnapshotInfoCollection"]
+        # type: (...) -> Iterable["_models.SiteConfigurationSnapshotInfoCollection"]
         """Gets a list of web app configuration snapshots identifiers. Each element of the list contains a timestamp and the ID of the snapshot.
 
         Description for Gets a list of web app configuration snapshots identifiers. Each element of the
@@ -3267,7 +3286,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SiteConfigurationSnapshotInfoCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigurationSnapshotInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigurationSnapshotInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3314,7 +3333,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3332,7 +3351,7 @@ class WebAppsOperations(object):
         snapshot_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteConfigResource"
+        # type: (...) -> "_models.SiteConfigResource"
         """Gets a snapshot of the configuration of an app at a previous point in time.
 
         Description for Gets a snapshot of the configuration of an app at a previous point in time.
@@ -3348,7 +3367,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3380,7 +3399,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -3446,7 +3465,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3586,7 +3605,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ContinuousWebJobCollection"]
+        # type: (...) -> Iterable["_models.ContinuousWebJobCollection"]
         """List continuous web jobs for an app, or a deployment slot.
 
         Description for List continuous web jobs for an app, or a deployment slot.
@@ -3600,7 +3619,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ContinuousWebJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContinuousWebJobCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContinuousWebJobCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3647,7 +3666,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3665,7 +3684,7 @@ class WebAppsOperations(object):
         web_job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ContinuousWebJob"]
+        # type: (...) -> Optional["_models.ContinuousWebJob"]
         """Gets a continuous web job by its ID for an app, or a deployment slot.
 
         Description for Gets a continuous web job by its ID for an app, or a deployment slot.
@@ -3681,7 +3700,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ContinuousWebJob or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ContinuousWebJob"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ContinuousWebJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3713,7 +3732,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -3781,7 +3800,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3844,7 +3863,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3907,7 +3926,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3921,7 +3940,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentCollection"]
+        # type: (...) -> Iterable["_models.DeploymentCollection"]
         """List deployments for an app, or a deployment slot.
 
         Description for List deployments for an app, or a deployment slot.
@@ -3935,7 +3954,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DeploymentCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3982,7 +4001,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -4000,7 +4019,7 @@ class WebAppsOperations(object):
         id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Deployment"
+        # type: (...) -> "_models.Deployment"
         """Get a deployment by its ID for an app, or a deployment slot.
 
         Description for Get a deployment by its ID for an app, or a deployment slot.
@@ -4016,7 +4035,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Deployment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4048,7 +4067,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -4064,10 +4083,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         id,  # type: str
-        deployment,  # type: "models.Deployment"
+        deployment,  # type: "_models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Deployment"
+        # type: (...) -> "_models.Deployment"
         """Create a deployment for an app, or a deployment slot.
 
         Description for Create a deployment for an app, or a deployment slot.
@@ -4085,7 +4104,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Deployment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4122,7 +4141,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -4188,7 +4207,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -4203,7 +4222,7 @@ class WebAppsOperations(object):
         id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Deployment"
+        # type: (...) -> "_models.Deployment"
         """List deployment log for specific deployment for an app, or a deployment slot.
 
         Description for List deployment log for specific deployment for an app, or a deployment slot.
@@ -4220,7 +4239,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Deployment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4252,7 +4271,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -4267,10 +4286,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RestoreRequest"
+        # type: (...) -> "_models.RestoreRequest"
         """Discovers an existing app backup that can be restored from a blob in Azure storage. Use this to get information about the databases stored in a backup.
 
         Description for Discovers an existing app backup that can be restored from a blob in Azure
@@ -4288,7 +4307,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RestoreRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4324,7 +4343,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RestoreRequest', pipeline_response)
@@ -4341,7 +4360,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IdentifierCollection"]
+        # type: (...) -> Iterable["_models.IdentifierCollection"]
         """Lists ownership identifiers for domain associated with web app.
 
         Description for Lists ownership identifiers for domain associated with web app.
@@ -4355,7 +4374,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.IdentifierCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentifierCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IdentifierCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4402,7 +4421,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -4420,7 +4439,7 @@ class WebAppsOperations(object):
         domain_ownership_identifier_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Identifier"
+        # type: (...) -> "_models.Identifier"
         """Get domain ownership identifier for web app.
 
         Description for Get domain ownership identifier for web app.
@@ -4436,7 +4455,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4468,7 +4487,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -4484,10 +4503,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         domain_ownership_identifier_name,  # type: str
-        domain_ownership_identifier,  # type: "models.Identifier"
+        domain_ownership_identifier,  # type: "_models.Identifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Identifier"
+        # type: (...) -> "_models.Identifier"
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
 
         Description for Creates a domain ownership identifier for web app, or updates an existing
@@ -4506,7 +4525,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4543,7 +4562,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -4609,7 +4628,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -4622,10 +4641,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         domain_ownership_identifier_name,  # type: str
-        domain_ownership_identifier,  # type: "models.Identifier"
+        domain_ownership_identifier,  # type: "_models.Identifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Identifier"
+        # type: (...) -> "_models.Identifier"
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
 
         Description for Creates a domain ownership identifier for web app, or updates an existing
@@ -4644,7 +4663,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4681,7 +4700,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -4698,7 +4717,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MSDeployStatus"
+        # type: (...) -> "_models.MSDeployStatus"
         """Get the status of the last MSDeploy operation.
 
         Description for Get the status of the last MSDeploy operation.
@@ -4712,7 +4731,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MSDeployStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4743,7 +4762,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
@@ -4758,11 +4777,11 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        ms_deploy,  # type: "models.MSDeploy"
+        ms_deploy,  # type: "_models.MSDeploy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MSDeployStatus"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MSDeployStatus"]]
+        # type: (...) -> Optional["_models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4798,7 +4817,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -4815,10 +4834,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        ms_deploy,  # type: "models.MSDeploy"
+        ms_deploy,  # type: "_models.MSDeploy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.MSDeployStatus"]
+        # type: (...) -> LROPoller["_models.MSDeployStatus"]
         """Invoke the MSDeploy web app extension.
 
         Description for Invoke the MSDeploy web app extension.
@@ -4840,7 +4859,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MSDeployStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -4865,7 +4884,13 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -4885,7 +4910,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MSDeployLog"]
+        # type: (...) -> Optional["_models.MSDeployLog"]
         """Get the MSDeploy Log for the last MSDeploy operation.
 
         Description for Get the MSDeploy Log for the last MSDeploy operation.
@@ -4899,7 +4924,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployLog or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MSDeployLog"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployLog"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4930,7 +4955,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -4949,7 +4974,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.FunctionEnvelopeCollection"]
+        # type: (...) -> Iterable["_models.FunctionEnvelopeCollection"]
         """List the functions for a web site, or a deployment slot.
 
         Description for List the functions for a web site, or a deployment slot.
@@ -4963,7 +4988,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelopeCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelopeCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionEnvelopeCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -5010,7 +5035,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -5072,7 +5097,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -5090,7 +5115,7 @@ class WebAppsOperations(object):
         function_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.FunctionEnvelope"]
+        # type: (...) -> Optional["_models.FunctionEnvelope"]
         """Get function information by its ID for web site, or a deployment slot.
 
         Description for Get function information by its ID for web site, or a deployment slot.
@@ -5106,7 +5131,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.FunctionEnvelope"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FunctionEnvelope"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -5138,7 +5163,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -5156,11 +5181,11 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         function_name,  # type: str
-        function_envelope,  # type: "models.FunctionEnvelope"
+        function_envelope,  # type: "_models.FunctionEnvelope"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FunctionEnvelope"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
+        # type: (...) -> "_models.FunctionEnvelope"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionEnvelope"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -5197,7 +5222,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionEnvelope', pipeline_response)
@@ -5213,10 +5238,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         function_name,  # type: str
-        function_envelope,  # type: "models.FunctionEnvelope"
+        function_envelope,  # type: "_models.FunctionEnvelope"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.FunctionEnvelope"]
+        # type: (...) -> LROPoller["_models.FunctionEnvelope"]
         """Create function for web site, or a deployment slot.
 
         Description for Create function for web site, or a deployment slot.
@@ -5240,7 +5265,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionEnvelope"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -5266,7 +5291,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -5335,7 +5367,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5349,10 +5381,10 @@ class WebAppsOperations(object):
         name,  # type: str
         function_name,  # type: str
         key_name,  # type: str
-        key,  # type: "models.KeyInfo"
+        key,  # type: "_models.KeyInfo"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyInfo"
+        # type: (...) -> "_models.KeyInfo"
         """Add or update a function secret.
 
         Description for Add or update a function secret.
@@ -5372,7 +5404,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.KeyInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -5410,7 +5442,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -5484,7 +5516,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5499,7 +5531,7 @@ class WebAppsOperations(object):
         function_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Get function keys for a function in a web site, or a deployment slot.
 
         Description for Get function keys for a function in a web site, or a deployment slot.
@@ -5515,7 +5547,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -5547,7 +5579,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -5565,7 +5597,7 @@ class WebAppsOperations(object):
         function_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FunctionSecrets"
+        # type: (...) -> "_models.FunctionSecrets"
         """Get function secrets for a function in a web site, or a deployment slot.
 
         Description for Get function secrets for a function in a web site, or a deployment slot.
@@ -5581,7 +5613,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionSecrets
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionSecrets"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionSecrets"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -5613,7 +5645,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
@@ -5630,7 +5662,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HostKeys"
+        # type: (...) -> "_models.HostKeys"
         """Get host secrets for a function app.
 
         Description for Get host secrets for a function app.
@@ -5644,7 +5676,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -5675,7 +5707,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostKeys', pipeline_response)
@@ -5737,7 +5769,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5796,7 +5828,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5810,10 +5842,10 @@ class WebAppsOperations(object):
         name,  # type: str
         key_type,  # type: str
         key_name,  # type: str
-        key,  # type: "models.KeyInfo"
+        key,  # type: "_models.KeyInfo"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyInfo"
+        # type: (...) -> "_models.KeyInfo"
         """Add or update a host level secret.
 
         Description for Add or update a host level secret.
@@ -5833,7 +5865,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.KeyInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -5871,7 +5903,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -5945,7 +5977,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5959,7 +5991,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.HostNameBindingCollection"]
+        # type: (...) -> Iterable["_models.HostNameBindingCollection"]
         """Get hostname bindings for an app or a deployment slot.
 
         Description for Get hostname bindings for an app or a deployment slot.
@@ -5973,7 +6005,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.HostNameBindingCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBindingCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostNameBindingCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6020,7 +6052,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -6038,7 +6070,7 @@ class WebAppsOperations(object):
         host_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HostNameBinding"
+        # type: (...) -> "_models.HostNameBinding"
         """Get the named hostname binding for an app (or deployment slot, if specified).
 
         Description for Get the named hostname binding for an app (or deployment slot, if specified).
@@ -6054,7 +6086,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBinding
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBinding"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostNameBinding"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6086,7 +6118,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
@@ -6102,10 +6134,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         host_name,  # type: str
-        host_name_binding,  # type: "models.HostNameBinding"
+        host_name_binding,  # type: "_models.HostNameBinding"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HostNameBinding"
+        # type: (...) -> "_models.HostNameBinding"
         """Creates a hostname binding for an app.
 
         Description for Creates a hostname binding for an app.
@@ -6124,7 +6156,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBinding
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBinding"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostNameBinding"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6161,7 +6193,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
@@ -6227,7 +6259,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -6243,7 +6275,7 @@ class WebAppsOperations(object):
         relay_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Retrieves a specific Service Bus Hybrid Connection used by this Web App.
 
         Description for Retrieves a specific Service Bus Hybrid Connection used by this Web App.
@@ -6261,7 +6293,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6294,7 +6326,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -6311,10 +6343,10 @@ class WebAppsOperations(object):
         name,  # type: str
         namespace_name,  # type: str
         relay_name,  # type: str
-        connection_envelope,  # type: "models.HybridConnection"
+        connection_envelope,  # type: "_models.HybridConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Creates a new Hybrid Connection using a Service Bus relay.
 
         Description for Creates a new Hybrid Connection using a Service Bus relay.
@@ -6334,7 +6366,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6372,7 +6404,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -6442,7 +6474,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -6456,10 +6488,10 @@ class WebAppsOperations(object):
         name,  # type: str
         namespace_name,  # type: str
         relay_name,  # type: str
-        connection_envelope,  # type: "models.HybridConnection"
+        connection_envelope,  # type: "_models.HybridConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Creates a new Hybrid Connection using a Service Bus relay.
 
         Description for Creates a new Hybrid Connection using a Service Bus relay.
@@ -6479,7 +6511,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6517,7 +6549,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -6534,7 +6566,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Retrieves all Service Bus Hybrid Connections used by this Web App.
 
         Description for Retrieves all Service Bus Hybrid Connections used by this Web App.
@@ -6548,7 +6580,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6579,7 +6611,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -6596,7 +6628,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RelayServiceConnectionEntity"
+        # type: (...) -> "_models.RelayServiceConnectionEntity"
         """Gets hybrid connections configured for an app (or deployment slot, if specified).
 
         Description for Gets hybrid connections configured for an app (or deployment slot, if
@@ -6611,7 +6643,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayServiceConnectionEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6642,7 +6674,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -6660,7 +6692,7 @@ class WebAppsOperations(object):
         entity_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RelayServiceConnectionEntity"
+        # type: (...) -> "_models.RelayServiceConnectionEntity"
         """Gets a hybrid connection configuration by its name.
 
         Description for Gets a hybrid connection configuration by its name.
@@ -6676,7 +6708,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayServiceConnectionEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6708,7 +6740,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -6724,10 +6756,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         entity_name,  # type: str
-        connection_envelope,  # type: "models.RelayServiceConnectionEntity"
+        connection_envelope,  # type: "_models.RelayServiceConnectionEntity"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RelayServiceConnectionEntity"
+        # type: (...) -> "_models.RelayServiceConnectionEntity"
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
 
         Description for Creates a new hybrid connection configuration (PUT), or updates an existing one
@@ -6746,7 +6778,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayServiceConnectionEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6783,7 +6815,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -6849,7 +6881,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -6862,10 +6894,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         entity_name,  # type: str
-        connection_envelope,  # type: "models.RelayServiceConnectionEntity"
+        connection_envelope,  # type: "_models.RelayServiceConnectionEntity"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RelayServiceConnectionEntity"
+        # type: (...) -> "_models.RelayServiceConnectionEntity"
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
 
         Description for Creates a new hybrid connection configuration (PUT), or updates an existing one
@@ -6884,7 +6916,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayServiceConnectionEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6921,7 +6953,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -6938,7 +6970,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WebAppInstanceCollection"]
+        # type: (...) -> Iterable["_models.WebAppInstanceCollection"]
         """Gets all scale-out instances of an app.
 
         Description for Gets all scale-out instances of an app.
@@ -6952,7 +6984,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppInstanceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppInstanceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppInstanceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -6999,7 +7031,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -7017,7 +7049,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WebSiteInstanceStatus"
+        # type: (...) -> "_models.WebSiteInstanceStatus"
         """Gets all scale-out instances of an app.
 
         Description for Gets all scale-out instances of an app.
@@ -7033,7 +7065,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebSiteInstanceStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebSiteInstanceStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebSiteInstanceStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7065,7 +7097,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebSiteInstanceStatus', pipeline_response)
@@ -7083,7 +7115,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MSDeployStatus"
+        # type: (...) -> "_models.MSDeployStatus"
         """Get the status of the last MSDeploy operation.
 
         Description for Get the status of the last MSDeploy operation.
@@ -7099,7 +7131,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MSDeployStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7131,7 +7163,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
@@ -7147,11 +7179,11 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         instance_id,  # type: str
-        ms_deploy,  # type: "models.MSDeploy"
+        ms_deploy,  # type: "_models.MSDeploy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MSDeployStatus"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MSDeployStatus"]]
+        # type: (...) -> Optional["_models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7188,7 +7220,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7206,10 +7238,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         instance_id,  # type: str
-        ms_deploy,  # type: "models.MSDeploy"
+        ms_deploy,  # type: "_models.MSDeploy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.MSDeployStatus"]
+        # type: (...) -> LROPoller["_models.MSDeployStatus"]
         """Invoke the MSDeploy web app extension.
 
         Description for Invoke the MSDeploy web app extension.
@@ -7233,7 +7265,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MSDeployStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -7259,7 +7291,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -7280,7 +7319,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MSDeployLog"]
+        # type: (...) -> Optional["_models.MSDeployLog"]
         """Get the MSDeploy Log for the last MSDeploy operation.
 
         Description for Get the MSDeploy Log for the last MSDeploy operation.
@@ -7296,7 +7335,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployLog or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MSDeployLog"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployLog"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7328,7 +7367,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7348,7 +7387,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessInfoCollection"]
         """Get list of processes for a web site, or a deployment slot, or for a specific scaled-out instance in a web site.
 
         Description for Get list of processes for a web site, or a deployment slot, or for a specific
@@ -7366,7 +7405,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7414,7 +7453,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -7433,7 +7472,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ProcessInfo"]
+        # type: (...) -> Optional["_models.ProcessInfo"]
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
         Description for Get process information by its ID for a specific scaled-out instance in a web
@@ -7453,7 +7492,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ProcessInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProcessInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7486,7 +7525,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7560,7 +7599,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -7629,7 +7668,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7650,7 +7689,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessModuleInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessModuleInfoCollection"]
         """List module information for a process by its ID for a specific scaled-out instance in a web site.
 
         Description for List module information for a process by its ID for a specific scaled-out
@@ -7670,7 +7709,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessModuleInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7719,7 +7758,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -7739,7 +7778,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ProcessModuleInfo"]
+        # type: (...) -> Optional["_models.ProcessModuleInfo"]
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
         Description for Get process information by its ID for a specific scaled-out instance in a web
@@ -7761,7 +7800,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ProcessModuleInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProcessModuleInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7795,7 +7834,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7816,7 +7855,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessThreadInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessThreadInfoCollection"]
         """List the threads in a process by its ID for a specific scaled-out instance in a web site.
 
         Description for List the threads in a process by its ID for a specific scaled-out instance in a
@@ -7836,7 +7875,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessThreadInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessThreadInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7885,7 +7924,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -7902,7 +7941,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteCloneability"
+        # type: (...) -> "_models.SiteCloneability"
         """Shows whether an app can be cloned to another resource group or subscription.
 
         Description for Shows whether an app can be cloned to another resource group or subscription.
@@ -7916,7 +7955,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteCloneability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteCloneability"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteCloneability"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -7947,7 +7986,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteCloneability', pipeline_response)
@@ -7964,7 +8003,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BackupItemCollection"]
+        # type: (...) -> Iterable["_models.BackupItemCollection"]
         """Gets existing backups of an app.
 
         Description for Gets existing backups of an app.
@@ -7978,7 +8017,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.BackupItemCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItemCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItemCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8025,7 +8064,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -8042,7 +8081,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FunctionSecrets"
+        # type: (...) -> "_models.FunctionSecrets"
         """This is to allow calling via powershell and ARM template.
 
         Description for This is to allow calling via powershell and ARM template.
@@ -8056,7 +8095,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionSecrets
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionSecrets"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionSecrets"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8087,7 +8126,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
@@ -8103,11 +8142,11 @@ class WebAppsOperations(object):
         subscription_name,  # type: str
         resource_group_name,  # type: str
         name,  # type: str
-        migration_options,  # type: "models.StorageMigrationOptions"
+        migration_options,  # type: "_models.StorageMigrationOptions"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageMigrationResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageMigrationResponse"]
+        # type: (...) -> "_models.StorageMigrationResponse"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageMigrationResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8144,7 +8183,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StorageMigrationResponse', pipeline_response)
@@ -8160,10 +8199,10 @@ class WebAppsOperations(object):
         subscription_name,  # type: str
         resource_group_name,  # type: str
         name,  # type: str
-        migration_options,  # type: "models.StorageMigrationOptions"
+        migration_options,  # type: "_models.StorageMigrationOptions"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.StorageMigrationResponse"]
+        # type: (...) -> LROPoller["_models.StorageMigrationResponse"]
         """Restores a web app.
 
         Description for Restores a web app.
@@ -8187,7 +8226,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageMigrationResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageMigrationResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -8213,7 +8252,13 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -8231,11 +8276,11 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        migration_request_envelope,  # type: "models.MigrateMySqlRequest"
+        migration_request_envelope,  # type: "_models.MigrateMySqlRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Operation"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Operation"]
+        # type: (...) -> "_models.Operation"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Operation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8271,7 +8316,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Operation', pipeline_response)
@@ -8286,10 +8331,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        migration_request_envelope,  # type: "models.MigrateMySqlRequest"
+        migration_request_envelope,  # type: "_models.MigrateMySqlRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Operation"]
+        # type: (...) -> LROPoller["_models.Operation"]
         """Migrates a local (in-app) MySql database to a remote MySql database.
 
         Description for Migrates a local (in-app) MySql database to a remote MySql database.
@@ -8311,7 +8356,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Operation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Operation"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -8336,7 +8381,13 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -8356,7 +8407,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MigrateMySqlStatus"
+        # type: (...) -> "_models.MigrateMySqlStatus"
         """Returns the status of MySql in app migration, if one is active, and whether or not MySql in app is enabled.
 
         Description for Returns the status of MySql in app migration, if one is active, and whether or
@@ -8371,7 +8422,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MigrateMySqlStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MigrateMySqlStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MigrateMySqlStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8402,7 +8453,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MigrateMySqlStatus', pipeline_response)
@@ -8419,7 +8470,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SwiftVirtualNetwork"
+        # type: (...) -> "_models.SwiftVirtualNetwork"
         """Gets a Swift Virtual Network connection.
 
         Description for Gets a Swift Virtual Network connection.
@@ -8433,7 +8484,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SwiftVirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8464,7 +8515,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -8479,10 +8530,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        connection_envelope,  # type: "models.SwiftVirtualNetwork"
+        connection_envelope,  # type: "_models.SwiftVirtualNetwork"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SwiftVirtualNetwork"
+        # type: (...) -> "_models.SwiftVirtualNetwork"
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true when doing a GET against this resource, and 2) that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
 
@@ -8502,7 +8553,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SwiftVirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8538,7 +8589,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -8600,7 +8651,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -8612,10 +8663,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        connection_envelope,  # type: "models.SwiftVirtualNetwork"
+        connection_envelope,  # type: "_models.SwiftVirtualNetwork"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SwiftVirtualNetwork"
+        # type: (...) -> "_models.SwiftVirtualNetwork"
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true when doing a GET against this resource, and 2) that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
 
@@ -8635,7 +8686,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SwiftVirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8671,7 +8722,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -8689,7 +8740,7 @@ class WebAppsOperations(object):
         view,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.NetworkFeatures"]
+        # type: (...) -> Optional["_models.NetworkFeatures"]
         """Gets all network features used by the app (or deployment slot, if specified).
 
         Description for Gets all network features used by the app (or deployment slot, if specified).
@@ -8705,7 +8756,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.NetworkFeatures or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NetworkFeatures"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NetworkFeatures"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8737,7 +8788,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -8757,7 +8808,7 @@ class WebAppsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
+        # type: (...) -> List["_models.NetworkTrace"]
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
         Description for Gets a named operation for a network trace capturing (or deployment slot, if
@@ -8774,7 +8825,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8806,7 +8857,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -8887,7 +8938,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -8907,8 +8958,8 @@ class WebAppsOperations(object):
         sas_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        # type: (...) -> List["_models.NetworkTrace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -8945,7 +8996,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -8969,7 +9020,7 @@ class WebAppsOperations(object):
         sas_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[List["models.NetworkTrace"]]
+        # type: (...) -> LROPoller[List["_models.NetworkTrace"]]
         """Start capturing network packets for the site.
 
         Description for Start capturing network packets for the site.
@@ -8995,7 +9046,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -9022,7 +9073,13 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -9087,7 +9144,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -9102,7 +9159,7 @@ class WebAppsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
+        # type: (...) -> List["_models.NetworkTrace"]
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
         Description for Gets a named operation for a network trace capturing (or deployment slot, if
@@ -9119,7 +9176,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9151,7 +9208,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
@@ -9169,7 +9226,7 @@ class WebAppsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
+        # type: (...) -> List["_models.NetworkTrace"]
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
         Description for Gets a named operation for a network trace capturing (or deployment slot, if
@@ -9186,7 +9243,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9218,7 +9275,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -9240,7 +9297,7 @@ class WebAppsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
+        # type: (...) -> List["_models.NetworkTrace"]
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
         Description for Gets a named operation for a network trace capturing (or deployment slot, if
@@ -9257,7 +9314,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9289,7 +9346,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
@@ -9352,7 +9409,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -9367,7 +9424,7 @@ class WebAppsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PerfMonCounterCollection"]
+        # type: (...) -> Iterable["_models.PerfMonCounterCollection"]
         """Gets perfmon counters for web app.
 
         Description for Gets perfmon counters for web app.
@@ -9385,7 +9442,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.PerfMonCounterCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PerfMonCounterCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PerfMonCounterCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9434,7 +9491,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -9451,7 +9508,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SitePhpErrorLogFlag"
+        # type: (...) -> "_models.SitePhpErrorLogFlag"
         """Gets web app's event logs.
 
         Description for Gets web app's event logs.
@@ -9465,7 +9522,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SitePhpErrorLogFlag
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SitePhpErrorLogFlag"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SitePhpErrorLogFlag"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9496,7 +9553,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SitePhpErrorLogFlag', pipeline_response)
@@ -9513,7 +9570,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PremierAddOn"
+        # type: (...) -> "_models.PremierAddOn"
         """Gets the premier add-ons of an app.
 
         Description for Gets the premier add-ons of an app.
@@ -9527,7 +9584,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOn"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9558,7 +9615,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -9576,7 +9633,7 @@ class WebAppsOperations(object):
         premier_add_on_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PremierAddOn"
+        # type: (...) -> "_models.PremierAddOn"
         """Gets a named add-on of an app.
 
         Description for Gets a named add-on of an app.
@@ -9592,7 +9649,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOn"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9624,7 +9681,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -9640,10 +9697,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         premier_add_on_name,  # type: str
-        premier_add_on,  # type: "models.PremierAddOn"
+        premier_add_on,  # type: "_models.PremierAddOn"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PremierAddOn"
+        # type: (...) -> "_models.PremierAddOn"
         """Updates a named add-on of an app.
 
         Description for Updates a named add-on of an app.
@@ -9661,7 +9718,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOn"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9698,7 +9755,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -9764,7 +9821,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -9777,10 +9834,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         premier_add_on_name,  # type: str
-        premier_add_on,  # type: "models.PremierAddOnPatchResource"
+        premier_add_on,  # type: "_models.PremierAddOnPatchResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PremierAddOn"
+        # type: (...) -> "_models.PremierAddOn"
         """Updates a named add-on of an app.
 
         Description for Updates a named add-on of an app.
@@ -9798,7 +9855,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOn"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9835,7 +9892,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -9852,7 +9909,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateAccess"
+        # type: (...) -> "_models.PrivateAccess"
         """Gets data around private site access enablement and authorized Virtual Networks that can access the site.
 
         Description for Gets data around private site access enablement and authorized Virtual Networks
@@ -9867,7 +9924,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateAccess"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateAccess"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9898,7 +9955,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
@@ -9913,10 +9970,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        access,  # type: "models.PrivateAccess"
+        access,  # type: "_models.PrivateAccess"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateAccess"
+        # type: (...) -> "_models.PrivateAccess"
         """Sets data around private site access enablement and authorized Virtual Networks that can access the site.
 
         Description for Sets data around private site access enablement and authorized Virtual Networks
@@ -9933,7 +9990,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateAccess"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateAccess"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -9969,7 +10026,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
@@ -9986,7 +10043,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessInfoCollection"]
         """Get list of processes for a web site, or a deployment slot, or for a specific scaled-out instance in a web site.
 
         Description for Get list of processes for a web site, or a deployment slot, or for a specific
@@ -10001,7 +10058,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -10048,7 +10105,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -10066,7 +10123,7 @@ class WebAppsOperations(object):
         process_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ProcessInfo"]
+        # type: (...) -> Optional["_models.ProcessInfo"]
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
         Description for Get process information by its ID for a specific scaled-out instance in a web
@@ -10083,7 +10140,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ProcessInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProcessInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -10115,7 +10172,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -10184,7 +10241,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10248,7 +10305,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -10268,7 +10325,7 @@ class WebAppsOperations(object):
         process_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessModuleInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessModuleInfoCollection"]
         """List module information for a process by its ID for a specific scaled-out instance in a web site.
 
         Description for List module information for a process by its ID for a specific scaled-out
@@ -10285,7 +10342,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessModuleInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -10333,7 +10390,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -10352,7 +10409,7 @@ class WebAppsOperations(object):
         base_address,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ProcessModuleInfo"]
+        # type: (...) -> Optional["_models.ProcessModuleInfo"]
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
         Description for Get process information by its ID for a specific scaled-out instance in a web
@@ -10371,7 +10428,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ProcessModuleInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProcessModuleInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -10404,7 +10461,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -10424,7 +10481,7 @@ class WebAppsOperations(object):
         process_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessThreadInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessThreadInfoCollection"]
         """List the threads in a process by its ID for a specific scaled-out instance in a web site.
 
         Description for List the threads in a process by its ID for a specific scaled-out instance in a
@@ -10441,7 +10498,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessThreadInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessThreadInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -10489,7 +10546,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -10506,7 +10563,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PublicCertificateCollection"]
+        # type: (...) -> Iterable["_models.PublicCertificateCollection"]
         """Get public certificates for an app or a deployment slot.
 
         Description for Get public certificates for an app or a deployment slot.
@@ -10520,7 +10577,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.PublicCertificateCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificateCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicCertificateCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -10567,7 +10624,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -10585,7 +10642,7 @@ class WebAppsOperations(object):
         public_certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PublicCertificate"
+        # type: (...) -> "_models.PublicCertificate"
         """Get the named public certificate for an app (or deployment slot, if specified).
 
         Description for Get the named public certificate for an app (or deployment slot, if specified).
@@ -10601,7 +10658,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicCertificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -10633,7 +10690,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
@@ -10649,10 +10706,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         public_certificate_name,  # type: str
-        public_certificate,  # type: "models.PublicCertificate"
+        public_certificate,  # type: "_models.PublicCertificate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PublicCertificate"
+        # type: (...) -> "_models.PublicCertificate"
         """Creates a hostname binding for an app.
 
         Description for Creates a hostname binding for an app.
@@ -10671,7 +10728,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicCertificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -10708,7 +10765,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
@@ -10774,7 +10831,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10786,7 +10843,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        publishing_profile_options,  # type: "models.CsmPublishingProfileOptions"
+        publishing_profile_options,  # type: "_models.CsmPublishingProfileOptions"
         **kwargs  # type: Any
     ):
         # type: (...) -> IO
@@ -10842,7 +10899,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline)
@@ -10905,7 +10962,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10976,7 +11033,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10988,7 +11045,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -11028,7 +11085,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11040,7 +11097,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -11087,7 +11144,13 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -11105,7 +11168,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        restore_request,  # type: "models.DeletedAppRestoreRequest"
+        restore_request,  # type: "_models.DeletedAppRestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -11145,7 +11208,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11157,7 +11220,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        restore_request,  # type: "models.DeletedAppRestoreRequest"
+        restore_request,  # type: "_models.DeletedAppRestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -11204,7 +11267,13 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -11222,7 +11291,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        restore_request,  # type: "models.SnapshotRestoreRequest"
+        restore_request,  # type: "_models.SnapshotRestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -11262,7 +11331,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11274,7 +11343,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        restore_request,  # type: "models.SnapshotRestoreRequest"
+        restore_request,  # type: "_models.SnapshotRestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -11322,7 +11391,13 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -11342,7 +11417,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SiteExtensionInfoCollection"]
+        # type: (...) -> Iterable["_models.SiteExtensionInfoCollection"]
         """Get list of siteextensions for a web site, or a deployment slot.
 
         Description for Get list of siteextensions for a web site, or a deployment slot.
@@ -11356,7 +11431,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteExtensionInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -11403,7 +11478,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -11421,7 +11496,7 @@ class WebAppsOperations(object):
         site_extension_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.SiteExtensionInfo"]
+        # type: (...) -> Optional["_models.SiteExtensionInfo"]
         """Get site extension information by its ID for a web site, or a deployment slot.
 
         Description for Get site extension information by its ID for a web site, or a deployment slot.
@@ -11437,7 +11512,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SiteExtensionInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SiteExtensionInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -11469,7 +11544,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -11489,8 +11564,8 @@ class WebAppsOperations(object):
         site_extension_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.SiteExtensionInfo"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SiteExtensionInfo"]]
+        # type: (...) -> Optional["_models.SiteExtensionInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SiteExtensionInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -11522,7 +11597,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 429]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -11545,7 +11620,7 @@ class WebAppsOperations(object):
         site_extension_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SiteExtensionInfo"]
+        # type: (...) -> LROPoller["_models.SiteExtensionInfo"]
         """Install site extension on a web site, or a deployment slot.
 
         Description for Install site extension on a web site, or a deployment slot.
@@ -11567,7 +11642,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteExtensionInfo"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -11592,7 +11667,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'siteExtensionId': self._serialize.url("site_extension_id", site_extension_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -11661,7 +11743,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11673,7 +11755,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        copy_slot_entity,  # type: "models.CsmCopySlotEntity"
+        copy_slot_entity,  # type: "_models.CsmCopySlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -11713,7 +11795,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11725,7 +11807,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        copy_slot_entity,  # type: "models.CsmCopySlotEntity"
+        copy_slot_entity,  # type: "_models.CsmCopySlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -11773,7 +11855,13 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -11793,7 +11881,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WebAppCollection"]
+        # type: (...) -> Iterable["_models.WebAppCollection"]
         """Gets an app's deployment slots.
 
         Description for Gets an app's deployment slots.
@@ -11807,7 +11895,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -11854,7 +11942,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -11872,7 +11960,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Site"]
+        # type: (...) -> Optional["_models.Site"]
         """Gets the details of a web, mobile, or API app.
 
         Description for Gets the details of a web, mobile, or API app.
@@ -11888,7 +11976,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Site or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Site"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Site"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -11920,7 +12008,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -11938,11 +12026,11 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_envelope,  # type: "models.Site"
+        site_envelope,  # type: "_models.Site"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Site"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
+        # type: (...) -> "_models.Site"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -11979,7 +12067,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -11999,10 +12087,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_envelope,  # type: "models.Site"
+        site_envelope,  # type: "_models.Site"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Site"]
+        # type: (...) -> LROPoller["_models.Site"]
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing app.
 
         Description for Creates a new web, mobile, or API app in an existing resource group, or updates
@@ -12029,7 +12117,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -12055,7 +12143,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -12137,7 +12232,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12150,10 +12245,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_envelope,  # type: "models.SitePatchResource"
+        site_envelope,  # type: "_models.SitePatchResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Site"
+        # type: (...) -> "_models.Site"
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing app.
 
         Description for Creates a new web, mobile, or API app in an existing resource group, or updates
@@ -12174,7 +12269,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Site
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -12211,7 +12306,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -12234,7 +12329,7 @@ class WebAppsOperations(object):
         host_name=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CustomHostnameAnalysisResult"
+        # type: (...) -> "_models.CustomHostnameAnalysisResult"
         """Analyze a custom hostname.
 
         Description for Analyze a custom hostname.
@@ -12252,7 +12347,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CustomHostnameAnalysisResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomHostnameAnalysisResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomHostnameAnalysisResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -12286,7 +12381,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CustomHostnameAnalysisResult', pipeline_response)
@@ -12302,7 +12397,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        slot_swap_entity,  # type: "models.CsmSlotEntity"
+        slot_swap_entity,  # type: "_models.CsmSlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -12361,7 +12456,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12374,10 +12469,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        request,  # type: "models.BackupRequest"
+        request,  # type: "_models.BackupRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupItem"
+        # type: (...) -> "_models.BackupItem"
         """Creates a backup of an app.
 
         Description for Creates a backup of an app.
@@ -12397,7 +12492,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItem"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -12434,7 +12529,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -12452,7 +12547,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BackupItemCollection"]
+        # type: (...) -> Iterable["_models.BackupItemCollection"]
         """Gets existing backups of an app.
 
         Description for Gets existing backups of an app.
@@ -12469,7 +12564,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.BackupItemCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItemCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItemCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -12517,7 +12612,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -12536,7 +12631,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupItem"
+        # type: (...) -> "_models.BackupItem"
         """Gets a backup of an app by its ID.
 
         Description for Gets a backup of an app by its ID.
@@ -12555,7 +12650,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItem"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -12588,7 +12683,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -12659,7 +12754,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12673,10 +12768,10 @@ class WebAppsOperations(object):
         name,  # type: str
         backup_id,  # type: str
         slot,  # type: str
-        request,  # type: "models.BackupRequest"
+        request,  # type: "_models.BackupRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupItem"
+        # type: (...) -> "_models.BackupItem"
         """Gets status of a web app backup that may be in progress, including secrets associated with the backup, such as the Azure Storage SAS URL. Also can be used to update the SAS URL for the backup if a new URL is passed in the request body.
 
         Description for Gets status of a web app backup that may be in progress, including secrets
@@ -12698,7 +12793,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItem"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -12736,7 +12831,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -12753,7 +12848,7 @@ class WebAppsOperations(object):
         name,  # type: str
         backup_id,  # type: str
         slot,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -12795,7 +12890,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12809,7 +12904,7 @@ class WebAppsOperations(object):
         name,  # type: str
         backup_id,  # type: str
         slot,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -12863,7 +12958,15 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'backupId': self._serialize.url("backup_id", backup_id, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -12884,7 +12987,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SiteConfigResourceCollection"]
+        # type: (...) -> Iterable["_models.SiteConfigResourceCollection"]
         """List the configurations of an app.
 
         Description for List the configurations of an app.
@@ -12901,7 +13004,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SiteConfigResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -12949,7 +13052,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -12965,10 +13068,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        app_settings,  # type: "models.StringDictionary"
+        app_settings,  # type: "_models.StringDictionary"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Replaces the application settings of an app.
 
         Description for Replaces the application settings of an app.
@@ -12987,7 +13090,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13024,7 +13127,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -13042,7 +13145,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Gets the application settings of an app.
 
         Description for Gets the application settings of an app.
@@ -13059,7 +13162,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13091,7 +13194,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -13107,10 +13210,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_auth_settings,  # type: "models.SiteAuthSettings"
+        site_auth_settings,  # type: "_models.SiteAuthSettings"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteAuthSettings"
+        # type: (...) -> "_models.SiteAuthSettings"
         """Updates the Authentication / Authorization settings associated with web app.
 
         Description for Updates the Authentication / Authorization settings associated with web app.
@@ -13128,7 +13231,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteAuthSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteAuthSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13165,7 +13268,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
@@ -13183,7 +13286,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteAuthSettings"
+        # type: (...) -> "_models.SiteAuthSettings"
         """Gets the Authentication/Authorization settings of an app.
 
         Description for Gets the Authentication/Authorization settings of an app.
@@ -13200,7 +13303,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteAuthSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteAuthSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13232,7 +13335,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
@@ -13248,10 +13351,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        azure_storage_accounts,  # type: "models.AzureStoragePropertyDictionaryResource"
+        azure_storage_accounts,  # type: "_models.AzureStoragePropertyDictionaryResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AzureStoragePropertyDictionaryResource"
+        # type: (...) -> "_models.AzureStoragePropertyDictionaryResource"
         """Updates the Azure storage account configurations of an app.
 
         Description for Updates the Azure storage account configurations of an app.
@@ -13270,7 +13373,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AzureStoragePropertyDictionaryResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureStoragePropertyDictionaryResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureStoragePropertyDictionaryResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13307,7 +13410,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
@@ -13325,7 +13428,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AzureStoragePropertyDictionaryResource"
+        # type: (...) -> "_models.AzureStoragePropertyDictionaryResource"
         """Gets the Azure storage account configurations of an app.
 
         Description for Gets the Azure storage account configurations of an app.
@@ -13342,7 +13445,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AzureStoragePropertyDictionaryResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureStoragePropertyDictionaryResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureStoragePropertyDictionaryResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13374,7 +13477,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
@@ -13390,10 +13493,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        request,  # type: "models.BackupRequest"
+        request,  # type: "_models.BackupRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupRequest"
+        # type: (...) -> "_models.BackupRequest"
         """Updates the backup configuration of an app.
 
         Description for Updates the backup configuration of an app.
@@ -13412,7 +13515,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13449,7 +13552,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
@@ -13516,7 +13619,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -13531,7 +13634,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupRequest"
+        # type: (...) -> "_models.BackupRequest"
         """Gets the backup configuration of an app.
 
         Description for Gets the backup configuration of an app.
@@ -13548,7 +13651,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13580,7 +13683,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
@@ -13596,10 +13699,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        connection_strings,  # type: "models.ConnectionStringDictionary"
+        connection_strings,  # type: "_models.ConnectionStringDictionary"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConnectionStringDictionary"
+        # type: (...) -> "_models.ConnectionStringDictionary"
         """Replaces the connection strings of an app.
 
         Description for Replaces the connection strings of an app.
@@ -13618,7 +13721,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ConnectionStringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionStringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionStringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13655,7 +13758,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
@@ -13673,7 +13776,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConnectionStringDictionary"
+        # type: (...) -> "_models.ConnectionStringDictionary"
         """Gets the connection strings of an app.
 
         Description for Gets the connection strings of an app.
@@ -13690,7 +13793,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ConnectionStringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionStringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionStringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13722,7 +13825,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
@@ -13740,7 +13843,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteLogsConfig"
+        # type: (...) -> "_models.SiteLogsConfig"
         """Gets the logging configuration of an app.
 
         Description for Gets the logging configuration of an app.
@@ -13757,7 +13860,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteLogsConfig"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteLogsConfig"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13789,7 +13892,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
@@ -13805,10 +13908,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_logs_config,  # type: "models.SiteLogsConfig"
+        site_logs_config,  # type: "_models.SiteLogsConfig"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteLogsConfig"
+        # type: (...) -> "_models.SiteLogsConfig"
         """Updates the logging configuration of an app.
 
         Description for Updates the logging configuration of an app.
@@ -13828,7 +13931,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteLogsConfig"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteLogsConfig"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13865,7 +13968,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
@@ -13881,10 +13984,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        metadata,  # type: "models.StringDictionary"
+        metadata,  # type: "_models.StringDictionary"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Replaces the metadata of an app.
 
         Description for Replaces the metadata of an app.
@@ -13903,7 +14006,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -13940,7 +14043,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -13958,7 +14061,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Gets the metadata of an app.
 
         Description for Gets the metadata of an app.
@@ -13975,7 +14078,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14007,7 +14110,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -14025,8 +14128,8 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.User"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        # type: (...) -> "_models.User"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14058,7 +14161,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -14076,7 +14179,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.User"]
+        # type: (...) -> LROPoller["_models.User"]
         """Gets the Git/FTP publishing credentials of an app.
 
         Description for Gets the Git/FTP publishing credentials of an app.
@@ -14099,7 +14202,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -14124,7 +14227,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -14143,10 +14253,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        push_settings,  # type: "models.PushSettings"
+        push_settings,  # type: "_models.PushSettings"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PushSettings"
+        # type: (...) -> "_models.PushSettings"
         """Updates the Push settings associated with web app.
 
         Description for Updates the Push settings associated with web app.
@@ -14164,7 +14274,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PushSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PushSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PushSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14201,7 +14311,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
@@ -14219,7 +14329,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PushSettings"
+        # type: (...) -> "_models.PushSettings"
         """Gets the Push settings associated with web app.
 
         Description for Gets the Push settings associated with web app.
@@ -14235,7 +14345,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PushSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PushSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PushSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14267,7 +14377,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
@@ -14285,7 +14395,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteConfigResource"
+        # type: (...) -> "_models.SiteConfigResource"
         """Gets the configuration of an app, such as platform version and bitness, default documents, virtual applications, Always On, etc.
 
         Description for Gets the configuration of an app, such as platform version and bitness, default
@@ -14303,7 +14413,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14335,7 +14445,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -14351,10 +14461,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_config,  # type: "models.SiteConfigResource"
+        site_config,  # type: "_models.SiteConfigResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteConfigResource"
+        # type: (...) -> "_models.SiteConfigResource"
         """Updates the configuration of an app.
 
         Description for Updates the configuration of an app.
@@ -14373,7 +14483,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14410,7 +14520,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -14426,10 +14536,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_config,  # type: "models.SiteConfigResource"
+        site_config,  # type: "_models.SiteConfigResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteConfigResource"
+        # type: (...) -> "_models.SiteConfigResource"
         """Updates the configuration of an app.
 
         Description for Updates the configuration of an app.
@@ -14448,7 +14558,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14485,7 +14595,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -14503,7 +14613,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SiteConfigurationSnapshotInfoCollection"]
+        # type: (...) -> Iterable["_models.SiteConfigurationSnapshotInfoCollection"]
         """Gets a list of web app configuration snapshots identifiers. Each element of the list contains a timestamp and the ID of the snapshot.
 
         Description for Gets a list of web app configuration snapshots identifiers. Each element of the
@@ -14521,7 +14631,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SiteConfigurationSnapshotInfoCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigurationSnapshotInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigurationSnapshotInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14569,7 +14679,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -14588,7 +14698,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteConfigResource"
+        # type: (...) -> "_models.SiteConfigResource"
         """Gets a snapshot of the configuration of an app at a previous point in time.
 
         Description for Gets a snapshot of the configuration of an app at a previous point in time.
@@ -14607,7 +14717,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14640,7 +14750,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -14711,7 +14821,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -14860,7 +14970,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ContinuousWebJobCollection"]
+        # type: (...) -> Iterable["_models.ContinuousWebJobCollection"]
         """List continuous web jobs for an app, or a deployment slot.
 
         Description for List continuous web jobs for an app, or a deployment slot.
@@ -14877,7 +14987,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ContinuousWebJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContinuousWebJobCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContinuousWebJobCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14925,7 +15035,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -14944,7 +15054,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ContinuousWebJob"]
+        # type: (...) -> Optional["_models.ContinuousWebJob"]
         """Gets a continuous web job by its ID for an app, or a deployment slot.
 
         Description for Gets a continuous web job by its ID for an app, or a deployment slot.
@@ -14963,7 +15073,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ContinuousWebJob or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ContinuousWebJob"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ContinuousWebJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -14996,7 +15106,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -15069,7 +15179,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15137,7 +15247,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15205,7 +15315,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15220,7 +15330,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentCollection"]
+        # type: (...) -> Iterable["_models.DeploymentCollection"]
         """List deployments for an app, or a deployment slot.
 
         Description for List deployments for an app, or a deployment slot.
@@ -15237,7 +15347,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DeploymentCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -15285,7 +15395,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -15304,7 +15414,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Deployment"
+        # type: (...) -> "_models.Deployment"
         """Get a deployment by its ID for an app, or a deployment slot.
 
         Description for Get a deployment by its ID for an app, or a deployment slot.
@@ -15323,7 +15433,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Deployment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -15356,7 +15466,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -15373,10 +15483,10 @@ class WebAppsOperations(object):
         name,  # type: str
         id,  # type: str
         slot,  # type: str
-        deployment,  # type: "models.Deployment"
+        deployment,  # type: "_models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Deployment"
+        # type: (...) -> "_models.Deployment"
         """Create a deployment for an app, or a deployment slot.
 
         Description for Create a deployment for an app, or a deployment slot.
@@ -15397,7 +15507,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Deployment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -15435,7 +15545,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -15506,7 +15616,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15522,7 +15632,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Deployment"
+        # type: (...) -> "_models.Deployment"
         """List deployment log for specific deployment for an app, or a deployment slot.
 
         Description for List deployment log for specific deployment for an app, or a deployment slot.
@@ -15542,7 +15652,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Deployment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -15575,7 +15685,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -15591,10 +15701,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RestoreRequest"
+        # type: (...) -> "_models.RestoreRequest"
         """Discovers an existing app backup that can be restored from a blob in Azure storage. Use this to get information about the databases stored in a backup.
 
         Description for Discovers an existing app backup that can be restored from a blob in Azure
@@ -15615,7 +15725,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RestoreRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -15652,7 +15762,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RestoreRequest', pipeline_response)
@@ -15670,7 +15780,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IdentifierCollection"]
+        # type: (...) -> Iterable["_models.IdentifierCollection"]
         """Lists ownership identifiers for domain associated with web app.
 
         Description for Lists ownership identifiers for domain associated with web app.
@@ -15687,7 +15797,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.IdentifierCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentifierCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IdentifierCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -15735,7 +15845,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -15754,7 +15864,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Identifier"
+        # type: (...) -> "_models.Identifier"
         """Get domain ownership identifier for web app.
 
         Description for Get domain ownership identifier for web app.
@@ -15773,7 +15883,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -15806,7 +15916,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -15823,10 +15933,10 @@ class WebAppsOperations(object):
         name,  # type: str
         domain_ownership_identifier_name,  # type: str
         slot,  # type: str
-        domain_ownership_identifier,  # type: "models.Identifier"
+        domain_ownership_identifier,  # type: "_models.Identifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Identifier"
+        # type: (...) -> "_models.Identifier"
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
 
         Description for Creates a domain ownership identifier for web app, or updates an existing
@@ -15848,7 +15958,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -15886,7 +15996,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -15957,7 +16067,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15971,10 +16081,10 @@ class WebAppsOperations(object):
         name,  # type: str
         domain_ownership_identifier_name,  # type: str
         slot,  # type: str
-        domain_ownership_identifier,  # type: "models.Identifier"
+        domain_ownership_identifier,  # type: "_models.Identifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Identifier"
+        # type: (...) -> "_models.Identifier"
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
 
         Description for Creates a domain ownership identifier for web app, or updates an existing
@@ -15996,7 +16106,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16034,7 +16144,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -16052,7 +16162,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MSDeployStatus"
+        # type: (...) -> "_models.MSDeployStatus"
         """Get the status of the last MSDeploy operation.
 
         Description for Get the status of the last MSDeploy operation.
@@ -16068,7 +16178,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MSDeployStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16100,7 +16210,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
@@ -16116,11 +16226,11 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        ms_deploy,  # type: "models.MSDeploy"
+        ms_deploy,  # type: "_models.MSDeploy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MSDeployStatus"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MSDeployStatus"]]
+        # type: (...) -> Optional["_models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16157,7 +16267,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -16175,10 +16285,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        ms_deploy,  # type: "models.MSDeploy"
+        ms_deploy,  # type: "_models.MSDeploy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.MSDeployStatus"]
+        # type: (...) -> LROPoller["_models.MSDeployStatus"]
         """Invoke the MSDeploy web app extension.
 
         Description for Invoke the MSDeploy web app extension.
@@ -16202,7 +16312,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MSDeployStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -16228,7 +16338,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -16249,7 +16366,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MSDeployLog"]
+        # type: (...) -> Optional["_models.MSDeployLog"]
         """Get the MSDeploy Log for the last MSDeploy operation.
 
         Description for Get the MSDeploy Log for the last MSDeploy operation.
@@ -16265,7 +16382,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployLog or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MSDeployLog"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployLog"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16297,7 +16414,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -16317,7 +16434,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.FunctionEnvelopeCollection"]
+        # type: (...) -> Iterable["_models.FunctionEnvelopeCollection"]
         """List the functions for a web site, or a deployment slot.
 
         Description for List the functions for a web site, or a deployment slot.
@@ -16333,7 +16450,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelopeCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelopeCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionEnvelopeCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16381,7 +16498,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -16447,7 +16564,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -16466,7 +16583,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.FunctionEnvelope"]
+        # type: (...) -> Optional["_models.FunctionEnvelope"]
         """Get function information by its ID for web site, or a deployment slot.
 
         Description for Get function information by its ID for web site, or a deployment slot.
@@ -16484,7 +16601,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.FunctionEnvelope"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FunctionEnvelope"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16517,7 +16634,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -16536,11 +16653,11 @@ class WebAppsOperations(object):
         name,  # type: str
         function_name,  # type: str
         slot,  # type: str
-        function_envelope,  # type: "models.FunctionEnvelope"
+        function_envelope,  # type: "_models.FunctionEnvelope"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FunctionEnvelope"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
+        # type: (...) -> "_models.FunctionEnvelope"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionEnvelope"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16578,7 +16695,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionEnvelope', pipeline_response)
@@ -16595,10 +16712,10 @@ class WebAppsOperations(object):
         name,  # type: str
         function_name,  # type: str
         slot,  # type: str
-        function_envelope,  # type: "models.FunctionEnvelope"
+        function_envelope,  # type: "_models.FunctionEnvelope"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.FunctionEnvelope"]
+        # type: (...) -> LROPoller["_models.FunctionEnvelope"]
         """Create function for web site, or a deployment slot.
 
         Description for Create function for web site, or a deployment slot.
@@ -16624,7 +16741,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionEnvelope"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -16651,7 +16768,15 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -16724,7 +16849,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -16739,10 +16864,10 @@ class WebAppsOperations(object):
         function_name,  # type: str
         key_name,  # type: str
         slot,  # type: str
-        key,  # type: "models.KeyInfo"
+        key,  # type: "_models.KeyInfo"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyInfo"
+        # type: (...) -> "_models.KeyInfo"
         """Add or update a function secret.
 
         Description for Add or update a function secret.
@@ -16764,7 +16889,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.KeyInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16803,7 +16928,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -16881,7 +17006,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -16897,7 +17022,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StringDictionary"
+        # type: (...) -> "_models.StringDictionary"
         """Get function keys for a function in a web site, or a deployment slot.
 
         Description for Get function keys for a function in a web site, or a deployment slot.
@@ -16915,7 +17040,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -16948,7 +17073,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -16967,7 +17092,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FunctionSecrets"
+        # type: (...) -> "_models.FunctionSecrets"
         """Get function secrets for a function in a web site, or a deployment slot.
 
         Description for Get function secrets for a function in a web site, or a deployment slot.
@@ -16985,7 +17110,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionSecrets
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionSecrets"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionSecrets"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17018,7 +17143,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
@@ -17036,7 +17161,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HostKeys"
+        # type: (...) -> "_models.HostKeys"
         """Get host secrets for a function app.
 
         Description for Get host secrets for a function app.
@@ -17052,7 +17177,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17084,7 +17209,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostKeys', pipeline_response)
@@ -17150,7 +17275,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17213,7 +17338,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17228,10 +17353,10 @@ class WebAppsOperations(object):
         key_type,  # type: str
         key_name,  # type: str
         slot,  # type: str
-        key,  # type: "models.KeyInfo"
+        key,  # type: "_models.KeyInfo"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyInfo"
+        # type: (...) -> "_models.KeyInfo"
         """Add or update a host level secret.
 
         Description for Add or update a host level secret.
@@ -17253,7 +17378,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.KeyInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17292,7 +17417,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -17370,7 +17495,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17385,7 +17510,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.HostNameBindingCollection"]
+        # type: (...) -> Iterable["_models.HostNameBindingCollection"]
         """Get hostname bindings for an app or a deployment slot.
 
         Description for Get hostname bindings for an app or a deployment slot.
@@ -17402,7 +17527,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.HostNameBindingCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBindingCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostNameBindingCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17450,7 +17575,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -17469,7 +17594,7 @@ class WebAppsOperations(object):
         host_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HostNameBinding"
+        # type: (...) -> "_models.HostNameBinding"
         """Get the named hostname binding for an app (or deployment slot, if specified).
 
         Description for Get the named hostname binding for an app (or deployment slot, if specified).
@@ -17488,7 +17613,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBinding
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBinding"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostNameBinding"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17521,7 +17646,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
@@ -17538,10 +17663,10 @@ class WebAppsOperations(object):
         name,  # type: str
         host_name,  # type: str
         slot,  # type: str
-        host_name_binding,  # type: "models.HostNameBinding"
+        host_name_binding,  # type: "_models.HostNameBinding"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HostNameBinding"
+        # type: (...) -> "_models.HostNameBinding"
         """Creates a hostname binding for an app.
 
         Description for Creates a hostname binding for an app.
@@ -17563,7 +17688,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBinding
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBinding"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostNameBinding"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17601,7 +17726,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
@@ -17672,7 +17797,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17689,7 +17814,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Retrieves a specific Service Bus Hybrid Connection used by this Web App.
 
         Description for Retrieves a specific Service Bus Hybrid Connection used by this Web App.
@@ -17709,7 +17834,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17743,7 +17868,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -17761,10 +17886,10 @@ class WebAppsOperations(object):
         namespace_name,  # type: str
         relay_name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.HybridConnection"
+        connection_envelope,  # type: "_models.HybridConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Creates a new Hybrid Connection using a Service Bus relay.
 
         Description for Creates a new Hybrid Connection using a Service Bus relay.
@@ -17786,7 +17911,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17825,7 +17950,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -17899,7 +18024,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17914,10 +18039,10 @@ class WebAppsOperations(object):
         namespace_name,  # type: str
         relay_name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.HybridConnection"
+        connection_envelope,  # type: "_models.HybridConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Creates a new Hybrid Connection using a Service Bus relay.
 
         Description for Creates a new Hybrid Connection using a Service Bus relay.
@@ -17939,7 +18064,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -17978,7 +18103,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -17996,7 +18121,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Retrieves all Service Bus Hybrid Connections used by this Web App.
 
         Description for Retrieves all Service Bus Hybrid Connections used by this Web App.
@@ -18012,7 +18137,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18044,7 +18169,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -18062,7 +18187,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RelayServiceConnectionEntity"
+        # type: (...) -> "_models.RelayServiceConnectionEntity"
         """Gets hybrid connections configured for an app (or deployment slot, if specified).
 
         Description for Gets hybrid connections configured for an app (or deployment slot, if
@@ -18080,7 +18205,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayServiceConnectionEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18112,7 +18237,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -18131,7 +18256,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RelayServiceConnectionEntity"
+        # type: (...) -> "_models.RelayServiceConnectionEntity"
         """Gets a hybrid connection configuration by its name.
 
         Description for Gets a hybrid connection configuration by its name.
@@ -18150,7 +18275,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayServiceConnectionEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18183,7 +18308,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -18200,10 +18325,10 @@ class WebAppsOperations(object):
         name,  # type: str
         entity_name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.RelayServiceConnectionEntity"
+        connection_envelope,  # type: "_models.RelayServiceConnectionEntity"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RelayServiceConnectionEntity"
+        # type: (...) -> "_models.RelayServiceConnectionEntity"
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
 
         Description for Creates a new hybrid connection configuration (PUT), or updates an existing one
@@ -18225,7 +18350,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayServiceConnectionEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18263,7 +18388,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -18334,7 +18459,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -18348,10 +18473,10 @@ class WebAppsOperations(object):
         name,  # type: str
         entity_name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.RelayServiceConnectionEntity"
+        connection_envelope,  # type: "_models.RelayServiceConnectionEntity"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RelayServiceConnectionEntity"
+        # type: (...) -> "_models.RelayServiceConnectionEntity"
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
 
         Description for Creates a new hybrid connection configuration (PUT), or updates an existing one
@@ -18373,7 +18498,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayServiceConnectionEntity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18411,7 +18536,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -18429,7 +18554,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WebAppInstanceCollection"]
+        # type: (...) -> Iterable["_models.WebAppInstanceCollection"]
         """Gets all scale-out instances of an app.
 
         Description for Gets all scale-out instances of an app.
@@ -18446,7 +18571,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppInstanceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppInstanceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppInstanceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18494,7 +18619,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -18513,7 +18638,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WebSiteInstanceStatus"
+        # type: (...) -> "_models.WebSiteInstanceStatus"
         """Gets all scale-out instances of an app.
 
         Description for Gets all scale-out instances of an app.
@@ -18532,7 +18657,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebSiteInstanceStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebSiteInstanceStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebSiteInstanceStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18565,7 +18690,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebSiteInstanceStatus', pipeline_response)
@@ -18584,7 +18709,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MSDeployStatus"
+        # type: (...) -> "_models.MSDeployStatus"
         """Get the status of the last MSDeploy operation.
 
         Description for Get the status of the last MSDeploy operation.
@@ -18602,7 +18727,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MSDeployStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18635,7 +18760,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
@@ -18652,11 +18777,11 @@ class WebAppsOperations(object):
         name,  # type: str
         slot,  # type: str
         instance_id,  # type: str
-        ms_deploy,  # type: "models.MSDeploy"
+        ms_deploy,  # type: "_models.MSDeploy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MSDeployStatus"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MSDeployStatus"]]
+        # type: (...) -> Optional["_models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18694,7 +18819,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -18713,10 +18838,10 @@ class WebAppsOperations(object):
         name,  # type: str
         slot,  # type: str
         instance_id,  # type: str
-        ms_deploy,  # type: "models.MSDeploy"
+        ms_deploy,  # type: "_models.MSDeploy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.MSDeployStatus"]
+        # type: (...) -> LROPoller["_models.MSDeployStatus"]
         """Invoke the MSDeploy web app extension.
 
         Description for Invoke the MSDeploy web app extension.
@@ -18742,7 +18867,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MSDeployStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -18769,7 +18894,15 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -18791,7 +18924,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MSDeployLog"]
+        # type: (...) -> Optional["_models.MSDeployLog"]
         """Get the MSDeploy Log for the last MSDeploy operation.
 
         Description for Get the MSDeploy Log for the last MSDeploy operation.
@@ -18809,7 +18942,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployLog or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MSDeployLog"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployLog"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18842,7 +18975,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -18863,7 +18996,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessInfoCollection"]
         """Get list of processes for a web site, or a deployment slot, or for a specific scaled-out instance in a web site.
 
         Description for Get list of processes for a web site, or a deployment slot, or for a specific
@@ -18884,7 +19017,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -18933,7 +19066,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -18953,7 +19086,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ProcessInfo"]
+        # type: (...) -> Optional["_models.ProcessInfo"]
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
         Description for Get process information by its ID for a specific scaled-out instance in a web
@@ -18976,7 +19109,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ProcessInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProcessInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19010,7 +19143,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -19089,7 +19222,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -19163,7 +19296,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -19185,7 +19318,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessModuleInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessModuleInfoCollection"]
         """List module information for a process by its ID for a specific scaled-out instance in a web site.
 
         Description for List module information for a process by its ID for a specific scaled-out
@@ -19208,7 +19341,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessModuleInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19258,7 +19391,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -19279,7 +19412,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ProcessModuleInfo"]
+        # type: (...) -> Optional["_models.ProcessModuleInfo"]
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
         Description for Get process information by its ID for a specific scaled-out instance in a web
@@ -19304,7 +19437,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ProcessModuleInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProcessModuleInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19339,7 +19472,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -19361,7 +19494,7 @@ class WebAppsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessThreadInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessThreadInfoCollection"]
         """List the threads in a process by its ID for a specific scaled-out instance in a web site.
 
         Description for List the threads in a process by its ID for a specific scaled-out instance in a
@@ -19384,7 +19517,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessThreadInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessThreadInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19434,7 +19567,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -19452,7 +19585,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteCloneability"
+        # type: (...) -> "_models.SiteCloneability"
         """Shows whether an app can be cloned to another resource group or subscription.
 
         Description for Shows whether an app can be cloned to another resource group or subscription.
@@ -19469,7 +19602,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteCloneability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteCloneability"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteCloneability"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19501,7 +19634,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteCloneability', pipeline_response)
@@ -19519,7 +19652,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BackupItemCollection"]
+        # type: (...) -> Iterable["_models.BackupItemCollection"]
         """Gets existing backups of an app.
 
         Description for Gets existing backups of an app.
@@ -19536,7 +19669,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.BackupItemCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItemCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupItemCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19584,7 +19717,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -19602,7 +19735,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FunctionSecrets"
+        # type: (...) -> "_models.FunctionSecrets"
         """This is to allow calling via powershell and ARM template.
 
         Description for This is to allow calling via powershell and ARM template.
@@ -19618,7 +19751,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionSecrets
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionSecrets"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionSecrets"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19650,7 +19783,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
@@ -19668,7 +19801,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MigrateMySqlStatus"
+        # type: (...) -> "_models.MigrateMySqlStatus"
         """Returns the status of MySql in app migration, if one is active, and whether or not MySql in app is enabled.
 
         Description for Returns the status of MySql in app migration, if one is active, and whether or
@@ -19685,7 +19818,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.MigrateMySqlStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MigrateMySqlStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MigrateMySqlStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19717,7 +19850,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MigrateMySqlStatus', pipeline_response)
@@ -19735,7 +19868,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SwiftVirtualNetwork"
+        # type: (...) -> "_models.SwiftVirtualNetwork"
         """Gets a Swift Virtual Network connection.
 
         Description for Gets a Swift Virtual Network connection.
@@ -19752,7 +19885,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SwiftVirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19784,7 +19917,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -19800,10 +19933,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.SwiftVirtualNetwork"
+        connection_envelope,  # type: "_models.SwiftVirtualNetwork"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SwiftVirtualNetwork"
+        # type: (...) -> "_models.SwiftVirtualNetwork"
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true when doing a GET against this resource, and 2) that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
 
@@ -19826,7 +19959,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SwiftVirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -19863,7 +19996,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -19930,7 +20063,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -19943,10 +20076,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.SwiftVirtualNetwork"
+        connection_envelope,  # type: "_models.SwiftVirtualNetwork"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SwiftVirtualNetwork"
+        # type: (...) -> "_models.SwiftVirtualNetwork"
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true when doing a GET against this resource, and 2) that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
 
@@ -19969,7 +20102,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SwiftVirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20006,7 +20139,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -20025,7 +20158,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.NetworkFeatures"]
+        # type: (...) -> Optional["_models.NetworkFeatures"]
         """Gets all network features used by the app (or deployment slot, if specified).
 
         Description for Gets all network features used by the app (or deployment slot, if specified).
@@ -20044,7 +20177,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.NetworkFeatures or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NetworkFeatures"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NetworkFeatures"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20077,7 +20210,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -20098,7 +20231,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
+        # type: (...) -> List["_models.NetworkTrace"]
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
         Description for Gets a named operation for a network trace capturing (or deployment slot, if
@@ -20118,7 +20251,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20151,7 +20284,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -20236,7 +20369,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -20257,8 +20390,8 @@ class WebAppsOperations(object):
         sas_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        # type: (...) -> List["_models.NetworkTrace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20296,7 +20429,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -20321,7 +20454,7 @@ class WebAppsOperations(object):
         sas_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[List["models.NetworkTrace"]]
+        # type: (...) -> LROPoller[List["_models.NetworkTrace"]]
         """Start capturing network packets for the site.
 
         Description for Start capturing network packets for the site.
@@ -20349,7 +20482,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -20377,7 +20510,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -20446,7 +20586,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -20462,7 +20602,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
+        # type: (...) -> List["_models.NetworkTrace"]
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
         Description for Gets a named operation for a network trace capturing (or deployment slot, if
@@ -20482,7 +20622,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20515,7 +20655,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
@@ -20534,7 +20674,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
+        # type: (...) -> List["_models.NetworkTrace"]
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
         Description for Gets a named operation for a network trace capturing (or deployment slot, if
@@ -20554,7 +20694,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20587,7 +20727,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -20610,7 +20750,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
+        # type: (...) -> List["_models.NetworkTrace"]
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
         Description for Gets a named operation for a network trace capturing (or deployment slot, if
@@ -20630,7 +20770,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20663,7 +20803,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
@@ -20731,7 +20871,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -20747,7 +20887,7 @@ class WebAppsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PerfMonCounterCollection"]
+        # type: (...) -> Iterable["_models.PerfMonCounterCollection"]
         """Gets perfmon counters for web app.
 
         Description for Gets perfmon counters for web app.
@@ -20767,7 +20907,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.PerfMonCounterCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PerfMonCounterCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PerfMonCounterCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20817,7 +20957,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -20835,7 +20975,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SitePhpErrorLogFlag"
+        # type: (...) -> "_models.SitePhpErrorLogFlag"
         """Gets web app's event logs.
 
         Description for Gets web app's event logs.
@@ -20851,7 +20991,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SitePhpErrorLogFlag
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SitePhpErrorLogFlag"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SitePhpErrorLogFlag"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20883,7 +21023,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SitePhpErrorLogFlag', pipeline_response)
@@ -20901,7 +21041,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PremierAddOn"
+        # type: (...) -> "_models.PremierAddOn"
         """Gets the premier add-ons of an app.
 
         Description for Gets the premier add-ons of an app.
@@ -20918,7 +21058,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOn"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -20950,7 +21090,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -20969,7 +21109,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PremierAddOn"
+        # type: (...) -> "_models.PremierAddOn"
         """Gets a named add-on of an app.
 
         Description for Gets a named add-on of an app.
@@ -20988,7 +21128,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOn"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21021,7 +21161,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -21038,10 +21178,10 @@ class WebAppsOperations(object):
         name,  # type: str
         premier_add_on_name,  # type: str
         slot,  # type: str
-        premier_add_on,  # type: "models.PremierAddOn"
+        premier_add_on,  # type: "_models.PremierAddOn"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PremierAddOn"
+        # type: (...) -> "_models.PremierAddOn"
         """Updates a named add-on of an app.
 
         Description for Updates a named add-on of an app.
@@ -21062,7 +21202,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOn"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21100,7 +21240,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -21171,7 +21311,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -21185,10 +21325,10 @@ class WebAppsOperations(object):
         name,  # type: str
         premier_add_on_name,  # type: str
         slot,  # type: str
-        premier_add_on,  # type: "models.PremierAddOnPatchResource"
+        premier_add_on,  # type: "_models.PremierAddOnPatchResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PremierAddOn"
+        # type: (...) -> "_models.PremierAddOn"
         """Updates a named add-on of an app.
 
         Description for Updates a named add-on of an app.
@@ -21209,7 +21349,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOn"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21247,7 +21387,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -21265,7 +21405,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateAccess"
+        # type: (...) -> "_models.PrivateAccess"
         """Gets data around private site access enablement and authorized Virtual Networks that can access the site.
 
         Description for Gets data around private site access enablement and authorized Virtual Networks
@@ -21282,7 +21422,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateAccess"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateAccess"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21314,7 +21454,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
@@ -21330,10 +21470,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        access,  # type: "models.PrivateAccess"
+        access,  # type: "_models.PrivateAccess"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateAccess"
+        # type: (...) -> "_models.PrivateAccess"
         """Sets data around private site access enablement and authorized Virtual Networks that can access the site.
 
         Description for Sets data around private site access enablement and authorized Virtual Networks
@@ -21352,7 +21492,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateAccess"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateAccess"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21389,7 +21529,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
@@ -21407,7 +21547,7 @@ class WebAppsOperations(object):
         private_endpoint_connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpointConnectionResource"
+        # type: (...) -> "_models.PrivateEndpointConnectionResource"
         """Gets a private endpoint connection.
 
         Description for Gets a private endpoint connection.
@@ -21423,7 +21563,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateEndpointConnectionResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21455,7 +21595,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpointConnectionResource', pipeline_response)
@@ -21471,11 +21611,11 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         private_endpoint_connection_name,  # type: str
-        private_endpoint_wrapper,  # type: "models.PrivateLinkConnectionApprovalRequestResource"
+        private_endpoint_wrapper,  # type: "_models.PrivateLinkConnectionApprovalRequestResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpointConnectionResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionResource"]
+        # type: (...) -> "_models.PrivateEndpointConnectionResource"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21512,7 +21652,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -21532,10 +21672,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         private_endpoint_connection_name,  # type: str
-        private_endpoint_wrapper,  # type: "models.PrivateLinkConnectionApprovalRequestResource"
+        private_endpoint_wrapper,  # type: "_models.PrivateLinkConnectionApprovalRequestResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.PrivateEndpointConnectionResource"]
+        # type: (...) -> LROPoller["_models.PrivateEndpointConnectionResource"]
         """Approves or rejects a private endpoint connection.
 
         Description for Approves or rejects a private endpoint connection.
@@ -21559,7 +21699,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -21585,7 +21725,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -21639,7 +21786,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -21711,7 +21858,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -21731,7 +21885,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateLinkResourcesWrapper"
+        # type: (...) -> "_models.PrivateLinkResourcesWrapper"
         """Gets the private link resources.
 
         Description for Gets the private link resources.
@@ -21745,7 +21899,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateLinkResourcesWrapper
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourcesWrapper"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourcesWrapper"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21776,7 +21930,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateLinkResourcesWrapper', pipeline_response)
@@ -21794,7 +21948,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessInfoCollection"]
         """Get list of processes for a web site, or a deployment slot, or for a specific scaled-out instance in a web site.
 
         Description for Get list of processes for a web site, or a deployment slot, or for a specific
@@ -21812,7 +21966,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21860,7 +22014,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -21879,7 +22033,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ProcessInfo"]
+        # type: (...) -> Optional["_models.ProcessInfo"]
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
         Description for Get process information by its ID for a specific scaled-out instance in a web
@@ -21899,7 +22053,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ProcessInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProcessInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21932,7 +22086,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -22006,7 +22160,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22075,7 +22229,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -22096,7 +22250,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessModuleInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessModuleInfoCollection"]
         """List module information for a process by its ID for a specific scaled-out instance in a web site.
 
         Description for List module information for a process by its ID for a specific scaled-out
@@ -22116,7 +22270,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessModuleInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -22165,7 +22319,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -22185,7 +22339,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ProcessModuleInfo"]
+        # type: (...) -> Optional["_models.ProcessModuleInfo"]
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
         Description for Get process information by its ID for a specific scaled-out instance in a web
@@ -22207,7 +22361,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ProcessModuleInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProcessModuleInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -22241,7 +22395,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -22262,7 +22416,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProcessThreadInfoCollection"]
+        # type: (...) -> Iterable["_models.ProcessThreadInfoCollection"]
         """List the threads in a process by its ID for a specific scaled-out instance in a web site.
 
         Description for List the threads in a process by its ID for a specific scaled-out instance in a
@@ -22282,7 +22436,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessThreadInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProcessThreadInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -22331,7 +22485,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -22349,7 +22503,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PublicCertificateCollection"]
+        # type: (...) -> Iterable["_models.PublicCertificateCollection"]
         """Get public certificates for an app or a deployment slot.
 
         Description for Get public certificates for an app or a deployment slot.
@@ -22366,7 +22520,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.PublicCertificateCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificateCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicCertificateCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -22414,7 +22568,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -22433,7 +22587,7 @@ class WebAppsOperations(object):
         public_certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PublicCertificate"
+        # type: (...) -> "_models.PublicCertificate"
         """Get the named public certificate for an app (or deployment slot, if specified).
 
         Description for Get the named public certificate for an app (or deployment slot, if specified).
@@ -22452,7 +22606,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicCertificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -22485,7 +22639,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
@@ -22502,10 +22656,10 @@ class WebAppsOperations(object):
         name,  # type: str
         public_certificate_name,  # type: str
         slot,  # type: str
-        public_certificate,  # type: "models.PublicCertificate"
+        public_certificate,  # type: "_models.PublicCertificate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PublicCertificate"
+        # type: (...) -> "_models.PublicCertificate"
         """Creates a hostname binding for an app.
 
         Description for Creates a hostname binding for an app.
@@ -22527,7 +22681,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicCertificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -22565,7 +22719,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
@@ -22636,7 +22790,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22649,7 +22803,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        publishing_profile_options,  # type: "models.CsmPublishingProfileOptions"
+        publishing_profile_options,  # type: "_models.CsmPublishingProfileOptions"
         **kwargs  # type: Any
     ):
         # type: (...) -> IO
@@ -22709,7 +22863,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline)
@@ -22777,7 +22931,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22853,7 +23007,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22866,7 +23020,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -22907,7 +23061,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22920,7 +23074,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        request,  # type: "models.RestoreRequest"
+        request,  # type: "_models.RestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -22971,7 +23125,14 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -22990,7 +23151,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        restore_request,  # type: "models.DeletedAppRestoreRequest"
+        restore_request,  # type: "_models.DeletedAppRestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -23031,7 +23192,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23044,7 +23205,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        restore_request,  # type: "models.DeletedAppRestoreRequest"
+        restore_request,  # type: "_models.DeletedAppRestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -23094,7 +23255,14 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -23113,7 +23281,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        restore_request,  # type: "models.SnapshotRestoreRequest"
+        restore_request,  # type: "_models.SnapshotRestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -23154,7 +23322,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23167,7 +23335,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        restore_request,  # type: "models.SnapshotRestoreRequest"
+        restore_request,  # type: "_models.SnapshotRestoreRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -23218,7 +23386,14 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -23239,7 +23414,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SiteExtensionInfoCollection"]
+        # type: (...) -> Iterable["_models.SiteExtensionInfoCollection"]
         """Get list of siteextensions for a web site, or a deployment slot.
 
         Description for Get list of siteextensions for a web site, or a deployment slot.
@@ -23256,7 +23431,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfoCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteExtensionInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -23304,7 +23479,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23323,7 +23498,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.SiteExtensionInfo"]
+        # type: (...) -> Optional["_models.SiteExtensionInfo"]
         """Get site extension information by its ID for a web site, or a deployment slot.
 
         Description for Get site extension information by its ID for a web site, or a deployment slot.
@@ -23342,7 +23517,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SiteExtensionInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SiteExtensionInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -23375,7 +23550,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -23396,8 +23571,8 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.SiteExtensionInfo"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SiteExtensionInfo"]]
+        # type: (...) -> Optional["_models.SiteExtensionInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SiteExtensionInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -23430,7 +23605,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 429]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -23454,7 +23629,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SiteExtensionInfo"]
+        # type: (...) -> LROPoller["_models.SiteExtensionInfo"]
         """Install site extension on a web site, or a deployment slot.
 
         Description for Install site extension on a web site, or a deployment slot.
@@ -23479,7 +23654,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteExtensionInfo"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -23505,7 +23680,15 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'siteExtensionId': self._serialize.url("site_extension_id", site_extension_id, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -23579,7 +23762,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23592,7 +23775,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        copy_slot_entity,  # type: "models.CsmCopySlotEntity"
+        copy_slot_entity,  # type: "_models.CsmCopySlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -23633,7 +23816,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23646,7 +23829,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        copy_slot_entity,  # type: "models.CsmCopySlotEntity"
+        copy_slot_entity,  # type: "_models.CsmCopySlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -23698,7 +23881,14 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -23717,10 +23907,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        slot_swap_entity,  # type: "models.CsmSlotEntity"
+        slot_swap_entity,  # type: "_models.CsmSlotEntity"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SlotDifferenceCollection"]
+        # type: (...) -> Iterable["_models.SlotDifferenceCollection"]
         """Get the difference in configuration settings between two web app slots.
 
         Description for Get the difference in configuration settings between two web app slots.
@@ -23739,7 +23929,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SlotDifferenceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SlotDifferenceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SlotDifferenceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -23795,7 +23985,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23811,7 +24001,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        slot_swap_entity,  # type: "models.CsmSlotEntity"
+        slot_swap_entity,  # type: "_models.CsmSlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -23852,7 +24042,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23865,7 +24055,7 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        slot_swap_entity,  # type: "models.CsmSlotEntity"
+        slot_swap_entity,  # type: "_models.CsmSlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -23916,7 +24106,14 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -23937,7 +24134,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SnapshotCollection"]
+        # type: (...) -> Iterable["_models.SnapshotCollection"]
         """Returns all Snapshots to the user.
 
         Description for Returns all Snapshots to the user.
@@ -23953,7 +24150,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SnapshotCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -24001,7 +24198,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -24019,7 +24216,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SnapshotCollection"]
+        # type: (...) -> Iterable["_models.SnapshotCollection"]
         """Returns all Snapshots to the user from DRSecondary endpoint.
 
         Description for Returns all Snapshots to the user from DRSecondary endpoint.
@@ -24035,7 +24232,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SnapshotCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -24083,7 +24280,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -24101,7 +24298,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteSourceControl"
+        # type: (...) -> "_models.SiteSourceControl"
         """Gets the source control configuration of an app.
 
         Description for Gets the source control configuration of an app.
@@ -24118,7 +24315,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -24150,7 +24347,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -24173,11 +24370,11 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_source_control,  # type: "models.SiteSourceControl"
+        site_source_control,  # type: "_models.SiteSourceControl"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteSourceControl"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
+        # type: (...) -> "_models.SiteSourceControl"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -24214,7 +24411,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -24237,10 +24434,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_source_control,  # type: "models.SiteSourceControl"
+        site_source_control,  # type: "_models.SiteSourceControl"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SiteSourceControl"]
+        # type: (...) -> LROPoller["_models.SiteSourceControl"]
         """Updates the source control configuration of an app.
 
         Description for Updates the source control configuration of an app.
@@ -24265,7 +24462,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -24291,7 +24488,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -24361,7 +24565,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24374,10 +24578,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         slot,  # type: str
-        site_source_control,  # type: "models.SiteSourceControl"
+        site_source_control,  # type: "_models.SiteSourceControl"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteSourceControl"
+        # type: (...) -> "_models.SiteSourceControl"
         """Updates the source control configuration of an app.
 
         Description for Updates the source control configuration of an app.
@@ -24396,7 +24600,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -24433,7 +24637,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -24507,7 +24711,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24525,8 +24729,8 @@ class WebAppsOperations(object):
         sas_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        # type: (...) -> List["_models.NetworkTrace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -24564,7 +24768,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -24589,7 +24793,7 @@ class WebAppsOperations(object):
         sas_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[List["models.NetworkTrace"]]
+        # type: (...) -> LROPoller[List["_models.NetworkTrace"]]
         """Start capturing network packets for the site.
 
         Description for Start capturing network packets for the site.
@@ -24617,7 +24821,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -24645,7 +24849,14 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -24715,7 +24926,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24778,7 +24989,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24841,7 +25052,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24904,7 +25115,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24919,7 +25130,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TriggeredWebJobCollection"]
+        # type: (...) -> Iterable["_models.TriggeredWebJobCollection"]
         """List triggered web jobs for an app, or a deployment slot.
 
         Description for List triggered web jobs for an app, or a deployment slot.
@@ -24936,7 +25147,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.TriggeredWebJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredWebJobCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggeredWebJobCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -24984,7 +25195,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -25003,7 +25214,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.TriggeredWebJob"]
+        # type: (...) -> Optional["_models.TriggeredWebJob"]
         """Gets a triggered web job by its ID for an app, or a deployment slot.
 
         Description for Gets a triggered web job by its ID for an app, or a deployment slot.
@@ -25022,7 +25233,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredWebJob or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggeredWebJob"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggeredWebJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25055,7 +25266,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -25128,7 +25339,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25144,7 +25355,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TriggeredJobHistoryCollection"]
+        # type: (...) -> Iterable["_models.TriggeredJobHistoryCollection"]
         """List a triggered web job's history for an app, or a deployment slot.
 
         Description for List a triggered web job's history for an app, or a deployment slot.
@@ -25163,7 +25374,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistoryCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredJobHistoryCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggeredJobHistoryCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25212,7 +25423,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -25232,7 +25443,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.TriggeredJobHistory"]
+        # type: (...) -> Optional["_models.TriggeredJobHistory"]
         """Gets a triggered web job's history by its ID for an app, , or a deployment slot.
 
         Description for Gets a triggered web job's history by its ID for an app, , or a deployment
@@ -25254,7 +25465,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistory or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggeredJobHistory"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggeredJobHistory"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25288,7 +25499,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -25361,7 +25572,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25377,7 +25588,7 @@ class WebAppsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CsmUsageQuotaCollection"]
+        # type: (...) -> Iterable["_models.CsmUsageQuotaCollection"]
         """Gets the quota usage information of an app (or deployment slot, if specified).
 
         Description for Gets the quota usage information of an app (or deployment slot, if specified).
@@ -25399,7 +25610,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.CsmUsageQuotaCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmUsageQuotaCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25449,7 +25660,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -25467,7 +25678,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.VnetInfo"]
+        # type: (...) -> List["_models.VnetInfo"]
         """Gets the virtual networks the app (or deployment slot) is connected to.
 
         Description for Gets the virtual networks the app (or deployment slot) is connected to.
@@ -25484,7 +25695,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.VnetInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VnetInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VnetInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25516,7 +25727,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetInfo]', pipeline_response)
@@ -25535,7 +25746,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetInfo"
+        # type: (...) -> "_models.VnetInfo"
         """Gets a virtual network the app (or deployment slot) is connected to by name.
 
         Description for Gets a virtual network the app (or deployment slot) is connected to by name.
@@ -25554,7 +25765,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25587,7 +25798,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -25604,10 +25815,10 @@ class WebAppsOperations(object):
         name,  # type: str
         vnet_name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.VnetInfo"
+        connection_envelope,  # type: "_models.VnetInfo"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetInfo"
+        # type: (...) -> "_models.VnetInfo"
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties (PATCH).
 
         Description for Adds a Virtual Network connection to an app or slot (PUT) or updates the
@@ -25629,7 +25840,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25667,7 +25878,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -25739,7 +25950,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25753,10 +25964,10 @@ class WebAppsOperations(object):
         name,  # type: str
         vnet_name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.VnetInfo"
+        connection_envelope,  # type: "_models.VnetInfo"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetInfo"
+        # type: (...) -> "_models.VnetInfo"
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties (PATCH).
 
         Description for Adds a Virtual Network connection to an app or slot (PUT) or updates the
@@ -25778,7 +25989,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25816,7 +26027,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -25836,7 +26047,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.VnetGateway"]
+        # type: (...) -> Optional["_models.VnetGateway"]
         """Gets an app's Virtual Network gateway.
 
         Description for Gets an app's Virtual Network gateway.
@@ -25857,7 +26068,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VnetGateway"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VnetGateway"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25891,7 +26102,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -25911,10 +26122,10 @@ class WebAppsOperations(object):
         vnet_name,  # type: str
         gateway_name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.VnetGateway"
+        connection_envelope,  # type: "_models.VnetGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetGateway"
+        # type: (...) -> "_models.VnetGateway"
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
 
         Description for Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
@@ -25937,7 +26148,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -25976,7 +26187,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -25994,10 +26205,10 @@ class WebAppsOperations(object):
         vnet_name,  # type: str
         gateway_name,  # type: str
         slot,  # type: str
-        connection_envelope,  # type: "models.VnetGateway"
+        connection_envelope,  # type: "_models.VnetGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetGateway"
+        # type: (...) -> "_models.VnetGateway"
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
 
         Description for Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
@@ -26020,7 +26231,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26059,7 +26270,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -26077,7 +26288,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WebJobCollection"]
+        # type: (...) -> Iterable["_models.WebJobCollection"]
         """List webjobs for an app, or a deployment slot.
 
         Description for List webjobs for an app, or a deployment slot.
@@ -26094,7 +26305,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.WebJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebJobCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebJobCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26142,7 +26353,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26161,7 +26372,7 @@ class WebAppsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WebJob"
+        # type: (...) -> "_models.WebJob"
         """Get webjob information for an app, or a deployment slot.
 
         Description for Get webjob information for an app, or a deployment slot.
@@ -26180,7 +26391,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26213,7 +26424,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebJob', pipeline_response)
@@ -26228,10 +26439,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        slot_swap_entity,  # type: "models.CsmSlotEntity"
+        slot_swap_entity,  # type: "_models.CsmSlotEntity"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SlotDifferenceCollection"]
+        # type: (...) -> Iterable["_models.SlotDifferenceCollection"]
         """Get the difference in configuration settings between two web app slots.
 
         Description for Get the difference in configuration settings between two web app slots.
@@ -26247,7 +26458,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SlotDifferenceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SlotDifferenceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SlotDifferenceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26302,7 +26513,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26317,7 +26528,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        slot_swap_entity,  # type: "models.CsmSlotEntity"
+        slot_swap_entity,  # type: "_models.CsmSlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -26357,7 +26568,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -26369,7 +26580,7 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        slot_swap_entity,  # type: "models.CsmSlotEntity"
+        slot_swap_entity,  # type: "_models.CsmSlotEntity"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -26416,7 +26627,13 @@ class WebAppsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -26436,7 +26653,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SnapshotCollection"]
+        # type: (...) -> Iterable["_models.SnapshotCollection"]
         """Returns all Snapshots to the user.
 
         Description for Returns all Snapshots to the user.
@@ -26450,7 +26667,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SnapshotCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26497,7 +26714,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26514,7 +26731,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SnapshotCollection"]
+        # type: (...) -> Iterable["_models.SnapshotCollection"]
         """Returns all Snapshots to the user from DRSecondary endpoint.
 
         Description for Returns all Snapshots to the user from DRSecondary endpoint.
@@ -26528,7 +26745,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SnapshotCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26575,7 +26792,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26592,7 +26809,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteSourceControl"
+        # type: (...) -> "_models.SiteSourceControl"
         """Gets the source control configuration of an app.
 
         Description for Gets the source control configuration of an app.
@@ -26606,7 +26823,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26637,7 +26854,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -26659,11 +26876,11 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_source_control,  # type: "models.SiteSourceControl"
+        site_source_control,  # type: "_models.SiteSourceControl"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteSourceControl"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
+        # type: (...) -> "_models.SiteSourceControl"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26699,7 +26916,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -26721,10 +26938,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_source_control,  # type: "models.SiteSourceControl"
+        site_source_control,  # type: "_models.SiteSourceControl"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SiteSourceControl"]
+        # type: (...) -> LROPoller["_models.SiteSourceControl"]
         """Updates the source control configuration of an app.
 
         Description for Updates the source control configuration of an app.
@@ -26746,7 +26963,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -26771,7 +26988,13 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -26836,7 +27059,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -26848,10 +27071,10 @@ class WebAppsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        site_source_control,  # type: "models.SiteSourceControl"
+        site_source_control,  # type: "_models.SiteSourceControl"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SiteSourceControl"
+        # type: (...) -> "_models.SiteSourceControl"
         """Updates the source control configuration of an app.
 
         Description for Updates the source control configuration of an app.
@@ -26867,7 +27090,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -26903,7 +27126,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -26972,7 +27195,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -26989,8 +27212,8 @@ class WebAppsOperations(object):
         sas_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.NetworkTrace"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        # type: (...) -> List["_models.NetworkTrace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -27027,7 +27250,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -27051,7 +27274,7 @@ class WebAppsOperations(object):
         sas_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[List["models.NetworkTrace"]]
+        # type: (...) -> LROPoller[List["_models.NetworkTrace"]]
         """Start capturing network packets for the site.
 
         Description for Start capturing network packets for the site.
@@ -27077,7 +27300,7 @@ class WebAppsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.NetworkTrace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -27104,7 +27327,13 @@ class WebAppsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -27169,7 +27398,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27228,7 +27457,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27287,7 +27516,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27346,7 +27575,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27360,7 +27589,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TriggeredWebJobCollection"]
+        # type: (...) -> Iterable["_models.TriggeredWebJobCollection"]
         """List triggered web jobs for an app, or a deployment slot.
 
         Description for List triggered web jobs for an app, or a deployment slot.
@@ -27374,7 +27603,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.TriggeredWebJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredWebJobCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggeredWebJobCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -27421,7 +27650,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27439,7 +27668,7 @@ class WebAppsOperations(object):
         web_job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.TriggeredWebJob"]
+        # type: (...) -> Optional["_models.TriggeredWebJob"]
         """Gets a triggered web job by its ID for an app, or a deployment slot.
 
         Description for Gets a triggered web job by its ID for an app, or a deployment slot.
@@ -27455,7 +27684,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredWebJob or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggeredWebJob"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggeredWebJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -27487,7 +27716,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -27555,7 +27784,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27570,7 +27799,7 @@ class WebAppsOperations(object):
         web_job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TriggeredJobHistoryCollection"]
+        # type: (...) -> Iterable["_models.TriggeredJobHistoryCollection"]
         """List a triggered web job's history for an app, or a deployment slot.
 
         Description for List a triggered web job's history for an app, or a deployment slot.
@@ -27586,7 +27815,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistoryCollectionor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredJobHistoryCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggeredJobHistoryCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -27634,7 +27863,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27653,7 +27882,7 @@ class WebAppsOperations(object):
         id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.TriggeredJobHistory"]
+        # type: (...) -> Optional["_models.TriggeredJobHistory"]
         """Gets a triggered web job's history by its ID for an app, , or a deployment slot.
 
         Description for Gets a triggered web job's history by its ID for an app, , or a deployment
@@ -27672,7 +27901,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistory or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggeredJobHistory"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggeredJobHistory"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -27705,7 +27934,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -27773,7 +28002,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27788,7 +28017,7 @@ class WebAppsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CsmUsageQuotaCollection"]
+        # type: (...) -> Iterable["_models.CsmUsageQuotaCollection"]
         """Gets the quota usage information of an app (or deployment slot, if specified).
 
         Description for Gets the quota usage information of an app (or deployment slot, if specified).
@@ -27807,7 +28036,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.CsmUsageQuotaCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmUsageQuotaCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -27856,7 +28085,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27873,7 +28102,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.VnetInfo"]
+        # type: (...) -> List["_models.VnetInfo"]
         """Gets the virtual networks the app (or deployment slot) is connected to.
 
         Description for Gets the virtual networks the app (or deployment slot) is connected to.
@@ -27887,7 +28116,7 @@ class WebAppsOperations(object):
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.VnetInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VnetInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VnetInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -27918,7 +28147,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetInfo]', pipeline_response)
@@ -27936,7 +28165,7 @@ class WebAppsOperations(object):
         vnet_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetInfo"
+        # type: (...) -> "_models.VnetInfo"
         """Gets a virtual network the app (or deployment slot) is connected to by name.
 
         Description for Gets a virtual network the app (or deployment slot) is connected to by name.
@@ -27952,7 +28181,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -27984,7 +28213,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -28000,10 +28229,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         vnet_name,  # type: str
-        connection_envelope,  # type: "models.VnetInfo"
+        connection_envelope,  # type: "_models.VnetInfo"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetInfo"
+        # type: (...) -> "_models.VnetInfo"
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties (PATCH).
 
         Description for Adds a Virtual Network connection to an app or slot (PUT) or updates the
@@ -28022,7 +28251,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -28059,7 +28288,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -28126,7 +28355,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -28139,10 +28368,10 @@ class WebAppsOperations(object):
         resource_group_name,  # type: str
         name,  # type: str
         vnet_name,  # type: str
-        connection_envelope,  # type: "models.VnetInfo"
+        connection_envelope,  # type: "_models.VnetInfo"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetInfo"
+        # type: (...) -> "_models.VnetInfo"
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties (PATCH).
 
         Description for Adds a Virtual Network connection to an app or slot (PUT) or updates the
@@ -28161,7 +28390,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -28198,7 +28427,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -28217,7 +28446,7 @@ class WebAppsOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.VnetGateway"]
+        # type: (...) -> Optional["_models.VnetGateway"]
         """Gets an app's Virtual Network gateway.
 
         Description for Gets an app's Virtual Network gateway.
@@ -28235,7 +28464,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VnetGateway"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VnetGateway"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -28268,7 +28497,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -28287,10 +28516,10 @@ class WebAppsOperations(object):
         name,  # type: str
         vnet_name,  # type: str
         gateway_name,  # type: str
-        connection_envelope,  # type: "models.VnetGateway"
+        connection_envelope,  # type: "_models.VnetGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetGateway"
+        # type: (...) -> "_models.VnetGateway"
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
 
         Description for Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
@@ -28310,7 +28539,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -28348,7 +28577,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -28365,10 +28594,10 @@ class WebAppsOperations(object):
         name,  # type: str
         vnet_name,  # type: str
         gateway_name,  # type: str
-        connection_envelope,  # type: "models.VnetGateway"
+        connection_envelope,  # type: "_models.VnetGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetGateway"
+        # type: (...) -> "_models.VnetGateway"
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
 
         Description for Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
@@ -28388,7 +28617,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -28426,7 +28655,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -28443,7 +28672,7 @@ class WebAppsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WebJobCollection"]
+        # type: (...) -> Iterable["_models.WebJobCollection"]
         """List webjobs for an app, or a deployment slot.
 
         Description for List webjobs for an app, or a deployment slot.
@@ -28457,7 +28686,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.WebJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebJobCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebJobCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -28504,7 +28733,7 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -28522,7 +28751,7 @@ class WebAppsOperations(object):
         web_job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WebJob"
+        # type: (...) -> "_models.WebJob"
         """Get webjob information for an app, or a deployment slot.
 
         Description for Get webjob information for an app, or a deployment slot.
@@ -28538,7 +28767,7 @@ class WebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -28570,7 +28799,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebJob', pipeline_response)

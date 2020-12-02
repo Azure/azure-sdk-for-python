@@ -17,7 +17,7 @@ The guides mentioned above can help you get started with key elements of Azure D
 Install [azure-digitaltwins-core][pypi_package_keys] and
 [azure-identity][azure_identity_pypi] with [pip][pip]:
 ```Bash
-pip install azure-digitaltiwns-core azure-identity
+pip install azure-digitaltwins-core azure-identity
 ```
 [azure-identity][azure_identity] is used for Azure Active Directory
 authentication as demonstrated below.
@@ -43,7 +43,7 @@ It attempts to use multiple credential types in an order until it finds a workin
 # DefaultAzureCredential supports different authentication mechanisms and determines the appropriate credential type based of the environment it is executing in.
 # It attempts to use multiple credential types in an order until it finds a working credential.
 
-# - AZURE_URL: The tenant ID in Azure Active Directory
+# - AZURE_URL: The URL to the ADT in Azure
 url = os.getenv("AZURE_URL")
 
 # DefaultAzureCredential expects the following three environment variables:
@@ -51,7 +51,7 @@ url = os.getenv("AZURE_URL")
 # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
 # - AZURE_CLIENT_SECRET: The client secret for the registered application
 credential = DefaultAzureCredential()
-serviceClient = DigitalTwinsClient(url, credential)
+service_client = DigitalTwinsClient(url, credential)
 ```
 
 ## Key concepts
@@ -83,7 +83,7 @@ Let's create models using the code below. You need to pass an array containing l
 temporary_component = {
     "@id": component_id,
     "@type": "Interface",
-    "@context": "dtmi:dtdl:context2",
+    "@context": "dtmi:dtdl:context;2",
     "displayName": "Component1",
     "contents": [
     {
@@ -102,7 +102,7 @@ temporary_component = {
 temporary_model = {
     "@id": model_id,
     "@type": "Interface",
-    "@context": "dtmi:dtdl:context2",
+    "@context": "dtmi:dtdl:context;2",
     "displayName": "TempModel",
     "contents": [
     {
@@ -133,9 +133,9 @@ print(models)
 Using `list_models` to retrieve all created models
 
 ```Python Snippet:dt_models_lifecycle
-listed_models = service_client.list_models(model_id)
+listed_models = service_client.list_models()
 for model in listed_models:
-    print(model + '\n')
+    print(model)
 ```
 
 ### Get model
@@ -171,10 +171,15 @@ For Creating Twin you will need to provide Id of a digital Twin such as `my_twin
 
 ```Python Snippet:dt_digitaltwins_lifecycle
 digital_twin_id = 'digitalTwin-' + str(uuid.uuid4())
-with open(r"dtdl\digital_twins_\buildingTwin.json") as f:
-    dtdl_digital_twins_building_twin = json.load(f)
+temporary_twin = {
+    "$metadata": {
+        "$model": model_id
+    },
+    "$dtId": digital_twin_id,
+    "Prop1": 42
+}
 
-created_twin = service_client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
+created_twin = service_client.upsert_digital_twin(digital_twin_id, temporary_twin)
 print('Created Digital Twin:')
 print(created_twin)
 ```
@@ -190,7 +195,7 @@ print(get_twin)
 
 ### Query digital twins
 
-Query the Azure Digital Twins instance for digital twins using the [Azure Digital Twins Query Store lanaguage](https://review.docs.microsoft.com/azure/digital-twins/concepts-query-language). Query calls support paging. Here's an example of how to query for digital twins and how to iterate over the results.
+Query the Azure Digital Twins instance for digital twins using the [Azure Digital Twins Query Store lanaguage](https://docs.microsoft.com/azure/digital-twins/concepts-query-language). Query calls support paging. Here's an example of how to query for digital twins and how to iterate over the results.
 
 Note that there may be a delay between before changes in your instance are reflected in queries.
 For more details on query limitations, see (https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitations)
@@ -200,7 +205,7 @@ query_expression = 'SELECT * FROM digitaltwins'
 query_result = service_client.query_twins(query_expression)
 print('DigitalTwins:')
 for twin in query_result:
-    print("    -: {}".format(twin["$dtId"]))
+    print(twin)
 ```
 
 ### Delete digital twins
@@ -218,13 +223,15 @@ service_client.delete_digital_twin(digital_twin_id)
 To update a component or in other words to replace, remove and/or add a component property or subproperty within Digital Twin, you would need Id of a digital twin, component name and application/json-patch+json operations to be performed on the specified digital twin's component. Here is the sample code on how to do it.
 
 ```Python Snippet:dt_component_lifecycle
-component_path = "Component1"
-options = {
-    "patchDocument": {
-    "ComponentProp1": "value2"
+component_name = "Component1"
+patch = [
+    {
+        "op": "replace",
+        "path": "/ComponentProp1",
+        "value": "value2"
     }
-}
-service_client.update_component(digital_twin_id, component_path, options)
+]
+service_client.update_component(digital_twin_id, component_name, patch)
 ```
 
 ### Get digital twin components
@@ -232,7 +239,7 @@ service_client.update_component(digital_twin_id, component_path, options)
 Get a component by providing name of a component and Id of digital twin to which it belongs.
 
 ```Python Snippet:dt_component_lifecycle
-get_component = service_client.get_component(digital_twin_id, component_path)
+get_component = service_client.get_component(digital_twin_id, component_name)
 print('Get Component:')
 print(get_component)
 ```
@@ -244,9 +251,35 @@ print(get_component)
 `upsert_relationship` creates a relationship on a digital twin provided with Id of a digital twin, name of relationship such as "contains", Id of an relationship such as "FloorContainsRoom" and an application/json relationship to be created. Must contain property with key "\$targetId" to specify the target of the relationship. Sample payloads for relationships can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/digitaltwins/azure-digitaltwins-core/samples/dtdl/relationships/hospitalRelationships.json).
 
 ```Python Snippet:dt_scenario
-with open(r"dtdl\relationships\hospitalRelationships.json") as f:
-    dtdl_relationships = json.load(f)
-for relationship in dtdl_relationships:
+hospital_relationships = [
+    {
+        "$relationshipId": "BuildingHasFloor",
+        "$sourceId": building_twin_id,
+        "$relationshipName": "has",
+        "$targetId": floor_twin_id,
+        "isAccessRestricted": False
+    },
+    {
+        "$relationshipId": "BuildingIsEquippedWithHVAC",
+        "$sourceId": building_twin_id,
+        "$relationshipName": "isEquippedWith",
+        "$targetId": hvac_twin_id
+    },
+    {
+        "$relationshipId": "HVACCoolsFloor",
+        "$sourceId": hvac_twin_id,
+        "$relationshipName": "controlsTemperature",
+        "$targetId": floor_twin_id
+    },
+    {
+        "$relationshipId": "FloorContainsRoom",
+        "$sourceId": floor_twin_id,
+        "$relationshipName": "contains",
+        "$targetId": room_twin_id
+    }
+]
+
+for relationship in hospital_relationships:
     service_client.upsert_relationship(
         relationship["$sourceId"],
         relationship["$relationshipId"],
@@ -261,13 +294,13 @@ for relationship in dtdl_relationships:
 ```Python Snippet:dt_relationships_list
 relationships = service_client.list_relationships(digital_twint_id)
 for relationship in relationships:
-    print(relationship + '\n')
+    print(relationship)
 ```
 
 ```Python Snippet:dt_incoming_relationships_list
 incoming_relationships = service_client.list_incoming_relationships(digital_twin_id)
 for incoming_relationship in incoming_relationships:
-    print(incoming_relationship + '\n')
+    print(incoming_relationship)
 ```
 
 ## Create, list, and delete event routes of digital twins
@@ -279,11 +312,11 @@ To create an event route, provide an Id of an event route such as "myEventRouteI
 ```Python Snippet:dt_scenario
 event_route_id = 'eventRoute-' + str(uuid.uuid4())
 event_filter = "$eventType = 'DigitalTwinTelemetryMessages' or $eventType = 'DigitalTwinLifecycleNotification'"
-service_client.upsert_event_route(
-    event_route_id,
-    event_hub_endpoint_name,
-    **{"filter": event_filter}
-)
+route = DigitalTwinsEventRoute(
+    endpoint_name=event_hub_endpoint_name,
+    filter=event_filter
+)    
+service_client.upsert_event_route(event_route_id, route)
 ```
 
 For more information on the event route filter language, see the "how to manage routes" [filter events documentation](https://github.com/Azure/azure-digital-twins/blob/private-preview/Documentation/how-to-manage-routes.md#filter-events).
@@ -295,7 +328,7 @@ List a specific event route given event route Id or all event routes setting opt
 ```Python Snippet:dt_event_routes_list
 event_routes = service_client.list_event_routes()
 for event_route in event_routes:
-    print(event_route + '\n')
+    print(event_route)
 ```
 
 ### Delete event routes
@@ -323,11 +356,11 @@ You can also publish a telemetry message for a specific component in a digital t
 
 ```Python Snippet:dt_publish_component_telemetry
 digita_twin_id = "<DIGITAL TWIN ID>"
-component_path = "<COMPONENT_PATH>"
+component_name = "<COMPONENT_NAME>"
 telemetry_payload = '{"Telemetry1": 5}'
 service_client.publish_component_telemetry(
     digita_twin_id,
-    component_path,
+    component_name,
     telemetry_payload
 )
 ```

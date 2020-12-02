@@ -4,8 +4,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.communication.administration._phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from ._polling import ReleasePhoneNumberPolling, ReservePhoneNumberPolling, PurchaseReservationPolling
 
 from ._phonenumber._generated._phone_number_administration_service\
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
@@ -13,18 +16,17 @@ from ._phonenumber._generated._phone_number_administration_service\
 from ._phonenumber._generated.models import (
     AcquiredPhoneNumbers,
     AreaCodes,
-    CreateSearchResponse,
     LocationOptionsResponse,
     NumberConfigurationResponse,
     NumberUpdateCapabilities,
     PhoneNumberCountries,
     PhoneNumberEntities,
     PhoneNumberRelease,
-    PhoneNumberSearch,
+    PhoneNumberReservation,
     PhonePlanGroups,
     PhonePlansResponse,
     PstnConfiguration,
-    ReleaseResponse,
+    SearchStatus,
     UpdateNumberCapabilitiesResponse,
     UpdatePhoneNumberCapabilitiesResponse
 )
@@ -351,22 +353,53 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace
-    def release_phone_numbers(
+    def begin_release_phone_numbers(
             self,
-            phone_numbers,  # type: List[str]
             **kwargs  # type: Any
     ):
-        # type: (...) -> ReleaseResponse
-        """Creates a release for the given phone numbers.
+        # type: (...) -> LROPoller[PhoneNumberRelease]
+        """Begins creating a release for the given phone numbers.
+        Caller must provide either phone_numbers, or continuation_token keywords to use the method.
+        If both phone_numbers and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword phone_numbers will be ignored.
 
-        :param phone_numbers: The list of phone numbers in the release request.
-        :type phone_numbers: list[str]
-        :rtype: ~azure.communication.administration.ReleaseResponse
+        :keyword list[str] phone_numbers: The list of phone numbers in the release request.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberRelease]
         """
-        return self._phone_number_administration_client.phone_number_administration.release_phone_numbers(
-            phone_numbers,
-            **kwargs
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        release_polling = ReleasePhoneNumberPolling(
+            is_terminated=lambda status: status in [
+                ReleaseStatus.Complete,
+                ReleaseStatus.Failed,
+                ReleaseStatus.Expired
+            ]
         )
+
+        if cont_token is not None:
+            return LROPoller.from_continuation_token(
+                polling_method=release_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        if "phone_numbers" not in kwargs:
+            raise ValueError("Either kwarg 'phone_numbers' or 'continuation_token' needs to be specified")
+
+        create_release_response = self._phone_number_administration_client.\
+            phone_number_administration.release_phone_numbers(
+                **kwargs
+        )
+
+        initial_state = self._phone_number_administration_client.phone_number_administration.get_release_by_id(
+            release_id=create_release_response.release_id
+        )
+
+        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=release_polling)
 
     @distributed_trace
     def list_all_releases(
@@ -387,47 +420,106 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace
-    def get_search_by_id(
+    def get_reservation_by_id(
         self,
-        search_id,  # type: str
+        reservation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> PhoneNumberSearch
-        """Get search by search id.
+        # type: (...) -> PhoneNumberReservation
+        """Get reservation by reservation id.
 
-        :param search_id: The search id to be searched for.
-        :type search_id: str
-        :rtype: ~azure.communication.administration.PhoneNumberSearch
+        :param reservation_id: The reservation id to get reservation.
+        :type reservation_id: str
+        :rtype: ~azure.communication.administration.PhoneNumberReservation
         """
         return self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id,
+            search_id=reservation_id,
             **kwargs
         )
 
     @distributed_trace
-    def create_search(
+    def begin_reserve_phone_numbers(
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> CreateSearchResponse
-        """Creates a phone number search.
-
-        :keyword azure.communication.administration.CreateSearchOptions body:
-        An optional parameter for defining the search options.
-        The default is None.
-        :rtype: ~azure.communication.administration.CreateSearchResponse
+        # type: (...) -> LROPoller[PhoneNumberReservation]
+        """Begins creating a phone number search to reserve phone numbers.
+        Caller must provide one of the following:
+         (1) all of keywords display_name, description, phone_plan_ids, area_code, quantity if all the phone plans
+         to reserve are toll-free plans.
+         (2) all of keywords display_name, description, phone_plan_ids, area_code, quantity, location_options
+         if at least one phone plan to reserve is not toll-free plans.
+         (3) only keyword continuation_token to restart a poller from a saved state.
+        If both continuation_token and other keywords are specified, only continuation_token will be used to
+        restart a poller from a saved state, and other keywords will be ignored.
+        :keyword str display_name: display name of the search.
+        :keyword str description: description of the search.
+        :keyword list[str] phone_plan_ids: the plan subtype ids from which to create the search.
+        :keyword str area_code: the area code from which to create the search.
+        :keyword int quantity: the quantity of phone numbers to request.
+        :keyword list[~azure.communication.administration.models.LocationOptionsDetails] location_options:
+            the location options of the search.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberReservation]
         """
-        return self._phone_number_administration_client.phone_number_administration.create_search(
-            **kwargs
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        reservation_polling = ReservePhoneNumberPolling(
+            is_terminated=lambda status: status in [
+                SearchStatus.Reserved,
+                SearchStatus.Expired,
+                SearchStatus.Success,
+                SearchStatus.Cancelled,
+                SearchStatus.Error
+            ]
         )
 
+        if cont_token is not None:
+            return LROPoller.from_continuation_token(
+                polling_method=reservation_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        required_kwargs = ['display_name', 'description', 'phone_plan_ids', 'area_code', 'quantity']
+        for required_kwarg in required_kwargs:
+            if required_kwarg not in kwargs:
+                raise ValueError("Either kwarg 'continuation_token', or a set of kwargs " +
+                                 "'display_name', 'description', 'phone_plan_ids', "
+                                 "'area_code', 'quantity' needs to be specified")
+
+        reservation_options = CreateSearchOptions(
+                display_name=kwargs.pop('display_name'),
+                description=kwargs.pop('description'),
+                phone_plan_ids=kwargs.pop('phone_plan_ids'),
+                area_code=kwargs.pop('area_code'),
+                quantity=kwargs.pop('quantity')
+            )
+
+        if 'location_options' in kwargs:
+            reservation_options.location_options = kwargs.pop('location_options')
+
+        create_reservation_response = self._phone_number_administration_client.\
+            phone_number_administration.create_search(
+                body=reservation_options,
+                **kwargs
+        )
+
+        initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
+            search_id=create_reservation_response.search_id
+        )
+        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=reservation_polling)
+
     @distributed_trace
-    def list_all_searches(
+    def list_all_reservations(
             self,
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[PhoneNumberEntities]
-        """Gets a list of all searches.
+        """Gets a list of all reservations.
 
         :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
         The default is 0.
@@ -440,37 +532,68 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace
-    def cancel_search(
+    def cancel_reservation(
         self,
-        search_id,  # type: str
+        reservation_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Cancels the search. This means existing numbers in the search will be made available.
+        """Cancels the reservation. This means existing numbers in the reservation will be made available.
 
-        :param search_id: The search id to be canceled.
-        :type search_id: str
+        :param reservation_id: The reservation id to be canceled.
+        :type reservation_id: str
         :rtype: None
         """
         return self._phone_number_administration_client.phone_number_administration.cancel_search(
-            search_id,
+            search_id=reservation_id,
             **kwargs
         )
 
     @distributed_trace
-    def purchase_search(
-            self,
-            search_id,  # type: str
-            **kwargs  # type: Any
+    def begin_purchase_reservation(
+        self,
+        **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        """Purchases the phone number search.
-
-        :param search_id: The search id to be purchased.
-        :type search_id: str
-        :rtype: None
+        # type: (...) -> LROPoller[PhoneNumberReservation]
+        """Begins purchase the reserved phone numbers of a phone number search.
+        Caller must provide either reservation_id, or continuation_token keywords to use the method.
+        If both reservation_id and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword reservation_id will be ignored.
+        :keyword str reservation_id: The reservation id to be purchased.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberReservation]
         """
-        return self._phone_number_administration_client.phone_number_administration.purchase_search(
-            search_id,
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        reservation_polling = PurchaseReservationPolling(
+            is_terminated=lambda status: status in [
+                SearchStatus.Success,
+                SearchStatus.Expired,
+                SearchStatus.Cancelled,
+                SearchStatus.Error
+            ]
+        )
+
+        if cont_token is not None:
+            return LROPoller.from_continuation_token(
+                polling_method=reservation_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        if "reservation_id" not in kwargs:
+            raise ValueError("Either kwarg 'reservation_id' or 'continuation_token' needs to be specified")
+
+        reservation_id = kwargs.pop('reservation_id')  # type: str
+
+        self._phone_number_administration_client.phone_number_administration.purchase_search(
+            search_id=reservation_id,
             **kwargs
         )
+        initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
+            search_id=reservation_id
+        )
+        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=reservation_polling)

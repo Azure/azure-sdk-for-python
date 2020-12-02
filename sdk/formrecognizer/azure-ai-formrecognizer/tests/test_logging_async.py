@@ -34,7 +34,7 @@ class TestLogging(AsyncFormRecognizerTest):
         logger.addHandler(mock_handler)
         logger.setLevel(logging.INFO)
         async with client:
-            poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+            poller = await client.begin_recognize_invoices_from_url(self.receipt_url_jpg)
             result = await poller.result()
 
         for message in mock_handler.messages:

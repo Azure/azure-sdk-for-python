@@ -33,10 +33,10 @@ try:
     service_client = DigitalTwinsClient(url, credential)
 
     # ModelId from the samples:
-    #   dtmi:samples:Room1
-    #   dtmi:samples:Wifi1
-    #   dtmi:samples:Floor1
-    #   dtmi:samples:Building1
+    #   dtmi:samples:Room;1
+    #   dtmi:samples:Wifi;1
+    #   dtmi:samples:Floor;1
+    #   dtmi:samples:Building;1
     model_id = "<MODEL_ID>"
 
     # Create logger
