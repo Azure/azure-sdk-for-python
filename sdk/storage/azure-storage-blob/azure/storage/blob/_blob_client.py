@@ -2552,6 +2552,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2594,6 +2595,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             value that, when present, specifies the version of the blob to add tags to.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
