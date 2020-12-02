@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .managed_labs_client import ManagedLabsClient
-from .version import VERSION
+from ._configuration import ManagedLabsClientConfiguration
+from ._managed_labs_client import ManagedLabsClient
+__all__ = ['ManagedLabsClient', 'ManagedLabsClientConfiguration']
 
-__all__ = ['ManagedLabsClient']
+from .version import VERSION
 
 __version__ = VERSION
 

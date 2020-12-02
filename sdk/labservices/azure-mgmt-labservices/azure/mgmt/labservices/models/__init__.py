@@ -10,137 +10,137 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .add_users_payload_py3 import AddUsersPayload
-    from .reference_vm_creation_parameters_py3 import ReferenceVmCreationParameters
-    from .resource_setting_creation_parameters_py3 import ResourceSettingCreationParameters
-    from .environment_setting_creation_parameters_py3 import EnvironmentSettingCreationParameters
-    from .lab_creation_parameters_py3 import LabCreationParameters
-    from .create_lab_properties_py3 import CreateLabProperties
-    from .resource_set_py3 import ResourceSet
-    from .network_interface_py3 import NetworkInterface
-    from .latest_operation_result_py3 import LatestOperationResult
-    from .environment_py3 import Environment
-    from .virtual_machine_details_py3 import VirtualMachineDetails
-    from .environment_details_py3 import EnvironmentDetails
-    from .resource_set_fragment_py3 import ResourceSetFragment
-    from .environment_fragment_py3 import EnvironmentFragment
-    from .environment_operations_payload_py3 import EnvironmentOperationsPayload
-    from .vm_state_details_py3 import VmStateDetails
-    from .reference_vm_py3 import ReferenceVm
-    from .resource_settings_py3 import ResourceSettings
-    from .environment_setting_py3 import EnvironmentSetting
-    from .reference_vm_fragment_py3 import ReferenceVmFragment
-    from .resource_settings_fragment_py3 import ResourceSettingsFragment
-    from .environment_setting_fragment_py3 import EnvironmentSettingFragment
-    from .size_info_py3 import SizeInfo
-    from .environment_size_py3 import EnvironmentSize
-    from .size_info_fragment_py3 import SizeInfoFragment
-    from .environment_size_fragment_py3 import EnvironmentSizeFragment
-    from .gallery_image_reference_py3 import GalleryImageReference
-    from .gallery_image_py3 import GalleryImage
-    from .gallery_image_fragment_py3 import GalleryImageFragment
-    from .gallery_image_reference_fragment_py3 import GalleryImageReferenceFragment
-    from .get_environment_response_py3 import GetEnvironmentResponse
-    from .get_personal_preferences_response_py3 import GetPersonalPreferencesResponse
-    from .size_availability_py3 import SizeAvailability
-    from .regional_availability_py3 import RegionalAvailability
-    from .get_regional_availability_response_py3 import GetRegionalAvailabilityResponse
-    from .lab_py3 import Lab
-    from .size_configuration_properties_py3 import SizeConfigurationProperties
-    from .lab_account_py3 import LabAccount
-    from .lab_account_fragment_py3 import LabAccountFragment
-    from .lab_details_py3 import LabDetails
-    from .lab_fragment_py3 import LabFragment
-    from .list_environments_payload_py3 import ListEnvironmentsPayload
-    from .list_environments_response_py3 import ListEnvironmentsResponse
-    from .list_labs_response_py3 import ListLabsResponse
-    from .operation_batch_status_payload_py3 import OperationBatchStatusPayload
-    from .operation_batch_status_response_item_py3 import OperationBatchStatusResponseItem
-    from .operation_batch_status_response_py3 import OperationBatchStatusResponse
-    from .operation_error_py3 import OperationError
-    from .operation_metadata_display_py3 import OperationMetadataDisplay
-    from .operation_metadata_py3 import OperationMetadata
-    from .operation_result_py3 import OperationResult
-    from .operation_status_payload_py3 import OperationStatusPayload
-    from .operation_status_response_py3 import OperationStatusResponse
-    from .personal_preferences_operations_payload_py3 import PersonalPreferencesOperationsPayload
-    from .publish_payload_py3 import PublishPayload
-    from .register_payload_py3 import RegisterPayload
-    from .reset_password_payload_py3 import ResetPasswordPayload
-    from .resource_py3 import Resource
-    from .size_configuration_properties_fragment_py3 import SizeConfigurationPropertiesFragment
-    from .user_py3 import User
-    from .user_fragment_py3 import UserFragment
+    from ._models_py3 import AddUsersPayload
+    from ._models_py3 import CreateLabProperties
+    from ._models_py3 import Environment
+    from ._models_py3 import EnvironmentDetails
+    from ._models_py3 import EnvironmentFragment
+    from ._models_py3 import EnvironmentOperationsPayload
+    from ._models_py3 import EnvironmentSetting
+    from ._models_py3 import EnvironmentSettingCreationParameters
+    from ._models_py3 import EnvironmentSettingFragment
+    from ._models_py3 import EnvironmentSize
+    from ._models_py3 import EnvironmentSizeFragment
+    from ._models_py3 import GalleryImage
+    from ._models_py3 import GalleryImageFragment
+    from ._models_py3 import GalleryImageReference
+    from ._models_py3 import GalleryImageReferenceFragment
+    from ._models_py3 import GetEnvironmentResponse
+    from ._models_py3 import GetPersonalPreferencesResponse
+    from ._models_py3 import GetRegionalAvailabilityResponse
+    from ._models_py3 import Lab
+    from ._models_py3 import LabAccount
+    from ._models_py3 import LabAccountFragment
+    from ._models_py3 import LabCreationParameters
+    from ._models_py3 import LabDetails
+    from ._models_py3 import LabFragment
+    from ._models_py3 import LatestOperationResult
+    from ._models_py3 import ListEnvironmentsPayload
+    from ._models_py3 import ListEnvironmentsResponse
+    from ._models_py3 import ListLabsResponse
+    from ._models_py3 import NetworkInterface
+    from ._models_py3 import OperationBatchStatusPayload
+    from ._models_py3 import OperationBatchStatusResponse
+    from ._models_py3 import OperationBatchStatusResponseItem
+    from ._models_py3 import OperationError
+    from ._models_py3 import OperationMetadata
+    from ._models_py3 import OperationMetadataDisplay
+    from ._models_py3 import OperationResult
+    from ._models_py3 import OperationStatusPayload
+    from ._models_py3 import OperationStatusResponse
+    from ._models_py3 import PersonalPreferencesOperationsPayload
+    from ._models_py3 import PublishPayload
+    from ._models_py3 import ReferenceVm
+    from ._models_py3 import ReferenceVmCreationParameters
+    from ._models_py3 import ReferenceVmFragment
+    from ._models_py3 import RegionalAvailability
+    from ._models_py3 import RegisterPayload
+    from ._models_py3 import ResetPasswordPayload
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceSet
+    from ._models_py3 import ResourceSetFragment
+    from ._models_py3 import ResourceSettingCreationParameters
+    from ._models_py3 import ResourceSettings
+    from ._models_py3 import ResourceSettingsFragment
+    from ._models_py3 import SizeAvailability
+    from ._models_py3 import SizeConfigurationProperties
+    from ._models_py3 import SizeConfigurationPropertiesFragment
+    from ._models_py3 import SizeInfo
+    from ._models_py3 import SizeInfoFragment
+    from ._models_py3 import User
+    from ._models_py3 import UserFragment
+    from ._models_py3 import VirtualMachineDetails
+    from ._models_py3 import VmStateDetails
 except (SyntaxError, ImportError):
-    from .add_users_payload import AddUsersPayload
-    from .reference_vm_creation_parameters import ReferenceVmCreationParameters
-    from .resource_setting_creation_parameters import ResourceSettingCreationParameters
-    from .environment_setting_creation_parameters import EnvironmentSettingCreationParameters
-    from .lab_creation_parameters import LabCreationParameters
-    from .create_lab_properties import CreateLabProperties
-    from .resource_set import ResourceSet
-    from .network_interface import NetworkInterface
-    from .latest_operation_result import LatestOperationResult
-    from .environment import Environment
-    from .virtual_machine_details import VirtualMachineDetails
-    from .environment_details import EnvironmentDetails
-    from .resource_set_fragment import ResourceSetFragment
-    from .environment_fragment import EnvironmentFragment
-    from .environment_operations_payload import EnvironmentOperationsPayload
-    from .vm_state_details import VmStateDetails
-    from .reference_vm import ReferenceVm
-    from .resource_settings import ResourceSettings
-    from .environment_setting import EnvironmentSetting
-    from .reference_vm_fragment import ReferenceVmFragment
-    from .resource_settings_fragment import ResourceSettingsFragment
-    from .environment_setting_fragment import EnvironmentSettingFragment
-    from .size_info import SizeInfo
-    from .environment_size import EnvironmentSize
-    from .size_info_fragment import SizeInfoFragment
-    from .environment_size_fragment import EnvironmentSizeFragment
-    from .gallery_image_reference import GalleryImageReference
-    from .gallery_image import GalleryImage
-    from .gallery_image_fragment import GalleryImageFragment
-    from .gallery_image_reference_fragment import GalleryImageReferenceFragment
-    from .get_environment_response import GetEnvironmentResponse
-    from .get_personal_preferences_response import GetPersonalPreferencesResponse
-    from .size_availability import SizeAvailability
-    from .regional_availability import RegionalAvailability
-    from .get_regional_availability_response import GetRegionalAvailabilityResponse
-    from .lab import Lab
-    from .size_configuration_properties import SizeConfigurationProperties
-    from .lab_account import LabAccount
-    from .lab_account_fragment import LabAccountFragment
-    from .lab_details import LabDetails
-    from .lab_fragment import LabFragment
-    from .list_environments_payload import ListEnvironmentsPayload
-    from .list_environments_response import ListEnvironmentsResponse
-    from .list_labs_response import ListLabsResponse
-    from .operation_batch_status_payload import OperationBatchStatusPayload
-    from .operation_batch_status_response_item import OperationBatchStatusResponseItem
-    from .operation_batch_status_response import OperationBatchStatusResponse
-    from .operation_error import OperationError
-    from .operation_metadata_display import OperationMetadataDisplay
-    from .operation_metadata import OperationMetadata
-    from .operation_result import OperationResult
-    from .operation_status_payload import OperationStatusPayload
-    from .operation_status_response import OperationStatusResponse
-    from .personal_preferences_operations_payload import PersonalPreferencesOperationsPayload
-    from .publish_payload import PublishPayload
-    from .register_payload import RegisterPayload
-    from .reset_password_payload import ResetPasswordPayload
-    from .resource import Resource
-    from .size_configuration_properties_fragment import SizeConfigurationPropertiesFragment
-    from .user import User
-    from .user_fragment import UserFragment
-from .operation_metadata_paged import OperationMetadataPaged
-from .lab_account_paged import LabAccountPaged
-from .gallery_image_paged import GalleryImagePaged
-from .lab_paged import LabPaged
-from .environment_setting_paged import EnvironmentSettingPaged
-from .environment_paged import EnvironmentPaged
-from .user_paged import UserPaged
-from .managed_labs_client_enums import (
+    from ._models import AddUsersPayload
+    from ._models import CreateLabProperties
+    from ._models import Environment
+    from ._models import EnvironmentDetails
+    from ._models import EnvironmentFragment
+    from ._models import EnvironmentOperationsPayload
+    from ._models import EnvironmentSetting
+    from ._models import EnvironmentSettingCreationParameters
+    from ._models import EnvironmentSettingFragment
+    from ._models import EnvironmentSize
+    from ._models import EnvironmentSizeFragment
+    from ._models import GalleryImage
+    from ._models import GalleryImageFragment
+    from ._models import GalleryImageReference
+    from ._models import GalleryImageReferenceFragment
+    from ._models import GetEnvironmentResponse
+    from ._models import GetPersonalPreferencesResponse
+    from ._models import GetRegionalAvailabilityResponse
+    from ._models import Lab
+    from ._models import LabAccount
+    from ._models import LabAccountFragment
+    from ._models import LabCreationParameters
+    from ._models import LabDetails
+    from ._models import LabFragment
+    from ._models import LatestOperationResult
+    from ._models import ListEnvironmentsPayload
+    from ._models import ListEnvironmentsResponse
+    from ._models import ListLabsResponse
+    from ._models import NetworkInterface
+    from ._models import OperationBatchStatusPayload
+    from ._models import OperationBatchStatusResponse
+    from ._models import OperationBatchStatusResponseItem
+    from ._models import OperationError
+    from ._models import OperationMetadata
+    from ._models import OperationMetadataDisplay
+    from ._models import OperationResult
+    from ._models import OperationStatusPayload
+    from ._models import OperationStatusResponse
+    from ._models import PersonalPreferencesOperationsPayload
+    from ._models import PublishPayload
+    from ._models import ReferenceVm
+    from ._models import ReferenceVmCreationParameters
+    from ._models import ReferenceVmFragment
+    from ._models import RegionalAvailability
+    from ._models import RegisterPayload
+    from ._models import ResetPasswordPayload
+    from ._models import Resource
+    from ._models import ResourceSet
+    from ._models import ResourceSetFragment
+    from ._models import ResourceSettingCreationParameters
+    from ._models import ResourceSettings
+    from ._models import ResourceSettingsFragment
+    from ._models import SizeAvailability
+    from ._models import SizeConfigurationProperties
+    from ._models import SizeConfigurationPropertiesFragment
+    from ._models import SizeInfo
+    from ._models import SizeInfoFragment
+    from ._models import User
+    from ._models import UserFragment
+    from ._models import VirtualMachineDetails
+    from ._models import VmStateDetails
+from ._paged_models import EnvironmentPaged
+from ._paged_models import EnvironmentSettingPaged
+from ._paged_models import GalleryImagePaged
+from ._paged_models import LabAccountPaged
+from ._paged_models import LabPaged
+from ._paged_models import OperationMetadataPaged
+from ._paged_models import UserPaged
+from ._managed_labs_client_enums import (
     ManagedLabVmSize,
     PublishingState,
     ConfigurationState,
@@ -150,66 +150,66 @@ from .managed_labs_client_enums import (
 
 __all__ = [
     'AddUsersPayload',
-    'ReferenceVmCreationParameters',
-    'ResourceSettingCreationParameters',
-    'EnvironmentSettingCreationParameters',
-    'LabCreationParameters',
     'CreateLabProperties',
-    'ResourceSet',
-    'NetworkInterface',
-    'LatestOperationResult',
     'Environment',
-    'VirtualMachineDetails',
     'EnvironmentDetails',
-    'ResourceSetFragment',
     'EnvironmentFragment',
     'EnvironmentOperationsPayload',
-    'VmStateDetails',
-    'ReferenceVm',
-    'ResourceSettings',
     'EnvironmentSetting',
-    'ReferenceVmFragment',
-    'ResourceSettingsFragment',
+    'EnvironmentSettingCreationParameters',
     'EnvironmentSettingFragment',
-    'SizeInfo',
     'EnvironmentSize',
-    'SizeInfoFragment',
     'EnvironmentSizeFragment',
-    'GalleryImageReference',
     'GalleryImage',
     'GalleryImageFragment',
+    'GalleryImageReference',
     'GalleryImageReferenceFragment',
     'GetEnvironmentResponse',
     'GetPersonalPreferencesResponse',
-    'SizeAvailability',
-    'RegionalAvailability',
     'GetRegionalAvailabilityResponse',
     'Lab',
-    'SizeConfigurationProperties',
     'LabAccount',
     'LabAccountFragment',
+    'LabCreationParameters',
     'LabDetails',
     'LabFragment',
+    'LatestOperationResult',
     'ListEnvironmentsPayload',
     'ListEnvironmentsResponse',
     'ListLabsResponse',
+    'NetworkInterface',
     'OperationBatchStatusPayload',
-    'OperationBatchStatusResponseItem',
     'OperationBatchStatusResponse',
+    'OperationBatchStatusResponseItem',
     'OperationError',
-    'OperationMetadataDisplay',
     'OperationMetadata',
+    'OperationMetadataDisplay',
     'OperationResult',
     'OperationStatusPayload',
     'OperationStatusResponse',
     'PersonalPreferencesOperationsPayload',
     'PublishPayload',
+    'ReferenceVm',
+    'ReferenceVmCreationParameters',
+    'ReferenceVmFragment',
+    'RegionalAvailability',
     'RegisterPayload',
     'ResetPasswordPayload',
     'Resource',
+    'ResourceSet',
+    'ResourceSetFragment',
+    'ResourceSettingCreationParameters',
+    'ResourceSettings',
+    'ResourceSettingsFragment',
+    'SizeAvailability',
+    'SizeConfigurationProperties',
     'SizeConfigurationPropertiesFragment',
+    'SizeInfo',
+    'SizeInfoFragment',
     'User',
     'UserFragment',
+    'VirtualMachineDetails',
+    'VmStateDetails',
     'OperationMetadataPaged',
     'LabAccountPaged',
     'GalleryImagePaged',
