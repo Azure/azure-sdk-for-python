@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._signal_rmanagement_client import SignalRManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['SignalRManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
