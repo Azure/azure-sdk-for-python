@@ -30,7 +30,8 @@ from ._response_handlers import (
     pii_entities_result,
     healthcare_paged_result,
     analyze_paged_result,
-    _get_deserialize
+    _get_deserialize,
+    _get_serialize
 )
 from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPollingMethod
 
@@ -108,6 +109,32 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
         self._deserialize = _get_deserialize()
+
+
+    def invoke(self, request, **kwargs):
+
+        # This part is because I don't want to force people to give the full URL. This is open to debate
+        # If we decide we like the approach with partial URL, we'll make this part accessible from autorest generated code.
+        # Right now it's ugly "kind of on purpose", just POC that mostly we should discuss this part
+        autorest_client = self._client
+        path_format_arguments = {
+            'Endpoint': _get_serialize().url(
+                "self._config.endpoint",
+                 autorest_client._config.endpoint,
+                 'str',
+                 skip_quote=True),
+        }
+        request.url = '{Endpoint}/text/analytics/v3.1-preview.3'.format(**path_format_arguments) + request.url
+        # End of the URL part
+
+        pipeline_response = self._client._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if 200 <= response.status_code < 400:
+            return response
+
+        raise HttpResponseError(response=response)
+
 
     @distributed_trace
     def detect_language(  # type: ignore

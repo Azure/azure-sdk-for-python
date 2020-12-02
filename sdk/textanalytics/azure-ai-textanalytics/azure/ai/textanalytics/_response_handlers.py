@@ -259,6 +259,10 @@ def analyze_paged_result(doc_id_order, analyze_status_callback, _, obj, response
             if show_stats and obj.statistics is not None else None # pylint: disable=protected-access
     )
 
+def _get_serialize():
+    from ._generated.v3_1_preview_3 import TextAnalyticsClient
+    return TextAnalyticsClient("dummy", "dummy")._serialize  # pylint: disable=protected-access
+
 def _get_deserialize():
     from ._generated.v3_1_preview_3 import TextAnalyticsClient
     return TextAnalyticsClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
