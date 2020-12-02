@@ -7,8 +7,10 @@ import typing
 from enum import Enum
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RequestIdPolicy
 from opentelemetry.sdk.trace.export import SpanExportResult
 from microsoft.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
+from microsoft.opentelemetry.exporter.azuremonitor._generated._configuration import AzureMonitorClientConfiguration
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
 from microsoft.opentelemetry.exporter.azuremonitor._connection_string_parser import ConnectionStringParser
 from microsoft.opentelemetry.exporter.azuremonitor._storage import LocalFileStorage
@@ -51,8 +53,25 @@ class BaseExporter:
         default_storage_path = os.path.join(
             tempfile.gettempdir(), TEMPDIR_PREFIX + temp_suffix
         )
+        config = AzureMonitorClientConfiguration(
+            parsed_connection_string.endpoint, **kwargs)
+        policies = [
+            RequestIdPolicy(**kwargs),
+            config.headers_policy,
+            config.user_agent_policy,
+            config.proxy_policy,
+            ContentDecodePolicy(**kwargs),
+            config.redirect_policy,
+            config.retry_policy,
+            config.authentication_policy,
+            config.custom_hook_policy,
+            config.logging_policy,
+            # Explicitly disabling to avoid infinite loop of Span creation when data is exported
+            # DistributedTracingPolicy(**kwargs),
+            config.http_logging_policy or HttpLoggingPolicy(**kwargs)
+        ]
         self.client = AzureMonitorClient(
-            host=parsed_connection_string.endpoint, connection_timeout=self._timeout, **kwargs)
+            host=parsed_connection_string.endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
         self.storage = LocalFileStorage(
             path=default_storage_path,
             max_size=50 * 1024 * 1024,  # Maximum size in bytes.
@@ -103,7 +122,8 @@ class BaseExporter:
                             envelopes[error.index] if error.index is not None else "",
                         )
                 if resend_envelopes:
-                    envelopes_to_store = [x.as_dict() for x in resend_envelopes]
+                    envelopes_to_store = [x.as_dict()
+                                          for x in resend_envelopes]
                     self.storage.put(envelopes_to_store)
                     return ExportResult.FAILED_RETRYABLE
 
