@@ -21,18 +21,22 @@ pip install azure-lva-edge
 ### Prerequisites
 
 * Python 2.7, or 3.5 or later is required to use this package.
-* You need an [Azure subscription][azure_sub], and a [IOT device connection string][iot_device_connection_string] to use this package.
+* You need an active [Azure subscription][azure_sub], and a [IoT device connection string][iot_device_connection_string] to use this package.
 
 ### Creating a graph topology and making requests
 Please visit the [Examples](#examples) for starter code
 ## Key concepts
 
-### Graph Topology vs Graph Instance
-A graph topology is essentially the blueprint or template of a graph. It defines the parameters of the graph using placeholders as values for them. A graph instance references a graph topology and specifies the parameters. This way you are able to have multiple graph instances referencing the same topology but with different values for parameters. For more information please visit [Media graph topologies and instances][doc_media_graph] 
+### MediaGraph Topology vs MediaGraph Instance
+A _graph topology_ is a blueprint or template of a graph. It defines the parameters of the graph using placeholders as values for them. A _graph instance_ references a graph topology and specifies the parameters. This way you are able to have multiple graph instances referencing the same topology but with different values for parameters. For more information please visit [Media graph topologies and instances][doc_media_graph] 
 
 ### CloudToDeviceMethod
 
-The `CloudToDeviceMethod` is part of the azure-iot-hub sdk. This method allows you to communicate one way notifications to a device in your iot hub. In our case we want to communicate various graph methods such as `MediaGraphTopologySetRequest` and `MediaGraphTopologyGetRequest`. To use `CloudToDeviceMethod` you need to pass in two parameters: `method_name` and `payload`. `method_name` should be the name of the media graph request you are sending. Each media graph request has a property called `method_name`. For example, `MediaGraphTopologySetRequest.method_name`. For the second parameter `payload` send the entire serialization of the media graph request. For example, `MediaGraphTopologySetRequest.serialize()`
+The `CloudToDeviceMethod` is part of the [azure-iot-hub SDk][iot-hub-sdk]. This method allows you to communicate one way notifications to a device in your IoT hub. In our case, we want to communicate various graph methods such as `MediaGraphTopologySetRequest` and `MediaGraphTopologyGetRequest`. To use `CloudToDeviceMethod` you need to pass in two parameters: `method_name` and `payload`. 
+
+The first parameter, `method_name`, is the name of the media graph request you are sending. Make sure to use each method's predefined `method_name` property. For example, `MediaGraphTopologySetRequest.method_name`. 
+
+The second parameter, `payload`, sends the entire serialization of the media graph request. For example, `MediaGraphTopologySetRequest.serialize()`
 
 ## Examples
 
@@ -42,7 +46,7 @@ To create a graph topology you need to define parameters, sources, and sinks.
 #Parameters
 user_name_param = MediaGraphParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
 password_param = MediaGraphParameterDeclaration(name="rtspPassword",type="String",default="dummypassword")
-url_param = MediaGraphParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
+url_param = MediaGraphParameterDeclaration(name="rtspUrl",type="String",default="rtsp://rtspsim:554/media/camera-300s.mkv")
 
 #Source and Sink
 source = MediaGraphRtspSource(name="rtspSource", endpoint=MediaGraphUnsecuredEndpoint(url="${rtspUrl}",credentials=MediaGraphUsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
@@ -75,7 +79,7 @@ registry_manager = IoTHubRegistryManager(connection_string)
 registry_manager.invoke_device_module_method(device_id, module_d, direct_method)
 ```
 
-For more samples please visit [Samples][samples].
+To try different media graph topologies with the SDK, please see the official [Samples][samples].
 
 ## Troubleshooting
 
@@ -94,6 +98,8 @@ This project welcomes contributions and suggestions. Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have
 the right to, and actually do, grant us the rights to use your contribution.
 For details, visit https://cla.microsoft.com.
+
+If you encounter any issues, please open an issue on our [Github][github-page-issues].
 
 When you submit a pull request, a CLA-bot will automatically determine whether
 you need to provide a CLA and decorate the PR appropriately (e.g., label,
@@ -115,7 +121,7 @@ additional questions or comments.
 [coc_contact]: mailto:opencode@microsoft.com
 
 [package]: TODO://link-to-published-package
-[source]: TODO://link-to-path-in-the-SDK-repo
+[source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/media/azure-media-lva-edge
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
 [doc_direct_methods]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/direct-methods
@@ -125,3 +131,5 @@ additional questions or comments.
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
 [iot_device_connection_string]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/get-started-detect-motion-emit-events-quickstart
+
+[github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues 
