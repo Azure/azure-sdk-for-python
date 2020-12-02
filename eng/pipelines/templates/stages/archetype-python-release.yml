@@ -165,7 +165,7 @@ stages:
                 vmImage: ubuntu-18.04
 
               variables:
-                CIConfigs: "{'targets':[{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest'}]}"
+                CIConfigs: "{'targets':[{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview','content_folder':'docs-ref-services/preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest','content_folder':'docs-ref-services/latest'}]}"
 
               strategy:
                 runOnce:
