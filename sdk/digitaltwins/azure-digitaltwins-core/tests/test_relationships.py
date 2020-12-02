@@ -19,9 +19,9 @@ from azure.core.exceptions import (
     ResourceNotModifiedError
 )
 
-BUILDING_MODEL_ID = "dtmi:samples:Building;1"
-FLOOR_MODEL_ID = "dtmi:samples:Floor;1"
-ROOM_MODEL_ID = "dtmi:samples:Room;1"
+BUILDING_MODEL_ID = "dtmi:samples:RelationshipTestBuilding;1"
+FLOOR_MODEL_ID = "dtmi:samples:RelationshipTestFloor;1"
+ROOM_MODEL_ID = "dtmi:samples:RelationshipTestRoom;1"
 BUILDING_DIGITAL_TWIN = "DTRelationshipTestsBuildingTwin"
 FLOOR_DIGITAL_TWIN = "DTRelationshipTestsFloorTwin"
 ROOM_DIGITAL_TWIN = "DTRelationshipTestsRoomTwin"
@@ -37,7 +37,34 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
             endpoint=endpoint,
             **kwargs)
 
+    def _clean_up_models(self, client, *models):
+        models = [m.id for m in client.list_models()]
+        while models:
+            print("Cleaning up {} models".format(len(models)))
+            for model in models:
+                try:
+                    client.delete_model(model)
+                except:
+                    pass
+            models = [m.id for m in client.list_models()]
+    
+    def _clean_up_relationships(self, client):
+        for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
+            for relationship in client.list_relationships(dt_id):
+                client.delete_relationship(
+                    dt_id,
+                    relationship['$relationshipId']
+                )
+
+    def _clean_up_twins(self, client):
+        for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
+            client.delete_digital_twin(dt_id)
+
     def _set_up_models(self, client, *models):
+        self._clean_up_models(client)
+        self._clean_up_relationships(client)
+        self._clean_up_twins(client)
+
         dtdl_model_building = {
             "@id": BUILDING_MODEL_ID,
             "@type": "Interface",
@@ -99,10 +126,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 }
             ]
         }
-        try:
-            client.create_models([dtdl_model_building, dtdl_model_floor, dtdl_model_room])
-        except ResourceExistsError:
-            pass
+        client.create_models([dtdl_model_building, dtdl_model_floor, dtdl_model_room])
+
         building_digital_twin = {
             "$metadata": {
                 "$model": BUILDING_MODEL_ID

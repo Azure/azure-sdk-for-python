@@ -32,7 +32,7 @@
 /sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
 
 # PRLabel: %Batch
-/sdk/batch/                                                          @bgklein @xingwu1
+/sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
 # PRLabel: %Communication

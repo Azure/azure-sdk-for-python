@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"$metadata": {"$model": "dtmi:samples:Building;1"}, "AverageTemperature":
+    body: '{"$metadata": {"$model": "dtmi:samples:DTTestBuilding;1"}, "AverageTemperature":
       68}'
     headers:
       Accept:
@@ -10,25 +10,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '78'
+      - '84'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-64b71110?api-version=2020-10-31
   response:
     body:
-      string: '{"$dtId":"digitalTwin-64b71110","$etag":"W/\"ac4f36d9-cc69-4bc2-8b1e-aad5bca297b0\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-09T07:45:35.5914881Z"}}}'
+      string: '{"$dtId":"digitalTwin-64b71110","$etag":"W/\"ff4592df-1105-49cd-804d-720bfb34d28d\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2020-11-24T21:06:19.8351479Z"}}}'
     headers:
       content-length:
-      - '229'
+      - '235'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 09 Nov 2020 07:45:35 GMT
+      - Tue, 24 Nov 2020 21:06:19 GMT
       etag:
-      - W/"ac4f36d9-cc69-4bc2-8b1e-aad5bca297b0"
+      - W/"ff4592df-1105-49cd-804d-720bfb34d28d"
       strict-transport-security:
       - max-age=2592000
     status:
@@ -38,7 +38,7 @@ interactions:
     body: '{"ComponentTelemetry1": 5}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -48,11 +48,11 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 159a775d-6a36-4d93-8a47-555c83ea42c4
+      - e37404e0-2a17-46ce-909e-02811d281d71
       Telemetry-Source-Time:
-      - '2020-11-09 20:45:35.960978'
+      - '2020-11-25 10:06:19.968709'
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-64b71110/telemetry?api-version=2020-10-31
   response:
@@ -62,7 +62,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 09 Nov 2020 07:45:35 GMT
+      - Tue, 24 Nov 2020 21:06:19 GMT
       strict-transport-security:
       - max-age=2592000
     status:

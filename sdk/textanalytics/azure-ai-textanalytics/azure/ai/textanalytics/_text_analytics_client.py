@@ -496,6 +496,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :return: An instance of an LROPoller that returns None.
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_health_with_cancellation.py
+                :start-after: [START health_with_cancellation]
+                :end-before: [END health_with_cancellation]
+                :language: python
+                :dedent: 8
+                :caption: Cancel an existing health operation.
         """
         polling_interval = kwargs.pop("polling_interval", 5)
         initial_response = getattr(poller._polling_method, "_initial_response") # pylint: disable=protected-access

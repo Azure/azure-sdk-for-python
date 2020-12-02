@@ -283,7 +283,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @pytest.skip(reason='This test is disabled unless re-openability of handlers is desired and re-enabled')
+    @pytest.mark.skip(reason='This test is disabled unless re-openability of handlers is desired and re-enabled')
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')

@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,8 +47,8 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         **kwargs
-    ) -> Optional["models.VpnServerConfigurationsResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnServerConfigurationsResponse"]]
+    ) -> Optional["_models.VpnServerConfigurationsResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VpnServerConfigurationsResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -96,7 +96,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.VpnServerConfigurationsResponse"]:
+    ) -> AsyncLROPoller["_models.VpnServerConfigurationsResponse"]:
         """Gives the list of VpnServerConfigurations associated with Virtual Wan in a resource group.
 
         :param resource_group_name: The resource group name.
@@ -115,7 +115,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfigurationsResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnServerConfigurationsResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -139,7 +139,13 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

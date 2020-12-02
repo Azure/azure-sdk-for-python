@@ -3,7 +3,7 @@ interactions:
     body: '{"ComponentTelemetry1": 5}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,11 +13,11 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 519e3a75-397e-4bd8-a7de-16ea704599ee
+      - 6dec8a9e-9fd2-48a5-8851-8500639678bc
       Telemetry-Source-Time:
-      - '2020-11-09 09:13:20.439129'
+      - '2020-11-25 10:03:54.074027'
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component1/telemetry?api-version=2020-10-31
   response:
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 08 Nov 2020 20:13:21 GMT
+      - Tue, 24 Nov 2020 21:03:57 GMT
       strict-transport-security:
       - max-age=2592000
     status:
