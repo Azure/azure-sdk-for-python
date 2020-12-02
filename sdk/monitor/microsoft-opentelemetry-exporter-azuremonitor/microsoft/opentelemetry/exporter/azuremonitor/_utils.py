@@ -11,6 +11,7 @@ import pkg_resources
 
 from microsoft.opentelemetry.exporter.azuremonitor._version import VERSION as ext_version
 
+
 # Workaround for missing version file
 opentelemetry_version = pkg_resources.get_distribution(
     "opentelemetry-sdk"
