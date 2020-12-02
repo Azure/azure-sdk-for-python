@@ -23,7 +23,8 @@ from ...management._generated.models import QueueDescriptionFeed, TopicDescripti
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent
 
 from ..._base_handler import _parse_conn_str
-from ..._common.constants import JWT_TOKEN_SCOPE
+from ..._common.constants import JWT_TOKEN_SCOPE, SUPPLEMENTARY_AUTHORIZATION_HEADER, \
+    DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
 from ...management._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
 from ...management._generated.aio._service_bus_management_client_async import ServiceBusManagementClient \
@@ -130,6 +131,21 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
                     topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
             )
         return element
+
+    async def _create_forward_to_header_tokens(self, entity, kwargs):
+        """forward_to requires providing a bearer token in headers for the referenced entity."""
+        kwargs['headers'] = kwargs.get('headers', {})
+
+        async def _populate_header(uri, header):
+            token = (await self._credential.get_token(uri)).token.decode()
+            if not isinstance(self._credential, (ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential)):
+                token = "Bearer {}".format(token)
+            kwargs['headers'][header] = token
+
+        if entity.forward_to:
+            await _populate_header(entity.forward_to, SUPPLEMENTARY_AUTHORIZATION_HEADER)
+        if entity.forward_dead_lettered_messages_to:
+            await _populate_header(entity.forward_dead_lettered_messages_to, DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER)
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusAdministrationClient":
@@ -260,6 +276,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        await self._create_forward_to_header_tokens(queue, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -296,6 +313,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        await self._create_forward_to_header_tokens(queue, kwargs)
         with _handle_response_error():
             await self._impl.entity.put(
                 queue.name,  # type: ignore
@@ -656,6 +674,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        await self._create_forward_to_header_tokens(subscription, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -696,6 +715,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        await self._create_forward_to_header_tokens(subscription, kwargs)
         with _handle_response_error():
             await self._impl.subscription.put(
                 topic_name,

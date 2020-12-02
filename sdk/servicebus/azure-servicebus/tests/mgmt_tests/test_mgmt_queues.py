@@ -289,7 +289,7 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_queue_update_success(self, servicebus_namespace_connection_string, **kwargs):
+    def test_mgmt_queue_update_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_queues(mgmt_service)
         queue_name = "fjrui"
@@ -313,6 +313,8 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             queue_description.lock_duration = datetime.timedelta(seconds=13)
             queue_description.max_delivery_count = 14
             queue_description.max_size_in_megabytes = 3072
+            queue_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, queue_name)
+            queue_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, queue_name)
             #queue_description.requires_duplicate_detection = True # Read only
             #queue_description.requires_session = True # Cannot be changed after creation
 
@@ -329,6 +331,8 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue_description.lock_duration == datetime.timedelta(seconds=13)
             assert queue_description.max_delivery_count == 14
             assert queue_description.max_size_in_megabytes == 3072
+            assert queue_description.forward_to == "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, queue_name)
+            assert queue_description.forward_dead_lettered_messages_to == "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, queue_name)
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
         finally:

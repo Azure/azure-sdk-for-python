@@ -97,6 +97,8 @@ class SubscriptionOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
+        print("RESPONSE: &&&&&&&&&&&&&&&&&&&&&&&&&&")
+        print(response)
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)

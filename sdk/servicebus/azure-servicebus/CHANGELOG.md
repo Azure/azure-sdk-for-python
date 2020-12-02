@@ -2,6 +2,9 @@
 
 ## 7.0.1 (Unreleased)
 
+**BugFixes**
+
+* `forward_to` and `forward_dead_lettered_messages_to` will no longer cause authorization errors when uses in `ServiceBusAdministrationClient` for subscriptions.
 
 ## 7.0.0 (2020-11-23)
 
