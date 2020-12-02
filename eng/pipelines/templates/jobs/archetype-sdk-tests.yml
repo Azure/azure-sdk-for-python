@@ -33,11 +33,6 @@ jobs:
   - job: ${{ parameters.JobName }}
     variables:
       skipComponentGovernanceDetection: true
-      # ${{ if eq(parameters['Matrix'], 'Linux_Python39') }}:
-      #   CoverageArg: ''
-      # ${{ if ne(parameters['Matrix'], 'Linux_Python39) }}:
-      #   CoverageArg: --disablecov
-
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     strategy:
       maxParallel: ${{ parameters.MaxParallel }}
@@ -50,16 +45,18 @@ jobs:
     steps:
       - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
 
-      - pwsh: |
-          Write-Host "Setting Python version as env var"
-          if ($PythonVersion -eq "Python 3.9.0") {
-            Write-Host "Enabling Code Coverage"
-            Write-Host "##vso[task.setvariable variable=CoverageArg]True"
-          } else {
-            Write-Host "Disabling Code Coverage"
-            Write-Host "##vso[task.setvariable variable=CoverageArg]False"
-          }
-        displayName: Set code coverage environment variables
+      # - pwsh: |
+      #     Write-Host "Setting Python version as env var"
+      #     if ($PythonVersion -eq "Python 3.9.0") {
+      #       Write-Host "Enabling Code Coverage"
+      #       Write-Host "##vso[task.setvariable variable=CoverageArg]True"
+      #       Write-Host $Env:CoverageArg
+      #     } else {
+      #       Write-Host "Disabling Code Coverage"
+      #       Write-Host "##vso[task.setvariable variable=CoverageArg]False"
+      #       Write-Host $Env:CoverageArg
+      #     }
+      #   displayName: Set code coverage environment variables
 
       - ${{ if eq(parameters['AllocateResourceGroup'], 'true') }}:
         - pwsh: |
