@@ -11,7 +11,7 @@ module_d = "lvaEdge"
 connection_string = os.getenv("IOTHUB_DEVICE_CONNECTION_STRING")
 graph_instance_name = "graphInstance1"
 graph_topology_name = "graphTopology1"
-
+graph_url = '"rtsp://sample-url-from-camera"'
 
 def build_graph_topology():
     graph_properties = MediaGraphTopologyProperties()
@@ -31,7 +31,7 @@ def build_graph_topology():
     return graph
 
 def build_graph_instance():
-    url_param = MediaGraphParameterDefinition(name="rtspUrl", value="rtsp://rtspsim:554/media/camera-300s.mkv")
+    url_param = MediaGraphParameterDefinition(name="rtspUrl", value=graph_url)
     graph_instance_properties = MediaGraphInstanceProperties(description="Sample graph description", topology_name=graph_topology_name, parameters=[url_param])
 
     graph_instance = MediaGraphInstance(name=graph_instance_name, properties=graph_instance_properties)

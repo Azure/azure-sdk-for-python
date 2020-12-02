@@ -4,8 +4,8 @@ Live Video Analytics on IoT Edge provides a platform to build intelligent video 
 
 Use the client library for Live Video Analytics on IoT Edge to:
 
-- simplify interactions with the [Microsoft Azure IoT SDKs](https://github.com/azure/azure-iot-sdks) 
-- programatically construct media graph topologies and instances
+- Simplify interactions with the [Microsoft Azure IoT SDKs](https://github.com/azure/azure-iot-sdks) 
+- Programatically construct media graph topologies and instances
 
 [Package (PyPi)][package] | [Product documentation][doc_product] | [Direct methods][doc_direct_methods] | [Media graphs][doc_media_graph] | [Source code][source] | [Samples][samples]
 
@@ -23,7 +23,8 @@ pip install azure-lva-edge
 * Python 2.7, or 3.5 or later is required to use this package.
 * You need an [Azure subscription][azure_sub], and a [IOT device connection string][iot_device_connection_string] to use this package.
 
-
+### Creating a graph topology and making requests
+Please visit the [Examples](#examples) for starter code
 ## Key concepts
 
 ### Graph Topology vs Graph Instance
@@ -35,7 +36,46 @@ The `CloudToDeviceMethod` is part of the azure-iot-hub sdk. This method allows y
 
 ## Examples
 
-[Samples][samples]
+### Creating a graph topology
+To create a graph topology you need to define parameters, sources, and sinks.
+```
+#Parameters
+user_name_param = MediaGraphParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
+password_param = MediaGraphParameterDeclaration(name="rtspPassword",type="String",default="dummypassword")
+url_param = MediaGraphParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
+
+#Source and Sink
+source = MediaGraphRtspSource(name="rtspSource", endpoint=MediaGraphUnsecuredEndpoint(url="${rtspUrl}",credentials=MediaGraphUsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
+node = MediaGraphNodeInput(node_name="rtspSource")
+sink = MediaGraphAssetSink(name="assetsink", inputs=[node],asset_name_pattern='sampleAsset-${System.GraphTopologyName}-${System.GraphInstanceName}', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
+
+graph_properties = MediaGraphTopologyProperties(parameters=[user_name_param, password_param, url_param], sources=[source], sinks=[sink], description="Continuous video recording to an Azure Media Services Asset")
+
+graph_topology = MediaGraphTopology(name=graph_topology_name,properties=graph_properties)
+
+```
+
+### Creating a graph instance 
+To create a graph instance, you need to have an existing graph topology.
+```
+url_param = MediaGraphParameterDefinition(name="rtspUrl", value=graph_url)
+graph_instance_properties = MediaGraphInstanceProperties(description="Sample graph description", topology_name=graph_topology_name, parameters=[url_param])
+
+graph_instance = MediaGraphInstance(name=graph_instance_name, properties=graph_instance_properties)
+
+```
+
+### Invoking a graph method request
+To invoke a graph method on your device you need to first define the request using the lva sdk. Then send that method request using the iot sdk's `CloudToDeviceMethod`
+```
+set_method_request = MediaGraphTopologySetRequest(graph=graph_topology)
+direct_method = CloudToDeviceMethod(method_name=set_method_request.method_name, payload=set_method_request.serialize())
+registry_manager = IoTHubRegistryManager(connection_string)
+
+registry_manager.invoke_device_module_method(device_id, module_d, direct_method)
+```
+
+For more samples please visit [Samples][samples].
 
 ## Troubleshooting
 
