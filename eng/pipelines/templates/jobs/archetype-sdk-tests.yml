@@ -33,7 +33,11 @@ jobs:
   - job: ${{ parameters.JobName }}
     variables:
       skipComponentGovernanceDetection: true
-      CoverageArg: ''
+      ${{ if eq(parameters['PythonVersion'], '3.9.0') }}:
+        CoverageArg: ''
+      ${{ if ne(parameters['PythonVersion'], '3.9.0') }}:
+        CoverageArg: --disablecov
+
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     strategy:
       maxParallel: ${{ parameters.MaxParallel }}
