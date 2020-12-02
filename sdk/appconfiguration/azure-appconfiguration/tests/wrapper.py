@@ -21,7 +21,6 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from async_proxy import AzureAppConfigurationClientProxy
 import os
 import functools
 import inspect
@@ -121,7 +120,6 @@ def async_app_config_decorator(func, **kwargs):
     def wrapper(*args, **kwargs):
         appconfiguration_connection_string = kwargs.pop("appconfiguration_connection_string")
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        client = AzureAppConfigurationClientProxy(client)
 
         kwargs['client'] = client
         kwargs['appconfiguration_connection_string'] = appconfiguration_connection_string
