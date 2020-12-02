@@ -34,6 +34,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
         rule_name_1 = 'test_rule_1'
         rule_name_2 = 'test_rule_2'
         rule_name_3 = 'test_rule_3'
+        rule_name_4 = 'test_rule_4'
 
         correlation_fitler = CorrelationRuleFilter(correlation_id='testcid', properties={
             "key_string": "str1",
@@ -71,7 +72,6 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             assert rule_properties["key_datetime"] == datetime(2020, 7, 5, 11, 12, 13)
             assert rule_properties["key_duration"] == timedelta(days=1, hours=2, minutes=3)
 
-
             mgmt_service.create_rule(topic_name, subscription_name, rule_name_2, filter=sql_filter)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_2)
             assert type(rule_desc.filter) == SqlRuleFilter
@@ -80,6 +80,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
 
             mgmt_service.create_rule(topic_name, subscription_name, rule_name_3, filter=bool_filter)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_3)
+            assert type(rule_desc.filter) == TrueRuleFilter
+
+            mgmt_service.create_rule(topic_name, subscription_name, rule_name_4)
+            rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_4)
             assert type(rule_desc.filter) == TrueRuleFilter
 
         finally:
@@ -93,6 +97,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
                 pass
             try:
                 mgmt_service.delete_rule(topic_name, subscription_name, rule_name_3)
+            except:
+                pass
+            try:
+                mgmt_service.delete_rule(topic_name, subscription_name, rule_name_4)
             except:
                 pass
             try:

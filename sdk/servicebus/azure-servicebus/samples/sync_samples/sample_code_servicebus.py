@@ -78,6 +78,7 @@ def example_create_servicebus_sender_sync():
         topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
     # [END create_topic_sender_from_sb_client_sync]
 
+    queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
     return queue_sender
 
 
@@ -144,14 +145,13 @@ def example_create_servicebus_receiver_sync():
         )
     # [END create_subscription_deadletter_receiver_from_sb_client_sync]
 
+    queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
     return queue_receiver
 
 
 def example_send_and_receive_sync():
-    servicebus_sender = example_create_servicebus_sender_sync()
-    servicebus_receiver = example_create_servicebus_receiver_sync()
-
     from azure.servicebus import ServiceBusMessage
+    servicebus_sender = example_create_servicebus_sender_sync()
     # [START send_sync]
     with servicebus_sender:
         message = ServiceBusMessage("Hello World")
@@ -159,6 +159,7 @@ def example_send_and_receive_sync():
     # [END send_sync]
         servicebus_sender.send_messages([ServiceBusMessage("Hello World")] * 5)
 
+    servicebus_sender = example_create_servicebus_sender_sync()
     # [START create_batch_sync]
     with servicebus_sender:
         batch_message = servicebus_sender.create_message_batch()
@@ -169,13 +170,13 @@ def example_send_and_receive_sync():
     message = ServiceBusMessage(
         "Hello World!!",
         session_id="MySessionID",
-        partition_key="UsingSpecificPartition",
         user_properties={'data': 'custom_data'},
         time_to_live=datetime.timedelta(seconds=30),
         label='MyLabel'
     )
     # [END send_complex_message]
 
+    servicebus_receiver = example_create_servicebus_receiver_sync()
     # [START peek_messages_sync]
     with servicebus_receiver:
         messages = servicebus_receiver.peek_messages()
@@ -183,6 +184,7 @@ def example_send_and_receive_sync():
             print(str(message))
     # [END peek_messages_sync]
 
+    servicebus_receiver = example_create_servicebus_receiver_sync()
     # [START auto_lock_renew_message_sync]
     from azure.servicebus import AutoLockRenewer
     lock_renewal = AutoLockRenewer(max_workers=4)
@@ -195,6 +197,7 @@ def example_send_and_receive_sync():
     # [END auto_lock_renew_message_sync]
             break
 
+    servicebus_receiver = example_create_servicebus_receiver_sync()
     # [START receive_sync]
     with servicebus_receiver:
         messages = servicebus_receiver.receive_messages(max_wait_time=5)
@@ -249,9 +252,10 @@ def example_send_and_receive_sync():
             servicebus_receiver.renew_message_lock(message)
         # [END renew_message_lock_sync]
 
+    servicebus_receiver = example_create_servicebus_receiver_sync()
     # [START receive_forever]
     with servicebus_receiver:
-        for message in servicebus_receiver.get_streaming_message_iter():
+        for message in servicebus_receiver:
             print(str(message))
             servicebus_receiver.complete_message(message)
     # [END receive_forever]
@@ -363,6 +367,7 @@ def example_schedule_ops_sync():
         sequence_nums = servicebus_sender.schedule_messages(scheduled_messages, scheduled_time_utc)
     # [END scheduling_messages]
 
+    servicebus_sender = example_create_servicebus_sender_sync()
     # [START cancel_scheduled_messages]
     with servicebus_sender:
         servicebus_sender.cancel_scheduled_messages(sequence_nums)

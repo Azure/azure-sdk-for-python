@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import uuid
 import functools
-from typing import Optional, Callable, TYPE_CHECKING
+from typing import Optional, Callable
 
 from uamqp import Source
 
@@ -30,10 +30,6 @@ from ..exceptions import (
     MessageAlreadySettled
 )
 from .utils import utc_from_timestamp, utc_now, trace_link_message
-
-if TYPE_CHECKING:
-    from azure.core.tracing import AbstractSpan
-    from .message import ServiceBusMessage
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes

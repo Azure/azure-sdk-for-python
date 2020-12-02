@@ -10,7 +10,10 @@ from time import sleep
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import (
+    ResourceGroupPreparer,
+    StorageAccountPreparer
+)
 from _shared.testcase import (
     TableTestCase,
     RERUNS_DELAY,
@@ -83,9 +86,7 @@ class StorageTableClientTest(TableTestCase):
     def test_create_service_with_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
+        suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -104,9 +105,7 @@ class StorageTableClientTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_token(self, resource_group, location, cosmos_account, cosmos_account_key):
         url = self.account_url(cosmos_account, "cosmos")
-        suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
+        suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
             service = service_type(url, credential=self.token_credential, table_name='foo')
@@ -132,6 +131,7 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Confirm cosmos national cloud URLs")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_china(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -140,17 +140,15 @@ class StorageTableClientTest(TableTestCase):
         for service_type in SERVICES.items():
             # Act
             url = self.account_url(cosmos_account, "cosmos").replace('core.windows.net', 'core.chinacloudapi.cn')
-            if 'cosmos.azure' in url:
-                pytest.skip("Confirm cosmos national cloud URLs")
             service = service_type[0](
                 url, credential=cosmos_account_key, table_name='foo')
 
             # Assert
             assert service is not None
-            assert service.account_name ==  storage_account.name
-            assert service.credential.account_name ==  storage_account.name
-            assert service.credential.account_key ==  storage_account_key
-            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table"))
+            assert service.account_name ==  cosmos_account.name
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account
+            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "table"))
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -267,8 +265,6 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -285,7 +281,7 @@ class StorageTableClientTest(TableTestCase):
             assert service.account_name ==  cosmos_account.name
             assert service.credential.account_name ==  cosmos_account.name
             assert service.credential.account_key ==  cosmos_account_key
-            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table"))
+            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "table"))
             assert service.scheme ==  'http'
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -445,7 +441,6 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_user_agent_default(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -453,11 +448,10 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] in "azsdk-python-data-tables/{} Python/{} ({})".format(
+            assert "azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform())
-
+                    platform.platform()) in response.http_request.headers['User-Agent']
 
         tables = list(service.list_tables(raw_response_hook=callback))
         assert isinstance(tables,  list)

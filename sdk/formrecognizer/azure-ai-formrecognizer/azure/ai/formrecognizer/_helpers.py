@@ -17,7 +17,7 @@ def _get_deserialize(api_version):
     if api_version == "2.0":
         from ._generated.v2_0 import FormRecognizerClient
     else:
-        from ._generated.v2_1_preview_1 import FormRecognizerClient
+        from ._generated.v2_1_preview_2 import FormRecognizerClient
     return FormRecognizerClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
 
 
@@ -86,18 +86,6 @@ def adjust_text_angle(text_angle):
     return text_angle
 
 
-def adjust_page_number(value):
-    """Adjusts the page number on the business card field
-    `ContactNames` to be set to the page number value found on `FirstName`
-    """
-    for val in value.value_array:
-        if val.value_object.get("FirstName", None) and val.value_object.get("LastName", None):
-            if val.value_object["FirstName"].page == val.value_object["LastName"].page:
-                page_number = val.value_object["FirstName"].page
-                val.page = page_number
-    return value
-
-
 def get_authentication_policy(credential):
     authentication_policy = None
     if credential is None:
@@ -142,6 +130,8 @@ def check_beginning_bytes(form):
             return "image/tiff"
         if form[:4] == b"\x4D\x4D\x00\x2A":  # big-endian
             return "image/tiff"
+        if form[:2] == b"\x42\x4D":
+            return "image/bmp"
     raise ValueError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
 
 

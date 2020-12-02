@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class SingleSignOnConfigurationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class SingleSignOnConfigurationsOperations:
         resource_group_name: str,
         monitor_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DatadogSingleSignOnResourceListResponse"]:
+    ) -> AsyncIterable["_models.DatadogSingleSignOnResourceListResponse"]:
         """List the single sign-on configurations for a given monitor resource.
 
         List the single sign-on configurations for a given monitor resource.
@@ -63,7 +63,7 @@ class SingleSignOnConfigurationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_datadog_client.models.DatadogSingleSignOnResourceListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogSingleSignOnResourceListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogSingleSignOnResourceListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,7 +110,7 @@ class SingleSignOnConfigurationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -126,10 +126,10 @@ class SingleSignOnConfigurationsOperations:
         resource_group_name: str,
         monitor_name: str,
         configuration_name: str,
-        body: Optional["models.DatadogSingleSignOnResource"] = None,
+        body: Optional["_models.DatadogSingleSignOnResource"] = None,
         **kwargs
-    ) -> "models.DatadogSingleSignOnResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogSingleSignOnResource"]
+    ) -> "_models.DatadogSingleSignOnResource":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogSingleSignOnResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -169,7 +169,7 @@ class SingleSignOnConfigurationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -189,9 +189,9 @@ class SingleSignOnConfigurationsOperations:
         resource_group_name: str,
         monitor_name: str,
         configuration_name: str,
-        body: Optional["models.DatadogSingleSignOnResource"] = None,
+        body: Optional["_models.DatadogSingleSignOnResource"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.DatadogSingleSignOnResource"]:
+    ) -> AsyncLROPoller["_models.DatadogSingleSignOnResource"]:
         """Configures single-sign-on for this resource.
 
         Configures single-sign-on for this resource.
@@ -201,7 +201,7 @@ class SingleSignOnConfigurationsOperations:
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param configuration_name:
+        :param configuration_name: Configuration name.
         :type configuration_name: str
         :param body:
         :type body: ~microsoft_datadog_client.models.DatadogSingleSignOnResource
@@ -216,7 +216,7 @@ class SingleSignOnConfigurationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogSingleSignOnResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogSingleSignOnResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -242,7 +242,14 @@ class SingleSignOnConfigurationsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'monitorName': self._serialize.url("monitor_name", monitor_name, 'str'),
+            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -262,7 +269,7 @@ class SingleSignOnConfigurationsOperations:
         monitor_name: str,
         configuration_name: str,
         **kwargs
-    ) -> "models.DatadogSingleSignOnResource":
+    ) -> "_models.DatadogSingleSignOnResource":
         """Gets the datadog single sign-on resource for the given Monitor.
 
         Gets the datadog single sign-on resource for the given Monitor.
@@ -272,14 +279,14 @@ class SingleSignOnConfigurationsOperations:
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param configuration_name:
+        :param configuration_name: Configuration name.
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatadogSingleSignOnResource, or the result of cls(response)
         :rtype: ~microsoft_datadog_client.models.DatadogSingleSignOnResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogSingleSignOnResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogSingleSignOnResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -311,7 +318,7 @@ class SingleSignOnConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DatadogSingleSignOnResource', pipeline_response)

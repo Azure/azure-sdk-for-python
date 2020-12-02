@@ -52,7 +52,6 @@ from ._servicebus_session import ServiceBusSession
 if TYPE_CHECKING:
     import datetime
     from azure.core.credentials import TokenCredential
-    from ._common.auto_lock_renewer import AutoLockRenewer
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -171,7 +170,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 break
             finally:
                 if original_timeout:
-                    self._handler._timeout = original_timeout
+                    try:
+                        self._handler._timeout = original_timeout
+                    except AttributeError: # Handler may be disposed already.
+                        pass
+
 
     def _inner_next(self):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
@@ -485,7 +488,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         super(ServiceBusReceiver, self).close()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
-    def get_streaming_message_iter(self, max_wait_time=None):
+    def _get_streaming_message_iter(self, max_wait_time=None):
         # type: (Optional[float]) -> Iterator[ServiceBusReceivedMessage]
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
@@ -575,8 +578,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param Union[int,List[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -636,8 +639,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
 
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
@@ -801,8 +804,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param message: The message to renew the lock for.
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.

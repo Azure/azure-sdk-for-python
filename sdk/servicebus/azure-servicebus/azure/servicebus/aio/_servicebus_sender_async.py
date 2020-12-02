@@ -5,7 +5,7 @@
 import logging
 import asyncio
 import datetime
-from typing import Any, TYPE_CHECKING, Union, List
+from typing import Any, TYPE_CHECKING, Union, List, Optional
 
 import uamqp
 from uamqp import SendClientAsync, types
@@ -276,8 +276,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :param message: The ServiceBus message to be sent.
         :type message: Union[~azure.servicebus.ServiceBusMessage,~azure.servicebus.ServiceBusMessageBatch,
          list[~azure.servicebus.ServiceBusMessage]]
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
@@ -334,12 +334,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 require_last_exception=True
             )
 
-    async def create_message_batch(self, max_size_in_bytes: int = None) -> ServiceBusMessageBatch:
+    async def create_message_batch(self, max_size_in_bytes: Optional[int] = None) -> ServiceBusMessageBatch:
         """Create a ServiceBusMessageBatch object with the max size of all content being constrained by
         max_size_in_bytes. The max_size should be no greater than the max allowed message size defined by the service.
 
-        :param int max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can hold. By
-         default, the value is determined by your Service Bus tier.
+        :param Optional[int] max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can
+         hold. By default, the value is determined by your Service Bus tier.
         :rtype: ~azure.servicebus.ServiceBusMessageBatch
 
         .. admonition:: Example:

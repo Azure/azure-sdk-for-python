@@ -14,28 +14,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2020-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy\"\
-        ,\r\n  \"etag\": \"W/\\\"3a6edd0d-5038-424b-925e-f8d5ad25c035\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies\"\
-        ,\r\n  \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
-        : \"Updating\",\r\n    \"customRules\": [],\r\n    \"policySettings\": {\r\
-        \n      \"requestBodyCheck\": true,\r\n      \"maxRequestBodySizeInKb\": 128,\r\
-        \n      \"fileUploadLimitInMb\": 100,\r\n      \"state\": \"Disabled\",\r\n\
-        \      \"mode\": \"Detection\"\r\n    },\r\n    \"managedRules\": {\r\n  \
-        \    \"managedRuleSets\": [\r\n        {\r\n          \"ruleSetType\": \"\
-        OWASP\",\r\n          \"ruleSetVersion\": \"3.0\",\r\n          \"ruleGroupOverrides\"\
-        : []\r\n        }\r\n      ],\r\n      \"exclusions\": []\r\n    }\r\n  }\r\
-        \n}"
+      string: "{\r\n  \"name\": \"myPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy\",\r\n
+        \ \"etag\": \"W/\\\"78b15572-8800-4302-b143-dccdf8c97ec4\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies\",\r\n
+        \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\":
+        \"Updating\",\r\n    \"customRules\": [],\r\n    \"policySettings\": {\r\n
+        \     \"requestBodyCheck\": true,\r\n      \"maxRequestBodySizeInKb\": 128,\r\n
+        \     \"fileUploadLimitInMb\": 100,\r\n      \"state\": \"Disabled\",\r\n
+        \     \"mode\": \"Detection\"\r\n    },\r\n    \"managedRules\": {\r\n      \"managedRuleSets\":
+        [\r\n        {\r\n          \"ruleSetType\": \"OWASP\",\r\n          \"ruleSetVersion\":
+        \"3.0\",\r\n          \"ruleGroupOverrides\": []\r\n        }\r\n      ],\r\n
+        \     \"exclusions\": []\r\n    }\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3c2d92aa-2a00-4085-b965-445080597699?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a3e4b9f5-e2db-44a8-afae-14ec01728f46?api-version=2020-07-01
       cache-control:
       - no-cache
       content-length:
@@ -43,7 +42,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Sep 2020 03:38:20 GMT
+      - Wed, 25 Nov 2020 11:10:07 GMT
       expires:
       - '-1'
       pragma:
@@ -56,9 +55,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 89ead1c9-928d-431c-9bc3-f8a3d85db8e3
+      - a361b6ec-b728-4368-b4ab-eb1347640b09
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -72,23 +71,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2020-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy\"\
-        ,\r\n  \"etag\": \"W/\\\"c8248a55-4f23-4618-bed4-6e606f56dbb4\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies\"\
-        ,\r\n  \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
-        : \"Succeeded\",\r\n    \"customRules\": [],\r\n    \"policySettings\": {\r\
-        \n      \"requestBodyCheck\": true,\r\n      \"maxRequestBodySizeInKb\": 128,\r\
-        \n      \"fileUploadLimitInMb\": 100,\r\n      \"state\": \"Disabled\",\r\n\
-        \      \"mode\": \"Detection\"\r\n    },\r\n    \"managedRules\": {\r\n  \
-        \    \"managedRuleSets\": [\r\n        {\r\n          \"ruleSetType\": \"\
-        OWASP\",\r\n          \"ruleSetVersion\": \"3.0\",\r\n          \"ruleGroupOverrides\"\
-        : []\r\n        }\r\n      ],\r\n      \"exclusions\": []\r\n    }\r\n  }\r\
-        \n}"
+      string: "{\r\n  \"name\": \"myPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy\",\r\n
+        \ \"etag\": \"W/\\\"ad6a6abc-7491-4e93-b280-79a9925c4ebd\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies\",\r\n
+        \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\":
+        \"Succeeded\",\r\n    \"customRules\": [],\r\n    \"policySettings\": {\r\n
+        \     \"requestBodyCheck\": true,\r\n      \"maxRequestBodySizeInKb\": 128,\r\n
+        \     \"fileUploadLimitInMb\": 100,\r\n      \"state\": \"Disabled\",\r\n
+        \     \"mode\": \"Detection\"\r\n    },\r\n    \"managedRules\": {\r\n      \"managedRuleSets\":
+        [\r\n        {\r\n          \"ruleSetType\": \"OWASP\",\r\n          \"ruleSetVersion\":
+        \"3.0\",\r\n          \"ruleGroupOverrides\": []\r\n        }\r\n      ],\r\n
+        \     \"exclusions\": []\r\n    }\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -97,9 +95,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Sep 2020 03:38:20 GMT
+      - Wed, 25 Nov 2020 11:10:08 GMT
       etag:
-      - W/"c8248a55-4f23-4618-bed4-6e606f56dbb4"
+      - W/"ad6a6abc-7491-4e93-b280-79a9925c4ebd"
       expires:
       - '-1'
       pragma:
@@ -116,7 +114,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c593ace4-337a-4bb4-a44c-148d618e7a92
+      - bda12f3c-44df-4ec7-a282-d274ec75f892
     status:
       code: 200
       message: OK
@@ -132,9 +130,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2020-07-01
   response:
     body:
       string: ''
@@ -142,17 +140,17 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5d595171-9920-43a0-8e1b-c77b85b9a152?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e95a7d89-8f62-44de-a01e-823468ed289f?api-version=2020-07-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 15 Sep 2020 03:38:21 GMT
+      - Wed, 25 Nov 2020 11:10:09 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/5d595171-9920-43a0-8e1b-c77b85b9a152?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/e95a7d89-8f62-44de-a01e-823468ed289f?api-version=2020-07-01
       pragma:
       - no-cache
       server:
@@ -163,7 +161,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - fdcc0d80-f882-4175-ac26-48cd18b44327
+      - f82c538b-07e0-48a7-af6a-e668ed57cfab
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14999'
     status:
@@ -179,9 +177,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5d595171-9920-43a0-8e1b-c77b85b9a152?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e95a7d89-8f62-44de-a01e-823468ed289f?api-version=2020-07-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -193,7 +191,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Sep 2020 03:38:32 GMT
+      - Wed, 25 Nov 2020 11:10:19 GMT
       expires:
       - '-1'
       pragma:
@@ -210,7 +208,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 83e63561-9707-4b01-859c-bca31e55c89c
+      - 561ceb5b-0f20-448b-b543-a1a05a2ab001
     status:
       code: 200
       message: OK

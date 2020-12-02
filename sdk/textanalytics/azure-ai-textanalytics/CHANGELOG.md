@@ -2,6 +2,10 @@
 
 ## 5.1.0b4 (Unreleased)
 
+**Bug Fixes**
+
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.8.2 or greater
+
 
 ## 5.1.0b3 (2020-11-19)
 

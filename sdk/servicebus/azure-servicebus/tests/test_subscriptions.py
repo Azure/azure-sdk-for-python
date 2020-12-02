@@ -63,7 +63,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     receiver.receive_messages(max_wait_time=-1)
 
                 with pytest.raises(ValueError):
-                    receiver.get_streaming_message_iter(max_wait_time=0)
+                    receiver._get_streaming_message_iter(max_wait_time=0)
 
                 count = 0
                 for message in receiver:

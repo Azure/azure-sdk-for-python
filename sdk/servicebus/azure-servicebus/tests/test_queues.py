@@ -157,7 +157,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver.receive_messages(max_wait_time=0)
 
             with pytest.raises(ValueError):
-                receiver.get_streaming_message_iter(max_wait_time=0)
+                receiver._get_streaming_message_iter(max_wait_time=0)
 
             count = 0
             for message in receiver:
@@ -1369,7 +1369,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(message_arry)
 
                 received_messages = []
-                for message in receiver.get_streaming_message_iter(max_wait_time=5):
+                for message in receiver._get_streaming_message_iter(max_wait_time=5):
                     received_messages.append(message)
                     receiver.complete_message(message)
 
@@ -1711,7 +1711,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message_2nd_received_cnt = 0
                 while message_1st_received_cnt < 20 or message_2nd_received_cnt < 20:
                     messages = []
-                    for message in receiver.get_streaming_message_iter(max_wait_time=5):
+                    for message in receiver._get_streaming_message_iter(max_wait_time=5):
                         messages.append(message)
                     if not messages:
                         break
@@ -1758,11 +1758,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     
-                    for message in receiver.get_streaming_message_iter():
+                    for message in receiver._get_streaming_message_iter():
                         messages.append(message)
                         break
 
-                    for message in receiver.get_streaming_message_iter():
+                    for message in receiver._get_streaming_message_iter():
                         messages.append(message)
 
                     for message in messages:
@@ -1776,9 +1776,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message_3 = ServiceBusMessage("3")
                     sender.send_messages([message_2, message_3])
 
-                    for message in receiver.get_streaming_message_iter():
+                    for message in receiver._get_streaming_message_iter():
                         messages.append(message)
-                        for message in receiver.get_streaming_message_iter():
+                        for message in receiver._get_streaming_message_iter():
                             messages.append(message)
 
                     assert len(messages) == 4
@@ -1848,7 +1848,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     
-                    for message in receiver.get_streaming_message_iter():
+                    for message in receiver._get_streaming_message_iter():
                         messages.append(message)
                 assert len(messages) == 2
 
@@ -1872,19 +1872,19 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
                     time_1 = receiver._handler._counter.get_current_ms()
                     time_3 = time_1 # In case inner loop isn't hit, fail sanely.
-                    for message in receiver.get_streaming_message_iter(max_wait_time=10):
+                    for message in receiver._get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
                         receiver.complete_message(message)
 
                         time_2 = receiver._handler._counter.get_current_ms()
-                        for message in receiver.get_streaming_message_iter(max_wait_time=1):
+                        for message in receiver._get_streaming_message_iter(max_wait_time=1):
                             messages.append(message)
                         time_3 = receiver._handler._counter.get_current_ms()
                         assert timedelta(seconds=.5) < timedelta(milliseconds=(time_3 - time_2)) <= timedelta(seconds=2)
                     time_4 = receiver._handler._counter.get_current_ms()
                     assert timedelta(seconds=8) < timedelta(milliseconds=(time_4 - time_3)) <= timedelta(seconds=11)
 
-                    for message in receiver.get_streaming_message_iter(max_wait_time=3):
+                    for message in receiver._get_streaming_message_iter(max_wait_time=3):
                         messages.append(message)
                     time_5 = receiver._handler._counter.get_current_ms()
                     assert timedelta(seconds=1) < timedelta(milliseconds=(time_5 - time_4)) <= timedelta(seconds=4)
@@ -1894,7 +1894,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     time_6 = receiver._handler._counter.get_current_ms()
                     assert timedelta(seconds=3) < timedelta(milliseconds=(time_6 - time_5)) <= timedelta(seconds=6)
 
-                    for message in receiver.get_streaming_message_iter():
+                    for message in receiver._get_streaming_message_iter():
                         messages.append(message)
                     time_7 = receiver._handler._counter.get_current_ms()
                     assert timedelta(seconds=3) < timedelta(milliseconds=(time_7 - time_6)) <= timedelta(seconds=6)

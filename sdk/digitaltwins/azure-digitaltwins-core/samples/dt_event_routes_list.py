@@ -32,7 +32,7 @@ try:
     # List event routes
     event_routes = service_client.list_event_routes()
     for event_route in event_routes:
-        print(event_route + '\n')
+        print(event_route)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

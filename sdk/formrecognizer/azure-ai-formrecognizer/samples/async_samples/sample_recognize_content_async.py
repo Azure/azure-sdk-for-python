@@ -65,6 +65,7 @@ class RecognizeContentSampleAsync(object):
                 ))
                 for table_idx, table in enumerate(content.tables):
                     print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
+                    print("Table # {} location on page: {}".format(table_idx, format_bounding_box(table.bounding_box)))
                     for cell in table.cells:
                         print("...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
                             cell.row_index,
