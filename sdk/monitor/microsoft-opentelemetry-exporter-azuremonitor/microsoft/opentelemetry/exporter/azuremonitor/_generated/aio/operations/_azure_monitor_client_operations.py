@@ -8,11 +8,11 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -21,9 +21,9 @@ class AzureMonitorClientOperationsMixin:
 
     async def track(
         self,
-        body: List["models.TelemetryItem"],
+        body: List["_models.TelemetryItem"],
         **kwargs
-    ) -> "models.TrackResponse":
+    ) -> "_models.TrackResponse":
         """Track telemetry events.
 
         This operation sends a sequence of telemetry events that will be monitored by Azure Monitor.
@@ -35,18 +35,20 @@ class AzureMonitorClientOperationsMixin:
         :rtype: ~azure_monitor_client.models.TrackResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TrackResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TrackResponse"]
         error_map = {
+            401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.TrackResponse, response)),
-            402: lambda response: HttpResponseError(response=response, model=self._deserialize(models.TrackResponse, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.TrackResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.TrackResponse, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.TrackResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
+            402: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.track.metadata['url']  # type: ignore
@@ -61,13 +63,12 @@ class AzureMonitorClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(body, '[TelemetryItem]')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

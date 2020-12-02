@@ -11,8 +11,8 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration_async import AzureMonitorClientConfiguration
-from .operations_async import AzureMonitorClientOperationsMixin
+from ._configuration import AzureMonitorClientConfiguration
+from .operations import AzureMonitorClientOperationsMixin
 from .. import models
 
 
