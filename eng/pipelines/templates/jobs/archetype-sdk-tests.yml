@@ -11,6 +11,7 @@ parameters:
   BuildDocs: true
   JobName: Test
   AllocateResourceGroup: 'true'
+  DeployArmTemplate: 'false'
   TestTimeoutInMinutes: 120
   Location: ''
   Matrix:
@@ -68,7 +69,7 @@ jobs:
             displayName: Create resource group and environment variable for tests
 
           # figure out what's up with the create resource group above
-        - ${{ if eq(parameters['AllocateResourceGroup'], 'false') }}:
+        - ${{ if eq(parameters['DeployArmTemplate'], 'true') }}:
           - template: ../../../common/TestResources/deploy-test-resources.yml
             parameters:
               Location: ${{ coalesce(parameters.Location, cloudConfig.value.Location) }}
