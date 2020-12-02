@@ -7,9 +7,10 @@ import typing
 from enum import Enum
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import RetryPolicy
+from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RequestIdPolicy
 from opentelemetry.sdk.trace.export import SpanExportResult
 from microsoft.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
+from microsoft.opentelemetry.exporter.azuremonitor._generated._configuration import AzureMonitorClientConfiguration
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
 from microsoft.opentelemetry.exporter.azuremonitor.connection_string_parser import ConnectionStringParser
 from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
@@ -35,8 +36,8 @@ class BaseExporter:
         options: :doc:`export.options` to allow configuration for the exporter
     """
 
-    def __init__(self, **options):
-        options = ExporterOptions(**options)
+    def __init__(self, **kwargs):
+        options = ExporterOptions(**kwargs)
         parsed_connection_string = ConnectionStringParser(
             options.connection_string)
 
@@ -47,9 +48,26 @@ class BaseExporter:
         default_storage_path = os.path.join(
             tempfile.gettempdir(), TEMPDIR_PREFIX + temp_suffix
         )
-        retry_policy = RetryPolicy(timeout=self._timeout)
+
+        config = AzureMonitorClientConfiguration(parsed_connection_string.endpoint, **kwargs)
+        policies = [
+            RequestIdPolicy(**kwargs),
+            config.headers_policy,
+            config.user_agent_policy,
+            config.proxy_policy,
+            ContentDecodePolicy(**kwargs),
+            config.redirect_policy,
+            config.retry_policy,
+            config.authentication_policy,
+            config.custom_hook_policy,
+            config.logging_policy,
+            # Explicitly disabling to avoid infinite loop of Span creation when data is exported
+            # DistributedTracingPolicy(**kwargs),
+            config.http_logging_policy or HttpLoggingPolicy(**kwargs)
+        ]
+
         self.client = AzureMonitorClient(
-            parsed_connection_string.endpoint, retry_policy=retry_policy)
+            parsed_connection_string.endpoint, policies=policies)
         self.storage = LocalFileStorage(
             path=default_storage_path,
             max_size=50 * 1024 * 1024,  # Maximum size in bytes.
