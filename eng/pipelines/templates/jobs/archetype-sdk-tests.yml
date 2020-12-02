@@ -10,8 +10,8 @@ parameters:
   InjectedPackages: ''
   BuildDocs: true
   JobName: Test
-  AllocateResourceGroup: 'true'
-  DeployArmTemplate: 'false'
+  AllocateResourceGroup: true
+  DeployArmTemplate: false
   TestTimeoutInMinutes: 120
   Location: ''
   Matrix:
@@ -53,7 +53,7 @@ jobs:
       steps:
         - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
 
-        - ${{ if eq(parameters['AllocateResourceGroup'], 'true') }}:
+        - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
           - pwsh: |
               $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
               $RgName = "rg-${{ parameters.ServiceDirectory }}-$($BaseName)"
@@ -69,7 +69,7 @@ jobs:
             displayName: Create resource group and environment variable for tests
 
           # figure out what's up with the create resource group above
-        - ${{ if eq(parameters['DeployArmTemplate'], 'true') }}:
+        - ${{ if eq(parameters['DeployArmTemplate'], true) }}:
           - template: ../../../common/TestResources/deploy-test-resources.yml
             parameters:
               Location: ${{ coalesce(parameters.Location, cloudConfig.value.Location) }}
@@ -95,13 +95,13 @@ jobs:
             InjectedPackages: ${{ parameters.InjectedPackages }}
             BuildDocs: ${{parameters.BuildDocs}}
 
-        - ${{ if eq(parameters['AllocateResourceGroup'], 'true') }}:
+        - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
           - pwsh: |
               az group delete --resource-group $env:AZURE_RESOURCEGROUP_NAME -y --no-wait
             displayName: Delete resource group
             condition: ne(variables['AZURE_RESOURCEGROUP_NAME'], '')
 
-        - ${{ if eq(parameters['DeployArmTemplate'], 'true') }}:
+        - ${{ if eq(parameters['DeployArmTemplate'], true) }}:
           - template: /eng/common/TestResources/remove-test-resources.yml
             parameters:
               ServiceDirectory: '${{ parameters.ServiceDirectory }}'
