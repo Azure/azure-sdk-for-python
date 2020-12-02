@@ -24,7 +24,7 @@ class DimensionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-11-01. Constant value: "2019-11-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2020-06-01. Constant value: "2020-06-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class DimensionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-11-01"
+        self.api_version = "2020-06-01"
 
         self.config = config
 
@@ -145,3 +145,105 @@ class DimensionsOperations(object):
 
         return deserialized
     list.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/dimensions'}
+
+    def by_external_cloud_provider_type(
+            self, external_cloud_provider_type, external_cloud_provider_id, filter=None, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the dimensions by the external cloud provider type.
+
+        :param external_cloud_provider_type: The external cloud provider type
+         associated with dimension/query operations. This includes
+         'externalSubscriptions' for linked account and
+         'externalBillingAccounts' for consolidated account. Possible values
+         include: 'externalSubscriptions', 'externalBillingAccounts'
+        :type external_cloud_provider_type: str or
+         ~azure.mgmt.costmanagement.models.ExternalCloudProviderType
+        :param external_cloud_provider_id: This can be
+         '{externalSubscriptionId}' for linked account or
+         '{externalBillingAccountId}' for consolidated account used with
+         dimension/query operations.
+        :type external_cloud_provider_id: str
+        :param filter: May be used to filter dimensions by
+         properties/category, properties/usageStart, properties/usageEnd.
+         Supported operators are 'eq','lt', 'gt', 'le', 'ge'.
+        :type filter: str
+        :param expand: May be used to expand the properties/data within a
+         dimension category. By default, data is not included when listing
+         dimensions.
+        :type expand: str
+        :param skiptoken: Skiptoken is only used if a previous operation
+         returned a partial result. If a previous response contains a nextLink
+         element, the value of the nextLink element will include a skiptoken
+         parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
+        :param top: May be used to limit the number of results to the most
+         recent N dimension data.
+        :type top: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Dimension
+        :rtype:
+         ~azure.mgmt.costmanagement.models.DimensionPaged[~azure.mgmt.costmanagement.models.Dimension]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.by_external_cloud_provider_type.metadata['url']
+                path_format_arguments = {
+                    'externalCloudProviderType': self._serialize.url("external_cloud_provider_type", external_cloud_provider_type, 'str'),
+                    'externalCloudProviderId': self._serialize.url("external_cloud_provider_id", external_cloud_provider_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.DimensionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    by_external_cloud_provider_type.metadata = {'url': '/providers/Microsoft.CostManagement/{externalCloudProviderType}/{externalCloudProviderId}/dimensions'}
