@@ -79,12 +79,12 @@ This table shows the relationship between SDK versions and supported API version
 |5.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 3.0
 |5.1.0b3 - Latest release (beta)| 3.0, 3.1-preview.2, 3.1-preview.3
 
-Note: API version 3.1-preview.3 should be used exclusively for the Healthcare Analysis and Batch Analysis services, which are currently only supported in the following regions. 
-* Central US
-* West US 2
-* East US 2
-* North Europe
-* West Europe
+Note: API version 3.1-preview.3 should be used exclusively for the Healthcare Analysis and Batch Analysis services.  When creating a Cognitive Service or Text Analytics resource for accesing these services, be sure to use flags `--sku S` and one of the following regions for the `--region` flag.
+* centralus
+* westus2
+* eastus2
+* northeurope
+* westeurope
 
 
 ### Authenticate the client
