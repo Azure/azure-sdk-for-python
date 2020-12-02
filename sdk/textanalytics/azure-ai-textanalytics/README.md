@@ -8,6 +8,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 * Language Detection
 * Key Phrase Extraction
 * Healthcare Analysis (Gated Preview)
+* Batch Analysis
 
 [Source code][source_code] | [Package (PyPI)][TA_pypi] | [API reference documentation][TA_ref_docs]| [Product documentation][TA_product_documentation] | [Samples][TA_samples]
 
@@ -69,7 +70,7 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note: This version of the client library defaults to the v3.1-preview version of the service
+> Note: This version of the client library defaults to the v3.1-preview.2 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
@@ -77,6 +78,13 @@ This table shows the relationship between SDK versions and supported API version
 |-|-
 |5.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 3.0
 |5.1.0b3 - Latest release (beta)| 3.0, 3.1-preview.2, 3.1-preview.3
+
+Note: API version 3.1-preview.3 should be used exclusively for the Healthcare Analysis and Batch Analysis services, which are currently only supported in the following regions. 
+* Central US
+* West US 2
+* East US 2
+* North Europe
+* West Europe
 
 
 ### Authenticate the client
