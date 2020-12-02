@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_monitor_client_operations_async import AzureMonitorClientOperationsMixin
+from ._azure_monitor_client_operations import AzureMonitorClientOperationsMixin
 
 __all__ = [
     'AzureMonitorClientOperationsMixin',
