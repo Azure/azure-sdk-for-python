@@ -5,7 +5,7 @@ see `https://aka.ms/autorest`
 ## Getting started
 ```ps
 cd <swagger-folder>
-autorest --v3 --python autorest.md
+autorest --v3 --python
 ```
 ## Settings
 
