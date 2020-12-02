@@ -410,10 +410,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         tier = kwargs.pop('standard_blob_tier', None)
         overwrite = kwargs.pop('overwrite', False)
-        include_source_blob_properties = kwargs.pop('include_source_blob_properties', True)
-        blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
         content_settings = kwargs.pop('content_settings', None)
-        source_content_md5 = kwargs.pop('source_content_md5', None)
         if content_settings:
             kwargs['blob_http_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -433,11 +430,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         options = {
             'content_length': 0,
-            'copy_source_blob_properties': include_source_blob_properties,
-            'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
+            'copy_source_blob_properties': kwargs.pop('include_source_blob_properties', True),
+            'source_content_md5': kwargs.pop('source_content_md5', None),
             'copy_source': source_url,
             'modified_access_conditions': get_modify_conditions(kwargs),
-            'blob_tags_string': blob_tags_string,
+            'blob_tags_string': serialize_blob_tags_header(kwargs.pop('tags', None)),
             'cls': return_response_headers,
             'lease_access_conditions': get_access_conditions(kwargs.pop('destination_lease', None)),
             'tier': tier.value if tier else None,
