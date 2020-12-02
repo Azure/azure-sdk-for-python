@@ -110,6 +110,8 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 }
 
 function Get-python-GithubIoDocIndex() {
+  # Update the main.js and docfx.json language content
+  UpdateDocIndexFiles
   # Fetch out all package metadata from csv file.
   $metadata = Get-CSVMetadata -MetadataUri $MetadataUri
   # Get the artifacts name from blob storage
