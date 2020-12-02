@@ -145,7 +145,8 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         if entity.forward_to:
             await _populate_header(entity.forward_to, SUPPLEMENTARY_AUTHORIZATION_HEADER)
         if entity.forward_dead_lettered_messages_to:
-            await _populate_header(entity.forward_dead_lettered_messages_to, DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER)
+            await _populate_header(entity.forward_dead_lettered_messages_to, \
+                DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER)
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusAdministrationClient":

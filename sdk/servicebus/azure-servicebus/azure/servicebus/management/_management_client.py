@@ -13,7 +13,7 @@ from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
-    RequestIdPolicy, BearerTokenCredentialPolicy, HeadersPolicy
+    RequestIdPolicy, BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 
 from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
