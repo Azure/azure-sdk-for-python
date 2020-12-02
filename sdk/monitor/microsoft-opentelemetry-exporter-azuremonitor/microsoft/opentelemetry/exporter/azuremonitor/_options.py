@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+
 class BaseObject:
     __slots__ = ()
 
@@ -18,10 +19,8 @@ class BaseObject:
 
 
 class ExporterOptions(BaseObject):
-    """Options to configure Azure exporters.
-
-    Args:
-        connection_string: Azure Connection String.
+    """Configuration for Azure Exporters.
+    :param str connection_string: Azure Connection String.
     """
 
     __slots__ = (
