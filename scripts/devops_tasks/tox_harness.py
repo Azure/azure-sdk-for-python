@@ -153,7 +153,6 @@ def trim_cov_file(coverage_file):
     intro = ""
     with open(coverage_file, "r") as f_cov:
         for line in f_cov:
-            # Find '{', convert to JSON
             idx = line.find('{')
             intro = line[0:idx]
             line = line[idx:]
@@ -161,14 +160,11 @@ def trim_cov_file(coverage_file):
             files_tested = cov['lines'].keys()
             files_to_remove = []
             for keyword in remove_keywords:
-                # print(keyword)
                 for file_tested in files_tested:
                     if keyword in file_tested:
                         files_to_remove.append(file_tested)
-                        # del cov['lines'][file_tested]
             for f in files_to_remove:
                 del cov['lines'][f]
-        # print(cov)
         intro += json.dumps(cov)
     with open(coverage_file, "w") as f_cov:
         f_cov.write(intro)
@@ -178,7 +174,7 @@ def generate_coverage_xml():
     coverage_path = os.path.join(root_dir, ".coverage")
     if os.path.exists(coverage_path):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*,*azure-mgmt*"']
+        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*,*azure.mgmt*"']
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_path))
