@@ -23,14 +23,26 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - ${{ if eq(parameters.PythonVersion, '3.9.0') }}:
-    parameters.RunCoverage: true
-    parameters.CoverageArg: ''
-    # - pwsh: |
-    #   Write-Host "Enabling Code Coverage"
-    displayName: 'Enable Code Coverage'
+  # - ${{ if eq(parameters.PythonVersion, '3.9.0') }}:
+  #   parameters.RunCoverage: true
+  #   parameters.CoverageArg: ''
+  # - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
 
-  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+
+  - pwsh: |
+      Write-Host "Setting Python version as env var"
+      if ($PythonVersion -eq "Python 3.9.0") {
+        Write-Host "Enabling Code Coverage"
+        Write-Host "##vso[task.setvariable variable=CoverageArg]''"
+        Write-Host "##vso[task.setvariable variable=RunCoverage]True"
+        Write-Host $Env:CoverageArg
+      } else {
+        Write-Host "Disabling Code Coverage"
+        Write-Host "##vso[task.setvariable variable=CoverageArg]'--disablecov'"
+        Write-Host "##vso[task.setvariable variable=RunCoverage]False"
+        Write-Host $Env:CoverageArg
+      }
+    displayName: Set code coverage environment variables
 
   - script: |
       python -m pip install pip==20.1
