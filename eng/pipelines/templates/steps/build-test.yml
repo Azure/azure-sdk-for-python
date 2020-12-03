@@ -38,7 +38,7 @@ steps:
         Write-Host $Env:CoverageArg
       } else {
         Write-Host "Disabling Code Coverage"
-        Write-Host "##vso[task.setvariable variable=CoverageArg]'--disablecov'"
+        Write-Host "##vso[task.setvariable variable=CoverageArg]--disablecov"
         Write-Host "##vso[task.setvariable variable=RunCoverage]False"
         Write-Host $Env:CoverageArg
       }
