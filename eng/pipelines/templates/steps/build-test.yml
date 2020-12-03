@@ -23,6 +23,8 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+
   - script: |
       python -m pip install pip==20.1
       pip install -r eng/ci_tools.txt
@@ -32,7 +34,7 @@ steps:
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
-      parameters:
+      parameters: 
         DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ parameters.BeforeTestSteps }}
