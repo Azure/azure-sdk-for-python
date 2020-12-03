@@ -1,5 +1,8 @@
 # Release History
 
+## 4.3.2 (Unreleased)
+
+
 ## 4.3.1 (2020-12-03)
 ### Fixed
 - `CryptographyClient` operations no longer raise `AttributeError` when
