@@ -148,7 +148,7 @@ def collect_tox_coverage_files(targeted_packages):
 
 def trim_cov_file(coverage_file):
     # Remove generated files, python2 specific files
-    remove_keywords = ["_generated"]
+    remove_keywords = ["_generated", "azure-mgmt"]
     trimmed_info = []
     intro = ""
     with open(coverage_file, "r") as f_cov:
@@ -164,6 +164,7 @@ def trim_cov_file(coverage_file):
                     if keyword in file_tested:
                         files_to_remove.append(file_tested)
             for f in files_to_remove:
+                print(f)
                 del cov['lines'][f]
         intro += json.dumps(cov)
     with open(coverage_file, "w") as f_cov:
@@ -174,7 +175,7 @@ def generate_coverage_xml():
     coverage_path = os.path.join(root_dir, ".coverage")
     if os.path.exists(coverage_path):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*,*azure.mgmt*"']
+        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*,*mgmt*"']
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_path))
