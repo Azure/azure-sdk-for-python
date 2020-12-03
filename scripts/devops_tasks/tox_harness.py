@@ -126,7 +126,6 @@ def collect_tox_coverage_files(targeted_packages):
             coverage_files.append(destination_file)
 
     logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
-
     if len(coverage_files):
         cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
         cov_cmd_array.extend(coverage_files)
@@ -146,7 +145,7 @@ def generate_coverage_xml():
     coverage_path = os.path.join(root_dir, ".coverage")
     if os.path.exists(coverage_path):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"']
+        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*,*mgmt*"']
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_path))
