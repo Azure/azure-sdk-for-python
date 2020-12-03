@@ -908,6 +908,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(share2_tier, "Cool")
         await self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_with_protocol(self, resource_group, location, storage_account, storage_account_key):
@@ -927,6 +928,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(share_root_squash, ShareRootSquash.root_squash)
         await share_client.delete_share()
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_properties_with_root_squash(self, resource_group, location, storage_account, storage_account_key):
@@ -949,6 +951,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(share2_root_squash, ShareRootSquash.root_squash)
         await self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_root_squash_and_protocols(
