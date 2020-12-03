@@ -3,6 +3,6 @@
 
 -------------------
 
-## 0.0.1 (Unreleased)
+## 1.0.0b1 (Unreleased)
 
-- Training day!
+Initial release

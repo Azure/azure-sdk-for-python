@@ -7,7 +7,7 @@ Use the client library for Live Video Analytics on IoT Edge to:
 - Simplify interactions with the [Microsoft Azure IoT SDKs](https://github.com/azure/azure-iot-sdks) 
 - Programatically construct media graph topologies and instances
 
-[Package (PyPi)][package] | [Product documentation][doc_product] | [Direct methods][doc_direct_methods] | [Media graphs][doc_media_graph] | [Source code][source] | [Samples][samples]
+[Package (PyPI)][package] | [Product documentation][doc_product] | [Direct methods][doc_direct_methods] | [Media graphs][doc_media_graph] | [Source code][source] | [Samples][samples]
 
 ## Getting started
 
@@ -16,7 +16,7 @@ Use the client library for Live Video Analytics on IoT Edge to:
 Install the Live Video Analytics client library for Python with pip:
 
 ```bash
-pip install azure-media-livevideoanalytics--edge
+pip install azure-media-livevideoanalytics-edge
 ```
 ### Prerequisites
 
