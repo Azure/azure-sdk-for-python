@@ -4,6 +4,7 @@ import errno
 import shutil
 import re
 import multiprocessing
+import json
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -127,6 +128,10 @@ def collect_tox_coverage_files(targeted_packages):
 
     logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
     if len(coverage_files):
+        # Remove portions of coverage file that are not desired
+        for cov_file in coverage_files:
+            trim_cov_file(cov_file)
+
         cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
         cov_cmd_array.extend(coverage_files)
 
@@ -141,11 +146,41 @@ def collect_tox_coverage_files(targeted_packages):
         generate_coverage_xml()
 
 
+def trim_cov_file(coverage_file):
+    # Remove generated files, python2 specific files
+    remove_keywords = ["_generated"]
+    trimmed_info = []
+    intro = ""
+    with open(coverage_file, "r") as f_cov:
+        for line in f_cov:
+            # Find '{', convert to JSON
+            idx = line.find('{')
+            print(f"Index: {idx}")
+            intro = line[0:idx]
+            line = line[idx:]
+            print(f"INTRO: {intro}")
+            cov = json.loads(line)
+            files_tested = cov['lines'].keys()
+            files_to_remove = []
+            for keyword in remove_keywords:
+                # print(keyword)
+                for file_tested in files_tested:
+                    if keyword in file_tested:
+                        files_to_remove.append(file_tested)
+                        # del cov['lines'][file_tested]
+            for f in files_to_remove:
+                del cov['lines'][f]
+        # print(cov)
+        intro += json.dumps(cov)
+    with open(coverage_file, "w") as f_cov:
+        f_cov.write(intro)
+
+
 def generate_coverage_xml():
     coverage_path = os.path.join(root_dir, ".coverage")
     if os.path.exists(coverage_path):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*,*mgmt*"']
+        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*,*azure-mgmt*"']
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_path))
