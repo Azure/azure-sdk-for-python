@@ -48,7 +48,7 @@ known_content_issues:
   - ['sdk/synapse/azure-synapse-spark/README.md', '#4554']
   - ['sdk/synapse/azure-synapse-artifacts/README.md', '#4554']
   - ['sdk/synapse/azure-synapse-monitoring/README.md', '#4554']
-  - ['sdk/synapse/azure-synapse-vnet/README.md', '#4554']
+  - ['sdk/synapse/azure-synapse-managedprivateendpoints/README.md', '#4554']
   - ['sdk/synapse/azure-synapse-nspkg/README.md', '#4554']
   - ['sdk/anomalydetector/azure-ai-anomalydetector/README.md', '#4554']
   - ['sdk/metricsadvisor/azure-ai-metricsadvisor/README.md', '#4554']

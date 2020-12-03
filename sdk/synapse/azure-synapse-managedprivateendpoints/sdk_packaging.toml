@@ -1,5 +1,5 @@
 [packaging]
-package_name = "azure-synapse-vnet"
+package_name = "azure-synapse-managedprivateendpoints"
 package_nspkg = "azure-synapse-nspkg"
 package_pprint_name = "Synapse Vnet"
 package_doc_id = ""

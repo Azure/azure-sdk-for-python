@@ -36,8 +36,8 @@ extends:
       safeName: azuresynapseartifacts
     - name: azure_synapse_monitoring
       safeName: azuresynapsemonitoring
-    - name: azure_synapse_vent
-      safeName: azuresynapsevent
+    - name: azure_synapse_managedprivateendpoints
+      safeName: azuresynapsemanagedprivateendpoints
     - name: azure_synapse
       safeName: azuresynapse
     - name: azure_synapse_nspkg
