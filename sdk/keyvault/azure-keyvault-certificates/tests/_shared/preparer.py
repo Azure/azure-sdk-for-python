@@ -9,7 +9,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.identity import EnvironmentCredential
-from devtools_testutils import AzureMgmtPreparer
+from devtools_testutils import AzureMgmtPreparer, CachedResourceGroupPreparer, KeyVaultPreparer
 
 
 class KeyVaultClientPreparer(AzureMgmtPreparer):
@@ -27,3 +27,15 @@ class KeyVaultClientPreparer(AzureMgmtPreparer):
         credential = self.create_credential()
         client = self._client_cls(kwargs.get("vault_uri"), credential, **self.client_kwargs)
         return {"client": client}
+
+
+class CachedKeyVaultPreparer(KeyVaultPreparer):
+    def __init__(self, *args, **kwargs):
+        super(CachedKeyVaultPreparer, self).__init__(*args, **kwargs)
+        self.set_cache(True, self.parameter_name)
+
+    def create_resource(self, name, **kwargs):
+        if self.is_live and self.resource_group_parameter_name not in kwargs:
+            rg_preparer = CachedResourceGroupPreparer()
+            _, kwargs = rg_preparer._prepare_create_resource(self.test_class_instance, **kwargs)
+        return super(CachedKeyVaultPreparer, self).create_resource(name, **kwargs)
