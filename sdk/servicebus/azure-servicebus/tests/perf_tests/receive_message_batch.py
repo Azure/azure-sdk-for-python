@@ -12,7 +12,7 @@ class ReceiveMessageBatchTest(_ReceiveTest):
     def run_sync(self):
         received_msgs = self.receiver.receive_messages(
             max_message_count=self.args.num_messages,
-            max_wait_time=self.args.max_wait_time)
+            max_wait_time=self.args.max_wait_time or None)
         if self.args.peeklock:
             for msg in received_msgs:
                 self.receiver.complete_message(msg)
@@ -20,6 +20,6 @@ class ReceiveMessageBatchTest(_ReceiveTest):
     async def run_async(self):
         received_msgs = await self.async_receiver.receive_messages(
             max_message_count=self.args.num_messages,
-            max_wait_time=self.args.max_wait_time)
+            max_wait_time=self.args.max_wait_time or None)
         if self.args.peeklock:
             await asyncio.gather(*[self.async_receiver.complete_message(m) for m in received_msgs])

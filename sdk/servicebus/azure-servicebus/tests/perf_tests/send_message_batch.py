@@ -5,15 +5,18 @@
 
 from ._test_base import _SendTest
 
+from azure_devtools.perfstress_tests import get_random_bytes
+
 from azure.servicebus import ServiceBusMessage
+
 
 class SendMessageBatchTest(_SendTest):
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.data = b'a' * self.args.message_size
+        self.data = get_random_bytes(self.args.message_size)
 
     def run_sync(self):
-        batch = self.sender.create_message_batch(max_size_in_bytes=self.args.batch_size)
+        batch = self.sender.create_message_batch()
         try:
             while True:
                 message = ServiceBusMessage(self.data)
@@ -23,16 +26,11 @@ class SendMessageBatchTest(_SendTest):
             self.sender.send_messages(batch)
 
     async def run_async(self):
-        batch = await self.async_sender.create_message_batch(max_size_in_bytes=self.args.batch_size)
+        batch = await self.async_sender.create_message_batch()
         try:
             while True:
                 message = ServiceBusMessage(self.data)
                 batch.add_message(message)
         except ValueError:
             # Batch full
-            await self.sender.send_messages(batch)
-
-    @staticmethod
-    def add_arguments(parser):
-        super(SendMessageBatchTest, SendMessageBatchTest).add_arguments(parser)
-        parser.add_argument('--batch-size', nargs='?', type=int, help='Maximum size of a batch of messages. Defaults to 4*1024*1024', default=4*1024*1024)
+            await self.async_sender.send_messages(batch)

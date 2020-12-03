@@ -6,7 +6,7 @@
 import uuid
 from urllib.parse import urlparse
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from azure_devtools.perfstress_tests import PerfStressTest, get_random_bytes
 
 from azure.servicebus import ServiceBusClient, ReceiveSettleMode, BatchMessage
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
@@ -20,9 +20,9 @@ def parse_connection_string(conn_str):
     shared_access_key_name = conn_settings.get('SharedAccessKeyName')
     endpoint = conn_settings.get('Endpoint')
     parsed = urlparse(endpoint.rstrip('/'))
-    namespace = parsed.netloc.strip()
+    namespace = parsed.netloc.strip().split('.')[0]
     return {
-        'fully_qualified_namespace': namespace,
+        'namespace': namespace,
         'endpoint': endpoint,
         'entity_path': conn_settings.get('EntityPath'),
         'shared_access_key_name': shared_access_key_name,
@@ -45,10 +45,6 @@ class _ServiceTest(PerfStressTest):
         self.service_client = _ServiceTest.service_client
         self.async_service_client =_ServiceTest.async_service_client
 
-    async def close(self):
-        await self.async_service_client.close()
-        await super().close()
-
     @staticmethod
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
@@ -64,16 +60,13 @@ class _QueueTest(_ServiceTest):
         connection_string = self.get_from_env("AZURE_SERVICEBUS_CONNECTION_STRING")
         connection_props = parse_connection_string(connection_string)
         self.mgmt_client = ServiceBusService(
-            service_namespace=connection_props['fully_qualified_namespace'],
+            service_namespace=connection_props['namespace'],
             shared_access_key_name=connection_props['shared_access_key_name'],
             shared_access_key_value=connection_props['shared_access_key']
         )
+        self.mgmt_client.create_queue(self.queue_name)
         self.queue_client = self.service_client.get_queue(self.queue_name)
         self.async_queue_client = self.async_service_client.get_queue(self.queue_name)
-
-    async def global_setup(self):
-        await super().global_setup()
-        self.mgmt_client.create_queue(self.queue_name)
 
     async def global_cleanup(self):
         self.mgmt_client.delete_queue(self.queue_name)
@@ -105,19 +98,20 @@ class _ReceiveTest(_QueueTest):
         mode = ReceiveSettleMode.PeekLock if self.args.peeklock else ReceiveSettleMode.ReceiveAndDelete
         self.receiver = self.queue_client.get_receiver(
             mode=mode,
-            prefetch=self.args.prefetch,
+            prefetch=self.args.num_messages,
             idle_timeout=self.args.max_wait_time)
         self.async_receiver = self.async_queue_client.get_receiver(
             mode=mode,
-            prefetch=self.args.prefetch,
+            prefetch=self.args.num_messages,
             idle_timeout=self.args.max_wait_time)
     
     async def _preload_queue(self):
-        data = b'a' * self.args.message_size
+        data = get_random_bytes(self.args.message_size)
         async with self.async_queue_client.get_sender() as sender:
-            messages = (data for _ in range(self.args.preload))
-            batch = BatchMessage(messages)
-            await sender.send(batch)
+            for i in range(0, self.args.preload, 50):
+                messages = (data for _ in range(i, i + 50))
+                batch = BatchMessage(messages)
+                await sender.send(batch)
 
     async def global_setup(self):
         await super().global_setup()
@@ -133,8 +127,8 @@ class _ReceiveTest(_QueueTest):
     @staticmethod
     def add_arguments(parser):
         super(_ReceiveTest, _ReceiveTest).add_arguments(parser)
-        parser.add_argument('--preload', nargs='?', type=int, help='Number of messages to pre-load in the queue. Defaults to 1000.', default=1000)
+        parser.add_argument('--preload', nargs='?', type=int, help='Number of messages to pre-load in the queue. Defaults to 5000.', default=5000)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
-        parser.add_argument('--prefetch', nargs='?', type=int, help='Max number of messages fetched on the connection. Defaults to 0.', default=0)
+        #parser.add_argument('--prefetch', nargs='?', type=int, help='Max number of messages fetched on the connection. Defaults to 0.', default=0)
         parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for messages before closing. Defaults to 0.', default=0)
         parser.add_argument('--num-messages', nargs='?', type=int, help='Maximum number of messages to receive. Defaults to 100', default=100)

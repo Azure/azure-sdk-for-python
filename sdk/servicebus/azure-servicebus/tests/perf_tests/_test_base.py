@@ -5,9 +5,9 @@
 
 import uuid
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from azure_devtools.perfstress_tests import PerfStressTest, get_random_bytes
 
-from azure.servicebus import ServiceBusClient, ReceiveMode, ServiceBusMessage
+from azure.servicebus import ServiceBusClient, ServiceBusReceiveMode, ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
@@ -65,11 +65,6 @@ class _SendTest(_QueueTest):
         super().__init__(arguments)
         self.sender = self.service_client.get_queue_sender(self.queue_name)
         self.async_sender = self.async_service_client.get_queue_sender(self.queue_name)
-
-    async def global_setup(self):
-        await super().global_setup()
-        self.sender.open()
-        await self.async_sender.open()
     
     async def global_cleanup(self):
         self.sender.close()
@@ -81,20 +76,20 @@ class _ReceiveTest(_QueueTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
-        mode = ReceiveMode.PeekLock if self.args.peeklock else ReceiveMode.ReceiveAndDelete
+        mode = ServiceBusReceiveMode.PEEK_LOCK if self.args.peeklock else ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self.receiver = self.service_client.get_queue_receiver(
             queue_name=self.queue_name,
             receive_mode=mode,
-            prefetch_count=self.args.prefetch,
-            max_wait_time=self.args.max_wait_time)
-        self.async_receiver = self.service_client.get_queue_receiver(
+            prefetch_count=self.args.num_messages,
+            max_wait_time=self.args.max_wait_time or None)
+        self.async_receiver = self.async_service_client.get_queue_receiver(
             queue_name=self.queue_name,
             receive_mode=mode,
-            prefetch_count=self.args.prefetch,
-            max_wait_time=self.args.max_wait_time)
+            prefetch_count=self.args.num_messages,
+            max_wait_time=self.args.max_wait_time or None)
     
     async def _preload_queue(self):
-        data = b'a' * self.args.message_size
+        data = get_random_bytes(self.args.message_size)
         async with self.async_service_client.get_queue_sender(self.queue_name) as sender:
             batch = await sender.create_message_batch()
             for i in range(self.args.preload):
@@ -109,8 +104,8 @@ class _ReceiveTest(_QueueTest):
     async def global_setup(self):
         await super().global_setup()
         await self._preload_queue()
-        self.receiver.open()
-        await self.async_receiver.open()
+        # self.receiver.open()
+        # await self.async_receiver.open()
     
     async def global_cleanup(self):
         self.receiver.close()
@@ -120,8 +115,8 @@ class _ReceiveTest(_QueueTest):
     @staticmethod
     def add_arguments(parser):
         super(_ReceiveTest, _ReceiveTest).add_arguments(parser)
-        parser.add_argument('--preload', nargs='?', type=int, help='Number of messages to pre-load in the queue. Defaults to 1000.', default=1000)
+        parser.add_argument('--preload', nargs='?', type=int, help='Number of messages to pre-load in the queue. Defaults to 5000.', default=5000)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
-        parser.add_argument('--prefetch', nargs='?', type=int, help='Max number of messages fetched on the connection. Defaults to 0.', default=0)
+        #parser.add_argument('--prefetch', nargs='?', type=int, help='Max number of messages fetched on the connection. Defaults to 0.', default=0)
         parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for messages before closing. Defaults to 0.', default=0)
         parser.add_argument('--num-messages', nargs='?', type=int, help='Maximum number of messages to receive. Defaults to 100', default=100)

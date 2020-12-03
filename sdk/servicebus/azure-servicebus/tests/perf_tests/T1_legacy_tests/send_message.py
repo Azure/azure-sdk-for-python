@@ -5,6 +5,8 @@
 
 from ._test_base import _SendTest
 
+from azure_devtools.perfstress_tests import get_random_bytes
+
 from azure.servicebus import Message
 from azure.servicebus.aio import Message as AsyncMessage
 
@@ -12,7 +14,7 @@ from azure.servicebus.aio import Message as AsyncMessage
 class LegacySendMessageTest(_SendTest):
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.data = b'a' * self.args.message_size
+        self.data = get_random_bytes(self.args.message_size)
 
     def run_sync(self):
         message = Message(self.data)
