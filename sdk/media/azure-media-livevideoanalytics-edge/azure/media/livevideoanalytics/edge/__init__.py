@@ -1,5 +1,5 @@
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: ignore
-from azure.media.lva.edge._generated.models import (MediaGraphTopologySetRequestBody,
+from azure.media.livevideoanalytics.edge._generated.models import (MediaGraphTopologySetRequestBody,
 MediaGraphTopologySetRequest, MediaGraphInstanceSetRequest, MediaGraphInstanceSetRequestBody)
 
 def _OverrideTopologySetRequestSerialize(self):
