@@ -4,12 +4,30 @@
 # --------------------------------------------------------------------------------------------
 
 import uuid
+from urllib.parse import urlparse
 
 from azure_devtools.perfstress_tests import PerfStressTest
 
-from azure.servicebus import ServiceBusClient, ReceiveMode, ServiceBusMessage
+from azure.servicebus import ServiceBusClient, ReceiveSettleMode, BatchMessage
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
-from azure.servicebus.aio.management import ServiceBusAdministrationClient
+from azure.servicebus.control_client import ServiceBusService
+
+
+def parse_connection_string(conn_str):
+    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
+    conn_settings = dict(conn_settings)
+    shared_access_key = conn_settings.get('SharedAccessKey')
+    shared_access_key_name = conn_settings.get('SharedAccessKeyName')
+    endpoint = conn_settings.get('Endpoint')
+    parsed = urlparse(endpoint.rstrip('/'))
+    namespace = parsed.netloc.strip()
+    return {
+        'fully_qualified_namespace': namespace,
+        'endpoint': endpoint,
+        'entity_path': conn_settings.get('EntityPath'),
+        'shared_access_key_name': shared_access_key_name,
+        'shared_access_key': shared_access_key
+    }
 
 
 class _ServiceTest(PerfStressTest):
@@ -44,29 +62,30 @@ class _QueueTest(_ServiceTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         connection_string = self.get_from_env("AZURE_SERVICEBUS_CONNECTION_STRING")
-        self.async_mgmt_client = ServiceBusAdministrationClient.from_connection_string(connection_string)
+        connection_props = parse_connection_string(connection_string)
+        self.mgmt_client = ServiceBusService(
+            service_namespace=connection_props['fully_qualified_namespace'],
+            shared_access_key_name=connection_props['shared_access_key_name'],
+            shared_access_key_value=connection_props['shared_access_key']
+        )
         self.queue_client = self.service_client.get_queue(self.queue_name)
-        self.async_queue_client = self.service_client.get_queue(self.queue_name)
+        self.async_queue_client = self.async_service_client.get_queue(self.queue_name)
 
     async def global_setup(self):
         await super().global_setup()
-        await self.async_mgmt_client.create_queue(self.queue_name)
+        self.mgmt_client.create_queue(self.queue_name)
 
     async def global_cleanup(self):
-        await self.async_mgmt_client.delete_queue(self.queue_name)
+        self.mgmt_client.delete_queue(self.queue_name)
         await super().global_cleanup()
-
-    async def close(self):
-        await self.async_mgmt_client.close()
-        await super().close()
 
 
 class _SendTest(_QueueTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.sender = self.service_client.get_queue_sender(self.queue_name)
-        self.async_sender = self.async_service_client.get_queue_sender(self.queue_name)
+        self.sender = self.queue_client.get_sender()
+        self.async_sender = self.async_queue_client.get_sender()
 
     async def global_setup(self):
         await super().global_setup()
@@ -83,30 +102,22 @@ class _ReceiveTest(_QueueTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
-        mode = ReceiveMode.PeekLock if self.args.peeklock else ReceiveMode.ReceiveAndDelete
-        self.receiver = self.service_client.get_queue_receiver(
-            queue_name=self.queue_name,
-            receive_mode=mode,
-            prefetch_count=self.args.prefetch,
-            max_wait_time=self.args.max_wait_time)
-        self.async_receiver = self.service_client.get_queue_receiver(
-            queue_name=self.queue_name,
-            receive_mode=mode,
-            prefetch_count=self.args.prefetch,
-            max_wait_time=self.args.max_wait_time)
+        mode = ReceiveSettleMode.PeekLock if self.args.peeklock else ReceiveSettleMode.ReceiveAndDelete
+        self.receiver = self.queue_client.get_receiver(
+            mode=mode,
+            prefetch=self.args.prefetch,
+            idle_timeout=self.args.max_wait_time)
+        self.async_receiver = self.async_queue_client.get_receiver(
+            mode=mode,
+            prefetch=self.args.prefetch,
+            idle_timeout=self.args.max_wait_time)
     
     async def _preload_queue(self):
         data = b'a' * self.args.message_size
-        async with self.async_service_client.get_queue_sender(self.queue_name) as sender:
-            batch = await sender.create_message_batch()
-            for i in range(self.args.preload):
-                try:
-                    message = ServiceBusMessage(data)
-                    batch.add_message(message)
-                except ValueError:
-                    # Batch full
-                    await sender.send_messages(batch)
-                    batch = await sender.create_message_batch()
+        async with self.async_queue_client.get_sender() as sender:
+            messages = (data for _ in range(self.args.preload))
+            batch = BatchMessage(messages)
+            await sender.send(batch)
 
     async def global_setup(self):
         await super().global_setup()

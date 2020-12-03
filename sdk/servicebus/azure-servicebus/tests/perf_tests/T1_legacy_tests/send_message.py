@@ -5,7 +5,9 @@
 
 from ._test_base import _SendTest
 
-from azure.servicebus import ServiceBusMessage
+from azure.servicebus import Message
+from azure.servicebus.aio import Message as AsyncMessage
+
 
 class LegacySendMessageTest(_SendTest):
     def __init__(self, arguments):
@@ -13,9 +15,9 @@ class LegacySendMessageTest(_SendTest):
         self.data = b'a' * self.args.message_size
 
     def run_sync(self):
-        message = ServiceBusMessage(self.data)
-        self.sender.send_messages(message)
+        message = Message(self.data)
+        self.sender.send(message)
 
     async def run_async(self):
-        message = ServiceBusMessage(self.data)
-        await self.async_sender.send_messages(message)
+        message = AsyncMessage(self.data)
+        await self.async_sender.send(message)

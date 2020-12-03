@@ -16,7 +16,7 @@ class LegacyReceiveMessageStreamTest(_ReceiveTest):
                 if count >= self.args.num_messages:
                     break
                 count += 1
-                self.receiver.complete_message(msg)
+                msg.complete()
         else:
             for msg in self.receiver:
                 if count >= self.args.num_messages:
@@ -30,7 +30,7 @@ class LegacyReceiveMessageStreamTest(_ReceiveTest):
                 if count >= self.args.num_messages:
                     break
                 count += 1
-                await self.async_receiver.complete_message(msg)
+                await msg.complete()
         else:
             async for msg in self.async_receiver:
                 if count >= self.args.num_messages:

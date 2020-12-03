@@ -34,5 +34,5 @@ class SendMessageBatchTest(_SendTest):
 
     @staticmethod
     def add_arguments(parser):
-        super(SendMessageTest, SendMessageTest).add_arguments(parser)
+        super(SendMessageBatchTest, SendMessageBatchTest).add_arguments(parser)
         parser.add_argument('--batch-size', nargs='?', type=int, help='Maximum size of a batch of messages. Defaults to 4*1024*1024', default=4*1024*1024)

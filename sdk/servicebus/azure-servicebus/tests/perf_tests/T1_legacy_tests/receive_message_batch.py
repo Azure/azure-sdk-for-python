@@ -10,16 +10,12 @@ from ._test_base import _ReceiveTest
 
 class LegacyReceiveMessageBatchTest(_ReceiveTest):
     def run_sync(self):
-        received_msgs = self.receiver.receive_messages(
-            max_message_count=self.args.num_messages,
-            max_wait_time=self.args.max_wait_time)
+        batch = self.receiver.fetch_next(max_batch_size=self.args.num_messages)
         if self.args.peeklock:
-            for msg in received_msgs:
-                self.receiver.complete_message(msg)
+            for msg in batch:
+                msg.complete()
 
     async def run_async(self):
-        received_msgs = await self.async_receiver.receive_messages(
-            max_message_count=self.args.num_messages,
-            max_wait_time=self.args.max_wait_time)
+        batch = await self.async_receiver.fetch_next(max_batch_size=self.args.num_messages)
         if self.args.peeklock:
-            await asyncio.gather(*[self.async_receiver.complete_message(m) for m in received_msgs])
+            await asyncio.gather(*[m.complete() for m in batch])
