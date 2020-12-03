@@ -15,6 +15,7 @@ except ImportError:
     from inspect import getargspec as get_arg_spec
 
 import pytest
+from dotenv import load_dotenv, find_dotenv
 
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
@@ -101,6 +102,7 @@ class AzureTestCase(ReplayableTest):
         config_file = config_file or os.path.join(self.working_folder, TEST_SETTING_FILENAME)
         if not os.path.exists(config_file):
             config_file = None
+        load_dotenv(find_dotenv())
         super(AzureTestCase, self).__init__(
             method_name,
             config_file=config_file,
