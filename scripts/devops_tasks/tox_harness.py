@@ -155,10 +155,8 @@ def trim_cov_file(coverage_file):
         for line in f_cov:
             # Find '{', convert to JSON
             idx = line.find('{')
-            print(f"Index: {idx}")
             intro = line[0:idx]
             line = line[idx:]
-            print(f"INTRO: {intro}")
             cov = json.loads(line)
             files_tested = cov['lines'].keys()
             files_to_remove = []
