@@ -47,8 +47,8 @@ jobs:
 
       - pwsh: |
           Write-Host "Setting Python version as env var"
-          Write-Host ($PythonVersion)
-          if ($PythonVersion -eq "Python 3.9.0") {
+          Write-Host $Env:PythonVersion
+          if ($Env:PythonVersion -eq "Python 3.9.0") {
             Write-Host "Enabling Code Coverage"
             Write-Host "##vso[task.setvariable variable=CoverageArg]True"
             Write-Host $Env:CoverageArg
