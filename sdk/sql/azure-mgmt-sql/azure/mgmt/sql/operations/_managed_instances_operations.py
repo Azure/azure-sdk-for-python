@@ -47,17 +47,17 @@ class ManagedInstancesOperations(object):
         # Construct URL
         url = self.failover.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
         if replica_type is not None:
             query_parameters['replicaType'] = self._serialize.query("replica_type", replica_type, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -85,10 +85,12 @@ class ManagedInstancesOperations(object):
             self, resource_group_name, managed_instance_name, replica_type=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Failovers a managed instance.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param managed_instance_name: The name of the managed instance.
+        :param managed_instance_name: The name of the managed instance to
+         failover.
         :type managed_instance_name: str
         :param replica_type: The type of replica to be failed over. Possible
          values include: 'Primary', 'ReadableSecondary'

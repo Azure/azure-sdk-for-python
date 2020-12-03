@@ -625,8 +625,7 @@ class Database(TrackedResource):
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
     :param storage_account_type: The storage account type used to store
-     backups for this database. Currently the only supported option is GRS
-     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
@@ -640,7 +639,7 @@ class Database(TrackedResource):
     :vartype resumed_date: datetime
     :param maintenance_configuration_id: Maintenance configuration id assigned
      to the database. This configuration defines the period when the
-     maintenance updates will be rolled out.
+     maintenance updates will occur.
     :type maintenance_configuration_id: str
     """
 
@@ -1289,8 +1288,7 @@ class DatabaseUpdate(Model):
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
     :param storage_account_type: The storage account type used to store
-     backups for this database. Currently the only supported option is GRS
-     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
@@ -1304,7 +1302,7 @@ class DatabaseUpdate(Model):
     :vartype resumed_date: datetime
     :param maintenance_configuration_id: Maintenance configuration id assigned
      to the database. This configuration defines the period when the
-     maintenance updates will be rolled out.
+     maintenance updates will occur.
     :type maintenance_configuration_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -1905,7 +1903,7 @@ class ElasticPool(TrackedResource):
     :type license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
     :param maintenance_configuration_id: Maintenance configuration id assigned
      to the elastic pool. This configuration defines the period when the
-     maintenance updates will be rolled out.
+     maintenance updates will will occur.
     :type maintenance_configuration_id: str
     """
 
@@ -2557,7 +2555,7 @@ class ElasticPoolUpdate(Model):
     :type license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
     :param maintenance_configuration_id: Maintenance configuration id assigned
      to the elastic pool. This configuration defines the period when the
-     maintenance updates will be rolled out.
+     maintenance updates will will occur.
     :type maintenance_configuration_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
