@@ -26,8 +26,8 @@ steps:
   - ${{ if eq(parameters.PythonVersion, '3.9.0') }}:
     parameters.RunCoverage: true
     parameters.CoverageArg: ''
-    - pwsh: |
-      Write-Host "Enabling Code Coverage"
+    # - pwsh: |
+    #   Write-Host "Enabling Code Coverage"
     displayName: 'Enable Code Coverage'
 
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
