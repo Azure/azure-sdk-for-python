@@ -26,6 +26,7 @@ from ._virtual_machine_scale_set_vm_extensions_operations import VirtualMachineS
 from ._virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from ._log_analytics_operations import LogAnalyticsOperations
 from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
+from ._virtual_machine_scale_set_vm_run_commands_operations import VirtualMachineScaleSetVMRunCommandsOperations
 
 __all__ = [
     'Operations',
@@ -48,4 +49,5 @@ __all__ = [
     'VirtualMachineScaleSetVMsOperations',
     'LogAnalyticsOperations',
     'VirtualMachineRunCommandsOperations',
+    'VirtualMachineScaleSetVMRunCommandsOperations',
 ]

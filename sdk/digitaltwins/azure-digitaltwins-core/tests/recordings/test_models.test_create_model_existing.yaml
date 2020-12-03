@@ -1,0 +1,168 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ATempModel2fc70f9f%3B1?includeModelDefinition=false&api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
+        that matches the provided id(s) dtmi:com:samples:TempModel2fc70f9f;1. Check
+        that the Model ID provided is valid by doing a Model_List API call."}}'
+    headers:
+      content-length:
+      - '221'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 21:09:07 GMT
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel2fc70f9f%3B1?includeModelDefinition=false&api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
+        that matches the provided id(s) dtmi:com:samples:ComponentModel2fc70f9f;1.
+        Check that the Model ID provided is valid by doing a Model_List API call."}}'
+    headers:
+      content-length:
+      - '226'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 21:09:07 GMT
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: '[{"@id": "dtmi:com:samples:TempModel2fc70f9f;1", "@type": "Interface",
+      "@context": "dtmi:dtdl:context;2", "displayName": "TempModel", "contents": [{"@type":
+      "Property", "name": "Prop1", "schema": "string"}, {"@type": "Telemetry", "name":
+      "Telemetry1", "schema": "integer"}]}]'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '275'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '[{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:08.535384+00:00"}]'
+    headers:
+      content-length:
+      - '168'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 21:09:07 GMT
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '[{"@id": "dtmi:com:samples:ComponentModel2fc70f9f;1", "@type": "Interface",
+      "@context": "dtmi:dtdl:context;2", "displayName": "Component1", "contents":
+      [{"@type": "Property", "name": "ComponentProp1", "schema": "string"}, {"@type":
+      "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"}]}, {"@id":
+      "dtmi:com:samples:TempModel2fc70f9f;1", "@type": "Interface", "@context": "dtmi:dtdl:context;2",
+      "displayName": "TempModel", "contents": [{"@type": "Property", "name": "Prop1",
+      "schema": "string"}, {"@type": "Telemetry", "name": "Telemetry1", "schema":
+      "integer"}]}]'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '574'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelIdAlreadyExists","message":"Some of the model
+        ids already exist: dtmi:com:samples:TempModel2fc70f9f;1. Use Model_List API
+        to view models that already exist. See the Swagger example (http://aka.ms/ModelListSwSmpl)."}}'
+    headers:
+      content-length:
+      - '239'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 21:09:07 GMT
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 409
+      message: Conflict
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel2fc70f9f%3B1?includeModelDefinition=false&api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
+        that matches the provided id(s) dtmi:com:samples:ComponentModel2fc70f9f;1.
+        Check that the Model ID provided is valid by doing a Model_List API call."}}'
+    headers:
+      content-length:
+      - '226'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 21:09:08 GMT
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+version: 1

@@ -15,7 +15,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class InboundSecurityRuleOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,11 +51,11 @@ class InboundSecurityRuleOperations(object):
         resource_group_name,  # type: str
         network_virtual_appliance_name,  # type: str
         rule_collection_name,  # type: str
-        parameters,  # type: "models.InboundSecurityRule"
+        parameters,  # type: "_models.InboundSecurityRule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.InboundSecurityRule"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InboundSecurityRule"]
+        # type: (...) -> "_models.InboundSecurityRule"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InboundSecurityRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,10 +111,10 @@ class InboundSecurityRuleOperations(object):
         resource_group_name,  # type: str
         network_virtual_appliance_name,  # type: str
         rule_collection_name,  # type: str
-        parameters,  # type: "models.InboundSecurityRule"
+        parameters,  # type: "_models.InboundSecurityRule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.InboundSecurityRule"]
+        # type: (...) -> LROPoller["_models.InboundSecurityRule"]
         """Creates or updates the specified Network Virtual Appliance Inbound Security Rules.
 
         :param resource_group_name: The name of the resource group.
@@ -137,7 +137,7 @@ class InboundSecurityRuleOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InboundSecurityRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InboundSecurityRule"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -163,7 +163,14 @@ class InboundSecurityRuleOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkVirtualApplianceName': self._serialize.url("network_virtual_appliance_name", network_virtual_appliance_name, 'str'),
+            'ruleCollectionName': self._serialize.url("rule_collection_name", rule_collection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

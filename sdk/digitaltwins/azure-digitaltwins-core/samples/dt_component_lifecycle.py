@@ -24,14 +24,14 @@ from azure.digitaltwins.core import DigitalTwinsClient
 # For the purpose of this example we will create temporary digital twin using random Ids.
 # We have to make sure these model Ids are unique within the DT instance so we use generated UUIDs.
 try:
-    model_id = 'model-' + str(uuid.uuid4())
-    component_id = 'component-' + str(uuid.uuid4())
+    model_id = 'dtmi:samples:componentlifecyclemodel;1'
+    component_id = 'dtmi:samples:componentlifecycle;1'
     digital_twin_id = 'digitalTwin-' + str(uuid.uuid4())
 
     temporary_component = {
         "@id": component_id,
         "@type": "Interface",
-        "@context": "dtmi:dtdl:context2",
+        "@context": "dtmi:dtdl:context;2",
         "displayName": "Component1",
         "contents": [
         {
@@ -45,7 +45,7 @@ try:
     temporary_model = {
         "@id": model_id,
         "@type": "Interface",
-        "@context": "dtmi:dtdl:context2",
+        "@context": "dtmi:dtdl:context;2",
         "displayName": "TempModel",
         "contents": [
         {
@@ -62,13 +62,13 @@ try:
     }
 
     temporary_twin = {
-        "@id": digital_twin_id,
         "$metadata": {
-        "@model": model_id
+            "$model": model_id
         },
+        "$dtId": digital_twin_id,
         "Prop1": 42,
         "Component1": {
-        "$metadata": {},
+            "$metadata": {},
         "ComponentProp1": "value1"
         }
     }
@@ -99,27 +99,31 @@ try:
     print(created_twin)
 
     # Update component
-    component_path = "Component1"
-    options = {
-        "patchDocument": {
-        "ComponentProp1": "value2"
+    component_name = "Component1"
+    patch = [
+        {
+            "op": "replace",
+            "path": "/ComponentProp1",
+            "value": "value2"
         }
-    }
-    service_client.update_component(digital_twin_id, component_path, options)
+    ]
+    service_client.update_component(digital_twin_id, component_name, patch)
 
     # Get component
-    get_component = service_client.get_component(digital_twin_id, component_path)
+    get_component = service_client.get_component(digital_twin_id, component_name)
     print('Get Component:')
     print(get_component)
 
     # Delete digital twin
     service_client.delete_digital_twin(digital_twin_id)
 
-    # Decomission model
+    # Decomission models
     service_client.decommission_model(model_id)
+    service_client.decommission_model(component_id)
 
-    # Delete model
+    # Delete models
     service_client.delete_model(model_id)
+    service_client.delete_model(component_id)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

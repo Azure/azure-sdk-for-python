@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class PrivateEndpointConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> "models.PrivateEndpointConnectionListResult":
+    ) -> "_models.PrivateEndpointConnectionListResult":
         """Gets a list of private endpoint connections in the specified managed cluster.
 
         Gets a list of private endpoint connections in the specified managed cluster. The operation
@@ -62,7 +62,7 @@ class PrivateEndpointConnectionsOperations:
         :rtype: ~azure.mgmt.containerservice.v2020_07_01.models.PrivateEndpointConnectionListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -109,7 +109,7 @@ class PrivateEndpointConnectionsOperations:
         resource_name: str,
         private_endpoint_connection_name: str,
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
+    ) -> "_models.PrivateEndpointConnection":
         """Gets the private endpoint connection.
 
         Gets the details of the private endpoint connection by managed cluster and resource group.
@@ -125,7 +125,7 @@ class PrivateEndpointConnectionsOperations:
         :rtype: ~azure.mgmt.containerservice.v2020_07_01.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -172,9 +172,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        parameters: "models.PrivateEndpointConnection",
+        parameters: "_models.PrivateEndpointConnection",
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
+    ) -> "_models.PrivateEndpointConnection":
         """Updates a private endpoint connection.
 
         Updates a private endpoint connection in the specified managed cluster.
@@ -192,7 +192,7 @@ class PrivateEndpointConnectionsOperations:
         :rtype: ~azure.mgmt.containerservice.v2020_07_01.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -335,7 +335,14 @@ class PrivateEndpointConnectionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

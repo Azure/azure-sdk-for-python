@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class RecommendationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class RecommendationsOperations:
         featured: Optional[bool] = None,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.RecommendationCollection"]:
+    ) -> AsyncIterable["_models.RecommendationCollection"]:
         """List all recommendations for a subscription.
 
         List all recommendations for a subscription.
@@ -63,7 +63,7 @@ class RecommendationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.RecommendationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,7 +112,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -228,7 +228,7 @@ class RecommendationsOperations:
         expired_only: Optional[bool] = None,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.RecommendationCollection"]:
+    ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get past recommendations for an app, optionally specified by the time range.
 
         Get past recommendations for an app, optionally specified by the time range.
@@ -249,7 +249,7 @@ class RecommendationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.RecommendationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -300,7 +300,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -318,7 +318,7 @@ class RecommendationsOperations:
         featured: Optional[bool] = None,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.RecommendationCollection"]:
+    ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get all recommendations for an app.
 
         Get all recommendations for an app.
@@ -338,7 +338,7 @@ class RecommendationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.RecommendationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -389,7 +389,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -526,7 +526,7 @@ class RecommendationsOperations:
         update_seen: Optional[bool] = None,
         recommendation_id: Optional[str] = None,
         **kwargs
-    ) -> "models.RecommendationRule":
+    ) -> "_models.RecommendationRule":
         """Get a recommendation rule for an app.
 
         Get a recommendation rule for an app.
@@ -548,7 +548,7 @@ class RecommendationsOperations:
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -584,7 +584,7 @@ class RecommendationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RecommendationRule', pipeline_response)
@@ -665,7 +665,7 @@ class RecommendationsOperations:
         expired_only: Optional[bool] = None,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.RecommendationCollection"]:
+    ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get past recommendations for an app, optionally specified by the time range.
 
         Get past recommendations for an app, optionally specified by the time range.
@@ -686,7 +686,7 @@ class RecommendationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.RecommendationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -737,7 +737,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -755,7 +755,7 @@ class RecommendationsOperations:
         featured: Optional[bool] = None,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.RecommendationCollection"]:
+    ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get all recommendations for an app.
 
         Get all recommendations for an app.
@@ -775,7 +775,7 @@ class RecommendationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.RecommendationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -826,7 +826,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -955,7 +955,7 @@ class RecommendationsOperations:
         update_seen: Optional[bool] = None,
         recommendation_id: Optional[str] = None,
         **kwargs
-    ) -> "models.RecommendationRule":
+    ) -> "_models.RecommendationRule":
         """Get a recommendation rule for an app.
 
         Get a recommendation rule for an app.
@@ -977,7 +977,7 @@ class RecommendationsOperations:
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1013,7 +1013,7 @@ class RecommendationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RecommendationRule', pipeline_response)

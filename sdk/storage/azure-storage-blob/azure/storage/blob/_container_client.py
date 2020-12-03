@@ -784,7 +784,7 @@ class ContainerClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -907,7 +907,7 @@ class ContainerClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -972,7 +972,7 @@ class ContainerClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -1172,7 +1172,7 @@ class ContainerClient(StorageAccountHostsMixin):
             the resource has not been modified since the specified date/time.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -1341,7 +1341,7 @@ class ContainerClient(StorageAccountHostsMixin):
             Indicates the priority with which to rehydrate an archived blob
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 

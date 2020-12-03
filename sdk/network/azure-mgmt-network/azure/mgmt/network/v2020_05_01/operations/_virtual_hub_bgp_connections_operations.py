@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class VirtualHubBgpConnectionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class VirtualHubBgpConnectionsOperations(object):
         virtual_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListVirtualHubBgpConnectionResults"]
+        # type: (...) -> Iterable["_models.ListVirtualHubBgpConnectionResults"]
         """Retrieves the details of all VirtualHubBgpConnections.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -63,7 +63,7 @@ class VirtualHubBgpConnectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.ListVirtualHubBgpConnectionResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVirtualHubBgpConnectionResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVirtualHubBgpConnectionResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Test passing cls to endpoint", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '86'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 01ef0e31-6140-4165-80bb-9fa2dd9b7f6c
+      date: Thu, 19 Nov 2020 21:25:10 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/cc5c9039-d215-451f-9c78-ef7d371f64f1
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '80'
+    status:
+      code: 202
+      message: Accepted
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/cc5c9039-d215-451f-9c78-ef7d371f64f1
+  response:
+    body:
+      string: '{"jobId":"cc5c9039-d215-451f-9c78-ef7d371f64f1","lastUpdateDateTime":"2020-11-19T21:25:12Z","createdDateTime":"2020-11-19T21:25:11Z","expirationDateTime":"2020-11-20T21:25:11Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":13,"length":3,"text":"cls","category":"Diagnosis","confidenceScore":1.0,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0265252"},{"dataSource":"CHV","id":"0000025867"},{"dataSource":"JABL","id":"238"},{"dataSource":"MDR","id":"10081806"},{"dataSource":"MEDCIN","id":"311935"},{"dataSource":"MSH","id":"D038921"},{"dataSource":"NCI","id":"C84643"},{"dataSource":"OMIM","id":"303600"},{"dataSource":"RCD","id":"Xa0Zc"},{"dataSource":"SNM","id":"D-5122"},{"dataSource":"SNMI","id":"D4-00811"},{"dataSource":"SNOMEDCT_US","id":"15182000"}]}],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id: 9ca20fb7-87e9-4833-9c3d-ab6667de094c
+      content-type: application/json; charset=utf-8
+      date: Thu, 19 Nov 2020 21:25:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '29'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/cc5c9039-d215-451f-9c78-ef7d371f64f1
+version: 1

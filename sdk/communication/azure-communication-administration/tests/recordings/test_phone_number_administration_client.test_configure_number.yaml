@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"pstnConfiguration": {"callbackUrl": "https://callbackurl", "applicationId":
-      "ApplicationId"}, "phoneNumber": "sanitized"}'
+    body: 'b''{"pstnConfiguration": {"callbackUrl": "https://callbackurl", "applicationId":
+      "ApplicationId"}, "phoneNumber": "+1area_code_for_reservation4501240"}'''
     headers:
       Accept:
       - '*/*'
@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 10 Oct 2020 02:20:52 GMT
+      - Mon, 23 Nov 2020 22:11:17 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -28,11 +28,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 10 Oct 2020 02:20:53 GMT
+      - Mon, 23 Nov 2020 22:11:18 GMT
       ms-cv:
-      - IUVOp9xP9kmu4ATrmLBfsw.0
+      - G9imTJyYkkSUmuTD6LmwNg.0
       x-processing-time:
-      - 657ms
+      - 886ms
     status:
       code: 200
       message: OK

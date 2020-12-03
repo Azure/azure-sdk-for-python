@@ -54,3 +54,7 @@ if sys.version_info >= (3, 5):
     READ_TIMEOUT = 2000
 
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
+
+NEXT_TABLE_NAME = 'x-ms-continuation-NextTableName'
+NEXT_PARTITION_KEY = 'x-ms-continuation-NextPartitionKey'
+NEXT_ROW_KEY = 'x-ms-continuation-NextRowKey'

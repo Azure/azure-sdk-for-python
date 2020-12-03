@@ -2,7 +2,7 @@ interactions:
 - request:
     body: '{"location": "eastus2", "sku": {"name": "Free"}, "properties": {"repositoryUrl":
       "https://github.com/00Kai0/html-docs-hello-world", "branch": "master", "repositoryToken":
-      "1f2e369d56a6b4f3cfbb60a07a9ebf5f7bd8d7e9", "buildProperties": {"appLocation":
+      "009820ffdf19db061b7e8667eabdc7f5188c3252", "buildProperties": {"appLocation":
       "app", "apiLocation": "api", "appArtifactLocation": "build"}}}'
     headers:
       Accept:
@@ -16,22 +16,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-web/0.46.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-web/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname?api-version=2019-08-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname","name":"myname","type":"Microsoft.Web/staticSites","location":"East
-        US 2","properties":{"defaultHostname":"red-flower-0c9fba40f.azurestaticapps.net","repositoryUrl":"https://github.com/00Kai0/html-docs-hello-world","branch":"master","customDomains":[],"privateEndpointConnections":[]},"sku":{"name":"Free","tier":"Free"}}'
+        US 2","properties":{"defaultHostname":"happy-ocean-0c2bdca0f.azurestaticapps.net","repositoryUrl":"https://github.com/00Kai0/html-docs-hello-world","branch":"master","provider":"GitHub","customDomains":[],"privateEndpointConnections":[],"contentDistributionEndpoint":"https://content-eus2.infrastructure.azurestaticapps.net"},"sku":{"name":"Free","tier":"Free"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '515'
+      - '624'
       content-type:
       - application/json
       date:
-      - Mon, 28 Sep 2020 04:27:54 GMT
+      - Mon, 23 Nov 2020 06:58:50 GMT
       expires:
       - '-1'
       pragma:
@@ -49,7 +49,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
       x-powered-by:
       - ASP.NET
     status:
@@ -65,22 +65,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-web/0.46.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-web/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname?api-version=2019-08-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname","name":"myname","type":"Microsoft.Web/staticSites","location":"East
-        US 2","properties":{"defaultHostname":"red-flower-0c9fba40f.azurestaticapps.net","repositoryUrl":"https://github.com/00Kai0/html-docs-hello-world","branch":"master","customDomains":[],"privateEndpointConnections":[]},"sku":{"name":"Free","tier":"Free"}}'
+        US 2","properties":{"defaultHostname":"happy-ocean-0c2bdca0f.azurestaticapps.net","repositoryUrl":"https://github.com/00Kai0/html-docs-hello-world","branch":"master","provider":"GitHub","customDomains":[],"privateEndpointConnections":[],"contentDistributionEndpoint":"https://content-eus2.infrastructure.azurestaticapps.net"},"sku":{"name":"Free","tier":"Free"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '515'
+      - '624'
       content-type:
       - application/json
       date:
-      - Mon, 28 Sep 2020 04:27:54 GMT
+      - Mon, 23 Nov 2020 06:58:50 GMT
       expires:
       - '-1'
       pragma:
@@ -114,22 +114,22 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-web/0.46.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-web/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname/listSecrets?api-version=2019-08-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname/secrets","name":"secrets","type":"Microsoft.Web/staticSites/secrets","location":"East
-        US 2","properties":{"apiKey":"f92e873d4c96ee107d89afd92c18504f6ae64cd3a3104dcc3be3c5bb97f9324f-267e9c0c-2823-481e-81b8-79c4be4797eb00f"}}'
+        US 2","properties":{"apiKey":"10ea75f7af05e747dc6c5d70b4e1821b8a473e8ed20e6a215e2857c6281edd16-16be15f8-11ba-4874-be4f-905b1294581800f4373"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '416'
+      - '420'
       content-type:
       - application/json
       date:
-      - Mon, 28 Sep 2020 04:27:54 GMT
+      - Mon, 23 Nov 2020 06:58:51 GMT
       expires:
       - '-1'
       pragma:
@@ -154,11 +154,11 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"properties": {"repositoryToken": "1f2e369d56a6b4f3cfbb60a07a9ebf5f7bd8d7e9",
+    body: '{"properties": {"repositoryToken": "009820ffdf19db061b7e8667eabdc7f5188c3252",
       "shouldUpdateRepository": true}}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -168,7 +168,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-web/0.46.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-web/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname/resetapikey?api-version=2019-08-01
   response:
@@ -180,7 +180,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Sep 2020 04:27:55 GMT
+      - Mon, 23 Nov 2020 06:58:51 GMT
       expires:
       - '-1'
       pragma:
@@ -204,7 +204,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -212,25 +212,21 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-web/0.46.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-web/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname/detach?api-version=2019-08-01
   response:
     body:
       string: ''
     headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web/locations/eastus2/operationResults/6e22a8dd-0629-443d-8f0a-87a6a419b776?api-version=2019-01-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 28 Sep 2020 04:27:56 GMT
+      - Mon, 23 Nov 2020 06:58:52 GMT
       expires:
       - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web/locations/eastus2/operations/6e22a8dd-0629-443d-8f0a-87a6a419b776?api-version=2019-01-01
       pragma:
       - no-cache
       server:
@@ -246,13 +242,13 @@ interactions:
       x-powered-by:
       - ASP.NET
     status:
-      code: 202
-      message: Accepted
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -260,7 +256,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-web/0.46.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-web/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/staticSites/myname?api-version=2019-08-01
   response:
@@ -268,17 +264,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web/locations/eastus2/operationResults/69da1539-a32d-4227-bfdd-cd892a097e37?api-version=2019-01-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web/locations/eastus2/operationResults/1063d04b-0ecf-4559-8075-3db9abb0660a?api-version=2019-01-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 28 Sep 2020 04:27:56 GMT
+      - Mon, 23 Nov 2020 06:58:53 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web/locations/eastus2/operations/69da1539-a32d-4227-bfdd-cd892a097e37?api-version=2019-01-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web/locations/eastus2/operations/1063d04b-0ecf-4559-8075-3db9abb0660a?api-version=2019-01-01
       pragma:
       - no-cache
       server:
@@ -290,7 +286,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14997'
       x-powered-by:
       - ASP.NET
     status:

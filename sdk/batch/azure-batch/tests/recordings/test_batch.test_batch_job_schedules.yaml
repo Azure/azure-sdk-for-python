@@ -15,14 +15,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:22 GMT
     method: POST
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -32,15 +32,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:22 GMT
       etag:
-      - '0x8D7CB8F5B1971C6'
+      - '0x8D8901B72AED6D8'
       last-modified:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:23 GMT
       location:
-      - https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a
+      - https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a
       request-id:
-      - 94da84f5-4511-4da6-949d-3a84e8c821b1
+      - 4e1ec064-062a-4369-bb9b-4a0344699338
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -62,34 +62,41 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:23 GMT
     method: GET
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobschedules\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"batch_schedule_fe140e2a\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a\",\"eTag\":\"0x8D7CB8F5B1971C6\",\"lastModified\":\"2020-03-18T22:54:46.5370566Z\",\"creationTime\":\"2020-03-18T22:54:46.5370566Z\",\"state\":\"active\",\"stateTransitionTime\":\"2020-03-18T22:54:46.5370566Z\",\"schedule\":{\r\n
-        \       \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n      },\"jobSpecification\":{\r\n
-        \       \"priority\":0,\"usesTaskDependencies\":false,\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\":{\r\n
-        \         \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
-        \       },\"poolInfo\":{\r\n          \"poolId\":\"pool_id\"\r\n        }\r\n
-        \     },\"executionInfo\":{\r\n        \"nextRunTime\":\"2020-03-19T22:54:46.5370566Z\",\"recentJob\":{\r\n
-        \         \"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n
-        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#jobschedules\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_schedule_fe140e2a\",\"url\"\
+        :\"https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a\"\
+        ,\"eTag\":\"0x8D8901B72AED6D8\",\"lastModified\":\"2020-11-24T01:51:23.5502808Z\"\
+        ,\"creationTime\":\"2020-11-24T01:51:23.5502808Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-24T01:51:23.5502808Z\",\"schedule\":{\r\n\
+        \        \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n     \
+        \ },\"jobSpecification\":{\r\n        \"priority\":0,\"usesTaskDependencies\"\
+        :false,\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\"\
+        ,\"constraints\":{\r\n          \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"maxTaskRetryCount\":2\r\n        },\"poolInfo\":{\r\n          \"poolId\"\
+        :\"pool_id\"\r\n        }\r\n      },\"executionInfo\":{\r\n        \"nextRunTime\"\
+        :\"2020-11-25T01:51:23.5502808Z\",\"recentJob\":{\r\n          \"url\":\"\
+        https://batch.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\"\
+        ,\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n        }\r\n      }\r\n    }\r\
+        \n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:22 GMT
       request-id:
-      - e5053424-d384-4d62-b493-e1633177cabe
+      - b1cd4ae4-1e3b-4376-bbf6-53d789729e05
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -111,36 +118,42 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:23 GMT
     method: GET
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobschedules/@Element\",\"id\":\"batch_schedule_fe140e2a\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a\",\"eTag\":\"0x8D7CB8F5B1971C6\",\"lastModified\":\"2020-03-18T22:54:46.5370566Z\",\"creationTime\":\"2020-03-18T22:54:46.5370566Z\",\"state\":\"active\",\"stateTransitionTime\":\"2020-03-18T22:54:46.5370566Z\",\"schedule\":{\r\n
-        \   \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n  },\"jobSpecification\":{\r\n
-        \   \"priority\":0,\"usesTaskDependencies\":false,\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\":{\r\n
-        \     \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
-        \   },\"poolInfo\":{\r\n      \"poolId\":\"pool_id\"\r\n    }\r\n  },\"executionInfo\":{\r\n
-        \   \"nextRunTime\":\"2020-03-19T22:54:46.5370566Z\",\"recentJob\":{\r\n      \"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n
-        \   }\r\n  }\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#jobschedules/@Element\"\
+        ,\"id\":\"batch_schedule_fe140e2a\",\"url\":\"https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a\"\
+        ,\"eTag\":\"0x8D8901B72AED6D8\",\"lastModified\":\"2020-11-24T01:51:23.5502808Z\"\
+        ,\"creationTime\":\"2020-11-24T01:51:23.5502808Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-24T01:51:23.5502808Z\",\"schedule\":{\r\n\
+        \    \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n  },\"jobSpecification\"\
+        :{\r\n    \"priority\":0,\"usesTaskDependencies\":false,\"onAllTasksComplete\"\
+        :\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\":{\r\n   \
+        \   \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\"\
+        :2\r\n    },\"poolInfo\":{\r\n      \"poolId\":\"pool_id\"\r\n    }\r\n  },\"\
+        executionInfo\":{\r\n    \"nextRunTime\":\"2020-11-25T01:51:23.5502808Z\"\
+        ,\"recentJob\":{\r\n      \"url\":\"https://batch.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\"\
+        ,\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n    }\r\n  }\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:22 GMT
       etag:
-      - '0x8D7CB8F5B1971C6'
+      - '0x8D8901B72AED6D8'
       last-modified:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:23 GMT
       request-id:
-      - 6c4d6d1a-5731-4251-8d6f-62a39101e6fe
+      - 5d1c247a-7031-4a8d-841f-e7aafd182799
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -162,14 +175,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
     method: HEAD
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -177,13 +190,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       etag:
-      - '0x8D7CB8F5B1971C6'
+      - '0x8D8901B72AED6D8'
       last-modified:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:23 GMT
       request-id:
-      - 4ef4b4ed-71ed-4c6e-9455-356d21772886
+      - f38ed958-2af3-41c9-b9ff-00e63d32946f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -205,32 +218,36 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
     method: GET
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/jobs?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/jobs?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobs\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"batch_schedule_fe140e2a:job-1\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"eTag\":\"0x8D7CB8F5B28D932\",\"lastModified\":\"2020-03-18T22:54:46.6380082Z\",\"creationTime\":\"2020-03-18T22:54:46.6230105Z\",\"state\":\"active\",\"stateTransitionTime\":\"2020-03-18T22:54:46.6380082Z\",\"priority\":0,\"usesTaskDependencies\":false,\"constraints\":{\r\n
-        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
-        \     },\"poolInfo\":{\r\n        \"poolId\":\"pool_id\"\r\n      },\"executionInfo\":{\r\n
-        \       \"startTime\":\"2020-03-18T22:54:46.6380082Z\",\"poolId\":\"pool_id\"\r\n
-        \     },\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\"\r\n
-        \   }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#jobs\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_schedule_fe140e2a:job-1\",\"\
+        url\":\"https://batch.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\"\
+        ,\"eTag\":\"0x8D8901B72B83A99\",\"lastModified\":\"2020-11-24T01:51:23.6118169Z\"\
+        ,\"creationTime\":\"2020-11-24T01:51:23.5958136Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-24T01:51:23.6118169Z\",\"priority\":0,\"usesTaskDependencies\"\
+        :false,\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"maxTaskRetryCount\":2\r\n      },\"poolInfo\":{\r\n        \"poolId\":\"\
+        pool_id\"\r\n      },\"executionInfo\":{\r\n        \"startTime\":\"2020-11-24T01:51:23.6118169Z\"\
+        ,\"poolId\":\"pool_id\"\r\n      },\"onAllTasksComplete\":\"terminatejob\"\
+        ,\"onTaskFailure\":\"noaction\"\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       request-id:
-      - 88bcd524-0c25-460d-9a61-8c96d530cbff
+      - 5270a673-6f1b-47da-bacc-1c0234538348
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -254,14 +271,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
     method: POST
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/disable?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/disable?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -273,13 +290,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       etag:
-      - '0x8D7CB8F5B6E2480'
+      - '0x8D8901B733DD566'
       last-modified:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       request-id:
-      - 423ac899-22d8-4444-a0d3-e4765f0064d6
+      - 0e83e2e9-e408-42ef-bf48-2a4caa77d45f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -301,14 +318,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
     method: POST
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/enable?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/enable?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -320,13 +337,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       etag:
-      - '0x8D7CB8F5B78A04E'
+      - '0x8D8901B7358B6B6'
       last-modified:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       request-id:
-      - 12de331d-84b6-4e3f-bfab-1710d7830096
+      - 25d15229-1e89-41ba-a558-351e3af8663c
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -351,14 +368,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
     method: PUT
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -368,13 +385,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       etag:
-      - '0x8D7CB8F5B871F2D'
+      - '0x8D8901B73763D1B'
       last-modified:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       request-id:
-      - 51e2c64e-fd9a-445b-8e8d-0f7ae53c62a4
+      - bde97f39-e216-4b4e-bc37-4e706c480fa3
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -400,14 +417,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
     method: PATCH
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -417,13 +434,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:24 GMT
       etag:
-      - '0x8D7CB8F5B9269C2'
+      - '0x8D8901B7390FC36'
       last-modified:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:25 GMT
       request-id:
-      - 354e4f75-66cd-44bf-a40b-c267a421a0b9
+      - cd548121-6e15-4e02-a9e4-94bf00bc31bf
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -447,14 +464,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:25 GMT
     method: POST
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/terminate?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/terminate?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -464,13 +481,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:46 GMT
+      - Tue, 24 Nov 2020 01:51:25 GMT
       etag:
-      - '0x8D7CB8F5B9BB8AE'
+      - '0x8D8901B73AB0689'
       last-modified:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:25 GMT
       request-id:
-      - 27d94eb6-d631-4f68-b1ae-2271a826bbae
+      - 0e1d7434-eba4-489a-8d5e-3560e7a9b50d
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -494,14 +511,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:54:47 GMT
+      - Tue, 24 Nov 2020 01:51:25 GMT
     method: DELETE
-    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -509,9 +526,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:54:48 GMT
+      - Tue, 24 Nov 2020 01:51:25 GMT
       request-id:
-      - ff534a3f-4ccd-4ae0-b036-520e2841d9cd
+      - 1066718e-fba4-4d22-ab03-3892675664f9
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
