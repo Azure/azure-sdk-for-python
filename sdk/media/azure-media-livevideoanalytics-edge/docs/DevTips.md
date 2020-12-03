@@ -18,11 +18,11 @@ tox -c eng/tox/tox.ini
 ```
 To run a specific tox command from your directory use the following commands:
 ```bash
-azure-sdk-for-python\sdk\api-learn\azure-learnappconfig> tox -c ../../../eng/tox/tox.ini -e sphinx
-azure-sdk-for-python\sdk\api-learn\azure-learnappconfig> tox -c ../../../eng/tox/tox.ini -e lint
-azure-sdk-for-python\sdk\api-learn\azure-learnappconfig> tox -c ../../../eng/tox/tox.ini -e mypy
-azure-sdk-for-python\sdk\api-learn\azure-learnappconfig> tox -c ../../../eng/tox/tox.ini -e whl
-azure-sdk-for-python\sdk\api-learn\azure-learnappconfig> tox -c ../../../eng/tox/tox.ini -e sdist
+> tox -c ../../../eng/tox/tox.ini -e sphinx
+> tox -c ../../../eng/tox/tox.ini -e lint
+> tox -c ../../../eng/tox/tox.ini -e mypy
+> tox -c ../../../eng/tox/tox.ini -e whl
+> tox -c ../../../eng/tox/tox.ini -e sdist
 ```
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
