@@ -121,7 +121,7 @@ additional questions or comments.
 [coc_contact]: mailto:opencode@microsoft.com
 
 [package]: TODO://link-to-published-package
-[source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/media/azure-media-lva-edge
+[source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/media
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
 [doc_direct_methods]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/direct-methods
