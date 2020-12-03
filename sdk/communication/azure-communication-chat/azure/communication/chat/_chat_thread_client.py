@@ -11,9 +11,9 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 from ._shared.user_credential import CommunicationUserCredential
-from ._common import CommunicationUserCredentialPolicy
 from ._generated import AzureCommunicationChatService
 from ._generated.models import (
     AddChatThreadMembersRequest,
@@ -97,7 +97,7 @@ class ChatThreadClient(object):
 
         self._client = AzureCommunicationChatService(
             endpoint,
-            authentication_policy=CommunicationUserCredentialPolicy(self._credential),
+            authentication_policy=BearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )

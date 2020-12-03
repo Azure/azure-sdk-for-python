@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class NetworkVirtualAppliancesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -137,7 +137,13 @@ class NetworkVirtualAppliancesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkVirtualApplianceName': self._serialize.url("network_virtual_appliance_name", network_virtual_appliance_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -158,7 +164,7 @@ class NetworkVirtualAppliancesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NetworkVirtualAppliance"
+        # type: (...) -> "_models.NetworkVirtualAppliance"
         """Gets the specified Network Virtual Appliance.
 
         :param resource_group_name: The name of the resource group.
@@ -172,7 +178,7 @@ class NetworkVirtualAppliancesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_04_01.models.NetworkVirtualAppliance
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkVirtualAppliance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkVirtualAppliance"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,10 +225,10 @@ class NetworkVirtualAppliancesOperations(object):
         self,
         resource_group_name,  # type: str
         network_virtual_appliance_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NetworkVirtualAppliance"
+        # type: (...) -> "_models.NetworkVirtualAppliance"
         """Updates a Network Virtual Appliance.
 
         :param resource_group_name: The resource group name of Network Virtual Appliance.
@@ -236,7 +242,7 @@ class NetworkVirtualAppliancesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_04_01.models.NetworkVirtualAppliance
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkVirtualAppliance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkVirtualAppliance"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -286,11 +292,11 @@ class NetworkVirtualAppliancesOperations(object):
         self,
         resource_group_name,  # type: str
         network_virtual_appliance_name,  # type: str
-        parameters,  # type: "models.NetworkVirtualAppliance"
+        parameters,  # type: "_models.NetworkVirtualAppliance"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NetworkVirtualAppliance"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkVirtualAppliance"]
+        # type: (...) -> "_models.NetworkVirtualAppliance"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkVirtualAppliance"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -344,10 +350,10 @@ class NetworkVirtualAppliancesOperations(object):
         self,
         resource_group_name,  # type: str
         network_virtual_appliance_name,  # type: str
-        parameters,  # type: "models.NetworkVirtualAppliance"
+        parameters,  # type: "_models.NetworkVirtualAppliance"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.NetworkVirtualAppliance"]
+        # type: (...) -> LROPoller["_models.NetworkVirtualAppliance"]
         """Creates or updates the specified Network Virtual Appliance.
 
         :param resource_group_name: The name of the resource group.
@@ -367,7 +373,7 @@ class NetworkVirtualAppliancesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkVirtualAppliance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkVirtualAppliance"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -392,7 +398,13 @@ class NetworkVirtualAppliancesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkVirtualApplianceName': self._serialize.url("network_virtual_appliance_name", network_virtual_appliance_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -411,7 +423,7 @@ class NetworkVirtualAppliancesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NetworkVirtualApplianceListResult"]
+        # type: (...) -> Iterable["_models.NetworkVirtualApplianceListResult"]
         """Lists all Network Virtual Appliances in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -421,7 +433,7 @@ class NetworkVirtualAppliancesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_04_01.models.NetworkVirtualApplianceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkVirtualApplianceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkVirtualApplianceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -481,7 +493,7 @@ class NetworkVirtualAppliancesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NetworkVirtualApplianceListResult"]
+        # type: (...) -> Iterable["_models.NetworkVirtualApplianceListResult"]
         """Gets all Network Virtual Appliances in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -489,7 +501,7 @@ class NetworkVirtualAppliancesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_04_01.models.NetworkVirtualApplianceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkVirtualApplianceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkVirtualApplianceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

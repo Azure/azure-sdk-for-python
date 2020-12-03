@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -27,7 +27,7 @@ class NetworkManagementClientOperationsMixin:
         location: str,
         domain_name_label: str,
         **kwargs
-    ) -> "models.DnsNameAvailabilityResult":
+    ) -> "_models.DnsNameAvailabilityResult":
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
         :param location: The location of the domain name.
@@ -40,7 +40,7 @@ class NetworkManagementClientOperationsMixin:
         :rtype: ~azure.mgmt.network.v2019_08_01.models.DnsNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DnsNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DnsNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -86,7 +86,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         virtual_wan_name: str,
         **kwargs
-    ) -> "models.VirtualWanSecurityProviders":
+    ) -> "_models.VirtualWanSecurityProviders":
         """Gives the supported security providers for the virtual wan.
 
         :param resource_group_name: The resource group name.
@@ -99,7 +99,7 @@ class NetworkManagementClientOperationsMixin:
         :rtype: ~azure.mgmt.network.v2019_08_01.models.VirtualWanSecurityProviders
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualWanSecurityProviders"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualWanSecurityProviders"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -144,10 +144,10 @@ class NetworkManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        vpn_client_params: "models.VirtualWanVpnProfileParameters",
+        vpn_client_params: "_models.VirtualWanVpnProfileParameters",
         **kwargs
-    ) -> Optional["models.VpnProfileResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnProfileResponse"]]
+    ) -> Optional["_models.VpnProfileResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VpnProfileResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -199,9 +199,9 @@ class NetworkManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        vpn_client_params: "models.VirtualWanVpnProfileParameters",
+        vpn_client_params: "_models.VirtualWanVpnProfileParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.VpnProfileResponse"]:
+    ) -> AsyncLROPoller["_models.VpnProfileResponse"]:
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
         VpnServerConfiguration combination in the specified resource group.
 
@@ -224,7 +224,7 @@ class NetworkManagementClientOperationsMixin:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnProfileResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnProfileResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -249,7 +249,13 @@ class NetworkManagementClientOperationsMixin:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

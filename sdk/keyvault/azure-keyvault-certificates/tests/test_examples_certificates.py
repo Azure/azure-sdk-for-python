@@ -216,7 +216,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_client.purge_deleted_certificate(certificate_name=cert_name)
 
         if self.is_live:
-            time.sleep(15)
+            time.sleep(60)
 
         # [START restore_certificate]
         # restore a certificate backup

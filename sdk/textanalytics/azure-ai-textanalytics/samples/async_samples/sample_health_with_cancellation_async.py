@@ -11,6 +11,10 @@ FILE: sample_health_with_cancellation.py
 
 DESCRIPTION:
     This sample demonstrates how to cancel a Health job after it's been started.
+    Since the Health API is currently only available in a gated preview, you need
+    to have your subscription on the service's allow list. More information
+    here: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview.
+
 
 USAGE:
     python sample_health_with_cancellation.py
@@ -35,9 +39,9 @@ class HealthWithCancellationSampleAsync(object):
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
         text_analytics_client = TextAnalyticsClient(
-            endpoint=endpoint, 
+            endpoint=endpoint,
             credential=AzureKeyCredential(key),
-            api_version="v3.2-preview.1")
+            api_version="v3.1-preview.3")
 
         documents = [
             "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
@@ -56,10 +60,10 @@ class HealthWithCancellationSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            poller = await text_analytics_client.begin_health(documents)
-            cancellation_poller = await text_analytics_client.begin_cancel_health_operation(poller)
+            poller = await text_analytics_client.begin_analyze_healthcare(documents)
+            poller = await text_analytics_client.begin_cancel_analyze_healthcare(poller)
 
-        cancellation_poller.result()
+        await poller.wait()
 
         # [END health_with_cancellation_async]
 

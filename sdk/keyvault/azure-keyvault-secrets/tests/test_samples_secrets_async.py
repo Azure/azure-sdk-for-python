@@ -158,7 +158,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         await secret_client.purge_deleted_secret(created_secret.name)
 
         if self.is_live:
-            await asyncio.sleep(15)
+            await asyncio.sleep(60)
 
         # [START restore_secret_backup]
         # restores a backed up secret

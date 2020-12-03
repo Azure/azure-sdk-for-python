@@ -31,7 +31,7 @@ parameters:
       CoverageArg: '--disablecov'
     Linux_Python39:
       OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.9.0'
+      PythonVersion: '3.9'
       CoverageArg: ''
 
 jobs:
@@ -49,20 +49,6 @@ jobs:
 
     steps:
       - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
-
-      # - pwsh: |
-      #     Write-Host "Setting Python version as env var"
-      #     Write-Host $Env:PythonVersion
-      #     if ($Env:PythonVersion -eq "Python 3.9.0") {
-      #       Write-Host "Enabling Code Coverage"
-      #       Write-Host "##vso[task.setvariable variable=CoverageArg]True"
-      #       Write-Host $Env:CoverageArg
-      #     } else {
-      #       Write-Host "Disabling Code Coverage"
-      #       Write-Host "##vso[task.setvariable variable=CoverageArg]False"
-      #       Write-Host $Env:CoverageArg
-      #     }
-      #   displayName: Set code coverage environment variables
 
       - ${{ if eq(parameters['AllocateResourceGroup'], 'true') }}:
         - pwsh: |

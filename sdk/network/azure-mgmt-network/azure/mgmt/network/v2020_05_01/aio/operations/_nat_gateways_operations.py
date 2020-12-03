@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NatGatewaysOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -131,7 +131,13 @@ class NatGatewaysOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'natGatewayName': self._serialize.url("nat_gateway_name", nat_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -151,7 +157,7 @@ class NatGatewaysOperations:
         nat_gateway_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.NatGateway":
+    ) -> "_models.NatGateway":
         """Gets the specified nat gateway in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -165,7 +171,7 @@ class NatGatewaysOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.NatGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NatGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NatGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -212,10 +218,10 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        parameters: "models.NatGateway",
+        parameters: "_models.NatGateway",
         **kwargs
-    ) -> "models.NatGateway":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NatGateway"]
+    ) -> "_models.NatGateway":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NatGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -272,9 +278,9 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        parameters: "models.NatGateway",
+        parameters: "_models.NatGateway",
         **kwargs
-    ) -> AsyncLROPoller["models.NatGateway"]:
+    ) -> AsyncLROPoller["_models.NatGateway"]:
         """Creates or updates a nat gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -294,7 +300,7 @@ class NatGatewaysOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NatGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NatGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -319,7 +325,13 @@ class NatGatewaysOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'natGatewayName': self._serialize.url("nat_gateway_name", nat_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -337,9 +349,9 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.NatGateway":
+    ) -> "_models.NatGateway":
         """Updates nat gateway tags.
 
         :param resource_group_name: The name of the resource group.
@@ -353,7 +365,7 @@ class NatGatewaysOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.NatGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NatGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NatGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -402,7 +414,7 @@ class NatGatewaysOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.NatGatewayListResult"]:
+    ) -> AsyncIterable["_models.NatGatewayListResult"]:
         """Gets all the Nat Gateways in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -410,7 +422,7 @@ class NatGatewaysOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.NatGatewayListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NatGatewayListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NatGatewayListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -469,7 +481,7 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.NatGatewayListResult"]:
+    ) -> AsyncIterable["_models.NatGatewayListResult"]:
         """Gets all nat gateways in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -479,7 +491,7 @@ class NatGatewaysOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.NatGatewayListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NatGatewayListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NatGatewayListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

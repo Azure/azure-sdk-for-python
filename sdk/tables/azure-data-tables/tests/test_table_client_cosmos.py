@@ -441,6 +441,7 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/15614")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_user_agent_default(self, resource_group, location, cosmos_account, cosmos_account_key):
