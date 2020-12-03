@@ -1,4 +1,4 @@
-# Azure Queue Storage for Python
+# Generate SDK using Autorest
 
 see `https://aka.ms/autorest`
 
