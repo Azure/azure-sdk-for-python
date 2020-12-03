@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,11 +31,11 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        bsl_request,  # type: "models.BastionShareableLinkListRequest"
+        bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.BastionShareableLinkListResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BastionShareableLinkListResult"]]
+        # type: (...) -> Optional["_models.BastionShareableLinkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BastionShareableLinkListResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -87,10 +87,10 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        bsl_request,  # type: "models.BastionShareableLinkListRequest"
+        bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[ItemPaged["models.BastionShareableLinkListResult"]]
+        # type: (...) -> LROPoller[ItemPaged["_models.BastionShareableLinkListResult"]]
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -109,7 +109,7 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_04_01.models.BastionShareableLinkListResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionShareableLinkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionShareableLinkListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,7 +170,7 @@ class NetworkManagementClientOperationsMixin(object):
             return pipeline_response
 
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionShareableLinkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionShareableLinkListResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -197,7 +197,13 @@ class NetworkManagementClientOperationsMixin(object):
             return ItemPaged(
                 internal_get_next, extract_data
             )
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'bastionHostName': self._serialize.url("bastion_host_name", bastion_host_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -215,7 +221,7 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        bsl_request,  # type: "models.BastionShareableLinkListRequest"
+        bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -266,7 +272,7 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        bsl_request,  # type: "models.BastionShareableLinkListRequest"
+        bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -311,7 +317,13 @@ class NetworkManagementClientOperationsMixin(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'bastionHostName': self._serialize.url("bastion_host_name", bastion_host_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -329,10 +341,10 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        bsl_request,  # type: "models.BastionShareableLinkListRequest"
+        bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BastionShareableLinkListResult"]
+        # type: (...) -> Iterable["_models.BastionShareableLinkListResult"]
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -346,7 +358,7 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_04_01.models.BastionShareableLinkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionShareableLinkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionShareableLinkListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -417,8 +429,8 @@ class NetworkManagementClientOperationsMixin(object):
         bastion_host_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.BastionActiveSessionListResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BastionActiveSessionListResult"]]
+        # type: (...) -> Optional["_models.BastionActiveSessionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BastionActiveSessionListResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -467,7 +479,7 @@ class NetworkManagementClientOperationsMixin(object):
         bastion_host_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[ItemPaged["models.BastionActiveSessionListResult"]]
+        # type: (...) -> LROPoller[ItemPaged["_models.BastionActiveSessionListResult"]]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -484,7 +496,7 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_04_01.models.BastionActiveSessionListResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionActiveSessionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionActiveSessionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -537,7 +549,7 @@ class NetworkManagementClientOperationsMixin(object):
             return pipeline_response
 
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionActiveSessionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionActiveSessionListResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -563,7 +575,13 @@ class NetworkManagementClientOperationsMixin(object):
             return ItemPaged(
                 internal_get_next, extract_data
             )
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'bastionHostName': self._serialize.url("bastion_host_name", bastion_host_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -581,10 +599,10 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        session_ids,  # type: "models.SessionIds"
+        session_ids,  # type: "_models.SessionIds"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BastionSessionDeleteResult"]
+        # type: (...) -> Iterable["_models.BastionSessionDeleteResult"]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -598,7 +616,7 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_04_01.models.BastionSessionDeleteResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionSessionDeleteResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionSessionDeleteResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -669,7 +687,7 @@ class NetworkManagementClientOperationsMixin(object):
         domain_name_label,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DnsNameAvailabilityResult"
+        # type: (...) -> "_models.DnsNameAvailabilityResult"
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
         :param location: The location of the domain name.
@@ -682,7 +700,7 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.network.v2020_04_01.models.DnsNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DnsNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DnsNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -729,7 +747,7 @@ class NetworkManagementClientOperationsMixin(object):
         virtual_wan_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualWanSecurityProviders"
+        # type: (...) -> "_models.VirtualWanSecurityProviders"
         """Gives the supported security providers for the virtual wan.
 
         :param resource_group_name: The resource group name.
@@ -742,7 +760,7 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.network.v2020_04_01.models.VirtualWanSecurityProviders
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualWanSecurityProviders"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualWanSecurityProviders"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -787,11 +805,11 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         virtual_wan_name,  # type: str
-        vpn_client_params,  # type: "models.VirtualWanVpnProfileParameters"
+        vpn_client_params,  # type: "_models.VirtualWanVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.VpnProfileResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnProfileResponse"]]
+        # type: (...) -> Optional["_models.VpnProfileResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VpnProfileResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -843,10 +861,10 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         virtual_wan_name,  # type: str
-        vpn_client_params,  # type: "models.VirtualWanVpnProfileParameters"
+        vpn_client_params,  # type: "_models.VirtualWanVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VpnProfileResponse"]
+        # type: (...) -> LROPoller["_models.VpnProfileResponse"]
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
         VpnServerConfiguration combination in the specified resource group.
 
@@ -869,7 +887,7 @@ class NetworkManagementClientOperationsMixin(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnProfileResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnProfileResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -894,7 +912,13 @@ class NetworkManagementClientOperationsMixin(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

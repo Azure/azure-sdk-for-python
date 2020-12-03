@@ -37,7 +37,7 @@ class ShareOperations:
         self._config = config
         self.restype = "share"
 
-    async def create(self, timeout=None, metadata=None, quota=None, access_tier=None, *, cls=None, **kwargs):
+    async def create(self, timeout=None, metadata=None, quota=None, access_tier=None, enabled_protocols=None, root_squash=None, *, cls=None, **kwargs):
         """Creates a new share under the specified account. If the share with the
         same name already exists, the operation fails.
 
@@ -55,6 +55,13 @@ class ShareOperations:
          values include: 'TransactionOptimized', 'Hot', 'Cool'
         :type access_tier: str or
          ~azure.storage.fileshare.models.ShareAccessTier
+        :param enabled_protocols: Protocols to enable on the share.
+        :type enabled_protocols: str
+        :param root_squash: Root squash to set on the share.  Only valid for
+         NFS shares. Possible values include: 'NoRootSquash', 'RootSquash',
+         'AllSquash'
+        :type root_squash: str or
+         ~azure.storage.fileshare.models.ShareRootSquash
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -85,6 +92,10 @@ class ShareOperations:
         if access_tier is not None:
             header_parameters['x-ms-access-tier'] = self._serialize.header("access_tier", access_tier, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if enabled_protocols is not None:
+            header_parameters['x-ms-enabled-protocols'] = self._serialize.header("enabled_protocols", enabled_protocols, 'str')
+        if root_squash is not None:
+            header_parameters['x-ms-root-squash'] = self._serialize.header("root_squash", root_squash, 'ShareRootSquash')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -185,6 +196,8 @@ class ShareOperations:
                 'x-ms-access-tier': self._deserialize('str', response.headers.get('x-ms-access-tier')),
                 'x-ms-access-tier-change-time': self._deserialize('rfc-1123', response.headers.get('x-ms-access-tier-change-time')),
                 'x-ms-access-tier-transition-state': self._deserialize('str', response.headers.get('x-ms-access-tier-transition-state')),
+                'x-ms-enabled-protocols': self._deserialize('str', response.headers.get('x-ms-enabled-protocols')),
+                'x-ms-root-squash': self._deserialize(models.ShareRootSquash, response.headers.get('x-ms-root-squash')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -877,7 +890,7 @@ class ShareOperations:
         return deserialized
     get_permission.metadata = {'url': '/{shareName}'}
 
-    async def set_properties(self, timeout=None, quota=None, access_tier=None, lease_access_conditions=None, *, cls=None, **kwargs):
+    async def set_properties(self, timeout=None, quota=None, access_tier=None, root_squash=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """Sets properties for the specified share.
 
         :param timeout: The timeout parameter is expressed in seconds. For
@@ -891,6 +904,11 @@ class ShareOperations:
          values include: 'TransactionOptimized', 'Hot', 'Cool'
         :type access_tier: str or
          ~azure.storage.fileshare.models.ShareAccessTier
+        :param root_squash: Root squash to set on the share.  Only valid for
+         NFS shares. Possible values include: 'NoRootSquash', 'RootSquash',
+         'AllSquash'
+        :type root_squash: str or
+         ~azure.storage.fileshare.models.ShareRootSquash
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
@@ -930,6 +948,8 @@ class ShareOperations:
             header_parameters['x-ms-share-quota'] = self._serialize.header("quota", quota, 'int', minimum=1)
         if access_tier is not None:
             header_parameters['x-ms-access-tier'] = self._serialize.header("access_tier", access_tier, 'str')
+        if root_squash is not None:
+            header_parameters['x-ms-root-squash'] = self._serialize.header("root_squash", root_squash, 'ShareRootSquash')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 

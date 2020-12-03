@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -25,7 +25,7 @@ class NetworkManagementClientOperationsMixin:
         location: str,
         domain_name_label: Optional[str] = None,
         **kwargs
-    ) -> "models.DnsNameAvailabilityResult":
+    ) -> "_models.DnsNameAvailabilityResult":
         """Checks whether a domain name in the cloudapp.net zone is available for use.
 
         :param location: The location of the domain name.
@@ -38,7 +38,7 @@ class NetworkManagementClientOperationsMixin:
         :rtype: ~azure.mgmt.network.v2017_03_01.models.DnsNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DnsNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DnsNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

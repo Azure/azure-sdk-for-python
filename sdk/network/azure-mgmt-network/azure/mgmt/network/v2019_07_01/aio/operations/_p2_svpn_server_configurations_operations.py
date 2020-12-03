@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class P2SVpnServerConfigurationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class P2SVpnServerConfigurationsOperations:
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
         **kwargs
-    ) -> "models.P2SVpnServerConfiguration":
+    ) -> "_models.P2SVpnServerConfiguration":
         """Retrieves the details of a P2SVpnServerConfiguration.
 
         :param resource_group_name: The resource group name of the P2SVpnServerConfiguration.
@@ -63,7 +63,7 @@ class P2SVpnServerConfigurationsOperations:
         :rtype: ~azure.mgmt.network.v2019_07_01.models.P2SVpnServerConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnServerConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnServerConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -95,7 +95,7 @@ class P2SVpnServerConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('P2SVpnServerConfiguration', pipeline_response)
@@ -111,10 +111,10 @@ class P2SVpnServerConfigurationsOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
-        p2_s_vpn_server_configuration_parameters: "models.P2SVpnServerConfiguration",
+        p2_s_vpn_server_configuration_parameters: "_models.P2SVpnServerConfiguration",
         **kwargs
-    ) -> "models.P2SVpnServerConfiguration":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnServerConfiguration"]
+    ) -> "_models.P2SVpnServerConfiguration":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnServerConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -151,7 +151,7 @@ class P2SVpnServerConfigurationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -171,9 +171,9 @@ class P2SVpnServerConfigurationsOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
-        p2_s_vpn_server_configuration_parameters: "models.P2SVpnServerConfiguration",
+        p2_s_vpn_server_configuration_parameters: "_models.P2SVpnServerConfiguration",
         **kwargs
-    ) -> AsyncLROPoller["models.P2SVpnServerConfiguration"]:
+    ) -> AsyncLROPoller["_models.P2SVpnServerConfiguration"]:
         """Creates a P2SVpnServerConfiguration to associate with a VirtualWan if it doesn't exist else
         updates the existing P2SVpnServerConfiguration.
 
@@ -197,7 +197,7 @@ class P2SVpnServerConfigurationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnServerConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnServerConfiguration"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -223,7 +223,14 @@ class P2SVpnServerConfigurationsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualWanName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
+            'p2SVpnServerConfigurationName': self._serialize.url("p2_s_vpn_server_configuration_name", p2_s_vpn_server_configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -276,7 +283,7 @@ class P2SVpnServerConfigurationsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -332,7 +339,14 @@ class P2SVpnServerConfigurationsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualWanName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
+            'p2SVpnServerConfigurationName': self._serialize.url("p2_s_vpn_server_configuration_name", p2_s_vpn_server_configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -351,7 +365,7 @@ class P2SVpnServerConfigurationsOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListP2SVpnServerConfigurationsResult"]:
+    ) -> AsyncIterable["_models.ListP2SVpnServerConfigurationsResult"]:
         """Retrieves all P2SVpnServerConfigurations for a particular VirtualWan.
 
         :param resource_group_name: The resource group name of the VirtualWan.
@@ -363,7 +377,7 @@ class P2SVpnServerConfigurationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_07_01.models.ListP2SVpnServerConfigurationsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListP2SVpnServerConfigurationsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListP2SVpnServerConfigurationsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -410,7 +424,7 @@ class P2SVpnServerConfigurationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

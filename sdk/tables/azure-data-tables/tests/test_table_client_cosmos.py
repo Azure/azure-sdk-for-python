@@ -429,7 +429,10 @@ class StorageTableClientTest(TableTestCase):
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-    @pytest.mark.skip("Tests fail with non-standard clouds")
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/15614")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_user_agent_default(self, cosmos_account, cosmos_account_key):

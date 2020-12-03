@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -25,7 +25,7 @@ class NetworkManagementClientOperationsMixin:
         location: str,
         domain_name_label: str,
         **kwargs
-    ) -> "models.DnsNameAvailabilityResult":
+    ) -> "_models.DnsNameAvailabilityResult":
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
         :param location: The location of the domain name.
@@ -38,7 +38,7 @@ class NetworkManagementClientOperationsMixin:
         :rtype: ~azure.mgmt.network.v2018_08_01.models.DnsNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DnsNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DnsNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -84,7 +84,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         virtual_wan_name: str,
         **kwargs
-    ) -> "models.VirtualWanSecurityProviders":
+    ) -> "_models.VirtualWanSecurityProviders":
         """Gives the supported security providers for the virtual wan.
 
         :param resource_group_name: The resource group name.
@@ -97,7 +97,7 @@ class NetworkManagementClientOperationsMixin:
         :rtype: ~azure.mgmt.network.v2018_08_01.models.VirtualWanSecurityProviders
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualWanSecurityProviders"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualWanSecurityProviders"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -128,7 +128,7 @@ class NetworkManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VirtualWanSecurityProviders', pipeline_response)

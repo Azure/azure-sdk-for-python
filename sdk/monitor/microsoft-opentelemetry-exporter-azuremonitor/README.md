@@ -92,40 +92,6 @@ with tracer.start_as_current_span("hello"):
     print("Hello, World!")
 ```
 
-### Modifying Traces
-
-* You can pass a callback function to the exporter to process telemetry before it is exported.
-* Your callback function can return False if you do not want this envelope exported.
-* Your callback function must accept an envelope data type as its parameter.
-* You can see the schema for Azure Monitor data types in the envelopes here.
-* The AzureMonitorTraceExporter handles Data data types.
-
-```Python
-from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
-
-# Callback function to add os_type: linux to span properties
-def callback_function(envelope):
-    envelope.data.baseData.properties['os_type'] = 'linux'
-    return True
-
-exporter = AzureMonitorTraceExporter(
-    connection_string='InstrumentationKey=<your-ikey-here>'
-)
-# This line will modify telemetry
-exporter.add_telemetry_processor(callback_function)
-
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-span_processor = BatchExportSpanProcessor(exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
-
-with tracer.start_as_current_span('hello'):
-    print('Hello World!')
-```
-
 ### Instrumentation with requests library
 
 OpenTelemetry also supports several instrumentations which allows to instrument with third party libraries.
