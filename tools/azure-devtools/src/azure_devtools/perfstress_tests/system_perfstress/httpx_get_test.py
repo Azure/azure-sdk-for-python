@@ -5,7 +5,7 @@
 
 import httpx
 
-from ..perf_stress_test import PerfStressTest
+from azure_devtools.perfstress_tests import PerfStressTest
 
 
 class HttpxGetTest(PerfStressTest):

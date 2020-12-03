@@ -5,7 +5,7 @@
 
 import requests
 
-from ..perf_stress_test import PerfStressTest
+from azure_devtools.perfstress_tests import PerfStressTest
 
 
 class RequestsGetTest(PerfStressTest):

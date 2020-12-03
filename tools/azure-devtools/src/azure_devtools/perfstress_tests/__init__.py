@@ -27,7 +27,6 @@ def run_perfstress_cmd():
 
 
 def run_system_perfstress_tests_cmd():
-    from . import system_perfstress  # check dependencies
     root_dir = os.path.dirname(os.path.abspath(__file__))
     sys_test_dir = os.path.join(root_dir, 'system_perfstress')
     main_loop = PerfStressRunner(test_folder_path=sys_test_dir)
