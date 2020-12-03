@@ -23,21 +23,6 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  # - pwsh: |
-  #     Write-Host "Setting Python version as env var"
-  #     if ($PythonVersion -eq "Python 3.9.0") {
-  #       Write-Host "Enabling Code Coverage"
-  #       Write-Host "##vso[task.setvariable variable=CoverageArgTemp]''"
-  #       Write-Host "##vso[task.setvariable variable=RunCoverageTemp]True"
-  #       Write-Host $Env:CoverageArgTemp
-  #     } else {
-  #       Write-Host "Disabling Code Coverage"
-  #       Write-Host "##vso[task.setvariable variable=CoverageArgTemp]--disablecov"
-  #       Write-Host "##vso[task.setvariable variable=RunCoverageTemp]False"
-  #       Write-Host $Env:CoverageArgTemp
-  #     }
-  #   displayName: Set code coverage environment variables
-
   - script: |
       python -m pip install pip==20.1
       pip install -r eng/ci_tools.txt
