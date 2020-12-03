@@ -297,11 +297,18 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
+        is_prefetch_cleaned = False
         try:
             await self._handler.open_async(connection=self._connection)
             while not await self._handler.client_ready_async():
+                if self._handler.message_handler and not is_prefetch_cleaned:
+                    # Set link credit to 0 to prevent receiver from receiving messages during connection establishment
+                    self._handler.message_handler._link.set_prefetch_count(0)
+                    is_prefetch_cleaned = True
                 await asyncio.sleep(0.05)
             self._running = True
+            # After connection establishment, reset link credit back to the client config
+            self._handler.message_handler._link.set_prefetch_count(self._prefetch_count)
         except:
             await self._close_handler()
             raise

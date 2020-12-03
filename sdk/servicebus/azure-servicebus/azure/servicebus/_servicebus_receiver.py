@@ -304,11 +304,18 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
+        is_prefetch_cleaned = False
         try:
             self._handler.open(connection=self._connection)
             while not self._handler.client_ready():
+                if self._handler.message_handler and not is_prefetch_cleaned:
+                    # Set link credit to 0 to prevent receiver from receiving messages during connection establishment
+                    self._handler.message_handler._link.set_prefetch_count(0)
+                    is_prefetch_cleaned = True
                 time.sleep(0.05)
             self._running = True
+            # After connection establishment, reset link credit back to the client config
+            self._handler.message_handler._link.set_prefetch_count(self._prefetch_count)
         except:
             self._close_handler()
             raise
