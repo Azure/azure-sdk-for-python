@@ -1,5 +1,11 @@
 # Release History
 
+## 4.3.1 (2020-12-03)
+### Fixed
+- `CryptographyClient` operations no longer raise `AttributeError` when
+  the client was constructed with a key ID
+  ([#15608](https://github.com/Azure/azure-sdk-for-python/issues/15608))
+
 ## 4.3.0 (2020-10-06)
 ### Changed
 - `CryptographyClient` can perform decrypt and sign operations locally

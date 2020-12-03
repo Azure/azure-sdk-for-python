@@ -81,6 +81,42 @@ class CryptoClientTests(KeyVaultTestCase):
         return imported_key
 
     @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @CryptoClientPreparer()
+    async def test_ec_key_id(self, key_client, credential, **kwargs):
+        """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
+
+        key = await key_client.create_ec_key(self.create_random_name("eckey"))
+
+        crypto_client = CryptographyClient(key.id, credential)
+        await crypto_client._initialize()
+        assert crypto_client.key_id == key.id
+
+        # ensure all remote crypto operations will fail
+        crypto_client._client = None
+
+        await crypto_client.verify(SignatureAlgorithm.es256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @CryptoClientPreparer()
+    async def test_rsa_key_id(self, key_client, credential, **kwargs):
+        """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
+
+        key = await key_client.create_rsa_key(self.create_random_name("rsakey"))
+
+        crypto_client = CryptographyClient(key.id, credential)
+        await crypto_client._initialize()
+        assert crypto_client.key_id == key.id
+
+        # ensure all remote crypto operations will fail
+        crypto_client._client = None
+
+        await crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
+        await crypto_client.verify(SignatureAlgorithm.rs256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
+        await crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(permissions=NO_GET)
     @CryptoClientPreparer()
     async def test_encrypt_and_decrypt(self, key_client, credential, **kwargs):
@@ -302,17 +338,21 @@ async def test_initialization_given_key():
 async def test_initialization_get_key_successful():
     """If the client is able to get key material, it shouldn't do so again"""
 
-    mock_client = mock.Mock()
-    mock_client.get_key.return_value = mock.Mock(spec=KeyVaultKey)
-    client = CryptographyClient("https://localhost/fake/key/version", mock.Mock())
-    client._client = mock_client
+    key_id = "https://localhost/fake/key/version"
     mock_key = mock.Mock()
+    mock_key.key.kid = key_id
+    mock_client = mock.Mock()
     mock_client.get_key.return_value = get_completed_future(mock_key)
+
+    client = CryptographyClient(key_id, mock.Mock())
+    client._client = mock_client
 
     assert mock_client.get_key.call_count == 0
     with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider") as get_provider:
         await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
-    get_provider.assert_called_once_with(mock_key)
+
+    args, _ = get_provider.call_args
+    assert len(args) == 1 and isinstance(args[0], KeyVaultKey) and args[0].id == key_id
 
     for _ in range(3):
         assert mock_client.get_key.call_count == 1
