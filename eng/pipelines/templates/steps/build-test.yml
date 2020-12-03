@@ -23,24 +23,18 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  # - ${{ if eq(parameters.PythonVersion, '3.9.0') }}:
-  #   parameters.RunCoverage: true
-  #   parameters.CoverageArg: ''
-  # - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-
-
   - pwsh: |
       Write-Host "Setting Python version as env var"
       if ($PythonVersion -eq "Python 3.9.0") {
         Write-Host "Enabling Code Coverage"
-        Write-Host "##vso[task.setvariable variable=CoverageArg]''"
-        Write-Host "##vso[task.setvariable variable=RunCoverage]True"
-        Write-Host $Env:CoverageArg
+        Write-Host "##vso[task.setvariable variable=CoverageArgTemp]''"
+        Write-Host "##vso[task.setvariable variable=RunCoverageTemp]True"
+        Write-Host $Env:CoverageArgTemp
       } else {
         Write-Host "Disabling Code Coverage"
-        Write-Host "##vso[task.setvariable variable=CoverageArg]--disablecov"
-        Write-Host "##vso[task.setvariable variable=RunCoverage]False"
-        Write-Host $Env:CoverageArg
+        Write-Host "##vso[task.setvariable variable=CoverageArgTemp]--disablecov"
+        Write-Host "##vso[task.setvariable variable=RunCoverageTemp]False"
+        Write-Host $Env:CoverageArgTemp
       }
     displayName: Set code coverage environment variables
 
@@ -65,7 +59,7 @@ steps:
       arguments: >-
         "${{ parameters.BuildTargetingString }}"
         ${{ parameters.AdditionalTestArgs }}
-        ${{ parameters.CoverageArg }}
+        $(CoverageArgTemp)
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="${{ parameters.ToxTestEnv }}"
@@ -84,4 +78,4 @@ steps:
 
   - template: publish-coverage.yml
     parameters:
-      RunCoverage: ${{ parameters.RunCoverage }}
+      RunCoverage: $(RunCoverageTemp) #${{ parameters.RunCoverage }}
