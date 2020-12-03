@@ -148,7 +148,7 @@ class ChatClient(object):
         participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
         create_thread_request = CreateChatThreadRequest(topic=topic, participants=participants)
 
-        response, create_chat_thread_result = await self._client.create_chat_thread(
+        response, create_chat_thread_result = await self._client.chat.create_chat_thread(
             create_thread_request, cls=return_response, **kwargs)
         if response is not None:
             response_header = response.http_response.headers
@@ -161,10 +161,11 @@ class ChatClient(object):
                     errors.append('participant ' + participant + ' failed to join thread '
                     + create_chat_thread_result.id + ' return statue code ' + reason)
                 raise ValueError(errors)
+        thread_id = create_chat_thread_result.chat_thread.id
         return ChatThreadClient(
             endpoint=self._endpoint,
             credential=self._credential,
-            thread_id=create_chat_thread_result.id,
+            thread_id=thread_id,
             **kwargs
         )
 
@@ -194,7 +195,7 @@ class ChatClient(object):
         if not thread_id:
             raise ValueError("thread_id cannot be None.")
 
-        chat_thread = await self._client.get_chat_thread(thread_id, **kwargs)
+        chat_thread = await self._client.chat.get_chat_thread(thread_id, **kwargs)
         return ChatThread._from_generated(chat_thread)  # pylint:disable=protected-access
 
     @distributed_trace
@@ -223,7 +224,7 @@ class ChatClient(object):
         results_per_page = kwargs.pop("results_per_page", None)
         start_time = kwargs.pop("start_time", None)
 
-        return self._client.list_chat_threads(
+        return self._client.chat.list_chat_threads(
             max_page_size=results_per_page,
             start_time=start_time,
             **kwargs)
@@ -255,7 +256,7 @@ class ChatClient(object):
         if not thread_id:
             raise ValueError("thread_id cannot be None.")
 
-        return await self._client.delete_chat_thread(thread_id, **kwargs)
+        return await self._client.chat.delete_chat_thread(thread_id, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()
