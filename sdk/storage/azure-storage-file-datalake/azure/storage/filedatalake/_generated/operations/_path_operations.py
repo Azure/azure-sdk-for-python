@@ -1605,11 +1605,11 @@ class PathOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
+        # Changed manually until https://github.com/Azure/autorest/issues/3714 is resolved.
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'IO')
-        body_content_kwargs['content'] = body_content
+        body_content_kwargs['stream_content'] = body
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
