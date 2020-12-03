@@ -14,10 +14,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
     def __init__(
         self, directory,
         name_prefix='',
-        sku='Standard_LRS', location='westus', kind='StorageV2',
-        parameter_name='storage_account',
-        resource_group_parameter_name=RESOURCE_GROUP_PARAM,
-        disable_recording=True, playback_fake_resource=None,
+        disable_recording=True,
         client_kwargs=None,
         random_name_enabled=False,
         use_cache=True,
@@ -25,7 +22,6 @@ class PowerShellPreparer(AzureMgmtPreparer):
     ):
         super(PowerShellPreparer, self).__init__(
             name_prefix, 24, disable_recording=disable_recording,
-            playback_fake_resource=playback_fake_resource,
             client_kwargs=client_kwargs, random_name_enabled=random_name_enabled
         )
 

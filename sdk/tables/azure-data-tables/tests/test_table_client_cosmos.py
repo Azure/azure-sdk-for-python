@@ -44,7 +44,6 @@ class StorageTableClientTest(TableTestCase):
     def setUp(self):
         super(StorageTableClientTest, self).setUp()
         self.sas_token = self.generate_sas_token()
-        # self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):
