@@ -140,7 +140,7 @@ class ChatThreadClient(object):
         """
 
         update_topic_request = UpdateChatThreadRequest(topic=topic)
-        return self._client.update_chat_thread(
+        return self._client.chat_thread.update_chat_thread(
             chat_thread_id=self._thread_id,
             update_chat_thread_request=update_topic_request,
             **kwargs)
@@ -174,7 +174,7 @@ class ChatThreadClient(object):
             raise ValueError("message_id cannot be None.")
 
         post_read_receipt_request = SendReadReceiptRequest(chat_message_id=message_id)
-        return self._client.send_chat_read_receipt(
+        return self._client.chat_thread.send_chat_read_receipt(
             self._thread_id,
             send_read_receipt_request=post_read_receipt_request,
             **kwargs)
@@ -201,7 +201,7 @@ class ChatThreadClient(object):
                 :dedent: 8
                 :caption: Listing read receipts.
         """
-        return self._client.list_chat_read_receipts(
+        return self._client.chat_thread.list_chat_read_receipts(
             self._thread_id,
             cls=lambda objs: [ChatMessageReadReceipt._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
@@ -228,7 +228,7 @@ class ChatThreadClient(object):
                 :dedent: 8
                 :caption: Sending typing notification.
         """
-        return self._client.send_typing_notification(self._thread_id, **kwargs)
+        return self._client.chat_thread.send_typing_notification(self._thread_id, **kwargs)
 
     @distributed_trace
     def send_message(
@@ -271,7 +271,7 @@ class ChatThreadClient(object):
             sender_display_name=sender_display_name
         )
 
-        send_chat_message_result = self._client.send_chat_message(
+        send_chat_message_result = self._client.chat_thread.send_chat_message(
             chat_thread_id=self._thread_id,
             send_chat_message_request=create_message_request,
             **kwargs)
@@ -305,7 +305,7 @@ class ChatThreadClient(object):
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
-        chat_message = self._client.get_chat_message(self._thread_id, message_id, **kwargs)
+        chat_message = self._client.chat_thread.get_chat_message(self._thread_id, message_id, **kwargs)
         return ChatMessage._from_generated(chat_message)  # pylint:disable=protected-access
 
     @distributed_trace
@@ -335,12 +335,13 @@ class ChatThreadClient(object):
         results_per_page = kwargs.pop("results_per_page", None)
         start_time = kwargs.pop("start_time", None)
 
-        return self._client.list_chat_messages(
+        a = self._client.chat_thread.list_chat_messages(
             self._thread_id,
-            max_page_size=results_per_page,
+            maxpagesize=results_per_page,
             start_time=start_time,
             cls=lambda objs: [ChatMessage._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
+        return a
 
     @distributed_trace
     def update_message(
@@ -375,7 +376,7 @@ class ChatThreadClient(object):
 
         update_message_request = UpdateChatMessageRequest(content=content, priority=None)
 
-        return self._client.update_chat_message(
+        return self._client.chat_thread.update_chat_message(
             chat_thread_id=self._thread_id,
             chat_message_id=message_id,
             update_chat_message_request=update_message_request,
@@ -409,7 +410,7 @@ class ChatThreadClient(object):
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
-        return self._client.delete_chat_message(
+        return self._client.chat_thread.delete_chat_message(
             chat_thread_id=self._thread_id,
             chat_message_id=message_id,
             **kwargs)
@@ -437,7 +438,7 @@ class ChatThreadClient(object):
                 :caption: Listing participants of chat thread.
         """
 
-        return self._client.list_chat_participants(
+        return self._client.chat_thread.list_chat_participants(
             self._thread_id,
             cls=lambda objs: [ChatThreadParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
@@ -473,7 +474,7 @@ class ChatThreadClient(object):
         participants = [thread_participant._to_generated()]  # pylint:disable=protected-access
         add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
 
-        return self._client.add_chat_participants(
+        return self._client.chat_thread.add_chat_participants(
             chat_thread_id=self._thread_id,
             add_chat_participants_request=add_thread_participants_request,
             **kwargs)
@@ -509,7 +510,7 @@ class ChatThreadClient(object):
         participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
         add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
 
-        return self._client.add_chat_participants(
+        return self._client.chat_thread.add_chat_participants(
             chat_thread_id=self._thread_id,
             add_chat_participants_request=add_thread_participants_request,
             **kwargs)
@@ -542,7 +543,7 @@ class ChatThreadClient(object):
         if not user:
             raise ValueError("user cannot be None.")
 
-        return self._client.remove_chat_participant(
+        return self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
             chat_participant_id=user.identifier,
             **kwargs)

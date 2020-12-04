@@ -32,7 +32,14 @@ async def test_create_chat_thread():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=201, json_payload={"id": thread_id})
+        return mock_response(status_code=201, json_payload={
+            "chatThread": {
+                "id": thread_id,
+                "topic": "test topic",
+                "createdOn": "2020-12-03T21:09:17Z",
+                "createdBy": "8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+            }
+        })
 
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
