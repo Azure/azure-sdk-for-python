@@ -6,6 +6,7 @@
 # ------------------------------------
 
 import functools
+import pytest
 from testcase import FormRecognizerTest
 from testcase import GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
@@ -14,6 +15,7 @@ from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient, Fo
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
+@pytest.mark.skip
 class TestMultiapi(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @FormRecognizerClientPreparer()

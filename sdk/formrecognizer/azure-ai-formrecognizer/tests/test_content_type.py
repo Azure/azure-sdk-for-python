@@ -8,7 +8,7 @@ import pytest
 from azure.ai.formrecognizer._helpers import get_content_type
 from testcase import FormRecognizerTest
 
-
+@pytest.mark.skip
 class TestContentType(FormRecognizerTest):
 
     def test_pdf(self):

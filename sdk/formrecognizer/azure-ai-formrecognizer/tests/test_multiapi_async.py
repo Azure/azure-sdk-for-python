@@ -6,6 +6,7 @@
 # ------------------------------------
 
 import functools
+import pytest
 from testcase import GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -15,6 +16,7 @@ from azure.ai.formrecognizer import FormRecognizerApiVersion
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
+@pytest.mark.skip
 class TestMultiapi(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @FormRecognizerClientPreparer()
