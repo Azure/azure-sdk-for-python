@@ -146,21 +146,20 @@ class ChatClient(object):
             raise ValueError("List of ThreadParticipant cannot be None.")
 
         participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
-        create_thread_request = CreateChatThreadRequest(topic=topic, participants=participants)
+        create_thread_request = \
+            CreateChatThreadRequest(topic=topic, participants=participants)
 
-        response, create_chat_thread_result = await self._client.chat.create_chat_thread(
-            create_thread_request, cls=return_response, **kwargs)
-        if response is not None:
-            response_header = response.http_response.headers
-            if ('Azure-Acs-InvalidParticipants' in response_header.keys() and
-                response_header['Azure-Acs-InvalidParticipants'] is not None):
-                invalid_participant_and_reason_list = response_header['Azure-Acs-InvalidParticipants'].split('|')
-                errors = []
-                for invalid_participant_and_reason in invalid_participant_and_reason_list:
-                    participant, reason = invalid_participant_and_reason.split(',', 1)
-                    errors.append('participant ' + participant + ' failed to join thread '
-                    + create_chat_thread_result.id + ' return statue code ' + reason)
-                raise ValueError(errors)
+        create_chat_thread_result = await self._client.chat.create_chat_thread(
+            create_thread_request, **kwargs)
+        if hasattr(create_chat_thread_result, 'errors') \
+                and create_chat_thread_result.errors is not None:
+            participants = \
+                create_chat_thread_result.errors.invalid_participants
+            errors = []
+            for participant in participants:
+                errors.append('participant ' + participant.target +
+                ' failed to join thread due to: ' + participant.message)
+            raise RuntimeError(errors)
         thread_id = create_chat_thread_result.chat_thread.id
         return ChatThreadClient(
             endpoint=self._endpoint,
