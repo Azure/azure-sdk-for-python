@@ -12,9 +12,7 @@ from azure.keyvault.certificates import (
     CertificateContentType,
     WellKnownIssuerNames,
 )
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-
-from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.preparer import CachedKeyVaultPreparer, KeyVaultClientPreparer as _KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -39,8 +37,7 @@ def test_create_certificate_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_certificate_crud_operations(self, client, **kwargs):
         certificate_client = client
@@ -121,8 +118,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_certificate.recovery_id)
         # [END delete_certificate]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_certificate_list_operations(self, client, **kwargs):
         certificate_client = client
@@ -140,7 +136,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
 
-        certificate_name = self.get_replayable_random_resource_name("cert")
+        certificate_name = self.get_resource_name("cert")
         certificate_client.begin_create_certificate(certificate_name, cert_policy).wait()
 
         # [START list_properties_of_certificates]
@@ -182,8 +178,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.deleted_on)
         # [END list_deleted_certificates]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_certificate_backup_restore(self, client, **kwargs):
         certificate_client = client
@@ -201,7 +196,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
         polling_interval = 0 if self.is_playback() else None
-        cert_name = "cert-name"
+        cert_name = self.get_resource_name("cert")
         certificate_client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
 
         # [START backup_certificate]
@@ -216,7 +211,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_client.purge_deleted_certificate(certificate_name=cert_name)
 
         if self.is_live:
-            time.sleep(15)
+            time.sleep(60)
 
         # [START restore_certificate]
         # restore a certificate backup
@@ -227,8 +222,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_certificate.properties.version)
         # [END restore_certificate]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_certificate_recover(self, client, **kwargs):
         certificate_client = client
@@ -246,7 +240,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
 
-        cert_name = "cert-name"
+        cert_name = self.get_resource_name("cert")
 
         polling_interval = 0 if self.is_playback() else None
         certificate_client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
@@ -272,8 +266,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(recovered_certificate.name)
         # [END recover_deleted_certificate]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_contacts(self, client, **kwargs):
         certificate_client = client
@@ -313,8 +306,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(deleted_contact.phone)
         # [END delete_contacts]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_issuers(self, client, **kwargs):
         certificate_client = client
