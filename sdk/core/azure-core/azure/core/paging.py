@@ -25,17 +25,20 @@
 # --------------------------------------------------------------------------
 import itertools
 import functools
-from typing import (  # pylint: disable=unused-import
-    Callable,
-    Optional,
-    TypeVar,
-    Iterator,
-    Iterable,
-    Tuple,
-)
 import logging
+from typing import TYPE_CHECKING, Iterator, TypeVar
 
 from .exceptions import AzureError, map_error, HttpResponseError
+
+if TYPE_CHECKING:
+    from typing import (
+        Callable,
+        Optional,
+        Iterable,
+        Tuple,
+    )
+    from .paging_method import PagingMethodABC
+
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -79,7 +82,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         get_next=None,  # type: Callable[[Optional[str]], ResponseType]
         extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         continuation_token=None,  # type: Optional[str]
-        paging_method=None,
+        paging_method=None,  # type: PagingMethodABC
         **kwargs
     ):
         """Return an iterator of pages.
