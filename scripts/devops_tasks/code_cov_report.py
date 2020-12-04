@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_file = os.path.join(root_dir, "coverage.xml")
-output_file = os.path.join(root_dir, "coverage-new.xml")
 
 
 def create_coverage_report():
@@ -29,6 +28,7 @@ def create_coverage_report():
         package = name[2]
         if (folder, package) not in packages_to_report:
             packages_to_report.append((folder, package))
+            logging.info("Found a new package: {}".format(package))
 
     new_packages = []
     for p in packages_to_report:
@@ -45,7 +45,7 @@ def create_coverage_report():
     for np in new_packages:
         packages_nodes[0].append(np)
 
-    ET.ElementTree(root).write(output_file)
+    ET.ElementTree(root).write(coverage_file)
 
 
 def recursive_set_name(root):
