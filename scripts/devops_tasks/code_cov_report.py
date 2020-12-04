@@ -80,6 +80,3 @@ def create_default_attribs(node, name):
     node.set('complexity', '0')
     node.set('line-rate', '0.0000')
     node.set('name', name)
-
-
-create_coverage_report()
