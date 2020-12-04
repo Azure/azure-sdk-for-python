@@ -24,12 +24,13 @@ def create_coverage_report():
     for child in packages:
         # Order should be: ['azure', '<package-name>', 'azure-<package-name>', ...]
         name = child.attrib['name'].split('.')
+        logging.info("Name: {}".format(name))
         folder = name[1]
         package = name[2]
         if (folder, package) not in packages_to_report:
             packages_to_report.append((folder, package))
             logging.info("Found a new package: {}".format(package))
-
+    logging.info("Reporting on packages: {}".format(packages_to_report))
     new_packages = []
     for p in packages_to_report:
         n = create_new_node(p, root)
@@ -40,7 +41,6 @@ def create_coverage_report():
     for packages_node in packages_nodes:
         for p in packages_node.findall('package'):
             packages_node.remove(p)
-
 
     for np in new_packages:
         packages_nodes[0].append(np)
