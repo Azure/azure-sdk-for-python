@@ -146,7 +146,6 @@ class ChatThread(object):
             topic=chat_thread.topic,
             created_on=chat_thread.created_on,
             created_by=CommunicationUser(chat_thread.created_by),
-            participants=[ChatThreadParticipant._from_generated(x) for x in chat_thread.participants]
         )
 
 
