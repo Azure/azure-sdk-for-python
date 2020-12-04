@@ -136,8 +136,9 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             subscription_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
             await mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
-            assert subscription_description.forward_to == "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
-            assert subscription_description.forward_dead_lettered_messages_to == "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
