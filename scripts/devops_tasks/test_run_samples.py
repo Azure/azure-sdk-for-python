@@ -134,4 +134,7 @@ if __name__ == "__main__":
         exit(0)
 
     logging.info("User opted to run samples")
+    logging.info("Root dir is {}".format(root_dir))
+    logging.info("Glog string is {}".format(args.glob_string))
+    logging.info("Mark arg is {}".format(args.mark_arg))
 
