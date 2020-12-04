@@ -37,6 +37,245 @@ class AclFailedEntry(Model):
         self.error_message = error_message
 
 
+class BlobHierarchyListSegment(Model):
+    """BlobHierarchyListSegment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param blob_prefixes:
+    :type blob_prefixes: list[~azure.storage.filedatalake.models.BlobPrefix]
+    :param blob_items: Required.
+    :type blob_items:
+     list[~azure.storage.filedatalake.models.BlobItemInternal]
+    """
+
+    _validation = {
+        'blob_items': {'required': True},
+    }
+
+    _attribute_map = {
+        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]'},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]'},
+    }
+
+    def __init__(self, *, blob_items, blob_prefixes=None, **kwargs) -> None:
+        super(BlobHierarchyListSegment, self).__init__(**kwargs)
+        self.blob_prefixes = blob_prefixes
+        self.blob_items = blob_items
+
+
+class BlobItemInternal(Model):
+    """An Azure Storage blob.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required.
+    :type name: str
+    :param deleted: Required.
+    :type deleted: bool
+    :param snapshot: Required.
+    :type snapshot: str
+    :param version_id:
+    :type version_id: str
+    :param is_current_version:
+    :type is_current_version: bool
+    :param properties: Required.
+    :type properties:
+     ~azure.storage.filedatalake.models.BlobPropertiesInternal
+    :param deletion_id:
+    :type deletion_id: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'deleted': {'required': True},
+        'snapshot': {'required': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str'},
+        'deleted': {'key': 'Deleted', 'type': 'bool'},
+        'snapshot': {'key': 'Snapshot', 'type': 'str'},
+        'version_id': {'key': 'VersionId', 'type': 'str'},
+        'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool'},
+        'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
+        'deletion_id': {'key': 'DeletionId', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, deleted: bool, snapshot: str, properties, version_id: str=None, is_current_version: bool=None, deletion_id: str=None, **kwargs) -> None:
+        super(BlobItemInternal, self).__init__(**kwargs)
+        self.name = name
+        self.deleted = deleted
+        self.snapshot = snapshot
+        self.version_id = version_id
+        self.is_current_version = is_current_version
+        self.properties = properties
+        self.deletion_id = deletion_id
+
+
+class BlobPrefix(Model):
+    """BlobPrefix.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required.
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, **kwargs) -> None:
+        super(BlobPrefix, self).__init__(**kwargs)
+        self.name = name
+
+
+class BlobPropertiesInternal(Model):
+    """Properties of a blob.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param creation_time:
+    :type creation_time: datetime
+    :param last_modified: Required.
+    :type last_modified: datetime
+    :param etag: Required.
+    :type etag: str
+    :param content_length: Size in bytes
+    :type content_length: long
+    :param content_type:
+    :type content_type: str
+    :param content_encoding:
+    :type content_encoding: str
+    :param content_language:
+    :type content_language: str
+    :param content_md5:
+    :type content_md5: bytearray
+    :param content_disposition:
+    :type content_disposition: str
+    :param cache_control:
+    :type cache_control: str
+    :param blob_sequence_number:
+    :type blob_sequence_number: long
+    :param copy_id:
+    :type copy_id: str
+    :param copy_source:
+    :type copy_source: str
+    :param copy_progress:
+    :type copy_progress: str
+    :param copy_completion_time:
+    :type copy_completion_time: datetime
+    :param copy_status_description:
+    :type copy_status_description: str
+    :param server_encrypted:
+    :type server_encrypted: bool
+    :param incremental_copy:
+    :type incremental_copy: bool
+    :param destination_snapshot:
+    :type destination_snapshot: str
+    :param deleted_time:
+    :type deleted_time: datetime
+    :param remaining_retention_days:
+    :type remaining_retention_days: int
+    :param access_tier_inferred:
+    :type access_tier_inferred: bool
+    :param customer_provided_key_sha256:
+    :type customer_provided_key_sha256: str
+    :param encryption_scope: The name of the encryption scope under which the
+     blob is encrypted.
+    :type encryption_scope: str
+    :param access_tier_change_time:
+    :type access_tier_change_time: datetime
+    :param tag_count:
+    :type tag_count: int
+    :param expires_on:
+    :type expires_on: datetime
+    :param is_sealed:
+    :type is_sealed: bool
+    :param last_accessed_on:
+    :type last_accessed_on: datetime
+    :param delete_time:
+    :type delete_time: datetime
+    """
+
+    _validation = {
+        'last_modified': {'required': True},
+        'etag': {'required': True},
+    }
+
+    _attribute_map = {
+        'creation_time': {'key': 'Creation-Time', 'type': 'rfc-1123'},
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
+        'etag': {'key': 'Etag', 'type': 'str'},
+        'content_length': {'key': 'Content-Length', 'type': 'long'},
+        'content_type': {'key': 'Content-Type', 'type': 'str'},
+        'content_encoding': {'key': 'Content-Encoding', 'type': 'str'},
+        'content_language': {'key': 'Content-Language', 'type': 'str'},
+        'content_md5': {'key': 'Content-MD5', 'type': 'bytearray'},
+        'content_disposition': {'key': 'Content-Disposition', 'type': 'str'},
+        'cache_control': {'key': 'Cache-Control', 'type': 'str'},
+        'blob_sequence_number': {'key': 'x-ms-blob-sequence-number', 'type': 'long'},
+        'copy_id': {'key': 'CopyId', 'type': 'str'},
+        'copy_source': {'key': 'CopySource', 'type': 'str'},
+        'copy_progress': {'key': 'CopyProgress', 'type': 'str'},
+        'copy_completion_time': {'key': 'CopyCompletionTime', 'type': 'rfc-1123'},
+        'copy_status_description': {'key': 'CopyStatusDescription', 'type': 'str'},
+        'server_encrypted': {'key': 'ServerEncrypted', 'type': 'bool'},
+        'incremental_copy': {'key': 'IncrementalCopy', 'type': 'bool'},
+        'destination_snapshot': {'key': 'DestinationSnapshot', 'type': 'str'},
+        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
+        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
+        'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool'},
+        'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str'},
+        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str'},
+        'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123'},
+        'tag_count': {'key': 'TagCount', 'type': 'int'},
+        'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123'},
+        'is_sealed': {'key': 'Sealed', 'type': 'bool'},
+        'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
+        'delete_time': {'key': 'DeleteTime', 'type': 'rfc-1123'},
+    }
+
+    def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, copy_id: str=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier_inferred: bool=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, tag_count: int=None, expires_on=None, is_sealed: bool=None, last_accessed_on=None, delete_time=None, **kwargs) -> None:
+        super(BlobPropertiesInternal, self).__init__(**kwargs)
+        self.creation_time = creation_time
+        self.last_modified = last_modified
+        self.etag = etag
+        self.content_length = content_length
+        self.content_type = content_type
+        self.content_encoding = content_encoding
+        self.content_language = content_language
+        self.content_md5 = content_md5
+        self.content_disposition = content_disposition
+        self.cache_control = cache_control
+        self.blob_sequence_number = blob_sequence_number
+        self.copy_id = copy_id
+        self.copy_source = copy_source
+        self.copy_progress = copy_progress
+        self.copy_completion_time = copy_completion_time
+        self.copy_status_description = copy_status_description
+        self.server_encrypted = server_encrypted
+        self.incremental_copy = incremental_copy
+        self.destination_snapshot = destination_snapshot
+        self.deleted_time = deleted_time
+        self.remaining_retention_days = remaining_retention_days
+        self.access_tier_inferred = access_tier_inferred
+        self.customer_provided_key_sha256 = customer_provided_key_sha256
+        self.encryption_scope = encryption_scope
+        self.access_tier_change_time = access_tier_change_time
+        self.tag_count = tag_count
+        self.expires_on = expires_on
+        self.is_sealed = is_sealed
+        self.last_accessed_on = last_accessed_on
+        self.delete_time = delete_time
+
+
 class FileSystem(Model):
     """FileSystem.
 
@@ -92,6 +331,58 @@ class LeaseAccessConditions(Model):
     def __init__(self, *, lease_id: str=None, **kwargs) -> None:
         super(LeaseAccessConditions, self).__init__(**kwargs)
         self.lease_id = lease_id
+
+
+class ListBlobsHierarchySegmentResponse(Model):
+    """An enumeration of blobs.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param service_endpoint: Required.
+    :type service_endpoint: str
+    :param container_name: Required.
+    :type container_name: str
+    :param prefix:
+    :type prefix: str
+    :param marker:
+    :type marker: str
+    :param max_results:
+    :type max_results: int
+    :param delimiter:
+    :type delimiter: str
+    :param segment: Required.
+    :type segment: ~azure.storage.filedatalake.models.BlobHierarchyListSegment
+    :param next_marker:
+    :type next_marker: str
+    """
+
+    _validation = {
+        'service_endpoint': {'required': True},
+        'container_name': {'required': True},
+        'segment': {'required': True},
+    }
+
+    _attribute_map = {
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
+        'container_name': {'key': 'ContainerName', 'type': 'str'},
+        'prefix': {'key': 'Prefix', 'type': 'str'},
+        'marker': {'key': 'Marker', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'int'},
+        'delimiter': {'key': 'Delimiter', 'type': 'str'},
+        'segment': {'key': 'Segment', 'type': 'BlobHierarchyListSegment'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+    }
+
+    def __init__(self, *, service_endpoint: str, container_name: str, segment, prefix: str=None, marker: str=None, max_results: int=None, delimiter: str=None, next_marker: str=None, **kwargs) -> None:
+        super(ListBlobsHierarchySegmentResponse, self).__init__(**kwargs)
+        self.service_endpoint = service_endpoint
+        self.container_name = container_name
+        self.prefix = prefix
+        self.marker = marker
+        self.max_results = max_results
+        self.delimiter = delimiter
+        self.segment = segment
+        self.next_marker = next_marker
 
 
 class ModifiedAccessConditions(Model):

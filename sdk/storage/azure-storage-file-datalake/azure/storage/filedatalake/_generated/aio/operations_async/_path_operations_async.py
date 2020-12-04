@@ -23,7 +23,6 @@ class PathOperations:
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar comp: . Constant value: "expiry".
     """
 
     models = models
@@ -35,7 +34,6 @@ class PathOperations:
         self._deserialize = deserializer
 
         self._config = config
-        self.comp = "expiry"
 
     async def create(self, resource=None, continuation=None, mode=None, rename_source=None, source_lease_id=None, properties=None, permissions=None, umask=None, request_id=None, timeout=None, path_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, source_modified_access_conditions=None, *, cls=None, **kwargs):
         """Create File | Create Directory | Rename File | Rename Directory.
@@ -1101,6 +1099,7 @@ class PathOperations:
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'x-ms-continuation': self._deserialize('str', response.headers.get('x-ms-continuation')),
+                'x-ms-deletion-id': self._deserialize('str', response.headers.get('x-ms-deletion-id')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -1653,6 +1652,8 @@ class PathOperations:
          :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        comp = "expiry"
+
         # Construct URL
         url = self.set_expiry.metadata['url']
         path_format_arguments = {
@@ -1664,7 +1665,7 @@ class PathOperations:
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        query_parameters['comp'] = self._serialize.query("self.comp", self.comp, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1696,3 +1697,69 @@ class PathOperations:
             }
             return cls(response, None, response_headers)
     set_expiry.metadata = {'url': '/{filesystem}/{path}'}
+
+    async def undelete(self, timeout=None, undelete_source=None, request_id=None, *, cls=None, **kwargs):
+        """Undelete a path that was previously soft deleted.
+
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param undelete_source: Only for hierarchical namespace enabled
+         accounts. Optional. The path of the soft deleted blob to undelete.
+        :type undelete_source: str
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        comp = "undelete"
+
+        # Construct URL
+        url = self.undelete.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if undelete_source is not None:
+            header_parameters['x-ms-undelete-source'] = self._serialize.header("undelete_source", undelete_source, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    undelete.metadata = {'url': '/{filesystem}/{path}'}

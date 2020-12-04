@@ -27,6 +27,22 @@ class PathExpiryOptions(str, Enum):
     absolute = "Absolute"
 
 
+class ListBlobsIncludeItem(str, Enum):
+
+    copy = "copy"
+    deleted = "deleted"
+    metadata = "metadata"
+    snapshots = "snapshots"
+    uncommittedblobs = "uncommittedblobs"
+    versions = "versions"
+    tags = "tags"
+
+
+class ListBlobsShowOnly(str, Enum):
+
+    deleted = "deleted"
+
+
 class PathResourceType(str, Enum):
 
     directory = "directory"
