@@ -151,7 +151,7 @@ def collect_tox_coverage_files(targeted_packages):
 
 def trim_cov_file(coverage_file):
     # Remove generated files, python2 specific files
-    remove_keywords = ["_generated", "azure-mgmt"]
+    remove_keywords = ["_generated"]
     trimmed_info = []
     intro = ""
     with open(coverage_file, "r") as f_cov:
