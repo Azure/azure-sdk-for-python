@@ -120,18 +120,13 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._did_a_call_already = False
         self._operation_config = kwargs
 
-    def _finished(self, did_a_call_already, continuation_token):
-        if self._paging_method:
-            return self._paging_method.finished(did_a_call_already, continuation_token)
-        return did_a_call_already and not continuation_token
-
     def __iter__(self):
         """Return 'self'."""
         return self
 
     def __next__(self):
         # type: () -> Iterator[ReturnType]
-        if self._finished(self._did_a_call_already, self.continuation_token):
+        if self._did_a_call_already and not self.continuation_token:
             raise StopIteration("End of paging")
         try:
             self._response = self._get_page(self.continuation_token)

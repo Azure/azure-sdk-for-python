@@ -62,17 +62,6 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def finished(self, did_a_call_already, continuation_token):
-        # type: (bool, Any) -> bool
-        """Whether paging is finished.
-
-        :param bool did_a_call_already: Whether an initial call has been made yet
-        :param any continuation_token: Token passed to indicate continued paging, and how to get next page
-        :return: Whether paging is finished
-        :rtype: bool
-        """
-        raise NotImplementedError("This method needs to be implemented")
-
     # extracting data from response
 
     def get_list_elements(self, pipeline_response, deserialized):
@@ -182,17 +171,6 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
                 "You need to pass in a callback for next request that takes in a continuation token"
             )
         return next_request_partial(continuation_token)
-
-    def finished(self, did_a_call_already, continuation_token):
-        # type: (bool, Any) -> bool
-        """Whether paging is finished.
-
-        :param bool did_a_call_already: Whether an initial call has been made yet
-        :param any continuation_token: Token passed to indicate continued paging, and how to get next page
-        :return: Whether paging is finished
-        :rtype: bool
-        """
-        return did_a_call_already and not continuation_token
 
     def get_list_elements(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
