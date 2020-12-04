@@ -236,7 +236,7 @@ sas_token = "<your-sas-token>"  # replace with a sas token to your storage accou
 # until the backup is completed, then return an object representing the backup operation.
 backup_operation = client.begin_full_backup(blob_storage_url, sas_token).result()
 
-print(backup_operation.blob_storage_url)
+print(backup_operation.folder_url)
 print(backup_operation.status)
 print(backup_operation.job_id)
 ```

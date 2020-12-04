@@ -56,7 +56,7 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the backup
-        restore_poller = backup_client.begin_full_restore(backup_status.blob_storage_url, sas_token)
+        restore_poller = backup_client.begin_full_restore(backup_status.folder_url, sas_token)
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
@@ -90,7 +90,7 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = backup_client.begin_selective_restore(backup_status.blob_storage_url, sas_token, key_name)
+        restore_poller = backup_client.begin_selective_restore(backup_status.folder_url, sas_token, key_name)
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
@@ -129,7 +129,7 @@ def test_continuation_token():
 
 def assert_in_progress_operation(operation):
     if isinstance(operation, BackupOperation):
-        assert operation.blob_storage_url is None
+        assert operation.folder_url is None
     assert operation.status == "InProgress"
     assert operation.end_time is None
     assert isinstance(operation.start_time, datetime)
@@ -137,7 +137,7 @@ def assert_in_progress_operation(operation):
 
 def assert_successful_operation(operation):
     if isinstance(operation, BackupOperation):
-        assert operation.blob_storage_url
+        assert operation.folder_url
     assert operation.status == "Succeeded"
     assert isinstance(operation.end_time, datetime)
     assert operation.start_time < operation.end_time

@@ -200,11 +200,11 @@ class BackupOperation(_Operation):
     :ivar datetime.datetime start_time: UTC start time of the operation
     :ivar datetime.datetime end_time: UTC end time of the operation
     :ivar str job_id: identifier for the operation
-    :ivar str blob_storage_url: URL of the Azure blob storage container which contains the backup
+    :ivar str folder_url: URL of the Azure blob storage container which contains the backup
     """
 
     def __init__(self, **kwargs):
-        self.blob_storage_url = kwargs.pop("azure_storage_blob_container_uri", None)
+        self.folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
         super(BackupOperation, self).__init__(**kwargs)
 
 

@@ -51,7 +51,7 @@ def parse_vault_id(url):
 BackupLocation = namedtuple("BackupLocation", ["container_url", "folder_name"])
 
 
-def parse_blob_storage_url(blob_storage_url):
+def parse_folder_url(folder_url):
     # type: (str) -> BackupLocation
     """Parse the blob container URL and folder name from a backup's blob storage URL.
 
@@ -60,12 +60,12 @@ def parse_blob_storage_url(blob_storage_url):
     """
 
     try:
-        folder_name = blob_storage_url.rstrip("/").split("/")[-1]
-        container_url = blob_storage_url[: blob_storage_url.rindex(folder_name) - 1]
+        folder_name = folder_url.rstrip("/").split("/")[-1]
+        container_url = folder_url[: folder_url.rindex(folder_name) - 1]
         return BackupLocation(container_url, folder_name)
     except:  # pylint:disable=broad-except
         raise ValueError(
-            '"blob_storage_url" should be the URL of a blob holding a Key Vault backup, for example '
+            '"folder_url" should be the URL of a blob holding a Key Vault backup, for example '
             '"https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313"'
         )
 

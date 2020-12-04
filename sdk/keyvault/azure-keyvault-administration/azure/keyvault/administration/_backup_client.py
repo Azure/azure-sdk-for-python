@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from azure.core.polling.base_polling import LROBasePolling
 
 from ._models import BackupOperation, RestoreOperation, SelectiveKeyRestoreOperation
-from ._internal import KeyVaultClientBase, parse_blob_storage_url
+from ._internal import KeyVaultClientBase, parse_folder_url
 from ._internal.polling import KeyVaultBackupClientPolling
 
 if TYPE_CHECKING:
@@ -47,18 +47,18 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def begin_full_restore(self, blob_storage_url, sas_token, **kwargs):
+    def begin_full_restore(self, folder_url, sas_token, **kwargs):
         # type: (str, str, **Any) -> LROPoller[RestoreOperation]
         """Restore a full backup of a Key Vault.
 
-        :param str blob_storage_url: URL of the blob holding the backup. This would be the `blob_storage_url` of a
+        :param str folder_url: URL of the blob holding the backup. This would be the `folder_url` of a
             :class:`BackupOperation` returned by :func:`begin_full_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :rtype: ~azure.core.polling.LROPoller[RestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
-        container_url, folder_name = parse_blob_storage_url(blob_storage_url)
+        container_url, folder_name = parse_folder_url(folder_url)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=container_url, token=sas_token)
         restore_details = self._models.RestoreOperationParameters(
             sas_token_parameters=sas_parameter, folder_to_restore=folder_name
@@ -72,12 +72,12 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def begin_selective_restore(self, blob_storage_url, sas_token, key_name, **kwargs):
+    def begin_selective_restore(self, folder_url, sas_token, key_name, **kwargs):
         # type: (str, str, str, **Any) -> LROPoller[SelectiveKeyRestoreOperation]
         """Restore a single key from a full Key Vault backup.
 
-        :param str blob_storage_url: URL for the blob storage resource, including the path to the blob holding the
-            backup. This would be the `blob_storage_url` of a :class:`BackupOperation` returned by
+        :param str folder_url: URL for the blob storage resource, including the path to the blob holding the
+            backup. This would be the `folder_url` of a :class:`BackupOperation` returned by
             :func:`begin_full_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
@@ -85,7 +85,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :rtype: ~azure.core.polling.LROPoller[RestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
-        container_url, folder_name = parse_blob_storage_url(blob_storage_url)
+        container_url, folder_name = parse_folder_url(folder_url)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=container_url, token=sas_token)
         restore_details = self._models.SelectiveKeyRestoreOperationParameters(
             sas_token_parameters=sas_parameter, folder=folder_name
