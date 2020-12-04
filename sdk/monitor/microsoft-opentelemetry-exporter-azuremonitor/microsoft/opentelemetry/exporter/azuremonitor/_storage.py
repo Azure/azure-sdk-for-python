@@ -26,16 +26,16 @@ def _seconds(seconds):
 
 # pylint: disable=broad-except
 class LocalFileBlob:
-    def __init__(self, fullpath):
+    def __init__(self, fullpath):  # type: (...) -> None
         self.fullpath = fullpath
 
-    def delete(self):
+    def delete(self):  # type: (...) -> None
         try:
             os.remove(self.fullpath)
         except Exception:
             pass  # keep silent
 
-    def get(self):
+    def get(self):  # type: (...) -> None
         try:
             with open(self.fullpath, "r") as file:
                 return tuple(
@@ -44,7 +44,7 @@ class LocalFileBlob:
         except Exception:
             pass  # keep silent
 
-    def put(self, data, lease_period=0):
+    def put(self, data, lease_period=0):  # type: (...) -> None
         try:
             fullpath = self.fullpath + ".tmp"
             with open(fullpath, "w") as file:
@@ -62,7 +62,7 @@ class LocalFileBlob:
         except Exception:
             pass  # keep silent
 
-    def lease(self, period):
+    def lease(self, period):  # type: (...) -> None
         timestamp = _now() + _seconds(period)
         fullpath = self.fullpath
         if fullpath.endswith(".lock"):
@@ -85,7 +85,7 @@ class LocalFileStorage:
         maintenance_period=60,  # 1 minute
         retention_period=7 * 24 * 60 * 60,  # 7 days
         write_timeout=60,  # 1 minute
-    ):
+    ):  # type: (...) -> None
         self._path = os.path.abspath(path)
         self._max_size = max_size
         self._retention_period = retention_period
@@ -98,7 +98,7 @@ class LocalFileStorage:
         self._maintenance_task.daemon = True
         self._maintenance_task.start()
 
-    def close(self):
+    def close(self):  # type: (...) -> None
         self._maintenance_task.cancel()
         self._maintenance_task.join()
 
@@ -118,7 +118,7 @@ class LocalFileStorage:
         except Exception:
             pass  # keep silent
 
-    def gets(self):
+    def gets(self):  # type: (...) -> None
         now = _now()
         lease_deadline = _fmt(now)
         retention_deadline = _fmt(now - _seconds(self._retention_period))
@@ -154,7 +154,7 @@ class LocalFileStorage:
         except Exception:
             pass  # keep silent
 
-    def get(self):
+    def get(self):  # type: (...) -> None
         cursor = self.gets()
         try:
             return next(cursor)
@@ -162,7 +162,7 @@ class LocalFileStorage:
             pass
         return None
 
-    def put(self, data, lease_period=0):
+    def put(self, data, lease_period=0):  # type: (...) -> None
         # Create path if it doesn't exist
         try:
             if not os.path.isdir(self._path):

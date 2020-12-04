@@ -46,7 +46,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_constructor(self):
         """Test the constructor."""
         base = BaseExporter(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            ExporterOptions("InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab")
         )
         self.assertEqual(
             base._instrumentation_key,
@@ -59,7 +59,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_constructor_wrong_options(self):
         """Test the constructor with wrong options."""
         with self.assertRaises(TypeError):
-            BaseExporter(something_else=6)
+            BaseExporter(ExporterOptions(something_else=6))
 
     def test_transmit_from_storage(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]

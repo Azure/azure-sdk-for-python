@@ -30,7 +30,7 @@ azure_monitor_context = {
 }
 
 
-def ns_to_duration(nanoseconds):
+def ns_to_duration(nanoseconds):  # type: (...) -> str
     value = (nanoseconds + 500000) // 1000000  # duration in milliseconds
     value, microseconds = divmod(value, 1000)
     value, seconds = divmod(value, 60)
@@ -58,6 +58,7 @@ class PeriodicTask(threading.Thread):
     """
 
     def __init__(self, interval, function, args=None, kwargs=None):
+        # type: (...) -> None
         super().__init__()
         self.interval = interval
         self.function = function
@@ -65,7 +66,7 @@ class PeriodicTask(threading.Thread):
         self.kwargs = kwargs or {}
         self.finished = threading.Event()
 
-    def run(self):
+    def run(self):  # type: (...) -> None
         wait_time = self.interval
         while not self.finished.wait(wait_time):
             start_time = time.time()
@@ -73,5 +74,5 @@ class PeriodicTask(threading.Thread):
             elapsed_time = time.time() - start_time
             wait_time = max(self.interval - elapsed_time, 0)
 
-    def cancel(self):
+    def cancel(self):  # type: (...) -> None
         self.finished.set()

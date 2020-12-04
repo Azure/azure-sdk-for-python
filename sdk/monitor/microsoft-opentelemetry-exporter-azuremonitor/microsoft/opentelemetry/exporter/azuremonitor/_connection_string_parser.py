@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 import os
 import re
-import typing
 
 INGESTION_ENDPOINT = "ingestionendpoint"
 INSTRUMENTATION_KEY = "instrumentationkey"
@@ -29,15 +28,16 @@ class ConnectionStringParser:
     def __init__(
         self,
         connection_string: str = None
-    ) -> None:
+    ):
+        # type: (...) -> None
         self.instrumentation_key = None
         self.endpoint = ""
         self._connection_string = connection_string
         self._initialize()
         self._validate_instrumentation_key()
 
-    def _initialize(self) -> None:
-        # connection string and ikey
+    def _initialize(self):
+        # type: (...) -> None
         code_cs = self._parse_connection_string(self._connection_string)
         code_ikey = self.instrumentation_key
         env_cs = self._parse_connection_string(
@@ -66,7 +66,8 @@ class ConnectionStringParser:
             or "https://dc.services.visualstudio.com"
         )
 
-    def _validate_instrumentation_key(self) -> None:
+    def _validate_instrumentation_key(self):
+        # type: (...) -> None
         """Validates the instrumentation key used for Azure Monitor.
         An instrumentation key cannot be null or empty. An instrumentation key
         is valid for Azure Monitor only if it is a valid UUID.
@@ -79,7 +80,8 @@ class ConnectionStringParser:
             raise ValueError(
                 "Invalid instrumentation key. It should be a valid UUID.")
 
-    def _parse_connection_string(self, connection_string) -> typing.Dict:
+    def _parse_connection_string(self, connection_string):
+        # type: (...) -> typing.Dict
         if connection_string is None:
             return {}
         try:

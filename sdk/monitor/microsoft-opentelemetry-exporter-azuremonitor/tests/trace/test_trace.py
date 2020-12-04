@@ -47,7 +47,7 @@ class TestAzureTraceExporter(unittest.TestCase):
     def test_constructor(self):
         """Test the constructor."""
         exporter = AzureMonitorTraceExporter(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            ExporterOptions("InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab")
         )
         self.assertEqual(
             exporter._instrumentation_key,
@@ -148,7 +148,7 @@ class TestAzureTraceExporter(unittest.TestCase):
     # pylint: disable=too-many-statements
     def test_span_to_envelope(self):
         exporter = AzureMonitorTraceExporter(
-            connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd",
+            ExporterOptions("InstrumentationKey=12345678-1234-5678-abcd-12345678abcd")
         )
         parent_span = SpanContext(
             trace_id=36873507687745823477771305566750195431,

@@ -36,16 +36,10 @@ class BaseExporter:
     :type options: ~microsoft.opentelemetry.exporter.azuremonitor.options.ExporterOptions
     """
 
-    def __init__(self, **kwargs):
-        """Azure Monitor base exporter for OpenTelemetry.
-
-        :param options: Exporter configuration options.
-        :type options: ~microsoft.opentelemetry.exporter.azuremonitor.options.ExporterOptions
-        """
-        options = ExporterOptions(**kwargs)
+    def __init__(self, options: ExporterOptions = None, **kwargs):
+        # type: (...) -> None
         parsed_connection_string = ConnectionStringParser(
-            options.connection_string)
-
+            options.connection_string if options is not None else None)
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._timeout = 10.0  # networking timeout in seconds
 
@@ -79,7 +73,8 @@ class BaseExporter:
             retention_period=7 * 24 * 60 * 60,  # Retention period in seconds
         )
 
-    def _transmit_from_storage(self) -> None:
+    def _transmit_from_storage(self):
+        # type: (...) -> None
         for blob in self.storage.gets():
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
@@ -94,7 +89,8 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-return-statements
-    def _transmit(self, envelopes: typing.List[TelemetryItem]) -> ExportResult:
+    def _transmit(self, envelopes: typing.List[TelemetryItem]):
+        # type: (...) -> ExportResult
         """
         Transmit the data envelopes to the ingestion service.
 
@@ -142,7 +138,8 @@ class BaseExporter:
         return ExportResult.SUCCESS
 
 
-def is_retryable_code(response_code: int) -> bool:
+def is_retryable_code(response_code: int):
+    # type: (...) -> bool
     """
     Determine if response is retryable
     """
@@ -156,7 +153,8 @@ def is_retryable_code(response_code: int) -> bool:
     ))
 
 
-def get_trace_export_result(result: ExportResult) -> SpanExportResult:
+def get_trace_export_result(result: ExportResult):
+    # type: (...) -> SpanExportResult
     if result == ExportResult.SUCCESS:
         return SpanExportResult.SUCCESS
     if result in (

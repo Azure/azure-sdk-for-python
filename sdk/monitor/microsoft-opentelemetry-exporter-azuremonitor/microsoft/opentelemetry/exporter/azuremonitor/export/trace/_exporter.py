@@ -28,13 +28,9 @@ __all__ = ["AzureMonitorTraceExporter"]
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
-    """Azure Monitor base exporter for OpenTelemetry.
 
-    :param options: Exporter configuration options.
-    :type options: ~microsoft.opentelemetry.exporter.azuremonitor.options.ExporterOptions
-    """
-
-    def export(self, spans: Sequence[Span]) -> SpanExportResult:
+    def export(self, spans: Sequence[Span]):
+        # type: (...) -> SpanExportResult
         """Export data
         :param spans: Open Telemetry Spans to export.
         :type spans: ~opentelemetry.trace.Span
@@ -54,13 +50,15 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             return get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self):
+        # type: (...) -> None
         """Shuts down the exporter.
 
         Called when the SDK is shut down.
         """
         self.storage.close()
 
-    def _span_to_envelope(self, span: Span) -> TelemetryItem:
+    def _span_to_envelope(self, span: Span):
+        # type: (...) -> TelemetryItem
         if not span:
             return None
         envelope = convert_span_to_envelope(span)
@@ -70,7 +68,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
-def convert_span_to_envelope(span: Span) -> TelemetryItem:
+def convert_span_to_envelope(span: Span):
+    # type: (...) -> TelemetryItem
     envelope = TelemetryItem(
         name="",
         instrumentation_key="",
