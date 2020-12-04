@@ -40,7 +40,7 @@ class MonitorClientConfiguration(Configuration):
         self.credential = credential
         self.api_version = "2018-11-27-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'mgmt-eventhub/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'mgmt-monitor/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

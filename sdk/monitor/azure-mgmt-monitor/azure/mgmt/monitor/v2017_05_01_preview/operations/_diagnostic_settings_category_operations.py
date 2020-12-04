@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class DiagnosticSettingsCategoryOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class DiagnosticSettingsCategoryOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiagnosticSettingsCategoryResource"
+        # type: (...) -> "_models.DiagnosticSettingsCategoryResource"
         """Gets the diagnostic settings category for the specified resource.
 
         :param resource_uri: The identifier of the resource.
@@ -62,7 +62,7 @@ class DiagnosticSettingsCategoryOperations(object):
         :rtype: ~$(python-base-namespace).v2017_05_01_preview.models.DiagnosticSettingsCategoryResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticSettingsCategoryResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticSettingsCategoryResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -92,7 +92,7 @@ class DiagnosticSettingsCategoryOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticSettingsCategoryResource', pipeline_response)
@@ -108,7 +108,7 @@ class DiagnosticSettingsCategoryOperations(object):
         resource_uri,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiagnosticSettingsCategoryResourceCollection"
+        # type: (...) -> "_models.DiagnosticSettingsCategoryResourceCollection"
         """Lists the diagnostic settings categories for the specified resource.
 
         :param resource_uri: The identifier of the resource.
@@ -118,7 +118,7 @@ class DiagnosticSettingsCategoryOperations(object):
         :rtype: ~$(python-base-namespace).v2017_05_01_preview.models.DiagnosticSettingsCategoryResourceCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticSettingsCategoryResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticSettingsCategoryResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -147,7 +147,7 @@ class DiagnosticSettingsCategoryOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticSettingsCategoryResourceCollection', pipeline_response)
