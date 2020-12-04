@@ -38,6 +38,19 @@ class StorageSyncServicePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(StorageSyncServicePaged, self).__init__(*args, **kwargs)
+class PrivateEndpointConnectionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.storagesync.models.PrivateEndpointConnection>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)
 class SyncGroupPaged(Paged):
     """
     A paging container for iterating over a list of :class:`SyncGroup <azure.mgmt.storagesync.models.SyncGroup>` object

@@ -16,16 +16,19 @@ from msrest.exceptions import HttpOperationError
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -49,19 +52,21 @@ class Resource(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -175,19 +180,21 @@ class CheckNameAvailabilityResult(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -213,13 +220,13 @@ class CloudEndpoint(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
@@ -282,13 +289,13 @@ class CloudEndpointCreateParameters(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
@@ -330,6 +337,221 @@ class CloudError(Model):
 
     _attribute_map = {
     }
+
+
+class CloudTieringCachePerformance(Model):
+    """Server endpoint cloud tiering status object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_updated_timestamp: Last updated timestamp
+    :vartype last_updated_timestamp: datetime
+    :ivar cache_hit_bytes: Count of bytes that were served from the local
+     server
+    :vartype cache_hit_bytes: long
+    :ivar cache_miss_bytes: Count of bytes that were served from the cloud
+    :vartype cache_miss_bytes: long
+    :ivar cache_hit_bytes_percent: Percentage of total bytes (hit + miss) that
+     were served from the local server
+    :vartype cache_hit_bytes_percent: int
+    """
+
+    _validation = {
+        'last_updated_timestamp': {'readonly': True},
+        'cache_hit_bytes': {'readonly': True, 'minimum': 0},
+        'cache_miss_bytes': {'readonly': True, 'minimum': 0},
+        'cache_hit_bytes_percent': {'readonly': True, 'maximum': 100, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'cache_hit_bytes': {'key': 'cacheHitBytes', 'type': 'long'},
+        'cache_miss_bytes': {'key': 'cacheMissBytes', 'type': 'long'},
+        'cache_hit_bytes_percent': {'key': 'cacheHitBytesPercent', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CloudTieringCachePerformance, self).__init__(**kwargs)
+        self.last_updated_timestamp = None
+        self.cache_hit_bytes = None
+        self.cache_miss_bytes = None
+        self.cache_hit_bytes_percent = None
+
+
+class CloudTieringDatePolicyStatus(Model):
+    """Status of the date policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_updated_timestamp: Last updated timestamp
+    :vartype last_updated_timestamp: datetime
+    :ivar tiered_files_most_recent_access_timestamp: Most recent access time
+     of tiered files
+    :vartype tiered_files_most_recent_access_timestamp: datetime
+    """
+
+    _validation = {
+        'last_updated_timestamp': {'readonly': True},
+        'tiered_files_most_recent_access_timestamp': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'tiered_files_most_recent_access_timestamp': {'key': 'tieredFilesMostRecentAccessTimestamp', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CloudTieringDatePolicyStatus, self).__init__(**kwargs)
+        self.last_updated_timestamp = None
+        self.tiered_files_most_recent_access_timestamp = None
+
+
+class CloudTieringFilesNotTiering(Model):
+    """Server endpoint cloud tiering status object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_updated_timestamp: Last updated timestamp
+    :vartype last_updated_timestamp: datetime
+    :ivar total_file_count: Last cloud tiering result (HResult)
+    :vartype total_file_count: long
+    :ivar errors: Array of tiering errors
+    :vartype errors: list[~azure.mgmt.storagesync.models.FilesNotTieringError]
+    """
+
+    _validation = {
+        'last_updated_timestamp': {'readonly': True},
+        'total_file_count': {'readonly': True, 'minimum': 0},
+        'errors': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'total_file_count': {'key': 'totalFileCount', 'type': 'long'},
+        'errors': {'key': 'errors', 'type': '[FilesNotTieringError]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CloudTieringFilesNotTiering, self).__init__(**kwargs)
+        self.last_updated_timestamp = None
+        self.total_file_count = None
+        self.errors = None
+
+
+class CloudTieringSpaceSavings(Model):
+    """Server endpoint cloud tiering status object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_updated_timestamp: Last updated timestamp
+    :vartype last_updated_timestamp: datetime
+    :ivar volume_size_bytes: Volume size
+    :vartype volume_size_bytes: long
+    :ivar total_size_cloud_bytes: Total size of content in the azure file
+     share
+    :vartype total_size_cloud_bytes: long
+    :ivar cached_size_bytes: Cached content size on the server
+    :vartype cached_size_bytes: long
+    :ivar space_savings_percent: Percentage of cached size over total size
+    :vartype space_savings_percent: int
+    :ivar space_savings_bytes: Count of bytes saved on the server
+    :vartype space_savings_bytes: long
+    """
+
+    _validation = {
+        'last_updated_timestamp': {'readonly': True},
+        'volume_size_bytes': {'readonly': True, 'minimum': 0},
+        'total_size_cloud_bytes': {'readonly': True, 'minimum': 0},
+        'cached_size_bytes': {'readonly': True, 'minimum': 0},
+        'space_savings_percent': {'readonly': True, 'maximum': 100, 'minimum': 0},
+        'space_savings_bytes': {'readonly': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'volume_size_bytes': {'key': 'volumeSizeBytes', 'type': 'long'},
+        'total_size_cloud_bytes': {'key': 'totalSizeCloudBytes', 'type': 'long'},
+        'cached_size_bytes': {'key': 'cachedSizeBytes', 'type': 'long'},
+        'space_savings_percent': {'key': 'spaceSavingsPercent', 'type': 'int'},
+        'space_savings_bytes': {'key': 'spaceSavingsBytes', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CloudTieringSpaceSavings, self).__init__(**kwargs)
+        self.last_updated_timestamp = None
+        self.volume_size_bytes = None
+        self.total_size_cloud_bytes = None
+        self.cached_size_bytes = None
+        self.space_savings_percent = None
+        self.space_savings_bytes = None
+
+
+class CloudTieringVolumeFreeSpacePolicyStatus(Model):
+    """Status of the volume free space policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_updated_timestamp: Last updated timestamp
+    :vartype last_updated_timestamp: datetime
+    :ivar effective_volume_free_space_policy: In the case where multiple
+     server endpoints are present in a volume, an effective free space policy
+     is applied.
+    :vartype effective_volume_free_space_policy: int
+    :ivar current_volume_free_space_percent: Current volume free space
+     percentage.
+    :vartype current_volume_free_space_percent: int
+    """
+
+    _validation = {
+        'last_updated_timestamp': {'readonly': True},
+        'effective_volume_free_space_policy': {'readonly': True, 'maximum': 100, 'minimum': 0},
+        'current_volume_free_space_percent': {'readonly': True, 'maximum': 100, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'effective_volume_free_space_policy': {'key': 'effectiveVolumeFreeSpacePolicy', 'type': 'int'},
+        'current_volume_free_space_percent': {'key': 'currentVolumeFreeSpacePercent', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CloudTieringVolumeFreeSpacePolicyStatus, self).__init__(**kwargs)
+        self.last_updated_timestamp = None
+        self.effective_volume_free_space_policy = None
+        self.current_volume_free_space_percent = None
+
+
+class FilesNotTieringError(Model):
+    """Files not tiering error object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error_code: Error code (HResult)
+    :vartype error_code: int
+    :ivar file_count: Count of files with this error
+    :vartype file_count: long
+    """
+
+    _validation = {
+        'error_code': {'readonly': True},
+        'file_count': {'readonly': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'error_code': {'key': 'errorCode', 'type': 'int'},
+        'file_count': {'key': 'fileCount', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(FilesNotTieringError, self).__init__(**kwargs)
+        self.error_code = None
+        self.file_count = None
 
 
 class OperationDisplayInfo(Model):
@@ -398,19 +620,124 @@ class OperationEntity(Model):
     :type display: ~azure.mgmt.storagesync.models.OperationDisplayInfo
     :param origin: The origin.
     :type origin: str
+    :param properties: Properties of the operations resource.
+    :type properties: ~azure.mgmt.storagesync.models.OperationProperties
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplayInfo'},
         'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'OperationProperties'},
     }
 
-    def __init__(self, *, name: str=None, display=None, origin: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, display=None, origin: str=None, properties=None, **kwargs) -> None:
         super(OperationEntity, self).__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
+        self.properties = properties
+
+
+class OperationProperties(Model):
+    """Properties of the operations resource.
+
+    :param service_specification: Service specification for the operations
+     resource.
+    :type service_specification:
+     ~azure.mgmt.storagesync.models.OperationResourceServiceSpecification
+    """
+
+    _attribute_map = {
+        'service_specification': {'key': 'serviceSpecification', 'type': 'OperationResourceServiceSpecification'},
+    }
+
+    def __init__(self, *, service_specification=None, **kwargs) -> None:
+        super(OperationProperties, self).__init__(**kwargs)
+        self.service_specification = service_specification
+
+
+class OperationResourceMetricSpecification(Model):
+    """Operation Display Resource object.
+
+    :param name: Name of the metric.
+    :type name: str
+    :param display_name: Display name for the metric.
+    :type display_name: str
+    :param display_description: Display description for the metric.
+    :type display_description: str
+    :param unit: Unit for the metric.
+    :type unit: str
+    :param aggregation_type: Aggregation type for the metric.
+    :type aggregation_type: str
+    :param fill_gap_with_zero: Fill gaps in the metric with zero.
+    :type fill_gap_with_zero: bool
+    :param dimensions: Dimensions for the metric specification.
+    :type dimensions:
+     list[~azure.mgmt.storagesync.models.OperationResourceMetricSpecificationDimension]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
+        'dimensions': {'key': 'dimensions', 'type': '[OperationResourceMetricSpecificationDimension]'},
+    }
+
+    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit: str=None, aggregation_type: str=None, fill_gap_with_zero: bool=None, dimensions=None, **kwargs) -> None:
+        super(OperationResourceMetricSpecification, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.aggregation_type = aggregation_type
+        self.fill_gap_with_zero = fill_gap_with_zero
+        self.dimensions = dimensions
+
+
+class OperationResourceMetricSpecificationDimension(Model):
+    """OperationResourceMetricSpecificationDimension object.
+
+    :param name: Name of the dimension.
+    :type name: str
+    :param display_name: Display name of the dimensions.
+    :type display_name: str
+    :param to_be_exported_for_shoebox: Indicates metric should be exported for
+     Shoebox.
+    :type to_be_exported_for_shoebox: bool
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+    }
+
+    def __init__(self, *, name: str=None, display_name: str=None, to_be_exported_for_shoebox: bool=None, **kwargs) -> None:
+        super(OperationResourceMetricSpecificationDimension, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
+
+
+class OperationResourceServiceSpecification(Model):
+    """Service specification.
+
+    :param metric_specifications: List of metric specifications.
+    :type metric_specifications:
+     list[~azure.mgmt.storagesync.models.OperationResourceMetricSpecification]
+    """
+
+    _attribute_map = {
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[OperationResourceMetricSpecification]'},
+    }
+
+    def __init__(self, *, metric_specifications=None, **kwargs) -> None:
+        super(OperationResourceServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = metric_specifications
 
 
 class OperationStatus(Model):
@@ -577,6 +904,174 @@ class PreRestoreRequest(Model):
         self.pause_wait_for_sync_drain_time_period_in_seconds = pause_wait_for_sync_drain_time_period_in_seconds
 
 
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint: ~azure.mgmt.storagesync.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. A collection of
+     information about the state of the connection between service consumer and
+     provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.storagesync.models.PrivateLinkServiceConnectionState
+    :param provisioning_state: The provisioning state of the private endpoint
+     connection resource. Possible values include: 'Succeeded', 'Creating',
+     'Deleting', 'Failed'
+    :type provisioning_state: str or
+     ~azure.mgmt.storagesync.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'private_link_service_connection_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_link_service_connection_state, private_endpoint=None, provisioning_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = provisioning_state
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, *, required_zone_names=None, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources
+    :type value: list[~azure.mgmt.storagesync.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """A collection of information about the state of the connection between
+    service consumer and provider.
+
+    :param status: Indicates whether the connection has been
+     Approved/Rejected/Removed by the owner of the service. Possible values
+     include: 'Pending', 'Approved', 'Rejected'
+    :type status: str or
+     ~azure.mgmt.storagesync.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval/rejection of the connection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service
+     provider require any updates on the consumer.
+    :type actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status=None, description: str=None, actions_required: str=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
+
+
 class RecallActionParameters(Model):
     """The parameters used when calling recall action on server endpoint.
 
@@ -603,27 +1098,34 @@ class RegisteredServer(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param server_certificate: Registered Server Certificate
     :type server_certificate: str
     :param agent_version: Registered Server Agent Version
     :type agent_version: str
+    :ivar agent_version_status: Registered Server Agent Version Status.
+     Possible values include: 'Ok', 'NearExpiry', 'Expired', 'Blocked'
+    :vartype agent_version_status: str or
+     ~azure.mgmt.storagesync.models.RegisteredServerAgentVersionStatus
+    :ivar agent_version_expiration_date: Registered Server Agent Version
+     Expiration Date
+    :vartype agent_version_expiration_date: datetime
     :param server_os_version: Registered Server OS Version
     :type server_os_version: str
-    :param server_management_error_code: Registered Server Management Error
+    :ivar server_management_error_code: Registered Server Management Error
      Code
-    :type server_management_error_code: int
-    :param last_heart_beat: Registered Server last heart beat
-    :type last_heart_beat: str
-    :param provisioning_state: Registered Server Provisioning State
-    :type provisioning_state: str
+    :vartype server_management_error_code: int
+    :ivar last_heart_beat: Registered Server last heart beat
+    :vartype last_heart_beat: datetime
+    :ivar provisioning_state: Registered Server Provisioning State
+    :vartype provisioning_state: str
     :param server_role: Registered Server serverRole
     :type server_role: str
     :param cluster_id: Registered Server clusterId
@@ -632,30 +1134,49 @@ class RegisteredServer(ProxyResource):
     :type cluster_name: str
     :param server_id: Registered Server serverId
     :type server_id: str
-    :param storage_sync_service_uid: Registered Server storageSyncServiceUid
-    :type storage_sync_service_uid: str
-    :param last_workflow_id: Registered Server lastWorkflowId
-    :type last_workflow_id: str
-    :param last_operation_name: Resource Last Operation Name
-    :type last_operation_name: str
-    :param discovery_endpoint_uri: Resource discoveryEndpointUri
-    :type discovery_endpoint_uri: str
-    :param resource_location: Resource Location
-    :type resource_location: str
-    :param service_location: Service Location
-    :type service_location: str
+    :ivar storage_sync_service_uid: Registered Server storageSyncServiceUid
+    :vartype storage_sync_service_uid: str
+    :ivar last_workflow_id: Registered Server lastWorkflowId
+    :vartype last_workflow_id: str
+    :ivar last_operation_name: Resource Last Operation Name
+    :vartype last_operation_name: str
+    :ivar discovery_endpoint_uri: Resource discoveryEndpointUri
+    :vartype discovery_endpoint_uri: str
+    :ivar resource_location: Resource Location
+    :vartype resource_location: str
+    :ivar service_location: Service Location
+    :vartype service_location: str
     :param friendly_name: Friendly Name
     :type friendly_name: str
-    :param management_endpoint_uri: Management Endpoint Uri
-    :type management_endpoint_uri: str
-    :param monitoring_configuration: Monitoring Configuration
-    :type monitoring_configuration: str
+    :ivar management_endpoint_uri: Management Endpoint Uri
+    :vartype management_endpoint_uri: str
+    :ivar monitoring_endpoint_uri: Telemetry Endpoint Uri
+    :vartype monitoring_endpoint_uri: str
+    :ivar monitoring_configuration: Monitoring Configuration
+    :vartype monitoring_configuration: str
+    :ivar server_name: Server name
+    :vartype server_name: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'agent_version_status': {'readonly': True},
+        'agent_version_expiration_date': {'readonly': True},
+        'server_management_error_code': {'readonly': True},
+        'last_heart_beat': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'storage_sync_service_uid': {'readonly': True},
+        'last_workflow_id': {'readonly': True},
+        'last_operation_name': {'readonly': True},
+        'discovery_endpoint_uri': {'readonly': True},
+        'resource_location': {'readonly': True},
+        'service_location': {'readonly': True},
+        'management_endpoint_uri': {'readonly': True},
+        'monitoring_endpoint_uri': {'readonly': True},
+        'monitoring_configuration': {'readonly': True},
+        'server_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -664,9 +1185,11 @@ class RegisteredServer(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'server_certificate': {'key': 'properties.serverCertificate', 'type': 'str'},
         'agent_version': {'key': 'properties.agentVersion', 'type': 'str'},
+        'agent_version_status': {'key': 'properties.agentVersionStatus', 'type': 'str'},
+        'agent_version_expiration_date': {'key': 'properties.agentVersionExpirationDate', 'type': 'iso-8601'},
         'server_os_version': {'key': 'properties.serverOSVersion', 'type': 'str'},
         'server_management_error_code': {'key': 'properties.serverManagementErrorCode', 'type': 'int'},
-        'last_heart_beat': {'key': 'properties.lastHeartBeat', 'type': 'str'},
+        'last_heart_beat': {'key': 'properties.lastHeartBeat', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'server_role': {'key': 'properties.serverRole', 'type': 'str'},
         'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
@@ -680,30 +1203,36 @@ class RegisteredServer(ProxyResource):
         'service_location': {'key': 'properties.serviceLocation', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'management_endpoint_uri': {'key': 'properties.managementEndpointUri', 'type': 'str'},
+        'monitoring_endpoint_uri': {'key': 'properties.monitoringEndpointUri', 'type': 'str'},
         'monitoring_configuration': {'key': 'properties.monitoringConfiguration', 'type': 'str'},
+        'server_name': {'key': 'properties.serverName', 'type': 'str'},
     }
 
-    def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_management_error_code: int=None, last_heart_beat: str=None, provisioning_state: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, storage_sync_service_uid: str=None, last_workflow_id: str=None, last_operation_name: str=None, discovery_endpoint_uri: str=None, resource_location: str=None, service_location: str=None, friendly_name: str=None, management_endpoint_uri: str=None, monitoring_configuration: str=None, **kwargs) -> None:
+    def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, friendly_name: str=None, **kwargs) -> None:
         super(RegisteredServer, self).__init__(**kwargs)
         self.server_certificate = server_certificate
         self.agent_version = agent_version
+        self.agent_version_status = None
+        self.agent_version_expiration_date = None
         self.server_os_version = server_os_version
-        self.server_management_error_code = server_management_error_code
-        self.last_heart_beat = last_heart_beat
-        self.provisioning_state = provisioning_state
+        self.server_management_error_code = None
+        self.last_heart_beat = None
+        self.provisioning_state = None
         self.server_role = server_role
         self.cluster_id = cluster_id
         self.cluster_name = cluster_name
         self.server_id = server_id
-        self.storage_sync_service_uid = storage_sync_service_uid
-        self.last_workflow_id = last_workflow_id
-        self.last_operation_name = last_operation_name
-        self.discovery_endpoint_uri = discovery_endpoint_uri
-        self.resource_location = resource_location
-        self.service_location = service_location
+        self.storage_sync_service_uid = None
+        self.last_workflow_id = None
+        self.last_operation_name = None
+        self.discovery_endpoint_uri = None
+        self.resource_location = None
+        self.service_location = None
         self.friendly_name = friendly_name
-        self.management_endpoint_uri = management_endpoint_uri
-        self.monitoring_configuration = monitoring_configuration
+        self.management_endpoint_uri = None
+        self.monitoring_endpoint_uri = None
+        self.monitoring_configuration = None
+        self.server_name = None
 
 
 class RegisteredServerCreateParameters(ProxyResource):
@@ -712,13 +1241,13 @@ class RegisteredServerCreateParameters(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param server_certificate: Registered Server Certificate
     :type server_certificate: str
@@ -820,18 +1349,18 @@ class ServerEndpoint(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param server_local_path: Server Local path.
     :type server_local_path: str
     :param cloud_tiering: Cloud Tiering. Possible values include: 'on', 'off'
-    :type cloud_tiering: str or ~azure.mgmt.storagesync.models.enum
+    :type cloud_tiering: str or ~azure.mgmt.storagesync.models.FeatureStatus
     :param volume_free_space_percent: Level of free space to be maintained by
      Cloud Tiering if it is enabled.
     :type volume_free_space_percent: int
@@ -852,7 +1381,8 @@ class ServerEndpoint(ProxyResource):
      ~azure.mgmt.storagesync.models.ServerEndpointSyncStatus
     :param offline_data_transfer: Offline data transfer. Possible values
      include: 'on', 'off'
-    :type offline_data_transfer: str or ~azure.mgmt.storagesync.models.enum
+    :type offline_data_transfer: str or
+     ~azure.mgmt.storagesync.models.FeatureStatus
     :ivar offline_data_transfer_storage_account_resource_id: Offline data
      transfer storage account resource ID
     :vartype offline_data_transfer_storage_account_resource_id: str
@@ -869,6 +1399,19 @@ class ServerEndpoint(ProxyResource):
      enabled.
     :vartype recall_status:
      ~azure.mgmt.storagesync.models.ServerEndpointRecallStatus
+    :param initial_download_policy: Policy for how namespace and files are
+     recalled during FastDr. Possible values include: 'NamespaceOnly',
+     'NamespaceThenModifiedFiles', 'AvoidTieredFiles'
+    :type initial_download_policy: str or
+     ~azure.mgmt.storagesync.models.InitialDownloadPolicy
+    :param local_cache_mode: Policy for enabling follow-the-sun business
+     models: link local cache to cloud behavior to pre-populate before local
+     access. Possible values include: 'DownloadNewAndModifiedFiles',
+     'UpdateLocallyCachedFiles'
+    :type local_cache_mode: str or
+     ~azure.mgmt.storagesync.models.LocalCacheMode
+    :ivar server_name: Server name
+    :vartype server_name: str
     """
 
     _validation = {
@@ -885,6 +1428,7 @@ class ServerEndpoint(ProxyResource):
         'offline_data_transfer_storage_account_tenant_id': {'readonly': True},
         'cloud_tiering_status': {'readonly': True},
         'recall_status': {'readonly': True},
+        'server_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -907,9 +1451,12 @@ class ServerEndpoint(ProxyResource):
         'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
         'cloud_tiering_status': {'key': 'properties.cloudTieringStatus', 'type': 'ServerEndpointCloudTieringStatus'},
         'recall_status': {'key': 'properties.recallStatus', 'type': 'ServerEndpointRecallStatus'},
+        'initial_download_policy': {'key': 'properties.initialDownloadPolicy', 'type': 'str'},
+        'local_cache_mode': {'key': 'properties.localCacheMode', 'type': 'str'},
+        'server_name': {'key': 'properties.serverName', 'type': 'str'},
     }
 
-    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, **kwargs) -> None:
+    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, initial_download_policy=None, local_cache_mode=None, **kwargs) -> None:
         super(ServerEndpoint, self).__init__(**kwargs)
         self.server_local_path = server_local_path
         self.cloud_tiering = cloud_tiering
@@ -927,6 +1474,42 @@ class ServerEndpoint(ProxyResource):
         self.offline_data_transfer_share_name = offline_data_transfer_share_name
         self.cloud_tiering_status = None
         self.recall_status = None
+        self.initial_download_policy = initial_download_policy
+        self.local_cache_mode = local_cache_mode
+        self.server_name = None
+
+
+class ServerEndpointBackgroundDataDownloadActivity(Model):
+    """Background data download activity object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar timestamp: Timestamp when properties were updated
+    :vartype timestamp: datetime
+    :ivar percent_progress: Progress percentage
+    :vartype percent_progress: int
+    :ivar downloaded_bytes: Running count of bytes downloaded
+    :vartype downloaded_bytes: long
+    """
+
+    _validation = {
+        'timestamp': {'readonly': True},
+        'percent_progress': {'readonly': True, 'maximum': 100, 'minimum': 0},
+        'downloaded_bytes': {'readonly': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'percent_progress': {'key': 'percentProgress', 'type': 'int'},
+        'downloaded_bytes': {'key': 'downloadedBytes', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerEndpointBackgroundDataDownloadActivity, self).__init__(**kwargs)
+        self.timestamp = None
+        self.percent_progress = None
+        self.downloaded_bytes = None
 
 
 class ServerEndpointCloudTieringStatus(Model):
@@ -935,37 +1518,78 @@ class ServerEndpointCloudTieringStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar health: Cloud tiering health state. Possible values include:
-     'Healthy', 'Error'
-    :vartype health: str or ~azure.mgmt.storagesync.models.enum
     :ivar last_updated_timestamp: Last updated timestamp
     :vartype last_updated_timestamp: datetime
+    :ivar health: Cloud tiering health state. Possible values include:
+     'Unavailable', 'Healthy', 'Error'
+    :vartype health: str or
+     ~azure.mgmt.storagesync.models.ServerEndpointHealthState
+    :ivar health_last_updated_timestamp: The last updated timestamp of health
+     state
+    :vartype health_last_updated_timestamp: datetime
     :ivar last_cloud_tiering_result: Last cloud tiering result (HResult)
     :vartype last_cloud_tiering_result: int
     :ivar last_success_timestamp: Last cloud tiering success timestamp
     :vartype last_success_timestamp: datetime
+    :ivar space_savings: Information regarding how much local space cloud
+     tiering is saving.
+    :vartype space_savings:
+     ~azure.mgmt.storagesync.models.CloudTieringSpaceSavings
+    :ivar cache_performance: Information regarding how well the local cache on
+     the server is performing.
+    :vartype cache_performance:
+     ~azure.mgmt.storagesync.models.CloudTieringCachePerformance
+    :ivar files_not_tiering: Information regarding files that failed to be
+     tiered
+    :vartype files_not_tiering:
+     ~azure.mgmt.storagesync.models.CloudTieringFilesNotTiering
+    :ivar volume_free_space_policy_status: Status of the volume free space
+     policy
+    :vartype volume_free_space_policy_status:
+     ~azure.mgmt.storagesync.models.CloudTieringVolumeFreeSpacePolicyStatus
+    :ivar date_policy_status: Status of the date policy
+    :vartype date_policy_status:
+     ~azure.mgmt.storagesync.models.CloudTieringDatePolicyStatus
     """
 
     _validation = {
-        'health': {'readonly': True},
         'last_updated_timestamp': {'readonly': True},
+        'health': {'readonly': True},
+        'health_last_updated_timestamp': {'readonly': True},
         'last_cloud_tiering_result': {'readonly': True},
         'last_success_timestamp': {'readonly': True},
+        'space_savings': {'readonly': True},
+        'cache_performance': {'readonly': True},
+        'files_not_tiering': {'readonly': True},
+        'volume_free_space_policy_status': {'readonly': True},
+        'date_policy_status': {'readonly': True},
     }
 
     _attribute_map = {
-        'health': {'key': 'health', 'type': 'str'},
         'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'health': {'key': 'health', 'type': 'str'},
+        'health_last_updated_timestamp': {'key': 'healthLastUpdatedTimestamp', 'type': 'iso-8601'},
         'last_cloud_tiering_result': {'key': 'lastCloudTieringResult', 'type': 'int'},
         'last_success_timestamp': {'key': 'lastSuccessTimestamp', 'type': 'iso-8601'},
+        'space_savings': {'key': 'spaceSavings', 'type': 'CloudTieringSpaceSavings'},
+        'cache_performance': {'key': 'cachePerformance', 'type': 'CloudTieringCachePerformance'},
+        'files_not_tiering': {'key': 'filesNotTiering', 'type': 'CloudTieringFilesNotTiering'},
+        'volume_free_space_policy_status': {'key': 'volumeFreeSpacePolicyStatus', 'type': 'CloudTieringVolumeFreeSpacePolicyStatus'},
+        'date_policy_status': {'key': 'datePolicyStatus', 'type': 'CloudTieringDatePolicyStatus'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(ServerEndpointCloudTieringStatus, self).__init__(**kwargs)
-        self.health = None
         self.last_updated_timestamp = None
+        self.health = None
+        self.health_last_updated_timestamp = None
         self.last_cloud_tiering_result = None
         self.last_success_timestamp = None
+        self.space_savings = None
+        self.cache_performance = None
+        self.files_not_tiering = None
+        self.volume_free_space_policy_status = None
+        self.date_policy_status = None
 
 
 class ServerEndpointCreateParameters(ProxyResource):
@@ -974,18 +1598,18 @@ class ServerEndpointCreateParameters(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param server_local_path: Server Local path.
     :type server_local_path: str
     :param cloud_tiering: Cloud Tiering. Possible values include: 'on', 'off'
-    :type cloud_tiering: str or ~azure.mgmt.storagesync.models.enum
+    :type cloud_tiering: str or ~azure.mgmt.storagesync.models.FeatureStatus
     :param volume_free_space_percent: Level of free space to be maintained by
      Cloud Tiering if it is enabled.
     :type volume_free_space_percent: int
@@ -997,9 +1621,21 @@ class ServerEndpointCreateParameters(ProxyResource):
     :type server_resource_id: str
     :param offline_data_transfer: Offline data transfer. Possible values
      include: 'on', 'off'
-    :type offline_data_transfer: str or ~azure.mgmt.storagesync.models.enum
+    :type offline_data_transfer: str or
+     ~azure.mgmt.storagesync.models.FeatureStatus
     :param offline_data_transfer_share_name: Offline data transfer share name
     :type offline_data_transfer_share_name: str
+    :param initial_download_policy: Policy for how namespace and files are
+     recalled during FastDr. Possible values include: 'NamespaceOnly',
+     'NamespaceThenModifiedFiles', 'AvoidTieredFiles'
+    :type initial_download_policy: str or
+     ~azure.mgmt.storagesync.models.InitialDownloadPolicy
+    :param local_cache_mode: Policy for enabling follow-the-sun business
+     models: link local cache to cloud behavior to pre-populate before local
+     access. Possible values include: 'DownloadNewAndModifiedFiles',
+     'UpdateLocallyCachedFiles'
+    :type local_cache_mode: str or
+     ~azure.mgmt.storagesync.models.LocalCacheMode
     """
 
     _validation = {
@@ -1022,9 +1658,11 @@ class ServerEndpointCreateParameters(ProxyResource):
         'server_resource_id': {'key': 'properties.serverResourceId', 'type': 'str'},
         'offline_data_transfer': {'key': 'properties.offlineDataTransfer', 'type': 'str'},
         'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
+        'initial_download_policy': {'key': 'properties.initialDownloadPolicy', 'type': 'str'},
+        'local_cache_mode': {'key': 'properties.localCacheMode', 'type': 'str'},
     }
 
-    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, **kwargs) -> None:
+    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, initial_download_policy=None, local_cache_mode=None, **kwargs) -> None:
         super(ServerEndpointCreateParameters, self).__init__(**kwargs)
         self.server_local_path = server_local_path
         self.cloud_tiering = cloud_tiering
@@ -1034,6 +1672,8 @@ class ServerEndpointCreateParameters(ProxyResource):
         self.server_resource_id = server_resource_id
         self.offline_data_transfer = offline_data_transfer
         self.offline_data_transfer_share_name = offline_data_transfer_share_name
+        self.initial_download_policy = initial_download_policy
+        self.local_cache_mode = local_cache_mode
 
 
 class ServerEndpointFilesNotSyncingError(Model):
@@ -1151,6 +1791,11 @@ class ServerEndpointSyncActivityStatus(Model):
     :vartype applied_bytes: long
     :ivar total_bytes: Total bytes (if available)
     :vartype total_bytes: long
+    :ivar sync_mode: Sync mode. Possible values include: 'Regular',
+     'NamespaceDownload', 'InitialUpload', 'SnapshotUpload',
+     'InitialFullDownload'
+    :vartype sync_mode: str or
+     ~azure.mgmt.storagesync.models.ServerEndpointSyncMode
     """
 
     _validation = {
@@ -1160,6 +1805,7 @@ class ServerEndpointSyncActivityStatus(Model):
         'total_item_count': {'readonly': True, 'minimum': 0},
         'applied_bytes': {'readonly': True, 'minimum': 0},
         'total_bytes': {'readonly': True, 'minimum': 0},
+        'sync_mode': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1169,6 +1815,7 @@ class ServerEndpointSyncActivityStatus(Model):
         'total_item_count': {'key': 'totalItemCount', 'type': 'long'},
         'applied_bytes': {'key': 'appliedBytes', 'type': 'long'},
         'total_bytes': {'key': 'totalBytes', 'type': 'long'},
+        'sync_mode': {'key': 'syncMode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -1179,6 +1826,7 @@ class ServerEndpointSyncActivityStatus(Model):
         self.total_item_count = None
         self.applied_bytes = None
         self.total_bytes = None
+        self.sync_mode = None
 
 
 class ServerEndpointSyncSessionStatus(Model):
@@ -1205,6 +1853,11 @@ class ServerEndpointSyncSessionStatus(Model):
      last sync session.
     :vartype files_not_syncing_errors:
      list[~azure.mgmt.storagesync.models.ServerEndpointFilesNotSyncingError]
+    :ivar last_sync_mode: Sync mode. Possible values include: 'Regular',
+     'NamespaceDownload', 'InitialUpload', 'SnapshotUpload',
+     'InitialFullDownload'
+    :vartype last_sync_mode: str or
+     ~azure.mgmt.storagesync.models.ServerEndpointSyncMode
     """
 
     _validation = {
@@ -1215,6 +1868,7 @@ class ServerEndpointSyncSessionStatus(Model):
         'persistent_files_not_syncing_count': {'readonly': True, 'minimum': 0},
         'transient_files_not_syncing_count': {'readonly': True, 'minimum': 0},
         'files_not_syncing_errors': {'readonly': True},
+        'last_sync_mode': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1225,6 +1879,7 @@ class ServerEndpointSyncSessionStatus(Model):
         'persistent_files_not_syncing_count': {'key': 'persistentFilesNotSyncingCount', 'type': 'long'},
         'transient_files_not_syncing_count': {'key': 'transientFilesNotSyncingCount', 'type': 'long'},
         'files_not_syncing_errors': {'key': 'filesNotSyncingErrors', 'type': '[ServerEndpointFilesNotSyncingError]'},
+        'last_sync_mode': {'key': 'lastSyncMode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -1236,6 +1891,7 @@ class ServerEndpointSyncSessionStatus(Model):
         self.persistent_files_not_syncing_count = None
         self.transient_files_not_syncing_count = None
         self.files_not_syncing_errors = None
+        self.last_sync_mode = None
 
 
 class ServerEndpointSyncStatus(Model):
@@ -1245,20 +1901,21 @@ class ServerEndpointSyncStatus(Model):
     sending a request.
 
     :ivar download_health: Download Health Status. Possible values include:
-     'Healthy', 'Error', 'SyncBlockedForRestore',
-     'SyncBlockedForChangeDetectionPostRestore', 'NoActivity'
-    :vartype download_health: str or ~azure.mgmt.storagesync.models.enum
+     'Unavailable', 'Healthy', 'Error'
+    :vartype download_health: str or
+     ~azure.mgmt.storagesync.models.ServerEndpointHealthState
     :ivar upload_health: Upload Health Status. Possible values include:
-     'Healthy', 'Error', 'SyncBlockedForRestore',
-     'SyncBlockedForChangeDetectionPostRestore', 'NoActivity'
-    :vartype upload_health: str or ~azure.mgmt.storagesync.models.enum
+     'Unavailable', 'Healthy', 'Error'
+    :vartype upload_health: str or
+     ~azure.mgmt.storagesync.models.ServerEndpointHealthState
     :ivar combined_health: Combined Health Status. Possible values include:
-     'Healthy', 'Error', 'SyncBlockedForRestore',
-     'SyncBlockedForChangeDetectionPostRestore', 'NoActivity'
-    :vartype combined_health: str or ~azure.mgmt.storagesync.models.enum
+     'Unavailable', 'Healthy', 'Error'
+    :vartype combined_health: str or
+     ~azure.mgmt.storagesync.models.ServerEndpointHealthState
     :ivar sync_activity: Sync activity. Possible values include: 'Upload',
      'Download', 'UploadAndDownload'
-    :vartype sync_activity: str or ~azure.mgmt.storagesync.models.enum
+    :vartype sync_activity: str or
+     ~azure.mgmt.storagesync.models.ServerEndpointSyncActivityState
     :ivar total_persistent_files_not_syncing_count: Total count of persistent
      files not syncing (combined upload + download).
     :vartype total_persistent_files_not_syncing_count: long
@@ -1279,7 +1936,10 @@ class ServerEndpointSyncStatus(Model):
     :ivar offline_data_transfer_status: Offline Data Transfer State. Possible
      values include: 'InProgress', 'Stopping', 'NotRunning', 'Complete'
     :vartype offline_data_transfer_status: str or
-     ~azure.mgmt.storagesync.models.enum
+     ~azure.mgmt.storagesync.models.ServerEndpointOfflineDataTransferState
+    :ivar background_data_download_activity: Background data download activity
+    :vartype background_data_download_activity:
+     ~azure.mgmt.storagesync.models.ServerEndpointBackgroundDataDownloadActivity
     """
 
     _validation = {
@@ -1294,6 +1954,7 @@ class ServerEndpointSyncStatus(Model):
         'upload_activity': {'readonly': True},
         'download_activity': {'readonly': True},
         'offline_data_transfer_status': {'readonly': True},
+        'background_data_download_activity': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1308,6 +1969,7 @@ class ServerEndpointSyncStatus(Model):
         'upload_activity': {'key': 'uploadActivity', 'type': 'ServerEndpointSyncActivityStatus'},
         'download_activity': {'key': 'downloadActivity', 'type': 'ServerEndpointSyncActivityStatus'},
         'offline_data_transfer_status': {'key': 'offlineDataTransferStatus', 'type': 'str'},
+        'background_data_download_activity': {'key': 'backgroundDataDownloadActivity', 'type': 'ServerEndpointBackgroundDataDownloadActivity'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -1323,13 +1985,14 @@ class ServerEndpointSyncStatus(Model):
         self.upload_activity = None
         self.download_activity = None
         self.offline_data_transfer_status = None
+        self.background_data_download_activity = None
 
 
 class ServerEndpointUpdateParameters(Model):
     """Parameters for updating an Server Endpoint.
 
     :param cloud_tiering: Cloud Tiering. Possible values include: 'on', 'off'
-    :type cloud_tiering: str or ~azure.mgmt.storagesync.models.enum
+    :type cloud_tiering: str or ~azure.mgmt.storagesync.models.FeatureStatus
     :param volume_free_space_percent: Level of free space to be maintained by
      Cloud Tiering if it is enabled.
     :type volume_free_space_percent: int
@@ -1337,9 +2000,16 @@ class ServerEndpointUpdateParameters(Model):
     :type tier_files_older_than_days: int
     :param offline_data_transfer: Offline data transfer. Possible values
      include: 'on', 'off'
-    :type offline_data_transfer: str or ~azure.mgmt.storagesync.models.enum
+    :type offline_data_transfer: str or
+     ~azure.mgmt.storagesync.models.FeatureStatus
     :param offline_data_transfer_share_name: Offline data transfer share name
     :type offline_data_transfer_share_name: str
+    :param local_cache_mode: Policy for enabling follow-the-sun business
+     models: link local cache to cloud behavior to pre-populate before local
+     access. Possible values include: 'DownloadNewAndModifiedFiles',
+     'UpdateLocallyCachedFiles'
+    :type local_cache_mode: str or
+     ~azure.mgmt.storagesync.models.LocalCacheMode
     """
 
     _validation = {
@@ -1353,15 +2023,17 @@ class ServerEndpointUpdateParameters(Model):
         'tier_files_older_than_days': {'key': 'properties.tierFilesOlderThanDays', 'type': 'int'},
         'offline_data_transfer': {'key': 'properties.offlineDataTransfer', 'type': 'str'},
         'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
+        'local_cache_mode': {'key': 'properties.localCacheMode', 'type': 'str'},
     }
 
-    def __init__(self, *, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, **kwargs) -> None:
+    def __init__(self, *, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, local_cache_mode=None, **kwargs) -> None:
         super(ServerEndpointUpdateParameters, self).__init__(**kwargs)
         self.cloud_tiering = cloud_tiering
         self.volume_free_space_percent = volume_free_space_percent
         self.tier_files_older_than_days = tier_files_older_than_days
         self.offline_data_transfer = offline_data_transfer
         self.offline_data_transfer_share_name = offline_data_transfer_share_name
+        self.local_cache_mode = local_cache_mode
 
 
 class StorageSyncApiError(Model):
@@ -1375,6 +2047,9 @@ class StorageSyncApiError(Model):
     :type target: str
     :param details: Error details of the given entry.
     :type details: ~azure.mgmt.storagesync.models.StorageSyncErrorDetails
+    :param inner_error: Inner error details of the given entry.
+    :type inner_error:
+     ~azure.mgmt.storagesync.models.StorageSyncInnerErrorDetails
     """
 
     _attribute_map = {
@@ -1382,14 +2057,16 @@ class StorageSyncApiError(Model):
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'details': {'key': 'details', 'type': 'StorageSyncErrorDetails'},
+        'inner_error': {'key': 'innerError', 'type': 'StorageSyncInnerErrorDetails'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, target: str=None, details=None, **kwargs) -> None:
+    def __init__(self, *, code: str=None, message: str=None, target: str=None, details=None, inner_error=None, **kwargs) -> None:
         super(StorageSyncApiError, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
+        self.inner_error = inner_error
 
 
 class StorageSyncError(Model):
@@ -1433,36 +2110,87 @@ class StorageSyncErrorDetails(Model):
     :type message: str
     :param target: Target of the given entry.
     :type target: str
+    :param request_uri: Request URI of the given entry.
+    :type request_uri: str
+    :param exception_type: Exception type of the given entry.
+    :type exception_type: str
+    :param http_method: HTTP method of the given entry.
+    :type http_method: str
+    :param hashed_message: Hashed message of the given entry.
+    :type hashed_message: str
+    :param http_error_code: HTTP error code of the given entry.
+    :type http_error_code: str
     """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
+        'request_uri': {'key': 'requestUri', 'type': 'str'},
+        'exception_type': {'key': 'exceptionType', 'type': 'str'},
+        'http_method': {'key': 'httpMethod', 'type': 'str'},
+        'hashed_message': {'key': 'hashedMessage', 'type': 'str'},
+        'http_error_code': {'key': 'httpErrorCode', 'type': 'str'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, target: str=None, **kwargs) -> None:
+    def __init__(self, *, code: str=None, message: str=None, target: str=None, request_uri: str=None, exception_type: str=None, http_method: str=None, hashed_message: str=None, http_error_code: str=None, **kwargs) -> None:
         super(StorageSyncErrorDetails, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
+        self.request_uri = request_uri
+        self.exception_type = exception_type
+        self.http_method = http_method
+        self.hashed_message = hashed_message
+        self.http_error_code = http_error_code
+
+
+class StorageSyncInnerErrorDetails(Model):
+    """Error Details object.
+
+    :param call_stack: Call stack of the error.
+    :type call_stack: str
+    :param message: Error message of the error.
+    :type message: str
+    :param inner_exception: Exception of the inner error.
+    :type inner_exception: str
+    :param inner_exception_call_stack: Call stack of the inner error.
+    :type inner_exception_call_stack: str
+    """
+
+    _attribute_map = {
+        'call_stack': {'key': 'callStack', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'inner_exception': {'key': 'innerException', 'type': 'str'},
+        'inner_exception_call_stack': {'key': 'innerExceptionCallStack', 'type': 'str'},
+    }
+
+    def __init__(self, *, call_stack: str=None, message: str=None, inner_exception: str=None, inner_exception_call_stack: str=None, **kwargs) -> None:
+        super(StorageSyncInnerErrorDetails, self).__init__(**kwargs)
+        self.call_stack = call_stack
+        self.message = message
+        self.inner_exception = inner_exception
+        self.inner_exception_call_stack = inner_exception_call_stack
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -1499,22 +2227,36 @@ class StorageSyncService(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
+    :param incoming_traffic_policy: Incoming Traffic Policy. Possible values
+     include: 'AllowAllTraffic', 'AllowVirtualNetworksOnly'
+    :type incoming_traffic_policy: str or
+     ~azure.mgmt.storagesync.models.IncomingTrafficPolicy
     :ivar storage_sync_service_status: Storage Sync service status.
     :vartype storage_sync_service_status: int
     :ivar storage_sync_service_uid: Storage Sync service Uid
     :vartype storage_sync_service_uid: str
+    :ivar provisioning_state: StorageSyncService Provisioning State
+    :vartype provisioning_state: str
+    :ivar last_workflow_id: StorageSyncService lastWorkflowId
+    :vartype last_workflow_id: str
+    :ivar last_operation_name: Resource Last Operation Name
+    :vartype last_operation_name: str
+    :ivar private_endpoint_connections: List of private endpoint connection
+     associated with the specified storage sync service
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.storagesync.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -1524,6 +2266,10 @@ class StorageSyncService(TrackedResource):
         'location': {'required': True},
         'storage_sync_service_status': {'readonly': True},
         'storage_sync_service_uid': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'last_workflow_id': {'readonly': True},
+        'last_operation_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1532,14 +2278,24 @@ class StorageSyncService(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'incoming_traffic_policy': {'key': 'properties.incomingTrafficPolicy', 'type': 'str'},
         'storage_sync_service_status': {'key': 'properties.storageSyncServiceStatus', 'type': 'int'},
         'storage_sync_service_uid': {'key': 'properties.storageSyncServiceUid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
+        'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, incoming_traffic_policy=None, **kwargs) -> None:
         super(StorageSyncService, self).__init__(tags=tags, location=location, **kwargs)
+        self.incoming_traffic_policy = incoming_traffic_policy
         self.storage_sync_service_status = None
         self.storage_sync_service_uid = None
+        self.provisioning_state = None
+        self.last_workflow_id = None
+        self.last_operation_name = None
+        self.private_endpoint_connections = None
 
 
 class StorageSyncServiceCreateParameters(Model):
@@ -1559,8 +2315,10 @@ class StorageSyncServiceCreateParameters(Model):
      resource. Each tag must have a key with a length no greater than 128
      characters and a value with a length no greater than 256 characters.
     :type tags: dict[str, str]
-    :param properties:
-    :type properties: object
+    :param incoming_traffic_policy: Incoming Traffic Policy. Possible values
+     include: 'AllowAllTraffic', 'AllowVirtualNetworksOnly'
+    :type incoming_traffic_policy: str or
+     ~azure.mgmt.storagesync.models.IncomingTrafficPolicy
     """
 
     _validation = {
@@ -1570,14 +2328,14 @@ class StorageSyncServiceCreateParameters(Model):
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'incoming_traffic_policy': {'key': 'properties.incomingTrafficPolicy', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, incoming_traffic_policy=None, **kwargs) -> None:
         super(StorageSyncServiceCreateParameters, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
-        self.properties = properties
+        self.incoming_traffic_policy = incoming_traffic_policy
 
 
 class StorageSyncServiceUpdateParameters(Model):
@@ -1586,19 +2344,21 @@ class StorageSyncServiceUpdateParameters(Model):
     :param tags: The user-specified tags associated with the storage sync
      service.
     :type tags: dict[str, str]
-    :param properties: The properties of the storage sync service.
-    :type properties: object
+    :param incoming_traffic_policy: Incoming Traffic Policy. Possible values
+     include: 'AllowAllTraffic', 'AllowVirtualNetworksOnly'
+    :type incoming_traffic_policy: str or
+     ~azure.mgmt.storagesync.models.IncomingTrafficPolicy
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'incoming_traffic_policy': {'key': 'properties.incomingTrafficPolicy', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, incoming_traffic_policy=None, **kwargs) -> None:
         super(StorageSyncServiceUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
-        self.properties = properties
+        self.incoming_traffic_policy = incoming_traffic_policy
 
 
 class SubscriptionState(Model):
@@ -1639,13 +2399,13 @@ class SyncGroup(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar unique_id: Unique Id
     :vartype unique_id: str
@@ -1681,13 +2441,13 @@ class SyncGroupCreateParameters(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param properties: The parameters used to create the sync group
     :type properties: object
@@ -1763,32 +2523,47 @@ class Workflow(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
-    :param last_step_name: last step name
-    :type last_step_name: str
-    :param status: workflow status. Possible values include: 'active',
+    :ivar last_step_name: last step name
+    :vartype last_step_name: str
+    :ivar status: workflow status. Possible values include: 'active',
      'expired', 'succeeded', 'aborted', 'failed'
-    :type status: str or ~azure.mgmt.storagesync.models.enum
-    :param operation: operation direction. Possible values include: 'do',
+    :vartype status: str or ~azure.mgmt.storagesync.models.WorkflowStatus
+    :ivar operation: operation direction. Possible values include: 'do',
      'undo', 'cancel'
-    :type operation: str or ~azure.mgmt.storagesync.models.enum
-    :param steps: workflow steps
-    :type steps: str
-    :param last_operation_id: workflow last operation identifier.
-    :type last_operation_id: str
+    :vartype operation: str or
+     ~azure.mgmt.storagesync.models.OperationDirection
+    :ivar steps: workflow steps
+    :vartype steps: str
+    :ivar last_operation_id: workflow last operation identifier.
+    :vartype last_operation_id: str
+    :ivar command_name: workflow command name.
+    :vartype command_name: str
+    :ivar created_timestamp: workflow created timestamp.
+    :vartype created_timestamp: datetime
+    :ivar last_status_timestamp: workflow last status timestamp.
+    :vartype last_status_timestamp: datetime
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'last_step_name': {'readonly': True},
+        'status': {'readonly': True},
+        'operation': {'readonly': True},
+        'steps': {'readonly': True},
+        'last_operation_id': {'readonly': True},
+        'command_name': {'readonly': True},
+        'created_timestamp': {'readonly': True},
+        'last_status_timestamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1800,12 +2575,18 @@ class Workflow(ProxyResource):
         'operation': {'key': 'properties.operation', 'type': 'str'},
         'steps': {'key': 'properties.steps', 'type': 'str'},
         'last_operation_id': {'key': 'properties.lastOperationId', 'type': 'str'},
+        'command_name': {'key': 'properties.commandName', 'type': 'str'},
+        'created_timestamp': {'key': 'properties.createdTimestamp', 'type': 'iso-8601'},
+        'last_status_timestamp': {'key': 'properties.lastStatusTimestamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, last_step_name: str=None, status=None, operation=None, steps: str=None, last_operation_id: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(Workflow, self).__init__(**kwargs)
-        self.last_step_name = last_step_name
-        self.status = status
-        self.operation = operation
-        self.steps = steps
-        self.last_operation_id = last_operation_id
+        self.last_step_name = None
+        self.status = None
+        self.operation = None
+        self.steps = None
+        self.last_operation_id = None
+        self.command_name = None
+        self.created_timestamp = None
+        self.last_status_timestamp = None
