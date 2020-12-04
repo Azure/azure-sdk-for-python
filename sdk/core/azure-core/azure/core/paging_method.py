@@ -91,7 +91,7 @@ class PagingMethodABC():
 
     def get_continuation_token(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Any
-        """Get the continuation token from the current page
+        """Get the continuation token from the current page. This operation returning None signals the end of paging.
 
         :param pipeline_response: The immediate response returned from the pipeline
         :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
@@ -205,7 +205,7 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
 
     def get_continuation_token(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Any
-        """Get the continuation token from the current page
+        """Get the continuation token from the current page. This operation returning None signals the end of paging.
 
         :param pipeline_response: The immediate response returned from the pipeline
         :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
