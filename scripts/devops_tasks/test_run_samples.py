@@ -19,6 +19,40 @@ from common_tasks import (
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
+dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
+
+def prep_samples(targeted_packages):
+    logging.info("running test setup for {}".format(targeted_packages))
+    run_check_call(
+        [
+            sys.executable,
+            dev_setup_script_location,
+            "--disabledevelop",
+            "-p",
+            ",".join([os.path.basename(p) for p in targeted_packages])
+        ],
+        root_dir,
+    )
+
+def run_samples(one_sample):
+    logging.info(
+        "Testing {}".format(one_sample)
+    )
+    samples_errors = []
+    command_array = [sys.executable, one_sample]
+    errors = run_check_call(command_array, root_dir, always_exit=False)
+    if errors:
+        samples_errors.append(errors)
+
+    if samples_errors:
+        logging.error(samples_errors)
+        exit(1)
+
+        logging.info(
+            "All samples ran successfully"
+        )
+        exit(0)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -153,22 +187,7 @@ if __name__ == "__main__":
     logging.info("target dir is {}".format(target_dir))
     logging.info("targeted packages are {}".format(targeted_packages))
 
+
     one_sample = os.path.abspath(os.path.join(target_dir, args.glob_string, "samples/sample_recognize_receipts_from_url.py"))
-
-    logging.info(
-        "Testing {}".format(one_sample)
-    )
-    samples_errors = []
-    command_array = [sys.executable, one_sample]
-    errors = run_check_call(command_array, root_dir, always_exit=False)
-    if errors:
-        samples_errors.append(errors)
-
-    if samples_errors:
-        logging.error(samples_errors)
-        exit(1)
-
-        logging.info(
-            "All samples ran successfully"
-        )
-        exit(0)
+    prep_samples(targeted_packages)
+    run_samples(one_sample)
