@@ -1363,7 +1363,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_zero_entities(self, resource_group, location, storage_account, storage_account_key):

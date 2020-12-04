@@ -152,7 +152,7 @@ class AzureTestCase(ReplayableTest):
         key_value = os.environ.get("AZURE_"+key, None)
 
         if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
-            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values".format(key=key))
+            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values".format(key=key))
 
         if not key_value:
             try:
