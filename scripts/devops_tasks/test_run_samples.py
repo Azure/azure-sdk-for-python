@@ -133,8 +133,12 @@ if __name__ == "__main__":
         logging.info("User opted to not run samples")
         exit(0)
 
+    service_dir = os.path.join("sdk", args.service)
+    target_dir = os.path.join(root_dir, service_dir)
+
     logging.info("User opted to run samples")
     logging.info("Root dir is {}".format(root_dir))
     logging.info("Glog string is {}".format(args.glob_string))
-    logging.info("Mark arg is {}".format(args.mark_arg))
+    logging.info("service dir is {}".format(service_dir))
+    logging.info("target dir is {}".format(target_dir))
 
