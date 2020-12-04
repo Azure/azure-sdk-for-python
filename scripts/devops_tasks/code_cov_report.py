@@ -8,6 +8,8 @@ output_file = os.path.join(root_dir, "coverage-new.xml")
 
 
 def create_coverage_report():
+    if not os.path.exists(coverage_file):
+        logging.info("No coverage file detected at {}".format(coverage_file))
     tree = ET.parse(coverage_file)
     root = tree.getroot()
 
@@ -24,8 +26,6 @@ def create_coverage_report():
         package = name[2]
         if (folder, package) not in packages_to_report:
             packages_to_report.append((folder, package))
-
-    print(packages_to_report)
 
     new_packages = []
     for p in packages_to_report:
