@@ -12,7 +12,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -40,7 +40,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:36:07 GMT
+      - Fri, 04 Dec 2020 07:49:01 GMT
       expires:
       - '-1'
       pragma:
@@ -69,7 +69,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -97,7 +97,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:36:07 GMT
+      - Fri, 04 Dec 2020 07:49:01 GMT
       expires:
       - '-1'
       pragma:
@@ -124,7 +124,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -152,7 +152,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:36:10 GMT
+      - Fri, 04 Dec 2020 07:49:03 GMT
       expires:
       - '-1'
       pragma:

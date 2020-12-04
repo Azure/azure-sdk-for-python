@@ -10,7 +10,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -208,9 +208,9 @@ interactions:
         Central","West Europe","South India","West Central US","East Asia (Stage)","North
         Central US (Stage)","East Asia","East US 2 EUAP","Central US EUAP","West US","Central
         US","West US 2","East US"],"apiVersions":["2020-06-01","2019-08-01","2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"hostingEnvironments","locations":["South
-        Central US","MSFT West US","MSFT East US","MSFT East Asia","MSFT North Europe","East
-        US 2 (Stage)","Central US (Stage)","South Africa North","East US 2","UK South","Southeast
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"hostingEnvironments","locations":["MSFT
+        West US","MSFT East US","MSFT East Asia","MSFT North Europe","East US 2 (Stage)","Central
+        US (Stage)","South Central US","South Africa North","East US 2","UK South","Southeast
         Asia","North Europe","Japan East","West Europe","Australia East","Brazil South","Japan
         West","Central India","Canada East","Korea Central","France Central","West
         India","Australia Central","Germany West Central","Norway East","UAE North","Switzerland
@@ -224,8 +224,8 @@ interactions:
         Asia","zones":["2","3","1"]},{"location":"West US 2","zones":["2","3","1"]},{"location":"North
         Europe","zones":["2","3","1"]},{"location":"East US","zones":["2","3","1"]},{"location":"UK
         South","zones":["2","3","1"]},{"location":"Japan East","zones":["2","3","1"]},{"location":"Australia
-        East","zones":["2","3","1"]},{"location":"South Africa North","zones":[]},{"location":"South
-        Central US","zones":[]},{"location":"Canada Central","zones":["2","3","1"]},{"location":"Germany
+        East","zones":["2","3","1"]},{"location":"South Africa North","zones":["2","3","1"]},{"location":"South
+        Central US","zones":["2","3","1"]},{"location":"Canada Central","zones":["2","3","1"]},{"location":"Germany
         West Central","zones":["2","3","1"]},{"location":"Brazil South","zones":["2","3","1"]}],"capabilities":"SupportsTags,
         SupportsLocation"},{"resourceType":"hostingEnvironments/multiRolePools","locations":["South
         Central US","MSFT West US","MSFT East US","MSFT East Asia","MSFT North Europe","East
@@ -445,11 +445,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '58747'
+      - '58769'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:36:02 GMT
+      - Fri, 04 Dec 2020 07:48:57 GMT
       expires:
       - '-1'
       pragma:
