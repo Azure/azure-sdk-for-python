@@ -1,3 +1,4 @@
+import logging
 import os
 import xml.etree.ElementTree as ET
 
@@ -10,6 +11,7 @@ output_file = os.path.join(root_dir, "coverage-new.xml")
 def create_coverage_report():
     if not os.path.exists(coverage_file):
         logging.info("No coverage file detected at {}".format(coverage_file))
+    logging.info("Modifying coverage file at {}".format(coverage_file))
     tree = ET.parse(coverage_file)
     root = tree.getroot()
 
