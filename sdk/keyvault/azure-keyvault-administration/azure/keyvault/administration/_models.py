@@ -51,20 +51,20 @@ class KeyVaultRoleAssignment(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._assignment_id = kwargs.get("assignment_id")
+        self._role_assignment_id = kwargs.get("role_assignment_id")
         self._name = kwargs.get("name")
         self._properties = kwargs.get("properties")
         self._type = kwargs.get("assignment_type")
 
     def __repr__(self):
         # type: () -> str
-        return "KeyVaultRoleAssignment<{}>".format(self._assignment_id)
+        return "KeyVaultRoleAssignment<{}>".format(self._role_assignment_id)
 
     @property
-    def assignment_id(self):
+    def role_assignment_id(self):
         # type: () -> str
         """unique identifier for this assignment"""
-        return self._assignment_id
+        return self._role_assignment_id
 
     @property
     def name(self):
@@ -102,7 +102,7 @@ class KeyVaultRoleAssignment(object):
     @classmethod
     def _from_generated(cls, role_assignment):
         return cls(
-            assignment_id=role_assignment.id,
+            role_assignment_id=role_assignment.id,
             name=role_assignment.name,
             assignment_type=role_assignment.type,
             properties=KeyVaultRoleAssignmentProperties._from_generated(role_assignment.properties),
