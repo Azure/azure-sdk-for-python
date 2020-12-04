@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-synapse-managedprivateendpoints"
-PACKAGE_PPRINT_NAME = "Synapse Vnet"
+PACKAGE_PPRINT_NAME = "Synapse Managed Private Endpoints"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
