@@ -25,6 +25,7 @@ from common_tasks import (
     find_whl,
     parse_setup
 )
+from code_cov_report import create_coverage_report
 
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
@@ -144,6 +145,8 @@ def collect_tox_coverage_files(targeted_packages):
         shutil.move(source, dest)
         # Generate coverage XML
         generate_coverage_xml()
+        # Format coverage into packages
+        create_coverage_report()
 
 
 def trim_cov_file(coverage_file):
