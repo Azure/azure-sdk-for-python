@@ -1,5 +1,15 @@
 # Release History
 
+## 0.15.0 (2020-12-04)
+
+**Features**
+
+  - Model ExecuteDataFlowActivity has a new parameter run_concurrently
+  - Model ExecuteDataFlowActivity has a new parameter trace_level
+  - Model ExecuteDataFlowActivity has a new parameter continue_on_error
+  - Model FactoryIdentity has a new parameter user_assigned_identities
+  - Model Factory has a new parameter encryption
+
 ## 0.14.0 (2020-10-23)
 
 **Features**
