@@ -12,6 +12,7 @@ import os
 import logging
 from common_tasks import (
     run_check_call,
+    process_glob_string,
 )
 
 
@@ -133,12 +134,41 @@ if __name__ == "__main__":
         logging.info("User opted to not run samples")
         exit(0)
 
-    service_dir = os.path.join("sdk", args.service)
-    target_dir = os.path.join(root_dir, service_dir)
+    if args.service:
+        service_dir = os.path.join("sdk", args.service)
+        target_dir = os.path.join(root_dir, service_dir)
+    else:
+        target_dir = root_dir
+
+    targeted_packages = process_glob_string(args.glob_string, target_dir, "", args.filter_type)
+
+    if len(targeted_packages) == 0:
+        exit(0)
+
 
     logging.info("User opted to run samples")
     logging.info("Root dir is {}".format(root_dir))
     logging.info("Glog string is {}".format(args.glob_string))
     logging.info("service dir is {}".format(service_dir))
     logging.info("target dir is {}".format(target_dir))
+    logging.info("targeted packages are {}".format(targeted_packages))
 
+    one_sample = os.path.abspath(os.path.join(target_dir, args.glob_string, "samples/sample_recognize_receipts_from_url.py"))
+
+    logging.info(
+        "Testing {}".format(one_sample)
+    )
+    samples_errors = []
+    command_array = [sys.executable, one_sample]
+    errors = run_check_call(command_array, root_dir, always_exit=False)
+    if errors:
+        samples_errors.append(errors)
+
+    if samples_errors:
+        logging.error(samples_errors)
+        exit(1)
+
+        logging.info(
+            "All samples ran successfully"
+        )
+        exit(0)
