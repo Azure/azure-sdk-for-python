@@ -6,12 +6,12 @@ from azure.iot.hub import IoTHubRegistryManager
 from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 from datetime import time
 
-device_id = "lva-sample-device"
-module_d = "lvaEdge"
-connection_string = os.getenv("IOTHUB_DEVICE_CONNECTION_STRING")
+device_id = "enter-your-device-name"
+module_d = "enter-your-module-name"
+connection_string = "enter-your-connection-string"
 graph_instance_name = "graphInstance1"
 graph_topology_name = "graphTopology1"
-graph_url = '"rtsp://sample-url-from-camera"'
+graph_url = "rtsp://sample-url-from-camera"
 
 def build_graph_topology():
     graph_properties = MediaGraphTopologyProperties()
@@ -38,43 +38,45 @@ def build_graph_instance():
 
     return graph_instance
 
-def invoke_method(method):
+def invoke_method_helper(method):
     direct_method = CloudToDeviceMethod(method_name=method.method_name, payload=method.serialize())
     registry_manager = IoTHubRegistryManager(connection_string)
 
-    return registry_manager.invoke_device_module_method(device_id, module_d, direct_method)
+    payload = registry_manager.invoke_device_module_method(device_id, module_d, direct_method).payload
+    if payload is not None and 'error' in payload:
+        print(payload['error'])
+        return None
+
+    return payload
 
 def main():
     graph_topology = build_graph_topology()
     graph_instance = build_graph_instance()
 
     try:
-        set_graph = invoke_method(MediaGraphTopologySetRequest(graph=graph_topology))
-        set_graph_result = MediaGraphTopology.deserialize(set_graph)
+        set_graph_response = invoke_method_helper(MediaGraphTopologySetRequest(graph=graph_topology))
+        
+        list_graph_response = invoke_method_helper(MediaGraphTopologyListRequest())
+        if list_graph_response:
+            list_graph_result = MediaGraphTopologyCollection.deserialize(list_graph_response)
 
-        list_graph = invoke_method(MediaGraphTopologyListRequest())
-        list_graph_result = MediaGraphTopology.deserialize(list_graph)
+        get_graph_response = invoke_method_helper(MediaGraphTopologyGetRequest(name=graph_topology_name))
+        if get_graph_response:
+            get_graph_result = MediaGraphTopology.deserialize(get_graph_response)
 
-        get_graph = invoke_method(MediaGraphTopologyGetRequest(name=graph_topology_name))
-        get_graph_result = MediaGraphTopology.deserialize(get_graph)
+        set_graph_instance_response = invoke_method_helper(MediaGraphInstanceSetRequest(instance=graph_instance))
 
-        set_graph_instance = invoke_method(MediaGraphInstanceSetRequest(instance=graph_instance))
-        set_graph_instance_result = MediaGraphInstance.deserialize(set_graph_instance)
+        activate_graph_instance_response = invoke_method_helper(MediaGraphInstanceActivateRequest(name=graph_instance_name))
 
-        activate_graph_instance = invoke_method(MediaGraphInstanceActivateRequest(name=graph_instance_name))
-        activate_graph_instance_result = MediaGraphInstance.deserialize(activate_graph_instance)
+        get_graph_instance_response = invoke_method_helper(MediaGraphInstanceGetRequest(name=graph_instance_name))
+        if get_graph_instance_response:
+            get_graph_instance_result = MediaGraphInstance.deserialize(get_graph_instance_response)
 
-        get_graph_instance = invoke_method(MediaGraphInstanceGetRequest(name=graph_instance_name))
-        get_graph_instance_result = MediaGraphInstance.deserialize(get_graph_instance)
+        deactivate_graph_instance_response = invoke_method_helper(MediaGraphInstanceDeActivateRequest(name=graph_instance_name))
 
-        deactivate_graph_instance = invoke_method(MediaGraphInstanceDeActivateRequest(name=graph_instance_name))
-        deactivate_graph_instance_result = MediaGraphInstance.deserialize(deactivate_graph_instance)
+        delete_graph_instance_response = invoke_method_helper(MediaGraphInstanceDeleteRequest(name=graph_instance_name))
 
-        delete_graph_instance = invoke_method(MediaGraphInstanceDeleteRequest(name=graph_instance_name))
-        delete_graph_instance_result = MediaGraphInstance.deserialize(delete_graph_instance)
-
-        delete_graph = invoke_method(MediaGraphTopologyDeleteRequest(name=graph_topology_name))
-        delete_graph_result = MediaGraphTopology.deserialize(delete_graph)
+        delete_graph_response = invoke_method_helper(MediaGraphTopologyDeleteRequest(name=graph_topology_name))
 
     except Exception as ex:
         print(ex)

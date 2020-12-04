@@ -33,17 +33,7 @@ class MediaGraphGrpcExtensionDataTransferMode(with_metaclass(_CaseInsensitiveEnu
     EMBEDDED = "Embedded"  #: Frames are transferred embedded into the gRPC messages.
     SHARED_MEMORY = "SharedMemory"  #: Frames are transferred through shared memory.
 
-class MediaGraphImageEncodingFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The different encoding formats that can be used for the image.
-    """
-
-    JPEG = "Jpeg"  #: JPEG image format.
-    BMP = "Bmp"  #: BMP image format.
-    PNG = "Png"  #: PNG image format.
-
 class MediaGraphImageFormatRawPixelFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """pixel format
-    """
 
     YUV420_P = "Yuv420p"  #: Planar YUV 4:2:0, 12bpp, (1 Cr and Cb sample per 2x2 Y samples).
     RGB565_BE = "Rgb565be"  #: Packed RGB 5:6:5, 16bpp, (msb)   5R 6G 5B(lsb), big-endian.
@@ -67,13 +57,13 @@ class MediaGraphImageScaleMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     STRETCH = "Stretch"  #: Stretch input frame to match given dimensions.
 
 class MediaGraphInstanceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Allowed states for a graph Instance.
+    """Allowed states for a graph instance.
     """
 
-    INACTIVE = "Inactive"  #: Inactive state.
-    ACTIVATING = "Activating"  #: Activating state.
-    ACTIVE = "Active"  #: Active state.
-    DEACTIVATING = "Deactivating"  #: Deactivating state.
+    INACTIVE = "Inactive"  #: The media graph instance is idle and not processing media.
+    ACTIVATING = "Activating"  #: The media graph instance is transitioning into the active state.
+    ACTIVE = "Active"  #: The media graph instance is active and processing media.
+    DEACTIVATING = "Deactivating"  #: The media graph instance is transitioning into the inactive state.
 
 class MediaGraphMotionDetectionSensitivity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enumeration that specifies the sensitivity of the motion detection processor.
@@ -91,8 +81,6 @@ class MediaGraphOutputSelectorOperator(with_metaclass(_CaseInsensitiveEnumMeta, 
     IS_NOT = "isNot"  #: A media type is not the same type or a subtype.
 
 class MediaGraphParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """name
-    """
 
     STRING = "String"  #: A string parameter value.
     SECRET_STRING = "SecretString"  #: A string to hold sensitive information as parameter value.

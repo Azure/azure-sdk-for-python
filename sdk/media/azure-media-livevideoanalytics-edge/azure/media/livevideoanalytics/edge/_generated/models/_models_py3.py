@@ -11,11 +11,11 @@ from typing import List, Optional, Union
 
 import msrest.serialization
 
-from ._definitionsfor_live_video_analyticson_io_tedge_enums import *
+from ._direct_methodsfor_live_video_analyticson_io_tedge_enums import *
 
 
-class OperationBase(msrest.serialization.Model):
-    """OperationBase.
+class MethodRequest(msrest.serialization.Model):
+    """MethodRequest.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MediaGraphInstanceListRequest, MediaGraphInstanceSetRequest, MediaGraphTopologyListRequest, MediaGraphTopologySetRequest, ItemNonSetRequestBase, MediaGraphInstanceSetRequestBody, MediaGraphTopologySetRequestBody.
@@ -24,7 +24,7 @@ class OperationBase(msrest.serialization.Model):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     """
 
@@ -42,17 +42,17 @@ class OperationBase(msrest.serialization.Model):
         'method_name': {'GraphInstanceList': 'MediaGraphInstanceListRequest', 'GraphInstanceSet': 'MediaGraphInstanceSetRequest', 'GraphTopologyList': 'MediaGraphTopologyListRequest', 'GraphTopologySet': 'MediaGraphTopologySetRequest', 'ItemNonSetRequestBase': 'ItemNonSetRequestBase', 'MediaGraphInstanceSetRequestBody': 'MediaGraphInstanceSetRequestBody', 'MediaGraphTopologySetRequestBody': 'MediaGraphTopologySetRequestBody'}
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
         **kwargs
     ):
-        super(OperationBase, self).__init__(**kwargs)
+        super(MethodRequest, self).__init__(**kwargs)
         self.method_name = None  # type: Optional[str]
 
 
-class ItemNonSetRequestBase(OperationBase):
+class ItemNonSetRequestBase(MethodRequest):
     """ItemNonSetRequestBase.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -64,7 +64,7 @@ class ItemNonSetRequestBase(OperationBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param name: Required. method name.
     :type name: str
@@ -86,7 +86,7 @@ class ItemNonSetRequestBase(OperationBase):
         'method_name': {'GraphInstanceActivate': 'MediaGraphInstanceActivateRequest', 'GraphInstanceDeactivate': 'MediaGraphInstanceDeActivateRequest', 'GraphInstanceDelete': 'MediaGraphInstanceDeleteRequest', 'GraphInstanceGet': 'MediaGraphInstanceGetRequest', 'GraphTopologyDelete': 'MediaGraphTopologyDeleteRequest', 'GraphTopologyGet': 'MediaGraphTopologyGetRequest'}
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -146,7 +146,7 @@ class MediaGraphSink(msrest.serialization.Model):
 
 
 class MediaGraphAssetSink(MediaGraphSink):
-    """Enables a graph to record media to an Azure Media Services asset, for subsequent playback.
+    """Enables a media graph to record media to an Azure Media Services asset for subsequent playback.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -157,18 +157,18 @@ class MediaGraphAssetSink(MediaGraphSink):
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param asset_name_pattern: A name pattern when creating new assets.
+    :param asset_name_pattern: Required. A name pattern when creating new assets.
     :type asset_name_pattern: str
     :param segment_length: When writing media to an asset, wait until at least this duration of
      media has been accumulated on the Edge. Expressed in increments of 30 seconds, with a minimum
      of 30 seconds and a recommended maximum of 5 minutes.
-    :type segment_length: ~datetime.timedelta
-    :param local_media_cache_path: Path to a local file system directory for temporary caching of
-     media, before writing to an Asset. Used when the Edge device is temporarily disconnected from
-     Azure.
+    :type segment_length: str
+    :param local_media_cache_path: Required. Path to a local file system directory for temporary
+     caching of media before writing to an Asset. Used when the Edge device is temporarily
+     disconnected from Azure.
     :type local_media_cache_path: str
-    :param local_media_cache_maximum_size_mi_b: Maximum amount of disk space that can be used for
-     temporary caching of media.
+    :param local_media_cache_maximum_size_mi_b: Required. Maximum amount of disk space that can be
+     used for temporary caching of media.
     :type local_media_cache_maximum_size_mi_b: str
     """
 
@@ -176,6 +176,9 @@ class MediaGraphAssetSink(MediaGraphSink):
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
+        'asset_name_pattern': {'required': True},
+        'local_media_cache_path': {'required': True},
+        'local_media_cache_maximum_size_mi_b': {'required': True},
     }
 
     _attribute_map = {
@@ -183,7 +186,7 @@ class MediaGraphAssetSink(MediaGraphSink):
         'name': {'key': 'name', 'type': 'str'},
         'inputs': {'key': 'inputs', 'type': '[MediaGraphNodeInput]'},
         'asset_name_pattern': {'key': 'assetNamePattern', 'type': 'str'},
-        'segment_length': {'key': 'segmentLength', 'type': 'duration'},
+        'segment_length': {'key': 'segmentLength', 'type': 'str'},
         'local_media_cache_path': {'key': 'localMediaCachePath', 'type': 'str'},
         'local_media_cache_maximum_size_mi_b': {'key': 'localMediaCacheMaximumSizeMiB', 'type': 'str'},
     }
@@ -193,10 +196,10 @@ class MediaGraphAssetSink(MediaGraphSink):
         *,
         name: str,
         inputs: List["MediaGraphNodeInput"],
-        asset_name_pattern: Optional[str] = None,
-        segment_length: Optional[datetime.timedelta] = None,
-        local_media_cache_path: Optional[str] = None,
-        local_media_cache_maximum_size_mi_b: Optional[str] = None,
+        asset_name_pattern: str,
+        local_media_cache_path: str,
+        local_media_cache_maximum_size_mi_b: str,
+        segment_length: Optional[str] = None,
         **kwargs
     ):
         super(MediaGraphAssetSink, self).__init__(name=name, inputs=inputs, **kwargs)
@@ -243,7 +246,7 @@ class MediaGraphProcessor(msrest.serialization.Model):
     """A node that represents the desired processing of media in a graph. Takes media and/or events as inputs, and emits media and/or event as output.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MediaGraphExtensionProcessorBase, MediaGraphFrameRateFilterProcessor, MediaGraphMotionDetectionProcessor, MediaGraphSignalGateProcessor.
+    sub-classes are: MediaGraphExtensionProcessorBase, MediaGraphMotionDetectionProcessor, MediaGraphSignalGateProcessor.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -269,7 +272,7 @@ class MediaGraphProcessor(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.Media.MediaGraphExtensionProcessorBase': 'MediaGraphExtensionProcessorBase', '#Microsoft.Media.MediaGraphFrameRateFilterProcessor': 'MediaGraphFrameRateFilterProcessor', '#Microsoft.Media.MediaGraphMotionDetectionProcessor': 'MediaGraphMotionDetectionProcessor', '#Microsoft.Media.MediaGraphSignalGateProcessor': 'MediaGraphSignalGateProcessor'}
+        'type': {'#Microsoft.Media.MediaGraphExtensionProcessorBase': 'MediaGraphExtensionProcessorBase', '#Microsoft.Media.MediaGraphMotionDetectionProcessor': 'MediaGraphMotionDetectionProcessor', '#Microsoft.Media.MediaGraphSignalGateProcessor': 'MediaGraphSignalGateProcessor'}
     }
 
     def __init__(
@@ -286,7 +289,7 @@ class MediaGraphProcessor(msrest.serialization.Model):
 
 
 class MediaGraphExtensionProcessorBase(MediaGraphProcessor):
-    """Processor that allows for extensions, outside of the Live Video Analytics Edge module, to be integrated into the graph. It is the base class for various different kinds of extension processor types.
+    """Processor that allows for extensions outside of the Live Video Analytics Edge module to be integrated into the graph. It is the base class for various different kinds of extension processor types.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MediaGraphCognitiveServicesVisionExtension, MediaGraphGrpcExtension, MediaGraphHttpExtension.
@@ -300,16 +303,22 @@ class MediaGraphExtensionProcessorBase(MediaGraphProcessor):
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param endpoint: Endpoint to which this processor should connect.
+    :param endpoint: Required. Endpoint to which this processor should connect.
     :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
-    :param image: Describes the parameters of the image that is sent as input to the endpoint.
+    :param image: Required. Describes the parameters of the image that is sent as input to the
+     endpoint.
     :type image: ~azure.media.livevideoanalytics.edge.models.MediaGraphImage
+    :param sampling_options: Describes the sampling options to be applied when forwarding samples
+     to the extension.
+    :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
     """
 
     _validation = {
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
+        'endpoint': {'required': True},
+        'image': {'required': True},
     }
 
     _attribute_map = {
@@ -318,6 +327,7 @@ class MediaGraphExtensionProcessorBase(MediaGraphProcessor):
         'inputs': {'key': 'inputs', 'type': '[MediaGraphNodeInput]'},
         'endpoint': {'key': 'endpoint', 'type': 'MediaGraphEndpoint'},
         'image': {'key': 'image', 'type': 'MediaGraphImage'},
+        'sampling_options': {'key': 'samplingOptions', 'type': 'MediaGraphSamplingOptions'},
     }
 
     _subtype_map = {
@@ -329,14 +339,16 @@ class MediaGraphExtensionProcessorBase(MediaGraphProcessor):
         *,
         name: str,
         inputs: List["MediaGraphNodeInput"],
-        endpoint: Optional["MediaGraphEndpoint"] = None,
-        image: Optional["MediaGraphImage"] = None,
+        endpoint: "MediaGraphEndpoint",
+        image: "MediaGraphImage",
+        sampling_options: Optional["MediaGraphSamplingOptions"] = None,
         **kwargs
     ):
         super(MediaGraphExtensionProcessorBase, self).__init__(name=name, inputs=inputs, **kwargs)
         self.type = '#Microsoft.Media.MediaGraphExtensionProcessorBase'  # type: str
         self.endpoint = endpoint
         self.image = image
+        self.sampling_options = sampling_options
 
 
 class MediaGraphCognitiveServicesVisionExtension(MediaGraphExtensionProcessorBase):
@@ -351,16 +363,22 @@ class MediaGraphCognitiveServicesVisionExtension(MediaGraphExtensionProcessorBas
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param endpoint: Endpoint to which this processor should connect.
+    :param endpoint: Required. Endpoint to which this processor should connect.
     :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
-    :param image: Describes the parameters of the image that is sent as input to the endpoint.
+    :param image: Required. Describes the parameters of the image that is sent as input to the
+     endpoint.
     :type image: ~azure.media.livevideoanalytics.edge.models.MediaGraphImage
+    :param sampling_options: Describes the sampling options to be applied when forwarding samples
+     to the extension.
+    :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
     """
 
     _validation = {
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
+        'endpoint': {'required': True},
+        'image': {'required': True},
     }
 
     _attribute_map = {
@@ -369,6 +387,7 @@ class MediaGraphCognitiveServicesVisionExtension(MediaGraphExtensionProcessorBas
         'inputs': {'key': 'inputs', 'type': '[MediaGraphNodeInput]'},
         'endpoint': {'key': 'endpoint', 'type': 'MediaGraphEndpoint'},
         'image': {'key': 'image', 'type': 'MediaGraphImage'},
+        'sampling_options': {'key': 'samplingOptions', 'type': 'MediaGraphSamplingOptions'},
     }
 
     def __init__(
@@ -376,11 +395,12 @@ class MediaGraphCognitiveServicesVisionExtension(MediaGraphExtensionProcessorBas
         *,
         name: str,
         inputs: List["MediaGraphNodeInput"],
-        endpoint: Optional["MediaGraphEndpoint"] = None,
-        image: Optional["MediaGraphImage"] = None,
+        endpoint: "MediaGraphEndpoint",
+        image: "MediaGraphImage",
+        sampling_options: Optional["MediaGraphSamplingOptions"] = None,
         **kwargs
     ):
-        super(MediaGraphCognitiveServicesVisionExtension, self).__init__(name=name, inputs=inputs, endpoint=endpoint, image=image, **kwargs)
+        super(MediaGraphCognitiveServicesVisionExtension, self).__init__(name=name, inputs=inputs, endpoint=endpoint, image=image, sampling_options=sampling_options, **kwargs)
         self.type = '#Microsoft.Media.MediaGraphCognitiveServicesVisionExtension'  # type: str
 
 
@@ -472,23 +492,33 @@ class MediaGraphFileSink(MediaGraphSink):
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param file_path_pattern: Required. Absolute file path pattern for creating new files on the
-     Edge device.
-    :type file_path_pattern: str
+    :param base_directory_path: Required. Absolute directory for all outputs to the Edge device
+     from this sink.
+    :type base_directory_path: str
+    :param file_name_pattern: Required. File name pattern for creating new files on the Edge
+     device.
+    :type file_name_pattern: str
+    :param maximum_size_mi_b: Required. Maximum amount of disk space that can be used for storing
+     files from this sink.
+    :type maximum_size_mi_b: str
     """
 
     _validation = {
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
-        'file_path_pattern': {'required': True, 'min_length': 1},
+        'base_directory_path': {'required': True},
+        'file_name_pattern': {'required': True},
+        'maximum_size_mi_b': {'required': True},
     }
 
     _attribute_map = {
         'type': {'key': '@type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'inputs': {'key': 'inputs', 'type': '[MediaGraphNodeInput]'},
-        'file_path_pattern': {'key': 'filePathPattern', 'type': 'str'},
+        'base_directory_path': {'key': 'baseDirectoryPath', 'type': 'str'},
+        'file_name_pattern': {'key': 'fileNamePattern', 'type': 'str'},
+        'maximum_size_mi_b': {'key': 'maximumSizeMiB', 'type': 'str'},
     }
 
     def __init__(
@@ -496,55 +526,16 @@ class MediaGraphFileSink(MediaGraphSink):
         *,
         name: str,
         inputs: List["MediaGraphNodeInput"],
-        file_path_pattern: str,
+        base_directory_path: str,
+        file_name_pattern: str,
+        maximum_size_mi_b: str,
         **kwargs
     ):
         super(MediaGraphFileSink, self).__init__(name=name, inputs=inputs, **kwargs)
         self.type = '#Microsoft.Media.MediaGraphFileSink'  # type: str
-        self.file_path_pattern = file_path_pattern
-
-
-class MediaGraphFrameRateFilterProcessor(MediaGraphProcessor):
-    """Limits the frame rate on the input video stream based on the maximumFps property.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. The name for this processor node.
-    :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the media graph, the
-     outputs of which are used as input for this processor node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param maximum_fps: Ensures that the frame rate of the video leaving this processor does not
-     exceed this limit.
-    :type maximum_fps: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[MediaGraphNodeInput]'},
-        'maximum_fps': {'key': 'maximumFps', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["MediaGraphNodeInput"],
-        maximum_fps: Optional[str] = None,
-        **kwargs
-    ):
-        super(MediaGraphFrameRateFilterProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.Media.MediaGraphFrameRateFilterProcessor'  # type: str
-        self.maximum_fps = maximum_fps
+        self.base_directory_path = base_directory_path
+        self.file_name_pattern = file_name_pattern
+        self.maximum_size_mi_b = maximum_size_mi_b
 
 
 class MediaGraphGrpcExtension(MediaGraphExtensionProcessorBase):
@@ -559,19 +550,27 @@ class MediaGraphGrpcExtension(MediaGraphExtensionProcessorBase):
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param endpoint: Endpoint to which this processor should connect.
+    :param endpoint: Required. Endpoint to which this processor should connect.
     :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
-    :param image: Describes the parameters of the image that is sent as input to the endpoint.
+    :param image: Required. Describes the parameters of the image that is sent as input to the
+     endpoint.
     :type image: ~azure.media.livevideoanalytics.edge.models.MediaGraphImage
+    :param sampling_options: Describes the sampling options to be applied when forwarding samples
+     to the extension.
+    :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
     :param data_transfer: Required. How media should be transferred to the inferencing engine.
     :type data_transfer:
      ~azure.media.livevideoanalytics.edge.models.MediaGraphGrpcExtensionDataTransfer
+    :param extension_configuration: Optional configuration to pass to the gRPC extension.
+    :type extension_configuration: str
     """
 
     _validation = {
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
+        'endpoint': {'required': True},
+        'image': {'required': True},
         'data_transfer': {'required': True},
     }
 
@@ -581,7 +580,9 @@ class MediaGraphGrpcExtension(MediaGraphExtensionProcessorBase):
         'inputs': {'key': 'inputs', 'type': '[MediaGraphNodeInput]'},
         'endpoint': {'key': 'endpoint', 'type': 'MediaGraphEndpoint'},
         'image': {'key': 'image', 'type': 'MediaGraphImage'},
+        'sampling_options': {'key': 'samplingOptions', 'type': 'MediaGraphSamplingOptions'},
         'data_transfer': {'key': 'dataTransfer', 'type': 'MediaGraphGrpcExtensionDataTransfer'},
+        'extension_configuration': {'key': 'extensionConfiguration', 'type': 'str'},
     }
 
     def __init__(
@@ -589,14 +590,17 @@ class MediaGraphGrpcExtension(MediaGraphExtensionProcessorBase):
         *,
         name: str,
         inputs: List["MediaGraphNodeInput"],
+        endpoint: "MediaGraphEndpoint",
+        image: "MediaGraphImage",
         data_transfer: "MediaGraphGrpcExtensionDataTransfer",
-        endpoint: Optional["MediaGraphEndpoint"] = None,
-        image: Optional["MediaGraphImage"] = None,
+        sampling_options: Optional["MediaGraphSamplingOptions"] = None,
+        extension_configuration: Optional[str] = None,
         **kwargs
     ):
-        super(MediaGraphGrpcExtension, self).__init__(name=name, inputs=inputs, endpoint=endpoint, image=image, **kwargs)
+        super(MediaGraphGrpcExtension, self).__init__(name=name, inputs=inputs, endpoint=endpoint, image=image, sampling_options=sampling_options, **kwargs)
         self.type = '#Microsoft.Media.MediaGraphGrpcExtension'  # type: str
         self.data_transfer = data_transfer
+        self.extension_configuration = extension_configuration
 
 
 class MediaGraphGrpcExtensionDataTransfer(msrest.serialization.Model):
@@ -605,7 +609,7 @@ class MediaGraphGrpcExtensionDataTransfer(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param shared_memory_size_mi_b: The size of the buffer for all in-flight frames in mebibytes if
-     mode is SharedMemory. Should not be specificed otherwise.
+     mode is SharedMemory. Should not be specified otherwise.
     :type shared_memory_size_mi_b: str
     :param mode: Required. How frame data should be transmitted to the inferencing engine. Possible
      values include: "Embedded", "SharedMemory".
@@ -646,16 +650,22 @@ class MediaGraphHttpExtension(MediaGraphExtensionProcessorBase):
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param endpoint: Endpoint to which this processor should connect.
+    :param endpoint: Required. Endpoint to which this processor should connect.
     :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
-    :param image: Describes the parameters of the image that is sent as input to the endpoint.
+    :param image: Required. Describes the parameters of the image that is sent as input to the
+     endpoint.
     :type image: ~azure.media.livevideoanalytics.edge.models.MediaGraphImage
+    :param sampling_options: Describes the sampling options to be applied when forwarding samples
+     to the extension.
+    :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
     """
 
     _validation = {
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
+        'endpoint': {'required': True},
+        'image': {'required': True},
     }
 
     _attribute_map = {
@@ -664,6 +674,7 @@ class MediaGraphHttpExtension(MediaGraphExtensionProcessorBase):
         'inputs': {'key': 'inputs', 'type': '[MediaGraphNodeInput]'},
         'endpoint': {'key': 'endpoint', 'type': 'MediaGraphEndpoint'},
         'image': {'key': 'image', 'type': 'MediaGraphImage'},
+        'sampling_options': {'key': 'samplingOptions', 'type': 'MediaGraphSamplingOptions'},
     }
 
     def __init__(
@@ -671,11 +682,12 @@ class MediaGraphHttpExtension(MediaGraphExtensionProcessorBase):
         *,
         name: str,
         inputs: List["MediaGraphNodeInput"],
-        endpoint: Optional["MediaGraphEndpoint"] = None,
-        image: Optional["MediaGraphImage"] = None,
+        endpoint: "MediaGraphEndpoint",
+        image: "MediaGraphImage",
+        sampling_options: Optional["MediaGraphSamplingOptions"] = None,
         **kwargs
     ):
-        super(MediaGraphHttpExtension, self).__init__(name=name, inputs=inputs, endpoint=endpoint, image=image, **kwargs)
+        super(MediaGraphHttpExtension, self).__init__(name=name, inputs=inputs, endpoint=endpoint, image=image, sampling_options=sampling_options, **kwargs)
         self.type = '#Microsoft.Media.MediaGraphHttpExtension'  # type: str
 
 
@@ -688,7 +700,8 @@ class MediaGraphHttpHeaderCredentials(MediaGraphCredentials):
     :type type: str
     :param header_name: Required. HTTP header name.
     :type header_name: str
-    :param header_value: Required. HTTP header value.
+    :param header_value: Required. HTTP header value. Please use a parameter so that the actual
+     value is not returned on PUT or GET requests.
     :type header_value: str
     """
 
@@ -747,7 +760,7 @@ class MediaGraphImageFormat(msrest.serialization.Model):
     """Encoding settings for an image.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MediaGraphImageFormatEncoded, MediaGraphImageFormatRaw.
+    sub-classes are: MediaGraphImageFormatBmp, MediaGraphImageFormatJpeg, MediaGraphImageFormatPng, MediaGraphImageFormatRaw.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -764,7 +777,7 @@ class MediaGraphImageFormat(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.Media.MediaGraphImageFormatEncoded': 'MediaGraphImageFormatEncoded', '#Microsoft.Media.MediaGraphImageFormatRaw': 'MediaGraphImageFormatRaw'}
+        'type': {'#Microsoft.Media.MediaGraphImageFormatBmp': 'MediaGraphImageFormatBmp', '#Microsoft.Media.MediaGraphImageFormatJpeg': 'MediaGraphImageFormatJpeg', '#Microsoft.Media.MediaGraphImageFormatPng': 'MediaGraphImageFormatPng', '#Microsoft.Media.MediaGraphImageFormatRaw': 'MediaGraphImageFormatRaw'}
     }
 
     def __init__(
@@ -775,19 +788,39 @@ class MediaGraphImageFormat(msrest.serialization.Model):
         self.type = None  # type: Optional[str]
 
 
-class MediaGraphImageFormatEncoded(MediaGraphImageFormat):
-    """Allowed formats for the image.
+class MediaGraphImageFormatBmp(MediaGraphImageFormat):
+    """Encoding settings for Bmp images.
 
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
-    :param encoding: The different encoding formats that can be used for the image. Possible values
-     include: "Jpeg", "Bmp", "Png". Default value: "Jpeg".
-    :type encoding: str or
-     ~azure.media.livevideoanalytics.edge.models.MediaGraphImageEncodingFormat
-    :param quality: The image quality (used for JPEG only). Value must be between 0 to 100 (best
-     quality).
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': '@type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MediaGraphImageFormatBmp, self).__init__(**kwargs)
+        self.type = '#Microsoft.Media.MediaGraphImageFormatBmp'  # type: str
+
+
+class MediaGraphImageFormatJpeg(MediaGraphImageFormat):
+    """Encoding settings for Jpeg images.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :type type: str
+    :param quality: The image quality. Value must be between 0 to 100 (best quality).
     :type quality: str
     """
 
@@ -797,21 +830,43 @@ class MediaGraphImageFormatEncoded(MediaGraphImageFormat):
 
     _attribute_map = {
         'type': {'key': '@type', 'type': 'str'},
-        'encoding': {'key': 'encoding', 'type': 'str'},
         'quality': {'key': 'quality', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        encoding: Optional[Union[str, "MediaGraphImageEncodingFormat"]] = "Jpeg",
         quality: Optional[str] = None,
         **kwargs
     ):
-        super(MediaGraphImageFormatEncoded, self).__init__(**kwargs)
-        self.type = '#Microsoft.Media.MediaGraphImageFormatEncoded'  # type: str
-        self.encoding = encoding
+        super(MediaGraphImageFormatJpeg, self).__init__(**kwargs)
+        self.type = '#Microsoft.Media.MediaGraphImageFormatJpeg'  # type: str
         self.quality = quality
+
+
+class MediaGraphImageFormatPng(MediaGraphImageFormat):
+    """Encoding settings for Png images.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': '@type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MediaGraphImageFormatPng, self).__init__(**kwargs)
+        self.type = '#Microsoft.Media.MediaGraphImageFormatPng'  # type: str
 
 
 class MediaGraphImageFormatRaw(MediaGraphImageFormat):
@@ -821,7 +876,7 @@ class MediaGraphImageFormatRaw(MediaGraphImageFormat):
 
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
-    :param pixel_format: pixel format. Possible values include: "Yuv420p", "Rgb565be", "Rgb565le",
+    :param pixel_format: Required.  Possible values include: "Yuv420p", "Rgb565be", "Rgb565le",
      "Rgb555be", "Rgb555le", "Rgb24", "Bgr24", "Argb", "Rgba", "Abgr", "Bgra".
     :type pixel_format: str or
      ~azure.media.livevideoanalytics.edge.models.MediaGraphImageFormatRawPixelFormat
@@ -829,6 +884,7 @@ class MediaGraphImageFormatRaw(MediaGraphImageFormat):
 
     _validation = {
         'type': {'required': True},
+        'pixel_format': {'required': True},
     }
 
     _attribute_map = {
@@ -839,7 +895,7 @@ class MediaGraphImageFormatRaw(MediaGraphImageFormat):
     def __init__(
         self,
         *,
-        pixel_format: Optional[Union[str, "MediaGraphImageFormatRawPixelFormat"]] = None,
+        pixel_format: Union[str, "MediaGraphImageFormatRawPixelFormat"],
         **kwargs
     ):
         super(MediaGraphImageFormatRaw, self).__init__(**kwargs)
@@ -850,14 +906,21 @@ class MediaGraphImageFormatRaw(MediaGraphImageFormat):
 class MediaGraphImageScale(msrest.serialization.Model):
     """The scaling mode for the image.
 
-    :param mode: Describes the modes for scaling an input video frame into an image, before it is
-     sent to an inference engine. Possible values include: "PreserveAspectRatio", "Pad", "Stretch".
+    All required parameters must be populated in order to send to Azure.
+
+    :param mode: Required. Describes the modes for scaling an input video frame into an image,
+     before it is sent to an inference engine. Possible values include: "PreserveAspectRatio",
+     "Pad", "Stretch".
     :type mode: str or ~azure.media.livevideoanalytics.edge.models.MediaGraphImageScaleMode
     :param width: The desired output width of the image.
     :type width: str
     :param height: The desired output height of the image.
     :type height: str
     """
+
+    _validation = {
+        'mode': {'required': True},
+    }
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
@@ -868,7 +931,7 @@ class MediaGraphImageScale(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "MediaGraphImageScaleMode"]] = None,
+        mode: Union[str, "MediaGraphImageScaleMode"],
         width: Optional[str] = None,
         height: Optional[str] = None,
         **kwargs
@@ -880,15 +943,16 @@ class MediaGraphImageScale(msrest.serialization.Model):
 
 
 class MediaGraphInstance(msrest.serialization.Model):
-    """Represents a Media Graph instance.
+    """Represents an instance of a media graph.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. name.
+    :param name: Required.
     :type name: str
-    :param system_data: Graph system data.
+    :param system_data: The system data for a resource. This is used by both topologies and
+     instances.
     :type system_data: ~azure.media.livevideoanalytics.edge.models.MediaGraphSystemData
-    :param properties: Properties of a Media Graph instance.
+    :param properties: Properties of a media graph instance.
     :type properties: ~azure.media.livevideoanalytics.edge.models.MediaGraphInstanceProperties
     """
 
@@ -925,7 +989,7 @@ class MediaGraphInstanceActivateRequest(ItemNonSetRequestBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param name: Required. method name.
     :type name: str
@@ -943,7 +1007,7 @@ class MediaGraphInstanceActivateRequest(ItemNonSetRequestBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -956,13 +1020,13 @@ class MediaGraphInstanceActivateRequest(ItemNonSetRequestBase):
 
 
 class MediaGraphInstanceCollection(msrest.serialization.Model):
-    """Collection of graph instances.
+    """A collection of media graph instances.
 
-    :param value: Collection of graph instances.
+    :param value: A collection of media graph instances.
     :type value: list[~azure.media.livevideoanalytics.edge.models.MediaGraphInstance]
-    :param continuation_token: Continuation token to use in subsequent calls to enumerate through
-     the graph instance collection (when the collection contains too many results to return in one
-     response).
+    :param continuation_token: A continuation token to use in subsequent calls to enumerate through
+     the graph instance collection. This is used when the collection contains too many results to
+     return in one response.
     :type continuation_token: str
     """
 
@@ -992,7 +1056,7 @@ class MediaGraphInstanceDeActivateRequest(ItemNonSetRequestBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param name: Required. method name.
     :type name: str
@@ -1010,7 +1074,7 @@ class MediaGraphInstanceDeActivateRequest(ItemNonSetRequestBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1031,7 +1095,7 @@ class MediaGraphInstanceDeleteRequest(ItemNonSetRequestBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param name: Required. method name.
     :type name: str
@@ -1049,7 +1113,7 @@ class MediaGraphInstanceDeleteRequest(ItemNonSetRequestBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1070,7 +1134,7 @@ class MediaGraphInstanceGetRequest(ItemNonSetRequestBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param name: Required. method name.
     :type name: str
@@ -1088,7 +1152,7 @@ class MediaGraphInstanceGetRequest(ItemNonSetRequestBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1100,14 +1164,14 @@ class MediaGraphInstanceGetRequest(ItemNonSetRequestBase):
         self.method_name = 'GraphInstanceGet'  # type: str
 
 
-class MediaGraphInstanceListRequest(OperationBase):
+class MediaGraphInstanceListRequest(MethodRequest):
     """MediaGraphInstanceListRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     """
 
@@ -1121,7 +1185,7 @@ class MediaGraphInstanceListRequest(OperationBase):
         'api_version': {'key': '@apiVersion', 'type': 'str'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1132,17 +1196,17 @@ class MediaGraphInstanceListRequest(OperationBase):
 
 
 class MediaGraphInstanceProperties(msrest.serialization.Model):
-    """Properties of a Media Graph instance.
+    """Properties of a media graph instance.
 
     :param description: An optional description for the instance.
     :type description: str
-    :param topology_name: The name of the graph topology that this instance will run. A topology
-     with this name should already have been set in the Edge module.
+    :param topology_name: The name of the media graph topology that this instance will run. A
+     topology with this name should already have been set in the Edge module.
     :type topology_name: str
     :param parameters: List of one or more graph instance parameters.
     :type parameters:
      list[~azure.media.livevideoanalytics.edge.models.MediaGraphParameterDefinition]
-    :param state: Allowed states for a graph Instance. Possible values include: "Inactive",
+    :param state: Allowed states for a graph instance. Possible values include: "Inactive",
      "Activating", "Active", "Deactivating".
     :type state: str or ~azure.media.livevideoanalytics.edge.models.MediaGraphInstanceState
     """
@@ -1170,7 +1234,7 @@ class MediaGraphInstanceProperties(msrest.serialization.Model):
         self.state = state
 
 
-class MediaGraphInstanceSetRequest(OperationBase):
+class MediaGraphInstanceSetRequest(MethodRequest):
     """MediaGraphInstanceSetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1179,9 +1243,9 @@ class MediaGraphInstanceSetRequest(OperationBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
-    :param instance: Required. Represents a Media Graph instance.
+    :param instance: Required. Represents an instance of a media graph.
     :type instance: ~azure.media.livevideoanalytics.edge.models.MediaGraphInstance
     """
 
@@ -1197,7 +1261,7 @@ class MediaGraphInstanceSetRequest(OperationBase):
         'instance': {'key': 'instance', 'type': 'MediaGraphInstance'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1210,7 +1274,7 @@ class MediaGraphInstanceSetRequest(OperationBase):
         self.instance = instance
 
 
-class MediaGraphInstanceSetRequestBody(MediaGraphInstance, OperationBase):
+class MediaGraphInstanceSetRequestBody(MediaGraphInstance, MethodRequest):
     """MediaGraphInstanceSetRequestBody.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1219,13 +1283,14 @@ class MediaGraphInstanceSetRequestBody(MediaGraphInstance, OperationBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
-    :param name: Required. name.
+    :param name: Required.
     :type name: str
-    :param system_data: Graph system data.
+    :param system_data: The system data for a resource. This is used by both topologies and
+     instances.
     :type system_data: ~azure.media.livevideoanalytics.edge.models.MediaGraphSystemData
-    :param properties: Properties of a Media Graph instance.
+    :param properties: Properties of a media graph instance.
     :type properties: ~azure.media.livevideoanalytics.edge.models.MediaGraphInstanceProperties
     """
 
@@ -1243,7 +1308,7 @@ class MediaGraphInstanceSetRequestBody(MediaGraphInstance, OperationBase):
         'properties': {'key': 'properties', 'type': 'MediaGraphInstanceProperties'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1262,7 +1327,7 @@ class MediaGraphInstanceSetRequestBody(MediaGraphInstance, OperationBase):
 
 
 class MediaGraphIoTHubMessageSink(MediaGraphSink):
-    """Enables a graph to publish messages that can be delivered via routes declared in the IoT Edge deployment manifest.
+    """Enables a media graph to publish messages that can be delivered via routes declared in the IoT Edge deployment manifest.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1273,9 +1338,9 @@ class MediaGraphIoTHubMessageSink(MediaGraphSink):
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param hub_output_name: Name of the output path to which the graph will publish message. These
-     messages can then be delivered to desired destinations by declaring routes referencing the
-     output path in the IoT Edge deployment manifest.
+    :param hub_output_name: Required. Name of the output path to which the media graph will publish
+     message. These messages can then be delivered to desired destinations by declaring routes
+     referencing the output path in the IoT Edge deployment manifest.
     :type hub_output_name: str
     """
 
@@ -1283,6 +1348,7 @@ class MediaGraphIoTHubMessageSink(MediaGraphSink):
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
+        'hub_output_name': {'required': True},
     }
 
     _attribute_map = {
@@ -1297,7 +1363,7 @@ class MediaGraphIoTHubMessageSink(MediaGraphSink):
         *,
         name: str,
         inputs: List["MediaGraphNodeInput"],
-        hub_output_name: Optional[str] = None,
+        hub_output_name: str,
         **kwargs
     ):
         super(MediaGraphIoTHubMessageSink, self).__init__(name=name, inputs=inputs, **kwargs)
@@ -1306,7 +1372,7 @@ class MediaGraphIoTHubMessageSink(MediaGraphSink):
 
 
 class MediaGraphSource(msrest.serialization.Model):
-    """Media graph source.
+    """A source node in a media graph.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MediaGraphIoTHubMessageSource, MediaGraphRtspSource.
@@ -1346,7 +1412,7 @@ class MediaGraphSource(msrest.serialization.Model):
 
 
 class MediaGraphIoTHubMessageSource(MediaGraphSource):
-    """Enables a graph to receive messages via routes declared in the IoT Edge deployment manifest.
+    """Enables a media graph to receive messages via routes declared in the IoT Edge deployment manifest.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1402,6 +1468,8 @@ class MediaGraphMotionDetectionProcessor(MediaGraphProcessor):
     :param output_motion_region: Indicates whether the processor should detect and output the
      regions, within the video frame, where motion was detected. Default is true.
     :type output_motion_region: bool
+    :param event_aggregation_window: Event aggregation window duration, or 0 for no aggregation.
+    :type event_aggregation_window: str
     """
 
     _validation = {
@@ -1416,6 +1484,7 @@ class MediaGraphMotionDetectionProcessor(MediaGraphProcessor):
         'inputs': {'key': 'inputs', 'type': '[MediaGraphNodeInput]'},
         'sensitivity': {'key': 'sensitivity', 'type': 'str'},
         'output_motion_region': {'key': 'outputMotionRegion', 'type': 'bool'},
+        'event_aggregation_window': {'key': 'eventAggregationWindow', 'type': 'str'},
     }
 
     def __init__(
@@ -1425,12 +1494,14 @@ class MediaGraphMotionDetectionProcessor(MediaGraphProcessor):
         inputs: List["MediaGraphNodeInput"],
         sensitivity: Optional[Union[str, "MediaGraphMotionDetectionSensitivity"]] = None,
         output_motion_region: Optional[bool] = None,
+        event_aggregation_window: Optional[str] = None,
         **kwargs
     ):
         super(MediaGraphMotionDetectionProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
         self.type = '#Microsoft.Media.MediaGraphMotionDetectionProcessor'  # type: str
         self.sensitivity = sensitivity
         self.output_motion_region = output_motion_region
+        self.event_aggregation_window = event_aggregation_window
 
 
 class MediaGraphNodeInput(msrest.serialization.Model):
@@ -1500,19 +1571,19 @@ class MediaGraphOutputSelector(msrest.serialization.Model):
 
 
 class MediaGraphParameterDeclaration(msrest.serialization.Model):
-    """The declaration of a parameter in the graph topology. A graph topology can be authored with parameters. Then, during graph instance creation, the value for those parameters can be specified. This allows the same graph topology to be used as a blueprint for multiple graph instances with different values for the parameters.
+    """The declaration of a parameter in the media graph topology. A media graph topology can be authored with parameters. Then, during graph instance creation, the value for those parameters can be specified. This allows the same graph topology to be used as a blueprint for multiple graph instances with different values for the parameters.
 
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the parameter.
     :type name: str
-    :param type: Required. name. Possible values include: "String", "SecretString", "Int",
-     "Double", "Bool".
+    :param type: Required.  Possible values include: "String", "SecretString", "Int", "Double",
+     "Bool".
     :type type: str or ~azure.media.livevideoanalytics.edge.models.MediaGraphParameterType
     :param description: Description of the parameter.
     :type description: str
-    :param default: The default value for the parameter, to be used if the graph instance does not
-     specify a value.
+    :param default: The default value for the parameter to be used if the media graph instance does
+     not specify a value.
     :type default: str
     """
 
@@ -1545,11 +1616,11 @@ class MediaGraphParameterDeclaration(msrest.serialization.Model):
 
 
 class MediaGraphParameterDefinition(msrest.serialization.Model):
-    """A key, value pair. The graph topology can be authored with certain values with parameters. Then, during graph instance creation, the value for that parameters can be specified. This allows the same graph topology to be used as a blueprint for multiple graph instances with different values for the parameters.
+    """A key-value pair. A media graph topology allows certain values to be parameterized. When an instance is created, the parameters are supplied with arguments specific to that instance. This allows the same graph topology to be used as a blueprint for multiple graph instances with different values for the parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of parameter as defined in the graph topology.
+    :param name: Required. Name of parameter as defined in the media graph topology.
     :type name: str
     :param value: Required. Value of parameter.
     :type value: str
@@ -1610,7 +1681,7 @@ class MediaGraphPemCertificateList(MediaGraphCertificateSource):
 
 
 class MediaGraphRtspSource(MediaGraphSource):
-    """Enables a graph to capture media from a RTSP server.
+    """Enables a media graph to capture media from a RTSP server.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1653,6 +1724,33 @@ class MediaGraphRtspSource(MediaGraphSource):
         self.endpoint = endpoint
 
 
+class MediaGraphSamplingOptions(msrest.serialization.Model):
+    """Describes the properties of a sample.
+
+    :param skip_samples_without_annotation: If true, limits the samples submitted to the extension
+     to only samples which have associated inference(s).
+    :type skip_samples_without_annotation: str
+    :param maximum_samples_per_second: Maximum rate of samples submitted to the extension.
+    :type maximum_samples_per_second: str
+    """
+
+    _attribute_map = {
+        'skip_samples_without_annotation': {'key': 'skipSamplesWithoutAnnotation', 'type': 'str'},
+        'maximum_samples_per_second': {'key': 'maximumSamplesPerSecond', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        skip_samples_without_annotation: Optional[str] = None,
+        maximum_samples_per_second: Optional[str] = None,
+        **kwargs
+    ):
+        super(MediaGraphSamplingOptions, self).__init__(**kwargs)
+        self.skip_samples_without_annotation = skip_samples_without_annotation
+        self.maximum_samples_per_second = maximum_samples_per_second
+
+
 class MediaGraphSignalGateProcessor(MediaGraphProcessor):
     """A signal gate determines when to block (gate) incoming media, and when to allow it through. It gathers input events over the activationEvaluationWindow, and determines whether to open or close the gate.
 
@@ -1666,17 +1764,17 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
      outputs of which are used as input for this processor node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
     :param activation_evaluation_window: The period of time over which the gate gathers input
-     events, before evaluating them.
+     events before evaluating them.
     :type activation_evaluation_window: str
-    :param activation_signal_offset: Signal offset once the gate is activated (can be negative). It
-     is an offset between the time the event is received, and the timestamp of the first media
-     sample (eg. video frame) that is allowed through by the gate.
+    :param activation_signal_offset: Required. Signal offset once the gate is activated (can be
+     negative). It is an offset between the time the event is received, and the timestamp of the
+     first media sample (eg. video frame) that is allowed through by the gate.
     :type activation_signal_offset: str
-    :param minimum_activation_time: The minimum period for which the gate remains open, in the
-     absence of subsequent triggers (events).
+    :param minimum_activation_time: Required. The minimum period for which the gate remains open in
+     the absence of subsequent triggers (events).
     :type minimum_activation_time: str
-    :param maximum_activation_time: The maximum period for which the gate remains open, in the
-     presence of subsequent events.
+    :param maximum_activation_time: Required. The maximum period for which the gate remains open in
+     the presence of subsequent events.
     :type maximum_activation_time: str
     """
 
@@ -1684,6 +1782,9 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
+        'activation_signal_offset': {'required': True},
+        'minimum_activation_time': {'required': True},
+        'maximum_activation_time': {'required': True},
     }
 
     _attribute_map = {
@@ -1701,10 +1802,10 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
         *,
         name: str,
         inputs: List["MediaGraphNodeInput"],
+        activation_signal_offset: str,
+        minimum_activation_time: str,
+        maximum_activation_time: str,
         activation_evaluation_window: Optional[str] = None,
-        activation_signal_offset: Optional[str] = None,
-        minimum_activation_time: Optional[str] = None,
-        maximum_activation_time: Optional[str] = None,
         **kwargs
     ):
         super(MediaGraphSignalGateProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
@@ -1716,7 +1817,7 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
 
 
 class MediaGraphSystemData(msrest.serialization.Model):
-    """Graph system data.
+    """The system data for a resource. This is used by both topologies and instances.
 
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
@@ -1742,7 +1843,7 @@ class MediaGraphSystemData(msrest.serialization.Model):
 
 
 class MediaGraphTlsEndpoint(MediaGraphEndpoint):
-    """An endpoint that the graph can connect to, which must be connected over TLS/SSL.
+    """A TLS endpoint for media graph external connections.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1818,15 +1919,16 @@ class MediaGraphTlsValidationOptions(msrest.serialization.Model):
 
 
 class MediaGraphTopology(msrest.serialization.Model):
-    """Describes a graph topology.
+    """A description of a media graph topology.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. name.
+    :param name: Required.
     :type name: str
-    :param system_data: Graph system data.
+    :param system_data: The system data for a resource. This is used by both topologies and
+     instances.
     :type system_data: ~azure.media.livevideoanalytics.edge.models.MediaGraphSystemData
-    :param properties: Describes the properties of a graph topology.
+    :param properties: A description of the properties of a media graph topology.
     :type properties: ~azure.media.livevideoanalytics.edge.models.MediaGraphTopologyProperties
     """
 
@@ -1855,13 +1957,13 @@ class MediaGraphTopology(msrest.serialization.Model):
 
 
 class MediaGraphTopologyCollection(msrest.serialization.Model):
-    """Collection of graph topologies.
+    """A collection of media graph topologies.
 
-    :param value: Collection of graph topologies.
+    :param value: A collection of media graph topologies.
     :type value: list[~azure.media.livevideoanalytics.edge.models.MediaGraphTopology]
-    :param continuation_token: Continuation token to use in subsequent calls to enumerate through
-     the graph topologies collection (when the collection contains too many results to return in one
-     response).
+    :param continuation_token: A continuation token to use in subsequent calls to enumerate through
+     the graph topologies collection. This is used when the collection contains too many results to
+     return in one response.
     :type continuation_token: str
     """
 
@@ -1891,7 +1993,7 @@ class MediaGraphTopologyDeleteRequest(ItemNonSetRequestBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param name: Required. method name.
     :type name: str
@@ -1909,7 +2011,7 @@ class MediaGraphTopologyDeleteRequest(ItemNonSetRequestBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1930,7 +2032,7 @@ class MediaGraphTopologyGetRequest(ItemNonSetRequestBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param name: Required. method name.
     :type name: str
@@ -1948,7 +2050,7 @@ class MediaGraphTopologyGetRequest(ItemNonSetRequestBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1960,14 +2062,14 @@ class MediaGraphTopologyGetRequest(ItemNonSetRequestBase):
         self.method_name = 'GraphTopologyGet'  # type: str
 
 
-class MediaGraphTopologyListRequest(OperationBase):
+class MediaGraphTopologyListRequest(MethodRequest):
     """MediaGraphTopologyListRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     """
 
@@ -1981,7 +2083,7 @@ class MediaGraphTopologyListRequest(OperationBase):
         'api_version': {'key': '@apiVersion', 'type': 'str'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -1992,18 +2094,18 @@ class MediaGraphTopologyListRequest(OperationBase):
 
 
 class MediaGraphTopologyProperties(msrest.serialization.Model):
-    """Describes the properties of a graph topology.
+    """A description of the properties of a media graph topology.
 
-    :param description: An optional description for the instance.
+    :param description:
     :type description: str
-    :param parameters: An optional description for the instance.
+    :param parameters:
     :type parameters:
      list[~azure.media.livevideoanalytics.edge.models.MediaGraphParameterDeclaration]
-    :param sources: An optional description for the instance.
+    :param sources:
     :type sources: list[~azure.media.livevideoanalytics.edge.models.MediaGraphSource]
-    :param processors: An optional description for the instance.
+    :param processors:
     :type processors: list[~azure.media.livevideoanalytics.edge.models.MediaGraphProcessor]
-    :param sinks: name.
+    :param sinks:
     :type sinks: list[~azure.media.livevideoanalytics.edge.models.MediaGraphSink]
     """
 
@@ -2033,7 +2135,7 @@ class MediaGraphTopologyProperties(msrest.serialization.Model):
         self.sinks = sinks
 
 
-class MediaGraphTopologySetRequest(OperationBase):
+class MediaGraphTopologySetRequest(MethodRequest):
     """MediaGraphTopologySetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2042,9 +2144,9 @@ class MediaGraphTopologySetRequest(OperationBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
-    :param graph: Required. Describes a graph topology.
+    :param graph: Required. A description of a media graph topology.
     :type graph: ~azure.media.livevideoanalytics.edge.models.MediaGraphTopology
     """
 
@@ -2060,7 +2162,7 @@ class MediaGraphTopologySetRequest(OperationBase):
         'graph': {'key': 'graph', 'type': 'MediaGraphTopology'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -2073,7 +2175,7 @@ class MediaGraphTopologySetRequest(OperationBase):
         self.graph = graph
 
 
-class MediaGraphTopologySetRequestBody(MediaGraphTopology, OperationBase):
+class MediaGraphTopologySetRequestBody(MediaGraphTopology, MethodRequest):
     """MediaGraphTopologySetRequestBody.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2082,13 +2184,14 @@ class MediaGraphTopologySetRequestBody(MediaGraphTopology, OperationBase):
 
     :ivar method_name: method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
-    :param name: Required. name.
+    :param name: Required.
     :type name: str
-    :param system_data: Graph system data.
+    :param system_data: The system data for a resource. This is used by both topologies and
+     instances.
     :type system_data: ~azure.media.livevideoanalytics.edge.models.MediaGraphSystemData
-    :param properties: Describes the properties of a graph topology.
+    :param properties: A description of the properties of a media graph topology.
     :type properties: ~azure.media.livevideoanalytics.edge.models.MediaGraphTopologyProperties
     """
 
@@ -2106,7 +2209,7 @@ class MediaGraphTopologySetRequestBody(MediaGraphTopology, OperationBase):
         'properties': {'key': 'properties', 'type': 'MediaGraphTopologyProperties'},
     }
 
-    api_version = "1.0"
+    api_version = "2.0"
 
     def __init__(
         self,
@@ -2168,7 +2271,8 @@ class MediaGraphUsernamePasswordCredentials(MediaGraphCredentials):
     :type type: str
     :param username: Required. Username for a username/password pair.
     :type username: str
-    :param password: Password for a username/password pair.
+    :param password: Password for a username/password pair. Please use a parameter so that the
+     actual value is not returned on PUT or GET requests.
     :type password: str
     """
 
