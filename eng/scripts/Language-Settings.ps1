@@ -3,6 +3,7 @@ $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
+$PACKAGE_INSTALL_NOTES_REGEX = "pip\sinstall\s(?<PackageName>.*)==(?<Version>.*)"
 
 function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
 {
@@ -222,4 +223,14 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
     LogError "Failed to retrieve package versions. `n$_"
     return $null
   }
+}
+
+function SetPackageVersion ($PackageName, $Version, $ServiceName, $ReleaseDate)
+{
+  if($null -eq $ReleaseDate)
+  {
+    $ReleaseDate = Get-Date -Format "yyy-MM-dd"
+  }
+  pip install -r "$EngDir/versioning/requirements.txt" -q -I
+  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceName
 }
