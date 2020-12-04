@@ -523,12 +523,12 @@ class PhoneNumberAdministrationClient(object):
                          polling_method=reservation_polling)
 
     @distributed_trace
-    def list_all_searches(
+    def list_all_reservations(
             self,
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[PhoneNumberEntities]
-        """Gets a list of all searches.
+        """Gets a list of all reservations.
 
         :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
         The default is 0.

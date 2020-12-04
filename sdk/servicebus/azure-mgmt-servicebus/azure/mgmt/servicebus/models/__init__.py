@@ -11,28 +11,40 @@ try:
     from ._models_py3 import Action
     from ._models_py3 import ArmDisasterRecovery
     from ._models_py3 import ArmDisasterRecoveryListResult
-    from ._models_py3 import AuthorizationRuleProperties
     from ._models_py3 import CaptureDescription
     from ._models_py3 import CheckNameAvailability
     from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import ConnectionState
     from ._models_py3 import CorrelationFilter
     from ._models_py3 import Destination
+    from ._models_py3 import Encryption
+    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import ErrorResponseError
     from ._models_py3 import EventHubListResult
     from ._models_py3 import Eventhub
+    from ._models_py3 import FailoverProperties
+    from ._models_py3 import Identity
+    from ._models_py3 import IpFilterRule
+    from ._models_py3 import IpFilterRuleListResult
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import MessageCountDetails
     from ._models_py3 import MigrationConfigListResult
     from ._models_py3 import MigrationConfigProperties
     from ._models_py3 import NWRuleSetIpRules
     from ._models_py3 import NWRuleSetVirtualNetworkRules
     from ._models_py3 import NetworkRuleSet
-    from ._models_py3 import NetworkRuleSetListResult
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
     from ._models_py3 import PremiumMessagingRegions
     from ._models_py3 import PremiumMessagingRegionsListResult
     from ._models_py3 import PremiumMessagingRegionsProperties
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourcesListResult
     from ._models_py3 import RegenerateAccessKeyParameters
     from ._models_py3 import Resource
     from ._models_py3 import ResourceNamespacePatch
@@ -55,33 +67,47 @@ try:
     from ._models_py3 import SqlRuleAction
     from ._models_py3 import Subnet
     from ._models_py3 import TrackedResource
+    from ._models_py3 import VirtualNetworkRule
+    from ._models_py3 import VirtualNetworkRuleListResult
 except (SyntaxError, ImportError):
     from ._models import AccessKeys  # type: ignore
     from ._models import Action  # type: ignore
     from ._models import ArmDisasterRecovery  # type: ignore
     from ._models import ArmDisasterRecoveryListResult  # type: ignore
-    from ._models import AuthorizationRuleProperties  # type: ignore
     from ._models import CaptureDescription  # type: ignore
     from ._models import CheckNameAvailability  # type: ignore
     from ._models import CheckNameAvailabilityResult  # type: ignore
+    from ._models import ConnectionState  # type: ignore
     from ._models import CorrelationFilter  # type: ignore
     from ._models import Destination  # type: ignore
+    from ._models import Encryption  # type: ignore
+    from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import ErrorResponseError  # type: ignore
     from ._models import EventHubListResult  # type: ignore
     from ._models import Eventhub  # type: ignore
+    from ._models import FailoverProperties  # type: ignore
+    from ._models import Identity  # type: ignore
+    from ._models import IpFilterRule  # type: ignore
+    from ._models import IpFilterRuleListResult  # type: ignore
+    from ._models import KeyVaultProperties  # type: ignore
     from ._models import MessageCountDetails  # type: ignore
     from ._models import MigrationConfigListResult  # type: ignore
     from ._models import MigrationConfigProperties  # type: ignore
     from ._models import NWRuleSetIpRules  # type: ignore
     from ._models import NWRuleSetVirtualNetworkRules  # type: ignore
     from ._models import NetworkRuleSet  # type: ignore
-    from ._models import NetworkRuleSetListResult  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import PremiumMessagingRegions  # type: ignore
     from ._models import PremiumMessagingRegionsListResult  # type: ignore
     from ._models import PremiumMessagingRegionsProperties  # type: ignore
+    from ._models import PrivateEndpoint  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourcesListResult  # type: ignore
     from ._models import RegenerateAccessKeyParameters  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceNamespacePatch  # type: ignore
@@ -104,17 +130,22 @@ except (SyntaxError, ImportError):
     from ._models import SqlRuleAction  # type: ignore
     from ._models import Subnet  # type: ignore
     from ._models import TrackedResource  # type: ignore
+    from ._models import VirtualNetworkRule  # type: ignore
+    from ._models import VirtualNetworkRuleListResult  # type: ignore
 
 from ._service_bus_management_client_enums import (
     AccessRights,
     DefaultAction,
     EncodingCaptureDescription,
+    EndPointProvisioningState,
     EntityStatus,
     FilterType,
+    IPAction,
     KeyType,
     MigrationConfigurationName,
     NameSpaceType,
     NetworkRuleIPAction,
+    PrivateLinkConnectionStatus,
     ProvisioningStateDR,
     RoleDisasterRecovery,
     SkuName,
@@ -127,28 +158,40 @@ __all__ = [
     'Action',
     'ArmDisasterRecovery',
     'ArmDisasterRecoveryListResult',
-    'AuthorizationRuleProperties',
     'CaptureDescription',
     'CheckNameAvailability',
     'CheckNameAvailabilityResult',
+    'ConnectionState',
     'CorrelationFilter',
     'Destination',
+    'Encryption',
+    'ErrorAdditionalInfo',
     'ErrorResponse',
+    'ErrorResponseError',
     'EventHubListResult',
     'Eventhub',
+    'FailoverProperties',
+    'Identity',
+    'IpFilterRule',
+    'IpFilterRuleListResult',
+    'KeyVaultProperties',
     'MessageCountDetails',
     'MigrationConfigListResult',
     'MigrationConfigProperties',
     'NWRuleSetIpRules',
     'NWRuleSetVirtualNetworkRules',
     'NetworkRuleSet',
-    'NetworkRuleSetListResult',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
     'PremiumMessagingRegions',
     'PremiumMessagingRegionsListResult',
     'PremiumMessagingRegionsProperties',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourcesListResult',
     'RegenerateAccessKeyParameters',
     'Resource',
     'ResourceNamespacePatch',
@@ -171,15 +214,20 @@ __all__ = [
     'SqlRuleAction',
     'Subnet',
     'TrackedResource',
+    'VirtualNetworkRule',
+    'VirtualNetworkRuleListResult',
     'AccessRights',
     'DefaultAction',
     'EncodingCaptureDescription',
+    'EndPointProvisioningState',
     'EntityStatus',
     'FilterType',
+    'IPAction',
     'KeyType',
     'MigrationConfigurationName',
     'NameSpaceType',
     'NetworkRuleIPAction',
+    'PrivateLinkConnectionStatus',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
     'SkuName',

@@ -19,9 +19,9 @@ from azure.core.exceptions import (
     ResourceNotModifiedError
 )
 
-BUILDING_MODEL_ID = "dtmi:samples:Building;1"
-FLOOR_MODEL_ID = "dtmi:samples:Floor;1"
-ROOM_MODEL_ID = "dtmi:samples:Room;1"
+BUILDING_MODEL_ID = "dtmi:samples:RelationshipTestBuilding;1"
+FLOOR_MODEL_ID = "dtmi:samples:RelationshipTestFloor;1"
+ROOM_MODEL_ID = "dtmi:samples:RelationshipTestRoom;1"
 BUILDING_DIGITAL_TWIN = "DTRelationshipTestsBuildingTwin"
 FLOOR_DIGITAL_TWIN = "DTRelationshipTestsFloorTwin"
 ROOM_DIGITAL_TWIN = "DTRelationshipTestsRoomTwin"
@@ -37,7 +37,38 @@ class DigitalTwinsRelationshipTestsAsync(AzureTestCase):
             endpoint=endpoint,
             **kwargs)
 
+    async def _clean_up_models(self, client, *models):
+        models = []
+        async for m in client.list_models():
+            models.append(m)
+        while models:
+            print("Cleaning up {} models".format(len(models)))
+            for model in models:
+                try:
+                    await client.delete_model(model.id)
+                except:
+                    pass
+            models = []
+            async for m in client.list_models():
+                models.append(m)
+
+    async def _clean_up_relationships(self, client):
+        for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
+            async for relationship in client.list_relationships(dt_id):
+                await client.delete_relationship(
+                    dt_id,
+                    relationship['$relationshipId']
+                )
+
+    async def _clean_up_twins(self, client):
+        for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
+            await client.delete_digital_twin(dt_id)
+
     async def _set_up_models(self, client, *delete_old):
+        await self._clean_up_models(client)
+        await self._clean_up_relationships(client)
+        await self._clean_up_twins(client)
+
         dtdl_model_building = {
             "@id": BUILDING_MODEL_ID,
             "@type": "Interface",
@@ -99,10 +130,8 @@ class DigitalTwinsRelationshipTestsAsync(AzureTestCase):
                 }
             ]
         }
-        try:
-            await client.create_models([dtdl_model_building, dtdl_model_floor, dtdl_model_room])
-        except ResourceExistsError:
-            pass
+        await client.create_models([dtdl_model_building, dtdl_model_floor, dtdl_model_room])
+
         building_digital_twin = {
             "$metadata": {
                 "$model": BUILDING_MODEL_ID

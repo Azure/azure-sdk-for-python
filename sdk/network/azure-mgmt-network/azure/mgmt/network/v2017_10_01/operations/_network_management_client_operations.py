@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -30,7 +30,7 @@ class NetworkManagementClientOperationsMixin(object):
         domain_name_label,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DnsNameAvailabilityResult"
+        # type: (...) -> "_models.DnsNameAvailabilityResult"
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
         :param location: The location of the domain name.
@@ -43,7 +43,7 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.network.v2017_10_01.models.DnsNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DnsNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DnsNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class HubRouteTablesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,11 +52,11 @@ class HubRouteTablesOperations(object):
         resource_group_name,  # type: str
         virtual_hub_name,  # type: str
         route_table_name,  # type: str
-        route_table_parameters,  # type: "models.HubRouteTable"
+        route_table_parameters,  # type: "_models.HubRouteTable"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HubRouteTable"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubRouteTable"]
+        # type: (...) -> "_models.HubRouteTable"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubRouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,10 +112,10 @@ class HubRouteTablesOperations(object):
         resource_group_name,  # type: str
         virtual_hub_name,  # type: str
         route_table_name,  # type: str
-        route_table_parameters,  # type: "models.HubRouteTable"
+        route_table_parameters,  # type: "_models.HubRouteTable"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.HubRouteTable"]
+        # type: (...) -> LROPoller["_models.HubRouteTable"]
         """Creates a RouteTable resource if it doesn't exist else updates the existing RouteTable.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -137,7 +137,7 @@ class HubRouteTablesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubRouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubRouteTable"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -163,7 +163,14 @@ class HubRouteTablesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -184,7 +191,7 @@ class HubRouteTablesOperations(object):
         route_table_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HubRouteTable"
+        # type: (...) -> "_models.HubRouteTable"
         """Retrieves the details of a RouteTable.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -198,7 +205,7 @@ class HubRouteTablesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_05_01.models.HubRouteTable
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubRouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubRouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -336,7 +343,14 @@ class HubRouteTablesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -356,7 +370,7 @@ class HubRouteTablesOperations(object):
         virtual_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListHubRouteTablesResult"]
+        # type: (...) -> Iterable["_models.ListHubRouteTablesResult"]
         """Retrieves the details of all RouteTables.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -368,7 +382,7 @@ class HubRouteTablesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.ListHubRouteTablesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListHubRouteTablesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListHubRouteTablesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -3,7 +3,7 @@ interactions:
     body: '{"ComponentTelemetry1": 5}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,11 +13,11 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 48054feb-2562-4878-ba77-58654a0dc1b7
+      - 458fb43b-1961-431d-9938-21bb2bc05d35
       Telemetry-Source-Time:
-      - '2020-11-09 09:13:22.314834'
+      - '2020-11-25 10:03:57.725160'
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2020-10-31
   response:
@@ -32,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 08 Nov 2020 20:13:24 GMT
+      - Tue, 24 Nov 2020 21:03:58 GMT
       strict-transport-security:
       - max-age=2592000
     status:
@@ -42,7 +42,7 @@ interactions:
     body: '{"ComponentTelemetry1": 5}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -52,11 +52,11 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 7d81b295-6c7b-4fc5-91a3-03a08fc0682e
+      - 8c83158e-647a-4d9f-b1cf-e3dafdb88308
       Telemetry-Source-Time:
-      - '2020-11-09 09:13:24.354554'
+      - '2020-11-25 10:03:59.586048'
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2020-10-31
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 08 Nov 2020 20:13:24 GMT
+      - Tue, 24 Nov 2020 21:03:59 GMT
       strict-transport-security:
       - max-age=2592000
     status:

@@ -17,6 +17,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import functools
 import pytest
 import uuid
 import os
@@ -26,11 +27,12 @@ from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
 from schemaregistry_preparer import SchemaRegistryPreparer
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, PowerShellPreparer
 from devtools_testutils.azure_testcase import _is_autorest_v3
 
 from azure.core.credentials import AccessToken
 
+SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")
 
 class SchemaRegistryAsyncTests(AzureTestCase):
 
@@ -38,7 +40,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         credential = self.get_credential(SchemaRegistryClient, is_async=True)
         return self.create_client_from_credential(SchemaRegistryClient, credential, endpoint=endpoint, is_async=True)
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     async def test_schema_basic_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         async with client:
@@ -71,7 +73,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             assert returned_schema_properties.serialization_type == "Avro"
         await client._generated_client._config.credential.close()
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     async def test_schema_update_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         async with client:
@@ -106,7 +108,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             assert new_schema.schema_properties.serialization_type == "Avro"
         await client._generated_client._config.credential.close()
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     async def test_schema_same_twice_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-twice-async')
@@ -118,7 +120,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             assert schema_properties.schema_id == schema_properties_second.schema_id
         await client._generated_client._config.credential.close()
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     async def test_schema_negative_wrong_credential_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
@@ -129,7 +131,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             with pytest.raises(ClientAuthenticationError):
                 await client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     async def test_schema_negative_wrong_endpoint_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client("nonexist.servicebus.windows.net")
         async with client:
@@ -140,7 +142,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
                 await client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
         await client._generated_client._config.credential.close()
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     async def test_schema_negative_no_schema_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         async with client:
