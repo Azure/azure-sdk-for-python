@@ -15,14 +15,15 @@ try:
     from ._models_py3 import MediaGraphEndpoint
     from ._models_py3 import MediaGraphExtensionProcessorBase
     from ._models_py3 import MediaGraphFileSink
-    from ._models_py3 import MediaGraphFrameRateFilterProcessor
     from ._models_py3 import MediaGraphGrpcExtension
     from ._models_py3 import MediaGraphGrpcExtensionDataTransfer
     from ._models_py3 import MediaGraphHttpExtension
     from ._models_py3 import MediaGraphHttpHeaderCredentials
     from ._models_py3 import MediaGraphImage
     from ._models_py3 import MediaGraphImageFormat
-    from ._models_py3 import MediaGraphImageFormatEncoded
+    from ._models_py3 import MediaGraphImageFormatBmp
+    from ._models_py3 import MediaGraphImageFormatJpeg
+    from ._models_py3 import MediaGraphImageFormatPng
     from ._models_py3 import MediaGraphImageFormatRaw
     from ._models_py3 import MediaGraphImageScale
     from ._models_py3 import MediaGraphInstance
@@ -45,6 +46,7 @@ try:
     from ._models_py3 import MediaGraphPemCertificateList
     from ._models_py3 import MediaGraphProcessor
     from ._models_py3 import MediaGraphRtspSource
+    from ._models_py3 import MediaGraphSamplingOptions
     from ._models_py3 import MediaGraphSignalGateProcessor
     from ._models_py3 import MediaGraphSink
     from ._models_py3 import MediaGraphSource
@@ -61,7 +63,7 @@ try:
     from ._models_py3 import MediaGraphTopologySetRequestBody
     from ._models_py3 import MediaGraphUnsecuredEndpoint
     from ._models_py3 import MediaGraphUsernamePasswordCredentials
-    from ._models_py3 import OperationBase
+    from ._models_py3 import MethodRequest
 except (SyntaxError, ImportError):
     from ._models import ItemNonSetRequestBase  # type: ignore
     from ._models import MediaGraphAssetSink  # type: ignore
@@ -71,14 +73,15 @@ except (SyntaxError, ImportError):
     from ._models import MediaGraphEndpoint  # type: ignore
     from ._models import MediaGraphExtensionProcessorBase  # type: ignore
     from ._models import MediaGraphFileSink  # type: ignore
-    from ._models import MediaGraphFrameRateFilterProcessor  # type: ignore
     from ._models import MediaGraphGrpcExtension  # type: ignore
     from ._models import MediaGraphGrpcExtensionDataTransfer  # type: ignore
     from ._models import MediaGraphHttpExtension  # type: ignore
     from ._models import MediaGraphHttpHeaderCredentials  # type: ignore
     from ._models import MediaGraphImage  # type: ignore
     from ._models import MediaGraphImageFormat  # type: ignore
-    from ._models import MediaGraphImageFormatEncoded  # type: ignore
+    from ._models import MediaGraphImageFormatBmp  # type: ignore
+    from ._models import MediaGraphImageFormatJpeg  # type: ignore
+    from ._models import MediaGraphImageFormatPng  # type: ignore
     from ._models import MediaGraphImageFormatRaw  # type: ignore
     from ._models import MediaGraphImageScale  # type: ignore
     from ._models import MediaGraphInstance  # type: ignore
@@ -101,6 +104,7 @@ except (SyntaxError, ImportError):
     from ._models import MediaGraphPemCertificateList  # type: ignore
     from ._models import MediaGraphProcessor  # type: ignore
     from ._models import MediaGraphRtspSource  # type: ignore
+    from ._models import MediaGraphSamplingOptions  # type: ignore
     from ._models import MediaGraphSignalGateProcessor  # type: ignore
     from ._models import MediaGraphSink  # type: ignore
     from ._models import MediaGraphSource  # type: ignore
@@ -117,11 +121,10 @@ except (SyntaxError, ImportError):
     from ._models import MediaGraphTopologySetRequestBody  # type: ignore
     from ._models import MediaGraphUnsecuredEndpoint  # type: ignore
     from ._models import MediaGraphUsernamePasswordCredentials  # type: ignore
-    from ._models import OperationBase  # type: ignore
+    from ._models import MethodRequest  # type: ignore
 
-from ._definitionsfor_live_video_analyticson_io_tedge_enums import (
+from ._direct_methodsfor_live_video_analyticson_io_tedge_enums import (
     MediaGraphGrpcExtensionDataTransferMode,
-    MediaGraphImageEncodingFormat,
     MediaGraphImageFormatRawPixelFormat,
     MediaGraphImageScaleMode,
     MediaGraphInstanceState,
@@ -140,14 +143,15 @@ __all__ = [
     'MediaGraphEndpoint',
     'MediaGraphExtensionProcessorBase',
     'MediaGraphFileSink',
-    'MediaGraphFrameRateFilterProcessor',
     'MediaGraphGrpcExtension',
     'MediaGraphGrpcExtensionDataTransfer',
     'MediaGraphHttpExtension',
     'MediaGraphHttpHeaderCredentials',
     'MediaGraphImage',
     'MediaGraphImageFormat',
-    'MediaGraphImageFormatEncoded',
+    'MediaGraphImageFormatBmp',
+    'MediaGraphImageFormatJpeg',
+    'MediaGraphImageFormatPng',
     'MediaGraphImageFormatRaw',
     'MediaGraphImageScale',
     'MediaGraphInstance',
@@ -170,6 +174,7 @@ __all__ = [
     'MediaGraphPemCertificateList',
     'MediaGraphProcessor',
     'MediaGraphRtspSource',
+    'MediaGraphSamplingOptions',
     'MediaGraphSignalGateProcessor',
     'MediaGraphSink',
     'MediaGraphSource',
@@ -186,9 +191,8 @@ __all__ = [
     'MediaGraphTopologySetRequestBody',
     'MediaGraphUnsecuredEndpoint',
     'MediaGraphUsernamePasswordCredentials',
-    'OperationBase',
+    'MethodRequest',
     'MediaGraphGrpcExtensionDataTransferMode',
-    'MediaGraphImageEncodingFormat',
     'MediaGraphImageFormatRawPixelFormat',
     'MediaGraphImageScaleMode',
     'MediaGraphInstanceState',
