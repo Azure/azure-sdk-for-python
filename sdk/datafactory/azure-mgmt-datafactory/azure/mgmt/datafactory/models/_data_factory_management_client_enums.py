@@ -384,13 +384,6 @@ class RecurrenceFrequency(str, Enum):
     year = "Year"
 
 
-class DataFlowComputeType(str, Enum):
-
-    general = "General"
-    memory_optimized = "MemoryOptimized"
-    compute_optimized = "ComputeOptimized"
-
-
 class AzureFunctionActivityMethod(str, Enum):
 
     get = "GET"
@@ -410,24 +403,10 @@ class WebActivityMethod(str, Enum):
     delete = "DELETE"
 
 
-class OraclePartitionOption(str, Enum):
-
-    none = "None"
-    physical_partitions_of_table = "PhysicalPartitionsOfTable"
-    dynamic_range = "DynamicRange"
-
-
 class SalesforceSourceReadBehavior(str, Enum):
 
     query = "Query"
     query_all = "QueryAll"
-
-
-class NetezzaPartitionOption(str, Enum):
-
-    none = "None"
-    data_slice = "DataSlice"
-    dynamic_range = "DynamicRange"
 
 
 class CassandraSourceReadConsistencyLevels(str, Enum):
@@ -444,20 +423,6 @@ class CassandraSourceReadConsistencyLevels(str, Enum):
     local_serial = "LOCAL_SERIAL"
 
 
-class TeradataPartitionOption(str, Enum):
-
-    none = "None"
-    hash = "Hash"
-    dynamic_range = "DynamicRange"
-
-
-class SqlPartitionOption(str, Enum):
-
-    none = "None"
-    physical_partitions_of_table = "PhysicalPartitionsOfTable"
-    dynamic_range = "DynamicRange"
-
-
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
@@ -467,23 +432,6 @@ class StoredProcedureParameterType(str, Enum):
     guid = "Guid"
     boolean = "Boolean"
     date_enum = "Date"
-
-
-class SapTablePartitionOption(str, Enum):
-
-    none = "None"
-    partition_on_int = "PartitionOnInt"
-    partition_on_calendar_year = "PartitionOnCalendarYear"
-    partition_on_calendar_month = "PartitionOnCalendarMonth"
-    partition_on_calendar_date = "PartitionOnCalendarDate"
-    partition_on_time = "PartitionOnTime"
-
-
-class SapHanaPartitionOption(str, Enum):
-
-    none = "None"
-    physical_partitions_of_table = "PhysicalPartitionsOfTable"
-    sap_hana_dynamic_range = "SapHanaDynamicRange"
 
 
 class SsisPackageLocationType(str, Enum):
@@ -606,6 +554,13 @@ class IntegrationRuntimeEdition(str, Enum):
     enterprise = "Enterprise"
 
 
+class DataFlowComputeType(str, Enum):
+
+    general = "General"
+    memory_optimized = "MemoryOptimized"
+    compute_optimized = "ComputeOptimized"
+
+
 class SsisObjectMetadataType(str, Enum):
 
     folder = "Folder"
@@ -625,3 +580,48 @@ class CopyBehaviorType(str, Enum):
     preserve_hierarchy = "PreserveHierarchy"
     flatten_hierarchy = "FlattenHierarchy"
     merge_files = "MergeFiles"
+
+
+class SqlPartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    dynamic_range = "DynamicRange"
+
+
+class SapHanaPartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    sap_hana_dynamic_range = "SapHanaDynamicRange"
+
+
+class SapTablePartitionOption(str, Enum):
+
+    none = "None"
+    partition_on_int = "PartitionOnInt"
+    partition_on_calendar_year = "PartitionOnCalendarYear"
+    partition_on_calendar_month = "PartitionOnCalendarMonth"
+    partition_on_calendar_date = "PartitionOnCalendarDate"
+    partition_on_time = "PartitionOnTime"
+
+
+class OraclePartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    dynamic_range = "DynamicRange"
+
+
+class TeradataPartitionOption(str, Enum):
+
+    none = "None"
+    hash = "Hash"
+    dynamic_range = "DynamicRange"
+
+
+class NetezzaPartitionOption(str, Enum):
+
+    none = "None"
+    data_slice = "DataSlice"
+    dynamic_range = "DynamicRange"
