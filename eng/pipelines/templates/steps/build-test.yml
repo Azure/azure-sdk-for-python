@@ -66,3 +66,19 @@ steps:
   - template: publish-coverage.yml
     parameters:
       RunCoverage: ${{ parameters.RunCoverage }}
+
+  - task: PythonScript@0
+    displayName: 'Test Samples'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/test_run_samples.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        ${{ parameters.AdditionalTestArgs }}
+        ${{ parameters.CoverageArg }}
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="${{ parameters.ToxTestEnv }}"
+        --injected-packages="${{ parameters.InjectedPackages }}"
+        --test-samples="${{ parameters.TestSamples }}"
+        ${{ parameters.ToxEnvParallel }}
+    env: ${{ parameters.EnvVars }}

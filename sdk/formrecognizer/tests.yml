@@ -6,6 +6,7 @@ jobs:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
+      TestSamples: true
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
       # As such, the canary test runs should run on a reduced matrix.

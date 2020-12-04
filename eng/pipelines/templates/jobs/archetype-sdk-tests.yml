@@ -67,6 +67,7 @@ jobs:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           CoverageArg: $(CoverageArg)
+          TestSamples: ${{ parameters.TestSamples }}
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback
             ${{ insert }}: ${{ parameters.EnvVars }}
