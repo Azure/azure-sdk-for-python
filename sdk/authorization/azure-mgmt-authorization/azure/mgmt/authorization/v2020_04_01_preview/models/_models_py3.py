@@ -20,6 +20,43 @@ class CloudError(Model):
     }
 
 
+class Error(Model):
+    """Object to be thrown in case of an unsuccessful response.
+
+    :param error: Object to be thrown in case of an unsuccessful response
+    :type error:
+     ~azure.mgmt.authorization.v2020_04_01_preview.models.ErrorError
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorError'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(Error, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorError(Model):
+    """Object to be thrown in case of an unsuccessful response.
+
+    :param code: Brief error code
+    :type code: str
+    :param message: Longer message explaining the details of the error
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(ErrorError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
 class RoleAssignment(Model):
     """Role Assignments.
 
@@ -54,8 +91,19 @@ class RoleAssignment(Model):
      StringEqualsIgnoreCase 'foo_storage_container'
     :type condition: str
     :param condition_version: Version of the condition. Currently accepted
-     values are '1.0' or '2.0'
+     value is '2.0'
     :type condition_version: str
+    :param created_on: Time it was created
+    :type created_on: datetime
+    :param updated_on: Time it was updated
+    :type updated_on: datetime
+    :param created_by: Id of the user who created the assignment
+    :type created_by: str
+    :param updated_by: Id of the user who updated the assignment
+    :type updated_by: str
+    :param delegated_managed_identity_resource_id: Id of the delegated managed
+     identity resource
+    :type delegated_managed_identity_resource_id: str
     """
 
     _validation = {
@@ -76,9 +124,14 @@ class RoleAssignment(Model):
         'description': {'key': 'properties.description', 'type': 'str'},
         'condition': {'key': 'properties.condition', 'type': 'str'},
         'condition_version': {'key': 'properties.conditionVersion', 'type': 'str'},
+        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
+        'updated_on': {'key': 'properties.updatedOn', 'type': 'iso-8601'},
+        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
+        'updated_by': {'key': 'properties.updatedBy', 'type': 'str'},
+        'delegated_managed_identity_resource_id': {'key': 'properties.delegatedManagedIdentityResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, scope: str=None, role_definition_id: str=None, principal_id: str=None, principal_type=None, can_delegate: bool=None, description: str=None, condition: str=None, condition_version: str=None, **kwargs) -> None:
+    def __init__(self, *, scope: str=None, role_definition_id: str=None, principal_id: str=None, principal_type=None, can_delegate: bool=None, description: str=None, condition: str=None, condition_version: str=None, created_on=None, updated_on=None, created_by: str=None, updated_by: str=None, delegated_managed_identity_resource_id: str=None, **kwargs) -> None:
         super(RoleAssignment, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -91,6 +144,11 @@ class RoleAssignment(Model):
         self.description = description
         self.condition = condition
         self.condition_version = condition_version
+        self.created_on = created_on
+        self.updated_on = updated_on
+        self.created_by = created_by
+        self.updated_by = updated_by
+        self.delegated_managed_identity_resource_id = delegated_managed_identity_resource_id
 
 
 class RoleAssignmentCreateParameters(Model):
@@ -116,9 +174,13 @@ class RoleAssignmentCreateParameters(Model):
     :type can_delegate: bool
     :param description: Description of role assignment
     :type description: str
-    :param condition: The conditions on the role assignment
+    :param condition: The conditions on the role assignment. This limits the
+     resources it can be assigned to. e.g.:
+     @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+     StringEqualsIgnoreCase 'foo_storage_container'
     :type condition: str
-    :param condition_version: Version of the condition
+    :param condition_version: Version of the condition. Currently accepted
+     value is '2.0'
     :type condition_version: str
     """
 

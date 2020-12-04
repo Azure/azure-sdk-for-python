@@ -147,7 +147,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of RoleAssignment
         :rtype:
-         ~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment]
+         object[~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -189,7 +189,7 @@ class RoleAssignmentsOperations(object):
 
             response = self._client.send(request, stream=False, **operation_config)
 
-            if response.status_code not in [200]:
+            if response.status_code not in [200, 400]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -200,7 +200,7 @@ class RoleAssignmentsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.RoleAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.object(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleAssignments'}
@@ -251,7 +251,7 @@ class RoleAssignmentsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204, 412]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -290,10 +290,8 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RoleAssignment or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -326,7 +324,7 @@ class RoleAssignmentsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [201, 400, 409]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -334,6 +332,10 @@ class RoleAssignmentsOperations(object):
         deserialized = None
         if response.status_code == 201:
             deserialized = self._deserialize('RoleAssignment', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('Error', response)
+        if response.status_code == 409:
+            deserialized = self._deserialize('Error', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -355,10 +357,8 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RoleAssignment or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -387,7 +387,7 @@ class RoleAssignmentsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 400, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -395,6 +395,8 @@ class RoleAssignmentsOperations(object):
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('RoleAssignment', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('Error', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -600,7 +602,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of RoleAssignment
         :rtype:
-         ~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment]
+         object[~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -641,7 +643,7 @@ class RoleAssignmentsOperations(object):
 
             response = self._client.send(request, stream=False, **operation_config)
 
-            if response.status_code not in [200]:
+            if response.status_code not in [200, 400]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -652,7 +654,7 @@ class RoleAssignmentsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.RoleAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.object(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/roleAssignments'}
@@ -675,7 +677,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of RoleAssignment
         :rtype:
-         ~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment]
+         object[~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -716,7 +718,7 @@ class RoleAssignmentsOperations(object):
 
             response = self._client.send(request, stream=False, **operation_config)
 
-            if response.status_code not in [200]:
+            if response.status_code not in [200, 400]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -727,7 +729,7 @@ class RoleAssignmentsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.RoleAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.object(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_for_scope.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments'}
