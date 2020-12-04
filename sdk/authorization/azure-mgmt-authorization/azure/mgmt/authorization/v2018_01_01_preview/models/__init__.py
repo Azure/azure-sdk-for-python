@@ -10,6 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorError
     from ._models_py3 import Permission
     from ._models_py3 import ProviderOperation
     from ._models_py3 import ProviderOperationsMetadata
@@ -20,6 +22,8 @@ try:
     from ._models_py3 import RoleDefinition
     from ._models_py3 import RoleDefinitionFilter
 except (SyntaxError, ImportError):
+    from ._models import Error
+    from ._models import ErrorError
     from ._models import Permission
     from ._models import ProviderOperation
     from ._models import ProviderOperationsMetadata
@@ -35,6 +39,8 @@ from ._paged_models import RoleAssignmentPaged
 from ._paged_models import RoleDefinitionPaged
 
 __all__ = [
+    'Error',
+    'ErrorError',
     'Permission',
     'ProviderOperation',
     'ProviderOperationsMetadata',

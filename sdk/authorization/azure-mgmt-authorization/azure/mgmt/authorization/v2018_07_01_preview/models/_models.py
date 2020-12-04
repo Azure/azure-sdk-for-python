@@ -152,6 +152,43 @@ class DenyAssignmentPermission(Model):
         self.not_data_actions = kwargs.get('not_data_actions', None)
 
 
+class Error(Model):
+    """Object to be thrown in case of an unsuccessful response.
+
+    :param error: Object to be thrown in case of an unsuccessful response
+    :type error:
+     ~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorError
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorError'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Error, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorError(Model):
+    """Object to be thrown in case of an unsuccessful response.
+
+    :param code: Brief error code
+    :type code: str
+    :param message: Longer message explaining the details of the error
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+
+
 class Principal(Model):
     """Deny assignment principal.
 
