@@ -3,15 +3,13 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy, parse_key_vault_certificate_id
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
-from _shared.preparer import KeyVaultClientPreparer
+from _shared.preparer import CachedKeyVaultPreparer, KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
 
 
 class TestParseId(KeyVaultTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer(CertificateClient)
     def test_parse_certificate_id_with_version(self, client):
         cert_name = self.get_resource_name("cert")
