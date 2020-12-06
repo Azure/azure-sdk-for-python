@@ -28,9 +28,9 @@ try:
     from ._models_py3 import Metrics
     from ._models_py3 import RetentionPolicy
     from ._models_py3 import ShareFileRangeList
-    from ._models_py3 import ShareItem
+    from ._models_py3 import ShareItemInternal
     from ._models_py3 import SharePermission
-    from ._models_py3 import ShareProperties
+    from ._models_py3 import SharePropertiesInternal
     from ._models_py3 import ShareProtocolSettings
     from ._models_py3 import ShareSmbSettings
     from ._models_py3 import ShareStats
@@ -58,9 +58,9 @@ except (SyntaxError, ImportError):
     from ._models import Metrics
     from ._models import RetentionPolicy
     from ._models import ShareFileRangeList
-    from ._models import ShareItem
+    from ._models import ShareItemInternal
     from ._models import SharePermission
-    from ._models import ShareProperties
+    from ._models import SharePropertiesInternal
     from ._models import ShareProtocolSettings
     from ._models import ShareSmbSettings
     from ._models import ShareStats
@@ -79,6 +79,7 @@ from ._azure_file_storage_enums import (
     ListSharesIncludeType,
     PermissionCopyModeType,
     ShareAccessTier,
+    ShareRootSquash,
     StorageErrorCode,
 )
 
@@ -101,9 +102,9 @@ __all__ = [
     'Metrics',
     'RetentionPolicy',
     'ShareFileRangeList',
-    'ShareItem',
+    'ShareItemInternal',
     'SharePermission',
-    'ShareProperties',
+    'SharePropertiesInternal',
     'ShareProtocolSettings',
     'ShareSmbSettings',
     'ShareStats',
@@ -116,6 +117,7 @@ __all__ = [
     'LeaseDurationType',
     'LeaseStateType',
     'LeaseStatusType',
+    'ShareRootSquash',
     'ShareAccessTier',
     'PermissionCopyModeType',
     'DeleteSnapshotsOptionType',
