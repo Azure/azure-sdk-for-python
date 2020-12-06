@@ -15,6 +15,7 @@ except ImportError:
     from inspect import getargspec as get_arg_spec
 
 import pytest
+from dotenv import load_dotenv, find_dotenv
 
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
@@ -101,6 +102,7 @@ class AzureTestCase(ReplayableTest):
         config_file = config_file or os.path.join(self.working_folder, TEST_SETTING_FILENAME)
         if not os.path.exists(config_file):
             config_file = None
+        load_dotenv(find_dotenv())
         super(AzureTestCase, self).__init__(
             method_name,
             config_file=config_file,
@@ -150,7 +152,7 @@ class AzureTestCase(ReplayableTest):
         key_value = os.environ.get("AZURE_"+key, None)
 
         if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
-            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values".format(key=key))
+            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values".format(key=key))
 
         if not key_value:
             try:

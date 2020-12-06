@@ -1084,30 +1084,29 @@ class FilterBlobItem(Model):
     :type name: str
     :param container_name: Required.
     :type container_name: str
-    :param tag_value: Required.
-    :type tag_value: str
+    :param tags:
+    :type tags: ~azure.storage.blob.models.BlobTags
     """
 
     _validation = {
         'name': {'required': True},
         'container_name': {'required': True},
-        'tag_value': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
         'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'name': 'ContainerName'}},
-        'tag_value': {'key': 'TagValue', 'type': 'str', 'xml': {'name': 'TagValue'}},
+        'tags': {'key': 'Tags', 'type': 'BlobTags', 'xml': {'name': 'Tags'}},
     }
     _xml_map = {
         'name': 'Blob'
     }
 
-    def __init__(self, *, name: str, container_name: str, tag_value: str, **kwargs) -> None:
+    def __init__(self, *, name: str, container_name: str, tags=None, **kwargs) -> None:
         super(FilterBlobItem, self).__init__(**kwargs)
         self.name = name
         self.container_name = container_name
-        self.tag_value = tag_value
+        self.tags = tags
 
 
 class FilterBlobSegment(Model):
