@@ -1,5 +1,36 @@
 # Release History
 
+## 0.9.0 (2020-12-07)
+
+**Features**
+
+  - Model AzureFileshareProtectedItem has a new parameter kpis_healths
+  - Model AzureIaaSVMProtectedItem has a new parameter kpis_healths
+  - Model AzureIaaSClassicComputeVMProtectedItem has a new parameter kpis_healths
+  - Model AzureVmWorkloadProtectedItem has a new parameter kpis_healths
+  - Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter kpis_healths
+  - Model AzureIaaSComputeVMProtectedItem has a new parameter kpis_healths
+  - Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter kpis_healths
+  - Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter kpis_healths
+  - Added operation RecoveryServicesBackupClientOperationsMixin.bms_prepare_data_move
+  - Added operation RecoveryServicesBackupClientOperationsMixin.bms_trigger_data_move
+  - Added operation RecoveryServicesBackupClientOperationsMixin.get_operation_status1
+  - Added operation group BackupResourceEncryptionConfigsOperations
+  - Added operation group BMSPrepareDataMoveOperationResultOperations
+
+**Breaking changes**
+
+  - Model AzureFileshareProtectedItem no longer has parameter health_status
+  - Model AzureFileshareProtectedItem no longer has parameter health_details
+  - Model AzureVmWorkloadProtectedItem no longer has parameter health_status
+  - Model AzureVmWorkloadProtectedItem no longer has parameter health_details
+  - Model AzureVmWorkloadSAPHanaDatabaseProtectedItem no longer has parameter health_status
+  - Model AzureVmWorkloadSAPHanaDatabaseProtectedItem no longer has parameter health_details
+  - Model AzureVmWorkloadSAPAseDatabaseProtectedItem no longer has parameter health_status
+  - Model AzureVmWorkloadSAPAseDatabaseProtectedItem no longer has parameter health_details
+  - Model AzureVmWorkloadSQLDatabaseProtectedItem no longer has parameter health_status
+  - Model AzureVmWorkloadSQLDatabaseProtectedItem no longer has parameter health_details
+
 ## 0.8.0 (2020-06-05)
 
 **Features**
