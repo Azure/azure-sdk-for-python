@@ -265,6 +265,11 @@ class PremiumPageBlobAccessTier(str, Enum):
     p80 = "P80"
 
 
+class BlobDeleteType(str, Enum):
+
+    permanent = "Permanent"
+
+
 class BlobExpiryOptions(str, Enum):
 
     never_expire = "NeverExpire"

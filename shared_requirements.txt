@@ -165,6 +165,8 @@ opentelemetry-api==0.13b0
 #override azure-synapse-accesscontrol azure-core>=1.6.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.6.0,<2.0.0
 #override azure-synapse-artifacts azure-core>=1.6.0,<2.0.0
+#override azure-synapse-monitoring azure-core>=1.6.0,<2.0.0
+#override azure-synapse-managedprivateendpoints azure-core>=1.6.0,<2.0.0
 #override azure-data-tables msrest>=0.6.10
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
 #override azure-eventgrid msrest>=0.6.19
