@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class PrivateLinkResourcesOperations(object):
+    """PrivateLinkResourcesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,26 +38,36 @@ class Operations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available REST API operations of the Microsoft.Cache
-        provider.
+    def list_by_redis_cache(
+            self, resource_group_name, cache_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the private link resources that need to be created for a redis
+        cache.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cache_name: The name of the Redis cache.
+        :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of PrivateLinkResource
         :rtype:
-         ~azure.mgmt.redis.models.OperationPaged[~azure.mgmt.redis.models.Operation]
+         ~azure.mgmt.redis.models.PrivateLinkResourcePaged[~azure.mgmt.redis.models.PrivateLinkResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_redis_cache.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'cacheName': self._serialize.url("cache_name", cache_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -95,7 +105,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.PrivateLinkResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Cache/operations'}
+    list_by_redis_cache.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/privateLinkResources'}

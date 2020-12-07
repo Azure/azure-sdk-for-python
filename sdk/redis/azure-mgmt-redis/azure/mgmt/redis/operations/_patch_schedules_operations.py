@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class PatchSchedulesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
+    :ivar api_version: Client Api Version. Constant value: "2020-06-01".
     :ivar default: Default string modeled as parameter for auto generation to work correctly. Constant value: "default".
     """
 
@@ -36,7 +35,7 @@ class PatchSchedulesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-01"
+        self.api_version = "2020-06-01"
         self.default = "default"
 
         self.config = config
@@ -58,7 +57,8 @@ class PatchSchedulesOperations(object):
         :return: An iterator like instance of RedisPatchSchedule
         :rtype:
          ~azure.mgmt.redis.models.RedisPatchSchedulePaged[~azure.mgmt.redis.models.RedisPatchSchedule]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -99,9 +99,7 @@ class PatchSchedulesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -112,12 +110,11 @@ class PatchSchedulesOperations(object):
         deserialized = models.RedisPatchSchedulePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/patchSchedules'}
+    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/patchSchedules'}
 
     def create_or_update(
             self, resource_group_name, name, schedule_entries, custom_headers=None, raw=False, **operation_config):
-        """Create or replace the patching schedule for Redis cache (requires
-        Premium SKU).
+        """Create or replace the patching schedule for Redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -133,7 +130,8 @@ class PatchSchedulesOperations(object):
         :return: RedisPatchSchedule or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisPatchSchedule or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         parameters = models.RedisPatchSchedule(schedule_entries=schedule_entries)
 
@@ -170,9 +168,7 @@ class PatchSchedulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -185,11 +181,11 @@ class PatchSchedulesOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/patchSchedules/{default}'}
 
     def delete(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the patching schedule of a redis cache (requires Premium SKU).
+        """Deletes the patching schedule of a redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -202,7 +198,8 @@ class PatchSchedulesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -232,18 +229,16 @@ class PatchSchedulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/patchSchedules/{default}'}
 
     def get(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Gets the patching schedule of a redis cache (requires Premium SKU).
+        """Gets the patching schedule of a redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -257,7 +252,8 @@ class PatchSchedulesOperations(object):
         :return: RedisPatchSchedule or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisPatchSchedule or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -288,9 +284,7 @@ class PatchSchedulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -301,4 +295,4 @@ class PatchSchedulesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/patchSchedules/{default}'}
