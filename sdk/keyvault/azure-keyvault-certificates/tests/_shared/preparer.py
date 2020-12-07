@@ -7,8 +7,6 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock
 
-from azure.core.credentials import AccessToken
-from azure.identity import EnvironmentCredential
 from devtools_testutils import AzureMgmtPreparer, CachedResourceGroupPreparer, KeyVaultPreparer
 
 
@@ -18,10 +16,7 @@ class KeyVaultClientPreparer(AzureMgmtPreparer):
         self._client_cls = client_cls
 
     def create_credential(self):
-        if self.is_live:
-            return EnvironmentCredential()
-
-        return Mock(get_token=lambda *_: AccessToken("fake-token", 0))
+        return self.test_class_instance.settings.get_azure_core_credentials()
 
     def create_resource(self, _, **kwargs):
         credential = self.create_credential()

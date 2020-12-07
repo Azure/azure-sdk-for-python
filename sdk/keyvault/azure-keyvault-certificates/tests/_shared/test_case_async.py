@@ -5,7 +5,7 @@
 import asyncio
 
 from azure_devtools.scenario_tests.patches import mock_in_unit_test
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureTestCase
 
 
 def skip_sleep(unit_test):
@@ -15,7 +15,7 @@ def skip_sleep(unit_test):
     return mock_in_unit_test(unit_test, "asyncio.sleep", immediate_return)
 
 
-class KeyVaultTestCase(AzureMgmtTestCase):
+class KeyVaultTestCase(AzureTestCase):
     def __init__(self, *args, match_body=True, **kwargs):
         super().__init__(*args, match_body=match_body, **kwargs)
         self.replay_patches.append(skip_sleep)

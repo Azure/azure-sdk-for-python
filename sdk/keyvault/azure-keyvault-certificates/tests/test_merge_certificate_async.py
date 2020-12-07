@@ -20,8 +20,10 @@ class MergeCertificateTest(KeyVaultTestCase):
         super().__init__(*args, match_body=False, custom_request_matchers=[json_attribute_matcher], **kwargs)
 
     @CachedKeyVaultPreparer()
-    @KeyVaultClientPreparer(CertificateClient)
-    async def test_merge_certificate(self, client, **kwargs):
+    async def test_merge_certificate(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient, is_async=True)
+        client = self.create_client_from_credential(CertificateClient, credential=credential, vault_url=vault_uri)
+
         cert_name = self.get_resource_name("mergeCertificate")
         cert_policy = CertificatePolicy(
             issuer_name=WellKnownIssuerNames.unknown, subject="CN=MyCert", certificate_transparency=False
