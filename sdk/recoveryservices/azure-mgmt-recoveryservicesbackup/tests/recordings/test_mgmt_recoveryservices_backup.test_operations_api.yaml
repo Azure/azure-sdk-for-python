@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-recoveryservicesbackup/0.5.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-recoveryservicesbackup/0.9.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -25,7 +25,19 @@ interactions:
         of all Protected Items."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Locations/backupStatus/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Backup
         Status","operation":"Check Backup Status for Vault","description":"Check Backup
         Status for Recovery Services Vaults"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Locations/backupValidateFeatures/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Validate
-        Features","operation":"Validate Features","description":"Validate Features"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupEncryptionConfigs/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vault
+        Features","operation":"Validate Features","description":"Validate Features"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupAadProperties/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Recovery
+        Points","operation":"Get Aad Properties for CRR","description":"Get AAD Properties
+        for authentication in the third region for Cross Region Restore."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupCrossRegionRestore/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Recovery
+        Points","operation":"CRR Recovery Points","description":"Cross Region Restore
+        Recovery Points for Protected Items."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupCrrJob/action","display":{"provider":"Microsoft.RecoveryServices","resource":"CRR
+        Job Details","operation":"Get CRR Job Details","description":"Get Cross Region
+        Restore Job Details in the secondary region for Recovery Services Vault."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupCrrJobs/action","display":{"provider":"Microsoft.RecoveryServices","resource":"CRR
+        Jobs","operation":"List CRR Jobs","description":"List Cross Region Restore
+        Jobs in the secondary region for Recovery Services Vault."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupCrrOperationResults/read","display":{"provider":"Microsoft.RecoveryServices","resource":"CRR
+        Operation Results","operation":"Get CRR Operation Result","description":"Returns
+        CRR Operation Result for Recovery Services Vault."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupCrrOperationsStatus/read","display":{"provider":"Microsoft.RecoveryServices","resource":"CRR
+        Operation Status","operation":"Get CRR Operation Status","description":"Returns
+        CRR Operation Status for Recovery Services Vault."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupEncryptionConfigs/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vault
         Encryption Config","operation":"Get Backup Resource Encryption Config","description":"Gets
         Backup Resource Encryption Configuration."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupEncryptionConfigs/write","display":{"provider":"Microsoft.RecoveryServices","resource":"Vault
         Encryption Config","operation":"Put Backup Resource Encryption Config","description":"Updates
@@ -63,7 +75,9 @@ interactions:
         Item Operation Status","operation":"Get Protected Items operation status","description":"Returns
         the status of Operation performed on Protected Items."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupFabrics/protectionContainers/protectedItems/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
         Items","operation":"Get Protected Item Details","description":"Returns object
-        details of the Protected Item"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/provisionInstantItemRecovery/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Recovery
+        details of the Protected Item"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/accessToken/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Recovery
+        Points","operation":"Get AccessToken","description":"Get AccessToken for Cross
+        Region Restore."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/provisionInstantItemRecovery/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Recovery
         Points","operation":"Provision Instant Item Recovery for Protected Item","description":"Provision
         Instant Item Recovery for Protected Item"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Recovery
         Points","operation":"Get Recovery Points","description":"Get Recovery Points
@@ -123,7 +137,27 @@ interactions:
         Storage Config","operation":"Get Resource Storage Config","description":"Returns
         Storage Configuration for Recovery Services Vault."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/backupstorageconfig/write","display":{"provider":"Microsoft.RecoveryServices","resource":"Vault
         Storage Config","operation":"Write Resource Storage Config","description":"Updates
-        Storage Configuration for Recovery Services Vault."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/usages/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vault
+        Storage Configuration for Recovery Services Vault."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/privateEndpointConnectionProxies/delete","display":{"provider":"Microsoft.RecoveryServices","resource":"Private
+        Endpoints","operation":"Microsoft Azure Backup encountered an internal error.","description":"Wait
+        for a few minutes and then try the operation again. If the issue persists,
+        please contact Microsoft support."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/privateEndpointConnectionProxies/operationsStatus/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Private
+        Endpoints","operation":"Get all protectable containers","description":"Get
+        all protectable containers"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/privateEndpointConnectionProxies/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Private
+        Endpoints","operation":"Get all protectable containers","description":"Get
+        all protectable containers"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/privateEndpointConnectionProxies/validate/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Private
+        Endpoints","operation":"Get all protectable containers","description":"Get
+        all protectable containers"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/privateEndpointConnectionProxies/write","display":{"provider":"Microsoft.RecoveryServices","resource":"Private
+        Endpoints","operation":"Get all protectable containers","description":"Get
+        all protectable containers"},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/privateEndpointConnections/delete","display":{"provider":"Microsoft.RecoveryServices","resource":"Private
+        Endpoints","operation":"Delete Private Endpoint requests. This call is made
+        by Backup Admin.","description":"Delete Private Endpoint requests. This call
+        is made by Backup Admin."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/privateEndpointConnections/operationsStatus/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Private
+        Endpoints","operation":"Returns the operation status for a private endpoint
+        connection.","description":"Returns the operation status for a private endpoint
+        connection."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/privateEndpointConnections/write","display":{"provider":"Microsoft.RecoveryServices","resource":"Private
+        Endpoints","operation":"Approve or Reject Private Endpoint requests. This
+        call is made by Backup Admin.","description":"Approve or Reject Private Endpoint
+        requests. This call is made by Backup Admin."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/usages/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vault
         Usage","operation":"Recovery Services Vault usage details.","description":"Returns
         usage details for a Recovery Services Vault."},"origin":"user"},{"name":"Microsoft.RecoveryServices/vaults/replicationAlertSettings/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Alerts
         Settings","operation":"Read Alerts Settings","description":"Read any Alerts
@@ -301,7 +335,8 @@ interactions:
         Items","operation":"Create or Update Migration Items","description":"Create
         or Update any Migration Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationMigrationItems/delete","display":{"provider":"Microsoft.RecoveryServices","resource":"Migration
         Items","operation":"Delete Migration Items","description":"Delete any Migration
-        Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationMigrationItems/migrate/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Migration
+        Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationMigrationItems/resync/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Migration
+        Items","operation":"Resynchronize","description":"Resynchronize"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationMigrationItems/migrate/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Migration
         Items","operation":"Migrate Item","description":"Migrate Item"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationMigrationItems/testMigrate/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Migration
         Items","operation":"Test Migrate","description":"Test Migrate"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationMigrationItems/testMigrateCleanup/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Migration
         Items","operation":"Test Migrate Cleanup","description":"Test Migrate Cleanup"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationMigrationItems/migrationRecoveryPoints/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Migration
@@ -313,7 +348,10 @@ interactions:
         ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/addDisks/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
         Items","operation":"Add disks","description":"Add disks"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/removeDisks/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
         Items","operation":"Remove disks","description":"Remove disks"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/ResolveHealthErrors/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
-        Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationVaultSettings/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
+        Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/failoverCancel/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
+        Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationProtectionIntents/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
+        ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationProtectionIntents/write","display":{"provider":"Microsoft.RecoveryServices","operation":"Create
+        or Update ","description":"Create or Update any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationVaultSettings/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
         ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationVaultSettings/write","display":{"provider":"Microsoft.RecoveryServices","operation":"Create
         or Update ","description":"Create or Update any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/Vaults/vaultTokens/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vaults","operation":"Vault
         Token","description":"The Vault Token operation can be used to get Vault Token
@@ -379,11 +417,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '58724'
+      - '64339'
       content-type:
       - application/json
       date:
-      - Thu, 21 Nov 2019 23:23:30 GMT
+      - Mon, 07 Dec 2020 02:30:52 GMT
       expires:
       - '-1'
       pragma:

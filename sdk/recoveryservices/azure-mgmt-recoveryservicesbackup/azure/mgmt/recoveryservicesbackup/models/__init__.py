@@ -102,6 +102,8 @@ try:
     from ._models_py3 import BackupRequestResource
     from ._models_py3 import BackupResourceConfig
     from ._models_py3 import BackupResourceConfigResource
+    from ._models_py3 import BackupResourceEncryptionConfig
+    from ._models_py3 import BackupResourceEncryptionConfigResource
     from ._models_py3 import BackupResourceVaultConfig
     from ._models_py3 import BackupResourceVaultConfigResource
     from ._models_py3 import BackupStatusRequest
@@ -151,7 +153,6 @@ try:
     from ._models_py3 import GenericProtectionPolicy
     from ._models_py3 import GenericRecoveryPoint
     from ._models_py3 import GetProtectedItemQueryObject
-    from ._models_py3 import HealthDetails
     from ._models_py3 import IaasVMBackupRequest
     from ._models_py3 import IaaSVMContainer
     from ._models_py3 import IaasVMILRRegistrationRequest
@@ -169,6 +170,7 @@ try:
     from ._models_py3 import JobResource
     from ._models_py3 import KEKDetails
     from ._models_py3 import KeyAndSecretDetails
+    from ._models_py3 import KPIResourceHealthDetails
     from ._models_py3 import LogSchedulePolicy
     from ._models_py3 import LongTermRetentionPolicy
     from ._models_py3 import LongTermSchedulePolicy
@@ -184,6 +186,8 @@ try:
     from ._models_py3 import MabProtectionPolicy
     from ._models_py3 import MonthlyRetentionSchedule
     from ._models_py3 import NameInfo
+    from ._models_py3 import NewErrorResponse, NewErrorResponseException
+    from ._models_py3 import NewErrorResponseError
     from ._models_py3 import OperationResultInfo
     from ._models_py3 import OperationResultInfoBase
     from ._models_py3 import OperationResultInfoBaseResource
@@ -196,6 +200,8 @@ try:
     from ._models_py3 import OperationWorkerResponse
     from ._models_py3 import PointInTimeRange
     from ._models_py3 import PreBackupValidation
+    from ._models_py3 import PrepareDataMoveRequest
+    from ._models_py3 import PrepareDataMoveResponse
     from ._models_py3 import PreValidateEnableBackupRequest
     from ._models_py3 import PreValidateEnableBackupResponse
     from ._models_py3 import PrivateEndpoint
@@ -220,6 +226,7 @@ try:
     from ._models_py3 import RecoveryPointResource
     from ._models_py3 import RecoveryPointTierInformation
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceHealthDetails
     from ._models_py3 import ResourceList
     from ._models_py3 import RestoreFileSpecs
     from ._models_py3 import RestoreRequest
@@ -236,11 +243,13 @@ try:
     from ._models_py3 import TargetAFSRestoreInfo
     from ._models_py3 import TargetRestoreInfo
     from ._models_py3 import TokenInformation
+    from ._models_py3 import TriggerDataMoveRequest
     from ._models_py3 import ValidateIaasVMRestoreOperationRequest
     from ._models_py3 import ValidateOperationRequest
     from ._models_py3 import ValidateOperationResponse
     from ._models_py3 import ValidateOperationsResponse
     from ._models_py3 import ValidateRestoreOperationRequest
+    from ._models_py3 import VaultStorageConfigOperationResultResponse
     from ._models_py3 import WeeklyRetentionFormat
     from ._models_py3 import WeeklyRetentionSchedule
     from ._models_py3 import WorkloadInquiryDetails
@@ -342,6 +351,8 @@ except (SyntaxError, ImportError):
     from ._models import BackupRequestResource
     from ._models import BackupResourceConfig
     from ._models import BackupResourceConfigResource
+    from ._models import BackupResourceEncryptionConfig
+    from ._models import BackupResourceEncryptionConfigResource
     from ._models import BackupResourceVaultConfig
     from ._models import BackupResourceVaultConfigResource
     from ._models import BackupStatusRequest
@@ -391,7 +402,6 @@ except (SyntaxError, ImportError):
     from ._models import GenericProtectionPolicy
     from ._models import GenericRecoveryPoint
     from ._models import GetProtectedItemQueryObject
-    from ._models import HealthDetails
     from ._models import IaasVMBackupRequest
     from ._models import IaaSVMContainer
     from ._models import IaasVMILRRegistrationRequest
@@ -409,6 +419,7 @@ except (SyntaxError, ImportError):
     from ._models import JobResource
     from ._models import KEKDetails
     from ._models import KeyAndSecretDetails
+    from ._models import KPIResourceHealthDetails
     from ._models import LogSchedulePolicy
     from ._models import LongTermRetentionPolicy
     from ._models import LongTermSchedulePolicy
@@ -424,6 +435,8 @@ except (SyntaxError, ImportError):
     from ._models import MabProtectionPolicy
     from ._models import MonthlyRetentionSchedule
     from ._models import NameInfo
+    from ._models import NewErrorResponse, NewErrorResponseException
+    from ._models import NewErrorResponseError
     from ._models import OperationResultInfo
     from ._models import OperationResultInfoBase
     from ._models import OperationResultInfoBaseResource
@@ -436,6 +449,8 @@ except (SyntaxError, ImportError):
     from ._models import OperationWorkerResponse
     from ._models import PointInTimeRange
     from ._models import PreBackupValidation
+    from ._models import PrepareDataMoveRequest
+    from ._models import PrepareDataMoveResponse
     from ._models import PreValidateEnableBackupRequest
     from ._models import PreValidateEnableBackupResponse
     from ._models import PrivateEndpoint
@@ -460,6 +475,7 @@ except (SyntaxError, ImportError):
     from ._models import RecoveryPointResource
     from ._models import RecoveryPointTierInformation
     from ._models import Resource
+    from ._models import ResourceHealthDetails
     from ._models import ResourceList
     from ._models import RestoreFileSpecs
     from ._models import RestoreRequest
@@ -476,11 +492,13 @@ except (SyntaxError, ImportError):
     from ._models import TargetAFSRestoreInfo
     from ._models import TargetRestoreInfo
     from ._models import TokenInformation
+    from ._models import TriggerDataMoveRequest
     from ._models import ValidateIaasVMRestoreOperationRequest
     from ._models import ValidateOperationRequest
     from ._models import ValidateOperationResponse
     from ._models import ValidateOperationsResponse
     from ._models import ValidateRestoreOperationRequest
+    from ._models import VaultStorageConfigOperationResultResponse
     from ._models import WeeklyRetentionFormat
     from ._models import WeeklyRetentionSchedule
     from ._models import WorkloadInquiryDetails
@@ -502,17 +520,22 @@ from ._paged_models import RecoveryPointResourcePaged
 from ._paged_models import WorkloadItemResourcePaged
 from ._paged_models import WorkloadProtectableItemResourcePaged
 from ._recovery_services_backup_client_enums import (
+    EncryptionAtRestType,
+    LastUpdateStatus,
+    InfrastructureEncryptionState,
+    DataMoveLevel,
     OperationStatusValues,
     ProvisioningState,
     PrivateEndpointConnectionStatus,
     ProtectionState,
-    HealthStatus,
+    ResourceHealthStatus,
     RecoveryType,
     CopyOptions,
     RestoreRequestType,
     WorkloadType,
     PolicyType,
     JobSupportedAction,
+    HealthStatus,
     ProtectedItemState,
     LastBackupStatus,
     ProtectedItemHealthStatus,
@@ -650,6 +673,8 @@ __all__ = [
     'BackupRequestResource',
     'BackupResourceConfig',
     'BackupResourceConfigResource',
+    'BackupResourceEncryptionConfig',
+    'BackupResourceEncryptionConfigResource',
     'BackupResourceVaultConfig',
     'BackupResourceVaultConfigResource',
     'BackupStatusRequest',
@@ -699,7 +724,6 @@ __all__ = [
     'GenericProtectionPolicy',
     'GenericRecoveryPoint',
     'GetProtectedItemQueryObject',
-    'HealthDetails',
     'IaasVMBackupRequest',
     'IaaSVMContainer',
     'IaasVMILRRegistrationRequest',
@@ -717,6 +741,7 @@ __all__ = [
     'JobResource',
     'KEKDetails',
     'KeyAndSecretDetails',
+    'KPIResourceHealthDetails',
     'LogSchedulePolicy',
     'LongTermRetentionPolicy',
     'LongTermSchedulePolicy',
@@ -732,6 +757,8 @@ __all__ = [
     'MabProtectionPolicy',
     'MonthlyRetentionSchedule',
     'NameInfo',
+    'NewErrorResponse', 'NewErrorResponseException',
+    'NewErrorResponseError',
     'OperationResultInfo',
     'OperationResultInfoBase',
     'OperationResultInfoBaseResource',
@@ -744,6 +771,8 @@ __all__ = [
     'OperationWorkerResponse',
     'PointInTimeRange',
     'PreBackupValidation',
+    'PrepareDataMoveRequest',
+    'PrepareDataMoveResponse',
     'PreValidateEnableBackupRequest',
     'PreValidateEnableBackupResponse',
     'PrivateEndpoint',
@@ -768,6 +797,7 @@ __all__ = [
     'RecoveryPointResource',
     'RecoveryPointTierInformation',
     'Resource',
+    'ResourceHealthDetails',
     'ResourceList',
     'RestoreFileSpecs',
     'RestoreRequest',
@@ -784,11 +814,13 @@ __all__ = [
     'TargetAFSRestoreInfo',
     'TargetRestoreInfo',
     'TokenInformation',
+    'TriggerDataMoveRequest',
     'ValidateIaasVMRestoreOperationRequest',
     'ValidateOperationRequest',
     'ValidateOperationResponse',
     'ValidateOperationsResponse',
     'ValidateRestoreOperationRequest',
+    'VaultStorageConfigOperationResultResponse',
     'WeeklyRetentionFormat',
     'WeeklyRetentionSchedule',
     'WorkloadInquiryDetails',
@@ -809,17 +841,22 @@ __all__ = [
     'WorkloadProtectableItemResourcePaged',
     'ProtectionContainerResourcePaged',
     'ClientDiscoveryValueForSingleApiPaged',
+    'EncryptionAtRestType',
+    'LastUpdateStatus',
+    'InfrastructureEncryptionState',
+    'DataMoveLevel',
     'OperationStatusValues',
     'ProvisioningState',
     'PrivateEndpointConnectionStatus',
     'ProtectionState',
-    'HealthStatus',
+    'ResourceHealthStatus',
     'RecoveryType',
     'CopyOptions',
     'RestoreRequestType',
     'WorkloadType',
     'PolicyType',
     'JobSupportedAction',
+    'HealthStatus',
     'ProtectedItemState',
     'LastBackupStatus',
     'ProtectedItemHealthStatus',
