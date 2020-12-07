@@ -9,12 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._namespaces_operations import NamespacesOperations
-from ._notification_hubs_operations import NotificationHubsOperations
+from enum import Enum
 
-__all__ = [
-    'Operations',
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class SkuName(str, Enum):
+
+    free = "Free"
+    basic = "Basic"
+    standard = "Standard"
+
+
+class NamespaceType(str, Enum):
+
+    messaging = "Messaging"
+    notification_hub = "NotificationHub"
+
+
+class AccessRights(str, Enum):
+
+    manage = "Manage"
+    send = "Send"
+    listen = "Listen"
