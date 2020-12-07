@@ -154,7 +154,7 @@ class IPAddressProvisioningType(str, Enum):
 class ComputeNodeFillType(str, Enum):
 
     spread = "Spread"  #: Tasks should be assigned evenly across all nodes in the pool.
-    pack = "Pack"  #: As many tasks as possible (maxTasksPerNode) should be assigned to each node in the pool before any tasks are assigned to the next node in the pool.
+    pack = "Pack"  #: As many tasks as possible (taskSlotsPerNode) should be assigned to each node in the pool before any tasks are assigned to the next node in the pool.
 
 
 class ElevationLevel(str, Enum):
@@ -192,16 +192,6 @@ class CertificateVisibility(str, Enum):
     start_task = "StartTask"  #: The certificate should be visible to the user account under which the start task is run. Note that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be visible to the Task as well.
     task = "Task"  #: The certificate should be visible to the user accounts under which job tasks are run.
     remote_user = "RemoteUser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
-
-
-class ContainerType(str, Enum):
-
-    docker_compatible = "DockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
-
-
-class ResourceType(str, Enum):
-
-    batch_accounts = "Microsoft.Batch/batchAccounts"  #: The Batch account resource type.
 
 
 class NameAvailabilityReason(str, Enum):
