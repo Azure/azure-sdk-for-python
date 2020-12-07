@@ -225,16 +225,17 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   }
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceName, $ReleaseDate, $BuildType=$null, $GroupName=$null)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $BuildType=$null, $GroupId=$null)
 {
   if($null -eq $ReleaseDate)
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
-  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceName --release-date $ReleaseDate
+  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
 }
 
-function GetPackageInstallNotes ($package, $version) {
-  return npm install $package
+function GetPackageInstallNote ($PackageName, $Version, $GroupId=$null)
+{
+  return "pip install ${PackageName}==${Version}"
 }
