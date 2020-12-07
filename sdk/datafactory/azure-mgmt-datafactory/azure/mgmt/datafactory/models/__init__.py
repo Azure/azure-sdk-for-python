@@ -123,6 +123,7 @@ try:
     from ._models_py3 import CassandraTableDataset
     from ._models_py3 import ChainingTrigger
     from ._models_py3 import CmdkeySetup
+    from ._models_py3 import CMKIdentityDefinition
     from ._models_py3 import CommonDataServiceForAppsEntityDataset
     from ._models_py3 import CommonDataServiceForAppsLinkedService
     from ._models_py3 import CommonDataServiceForAppsSink
@@ -228,6 +229,7 @@ try:
     from ._models_py3 import EloquaLinkedService
     from ._models_py3 import EloquaObjectDataset
     from ._models_py3 import EloquaSource
+    from ._models_py3 import EncryptionConfiguration
     from ._models_py3 import EntityReference
     from ._models_py3 import EnvironmentVariableSetup
     from ._models_py3 import ExcelDataset
@@ -753,6 +755,7 @@ except (SyntaxError, ImportError):
     from ._models import CassandraTableDataset
     from ._models import ChainingTrigger
     from ._models import CmdkeySetup
+    from ._models import CMKIdentityDefinition
     from ._models import CommonDataServiceForAppsEntityDataset
     from ._models import CommonDataServiceForAppsLinkedService
     from ._models import CommonDataServiceForAppsSink
@@ -858,6 +861,7 @@ except (SyntaxError, ImportError):
     from ._models import EloquaLinkedService
     from ._models import EloquaObjectDataset
     from ._models import EloquaSource
+    from ._models import EncryptionConfiguration
     from ._models import EntityReference
     from ._models import EnvironmentVariableSetup
     from ._models import ExcelDataset
@@ -1329,18 +1333,11 @@ from ._data_factory_management_client_enums import (
     DayOfWeek,
     DaysOfWeek,
     RecurrenceFrequency,
-    DataFlowComputeType,
     AzureFunctionActivityMethod,
     WebActivityMethod,
-    OraclePartitionOption,
     SalesforceSourceReadBehavior,
-    NetezzaPartitionOption,
     CassandraSourceReadConsistencyLevels,
-    TeradataPartitionOption,
-    SqlPartitionOption,
     StoredProcedureParameterType,
-    SapTablePartitionOption,
-    SapHanaPartitionOption,
     SsisPackageLocationType,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
@@ -1359,9 +1356,16 @@ from ._data_factory_management_client_enums import (
     IntegrationRuntimeSsisCatalogPricingTier,
     IntegrationRuntimeLicenseType,
     IntegrationRuntimeEdition,
+    DataFlowComputeType,
     SsisObjectMetadataType,
     IntegrationRuntimeAuthKeyName,
     CopyBehaviorType,
+    SqlPartitionOption,
+    SapHanaPartitionOption,
+    SapTablePartitionOption,
+    OraclePartitionOption,
+    TeradataPartitionOption,
+    NetezzaPartitionOption,
 )
 
 __all__ = [
@@ -1478,6 +1482,7 @@ __all__ = [
     'CassandraTableDataset',
     'ChainingTrigger',
     'CmdkeySetup',
+    'CMKIdentityDefinition',
     'CommonDataServiceForAppsEntityDataset',
     'CommonDataServiceForAppsLinkedService',
     'CommonDataServiceForAppsSink',
@@ -1583,6 +1588,7 @@ __all__ = [
     'EloquaLinkedService',
     'EloquaObjectDataset',
     'EloquaSource',
+    'EncryptionConfiguration',
     'EntityReference',
     'EnvironmentVariableSetup',
     'ExcelDataset',
@@ -2053,18 +2059,11 @@ __all__ = [
     'DayOfWeek',
     'DaysOfWeek',
     'RecurrenceFrequency',
-    'DataFlowComputeType',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
-    'OraclePartitionOption',
     'SalesforceSourceReadBehavior',
-    'NetezzaPartitionOption',
     'CassandraSourceReadConsistencyLevels',
-    'TeradataPartitionOption',
-    'SqlPartitionOption',
     'StoredProcedureParameterType',
-    'SapTablePartitionOption',
-    'SapHanaPartitionOption',
     'SsisPackageLocationType',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
@@ -2083,7 +2082,14 @@ __all__ = [
     'IntegrationRuntimeSsisCatalogPricingTier',
     'IntegrationRuntimeLicenseType',
     'IntegrationRuntimeEdition',
+    'DataFlowComputeType',
     'SsisObjectMetadataType',
     'IntegrationRuntimeAuthKeyName',
     'CopyBehaviorType',
+    'SqlPartitionOption',
+    'SapHanaPartitionOption',
+    'SapTablePartitionOption',
+    'OraclePartitionOption',
+    'TeradataPartitionOption',
+    'NetezzaPartitionOption',
 ]
