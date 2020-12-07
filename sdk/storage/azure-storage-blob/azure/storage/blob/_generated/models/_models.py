@@ -1696,6 +1696,9 @@ class RetentionPolicy(Model):
      soft-deleted data should be retained. All data older than this value will
      be deleted
     :type days: int
+    :param allow_permanent_delete: Indicates whether permanent delete is
+     allowed on this storage account.
+    :type allow_permanent_delete: bool
     """
 
     _validation = {
@@ -1706,6 +1709,7 @@ class RetentionPolicy(Model):
     _attribute_map = {
         'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
         'days': {'key': 'Days', 'type': 'int', 'xml': {'name': 'Days'}},
+        'allow_permanent_delete': {'key': 'AllowPermanentDelete', 'type': 'bool', 'xml': {'name': 'AllowPermanentDelete'}},
     }
     _xml_map = {
     }
@@ -1714,6 +1718,7 @@ class RetentionPolicy(Model):
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.days = kwargs.get('days', None)
+        self.allow_permanent_delete = kwargs.get('allow_permanent_delete', None)
 
 
 class SequenceNumberAccessConditions(Model):
