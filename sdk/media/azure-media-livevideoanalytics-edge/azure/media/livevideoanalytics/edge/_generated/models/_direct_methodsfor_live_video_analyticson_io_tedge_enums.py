@@ -27,13 +27,15 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class MediaGraphGrpcExtensionDataTransferMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """How frame data should be transmitted to the inferencing engine.
+    """How frame data should be transmitted to the inference engine.
     """
 
     EMBEDDED = "Embedded"  #: Frames are transferred embedded into the gRPC messages.
     SHARED_MEMORY = "SharedMemory"  #: Frames are transferred through shared memory.
 
 class MediaGraphImageFormatRawPixelFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The pixel format that will be used to encode images.
+    """
 
     YUV420_P = "Yuv420p"  #: Planar YUV 4:2:0, 12bpp, (1 Cr and Cb sample per 2x2 Y samples).
     RGB565_BE = "Rgb565be"  #: Packed RGB 5:6:5, 16bpp, (msb)   5R 6G 5B(lsb), big-endian.
@@ -81,6 +83,8 @@ class MediaGraphOutputSelectorOperator(with_metaclass(_CaseInsensitiveEnumMeta, 
     IS_NOT = "isNot"  #: A media type is not the same type or a subtype.
 
 class MediaGraphParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the parameter.
+    """
 
     STRING = "String"  #: A string parameter value.
     SECRET_STRING = "SecretString"  #: A string to hold sensitive information as parameter value.

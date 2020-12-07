@@ -102,7 +102,7 @@ class MediaGraphSink(msrest.serialization.Model):
 
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
-    :param name: Required. Name to be used for the media graph sink.
+    :param name: Required. The name to be used for the media graph sink.
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
@@ -142,12 +142,14 @@ class MediaGraphAssetSink(MediaGraphSink):
 
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
-    :param name: Required. Name to be used for the media graph sink.
+    :param name: Required. The name to be used for the media graph sink.
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
     :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
-    :param asset_name_pattern: Required. A name pattern when creating new assets.
+    :param asset_name_pattern: Required. A name pattern when creating new assets. The pattern must
+     include at least one system variable. See the documentation for available variables and
+     additional examples.
     :type asset_name_pattern: str
     :param segment_length: When writing media to an asset, wait until at least this duration of
      media has been accumulated on the Edge. Expressed in increments of 30 seconds, with a minimum
@@ -452,7 +454,7 @@ class MediaGraphFileSink(MediaGraphSink):
 
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
-    :param name: Required. Name to be used for the media graph sink.
+    :param name: Required. The name to be used for the media graph sink.
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
@@ -461,7 +463,8 @@ class MediaGraphFileSink(MediaGraphSink):
      from this sink.
     :type base_directory_path: str
     :param file_name_pattern: Required. File name pattern for creating new files on the Edge
-     device.
+     device. The pattern must include at least one system variable. See the documentation for
+     available variables and additional examples.
     :type file_name_pattern: str
     :param maximum_size_mi_b: Required. Maximum amount of disk space that can be used for storing
      files from this sink.
@@ -517,7 +520,7 @@ class MediaGraphGrpcExtension(MediaGraphExtensionProcessorBase):
     :param sampling_options: Describes the sampling options to be applied when forwarding samples
      to the extension.
     :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
-    :param data_transfer: Required. How media should be transferred to the inferencing engine.
+    :param data_transfer: Required. How media should be transferred to the inference engine.
     :type data_transfer:
      ~azure.media.livevideoanalytics.edge.models.MediaGraphGrpcExtensionDataTransfer
     :param extension_configuration: Optional configuration to pass to the gRPC extension.
@@ -555,14 +558,14 @@ class MediaGraphGrpcExtension(MediaGraphExtensionProcessorBase):
 
 
 class MediaGraphGrpcExtensionDataTransfer(msrest.serialization.Model):
-    """Describes how media should be transferred to the inferencing engine.
+    """Describes how media should be transferred to the inference engine.
 
     All required parameters must be populated in order to send to Azure.
 
     :param shared_memory_size_mi_b: The size of the buffer for all in-flight frames in mebibytes if
      mode is SharedMemory. Should not be specified otherwise.
     :type shared_memory_size_mi_b: str
-    :param mode: Required. How frame data should be transmitted to the inferencing engine. Possible
+    :param mode: Required. How frame data should be transmitted to the inference engine. Possible
      values include: "Embedded", "SharedMemory".
     :type mode: str or
      ~azure.media.livevideoanalytics.edge.models.MediaGraphGrpcExtensionDataTransferMode
@@ -810,8 +813,9 @@ class MediaGraphImageFormatRaw(MediaGraphImageFormat):
 
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
-    :param pixel_format: Required.  Possible values include: "Yuv420p", "Rgb565be", "Rgb565le",
-     "Rgb555be", "Rgb555le", "Rgb24", "Bgr24", "Argb", "Rgba", "Abgr", "Bgra".
+    :param pixel_format: Required. The pixel format that will be used to encode images. Possible
+     values include: "Yuv420p", "Rgb565be", "Rgb565le", "Rgb555be", "Rgb555le", "Rgb24", "Bgr24",
+     "Argb", "Rgba", "Abgr", "Bgra".
     :type pixel_format: str or
      ~azure.media.livevideoanalytics.edge.models.MediaGraphImageFormatRawPixelFormat
     """
@@ -875,7 +879,7 @@ class MediaGraphInstance(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
+    :param name: Required. The identifier for the media graph instance.
     :type name: str
     :param system_data: The system data for a resource. This is used by both topologies and
      instances.
@@ -1191,7 +1195,7 @@ class MediaGraphInstanceSetRequestBody(MediaGraphInstance, MethodRequest):
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
-    :param name: Required.
+    :param name: Required. The identifier for the media graph instance.
     :type name: str
     :param system_data: The system data for a resource. This is used by both topologies and
      instances.
@@ -1235,7 +1239,7 @@ class MediaGraphIoTHubMessageSink(MediaGraphSink):
 
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
-    :param name: Required. Name to be used for the media graph sink.
+    :param name: Required. The name to be used for the media graph sink.
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
@@ -1458,8 +1462,8 @@ class MediaGraphParameterDeclaration(msrest.serialization.Model):
 
     :param name: Required. The name of the parameter.
     :type name: str
-    :param type: Required.  Possible values include: "String", "SecretString", "Int", "Double",
-     "Bool".
+    :param type: Required. The type of the parameter. Possible values include: "String",
+     "SecretString", "Int", "Double", "Bool".
     :type type: str or ~azure.media.livevideoanalytics.edge.models.MediaGraphParameterType
     :param description: Description of the parameter.
     :type description: str
@@ -1496,9 +1500,10 @@ class MediaGraphParameterDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of parameter as defined in the media graph topology.
+    :param name: Required. The name of the parameter defined in the media graph topology.
     :type name: str
-    :param value: Required. Value of parameter.
+    :param value: Required. The value to supply for the named parameter defined in the media graph
+     topology.
     :type value: str
     """
 
@@ -1765,11 +1770,11 @@ class MediaGraphTlsValidationOptions(msrest.serialization.Model):
 
 
 class MediaGraphTopology(msrest.serialization.Model):
-    """A description of a media graph topology.
+    """The definition of a media graph topology.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
+    :param name: Required. The identifier for the media graph topology.
     :type name: str
     :param system_data: The system data for a resource. This is used by both topologies and
      instances.
@@ -1931,16 +1936,18 @@ class MediaGraphTopologyListRequest(MethodRequest):
 class MediaGraphTopologyProperties(msrest.serialization.Model):
     """A description of the properties of a media graph topology.
 
-    :param description:
+    :param description: A description of a media graph topology. It is recommended to use this to
+     describe the expected use of the topology.
     :type description: str
-    :param parameters:
+    :param parameters: The list of parameters defined in the topology. The value for these
+     parameters are supplied by instances of this topology.
     :type parameters:
      list[~azure.media.livevideoanalytics.edge.models.MediaGraphParameterDeclaration]
-    :param sources:
+    :param sources: The list of source nodes in this topology.
     :type sources: list[~azure.media.livevideoanalytics.edge.models.MediaGraphSource]
-    :param processors:
+    :param processors: The list of processor nodes in this topology.
     :type processors: list[~azure.media.livevideoanalytics.edge.models.MediaGraphProcessor]
-    :param sinks:
+    :param sinks: The list of sink nodes in this topology.
     :type sinks: list[~azure.media.livevideoanalytics.edge.models.MediaGraphSink]
     """
 
@@ -1975,7 +1982,7 @@ class MediaGraphTopologySetRequest(MethodRequest):
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
-    :param graph: Required. A description of a media graph topology.
+    :param graph: Required. The definition of a media graph topology.
     :type graph: ~azure.media.livevideoanalytics.edge.models.MediaGraphTopology
     """
 
@@ -2013,7 +2020,7 @@ class MediaGraphTopologySetRequestBody(MediaGraphTopology, MethodRequest):
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
-    :param name: Required.
+    :param name: Required. The identifier for the media graph topology.
     :type name: str
     :param system_data: The system data for a resource. This is used by both topologies and
      instances.
