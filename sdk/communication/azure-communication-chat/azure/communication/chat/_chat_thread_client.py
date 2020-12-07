@@ -208,7 +208,7 @@ class ChatThreadClient(object):
 
         return self._client.chat_thread.list_chat_read_receipts(
             self._thread_id,
-            max_page_size=results_per_page,
+            maxpagesize=results_per_page,
             skip=skip,
             cls=lambda objs: [ChatMessageReadReceipt._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
@@ -452,7 +452,7 @@ class ChatThreadClient(object):
 
         return self._client.chat_thread.list_chat_participants(
             self._thread_id,
-            max_page_size=results_per_page,
+            maxpagesize=results_per_page,
             skip=skip,
             cls=lambda objs: [ChatThreadParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
