@@ -9,55 +9,39 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import uuid
 from msrest.pipeline import ClientRawResponse
-
+from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
+import uuid
 
 
-class Operations(object):
-    """Operations operations.
+class AzureMachineLearningWorkspacesOperationsMixin(object):
 
-    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
-
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    :ivar api_version: Version of Azure Machine Learning resource provider API. Constant value: "2020-08-01".
-    """
-
-    models = models
-
-    def __init__(self, client, config, serializer, deserializer):
-
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self.api_version = "2020-08-01"
-
-        self.config = config
-
-    def list(
+    def list_skus(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Azure Machine Learning Workspaces REST API
-        operations.
+        """Lists all skus with associated features.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of WorkspaceSku
         :rtype:
-         ~azure.mgmt.machinelearningservices.models.OperationPaged[~azure.mgmt.machinelearningservices.models.Operation]
+         ~azure.mgmt.machinelearningservices.models.WorkspaceSkuPaged[~azure.mgmt.machinelearningservices.models.WorkspaceSku]
         :raises:
          :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_skus.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -95,7 +79,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.WorkspaceSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.MachineLearningServices/operations'}
+    list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/workspaces/skus'}
