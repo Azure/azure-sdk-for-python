@@ -13,6 +13,7 @@ try:
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import CapabilityProperties
     from ._models_py3 import Configuration
+    from ._models_py3 import Database
     from ._models_py3 import DelegatedSubnetUsage
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
@@ -48,6 +49,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureEntityResource
     from ._models import CapabilityProperties
     from ._models import Configuration
+    from ._models import Database
     from ._models import DelegatedSubnetUsage
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorResponse
@@ -81,6 +83,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualNetworkSubnetUsageResult
 from ._paged_models import CapabilityPropertiesPaged
 from ._paged_models import ConfigurationPaged
+from ._paged_models import DatabasePaged
 from ._paged_models import FirewallRulePaged
 from ._paged_models import ServerPaged
 from ._postgre_sql_management_client_enums import (
@@ -100,6 +103,7 @@ __all__ = [
     'AzureEntityResource',
     'CapabilityProperties',
     'Configuration',
+    'Database',
     'DelegatedSubnetUsage',
     'ErrorAdditionalInfo',
     'ErrorResponse',
@@ -135,6 +139,7 @@ __all__ = [
     'FirewallRulePaged',
     'ConfigurationPaged',
     'CapabilityPropertiesPaged',
+    'DatabasePaged',
     'ServerVersion',
     'ServerState',
     'ServerHAState',
