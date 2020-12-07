@@ -6,12 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._workspaces_operations import WorkspacesOperations
-from ._vnet_peering_operations import VNetPeeringOperations
-from ._operations import Operations
-
-__all__ = [
-    'WorkspacesOperations',
-    'VNetPeeringOperations',
-    'Operations',
-]
+from ._databricks_client import DatabricksClient
+__all__ = ['DatabricksClient']
