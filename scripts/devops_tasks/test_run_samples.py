@@ -69,11 +69,11 @@ def run_samples(targeted_packages_directories):
             if errors:
                 samples_errors.append(sample)
                 logging.info(
-                    "\nERROR: {}".format(sample)
+                    "ERROR: {}".format(sample)
                 )
             else:
                 logging.info(
-                    "\nSUCCESS: {}.".format(sample)
+                    "SUCCESS: {}.".format(sample)
                 )
 
     if samples_errors:
