@@ -37,8 +37,8 @@ from typing import (
 )
 from .pipeline._tools_async import await_result as _await_result
 
-from .exceptions import AzureError, map_error, HttpResponseError
-from .paging import PagingMethodABC
+from .exceptions import AzureError
+from .paging import PagingMethodABC, _extract_data_helper, _get_request, _handle_response
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -52,35 +52,18 @@ __all__ = [
 ]
 
 def _extract_data(pipeline_response, paging_method):
-    deserialized = paging_method._deserialize_output(pipeline_response)  # pylint: disable=protected-access
-    list_of_elem = paging_method.get_list_elements(pipeline_response, deserialized)  # type: Iterable[ReturnType]
-    list_of_elem = paging_method.mutate_list(pipeline_response, list_of_elem)
-    continuation_token = paging_method.get_continuation_token(pipeline_response, deserialized)
+    continuation_token, list_of_elem = _extract_data_helper(pipeline_response, paging_method)
     return continuation_token, AsyncList(list_of_elem)
 
 async def _get_page(continuation_token, paging_method, initial_response):
-    if not continuation_token:
-        if initial_response:
-            return initial_response
-        request = paging_method._initial_request  # pylint: disable=protected-access
-    else:
-        request = paging_method._next_request_partial(continuation_token)  # pylint: disable=protected-access
-        request = paging_method.get_next_request(continuation_token, request)  # pylint: disable=protected-access
+    if not continuation_token and initial_response:
+        return initial_response
+    request = _get_request(continuation_token, paging_method)
 
     response = await paging_method._client._pipeline.run(  # pylint: disable=protected-access
         request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
     )
-
-    http_response = response.http_response
-    status_code = http_response.status_code
-    if status_code < 200 or status_code >= 300:
-        map_error(status_code=status_code, response=http_response, error_map=paging_method._error_map)  # pylint: disable=protected-access
-        error = HttpResponseError(response=http_response)
-        error.continuation_token = continuation_token
-        raise error
-    if "request_id" not in paging_method._operation_config:  # pylint: disable=protected-access
-        paging_method._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]  # pylint: disable=protected-access
-    return response
+    return _handle_response(continuation_token, paging_method, response)
 
 class AsyncList(AsyncIterator[ReturnType]):
     def __init__(self, iterable: Iterable[ReturnType]) -> None:

@@ -56,26 +56,25 @@ _LOGGER = logging.getLogger(__name__)
 ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
 
-def _extract_data(pipeline_response, paging_method):
+def _extract_data_helper(pipeline_response, paging_method):
     deserialized = paging_method._deserialize_output(pipeline_response)  # pylint: disable=protected-access
     list_of_elem = paging_method.get_list_elements(pipeline_response, deserialized)  # type: Iterable[ReturnType]
     list_of_elem = paging_method.mutate_list(pipeline_response, list_of_elem)
     continuation_token = paging_method.get_continuation_token(pipeline_response, deserialized)
     return continuation_token, list_of_elem
 
-def _get_page(continuation_token, paging_method, initial_response):
+def _extract_data(pipeline_response, paging_method):
+    return _extract_data_helper(pipeline_response, paging_method)
+
+def _get_request(continuation_token, paging_method):
     if not continuation_token:
-        if initial_response:
-            return initial_response
         request = paging_method._initial_request  # pylint: disable=protected-access
     else:
         request = paging_method._next_request_callback(continuation_token)  # pylint: disable=protected-access
-        request = paging_method.get_next_request(continuation_token, request)  # pylint: disable=protected-access
+        request = paging_method.mutate_next_request(continuation_token, request)  # pylint: disable=protected-access
+    return request
 
-    response = paging_method._client._pipeline.run(  # pylint: disable=protected-access
-        request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
-    )
-
+def _handle_response(continuation_token, paging_method, response):
     http_response = response.http_response
     status_code = http_response.status_code
     if status_code < 200 or status_code >= 300:
@@ -86,6 +85,18 @@ def _get_page(continuation_token, paging_method, initial_response):
     if "request_id" not in paging_method._operation_config:  # pylint: disable=protected-access
         paging_method._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]  # pylint: disable=protected-access
     return response
+
+def _get_page(continuation_token, paging_method, initial_response):
+    if not continuation_token and initial_response:
+        return initial_response
+    request = _get_request(continuation_token, paging_method)
+
+    response = paging_method._client._pipeline.run(  # pylint: disable=protected-access
+        request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
+    )
+    return _handle_response(continuation_token, paging_method, response)
+
+
 
 @add_metaclass(ABCMeta)
 class PagingMethodABC():
@@ -100,9 +111,10 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_next_request(self, continuation_token, next_request):
+    def mutate_next_request(self, continuation_token, next_request):
         # type: (Any, HttpRequest) -> HttpRequest
-        """Gets the next request to make to the service
+        """Mutate next request if there are any modifications that need to be
+        made to what azure core assumes the next request will be.
 
         :param any continuation_token: Token passed to indicate continued paging, and how to get next page
         :param next_request: What azure core assumes your next request to be.
@@ -142,6 +154,7 @@ class PagingMethodABC():
     def get_continuation_token(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Any
         """Get the continuation token from the current page. This operation returning None signals the end of paging.
+        Continuation token can be mutated here as well.
 
         :param pipeline_response: The immediate response returned from the pipeline
         :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
@@ -201,7 +214,7 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :keyword callable next_request_callback: A partial function that will take
          in the continuation token and return the request for a subsequent call to the service.
          If you don't pass one in, we will create one for you, based off of the initial_request
-         you pass in.
+         you pass in. We will assume the continuation token is the url for the next request.
         :keyword str item_name: Specifies the name of the property that provides the collection of pageable
          items. Defaults to `value`.
         :keyword callable cls: A custom type or function that will modify each element of the pageable items.
@@ -222,9 +235,10 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._operation_config = kwargs
         self._validate_inputs()
 
-    def get_next_request(self, continuation_token, next_request):
+    def mutate_next_request(self, continuation_token, next_request):
         # type: (Any, HttpRequest) -> HttpRequest
-        """Gets the next request to make to the service
+        """Mutate next request if there are any modifications that need to be
+        made to what azure core assumes the next request will be.
 
         :param any continuation_token: Token passed to indicate continued paging, and how to get next page
         :param next_request: What azure core assumes your next request to be.
