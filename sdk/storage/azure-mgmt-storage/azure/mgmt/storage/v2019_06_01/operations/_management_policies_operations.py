@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class ManagementPoliciesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,10 +48,10 @@ class ManagementPoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        management_policy_name,  # type: Union[str, "models.ManagementPolicyName"]
+        management_policy_name,  # type: Union[str, "_models.ManagementPolicyName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagementPolicy"
+        # type: (...) -> "_models.ManagementPolicy"
         """Gets the managementpolicy associated with the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -69,7 +69,7 @@ class ManagementPoliciesOperations(object):
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,11 +115,11 @@ class ManagementPoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        management_policy_name,  # type: Union[str, "models.ManagementPolicyName"]
-        properties,  # type: "models.ManagementPolicy"
+        management_policy_name,  # type: Union[str, "_models.ManagementPolicyName"]
+        properties,  # type: "_models.ManagementPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagementPolicy"
+        # type: (...) -> "_models.ManagementPolicy"
         """Sets the managementpolicy to the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -139,7 +139,7 @@ class ManagementPoliciesOperations(object):
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -190,7 +190,7 @@ class ManagementPoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        management_policy_name,  # type: Union[str, "models.ManagementPolicyName"]
+        management_policy_name,  # type: Union[str, "_models.ManagementPolicyName"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None

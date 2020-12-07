@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class TableServicesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class TableServicesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> "models.ListTableServices":
+    ) -> "_models.ListTableServices":
         """List all table services for the storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -60,7 +60,7 @@ class TableServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.ListTableServices
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListTableServices"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListTableServices"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,9 +105,9 @@ class TableServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: "models.TableServiceProperties",
+        parameters: "_models.TableServiceProperties",
         **kwargs
-    ) -> "models.TableServiceProperties":
+    ) -> "_models.TableServiceProperties":
         """Sets the properties of a storage account’s Table service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -126,7 +126,7 @@ class TableServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.TableServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TableServiceProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TableServiceProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class TableServicesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> "models.TableServiceProperties":
+    ) -> "_models.TableServiceProperties":
         """Gets the properties of a storage account’s Table service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -195,7 +195,7 @@ class TableServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.TableServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TableServiceProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TableServiceProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

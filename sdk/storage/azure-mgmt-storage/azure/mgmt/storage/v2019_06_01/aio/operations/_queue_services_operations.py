@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class QueueServicesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class QueueServicesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> "models.ListQueueServices":
+    ) -> "_models.ListQueueServices":
         """List all queue services for the storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -60,7 +60,7 @@ class QueueServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.ListQueueServices
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListQueueServices"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListQueueServices"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,9 +105,9 @@ class QueueServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: "models.QueueServiceProperties",
+        parameters: "_models.QueueServiceProperties",
         **kwargs
-    ) -> "models.QueueServiceProperties":
+    ) -> "_models.QueueServiceProperties":
         """Sets the properties of a storage account’s Queue service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -126,7 +126,7 @@ class QueueServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.QueueServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QueueServiceProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueueServiceProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class QueueServicesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> "models.QueueServiceProperties":
+    ) -> "_models.QueueServiceProperties":
         """Gets the properties of a storage account’s Queue service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -195,7 +195,7 @@ class QueueServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.QueueServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QueueServiceProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueueServiceProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
