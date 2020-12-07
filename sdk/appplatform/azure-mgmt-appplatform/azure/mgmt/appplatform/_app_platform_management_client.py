@@ -207,6 +207,22 @@ class AppPlatformManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def runtime_versions(self):
+        """Instance depends on the API version:
+
+           * 2019-05-01-preview: :class:`RuntimeVersionsOperations<azure.mgmt.appplatform.v2019_05_01_preview.operations.RuntimeVersionsOperations>`
+           * 2020-07-01: :class:`RuntimeVersionsOperations<azure.mgmt.appplatform.v2020_07_01.operations.RuntimeVersionsOperations>`
+        """
+        api_version = self._get_api_version('runtime_versions')
+        if api_version == '2019-05-01-preview':
+            from .v2019_05_01_preview.operations import RuntimeVersionsOperations as OperationClass
+        elif api_version == '2020-07-01':
+            from .v2020_07_01.operations import RuntimeVersionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def services(self):
         """Instance depends on the API version:
 
