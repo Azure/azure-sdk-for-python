@@ -2,6 +2,8 @@
 
 This package contains an SDK for Azure Digital Twins API to provide access to the Azure Digital Twins service for managing twins, models, relationships, etc.
 
+[API Reference Documentation](https://docs.microsoft.com/en-us/python/api/azure-digitaltwins-core/azure.digitaltwins.core?view=azure-python)
+
 ## Getting started
 
 ### Introduction
