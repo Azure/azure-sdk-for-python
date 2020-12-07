@@ -220,7 +220,7 @@ class RegistrationsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AzureStack/registrations/{registrationName}'}
 
     def create_or_update(
-            self, resource_group, registration_name, registration_token, location=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group, registration_name, registration_token, custom_headers=None, raw=False, **operation_config):
         """Create or update an Azure Stack registration.
 
         :param resource_group: Name of the resource group.
@@ -230,9 +230,6 @@ class RegistrationsOperations(object):
         :param registration_token: The token identifying registered Azure
          Stack
         :type registration_token: str
-        :param location: Location of the resource. Possible values include:
-         'global'
-        :type location: str or ~azure.mgmt.azurestack.models.Location
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -243,7 +240,7 @@ class RegistrationsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        token = models.RegistrationParameter(registration_token=registration_token, location=location)
+        token = models.RegistrationParameter(registration_token=registration_token)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -295,7 +292,7 @@ class RegistrationsOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AzureStack/registrations/{registrationName}'}
 
     def update(
-            self, resource_group, registration_name, registration_token, location=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group, registration_name, registration_token, custom_headers=None, raw=False, **operation_config):
         """Patch an Azure Stack registration.
 
         :param resource_group: Name of the resource group.
@@ -305,9 +302,6 @@ class RegistrationsOperations(object):
         :param registration_token: The token identifying registered Azure
          Stack
         :type registration_token: str
-        :param location: Location of the resource. Possible values include:
-         'global'
-        :type location: str or ~azure.mgmt.azurestack.models.Location
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -319,7 +313,7 @@ class RegistrationsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.azurestack.models.ErrorResponseException>`
         """
-        token = models.RegistrationParameter(registration_token=registration_token, location=location)
+        token = models.RegistrationParameter(registration_token=registration_token)
 
         # Construct URL
         url = self.update.metadata['url']
