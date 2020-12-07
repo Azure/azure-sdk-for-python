@@ -21,6 +21,7 @@ from ._workspace_operations import WorkspaceOperations
 from ._sql_pools_operations import SqlPoolsOperations
 from ._big_data_pools_operations import BigDataPoolsOperations
 from ._integration_runtimes_operations import IntegrationRuntimesOperations
+from ._workspace_git_repo_management_operations import WorkspaceGitRepoManagementOperations
 
 __all__ = [
     'LinkedServiceOperations',
@@ -38,4 +39,5 @@ __all__ = [
     'SqlPoolsOperations',
     'BigDataPoolsOperations',
     'IntegrationRuntimesOperations',
+    'WorkspaceGitRepoManagementOperations',
 ]

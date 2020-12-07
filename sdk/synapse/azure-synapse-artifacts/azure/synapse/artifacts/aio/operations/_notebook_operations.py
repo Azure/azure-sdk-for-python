@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class NotebookOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class NotebookOperations:
     def get_notebooks_by_workspace(
         self,
         **kwargs
-    ) -> AsyncIterable["models.NotebookListResponse"]:
+    ) -> AsyncIterable["_models.NotebookListResponse"]:
         """Lists Notebooks.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -53,7 +53,7 @@ class NotebookOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.NotebookListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,7 +102,7 @@ class NotebookOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.CloudError, response)
+                error = self._deserialize(_models.CloudError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -116,7 +116,7 @@ class NotebookOperations:
     def get_notebook_summary_by_work_space(
         self,
         **kwargs
-    ) -> AsyncIterable["models.NotebookListResponse"]:
+    ) -> AsyncIterable["_models.NotebookListResponse"]:
         """Lists a summary of Notebooks.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -124,7 +124,7 @@ class NotebookOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.NotebookListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -173,7 +173,7 @@ class NotebookOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.CloudError, response)
+                error = self._deserialize(_models.CloudError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -187,17 +187,15 @@ class NotebookOperations:
     async def _create_or_update_notebook_initial(
         self,
         notebook_name: str,
-        properties: "models.Notebook",
+        notebook: "_models.NotebookResource",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.NotebookResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NotebookResource"]]
+    ) -> Optional["_models.NotebookResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NotebookResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _notebook = models.NotebookResource(properties=properties)
         api_version = "2019-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -222,7 +220,7 @@ class NotebookOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_notebook, 'NotebookResource')
+        body_content = self._serialize.body(notebook, 'NotebookResource')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -230,7 +228,7 @@ class NotebookOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -246,16 +244,16 @@ class NotebookOperations:
     async def begin_create_or_update_notebook(
         self,
         notebook_name: str,
-        properties: "models.Notebook",
+        notebook: "_models.NotebookResource",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.NotebookResource"]:
+    ) -> AsyncLROPoller["_models.NotebookResource"]:
         """Creates or updates a Note Book.
 
         :param notebook_name: The notebook name.
         :type notebook_name: str
-        :param properties: Properties of Notebook.
-        :type properties: ~azure.synapse.artifacts.models.Notebook
+        :param notebook: Note book resource definition.
+        :type notebook: ~azure.synapse.artifacts.models.NotebookResource
         :param if_match: ETag of the Note book entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update.
         :type if_match: str
@@ -270,7 +268,7 @@ class NotebookOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -279,7 +277,7 @@ class NotebookOperations:
         if cont_token is None:
             raw_result = await self._create_or_update_notebook_initial(
                 notebook_name=notebook_name,
-                properties=properties,
+                notebook=notebook,
                 if_match=if_match,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -295,7 +293,12 @@ class NotebookOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'notebookName': self._serialize.url("notebook_name", notebook_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -314,7 +317,7 @@ class NotebookOperations:
         notebook_name: str,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.NotebookResource"]:
+    ) -> Optional["_models.NotebookResource"]:
         """Gets a Note Book.
 
         :param notebook_name: The notebook name.
@@ -327,7 +330,7 @@ class NotebookOperations:
         :rtype: ~azure.synapse.artifacts.models.NotebookResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NotebookResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NotebookResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -359,7 +362,7 @@ class NotebookOperations:
 
         if response.status_code not in [200, 304]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -407,7 +410,7 @@ class NotebookOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -455,7 +458,12 @@ class NotebookOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'notebookName': self._serialize.url("notebook_name", notebook_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -468,3 +476,117 @@ class NotebookOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete_notebook.metadata = {'url': '/notebooks/{notebookName}'}  # type: ignore
+
+    async def _rename_notebook_initial(
+        self,
+        notebook_name: str,
+        new_name: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        _request = _models.ArtifactRenameRequest(new_name=new_name)
+        api_version = "2019-06-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._rename_notebook_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'notebookName': self._serialize.url("notebook_name", notebook_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(_request, 'ArtifactRenameRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.CloudError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _rename_notebook_initial.metadata = {'url': '/notebooks/{notebookName}/rename'}  # type: ignore
+
+    async def begin_rename_notebook(
+        self,
+        notebook_name: str,
+        new_name: Optional[str] = None,
+        **kwargs
+    ) -> AsyncLROPoller[None]:
+        """Renames a notebook.
+
+        :param notebook_name: The notebook name.
+        :type notebook_name: str
+        :param new_name: New name of the artifact.
+        :type new_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._rename_notebook_initial(
+                notebook_name=notebook_name,
+                new_name=new_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'notebookName': self._serialize.url("notebook_name", notebook_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_rename_notebook.metadata = {'url': '/notebooks/{notebookName}/rename'}  # type: ignore

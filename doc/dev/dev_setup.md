@@ -41,3 +41,8 @@ or execute the various commands available in the toolbox.
     ```
     python scripts/dev_setup.py -p azure-mgmt-service
     ```
+
+5.  Create a .env file to store your secrets.
+
+    The recommended place to store your .env file is one directory higher than the `azure-sdk-for-python` location.
+    This ensures the secrets will be loaded by the interpreter and most importantly not be committed to Git history.
