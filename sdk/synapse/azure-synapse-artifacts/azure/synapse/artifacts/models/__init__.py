@@ -97,7 +97,6 @@ try:
     from ._models_py3 import AzureTableSink
     from ._models_py3 import AzureTableSource
     from ._models_py3 import AzureTableStorageLinkedService
-    from ._models_py3 import BabylonConfiguration
     from ._models_py3 import BigDataPoolReference
     from ._models_py3 import BigDataPoolResourceInfo
     from ._models_py3 import BigDataPoolResourceInfoListResult
@@ -247,6 +246,8 @@ try:
     from ._models_py3 import FtpServerLocation
     from ._models_py3 import GetMetadataActivity
     from ._models_py3 import GetSsisObjectMetadataRequest
+    from ._models_py3 import GitHubAccessTokenRequest
+    from ._models_py3 import GitHubAccessTokenResponse
     from ._models_py3 import GoogleAdWordsLinkedService
     from ._models_py3 import GoogleAdWordsObjectDataset
     from ._models_py3 import GoogleAdWordsSource
@@ -310,7 +311,6 @@ try:
     from ._models_py3 import JsonSink
     from ._models_py3 import JsonSource
     from ._models_py3 import JsonWriteSettings
-    from ._models_py3 import LibraryInfo
     from ._models_py3 import LibraryRequirements
     from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
@@ -414,6 +414,7 @@ try:
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
+    from ._models_py3 import PurviewConfiguration
     from ._models_py3 import QueryDataFlowDebugSessionsResponse
     from ._models_py3 import QuickBooksLinkedService
     from ._models_py3 import QuickBooksObjectDataset
@@ -595,6 +596,7 @@ try:
     from ._models_py3 import Workspace
     from ._models_py3 import WorkspaceIdentity
     from ._models_py3 import WorkspaceKeyDetails
+    from ._models_py3 import WorkspaceRepositoryConfiguration
     from ._models_py3 import WorkspaceUpdateParameters
     from ._models_py3 import XeroLinkedService
     from ._models_py3 import XeroObjectDataset
@@ -693,7 +695,6 @@ except (SyntaxError, ImportError):
     from ._models import AzureTableSink  # type: ignore
     from ._models import AzureTableSource  # type: ignore
     from ._models import AzureTableStorageLinkedService  # type: ignore
-    from ._models import BabylonConfiguration  # type: ignore
     from ._models import BigDataPoolReference  # type: ignore
     from ._models import BigDataPoolResourceInfo  # type: ignore
     from ._models import BigDataPoolResourceInfoListResult  # type: ignore
@@ -843,6 +844,8 @@ except (SyntaxError, ImportError):
     from ._models import FtpServerLocation  # type: ignore
     from ._models import GetMetadataActivity  # type: ignore
     from ._models import GetSsisObjectMetadataRequest  # type: ignore
+    from ._models import GitHubAccessTokenRequest  # type: ignore
+    from ._models import GitHubAccessTokenResponse  # type: ignore
     from ._models import GoogleAdWordsLinkedService  # type: ignore
     from ._models import GoogleAdWordsObjectDataset  # type: ignore
     from ._models import GoogleAdWordsSource  # type: ignore
@@ -906,7 +909,6 @@ except (SyntaxError, ImportError):
     from ._models import JsonSink  # type: ignore
     from ._models import JsonSource  # type: ignore
     from ._models import JsonWriteSettings  # type: ignore
-    from ._models import LibraryInfo  # type: ignore
     from ._models import LibraryRequirements  # type: ignore
     from ._models import LinkedIntegrationRuntimeKeyAuthorization  # type: ignore
     from ._models import LinkedIntegrationRuntimeRbacAuthorization  # type: ignore
@@ -1010,6 +1012,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import ProxyResource  # type: ignore
+    from ._models import PurviewConfiguration  # type: ignore
     from ._models import QueryDataFlowDebugSessionsResponse  # type: ignore
     from ._models import QuickBooksLinkedService  # type: ignore
     from ._models import QuickBooksObjectDataset  # type: ignore
@@ -1191,6 +1194,7 @@ except (SyntaxError, ImportError):
     from ._models import Workspace  # type: ignore
     from ._models import WorkspaceIdentity  # type: ignore
     from ._models import WorkspaceKeyDetails  # type: ignore
+    from ._models import WorkspaceRepositoryConfiguration  # type: ignore
     from ._models import WorkspaceUpdateParameters  # type: ignore
     from ._models import XeroLinkedService  # type: ignore
     from ._models import XeroObjectDataset  # type: ignore
@@ -1204,7 +1208,7 @@ from ._artifacts_client_enums import (
     AzureFunctionActivityMethod,
     AzureSearchIndexWriteBehaviorType,
     BigDataPoolReferenceType,
-    BlobEventTypes,
+    BlobEventType,
     CassandraSourceReadConsistencyLevels,
     CellOutputType,
     CopyBehaviorType,
@@ -1392,7 +1396,6 @@ __all__ = [
     'AzureTableSink',
     'AzureTableSource',
     'AzureTableStorageLinkedService',
-    'BabylonConfiguration',
     'BigDataPoolReference',
     'BigDataPoolResourceInfo',
     'BigDataPoolResourceInfoListResult',
@@ -1542,6 +1545,8 @@ __all__ = [
     'FtpServerLocation',
     'GetMetadataActivity',
     'GetSsisObjectMetadataRequest',
+    'GitHubAccessTokenRequest',
+    'GitHubAccessTokenResponse',
     'GoogleAdWordsLinkedService',
     'GoogleAdWordsObjectDataset',
     'GoogleAdWordsSource',
@@ -1605,7 +1610,6 @@ __all__ = [
     'JsonSink',
     'JsonSource',
     'JsonWriteSettings',
-    'LibraryInfo',
     'LibraryRequirements',
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeRbacAuthorization',
@@ -1709,6 +1713,7 @@ __all__ = [
     'PrivateEndpointConnection',
     'PrivateLinkServiceConnectionState',
     'ProxyResource',
+    'PurviewConfiguration',
     'QueryDataFlowDebugSessionsResponse',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
@@ -1890,6 +1895,7 @@ __all__ = [
     'Workspace',
     'WorkspaceIdentity',
     'WorkspaceKeyDetails',
+    'WorkspaceRepositoryConfiguration',
     'WorkspaceUpdateParameters',
     'XeroLinkedService',
     'XeroObjectDataset',
@@ -1901,7 +1907,7 @@ __all__ = [
     'AzureFunctionActivityMethod',
     'AzureSearchIndexWriteBehaviorType',
     'BigDataPoolReferenceType',
-    'BlobEventTypes',
+    'BlobEventType',
     'CassandraSourceReadConsistencyLevels',
     'CellOutputType',
     'CopyBehaviorType',

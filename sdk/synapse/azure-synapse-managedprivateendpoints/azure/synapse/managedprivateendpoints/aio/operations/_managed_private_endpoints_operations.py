@@ -13,7 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -25,14 +25,14 @@ class ManagedPrivateEndpointsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.synapse.vnet.models
+    :type models: ~azure.synapse.managedprivateendpoints.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class ManagedPrivateEndpointsOperations:
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
         **kwargs
-    ) -> "models.ManagedPrivateEndpoint":
+    ) -> "_models.ManagedPrivateEndpoint":
         """Get Managed Private Endpoints.
 
         :param managed_virtual_network_name: Managed virtual network name.
@@ -54,10 +54,10 @@ class ManagedPrivateEndpointsOperations:
         :type managed_private_endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedPrivateEndpoint, or the result of cls(response)
-        :rtype: ~azure.synapse.vnet.models.ManagedPrivateEndpoint
+        :rtype: ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedPrivateEndpoint"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,9 +102,9 @@ class ManagedPrivateEndpointsOperations:
         self,
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
-        properties: Optional["models.ManagedPrivateEndpointProperties"] = None,
+        properties: Optional["_models.ManagedPrivateEndpointProperties"] = None,
         **kwargs
-    ) -> "models.ManagedPrivateEndpoint":
+    ) -> "_models.ManagedPrivateEndpoint":
         """Create Managed Private Endpoints.
 
         :param managed_virtual_network_name: Managed virtual network name.
@@ -112,19 +112,19 @@ class ManagedPrivateEndpointsOperations:
         :param managed_private_endpoint_name: Managed private endpoint name.
         :type managed_private_endpoint_name: str
         :param properties: Managed private endpoint properties.
-        :type properties: ~azure.synapse.vnet.models.ManagedPrivateEndpointProperties
+        :type properties: ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpointProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedPrivateEndpoint, or the result of cls(response)
-        :rtype: ~azure.synapse.vnet.models.ManagedPrivateEndpoint
+        :rtype: ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedPrivateEndpoint"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _managed_private_endpoint = models.ManagedPrivateEndpoint(properties=properties)
+        _managed_private_endpoint = _models.ManagedPrivateEndpoint(properties=properties)
         api_version = "2019-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -223,17 +223,17 @@ class ManagedPrivateEndpointsOperations:
         self,
         managed_virtual_network_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ManagedPrivateEndpointListResponse"]:
+    ) -> AsyncIterable["_models.ManagedPrivateEndpointListResponse"]:
         """List Managed Private Endpoints.
 
         :param managed_virtual_network_name: Managed virtual network name.
         :type managed_virtual_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedPrivateEndpointListResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.vnet.models.ManagedPrivateEndpointListResponse]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpointListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedPrivateEndpointListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpointListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

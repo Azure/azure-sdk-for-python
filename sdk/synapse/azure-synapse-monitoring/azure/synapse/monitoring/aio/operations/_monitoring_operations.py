@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class MonitoringOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,7 +43,7 @@ class MonitoringOperations:
         self,
         x_ms_client_request_id: Optional[str] = None,
         **kwargs
-    ) -> "models.SparkJobListViewResponse":
+    ) -> "_models.SparkJobListViewResponse":
         """Get list of spark applications for the workspace.
 
         :param x_ms_client_request_id: Can provide a guid, which is helpful for debugging and to
@@ -54,7 +54,7 @@ class MonitoringOperations:
         :rtype: ~azure.synapse.monitoring.models.SparkJobListViewResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkJobListViewResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkJobListViewResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,7 +102,7 @@ class MonitoringOperations:
         orderby: Optional[str] = None,
         skip: Optional[str] = None,
         **kwargs
-    ) -> "models.SqlQueryStringDataModel":
+    ) -> "_models.SqlQueryStringDataModel":
         """Get SQL OD/DW Query for the workspace.
 
         :param x_ms_client_request_id: Can provide a guid, which is helpful for debugging and to
@@ -119,7 +119,7 @@ class MonitoringOperations:
         :rtype: ~azure.synapse.monitoring.models.SqlQueryStringDataModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SqlQueryStringDataModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlQueryStringDataModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

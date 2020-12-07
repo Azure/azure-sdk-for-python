@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -35,7 +35,7 @@ class MonitoringOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,7 +48,7 @@ class MonitoringOperations(object):
         x_ms_client_request_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SparkJobListViewResponse"
+        # type: (...) -> "_models.SparkJobListViewResponse"
         """Get list of spark applications for the workspace.
 
         :param x_ms_client_request_id: Can provide a guid, which is helpful for debugging and to
@@ -59,7 +59,7 @@ class MonitoringOperations(object):
         :rtype: ~azure.synapse.monitoring.models.SparkJobListViewResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkJobListViewResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkJobListViewResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,7 +108,7 @@ class MonitoringOperations(object):
         skip=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SqlQueryStringDataModel"
+        # type: (...) -> "_models.SqlQueryStringDataModel"
         """Get SQL OD/DW Query for the workspace.
 
         :param x_ms_client_request_id: Can provide a guid, which is helpful for debugging and to
@@ -125,7 +125,7 @@ class MonitoringOperations(object):
         :rtype: ~azure.synapse.monitoring.models.SqlQueryStringDataModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SqlQueryStringDataModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlQueryStringDataModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

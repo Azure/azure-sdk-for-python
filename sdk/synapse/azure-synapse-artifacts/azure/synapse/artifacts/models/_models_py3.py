@@ -19,7 +19,7 @@ class Activity(msrest.serialization.Model):
     """A pipeline activity.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AppendVariableActivity, ControlActivity, ExecutePipelineActivity, ExecutionActivity, FilterActivity, ForEachActivity, IfConditionActivity, SetVariableActivity, SynapseSparkJobDefinitionActivity, SqlPoolStoredProcedureActivity, SwitchActivity, SynapseNotebookActivity, UntilActivity, ValidationActivity, WaitActivity, WebHookActivity.
+    sub-classes are: AppendVariableActivity, ControlActivity, ExecutePipelineActivity, ExecutionActivity, FilterActivity, ForEachActivity, IfConditionActivity, SetVariableActivity, SqlPoolStoredProcedureActivity, SwitchActivity, UntilActivity, ValidationActivity, WaitActivity, WebHookActivity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -53,7 +53,7 @@ class Activity(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'AppendVariable': 'AppendVariableActivity', 'Container': 'ControlActivity', 'ExecutePipeline': 'ExecutePipelineActivity', 'Execution': 'ExecutionActivity', 'Filter': 'FilterActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'SetVariable': 'SetVariableActivity', 'SparkJob': 'SynapseSparkJobDefinitionActivity', 'SqlPoolStoredProcedure': 'SqlPoolStoredProcedureActivity', 'Switch': 'SwitchActivity', 'SynapseNotebook': 'SynapseNotebookActivity', 'Until': 'UntilActivity', 'Validation': 'ValidationActivity', 'Wait': 'WaitActivity', 'WebHook': 'WebHookActivity'}
+        'type': {'AppendVariable': 'AppendVariableActivity', 'Container': 'ControlActivity', 'ExecutePipeline': 'ExecutePipelineActivity', 'Execution': 'ExecutionActivity', 'Filter': 'FilterActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'SetVariable': 'SetVariableActivity', 'SqlPoolStoredProcedure': 'SqlPoolStoredProcedureActivity', 'Switch': 'SwitchActivity', 'Until': 'UntilActivity', 'Validation': 'ValidationActivity', 'Wait': 'WaitActivity', 'WebHook': 'WebHookActivity'}
     }
 
     def __init__(
@@ -2837,7 +2837,7 @@ class ExecutionActivity(Activity):
     """Base class for all execution activities.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureDataExplorerCommandActivity, AzureFunctionActivity, AzureMLBatchExecutionActivity, AzureMLExecutePipelineActivity, AzureMLUpdateResourceActivity, CopyActivity, CustomActivity, DataLakeAnalyticsUSQLActivity, DatabricksNotebookActivity, DatabricksSparkJarActivity, DatabricksSparkPythonActivity, DeleteActivity, ExecuteDataFlowActivity, ExecuteSSISPackageActivity, GetMetadataActivity, HDInsightHiveActivity, HDInsightMapReduceActivity, HDInsightPigActivity, HDInsightSparkActivity, HDInsightStreamingActivity, LookupActivity, SqlServerStoredProcedureActivity, WebActivity.
+    sub-classes are: AzureDataExplorerCommandActivity, AzureFunctionActivity, AzureMLBatchExecutionActivity, AzureMLExecutePipelineActivity, AzureMLUpdateResourceActivity, CopyActivity, CustomActivity, DataLakeAnalyticsUSQLActivity, DatabricksNotebookActivity, DatabricksSparkJarActivity, DatabricksSparkPythonActivity, DeleteActivity, ExecuteDataFlowActivity, ExecuteSSISPackageActivity, GetMetadataActivity, HDInsightHiveActivity, HDInsightMapReduceActivity, HDInsightPigActivity, HDInsightSparkActivity, HDInsightStreamingActivity, LookupActivity, SynapseSparkJobDefinitionActivity, SqlServerStoredProcedureActivity, SynapseNotebookActivity, WebActivity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2877,7 +2877,7 @@ class ExecutionActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'AzureFunctionActivity': 'AzureFunctionActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'AzureMLExecutePipeline': 'AzureMLExecutePipelineActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'Copy': 'CopyActivity', 'Custom': 'CustomActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'Delete': 'DeleteActivity', 'ExecuteDataFlow': 'ExecuteDataFlowActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'GetMetadata': 'GetMetadataActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'Lookup': 'LookupActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'WebActivity': 'WebActivity'}
+        'type': {'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'AzureFunctionActivity': 'AzureFunctionActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'AzureMLExecutePipeline': 'AzureMLExecutePipelineActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'Copy': 'CopyActivity', 'Custom': 'CustomActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'Delete': 'DeleteActivity', 'ExecuteDataFlow': 'ExecuteDataFlowActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'GetMetadata': 'GetMetadataActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'Lookup': 'LookupActivity', 'SparkJob': 'SynapseSparkJobDefinitionActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'SynapseNotebook': 'SynapseNotebookActivity', 'WebActivity': 'WebActivity'}
     }
 
     def __init__(
@@ -6730,27 +6730,6 @@ class AzureTableStorageLinkedService(LinkedService):
         self.encrypted_credential = encrypted_credential
 
 
-class BabylonConfiguration(msrest.serialization.Model):
-    """Babylon Configuration.
-
-    :param babylon_resource_id: Babylon Resource ID.
-    :type babylon_resource_id: str
-    """
-
-    _attribute_map = {
-        'babylon_resource_id': {'key': 'babylonResourceId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        babylon_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(BabylonConfiguration, self).__init__(**kwargs)
-        self.babylon_resource_id = babylon_resource_id
-
-
 class BigDataPoolReference(msrest.serialization.Model):
     """Big data pool reference.
 
@@ -6862,8 +6841,9 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type auto_pause: ~azure.synapse.artifacts.models.AutoPauseProperties
     :param is_compute_isolation_enabled: Whether compute isolation is required or not.
     :type is_compute_isolation_enabled: bool
-    :param session_level_packages_enabled: Whether session level library/package management is
-     enabled or not.
+    :param have_library_requirements_changed: Whether library requirements changed.
+    :type have_library_requirements_changed: bool
+    :param session_level_packages_enabled: Whether session level packages enabled.
     :type session_level_packages_enabled: bool
     :param spark_events_folder: The Spark events folder.
     :type spark_events_folder: str
@@ -6871,8 +6851,6 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type node_count: int
     :param library_requirements: Library version requirements.
     :type library_requirements: ~azure.synapse.artifacts.models.LibraryRequirements
-    :param custom_libraries: List of custom libraries/packages associated with the spark pool.
-    :type custom_libraries: list[~azure.synapse.artifacts.models.LibraryInfo]
     :param spark_config_properties: Spark configuration file to specify additional properties.
     :type spark_config_properties: ~azure.synapse.artifacts.models.LibraryRequirements
     :param spark_version: The Apache Spark version.
@@ -6905,11 +6883,11 @@ class BigDataPoolResourceInfo(TrackedResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'auto_pause': {'key': 'properties.autoPause', 'type': 'AutoPauseProperties'},
         'is_compute_isolation_enabled': {'key': 'properties.isComputeIsolationEnabled', 'type': 'bool'},
+        'have_library_requirements_changed': {'key': 'properties.haveLibraryRequirementsChanged', 'type': 'bool'},
         'session_level_packages_enabled': {'key': 'properties.sessionLevelPackagesEnabled', 'type': 'bool'},
         'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
-        'custom_libraries': {'key': 'properties.customLibraries', 'type': '[LibraryInfo]'},
         'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
@@ -6927,11 +6905,11 @@ class BigDataPoolResourceInfo(TrackedResource):
         creation_date: Optional[datetime.datetime] = None,
         auto_pause: Optional["AutoPauseProperties"] = None,
         is_compute_isolation_enabled: Optional[bool] = None,
+        have_library_requirements_changed: Optional[bool] = None,
         session_level_packages_enabled: Optional[bool] = None,
         spark_events_folder: Optional[str] = None,
         node_count: Optional[int] = None,
         library_requirements: Optional["LibraryRequirements"] = None,
-        custom_libraries: Optional[List["LibraryInfo"]] = None,
         spark_config_properties: Optional["LibraryRequirements"] = None,
         spark_version: Optional[str] = None,
         default_spark_log_folder: Optional[str] = None,
@@ -6945,11 +6923,11 @@ class BigDataPoolResourceInfo(TrackedResource):
         self.creation_date = creation_date
         self.auto_pause = auto_pause
         self.is_compute_isolation_enabled = is_compute_isolation_enabled
+        self.have_library_requirements_changed = have_library_requirements_changed
         self.session_level_packages_enabled = session_level_packages_enabled
         self.spark_events_folder = spark_events_folder
         self.node_count = node_count
         self.library_requirements = library_requirements
-        self.custom_libraries = custom_libraries
         self.spark_config_properties = spark_config_properties
         self.spark_version = spark_version
         self.default_spark_log_folder = default_spark_log_folder
@@ -7316,7 +7294,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     :param ignore_empty_blobs: If set to true, blobs with zero bytes will be ignored.
     :type ignore_empty_blobs: bool
     :param events: Required. The type of events that cause this trigger to fire.
-    :type events: list[str or ~azure.synapse.artifacts.models.BlobEventTypes]
+    :type events: list[str or ~azure.synapse.artifacts.models.BlobEventType]
     :param scope: Required. The ARM resource ID of the Storage Account.
     :type scope: str
     """
@@ -7345,7 +7323,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     def __init__(
         self,
         *,
-        events: List[Union[str, "BlobEventTypes"]],
+        events: List[Union[str, "BlobEventType"]],
         scope: str,
         additional_properties: Optional[Dict[str, object]] = None,
         description: Optional[str] = None,
@@ -14971,6 +14949,66 @@ class GetSsisObjectMetadataRequest(msrest.serialization.Model):
         self.metadata_path = metadata_path
 
 
+class GitHubAccessTokenRequest(msrest.serialization.Model):
+    """GitHubAccessTokenRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param git_hub_client_id: Required. The GitHub Client Id.
+    :type git_hub_client_id: str
+    :param git_hub_access_code: Required. The GitHub Access code.
+    :type git_hub_access_code: str
+    :param git_hub_access_token_base_url: Required. The GitHub access token base URL.
+    :type git_hub_access_token_base_url: str
+    """
+
+    _validation = {
+        'git_hub_client_id': {'required': True},
+        'git_hub_access_code': {'required': True},
+        'git_hub_access_token_base_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'git_hub_client_id': {'key': 'gitHubClientId', 'type': 'str'},
+        'git_hub_access_code': {'key': 'gitHubAccessCode', 'type': 'str'},
+        'git_hub_access_token_base_url': {'key': 'gitHubAccessTokenBaseUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        git_hub_client_id: str,
+        git_hub_access_code: str,
+        git_hub_access_token_base_url: str,
+        **kwargs
+    ):
+        super(GitHubAccessTokenRequest, self).__init__(**kwargs)
+        self.git_hub_client_id = git_hub_client_id
+        self.git_hub_access_code = git_hub_access_code
+        self.git_hub_access_token_base_url = git_hub_access_token_base_url
+
+
+class GitHubAccessTokenResponse(msrest.serialization.Model):
+    """GitHubAccessTokenResponse.
+
+    :param git_hub_access_token:
+    :type git_hub_access_token: str
+    """
+
+    _attribute_map = {
+        'git_hub_access_token': {'key': 'gitHubAccessToken', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        git_hub_access_token: Optional[str] = None,
+        **kwargs
+    ):
+        super(GitHubAccessTokenResponse, self).__init__(**kwargs)
+        self.git_hub_access_token = git_hub_access_token
+
+
 class GoogleAdWordsLinkedService(LinkedService):
     """Google AdWords service linked service.
 
@@ -19603,62 +19641,6 @@ class JsonWriteSettings(FormatWriteSettings):
         super(JsonWriteSettings, self).__init__(additional_properties=additional_properties, **kwargs)
         self.type = 'JsonWriteSettings'  # type: str
         self.file_pattern = file_pattern
-
-
-class LibraryInfo(msrest.serialization.Model):
-    """Library/package information of a Big Data pool powered by Apache Spark.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param name: Name of the library.
-    :type name: str
-    :param path: Storage blob path of library.
-    :type path: str
-    :param container_name: Storage blob container name.
-    :type container_name: str
-    :param uploaded_timestamp: The last update time of the library.
-    :type uploaded_timestamp: ~datetime.datetime
-    :param type: Type of the library.
-    :type type: str
-    :ivar provisioning_status: Provisioning status of the library/package.
-    :vartype provisioning_status: str
-    :ivar creator_id: Creator Id of the library/package.
-    :vartype creator_id: str
-    """
-
-    _validation = {
-        'provisioning_status': {'readonly': True},
-        'creator_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'uploaded_timestamp': {'key': 'uploadedTimestamp', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_status': {'key': 'provisioningStatus', 'type': 'str'},
-        'creator_id': {'key': 'creatorId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        path: Optional[str] = None,
-        container_name: Optional[str] = None,
-        uploaded_timestamp: Optional[datetime.datetime] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(LibraryInfo, self).__init__(**kwargs)
-        self.name = name
-        self.path = path
-        self.container_name = container_name
-        self.uploaded_timestamp = uploaded_timestamp
-        self.type = type
-        self.provisioning_status = None
-        self.creator_id = None
 
 
 class LibraryRequirements(msrest.serialization.Model):
@@ -25712,6 +25694,27 @@ class ProxyResource(Resource):
         **kwargs
     ):
         super(ProxyResource, self).__init__(**kwargs)
+
+
+class PurviewConfiguration(msrest.serialization.Model):
+    """Purview Configuration.
+
+    :param purview_resource_id: Purview Resource ID.
+    :type purview_resource_id: str
+    """
+
+    _attribute_map = {
+        'purview_resource_id': {'key': 'purviewResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        purview_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(PurviewConfiguration, self).__init__(**kwargs)
+        self.purview_resource_id = purview_resource_id
 
 
 class QueryDataFlowDebugSessionsResponse(msrest.serialization.Model):
@@ -31768,7 +31771,7 @@ class SqlPool(TrackedResource):
     :param status: Resource status.
     :type status: str
     :param restore_point_in_time: Snapshot time to restore.
-    :type restore_point_in_time: ~datetime.datetime
+    :type restore_point_in_time: str
     :param create_mode: What is this?.
     :type create_mode: str
     :param creation_date: Date the SQL pool was created.
@@ -31795,7 +31798,7 @@ class SqlPool(TrackedResource):
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'str'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
     }
@@ -31812,7 +31815,7 @@ class SqlPool(TrackedResource):
         recoverable_database_id: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         status: Optional[str] = None,
-        restore_point_in_time: Optional[datetime.datetime] = None,
+        restore_point_in_time: Optional[str] = None,
         create_mode: Optional[str] = None,
         creation_date: Optional[datetime.datetime] = None,
         **kwargs
@@ -33752,7 +33755,7 @@ class SybaseTableDataset(Dataset):
         self.table_name = table_name
 
 
-class SynapseNotebookActivity(Activity):
+class SynapseNotebookActivity(ExecutionActivity):
     """Execute Synapse notebook activity.
 
     All required parameters must be populated in order to send to Azure.
@@ -33770,6 +33773,10 @@ class SynapseNotebookActivity(Activity):
     :type depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param notebook: Required. Synapse notebook reference.
     :type notebook: ~azure.synapse.artifacts.models.SynapseNotebookReference
     :param parameters: Notebook parameters.
@@ -33789,6 +33796,8 @@ class SynapseNotebookActivity(Activity):
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'notebook': {'key': 'typeProperties.notebook', 'type': 'SynapseNotebookReference'},
         'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
     }
@@ -33802,10 +33811,12 @@ class SynapseNotebookActivity(Activity):
         description: Optional[str] = None,
         depends_on: Optional[List["ActivityDependency"]] = None,
         user_properties: Optional[List["UserProperty"]] = None,
+        linked_service_name: Optional["LinkedServiceReference"] = None,
+        policy: Optional["ActivityPolicy"] = None,
         parameters: Optional[Dict[str, object]] = None,
         **kwargs
     ):
-        super(SynapseNotebookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+        super(SynapseNotebookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.type = 'SynapseNotebook'  # type: str
         self.notebook = notebook
         self.parameters = parameters
@@ -33845,7 +33856,7 @@ class SynapseNotebookReference(msrest.serialization.Model):
         self.reference_name = reference_name
 
 
-class SynapseSparkJobDefinitionActivity(Activity):
+class SynapseSparkJobDefinitionActivity(ExecutionActivity):
     """Execute spark job activity.
 
     All required parameters must be populated in order to send to Azure.
@@ -33863,6 +33874,10 @@ class SynapseSparkJobDefinitionActivity(Activity):
     :type depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param spark_job: Required. Synapse spark job reference.
     :type spark_job: ~azure.synapse.artifacts.models.SynapseSparkJobReference
     """
@@ -33880,6 +33895,8 @@ class SynapseSparkJobDefinitionActivity(Activity):
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'spark_job': {'key': 'typeProperties.sparkJob', 'type': 'SynapseSparkJobReference'},
     }
 
@@ -33892,9 +33909,11 @@ class SynapseSparkJobDefinitionActivity(Activity):
         description: Optional[str] = None,
         depends_on: Optional[List["ActivityDependency"]] = None,
         user_properties: Optional[List["UserProperty"]] = None,
+        linked_service_name: Optional["LinkedServiceReference"] = None,
+        policy: Optional["ActivityPolicy"] = None,
         **kwargs
     ):
-        super(SynapseSparkJobDefinitionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+        super(SynapseSparkJobDefinitionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.type = 'SparkJob'  # type: str
         self.spark_job = spark_job
 
@@ -35983,8 +36002,11 @@ class Workspace(TrackedResource):
     :param managed_virtual_network_settings: Managed Virtual Network Settings.
     :type managed_virtual_network_settings:
      ~azure.synapse.artifacts.models.ManagedVirtualNetworkSettings
-    :param babylon_configuration: Babylon Configuration.
-    :type babylon_configuration: ~azure.synapse.artifacts.models.BabylonConfiguration
+    :param workspace_repository_configuration: Git integration settings.
+    :type workspace_repository_configuration:
+     ~azure.synapse.artifacts.models.WorkspaceRepositoryConfiguration
+    :param purview_configuration: Purview Configuration.
+    :type purview_configuration: ~azure.synapse.artifacts.models.PurviewConfiguration
     """
 
     _validation = {
@@ -36017,7 +36039,8 @@ class Workspace(TrackedResource):
         'workspace_uid': {'key': 'properties.workspaceUID', 'type': 'str'},
         'extra_properties': {'key': 'properties.extraProperties', 'type': '{object}'},
         'managed_virtual_network_settings': {'key': 'properties.managedVirtualNetworkSettings', 'type': 'ManagedVirtualNetworkSettings'},
-        'babylon_configuration': {'key': 'properties.babylonConfiguration', 'type': 'BabylonConfiguration'},
+        'workspace_repository_configuration': {'key': 'properties.workspaceRepositoryConfiguration', 'type': 'WorkspaceRepositoryConfiguration'},
+        'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
     }
 
     def __init__(
@@ -36036,7 +36059,8 @@ class Workspace(TrackedResource):
         private_endpoint_connections: Optional[List["PrivateEndpointConnection"]] = None,
         encryption: Optional["EncryptionDetails"] = None,
         managed_virtual_network_settings: Optional["ManagedVirtualNetworkSettings"] = None,
-        babylon_configuration: Optional["BabylonConfiguration"] = None,
+        workspace_repository_configuration: Optional["WorkspaceRepositoryConfiguration"] = None,
+        purview_configuration: Optional["PurviewConfiguration"] = None,
         **kwargs
     ):
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
@@ -36054,7 +36078,8 @@ class Workspace(TrackedResource):
         self.workspace_uid = None
         self.extra_properties = None
         self.managed_virtual_network_settings = managed_virtual_network_settings
-        self.babylon_configuration = babylon_configuration
+        self.workspace_repository_configuration = workspace_repository_configuration
+        self.purview_configuration = purview_configuration
 
 
 class WorkspaceIdentity(msrest.serialization.Model):
@@ -36120,6 +36145,58 @@ class WorkspaceKeyDetails(msrest.serialization.Model):
         super(WorkspaceKeyDetails, self).__init__(**kwargs)
         self.name = name
         self.key_vault_url = key_vault_url
+
+
+class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
+    """Git integration settings.
+
+    :param type: Type of workspace repositoryID configuration. Example WorkspaceVSTSConfiguration,
+     WorkspaceGitHubConfiguration.
+    :type type: str
+    :param host_name: GitHub Enterprise host name. For example: https://github.mydomain.com.
+    :type host_name: str
+    :param account_name: Account name.
+    :type account_name: str
+    :param project_name: VSTS project name.
+    :type project_name: str
+    :param repository_name: Repository name.
+    :type repository_name: str
+    :param collaboration_branch: Collaboration branch.
+    :type collaboration_branch: str
+    :param root_folder: Root folder to use in the repository.
+    :type root_folder: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'repository_name': {'key': 'repositoryName', 'type': 'str'},
+        'collaboration_branch': {'key': 'collaborationBranch', 'type': 'str'},
+        'root_folder': {'key': 'rootFolder', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        host_name: Optional[str] = None,
+        account_name: Optional[str] = None,
+        project_name: Optional[str] = None,
+        repository_name: Optional[str] = None,
+        collaboration_branch: Optional[str] = None,
+        root_folder: Optional[str] = None,
+        **kwargs
+    ):
+        super(WorkspaceRepositoryConfiguration, self).__init__(**kwargs)
+        self.type = type
+        self.host_name = host_name
+        self.account_name = account_name
+        self.project_name = project_name
+        self.repository_name = repository_name
+        self.collaboration_branch = collaboration_branch
+        self.root_folder = root_folder
 
 
 class WorkspaceUpdateParameters(msrest.serialization.Model):

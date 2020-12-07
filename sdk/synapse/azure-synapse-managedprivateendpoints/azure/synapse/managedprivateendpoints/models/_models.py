@@ -23,7 +23,8 @@ class ManagedPrivateEndpoint(msrest.serialization.Model):
      Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param properties: Managed private endpoint properties.
-    :type properties: ~azure.synapse.vnet.models.ManagedPrivateEndpointProperties
+    :type properties:
+     ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpointProperties
     """
 
     _validation = {
@@ -89,7 +90,7 @@ class ManagedPrivateEndpointListResponse(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: List of managed private endpoints.
-    :type value: list[~azure.synapse.vnet.models.ManagedPrivateEndpoint]
+    :type value: list[~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpoint]
     :ivar next_link: The link to the next page of results, if any remaining results exist.
     :vartype next_link: str
     """
@@ -125,7 +126,8 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
     :ivar provisioning_state: The managed private endpoint provisioning state.
     :vartype provisioning_state: str
     :param connection_state: The managed private endpoint connection state.
-    :type connection_state: ~azure.synapse.vnet.models.ManagedPrivateEndpointConnectionState
+    :type connection_state:
+     ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpointConnectionState
     :ivar is_reserved: Denotes whether the managed private endpoint is reserved.
     :vartype is_reserved: bool
     """

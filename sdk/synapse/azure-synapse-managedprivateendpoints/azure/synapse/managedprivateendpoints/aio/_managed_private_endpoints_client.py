@@ -24,7 +24,7 @@ class ManagedPrivateEndpointsClient(object):
     """ManagedPrivateEndpointsClient.
 
     :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
-    :vartype managed_private_endpoints: azure.synapse.vnet.aio.operations.ManagedPrivateEndpointsOperations
+    :vartype managed_private_endpoints: azure.synapse.managedprivateendpoints.aio.operations.ManagedPrivateEndpointsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.

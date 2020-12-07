@@ -59,7 +59,7 @@ class BigDataPoolReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
 
     BIG_DATA_POOL_REFERENCE = "BigDataPoolReference"
 
-class BlobEventTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     MICROSOFT_STORAGE_BLOB_CREATED = "Microsoft.Storage.BlobCreated"
     MICROSOFT_STORAGE_BLOB_DELETED = "Microsoft.Storage.BlobDeleted"
