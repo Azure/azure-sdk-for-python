@@ -29,8 +29,8 @@ def create_coverage_report():
         package = name[2]
         if (folder, package) not in packages_to_report:
             packages_to_report.append((folder, package))
-            logging.info("Found a new package: {}".format(package))
-    logging.info("Reporting on packages: {}".format(packages_to_report))
+            logging.info("Found a package: {}".format(package))
+
     new_packages = []
     for p in packages_to_report:
         n = create_new_node(p, root)
