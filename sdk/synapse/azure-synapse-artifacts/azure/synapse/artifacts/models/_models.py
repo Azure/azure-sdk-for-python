@@ -14,7 +14,7 @@ class Activity(msrest.serialization.Model):
     """A pipeline activity.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AppendVariableActivity, ControlActivity, ExecutePipelineActivity, ExecutionActivity, FilterActivity, ForEachActivity, IfConditionActivity, SetVariableActivity, SynapseSparkJobDefinitionActivity, SqlPoolStoredProcedureActivity, SwitchActivity, SynapseNotebookActivity, UntilActivity, ValidationActivity, WaitActivity, WebHookActivity.
+    sub-classes are: AppendVariableActivity, ControlActivity, ExecutePipelineActivity, ExecutionActivity, FilterActivity, ForEachActivity, IfConditionActivity, SetVariableActivity, SqlPoolStoredProcedureActivity, SwitchActivity, UntilActivity, ValidationActivity, WaitActivity, WebHookActivity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -48,7 +48,7 @@ class Activity(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'AppendVariable': 'AppendVariableActivity', 'Container': 'ControlActivity', 'ExecutePipeline': 'ExecutePipelineActivity', 'Execution': 'ExecutionActivity', 'Filter': 'FilterActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'SetVariable': 'SetVariableActivity', 'SparkJob': 'SynapseSparkJobDefinitionActivity', 'SqlPoolStoredProcedure': 'SqlPoolStoredProcedureActivity', 'Switch': 'SwitchActivity', 'SynapseNotebook': 'SynapseNotebookActivity', 'Until': 'UntilActivity', 'Validation': 'ValidationActivity', 'Wait': 'WaitActivity', 'WebHook': 'WebHookActivity'}
+        'type': {'AppendVariable': 'AppendVariableActivity', 'Container': 'ControlActivity', 'ExecutePipeline': 'ExecutePipelineActivity', 'Execution': 'ExecutionActivity', 'Filter': 'FilterActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'SetVariable': 'SetVariableActivity', 'SqlPoolStoredProcedure': 'SqlPoolStoredProcedureActivity', 'Switch': 'SwitchActivity', 'Until': 'UntilActivity', 'Validation': 'ValidationActivity', 'Wait': 'WaitActivity', 'WebHook': 'WebHookActivity'}
     }
 
     def __init__(
@@ -1228,6 +1228,29 @@ class AppendVariableActivity(Activity):
         self.type = 'AppendVariable'  # type: str
         self.variable_name = kwargs.get('variable_name', None)
         self.value = kwargs.get('value', None)
+
+
+class ArtifactRenameRequest(msrest.serialization.Model):
+    """Request body structure for rename artifact.
+
+    :param new_name: New name of the artifact.
+    :type new_name: str
+    """
+
+    _validation = {
+        'new_name': {'max_length': 260, 'min_length': 1, 'pattern': r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'},
+    }
+
+    _attribute_map = {
+        'new_name': {'key': 'newName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ArtifactRenameRequest, self).__init__(**kwargs)
+        self.new_name = kwargs.get('new_name', None)
 
 
 class AutoPauseProperties(msrest.serialization.Model):
@@ -2478,7 +2501,7 @@ class ExecutionActivity(Activity):
     """Base class for all execution activities.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureDataExplorerCommandActivity, AzureFunctionActivity, AzureMLBatchExecutionActivity, AzureMLExecutePipelineActivity, AzureMLUpdateResourceActivity, CopyActivity, CustomActivity, DataLakeAnalyticsUSQLActivity, DatabricksNotebookActivity, DatabricksSparkJarActivity, DatabricksSparkPythonActivity, DeleteActivity, ExecuteDataFlowActivity, ExecuteSSISPackageActivity, GetMetadataActivity, HDInsightHiveActivity, HDInsightMapReduceActivity, HDInsightPigActivity, HDInsightSparkActivity, HDInsightStreamingActivity, LookupActivity, SqlServerStoredProcedureActivity, WebActivity.
+    sub-classes are: AzureDataExplorerCommandActivity, AzureFunctionActivity, AzureMLBatchExecutionActivity, AzureMLExecutePipelineActivity, AzureMLUpdateResourceActivity, CopyActivity, CustomActivity, DataLakeAnalyticsUSQLActivity, DatabricksNotebookActivity, DatabricksSparkJarActivity, DatabricksSparkPythonActivity, DeleteActivity, ExecuteDataFlowActivity, ExecuteSSISPackageActivity, GetMetadataActivity, HDInsightHiveActivity, HDInsightMapReduceActivity, HDInsightPigActivity, HDInsightSparkActivity, HDInsightStreamingActivity, LookupActivity, SynapseSparkJobDefinitionActivity, SqlServerStoredProcedureActivity, SynapseNotebookActivity, WebActivity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2518,7 +2541,7 @@ class ExecutionActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'AzureFunctionActivity': 'AzureFunctionActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'AzureMLExecutePipeline': 'AzureMLExecutePipelineActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'Copy': 'CopyActivity', 'Custom': 'CustomActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'Delete': 'DeleteActivity', 'ExecuteDataFlow': 'ExecuteDataFlowActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'GetMetadata': 'GetMetadataActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'Lookup': 'LookupActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'WebActivity': 'WebActivity'}
+        'type': {'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'AzureFunctionActivity': 'AzureFunctionActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'AzureMLExecutePipeline': 'AzureMLExecutePipelineActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'Copy': 'CopyActivity', 'Custom': 'CustomActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'Delete': 'DeleteActivity', 'ExecuteDataFlow': 'ExecuteDataFlowActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'GetMetadata': 'GetMetadataActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'Lookup': 'LookupActivity', 'SparkJob': 'SynapseSparkJobDefinitionActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'SynapseNotebook': 'SynapseNotebookActivity', 'WebActivity': 'WebActivity'}
     }
 
     def __init__(
@@ -3248,17 +3271,17 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
 
 
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -3285,17 +3308,17 @@ class Resource(msrest.serialization.Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an etag.
+    """The resource model definition for an Azure Resource Manager resource with an etag.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -5890,19 +5913,19 @@ class BigDataPoolReference(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -5941,13 +5964,13 @@ class BigDataPoolResourceInfo(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -5963,18 +5986,24 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type auto_pause: ~azure.synapse.artifacts.models.AutoPauseProperties
     :param is_compute_isolation_enabled: Whether compute isolation is required or not.
     :type is_compute_isolation_enabled: bool
+    :param have_library_requirements_changed: Whether library requirements changed.
+    :type have_library_requirements_changed: bool
+    :param session_level_packages_enabled: Whether session level packages enabled.
+    :type session_level_packages_enabled: bool
     :param spark_events_folder: The Spark events folder.
     :type spark_events_folder: str
     :param node_count: The number of nodes in the Big Data pool.
     :type node_count: int
     :param library_requirements: Library version requirements.
     :type library_requirements: ~azure.synapse.artifacts.models.LibraryRequirements
+    :param spark_config_properties: Spark configuration file to specify additional properties.
+    :type spark_config_properties: ~azure.synapse.artifacts.models.LibraryRequirements
     :param spark_version: The Apache Spark version.
     :type spark_version: str
     :param default_spark_log_folder: The default folder where Spark logs will be written.
     :type default_spark_log_folder: str
     :param node_size: The level of compute power that each node in the Big Data pool has. Possible
-     values include: "None", "Small", "Medium", "Large", "XLarge", "XXLarge".
+     values include: "None", "Small", "Medium", "Large", "XLarge", "XXLarge", "XXXLarge".
     :type node_size: str or ~azure.synapse.artifacts.models.NodeSize
     :param node_size_family: The kind of nodes that the Big Data pool provides. Possible values
      include: "None", "MemoryOptimized".
@@ -5999,9 +6028,12 @@ class BigDataPoolResourceInfo(TrackedResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'auto_pause': {'key': 'properties.autoPause', 'type': 'AutoPauseProperties'},
         'is_compute_isolation_enabled': {'key': 'properties.isComputeIsolationEnabled', 'type': 'bool'},
+        'have_library_requirements_changed': {'key': 'properties.haveLibraryRequirementsChanged', 'type': 'bool'},
+        'session_level_packages_enabled': {'key': 'properties.sessionLevelPackagesEnabled', 'type': 'bool'},
         'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
+        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
@@ -6018,9 +6050,12 @@ class BigDataPoolResourceInfo(TrackedResource):
         self.creation_date = kwargs.get('creation_date', None)
         self.auto_pause = kwargs.get('auto_pause', None)
         self.is_compute_isolation_enabled = kwargs.get('is_compute_isolation_enabled', None)
+        self.have_library_requirements_changed = kwargs.get('have_library_requirements_changed', None)
+        self.session_level_packages_enabled = kwargs.get('session_level_packages_enabled', None)
         self.spark_events_folder = kwargs.get('spark_events_folder', None)
         self.node_count = kwargs.get('node_count', None)
         self.library_requirements = kwargs.get('library_requirements', None)
+        self.spark_config_properties = kwargs.get('spark_config_properties', None)
         self.spark_version = kwargs.get('spark_version', None)
         self.default_spark_log_folder = kwargs.get('default_spark_log_folder', None)
         self.node_size = kwargs.get('node_size', None)
@@ -6349,7 +6384,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     :param ignore_empty_blobs: If set to true, blobs with zero bytes will be ignored.
     :type ignore_empty_blobs: bool
     :param events: Required. The type of events that cause this trigger to fire.
-    :type events: list[str or ~azure.synapse.artifacts.models.BlobEventTypes]
+    :type events: list[str or ~azure.synapse.artifacts.models.BlobEventType]
     :param scope: Required. The ARM resource ID of the Storage Account.
     :type scope: str
     """
@@ -8449,6 +8484,35 @@ class CustomDataSourceLinkedService(LinkedService):
         self.type_properties = kwargs['type_properties']
 
 
+class CustomerManagedKeyDetails(msrest.serialization.Model):
+    """Details of the customer managed key associated with the workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The customer managed key status on the workspace.
+    :vartype status: str
+    :param key: The key object of the workspace.
+    :type key: ~azure.synapse.artifacts.models.WorkspaceKeyDetails
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'WorkspaceKeyDetails'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CustomerManagedKeyDetails, self).__init__(**kwargs)
+        self.status = None
+        self.key = kwargs.get('key', None)
+
+
 class CustomSetupBase(msrest.serialization.Model):
     """The base definition of the custom setup.
 
@@ -9148,13 +9212,13 @@ class DataFlowResource(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -9707,13 +9771,13 @@ class DatasetResource(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -11841,6 +11905,35 @@ class EloquaSource(TabularSource):
         self.query = kwargs.get('query', None)
 
 
+class EncryptionDetails(msrest.serialization.Model):
+    """Details of the encryption associated with the workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar double_encryption_enabled: Double Encryption enabled.
+    :vartype double_encryption_enabled: bool
+    :param cmk: Customer Managed Key Details.
+    :type cmk: ~azure.synapse.artifacts.models.CustomerManagedKeyDetails
+    """
+
+    _validation = {
+        'double_encryption_enabled': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'double_encryption_enabled': {'key': 'doubleEncryptionEnabled', 'type': 'bool'},
+        'cmk': {'key': 'cmk', 'type': 'CustomerManagedKeyDetails'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EncryptionDetails, self).__init__(**kwargs)
+        self.double_encryption_enabled = None
+        self.cmk = kwargs.get('cmk', None)
+
+
 class EntityReference(msrest.serialization.Model):
     """The entity reference.
 
@@ -11915,7 +12008,7 @@ class ErrorContract(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -12982,6 +13075,60 @@ class GetSsisObjectMetadataRequest(msrest.serialization.Model):
     ):
         super(GetSsisObjectMetadataRequest, self).__init__(**kwargs)
         self.metadata_path = kwargs.get('metadata_path', None)
+
+
+class GitHubAccessTokenRequest(msrest.serialization.Model):
+    """GitHubAccessTokenRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param git_hub_client_id: Required. The GitHub Client Id.
+    :type git_hub_client_id: str
+    :param git_hub_access_code: Required. The GitHub Access code.
+    :type git_hub_access_code: str
+    :param git_hub_access_token_base_url: Required. The GitHub access token base URL.
+    :type git_hub_access_token_base_url: str
+    """
+
+    _validation = {
+        'git_hub_client_id': {'required': True},
+        'git_hub_access_code': {'required': True},
+        'git_hub_access_token_base_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'git_hub_client_id': {'key': 'gitHubClientId', 'type': 'str'},
+        'git_hub_access_code': {'key': 'gitHubAccessCode', 'type': 'str'},
+        'git_hub_access_token_base_url': {'key': 'gitHubAccessTokenBaseUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GitHubAccessTokenRequest, self).__init__(**kwargs)
+        self.git_hub_client_id = kwargs['git_hub_client_id']
+        self.git_hub_access_code = kwargs['git_hub_access_code']
+        self.git_hub_access_token_base_url = kwargs['git_hub_access_token_base_url']
+
+
+class GitHubAccessTokenResponse(msrest.serialization.Model):
+    """GitHubAccessTokenResponse.
+
+    :param git_hub_access_token:
+    :type git_hub_access_token: str
+    """
+
+    _attribute_map = {
+        'git_hub_access_token': {'key': 'gitHubAccessToken', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GitHubAccessTokenResponse, self).__init__(**kwargs)
+        self.git_hub_access_token = kwargs.get('git_hub_access_token', None)
 
 
 class GoogleAdWordsLinkedService(LinkedService):
@@ -16352,13 +16499,13 @@ class IntegrationRuntimeResource(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -17211,13 +17358,13 @@ class LinkedServiceResource(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -17610,6 +17757,33 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         self.state = None
         self.compute_properties = kwargs.get('compute_properties', None)
         self.ssis_properties = kwargs.get('ssis_properties', None)
+
+
+class ManagedVirtualNetworkSettings(msrest.serialization.Model):
+    """Managed Virtual Network Settings.
+
+    :param prevent_data_exfiltration: Prevent Data Exfiltration.
+    :type prevent_data_exfiltration: bool
+    :param linked_access_check_on_target_resource: Linked Access Check On Target Resource.
+    :type linked_access_check_on_target_resource: bool
+    :param allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For Linking.
+    :type allowed_aad_tenant_ids_for_linking: list[str]
+    """
+
+    _attribute_map = {
+        'prevent_data_exfiltration': {'key': 'preventDataExfiltration', 'type': 'bool'},
+        'linked_access_check_on_target_resource': {'key': 'linkedAccessCheckOnTargetResource', 'type': 'bool'},
+        'allowed_aad_tenant_ids_for_linking': {'key': 'allowedAadTenantIdsForLinking', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagedVirtualNetworkSettings, self).__init__(**kwargs)
+        self.prevent_data_exfiltration = kwargs.get('prevent_data_exfiltration', None)
+        self.linked_access_check_on_target_resource = kwargs.get('linked_access_check_on_target_resource', None)
+        self.allowed_aad_tenant_ids_for_linking = kwargs.get('allowed_aad_tenant_ids_for_linking', None)
 
 
 class MappingDataFlow(DataFlow):
@@ -19321,7 +19495,7 @@ class NotebookMetadata(msrest.serialization.Model):
         self.language_info = kwargs.get('language_info', None)
 
 
-class NotebookResource(AzureEntityResource):
+class NotebookResource(msrest.serialization.Model):
     """Notebook resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -19331,8 +19505,8 @@ class NotebookResource(AzureEntityResource):
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
+    :param name: Required. The name of the resource.
+    :type name: str
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
@@ -19344,7 +19518,7 @@ class NotebookResource(AzureEntityResource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
+        'name': {'required': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'properties': {'required': True},
@@ -19363,6 +19537,10 @@ class NotebookResource(AzureEntityResource):
         **kwargs
     ):
         super(NotebookResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = kwargs['name']
+        self.type = None
+        self.etag = None
         self.properties = kwargs['properties']
 
 
@@ -21442,13 +21620,13 @@ class PipelineResource(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -22141,13 +22319,13 @@ class PrivateEndpointConnection(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param private_endpoint: The private endpoint which the connection belongs to.
     :type private_endpoint: ~azure.synapse.artifacts.models.PrivateEndpoint
@@ -22190,9 +22368,8 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param status: The private link service connection status. Possible values include: "Approved",
-     "Pending", "Rejected", "Disconnected".
-    :type status: str or ~azure.synapse.artifacts.models.PrivateLinkServiceConnectionStateStatus
+    :param status: The private link service connection status.
+    :type status: str
     :param description: The private link service connection description.
     :type description: str
     :ivar actions_required: The actions required for private link service connection.
@@ -22220,17 +22397,17 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -22251,6 +22428,25 @@ class ProxyResource(Resource):
         **kwargs
     ):
         super(ProxyResource, self).__init__(**kwargs)
+
+
+class PurviewConfiguration(msrest.serialization.Model):
+    """Purview Configuration.
+
+    :param purview_resource_id: Purview Resource ID.
+    :type purview_resource_id: str
+    """
+
+    _attribute_map = {
+        'purview_resource_id': {'key': 'purviewResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PurviewConfiguration, self).__init__(**kwargs)
+        self.purview_resource_id = kwargs.get('purview_resource_id', None)
 
 
 class QueryDataFlowDebugSessionsResponse(msrest.serialization.Model):
@@ -22751,13 +22947,13 @@ class RerunTriggerResource(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -25678,7 +25874,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
     :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeType
     :param description: Integration runtime description.
     :type description: str
-    :param linked_info: The base definition of a linked integration runtime.
+    :param linked_info: Linked integration runtime type from data factory.
     :type linked_info: ~azure.synapse.artifacts.models.LinkedIntegrationRuntimeType
     """
 
@@ -26598,13 +26794,13 @@ class SparkJobDefinitionResource(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -27481,13 +27677,13 @@ class SqlPool(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -27508,7 +27704,7 @@ class SqlPool(TrackedResource):
     :param status: Resource status.
     :type status: str
     :param restore_point_in_time: Snapshot time to restore.
-    :type restore_point_in_time: ~datetime.datetime
+    :type restore_point_in_time: str
     :param create_mode: What is this?.
     :type create_mode: str
     :param creation_date: Date the SQL pool was created.
@@ -27535,7 +27731,7 @@ class SqlPool(TrackedResource):
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'str'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
     }
@@ -27770,7 +27966,7 @@ class SqlScriptMetadata(msrest.serialization.Model):
         self.language = kwargs.get('language', None)
 
 
-class SqlScriptResource(AzureEntityResource):
+class SqlScriptResource(msrest.serialization.Model):
     """Sql Script resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27780,8 +27976,8 @@ class SqlScriptResource(AzureEntityResource):
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
+    :param name: Required. The name of the resource.
+    :type name: str
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
@@ -27793,7 +27989,7 @@ class SqlScriptResource(AzureEntityResource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
+        'name': {'required': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'properties': {'required': True},
@@ -27812,6 +28008,10 @@ class SqlScriptResource(AzureEntityResource):
         **kwargs
     ):
         super(SqlScriptResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = kwargs['name']
+        self.type = None
+        self.etag = None
         self.properties = kwargs['properties']
 
 
@@ -28936,13 +29136,13 @@ class SubResource(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -29235,7 +29435,7 @@ class SybaseTableDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
-class SynapseNotebookActivity(Activity):
+class SynapseNotebookActivity(ExecutionActivity):
     """Execute Synapse notebook activity.
 
     All required parameters must be populated in order to send to Azure.
@@ -29253,6 +29453,10 @@ class SynapseNotebookActivity(Activity):
     :type depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param notebook: Required. Synapse notebook reference.
     :type notebook: ~azure.synapse.artifacts.models.SynapseNotebookReference
     :param parameters: Notebook parameters.
@@ -29272,6 +29476,8 @@ class SynapseNotebookActivity(Activity):
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'notebook': {'key': 'typeProperties.notebook', 'type': 'SynapseNotebookReference'},
         'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
     }
@@ -29317,7 +29523,7 @@ class SynapseNotebookReference(msrest.serialization.Model):
         self.reference_name = kwargs['reference_name']
 
 
-class SynapseSparkJobDefinitionActivity(Activity):
+class SynapseSparkJobDefinitionActivity(ExecutionActivity):
     """Execute spark job activity.
 
     All required parameters must be populated in order to send to Azure.
@@ -29335,6 +29541,10 @@ class SynapseSparkJobDefinitionActivity(Activity):
     :type depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param spark_job: Required. Synapse spark job reference.
     :type spark_job: ~azure.synapse.artifacts.models.SynapseSparkJobReference
     """
@@ -29352,6 +29562,8 @@ class SynapseSparkJobDefinitionActivity(Activity):
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'spark_job': {'key': 'typeProperties.sparkJob', 'type': 'SynapseSparkJobReference'},
     }
 
@@ -29915,13 +30127,13 @@ class TriggerResource(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -31172,13 +31384,13 @@ class Workspace(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -31209,8 +31421,20 @@ class Workspace(TrackedResource):
     :param private_endpoint_connections: Private endpoint connections to the workspace.
     :type private_endpoint_connections:
      list[~azure.synapse.artifacts.models.PrivateEndpointConnection]
+    :param encryption: The encryption details of the workspace.
+    :type encryption: ~azure.synapse.artifacts.models.EncryptionDetails
+    :ivar workspace_uid: The workspace unique identifier.
+    :vartype workspace_uid: str
     :ivar extra_properties: Workspace level configs and feature flags.
     :vartype extra_properties: dict[str, object]
+    :param managed_virtual_network_settings: Managed Virtual Network Settings.
+    :type managed_virtual_network_settings:
+     ~azure.synapse.artifacts.models.ManagedVirtualNetworkSettings
+    :param workspace_repository_configuration: Git integration settings.
+    :type workspace_repository_configuration:
+     ~azure.synapse.artifacts.models.WorkspaceRepositoryConfiguration
+    :param purview_configuration: Purview Configuration.
+    :type purview_configuration: ~azure.synapse.artifacts.models.PurviewConfiguration
     """
 
     _validation = {
@@ -31219,6 +31443,7 @@ class Workspace(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
+        'workspace_uid': {'readonly': True},
         'extra_properties': {'readonly': True},
     }
 
@@ -31238,7 +31463,12 @@ class Workspace(TrackedResource):
         'connectivity_endpoints': {'key': 'properties.connectivityEndpoints', 'type': '{str}'},
         'managed_virtual_network': {'key': 'properties.managedVirtualNetwork', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionDetails'},
+        'workspace_uid': {'key': 'properties.workspaceUID', 'type': 'str'},
         'extra_properties': {'key': 'properties.extraProperties', 'type': '{object}'},
+        'managed_virtual_network_settings': {'key': 'properties.managedVirtualNetworkSettings', 'type': 'ManagedVirtualNetworkSettings'},
+        'workspace_repository_configuration': {'key': 'properties.workspaceRepositoryConfiguration', 'type': 'WorkspaceRepositoryConfiguration'},
+        'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
     }
 
     def __init__(
@@ -31256,7 +31486,12 @@ class Workspace(TrackedResource):
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
         self.managed_virtual_network = kwargs.get('managed_virtual_network', None)
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.workspace_uid = None
         self.extra_properties = None
+        self.managed_virtual_network_settings = kwargs.get('managed_virtual_network_settings', None)
+        self.workspace_repository_configuration = kwargs.get('workspace_repository_configuration', None)
+        self.purview_configuration = kwargs.get('purview_configuration', None)
 
 
 class WorkspaceIdentity(msrest.serialization.Model):
@@ -31296,6 +31531,73 @@ class WorkspaceIdentity(msrest.serialization.Model):
         super(WorkspaceIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+
+
+class WorkspaceKeyDetails(msrest.serialization.Model):
+    """Details of the customer managed key associated with the workspace.
+
+    :param name: Workspace Key sub-resource name.
+    :type name: str
+    :param key_vault_url: Workspace Key sub-resource key vault url.
+    :type key_vault_url: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'key_vault_url': {'key': 'keyVaultUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WorkspaceKeyDetails, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.key_vault_url = kwargs.get('key_vault_url', None)
+
+
+class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
+    """Git integration settings.
+
+    :param type: Type of workspace repositoryID configuration. Example WorkspaceVSTSConfiguration,
+     WorkspaceGitHubConfiguration.
+    :type type: str
+    :param host_name: GitHub Enterprise host name. For example: https://github.mydomain.com.
+    :type host_name: str
+    :param account_name: Account name.
+    :type account_name: str
+    :param project_name: VSTS project name.
+    :type project_name: str
+    :param repository_name: Repository name.
+    :type repository_name: str
+    :param collaboration_branch: Collaboration branch.
+    :type collaboration_branch: str
+    :param root_folder: Root folder to use in the repository.
+    :type root_folder: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'repository_name': {'key': 'repositoryName', 'type': 'str'},
+        'collaboration_branch': {'key': 'collaborationBranch', 'type': 'str'},
+        'root_folder': {'key': 'rootFolder', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WorkspaceRepositoryConfiguration, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.account_name = kwargs.get('account_name', None)
+        self.project_name = kwargs.get('project_name', None)
+        self.repository_name = kwargs.get('repository_name', None)
+        self.collaboration_branch = kwargs.get('collaboration_branch', None)
+        self.root_folder = kwargs.get('root_folder', None)
 
 
 class WorkspaceUpdateParameters(msrest.serialization.Model):
