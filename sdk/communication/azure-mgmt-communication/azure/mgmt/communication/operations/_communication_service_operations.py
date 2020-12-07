@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class CommunicationServiceOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -47,14 +47,79 @@ class CommunicationServiceOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    def check_name_availability(
+        self,
+        name_availability_parameters=None,  # type: Optional["_models.NameAvailabilityParameters"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.NameAvailability"
+        """Check Name Availability.
+
+        Checks that the CommunicationService name is valid and is not already in use.
+
+        :param name_availability_parameters: Parameters supplied to the operation.
+        :type name_availability_parameters: ~communication_service_management_client.models.NameAvailabilityParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NameAvailability, or the result of cls(response)
+        :rtype: ~communication_service_management_client.models.NameAvailability
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NameAvailability"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-20-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.check_name_availability.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if name_availability_parameters is not None:
+            body_content = self._serialize.body(name_availability_parameters, 'NameAvailabilityParameters')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('NameAvailability', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Communication/checkNameAvailability'}  # type: ignore
+
     def link_notification_hub(
         self,
         resource_group_name,  # type: str
         communication_service_name,  # type: str
-        link_notification_hub_parameters=None,  # type: Optional["models.LinkNotificationHubParameters"]
+        link_notification_hub_parameters=None,  # type: Optional["_models.LinkNotificationHubParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LinkedNotificationHub"
+        # type: (...) -> "_models.LinkedNotificationHub"
         """Link Notification Hub.
 
         Links an Azure Notification Hub to this communication service.
@@ -71,7 +136,7 @@ class CommunicationServiceOperations(object):
         :rtype: ~communication_service_management_client.models.LinkedNotificationHub
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LinkedNotificationHub"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkedNotificationHub"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -83,7 +148,7 @@ class CommunicationServiceOperations(object):
         # Construct URL
         url = self.link_notification_hub.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
         }
@@ -110,7 +175,7 @@ class CommunicationServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LinkedNotificationHub', pipeline_response)
@@ -125,7 +190,7 @@ class CommunicationServiceOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CommunicationServiceResourceList"]
+        # type: (...) -> Iterable["_models.CommunicationServiceResourceList"]
         """List By Subscription.
 
         Handles requests to list all resources in a subscription.
@@ -135,7 +200,7 @@ class CommunicationServiceOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~communication_service_management_client.models.CommunicationServiceResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationServiceResourceList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceResourceList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -152,7 +217,7 @@ class CommunicationServiceOperations(object):
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -180,7 +245,7 @@ class CommunicationServiceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -196,7 +261,7 @@ class CommunicationServiceOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CommunicationServiceResourceList"]
+        # type: (...) -> Iterable["_models.CommunicationServiceResourceList"]
         """List By Resource Group.
 
         Handles requests to list all resources in a resource group.
@@ -209,7 +274,7 @@ class CommunicationServiceOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~communication_service_management_client.models.CommunicationServiceResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationServiceResourceList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceResourceList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -226,7 +291,7 @@ class CommunicationServiceOperations(object):
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -255,7 +320,7 @@ class CommunicationServiceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -270,10 +335,10 @@ class CommunicationServiceOperations(object):
         self,
         resource_group_name,  # type: str
         communication_service_name,  # type: str
-        parameters=None,  # type: Optional["models.TaggedResource"]
+        parameters=None,  # type: Optional["_models.TaggedResource"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CommunicationServiceResource"
+        # type: (...) -> "_models.CommunicationServiceResource"
         """Update.
 
         Operation to update an existing CommunicationService.
@@ -290,7 +355,7 @@ class CommunicationServiceOperations(object):
         :rtype: ~communication_service_management_client.models.CommunicationServiceResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationServiceResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -302,7 +367,7 @@ class CommunicationServiceOperations(object):
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
         }
@@ -329,7 +394,7 @@ class CommunicationServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CommunicationServiceResource', pipeline_response)
@@ -346,7 +411,7 @@ class CommunicationServiceOperations(object):
         communication_service_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CommunicationServiceResource"
+        # type: (...) -> "_models.CommunicationServiceResource"
         """Get.
 
         Get the CommunicationService and its properties.
@@ -361,7 +426,7 @@ class CommunicationServiceOperations(object):
         :rtype: ~communication_service_management_client.models.CommunicationServiceResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationServiceResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -372,7 +437,7 @@ class CommunicationServiceOperations(object):
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
         }
@@ -392,7 +457,7 @@ class CommunicationServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CommunicationServiceResource', pipeline_response)
@@ -407,11 +472,11 @@ class CommunicationServiceOperations(object):
         self,
         resource_group_name,  # type: str
         communication_service_name,  # type: str
-        parameters=None,  # type: Optional["models.CommunicationServiceResource"]
+        parameters=None,  # type: Optional["_models.CommunicationServiceResource"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CommunicationServiceResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationServiceResource"]
+        # type: (...) -> "_models.CommunicationServiceResource"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -423,7 +488,7 @@ class CommunicationServiceOperations(object):
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
         }
@@ -450,7 +515,7 @@ class CommunicationServiceOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -471,10 +536,10 @@ class CommunicationServiceOperations(object):
         self,
         resource_group_name,  # type: str
         communication_service_name,  # type: str
-        parameters=None,  # type: Optional["models.CommunicationServiceResource"]
+        parameters=None,  # type: Optional["_models.CommunicationServiceResource"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.CommunicationServiceResource"]
+        # type: (...) -> LROPoller["_models.CommunicationServiceResource"]
         """Create Or Update.
 
         Create a new CommunicationService or update an existing CommunicationService.
@@ -497,7 +562,7 @@ class CommunicationServiceOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationServiceResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -516,16 +581,19 @@ class CommunicationServiceOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
             deserialized = self._deserialize('CommunicationServiceResource', pipeline_response)
 
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -557,7 +625,7 @@ class CommunicationServiceOperations(object):
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
         }
@@ -577,7 +645,7 @@ class CommunicationServiceOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -637,7 +705,13 @@ class CommunicationServiceOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -657,7 +731,7 @@ class CommunicationServiceOperations(object):
         communication_service_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CommunicationServiceKeys"
+        # type: (...) -> "_models.CommunicationServiceKeys"
         """List Keys.
 
         Get the access keys of the CommunicationService resource.
@@ -672,7 +746,7 @@ class CommunicationServiceOperations(object):
         :rtype: ~communication_service_management_client.models.CommunicationServiceKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationServiceKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -683,7 +757,7 @@ class CommunicationServiceOperations(object):
         # Construct URL
         url = self.list_keys.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
         }
@@ -703,7 +777,7 @@ class CommunicationServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CommunicationServiceKeys', pipeline_response)
@@ -718,10 +792,10 @@ class CommunicationServiceOperations(object):
         self,
         resource_group_name,  # type: str
         communication_service_name,  # type: str
-        parameters=None,  # type: Optional["models.RegenerateKeyParameters"]
+        parameters=None,  # type: Optional["_models.RegenerateKeyParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CommunicationServiceKeys"
+        # type: (...) -> "_models.CommunicationServiceKeys"
         """Regenerate Key.
 
         Regenerate CommunicationService access key. PrimaryKey and SecondaryKey cannot be regenerated
@@ -739,7 +813,7 @@ class CommunicationServiceOperations(object):
         :rtype: ~communication_service_management_client.models.CommunicationServiceKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationServiceKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -751,7 +825,7 @@ class CommunicationServiceOperations(object):
         # Construct URL
         url = self.regenerate_key.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str'),
         }
@@ -778,7 +852,7 @@ class CommunicationServiceOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
