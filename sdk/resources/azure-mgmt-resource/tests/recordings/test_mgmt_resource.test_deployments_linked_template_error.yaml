@@ -16,7 +16,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -25,7 +25,7 @@ interactions:
     body:
       string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
         deployment ''pytestlinkedafa117b7'' is not valid according to the validation
-        procedure. The tracking id is ''34973261-8e96-479b-b79d-875d8197ea4d''. See
+        procedure. The tracking id is ''e6d52feb-a202-40b1-92aa-7de2f2650815''. See
         inner errors for details.","details":[{"code":"InvalidDomainNameLabel","message":"The
         domain name label GEN-UNIQUE is invalid. It must conform to the following
         regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.","details":[]}]}}'
@@ -37,7 +37,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:35:57 GMT
+      - Fri, 04 Dec 2020 07:48:50 GMT
       expires:
       - '-1'
       pragma:
@@ -49,7 +49,7 @@ interactions:
       x-ms-failure-cause:
       - gateway
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 400
       message: Bad Request

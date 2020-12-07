@@ -10,7 +10,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: HEAD
@@ -26,7 +26,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:37:15 GMT
+      - Fri, 04 Dec 2020 07:50:08 GMT
       expires:
       - '-1'
       pragma:
@@ -55,7 +55,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -75,7 +75,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:37:21 GMT
+      - Fri, 04 Dec 2020 07:50:17 GMT
       expires:
       - '-1'
       pragma:
@@ -92,9 +92,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1197
+      - Microsoft.Compute/PutVM3Min;237,Microsoft.Compute/PutVM30Min;1193
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1193'
     status:
       code: 200
       message: OK
@@ -109,7 +109,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -129,7 +129,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:37:22 GMT
+      - Fri, 04 Dec 2020 07:50:18 GMT
       expires:
       - '-1'
       pragma:
@@ -146,7 +146,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;3999,Microsoft.Compute/LowCostGet30Min;31995
+      - Microsoft.Compute/LowCostGet3Min;3993,Microsoft.Compute/LowCostGet30Min;31927
     status:
       code: 200
       message: OK
@@ -161,7 +161,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -177,7 +177,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:37:22 GMT
+      - Fri, 04 Dec 2020 07:50:18 GMT
       expires:
       - '-1'
       pragma:
@@ -204,7 +204,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -218,7 +218,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Oct 2020 05:37:27 GMT
+      - Fri, 04 Dec 2020 07:50:22 GMT
       expires:
       - '-1'
       pragma:
@@ -231,9 +231,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/DeleteVM3Min;237,Microsoft.Compute/DeleteVM30Min;1197
+      - Microsoft.Compute/DeleteVM3Min;237,Microsoft.Compute/DeleteVM30Min;1194
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14995'
     status:
       code: 200
       message: OK

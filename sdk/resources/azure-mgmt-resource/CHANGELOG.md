@@ -1,5 +1,31 @@
 # Release History
 
+## 11.0.0 (2020-12-04)
+
+**Features**
+
+  - Model PolicyAssignment has a new parameter non_compliance_messages
+  - Model ProviderResourceType has a new parameter location_mappings
+  - Model ParameterDefinitionsValueMetadata has a new parameter strong_type
+  - Model ParameterDefinitionsValueMetadata has a new parameter assign_permissions
+  - Model TemplateLink has a new parameter query_string
+  - Added operation PolicySetDefinitionsOperations.list_by_management_group
+  - Added operation PolicyDefinitionsOperations.list_by_management_group
+  - Added operation group DataPolicyManifestsOperations
+  - Added operation group ProviderResourceTypesOperations
+
+**Breaking changes**
+
+  - Operation PolicyAssignmentsOperations.list has a new signature
+  - Operation PolicyAssignmentsOperations.list_for_management_group has a new signature
+  - Operation PolicyAssignmentsOperations.list_for_resource has a new signature
+  - Operation PolicyAssignmentsOperations.list_for_resource_group has a new signature
+  - Operation PolicySetDefinitionsOperations.list_built_in has a new signature
+  - Operation PolicySetDefinitionsOperations.list has a new signature
+  - Operation PolicyDefinitionsOperations.list_built_in has a new signature
+  - Operation PolicyDefinitionsOperations.list has a new signature
+  - Model PolicyAssignment no longer has parameter sku
+
 ## 10.3.0 (2020-11-02)
 **Features**
 
