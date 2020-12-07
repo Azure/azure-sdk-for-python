@@ -38,6 +38,7 @@ def prep_samples(targeted_packages):
 
 
 def run_samples(targeted_packages_directories):
+    logging.info("running samples for {}".format(targeted_packages))
     samples_errors = []
 
     for pkg_dir in targeted_packages_directories:
@@ -66,17 +67,17 @@ def run_samples(targeted_packages_directories):
             errors = run_check_call(command_array, root_dir, always_exit=False)
 
             if errors:
-                samples_errors.append(errors)
+                samples_errors.append(sample)
                 logging.info(
-                    "ERROR: {}".format(sample)
+                    "\nERROR: {}".format(sample)
                 )
             else:
                 logging.info(
-                    "SUCCESS: {}.".format(sample)
+                    "\nSUCCESS: {}.".format(sample)
                 )
 
     if samples_errors:
-        logging.error(samples_errors)
+        logging.error("Sample(s) that ran with errors: {}".format(samples_errors))
         exit(1)
 
     logging.info(
@@ -99,42 +100,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--junitxml",
-        dest="test_results",
-        help=(
-            "The folder where the test results will be stored in xml format."
-            'Example: --junitxml="junit/test-results.xml"'
-        ),
-    )
-
-    parser.add_argument(
-        "--mark_arg",
-        dest="mark_arg",
-        help=(
-            'The complete argument for `pytest -m "<input>"`. This can be used to exclude or include specific pytest markers.'
-            '--mark_arg="not cosmosEmulator"'
-        ),
-    )
-
-    parser.add_argument(
-        "--disablecov", help=("Flag that disables code coverage."), action="store_true"
-    )
-
-    parser.add_argument(
-        "--tparallel",
-        default=False,
-        help=("Flag  that enables parallel tox invocation."),
-        action="store_true",
-    )
-
-    parser.add_argument(
-        "--tenvparallel",
-        default=False,
-        help=("Run individual tox env for each package in parallel."),
-        action="store_true",
-    )
-
-    parser.add_argument(
         "--service",
         help=(
             "Name of service directory (under sdk/) to test."
@@ -143,54 +108,11 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-r", "--runtype", choices=["setup", "execute", "all", "none"], default="none"
-    )
-
-    parser.add_argument(
-        "-t",
-        "--toxenv",
-        dest="tox_env",
-        help="Specific set of named environments to execute",
-    )
-
-    parser.add_argument(
-        "-w",
-        "--wheel_dir",
-        dest="wheel_dir",
-        help="Location for prebuilt artifacts (if any)",
-    )
-
-    parser.add_argument(
-        "-x",
-        "--xdist",
-        default=False,
-        help=("Flag that enables xdist (requires pip install)"),
-        action="store_true"
-    )
-
-    parser.add_argument(
-        "-i",
-        "--injected-packages",
-        dest="injected_packages",
-        default="",
-        help="Comma or space-separated list of packages that should be installed prior to dev_requirements. If local path, should be absolute.",
-    )
-
-    parser.add_argument(
-        "--filter-type",
-        dest="filter_type",
-        default='Build',
-        help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
-        choices=['Build', "Docs", "Regression", "Omit_management"]
-    )
-
-    parser.add_argument(
         "--test-samples",
         dest="test_samples",
         default=False,
         help="Whether or not to execute library samples as tests."
     )
-
 
     args = parser.parse_args()
 
@@ -204,19 +126,12 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir, "", args.filter_type)
+    targeted_packages = process_glob_string(args.glob_string, target_dir)
 
     if len(targeted_packages) == 0:
         exit(0)
 
-
     logging.info("User opted to run samples")
-    logging.info("Root dir is {}".format(root_dir))
-    logging.info("Glog string is {}".format(args.glob_string))
-    logging.info("service dir is {}".format(service_dir))
-    logging.info("target dir is {}".format(target_dir))
-    logging.info("targeted packages are {}".format(targeted_packages))
-
 
     prep_samples(targeted_packages)
     run_samples(targeted_packages)
