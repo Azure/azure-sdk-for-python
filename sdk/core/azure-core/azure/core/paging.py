@@ -196,10 +196,16 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :keyword initial_request: Required. The request for our intial call to the service
          to begin paging
         :paramtype initial_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword str continuation_token_location: Required. Specifies the name of the property that provides
+         the continuation token. Common values include `next_link` and `token`.
         :keyword callable next_request_partial: A partial function that will take
          in the continuation token and return the request for a subsequent call to the service.
          If you don't pass one in, we will create one for you, based off of the initial_request
          you pass in.
+        :keyword str item_name: Specifies the name of the property that provides the collection of pageable
+         items. Defaults to `value`.
+        :keyword callable cls: A custom type or function that will modify each element of the pageable items.
+         Takes a list of iterables as an input.
         """
         self._initial_request = kwargs.pop("initial_request", None)
         self._next_request_partial = kwargs.pop("next_request_partial", self._default_next_request_partial)
@@ -303,6 +309,19 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         :param client: The client used to make requests
         :type client: ~azure.core.PipelineClient
         :param callable deserialize_output: Callback to deserialize response output
+        :keyword initial_response: Required. The response of the first request to start paging. In LRO + paging,
+         the LRO function's final returned object is the initial response.
+        :paramtype initial_response: ~azure.core.pipeline.transport.HttpResponse
+        :keyword str continuation_token_location: Required. Specifies the name of the property that provides
+         the continuation token. Common values include `next_link` and `token`.
+        :keyword callable next_request_partial: A partial function that will take
+         in the continuation token and return the request for a subsequent call to the service.
+         If you don't pass one in, we will create one for you, based off of the initial_request
+         you pass in.
+        :keyword str item_name: Specifies the name of the property that provides the collection of pageable
+         items. Defaults to `value`.
+        :keyword callable cls: A custom type or function that will modify each element of the pageable items.
+         Takes a list of iterables as an input.
         """
         self._initial_response = kwargs.pop("initial_response", None)
         super(PagingMethodWithInitialResponse, self).initialize(client, deserialize_output, **kwargs)
