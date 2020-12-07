@@ -10,6 +10,7 @@ import argparse
 import sys
 import os
 import logging
+from fnmatch import fnmatch
 from common_tasks import (
     run_check_call,
     process_glob_string,
@@ -20,6 +21,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
+
 
 def prep_samples(targeted_packages):
     logging.info("running test setup for {}".format(targeted_packages))
@@ -34,24 +36,39 @@ def prep_samples(targeted_packages):
         root_dir,
     )
 
-def run_samples(one_sample):
-    logging.info(
-        "Testing {}".format(one_sample)
-    )
+
+def run_samples(targeted_packages_directories):
     samples_errors = []
-    command_array = [sys.executable, one_sample]
-    errors = run_check_call(command_array, root_dir, always_exit=False)
-    if errors:
-        samples_errors.append(errors)
+    for pkg_dir in targeted_packages_directories:
+        samples_dir_path = os.path.abspath(os.path.join(pkg_dir, "samples"))
+        sample_paths = []
+        for path, subdirs, files in os.walk(samples_dir_path):
+            for name in files:
+                if fnmatch(name, "*.py"):
+                    sample_paths.append(os.path.abspath(os.path.join(path, name)))
+
+        if not sample_paths:
+            logging.info(
+                "No samples found in {}".format(targeted_packages_directories)
+            )
+            continue
+
+        for sample in sample_paths:
+            logging.info(
+                "Testing {}".format(sample)
+            )
+            command_array = [sys.executable, sample]
+            errors = run_check_call(command_array, root_dir, always_exit=False)
+            if errors:
+                samples_errors.append(errors)
 
     if samples_errors:
         logging.error(samples_errors)
         exit(1)
 
-        logging.info(
-            "All samples ran successfully"
-        )
-        exit(0)
+    logging.info(
+        "All samples ran successfully in {}".format(targeted_packages_directories)
+    )
 
 
 if __name__ == "__main__":
@@ -188,6 +205,5 @@ if __name__ == "__main__":
     logging.info("targeted packages are {}".format(targeted_packages))
 
 
-    one_sample = os.path.abspath(os.path.join(target_dir, args.glob_string, "samples/sample_recognize_receipts_from_url.py"))
     prep_samples(targeted_packages)
-    run_samples(one_sample)
+    run_samples(targeted_packages)
