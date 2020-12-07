@@ -104,14 +104,14 @@ class PagingMethodABC():
 
 
 class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-attributes
-    def __init__(self, **operation_config):
+    def __init__(self, path_format_arguments=None):
         """This is the most common paging method. It takes in an initial request object
         and a partial for next requests. Once deserializing the data and returning the iterable
         of paged items, it passes the continuation token from the response to the partial for the next
         request. It keeps paging until a subsequent call to the service returns an empty continuation token.
 
-        :param dict[str, any] operation_config: Any configuration you want to override and pass
-         in our pipeline call.
+        :param dict[str, any] path_format_arguments: Any path formatting arguments you would need
+         to format the endpoint for your next call
         """
         self._client = None
         self._deserialize_output = None
@@ -121,7 +121,20 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._error_map = None
         self._next_request_partial = None
         self._initial_request = None
-        self._operation_config = operation_config
+        self._operation_config = None
+        self._path_format_arguments = path_format_arguments
+
+    def _default_next_request_partial(self, continuation_token):
+        request = self._initial_request
+        url = continuation_token
+        if self._path_format_arguments:
+            url = self._client.format_url(continuation_token, **self._path_format_arguments)
+        request.url = url
+        return request
+
+    def _validate_inputs(self):
+        if not self._initial_request:
+            raise TypeError("BasicPagingMethod is missing required keyword-only arg initial_request")
 
     def initialize(self, client, deserialize_output, **kwargs):
         # type: (PipelineClient, Callable, Any) -> None
@@ -133,30 +146,27 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :keyword initial_request: Required. The request for our intial call to the service
          to begin paging
         :paramtype initial_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword callable next_request_partial: Required. A partial function that will take
+        :keyword callable next_request_partial: A partial function that will take
          in the continuation token and return the request for a subsequent call to the service.
+         If you don't pass one in, we will create one for you, based off of the initial_request
+         you pass in.
         """
-        try:
-            self._initial_request = kwargs.pop("initial_request")
-            self._next_request_partial = kwargs.pop("next_request_partial")
-        except KeyError as e:
-            raise TypeError(
-                "BasicPagingMethod is missing required keyword-only arg {}".format(
-                    str(e).replace("KeyError: ", "")
-                )
-            )
+        self._initial_request = kwargs.pop("initial_request", None)
+        self._next_request_partial = kwargs.pop("next_request_partial", self._default_next_request_partial)
         self._client = client
         self._deserialize_output = deserialize_output
         self._item_name = kwargs.pop("item_name", "value")
         self._cls = kwargs.pop("_cls", None)
-        self._continuation_token_location = kwargs.pop("continuation_token_location")
+        self._continuation_token_location = kwargs.pop("continuation_token_location", None)
 
         self._error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         self._error_map.update(kwargs.pop('error_map', {}))
+        self._operation_config = kwargs
+        self._validate_inputs()
 
-    def get_next_request(self, continuation_token, next_request_partial=None):
+    def get_next_request(self, continuation_token, next_request):
         # type: (Any, Optional[Callable]) -> HttpRequest
         """Gets the next request to make to the service
 
@@ -166,11 +176,7 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :return: A request object to make the next request to the service with
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        if not next_request_partial:
-            raise TypeError(
-                "You need to pass in a callback for next request that takes in a continuation token"
-            )
-        return next_request_partial(continuation_token)
+        return next_request
 
     def get_list_elements(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
@@ -225,17 +231,20 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
 
 
 class PagingMethodWithInitialResponse(BasicPagingMethod):
-    def __init__(self, **operation_config):
+    def __init__(self, path_format_arguments=None):
         """Use this paging method if paging has started before user starts iterating.
         Currently only scenario is LRO + paging, where the final response of the LRO operation
         is the initial page.
 
-        :param dict[str, any] operation_config: Any configuration you want to override and pass
-         in our pipeline call.
+        :param dict[str, any] path_format_arguments: Any path formatting arguments you would need
+         to format the endpoint for your next call
         """
-        super(PagingMethodWithInitialResponse, self).__init__(**operation_config)
+        super(PagingMethodWithInitialResponse, self).__init__(path_format_arguments)
         self._initial_response = None
-        self._path_format_arguments = None
+
+    def _validate_inputs(self):
+        if not self._initial_response:
+            raise TypeError("BasicPagingMethod is missing required keyword-only arg initial_response")
 
     def initialize(self, client, deserialize_output, **kwargs):
         # type: (PipelineClient, Callable, Any) -> None
@@ -245,40 +254,6 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         :type client: ~azure.core.PipelineClient
         :param callable deserialize_output: Callback to deserialize response output
         """
-        try:
-            self._initial_response = kwargs.pop("initial_response")
-            self._continuation_token_location = kwargs.pop("continuation_token_location")
-        except KeyError as e:
-            raise TypeError(
-                "PagingMethodWithInitialResponse is missing required keyword-only arg {}".format(
-                    str(e).replace("KeyError: ", "")
-                )
-            )
-        self._next_request_partial = kwargs.pop("next_request_partial", None)
-        self._client = client
-        self._deserialize_output = deserialize_output
-        self._path_format_arguments = kwargs.pop("path_format_arguments", {})
-
-        self._item_name = kwargs.pop("item_name", "value")
-        self._cls = kwargs.pop("_cls", None)
-
-        self._error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        self._error_map.update(kwargs.pop('error_map', {}))
-
-    def get_next_request(self, continuation_token, next_request_partial=None):
-        # type: (Any, Optional[Callable]) -> HttpRequest
-        """Gets the next request to make to the service
-
-        :param any continuation_token: Token passed to indicate continued paging, and how to get next page
-        :param callable next_request_partial: Optional. Partial function that returns the next request
-         when you pass in the continuation_token
-        :return: A request object to make the next request to the service with
-        :rtype: ~azure.core.pipeline.transport.HttpRequest
-        """
-        if next_request_partial:
-            return next_request_partial(continuation_token)
-        request = self._initial_response.http_response.request
-        request.url = self._client.format_url(continuation_token, **self._path_format_arguments)
-        return request
+        self._initial_response = kwargs.pop("initial_response", None)
+        super(PagingMethodWithInitialResponse, self).initialize(client, deserialize_output, **kwargs)
+        self._initial_request = self._initial_response.http_response.request

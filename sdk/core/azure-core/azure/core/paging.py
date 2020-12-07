@@ -59,7 +59,8 @@ def _get_page(continuation_token, paging_method, initial_response):
             return initial_response
         request = paging_method._initial_request  # pylint: disable=protected-access
     else:
-        request = paging_method.get_next_request(continuation_token, paging_method._next_request_partial)  # pylint: disable=protected-access
+        request = paging_method._next_request_partial(continuation_token)
+        request = paging_method.get_next_request(continuation_token, request)  # pylint: disable=protected-access
 
     response = paging_method._client._pipeline.run(  # pylint: disable=protected-access
         request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
