@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operationalization_clusters_operations import OperationalizationClustersOperations
-from .machine_learning_compute_operations import MachineLearningComputeOperations
+from ._operationalization_clusters_operations import OperationalizationClustersOperations
+from ._machine_learning_compute_operations import MachineLearningComputeOperations
 
 __all__ = [
     'OperationalizationClustersOperations',

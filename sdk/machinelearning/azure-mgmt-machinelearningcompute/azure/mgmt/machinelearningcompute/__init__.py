@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .machine_learning_compute_management_client import MachineLearningComputeManagementClient
-from .version import VERSION
+from ._configuration import MachineLearningComputeManagementClientConfiguration
+from ._machine_learning_compute_management_client import MachineLearningComputeManagementClient
+__all__ = ['MachineLearningComputeManagementClient', 'MachineLearningComputeManagementClientConfiguration']
 
-__all__ = ['MachineLearningComputeManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
