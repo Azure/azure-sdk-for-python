@@ -68,12 +68,13 @@ steps:
     parameters:
       RunCoverage: ${{ parameters.RunCoverage }}
 
-  - task: PythonScript@0
-    displayName: 'Test Samples'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/test_run_samples.py'
-      arguments: >-
-        "${{ parameters.BuildTargetingString }}"
-        --service="${{ parameters.ServiceDirectory }}"
-        --test-samples="${{ parameters.TestSamples }}"
-    env: ${{ parameters.EnvVars }}
+  - ${{ if eq(parameters['TestSamples'], true) }}:
+    - task: PythonScript@0
+      displayName: 'Test Samples'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/test_run_samples.py'
+        arguments: >-
+          "${{ parameters.BuildTargetingString }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --test-samples="${{ parameters.TestSamples }}"
+      env: ${{ parameters.EnvVars }}
