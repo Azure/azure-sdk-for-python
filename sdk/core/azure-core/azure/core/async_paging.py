@@ -38,7 +38,7 @@ from typing import (
 from .pipeline._tools_async import await_result as _await_result
 
 from .exceptions import AzureError, map_error, HttpResponseError
-from .paging_method import PagingMethodABC
+from .paging import PagingMethodABC
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ async def _get_page(continuation_token, paging_method, initial_response):
             return initial_response
         request = paging_method._initial_request  # pylint: disable=protected-access
     else:
-        request = paging_method._next_request_partial(continuation_token)
+        request = paging_method._next_request_partial(continuation_token)  # pylint: disable=protected-access
         request = paging_method.get_next_request(continuation_token, request)  # pylint: disable=protected-access
 
     response = await paging_method._client._pipeline.run(  # pylint: disable=protected-access
