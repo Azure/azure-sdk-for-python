@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import PeeringManagementClientConfiguration
 from .operations import CdnPeeringPrefixesOperations
@@ -33,42 +31,42 @@ from .operations import PeeringServiceLocationsOperations
 from .operations import PrefixesOperations
 from .operations import PeeringServiceProvidersOperations
 from .operations import PeeringServicesOperations
-from . import models
+from .. import models
 
 
 class PeeringManagementClient(PeeringManagementClientOperationsMixin):
     """Peering Client.
 
     :ivar cdn_peering_prefixes: CdnPeeringPrefixesOperations operations
-    :vartype cdn_peering_prefixes: azure.mgmt.peering.operations.CdnPeeringPrefixesOperations
+    :vartype cdn_peering_prefixes: azure.mgmt.peering.aio.operations.CdnPeeringPrefixesOperations
     :ivar legacy_peerings: LegacyPeeringsOperations operations
-    :vartype legacy_peerings: azure.mgmt.peering.operations.LegacyPeeringsOperations
+    :vartype legacy_peerings: azure.mgmt.peering.aio.operations.LegacyPeeringsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.peering.operations.Operations
+    :vartype operations: azure.mgmt.peering.aio.operations.Operations
     :ivar peer_asns: PeerAsnsOperations operations
-    :vartype peer_asns: azure.mgmt.peering.operations.PeerAsnsOperations
+    :vartype peer_asns: azure.mgmt.peering.aio.operations.PeerAsnsOperations
     :ivar peering_locations: PeeringLocationsOperations operations
-    :vartype peering_locations: azure.mgmt.peering.operations.PeeringLocationsOperations
+    :vartype peering_locations: azure.mgmt.peering.aio.operations.PeeringLocationsOperations
     :ivar registered_asns: RegisteredAsnsOperations operations
-    :vartype registered_asns: azure.mgmt.peering.operations.RegisteredAsnsOperations
+    :vartype registered_asns: azure.mgmt.peering.aio.operations.RegisteredAsnsOperations
     :ivar registered_prefixes: RegisteredPrefixesOperations operations
-    :vartype registered_prefixes: azure.mgmt.peering.operations.RegisteredPrefixesOperations
+    :vartype registered_prefixes: azure.mgmt.peering.aio.operations.RegisteredPrefixesOperations
     :ivar peerings: PeeringsOperations operations
-    :vartype peerings: azure.mgmt.peering.operations.PeeringsOperations
+    :vartype peerings: azure.mgmt.peering.aio.operations.PeeringsOperations
     :ivar received_routes: ReceivedRoutesOperations operations
-    :vartype received_routes: azure.mgmt.peering.operations.ReceivedRoutesOperations
+    :vartype received_routes: azure.mgmt.peering.aio.operations.ReceivedRoutesOperations
     :ivar peering_service_countries: PeeringServiceCountriesOperations operations
-    :vartype peering_service_countries: azure.mgmt.peering.operations.PeeringServiceCountriesOperations
+    :vartype peering_service_countries: azure.mgmt.peering.aio.operations.PeeringServiceCountriesOperations
     :ivar peering_service_locations: PeeringServiceLocationsOperations operations
-    :vartype peering_service_locations: azure.mgmt.peering.operations.PeeringServiceLocationsOperations
+    :vartype peering_service_locations: azure.mgmt.peering.aio.operations.PeeringServiceLocationsOperations
     :ivar prefixes: PrefixesOperations operations
-    :vartype prefixes: azure.mgmt.peering.operations.PrefixesOperations
+    :vartype prefixes: azure.mgmt.peering.aio.operations.PrefixesOperations
     :ivar peering_service_providers: PeeringServiceProvidersOperations operations
-    :vartype peering_service_providers: azure.mgmt.peering.operations.PeeringServiceProvidersOperations
+    :vartype peering_service_providers: azure.mgmt.peering.aio.operations.PeeringServiceProvidersOperations
     :ivar peering_services: PeeringServicesOperations operations
-    :vartype peering_services: azure.mgmt.peering.operations.PeeringServicesOperations
+    :vartype peering_services: azure.mgmt.peering.aio.operations.PeeringServicesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -76,16 +74,15 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = PeeringManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -121,15 +118,12 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin):
         self.peering_services = PeeringServicesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> PeeringManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "PeeringManagementClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

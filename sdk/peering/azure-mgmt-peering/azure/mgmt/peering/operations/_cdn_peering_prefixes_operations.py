@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class PeeringServiceLocationsOperations(object):
-    """PeeringServiceLocationsOperations operations.
+class CdnPeeringPrefixesOperations(object):
+    """CdnPeeringPrefixesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,20 +47,20 @@ class PeeringServiceLocationsOperations(object):
 
     def list(
         self,
-        country=None,  # type: Optional[str]
+        peering_location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.PeeringServiceLocationListResult"]
-        """Lists all of the available locations for peering service.
+        # type: (...) -> Iterable["_models.CdnPeeringPrefixListResult"]
+        """Lists all of the advertised prefixes for the specified peering location.
 
-        :param country: The country of interest, in which the locations are to be present.
-        :type country: str
+        :param peering_location: The peering location.
+        :type peering_location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PeeringServiceLocationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.peering.models.PeeringServiceLocationListResult]
+        :return: An iterator like instance of either CdnPeeringPrefixListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.peering.models.CdnPeeringPrefixListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PeeringServiceLocationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnPeeringPrefixListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -82,8 +82,7 @@ class PeeringServiceLocationsOperations(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if country is not None:
-                    query_parameters['country'] = self._serialize.query("country", country, 'str')
+                query_parameters['peeringLocation'] = self._serialize.query("peering_location", peering_location, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -94,7 +93,7 @@ class PeeringServiceLocationsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('PeeringServiceLocationListResult', pipeline_response)
+            deserialized = self._deserialize('CdnPeeringPrefixListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -116,4 +115,4 @@ class PeeringServiceLocationsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peeringServiceLocations'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/cdnPeeringPrefixes'}  # type: ignore
