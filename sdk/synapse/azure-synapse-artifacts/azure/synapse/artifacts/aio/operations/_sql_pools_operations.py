@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class SqlPoolsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -42,7 +42,7 @@ class SqlPoolsOperations:
     async def list(
         self,
         **kwargs
-    ) -> "models.SqlPoolInfoListResult":
+    ) -> "_models.SqlPoolInfoListResult":
         """List Sql Pools.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -50,7 +50,7 @@ class SqlPoolsOperations:
         :rtype: ~azure.synapse.artifacts.models.SqlPoolInfoListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SqlPoolInfoListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlPoolInfoListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -79,7 +79,7 @@ class SqlPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SqlPoolInfoListResult', pipeline_response)
@@ -94,7 +94,7 @@ class SqlPoolsOperations:
         self,
         sql_pool_name: str,
         **kwargs
-    ) -> "models.SqlPool":
+    ) -> "_models.SqlPool":
         """Get Sql Pool.
 
         :param sql_pool_name: The Sql Pool name.
@@ -104,7 +104,7 @@ class SqlPoolsOperations:
         :rtype: ~azure.synapse.artifacts.models.SqlPool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SqlPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -134,7 +134,7 @@ class SqlPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SqlPool', pipeline_response)
