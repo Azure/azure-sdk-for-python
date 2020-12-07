@@ -16,6 +16,7 @@ from ._check_name_availability_operations import CheckNameAvailabilityOperations
 from ._location_based_capabilities_operations import LocationBasedCapabilitiesOperations
 from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations
 from ._operations import Operations
+from ._databases_operations import DatabasesOperations
 
 __all__ = [
     'ServersOperations',
@@ -25,4 +26,5 @@ __all__ = [
     'LocationBasedCapabilitiesOperations',
     'VirtualNetworkSubnetUsageOperations',
     'Operations',
+    'DatabasesOperations',
 ]

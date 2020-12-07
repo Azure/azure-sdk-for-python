@@ -102,4 +102,4 @@ class CheckNameAvailabilityOperations(object):
             return client_raw_response
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMariaDB/checkNameAvailability'}
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForMariaDB/checkNameAvailability'}

@@ -27,7 +27,7 @@ class DatabasesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2018-06-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-11-05-preview".
     """
 
     models = models
@@ -37,17 +37,17 @@ class DatabasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01"
+        self.api_version = "2020-11-05-preview"
 
         self.config = config
 
 
-    def _create_or_update_initial(
+    def _create_initial(
             self, resource_group_name, server_name, database_name, charset=None, collation=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.Database(charset=charset, collation=collation)
 
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -96,7 +96,7 @@ class DatabasesOperations(object):
 
         return deserialized
 
-    def create_or_update(
+    def create(
             self, resource_group_name, server_name, database_name, charset=None, collation=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a new database or updates an existing database.
 
@@ -119,12 +119,12 @@ class DatabasesOperations(object):
         :return: An instance of LROPoller that returns Database or
          ClientRawResponse<Database> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.mariadb.models.Database]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Database]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.rdbms.mariadb.models.Database]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Database]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_or_update_initial(
+        raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -151,7 +151,7 @@ class DatabasesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForMariaDB/servers/{serverName}/databases/{databaseName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/databases/{databaseName}'}
 
 
     def _delete_initial(
@@ -235,7 +235,7 @@ class DatabasesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForMariaDB/servers/{serverName}/databases/{databaseName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/databases/{databaseName}'}
 
     def get(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
@@ -254,8 +254,8 @@ class DatabasesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Database or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.rdbms.mariadb.models.Database or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Database
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -300,7 +300,7 @@ class DatabasesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForMariaDB/servers/{serverName}/databases/{databaseName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/databases/{databaseName}'}
 
     def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
@@ -318,7 +318,7 @@ class DatabasesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Database
         :rtype:
-         ~azure.mgmt.rdbms.mariadb.models.DatabasePaged[~azure.mgmt.rdbms.mariadb.models.Database]
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.DatabasePaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Database]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -373,4 +373,4 @@ class DatabasesOperations(object):
         deserialized = models.DatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForMariaDB/servers/{serverName}/databases'}
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/databases'}

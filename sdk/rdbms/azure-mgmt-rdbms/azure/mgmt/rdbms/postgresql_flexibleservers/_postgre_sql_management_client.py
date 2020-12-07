@@ -20,6 +20,7 @@ from .operations import CheckNameAvailabilityOperations
 from .operations import LocationBasedCapabilitiesOperations
 from .operations import VirtualNetworkSubnetUsageOperations
 from .operations import Operations
+from .operations import DatabasesOperations
 from . import models
 
 
@@ -43,6 +44,8 @@ class PostgreSQLManagementClient(SDKClient):
     :vartype virtual_network_subnet_usage: azure.mgmt.rdbms.postgresql_flexibleservers.operations.VirtualNetworkSubnetUsageOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.postgresql_flexibleservers.operations.Operations
+    :ivar databases: Databases operations
+    :vartype databases: azure.mgmt.rdbms.postgresql_flexibleservers.operations.DatabasesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -59,7 +62,6 @@ class PostgreSQLManagementClient(SDKClient):
         super(PostgreSQLManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-02-14-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -76,4 +78,6 @@ class PostgreSQLManagementClient(SDKClient):
         self.virtual_network_subnet_usage = VirtualNetworkSubnetUsageOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
