@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-coverage_file = os.path.join(root_dir, "coverage.xml")
+coverage_file = os.path.join(root_dir, "coverage-new.xml")
 
 
 def create_coverage_report():
@@ -31,9 +31,11 @@ def create_coverage_report():
             packages_to_report.append((folder, package))
             logging.info("Found a package: {}".format(package))
 
+    packages_root = root.find('packages')
+
     new_packages = []
     for p in packages_to_report:
-        n = create_new_node(p, root)
+        n = create_new_node(p, packages_root)
         new_packages.append(n)
 
     # Now remove all the old packages
@@ -61,18 +63,20 @@ def recursive_set_name(root):
         recursive_set_name(child)
 
 
-def create_new_node(package_tuple, xml_root):
+def create_new_node(package_tuple, packages_root):
+    print(f"ROOT: {packages_root.tag}")
     directory, package = package_tuple
-    packages_root = xml_root[1]
     new_node = ET.Element('package')
     name = 'sdk' + '.' + directory + '.' + package
     create_default_attribs(new_node, name)
 
-    classes_elem = ET.Element('classes')
+    # classes_elem = ET.Element('classes')
     new_node.append(classes_elem)
 
+    for classes
     for sub_package in packages_root:
         if name in sub_package.attrib['name']:
+            print(sub_package.tag)
             for class_elem in sub_package[0]:
                 classes_elem.append(class_elem)
     return new_node
@@ -83,3 +87,6 @@ def create_default_attribs(node, name):
     node.set('complexity', '0')
     node.set('line-rate', '0.0000')
     node.set('name', name)
+
+
+create_coverage_report()
