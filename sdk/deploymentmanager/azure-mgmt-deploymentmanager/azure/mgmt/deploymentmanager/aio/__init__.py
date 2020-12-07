@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._deployment_manager_client import DeploymentManagerClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['DeploymentManagerClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
