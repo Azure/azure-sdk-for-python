@@ -234,3 +234,7 @@ function SetPackageVersion ($PackageName, $Version, $ServiceName, $ReleaseDate, 
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
   python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceName --release-date $ReleaseDate
 }
+
+function GetPackageInstallNotes ($package, $version) {
+  return npm install $package
+}
