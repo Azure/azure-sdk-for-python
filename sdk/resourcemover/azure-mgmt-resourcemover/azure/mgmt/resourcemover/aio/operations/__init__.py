@@ -6,14 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._resource_mover_service_api import ResourceMoverServiceAPI
-from ._version import VERSION
+from ._move_collections_operations import MoveCollectionsOperations
+from ._move_resources_operations import MoveResourcesOperations
+from ._unresolved_dependencies_operations import UnresolvedDependenciesOperations
+from ._operations_discovery_operations import OperationsDiscoveryOperations
 
-__version__ = VERSION
-__all__ = ['ResourceMoverServiceAPI']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'MoveCollectionsOperations',
+    'MoveResourcesOperations',
+    'UnresolvedDependenciesOperations',
+    'OperationsDiscoveryOperations',
+]
