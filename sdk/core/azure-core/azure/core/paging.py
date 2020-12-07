@@ -69,7 +69,7 @@ def _get_page(continuation_token, paging_method, initial_response):
             return initial_response
         request = paging_method._initial_request  # pylint: disable=protected-access
     else:
-        request = paging_method._next_request_partial(continuation_token)  # pylint: disable=protected-access
+        request = paging_method._next_request_callback(continuation_token)  # pylint: disable=protected-access
         request = paging_method.get_next_request(continuation_token, request)  # pylint: disable=protected-access
 
     response = paging_method._client._pipeline.run(  # pylint: disable=protected-access
@@ -169,12 +169,12 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._continuation_token_location = None
         self._cls = None
         self._error_map = None
-        self._next_request_partial = None
+        self._next_request_callback = None
         self._initial_request = None
         self._operation_config = None
         self._path_format_arguments = path_format_arguments
 
-    def _default_next_request_partial(self, continuation_token):
+    def _default_next_request_callback(self, continuation_token):
         request = self._initial_request
         url = continuation_token
         if self._path_format_arguments:
@@ -198,7 +198,7 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :paramtype initial_request: ~azure.core.pipeline.transport.HttpRequest
         :keyword str continuation_token_location: Required. Specifies the name of the property that provides
          the continuation token. Common values include `next_link` and `token`.
-        :keyword callable next_request_partial: A partial function that will take
+        :keyword callable next_request_callback: A partial function that will take
          in the continuation token and return the request for a subsequent call to the service.
          If you don't pass one in, we will create one for you, based off of the initial_request
          you pass in.
@@ -208,7 +208,7 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
          Takes a list of iterables as an input.
         """
         self._initial_request = kwargs.pop("initial_request", None)
-        self._next_request_partial = kwargs.pop("next_request_partial", self._default_next_request_partial)
+        self._next_request_callback = kwargs.pop("next_request_callback", self._default_next_request_callback)
         self._client = client
         self._deserialize_output = deserialize_output
         self._item_name = kwargs.pop("item_name", "value")
@@ -314,7 +314,7 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         :paramtype initial_response: ~azure.core.pipeline.transport.HttpResponse
         :keyword str continuation_token_location: Required. Specifies the name of the property that provides
          the continuation token. Common values include `next_link` and `token`.
-        :keyword callable next_request_partial: A partial function that will take
+        :keyword callable next_request_callback: A partial function that will take
          in the continuation token and return the request for a subsequent call to the service.
          If you don't pass one in, we will create one for you, based off of the initial_request
          you pass in.
