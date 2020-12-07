@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .workspaces_operations import WorkspacesOperations
-from .operations import Operations
+from ._workspaces_operations import WorkspacesOperations
+from ._vnet_peering_operations import VNetPeeringOperations
+from ._operations import Operations
 
 __all__ = [
     'WorkspacesOperations',
+    'VNetPeeringOperations',
     'Operations',
 ]
