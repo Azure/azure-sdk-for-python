@@ -1,7 +1,11 @@
 # Release History
 
-## 0.4.0 (Unreleased)
+## 0.4.0 (2020-12-08)
 
+** Features **
+
+- Add Workspace git repo management operations
+- Add rename method for data flow, dataset, linked service, notebook, pipeline, spark job definition, sql script operations
 
 ## 0.3.0 (2020-09-15)
 
