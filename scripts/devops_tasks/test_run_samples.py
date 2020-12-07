@@ -39,9 +39,11 @@ def prep_samples(targeted_packages):
 
 def run_samples(targeted_packages_directories):
     samples_errors = []
+
     for pkg_dir in targeted_packages_directories:
-        samples_dir_path = os.path.abspath(os.path.join(pkg_dir, "samples"))
+
         sample_paths = []
+        samples_dir_path = os.path.abspath(os.path.join(pkg_dir, "samples"))
         for path, subdirs, files in os.walk(samples_dir_path):
             for name in files:
                 if fnmatch(name, "*.py"):
@@ -54,13 +56,24 @@ def run_samples(targeted_packages_directories):
             continue
 
         for sample in sample_paths:
+            if sys.version_info < (3, 5) and sample.endswith("_async.py"):
+                continue
+
             logging.info(
                 "Testing {}".format(sample)
             )
             command_array = [sys.executable, sample]
             errors = run_check_call(command_array, root_dir, always_exit=False)
+
             if errors:
                 samples_errors.append(errors)
+                logging.info(
+                    "ERROR: {}".format(sample)
+                )
+            else:
+                logging.info(
+                    "SUCCESS: {}.".format(sample)
+                )
 
     if samples_errors:
         logging.error(samples_errors)
