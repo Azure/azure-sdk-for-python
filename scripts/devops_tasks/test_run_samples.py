@@ -87,7 +87,7 @@ def run_samples(targeted_packages_directories):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline"
+        description="Install Dependencies, Install Packages, Test Azure Packages Samples, Called from DevOps YAML Pipeline"
     )
 
     parser.add_argument(
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--service",
         help=(
-            "Name of service directory (under sdk/) to test."
+            "Name of service directory (under sdk/) to test samples."
             "Example: --service applicationinsights"
         ),
     )
