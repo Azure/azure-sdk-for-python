@@ -52,8 +52,3 @@ class Category(str, Enum):
 
     azure_ad = "AzureAD"
     adfs = "ADFS"
-
-
-class Location(str, Enum):
-
-    global_enum = "global"
