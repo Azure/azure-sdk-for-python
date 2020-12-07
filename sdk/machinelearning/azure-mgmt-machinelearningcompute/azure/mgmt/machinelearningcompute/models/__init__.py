@@ -9,35 +9,64 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
-from .error_detail import ErrorDetail
-from .error_response import ErrorResponse
-from .error_response_wrapper import ErrorResponseWrapper, ErrorResponseWrapperException
-from .storage_account_properties import StorageAccountProperties
-from .container_registry_properties import ContainerRegistryProperties
-from .service_principal_properties import ServicePrincipalProperties
-from .kubernetes_cluster_properties import KubernetesClusterProperties
-from .system_service import SystemService
-from .acs_cluster_properties import AcsClusterProperties
-from .app_insights_properties import AppInsightsProperties
-from .ssl_configuration import SslConfiguration
-from .service_auth_configuration import ServiceAuthConfiguration
-from .auto_scale_configuration import AutoScaleConfiguration
-from .global_service_configuration import GlobalServiceConfiguration
-from .operationalization_cluster import OperationalizationCluster
-from .operationalization_cluster_update_parameters import OperationalizationClusterUpdateParameters
-from .storage_account_credentials import StorageAccountCredentials
-from .container_registry_credentials import ContainerRegistryCredentials
-from .container_service_credentials import ContainerServiceCredentials
-from .app_insights_credentials import AppInsightsCredentials
-from .operationalization_cluster_credentials import OperationalizationClusterCredentials
-from .check_system_services_updates_available_response import CheckSystemServicesUpdatesAvailableResponse
-from .update_system_services_response import UpdateSystemServicesResponse
-from .resource_operation_display import ResourceOperationDisplay
-from .resource_operation import ResourceOperation
-from .available_operations import AvailableOperations
-from .operationalization_cluster_paged import OperationalizationClusterPaged
-from .machine_learning_compute_management_client_enums import (
+try:
+    from ._models_py3 import AcsClusterProperties
+    from ._models_py3 import AppInsightsCredentials
+    from ._models_py3 import AppInsightsProperties
+    from ._models_py3 import AutoScaleConfiguration
+    from ._models_py3 import AvailableOperations
+    from ._models_py3 import CheckSystemServicesUpdatesAvailableResponse
+    from ._models_py3 import ContainerRegistryCredentials
+    from ._models_py3 import ContainerRegistryProperties
+    from ._models_py3 import ContainerServiceCredentials
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse
+    from ._models_py3 import ErrorResponseWrapper, ErrorResponseWrapperException
+    from ._models_py3 import GlobalServiceConfiguration
+    from ._models_py3 import KubernetesClusterProperties
+    from ._models_py3 import OperationalizationCluster
+    from ._models_py3 import OperationalizationClusterCredentials
+    from ._models_py3 import OperationalizationClusterUpdateParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceOperation
+    from ._models_py3 import ResourceOperationDisplay
+    from ._models_py3 import ServiceAuthConfiguration
+    from ._models_py3 import ServicePrincipalProperties
+    from ._models_py3 import SslConfiguration
+    from ._models_py3 import StorageAccountCredentials
+    from ._models_py3 import StorageAccountProperties
+    from ._models_py3 import SystemService
+    from ._models_py3 import UpdateSystemServicesResponse
+except (SyntaxError, ImportError):
+    from ._models import AcsClusterProperties
+    from ._models import AppInsightsCredentials
+    from ._models import AppInsightsProperties
+    from ._models import AutoScaleConfiguration
+    from ._models import AvailableOperations
+    from ._models import CheckSystemServicesUpdatesAvailableResponse
+    from ._models import ContainerRegistryCredentials
+    from ._models import ContainerRegistryProperties
+    from ._models import ContainerServiceCredentials
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse
+    from ._models import ErrorResponseWrapper, ErrorResponseWrapperException
+    from ._models import GlobalServiceConfiguration
+    from ._models import KubernetesClusterProperties
+    from ._models import OperationalizationCluster
+    from ._models import OperationalizationClusterCredentials
+    from ._models import OperationalizationClusterUpdateParameters
+    from ._models import Resource
+    from ._models import ResourceOperation
+    from ._models import ResourceOperationDisplay
+    from ._models import ServiceAuthConfiguration
+    from ._models import ServicePrincipalProperties
+    from ._models import SslConfiguration
+    from ._models import StorageAccountCredentials
+    from ._models import StorageAccountProperties
+    from ._models import SystemService
+    from ._models import UpdateSystemServicesResponse
+from ._paged_models import OperationalizationClusterPaged
+from ._machine_learning_compute_management_client_enums import (
     OperationStatus,
     ClusterType,
     OrchestratorType,
@@ -48,33 +77,33 @@ from .machine_learning_compute_management_client_enums import (
 )
 
 __all__ = [
-    'Resource',
+    'AcsClusterProperties',
+    'AppInsightsCredentials',
+    'AppInsightsProperties',
+    'AutoScaleConfiguration',
+    'AvailableOperations',
+    'CheckSystemServicesUpdatesAvailableResponse',
+    'ContainerRegistryCredentials',
+    'ContainerRegistryProperties',
+    'ContainerServiceCredentials',
     'ErrorDetail',
     'ErrorResponse',
     'ErrorResponseWrapper', 'ErrorResponseWrapperException',
-    'StorageAccountProperties',
-    'ContainerRegistryProperties',
-    'ServicePrincipalProperties',
-    'KubernetesClusterProperties',
-    'SystemService',
-    'AcsClusterProperties',
-    'AppInsightsProperties',
-    'SslConfiguration',
-    'ServiceAuthConfiguration',
-    'AutoScaleConfiguration',
     'GlobalServiceConfiguration',
+    'KubernetesClusterProperties',
     'OperationalizationCluster',
-    'OperationalizationClusterUpdateParameters',
-    'StorageAccountCredentials',
-    'ContainerRegistryCredentials',
-    'ContainerServiceCredentials',
-    'AppInsightsCredentials',
     'OperationalizationClusterCredentials',
-    'CheckSystemServicesUpdatesAvailableResponse',
-    'UpdateSystemServicesResponse',
-    'ResourceOperationDisplay',
+    'OperationalizationClusterUpdateParameters',
+    'Resource',
     'ResourceOperation',
-    'AvailableOperations',
+    'ResourceOperationDisplay',
+    'ServiceAuthConfiguration',
+    'ServicePrincipalProperties',
+    'SslConfiguration',
+    'StorageAccountCredentials',
+    'StorageAccountProperties',
+    'SystemService',
+    'UpdateSystemServicesResponse',
     'OperationalizationClusterPaged',
     'OperationStatus',
     'ClusterType',
