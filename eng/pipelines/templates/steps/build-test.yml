@@ -14,6 +14,7 @@ parameters:
   ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
+  TestSamples: false
 
 steps:
   - pwsh: |

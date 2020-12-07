@@ -13,6 +13,7 @@ parameters:
   AllocateResourceGroup: true
   DeployArmTemplate: false
   TestTimeoutInMinutes: 120
+  TestSamples: false
   Location: ''
   Matrix:
     Linux_Python35:
