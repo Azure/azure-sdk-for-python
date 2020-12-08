@@ -138,17 +138,17 @@ try {
    $isolatedKey = [RSA]::Create(2048)
    $isolatedCertificate = New-X509Certificate2 $isolatedKey "CN=AttestationIsolatedManagementCertificate"
 
-   $EnvironmentVariables["isolatedSigningCertificate"] = $([Convert]::ToBase64String($isolatedCertificate.RawData, 'None'))
+   $EnvironmentVariables["ATTESTATION_isolatedSigningCertificate"] = $([Convert]::ToBase64String($isolatedCertificate.RawData, 'None'))
    $templateFileParameters.isolatedSigningCertificate = $([Convert]::ToBase64String($isolatedCertificate.RawData, 'None'))
 
-   $EnvironmentVariables["isolatedSigningKey"] = $([Convert]::ToBase64String($isolatedKey.ExportPkcs8PrivateKey()))
-   $EnvironmentVariables["serializedIsolatedSigningKey"] = $isolatedKey.ToXmlString($True)
+   $EnvironmentVariables["ATTESTATION_isolatedSigningKey"] = $([Convert]::ToBase64String($isolatedKey.ExportPkcs8PrivateKey()))
+   $EnvironmentVariables["ATTESTATION_serializedIsolatedSigningKey"] = $isolatedKey.ToXmlString($True)
 }
 finally {
    $isolatedKey.Dispose()
 }
 
-$EnvironmentVariables["locationShortName"] = $shortLocation
+$EnvironmentVariables["ATTESTATION_locationShortName"] = $shortLocation
 $templateFileParameters.locationShortName = $shortLocation
 
 Log 'Creating 3 X509 certificates which can be used to sign policies.'
@@ -157,10 +157,9 @@ $wrappingFiles = foreach ($i in 0..2) {
         $certificateKey = [RSA]::Create(2048)
         $certificate = New-X509Certificate2 $certificateKey "CN=AttestationCertificate$i"
 
-        $EnvironmentVariables["policySigningCertificate$i"] = $([Convert]::ToBase64String($certificate.RawData))
-
-        $EnvironmentVariables["policySigningKey$i"] = $([Convert]::ToBase64String($certificateKey.ExportPkcs8PrivateKey()))
-        $EnvironmentVariables["serializedPolicySigningKey$i"] = $certificateKey.ToXmlString($True)
+        $EnvironmentVariables["ATTESTATION_policySigningCertificate$i"] = $([Convert]::ToBase64String($certificate.RawData))
+        $EnvironmentVariables["ATTESTATION_policySigningKey$i"] = $([Convert]::ToBase64String($certificateKey.ExportPkcs8PrivateKey()))
+        $EnvironmentVariables["ATTESTATION_serializedPolicySigningKey$i"] = $certificateKey.ToXmlString($True)
 
         $baseName = "$PSScriptRoot\attestation-certificate$i"
         Export-X509Certificate2 "$baseName.pfx" $certificate

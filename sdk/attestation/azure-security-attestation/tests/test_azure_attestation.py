@@ -161,12 +161,14 @@ class AzureAttestationTest(AzureTestCase):
                 tenant_base_url=self.SharedBaseUri())
             return attest_client
 
-    def AadClient(self):
+#   @AttestationPreparer()
+    def AadClient(self, AAD_ATTESTATION_URL):
             """
             docstring
             """
             credential = self.get_credential(AttestationClient)
-            baseUri = self.original_env["AAD_ATTESTATION_URL"]
+#            baseUri = self.original_env["ATTESTATION_AAD_ATTESTATION_URL"]
+            baseUri = ATTESTATION_AAD_ATTESTATION_URL
             attest_client = self.create_client_from_credential(AttestationClient,
                 credential=credential,
                 tenant_base_url=baseUri)
@@ -177,11 +179,12 @@ class AzureAttestationTest(AzureTestCase):
             docstring
             """
             credential = self.get_credential(AttestationClient)
-            baseUri = self.original_env["ISOLATED_ATTESTATION_URL"]
+            baseUri = self.original_env["ATTESTATION_ISOLATED_ATTESTATION_URL"]
             attest_client = self.create_client_from_credential(AttestationClient,
                 credential=credential,
                 tenant_base_url=baseUri)
             return attest_client
+
 
     @staticmethod
     def SharedBaseUri():

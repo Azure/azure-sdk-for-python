@@ -58,11 +58,11 @@
     }
   ],
   "outputs": {
-    "ISOLATED_ATTESTATION_URL": {
+    "ATTESTATION_ISOLATED_ATTESTATION_URL": {
       "type": "string",
       "value": "[variables('isolatedUri')]"
     },
-    "AAD_ATTESTATION_URL": {
+    "ATTESTATION_AAD_ATTESTATION_URL": {
       "type": "string",
       "value": "[variables('aadUri')]"
     }
