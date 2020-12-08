@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import DataShareManagementClientConfiguration
 from .operations import AccountsOperations
@@ -30,38 +28,38 @@ from .operations import ShareSubscriptionsOperations
 from .operations import ConsumerSourceDataSetsOperations
 from .operations import SynchronizationSettingsOperations
 from .operations import TriggersOperations
-from . import models
+from .. import models
 
 
 class DataShareManagementClient(object):
     """Creates a Microsoft.DataShare management client.
 
     :ivar accounts: AccountsOperations operations
-    :vartype accounts: azure.mgmt.datashare.operations.AccountsOperations
+    :vartype accounts: azure.mgmt.datashare.aio.operations.AccountsOperations
     :ivar consumer_invitations: ConsumerInvitationsOperations operations
-    :vartype consumer_invitations: azure.mgmt.datashare.operations.ConsumerInvitationsOperations
+    :vartype consumer_invitations: azure.mgmt.datashare.aio.operations.ConsumerInvitationsOperations
     :ivar data_sets: DataSetsOperations operations
-    :vartype data_sets: azure.mgmt.datashare.operations.DataSetsOperations
+    :vartype data_sets: azure.mgmt.datashare.aio.operations.DataSetsOperations
     :ivar data_set_mappings: DataSetMappingsOperations operations
-    :vartype data_set_mappings: azure.mgmt.datashare.operations.DataSetMappingsOperations
+    :vartype data_set_mappings: azure.mgmt.datashare.aio.operations.DataSetMappingsOperations
     :ivar invitations: InvitationsOperations operations
-    :vartype invitations: azure.mgmt.datashare.operations.InvitationsOperations
+    :vartype invitations: azure.mgmt.datashare.aio.operations.InvitationsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.datashare.operations.Operations
+    :vartype operations: azure.mgmt.datashare.aio.operations.Operations
     :ivar shares: SharesOperations operations
-    :vartype shares: azure.mgmt.datashare.operations.SharesOperations
+    :vartype shares: azure.mgmt.datashare.aio.operations.SharesOperations
     :ivar provider_share_subscriptions: ProviderShareSubscriptionsOperations operations
-    :vartype provider_share_subscriptions: azure.mgmt.datashare.operations.ProviderShareSubscriptionsOperations
+    :vartype provider_share_subscriptions: azure.mgmt.datashare.aio.operations.ProviderShareSubscriptionsOperations
     :ivar share_subscriptions: ShareSubscriptionsOperations operations
-    :vartype share_subscriptions: azure.mgmt.datashare.operations.ShareSubscriptionsOperations
+    :vartype share_subscriptions: azure.mgmt.datashare.aio.operations.ShareSubscriptionsOperations
     :ivar consumer_source_data_sets: ConsumerSourceDataSetsOperations operations
-    :vartype consumer_source_data_sets: azure.mgmt.datashare.operations.ConsumerSourceDataSetsOperations
+    :vartype consumer_source_data_sets: azure.mgmt.datashare.aio.operations.ConsumerSourceDataSetsOperations
     :ivar synchronization_settings: SynchronizationSettingsOperations operations
-    :vartype synchronization_settings: azure.mgmt.datashare.operations.SynchronizationSettingsOperations
+    :vartype synchronization_settings: azure.mgmt.datashare.aio.operations.SynchronizationSettingsOperations
     :ivar triggers: TriggersOperations operations
-    :vartype triggers: azure.mgmt.datashare.operations.TriggersOperations
+    :vartype triggers: azure.mgmt.datashare.aio.operations.TriggersOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -70,16 +68,15 @@ class DataShareManagementClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = DataShareManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -111,15 +108,12 @@ class DataShareManagementClient(object):
         self.triggers = TriggersOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> DataShareManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "DataShareManagementClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
