@@ -27,7 +27,7 @@ class PrivateEndpointConnectionOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2020-02-02".
+    :ivar api_version: Client Api Version. Constant value: "2020-10-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class PrivateEndpointConnectionOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-02-02"
+        self.api_version = "2020-10-01"
 
         self.config = config
 
@@ -64,7 +64,7 @@ class PrivateEndpointConnectionOperations(object):
          ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpointConnectionResource
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.recoveryservicesbackup.models.ErrorResponseException>`
+         :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -95,7 +95,7 @@ class PrivateEndpointConnectionOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.NewErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

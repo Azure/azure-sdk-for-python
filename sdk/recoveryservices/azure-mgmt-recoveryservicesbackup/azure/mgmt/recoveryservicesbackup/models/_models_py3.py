@@ -13,6 +13,128 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class AADProperties(Model):
+    """AADProperties.
+
+    :param service_principal_client_id:
+    :type service_principal_client_id: str
+    :param tenant_id:
+    :type tenant_id: str
+    :param authority:
+    :type authority: str
+    :param audience:
+    :type audience: str
+    :param service_principal_object_id:
+    :type service_principal_object_id: str
+    """
+
+    _attribute_map = {
+        'service_principal_client_id': {'key': 'servicePrincipalClientId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'authority': {'key': 'authority', 'type': 'str'},
+        'audience': {'key': 'audience', 'type': 'str'},
+        'service_principal_object_id': {'key': 'servicePrincipalObjectId', 'type': 'str'},
+    }
+
+    def __init__(self, *, service_principal_client_id: str=None, tenant_id: str=None, authority: str=None, audience: str=None, service_principal_object_id: str=None, **kwargs) -> None:
+        super(AADProperties, self).__init__(**kwargs)
+        self.service_principal_client_id = service_principal_client_id
+        self.tenant_id = tenant_id
+        self.authority = authority
+        self.audience = audience
+        self.service_principal_object_id = service_principal_object_id
+
+
+class Resource(Model):
+    """ARM Resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags
+        self.e_tag = e_tag
+
+
+class AADPropertiesResource(Resource):
+    """AADPropertiesResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: AADPropertiesResource properties
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.AADProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'AADProperties'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, properties=None, **kwargs) -> None:
+        super(AADPropertiesResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        self.properties = properties
+
+
 class FeatureSupportRequest(Model):
     """Base class for feature request.
 
@@ -754,6 +876,11 @@ class AzureFileshareProtectedItem(ProtectedItem):
     :param extended_info: Additional information with this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureFileshareProtectedItemExtendedInfo
+    :param health_status: backups running status for this backup item.
+     Possible values include: 'Passed', 'ActionRequired', 'ActionSuggested',
+     'Invalid'
+    :type health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     """
 
     _validation = {
@@ -782,9 +909,10 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureFileshareProtectedItemExtendedInfo'},
+        'health_status': {'key': 'healthStatus', 'type': 'str'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, protection_status: str=None, protection_state=None, last_backup_status: str=None, last_backup_time=None, kpis_healths=None, extended_info=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, protection_status: str=None, protection_state=None, last_backup_status: str=None, last_backup_time=None, kpis_healths=None, extended_info=None, health_status=None, **kwargs) -> None:
         super(AzureFileshareProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.protection_status = protection_status
@@ -793,6 +921,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
         self.last_backup_time = last_backup_time
         self.kpis_healths = kpis_healths
         self.extended_info = extended_info
+        self.health_status = health_status
         self.protected_item_type = 'AzureFileShareProtectedItem'
 
 
@@ -1970,7 +2099,7 @@ class Job(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureIaaSVMJob, AzureStorageJob, AzureWorkloadJob, DpmJob,
-    MabJob
+    MabJob, VaultJob
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2013,7 +2142,7 @@ class Job(Model):
     }
 
     _subtype_map = {
-        'job_type': {'AzureIaaSVMJob': 'AzureIaaSVMJob', 'AzureStorageJob': 'AzureStorageJob', 'AzureWorkloadJob': 'AzureWorkloadJob', 'DpmJob': 'DpmJob', 'MabJob': 'MabJob'}
+        'job_type': {'AzureIaaSVMJob': 'AzureIaaSVMJob', 'AzureStorageJob': 'AzureStorageJob', 'AzureWorkloadJob': 'AzureWorkloadJob', 'DpmJob': 'DpmJob', 'MabJob': 'MabJob', 'VaultJob': 'VaultJob'}
     }
 
     def __init__(self, *, entity_friendly_name: str=None, backup_management_type=None, operation: str=None, status: str=None, start_time=None, end_time=None, activity_id: str=None, **kwargs) -> None:
@@ -4858,7 +4987,7 @@ class AzureWorkloadBackupRequest(BackupRequest):
     :type object_type: str
     :param backup_type: Type of backup, viz. Full, Differential, Log or
      CopyOnlyFull. Possible values include: 'Invalid', 'Full', 'Differential',
-     'Log', 'CopyOnlyFull'
+     'Log', 'CopyOnlyFull', 'Incremental'
     :type backup_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.BackupType
     :param enable_compression: Bool for Compression setting
@@ -5084,7 +5213,7 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
      created
     :vartype recovery_point_time_in_utc: datetime
     :ivar type: Type of restore point. Possible values include: 'Invalid',
-     'Full', 'Log', 'Differential'
+     'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     """
@@ -5129,7 +5258,7 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
      created
     :vartype recovery_point_time_in_utc: datetime
     :ivar type: Type of restore point. Possible values include: 'Invalid',
-     'Full', 'Log', 'Differential'
+     'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param time_ranges: List of log ranges
@@ -5282,7 +5411,7 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
      created
     :vartype recovery_point_time_in_utc: datetime
     :ivar type: Type of restore point. Possible values include: 'Invalid',
-     'Full', 'Log', 'Differential'
+     'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param time_ranges: List of log ranges
@@ -5425,7 +5554,7 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
      created
     :vartype recovery_point_time_in_utc: datetime
     :ivar type: Type of restore point. Possible values include: 'Invalid',
-     'Full', 'Log', 'Differential'
+     'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     """
@@ -5519,7 +5648,7 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
      created
     :vartype recovery_point_time_in_utc: datetime
     :ivar type: Type of restore point. Possible values include: 'Invalid',
-     'Full', 'Log', 'Differential'
+     'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param extended_info: Extended Info that provides data directory details.
@@ -5568,7 +5697,7 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
      created
     :vartype recovery_point_time_in_utc: datetime
     :ivar type: Type of restore point. Possible values include: 'Invalid',
-     'Full', 'Log', 'Differential'
+     'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param extended_info: Extended Info that provides data directory details.
@@ -5763,52 +5892,6 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(Model):
         self.data_directory_paths = None
 
 
-class Resource(Model):
-    """ARM Resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id represents the complete path to the resource.
-    :vartype id: str
-    :ivar name: Resource name associated with the resource.
-    :vartype name: str
-    :ivar type: Resource type represents the complete path of the form
-     Namespace/ResourceType/ResourceType/...
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param e_tag: Optional ETag.
-    :type e_tag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-    }
-
-    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
-        self.e_tag = e_tag
-
-
 class BackupEngineBaseResource(Resource):
     """The base backup engine class. All workload specific backup engines derive
     from this class.
@@ -5989,11 +6072,13 @@ class BackupResourceConfig(Model):
     """The resource storage details.
 
     :param storage_model_type: Storage type. Possible values include:
-     'Invalid', 'GeoRedundant', 'LocallyRedundant'
+     'Invalid', 'GeoRedundant', 'LocallyRedundant', 'ZoneRedundant',
+     'ReadAccessGeoZoneRedundant'
     :type storage_model_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.StorageType
     :param storage_type: Storage type. Possible values include: 'Invalid',
-     'GeoRedundant', 'LocallyRedundant'
+     'GeoRedundant', 'LocallyRedundant', 'ZoneRedundant',
+     'ReadAccessGeoZoneRedundant'
     :type storage_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.StorageType
     :param storage_type_state: Locked or Unlocked. Once a machine is
@@ -6001,19 +6086,24 @@ class BackupResourceConfig(Model):
      Possible values include: 'Invalid', 'Locked', 'Unlocked'
     :type storage_type_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.StorageTypeState
+    :param cross_region_restore_flag: Opt in details of Cross Region Restore
+     feature.
+    :type cross_region_restore_flag: bool
     """
 
     _attribute_map = {
         'storage_model_type': {'key': 'storageModelType', 'type': 'str'},
         'storage_type': {'key': 'storageType', 'type': 'str'},
         'storage_type_state': {'key': 'storageTypeState', 'type': 'str'},
+        'cross_region_restore_flag': {'key': 'crossRegionRestoreFlag', 'type': 'bool'},
     }
 
-    def __init__(self, *, storage_model_type=None, storage_type=None, storage_type_state=None, **kwargs) -> None:
+    def __init__(self, *, storage_model_type=None, storage_type=None, storage_type_state=None, cross_region_restore_flag: bool=None, **kwargs) -> None:
         super(BackupResourceConfig, self).__init__(**kwargs)
         self.storage_model_type = storage_model_type
         self.storage_type = storage_type
         self.storage_type_state = storage_type_state
+        self.cross_region_restore_flag = cross_region_restore_flag
 
 
 class BackupResourceConfigResource(Resource):
@@ -6149,11 +6239,13 @@ class BackupResourceVaultConfig(Model):
     """Backup resource vault config details.
 
     :param storage_model_type: Storage type. Possible values include:
-     'Invalid', 'GeoRedundant', 'LocallyRedundant'
+     'Invalid', 'GeoRedundant', 'LocallyRedundant', 'ZoneRedundant',
+     'ReadAccessGeoZoneRedundant'
     :type storage_model_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.StorageType
     :param storage_type: Storage type. Possible values include: 'Invalid',
-     'GeoRedundant', 'LocallyRedundant'
+     'GeoRedundant', 'LocallyRedundant', 'ZoneRedundant',
+     'ReadAccessGeoZoneRedundant'
     :type storage_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.StorageType
     :param storage_type_state: Locked or Unlocked. Once a machine is
@@ -6553,7 +6645,7 @@ class BMSRPQueryObject(Model):
     :type end_date: datetime
     :param restore_point_query_type: RestorePoint type. Possible values
      include: 'Invalid', 'Full', 'Log', 'Differential', 'FullAndDifferential',
-     'All'
+     'All', 'Incremental'
     :type restore_point_query_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointQueryType
     :param extended_info: In Get Recovery Point, it tells whether extended
@@ -6809,6 +6901,319 @@ class ContainerIdentityInfo(Model):
         self.aad_tenant_id = aad_tenant_id
         self.service_principal_client_id = service_principal_client_id
         self.audience = audience
+
+
+class CrossRegionRestoreRequest(Model):
+    """CrossRegionRestoreRequest.
+
+    :param cross_region_restore_access_details: Access details for cross
+     region restore
+    :type cross_region_restore_access_details:
+     ~azure.mgmt.recoveryservicesbackup.models.CrrAccessToken
+    :param restore_request: Request object for triggering restore
+    :type restore_request:
+     ~azure.mgmt.recoveryservicesbackup.models.RestoreRequest
+    """
+
+    _attribute_map = {
+        'cross_region_restore_access_details': {'key': 'crossRegionRestoreAccessDetails', 'type': 'CrrAccessToken'},
+        'restore_request': {'key': 'restoreRequest', 'type': 'RestoreRequest'},
+    }
+
+    def __init__(self, *, cross_region_restore_access_details=None, restore_request=None, **kwargs) -> None:
+        super(CrossRegionRestoreRequest, self).__init__(**kwargs)
+        self.cross_region_restore_access_details = cross_region_restore_access_details
+        self.restore_request = restore_request
+
+
+class CrossRegionRestoreRequestResource(Resource):
+    """CrossRegionRestoreRequestResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: CrossRegionRestoreRequestResource properties
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.CrossRegionRestoreRequest
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CrossRegionRestoreRequest'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, properties=None, **kwargs) -> None:
+        super(CrossRegionRestoreRequestResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        self.properties = properties
+
+
+class CrrAccessToken(Model):
+    """CrrAccessToken.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: WorkloadCrrAccessToken
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param access_token_string: Access token used for authentication
+    :type access_token_string: str
+    :param subscription_id: Subscription Id of the source vault
+    :type subscription_id: str
+    :param resource_group_name: Resource Group name of the source vault
+    :type resource_group_name: str
+    :param resource_name: Resource Name of the source vault
+    :type resource_name: str
+    :param resource_id: Resource Id of the source vault
+    :type resource_id: str
+    :param protection_container_id: Protected item container id
+    :type protection_container_id: long
+    :param recovery_point_id: Recovery Point Id
+    :type recovery_point_id: str
+    :param recovery_point_time: Recovery Point Time
+    :type recovery_point_time: str
+    :param container_name: Container Unique name
+    :type container_name: str
+    :param container_type: Container Type
+    :type container_type: str
+    :param backup_management_type: Backup Management Type
+    :type backup_management_type: str
+    :param datasource_type: Datasource Type
+    :type datasource_type: str
+    :param datasource_name: Datasource Friendly Name
+    :type datasource_name: str
+    :param datasource_id: Datasource Id
+    :type datasource_id: str
+    :param datasource_container_name: Datasource Container Unique Name
+    :type datasource_container_name: str
+    :param coordinator_service_stamp_id: CoordinatorServiceStampId to be used
+     by BCM in restore call
+    :type coordinator_service_stamp_id: str
+    :param coordinator_service_stamp_uri: CoordinatorServiceStampUri to be
+     used by BCM in restore call
+    :type coordinator_service_stamp_uri: str
+    :param protection_service_stamp_id: ProtectionServiceStampId to be used by
+     BCM in restore call
+    :type protection_service_stamp_id: str
+    :param protection_service_stamp_uri: ProtectionServiceStampUri to be used
+     by BCM in restore call
+    :type protection_service_stamp_uri: str
+    :param token_extended_information: Extended Information about the token
+     like FileSpec etc.
+    :type token_extended_information: str
+    :param rp_tier_information: Recovery point Tier Information
+    :type rp_tier_information: dict[str, str]
+    :param rp_original_sa_option: Recovery point information: Original SA
+     option
+    :type rp_original_sa_option: bool
+    :param rp_is_managed_virtual_machine: Recovery point information: Managed
+     virtual machine
+    :type rp_is_managed_virtual_machine: bool
+    :param rp_vm_size_description: Recovery point information: VM size
+     description
+    :type rp_vm_size_description: str
+    :param b_ms_active_region: Active region name of BMS Stamp
+    :type b_ms_active_region: str
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'access_token_string': {'key': 'accessTokenString', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
+        'resource_name': {'key': 'resourceName', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'protection_container_id': {'key': 'protectionContainerId', 'type': 'long'},
+        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
+        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'str'},
+        'container_name': {'key': 'containerName', 'type': 'str'},
+        'container_type': {'key': 'containerType', 'type': 'str'},
+        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'datasource_type': {'key': 'datasourceType', 'type': 'str'},
+        'datasource_name': {'key': 'datasourceName', 'type': 'str'},
+        'datasource_id': {'key': 'datasourceId', 'type': 'str'},
+        'datasource_container_name': {'key': 'datasourceContainerName', 'type': 'str'},
+        'coordinator_service_stamp_id': {'key': 'coordinatorServiceStampId', 'type': 'str'},
+        'coordinator_service_stamp_uri': {'key': 'coordinatorServiceStampUri', 'type': 'str'},
+        'protection_service_stamp_id': {'key': 'protectionServiceStampId', 'type': 'str'},
+        'protection_service_stamp_uri': {'key': 'protectionServiceStampUri', 'type': 'str'},
+        'token_extended_information': {'key': 'tokenExtendedInformation', 'type': 'str'},
+        'rp_tier_information': {'key': 'rpTierInformation', 'type': '{str}'},
+        'rp_original_sa_option': {'key': 'rpOriginalSAOption', 'type': 'bool'},
+        'rp_is_managed_virtual_machine': {'key': 'rpIsManagedVirtualMachine', 'type': 'bool'},
+        'rp_vm_size_description': {'key': 'rpVMSizeDescription', 'type': 'str'},
+        'b_ms_active_region': {'key': 'bMSActiveRegion', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'object_type': {'WorkloadCrrAccessToken': 'WorkloadCrrAccessToken'}
+    }
+
+    def __init__(self, *, access_token_string: str=None, subscription_id: str=None, resource_group_name: str=None, resource_name: str=None, resource_id: str=None, protection_container_id: int=None, recovery_point_id: str=None, recovery_point_time: str=None, container_name: str=None, container_type: str=None, backup_management_type: str=None, datasource_type: str=None, datasource_name: str=None, datasource_id: str=None, datasource_container_name: str=None, coordinator_service_stamp_id: str=None, coordinator_service_stamp_uri: str=None, protection_service_stamp_id: str=None, protection_service_stamp_uri: str=None, token_extended_information: str=None, rp_tier_information=None, rp_original_sa_option: bool=None, rp_is_managed_virtual_machine: bool=None, rp_vm_size_description: str=None, b_ms_active_region: str=None, **kwargs) -> None:
+        super(CrrAccessToken, self).__init__(**kwargs)
+        self.access_token_string = access_token_string
+        self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
+        self.resource_name = resource_name
+        self.resource_id = resource_id
+        self.protection_container_id = protection_container_id
+        self.recovery_point_id = recovery_point_id
+        self.recovery_point_time = recovery_point_time
+        self.container_name = container_name
+        self.container_type = container_type
+        self.backup_management_type = backup_management_type
+        self.datasource_type = datasource_type
+        self.datasource_name = datasource_name
+        self.datasource_id = datasource_id
+        self.datasource_container_name = datasource_container_name
+        self.coordinator_service_stamp_id = coordinator_service_stamp_id
+        self.coordinator_service_stamp_uri = coordinator_service_stamp_uri
+        self.protection_service_stamp_id = protection_service_stamp_id
+        self.protection_service_stamp_uri = protection_service_stamp_uri
+        self.token_extended_information = token_extended_information
+        self.rp_tier_information = rp_tier_information
+        self.rp_original_sa_option = rp_original_sa_option
+        self.rp_is_managed_virtual_machine = rp_is_managed_virtual_machine
+        self.rp_vm_size_description = rp_vm_size_description
+        self.b_ms_active_region = b_ms_active_region
+        self.object_type = None
+
+
+class CrrAccessTokenResource(Resource):
+    """CrrAccessTokenResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: CrrAccessTokenResource properties
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.CrrAccessToken
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CrrAccessToken'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, properties=None, **kwargs) -> None:
+        super(CrrAccessTokenResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        self.properties = properties
+
+
+class CrrJobRequest(Model):
+    """Request object for fetching CRR jobs.
+
+    :param resource_id: Entire ARM resource id of the resource
+    :type resource_id: str
+    :param job_name: Job Name of the job to be fetched
+    :type job_name: str
+    """
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'job_name': {'key': 'jobName', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str=None, job_name: str=None, **kwargs) -> None:
+        super(CrrJobRequest, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.job_name = job_name
+
+
+class CrrJobRequestResource(Resource):
+    """Request object for fetching CRR jobs.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: CrrJobRequestResource properties
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.CrrJobRequest
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CrrJobRequest'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, properties=None, **kwargs) -> None:
+        super(CrrJobRequestResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        self.properties = properties
 
 
 class DailyRetentionFormat(Model):
@@ -8092,6 +8497,12 @@ class IaasVMRestoreRequest(RestoreRequest):
      ~azure.mgmt.recoveryservicesbackup.models.EncryptionDetails
     :param restore_disk_lun_list: List of Disk LUNs for partial restore
     :type restore_disk_lun_list: list[int]
+    :param restore_with_managed_disks: Flag to denote of an Unmanaged disk VM
+     should be restored with Managed disks.
+    :type restore_with_managed_disks: bool
+    :param disk_encryption_set_id: DiskEncryptionSet's ID - needed if the VM
+     needs to be encrypted at rest during restore with customer managed key.
+    :type disk_encryption_set_id: str
     """
 
     _validation = {
@@ -8115,9 +8526,11 @@ class IaasVMRestoreRequest(RestoreRequest):
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'encryption_details': {'key': 'encryptionDetails', 'type': 'EncryptionDetails'},
         'restore_disk_lun_list': {'key': 'restoreDiskLunList', 'type': '[int]'},
+        'restore_with_managed_disks': {'key': 'restoreWithManagedDisks', 'type': 'bool'},
+        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
     }
 
-    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, **kwargs) -> None:
         super(IaasVMRestoreRequest, self).__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
@@ -8134,6 +8547,8 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.original_storage_account_option = original_storage_account_option
         self.encryption_details = encryption_details
         self.restore_disk_lun_list = restore_disk_lun_list
+        self.restore_with_managed_disks = restore_with_managed_disks
+        self.disk_encryption_set_id = disk_encryption_set_id
         self.object_type = 'IaasVMRestoreRequest'
 
 
@@ -8293,7 +8708,8 @@ class JobQueryObject(Model):
      ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: Type of operation. Possible values include: 'Invalid',
      'Register', 'UnRegister', 'ConfigureBackup', 'Backup', 'Restore',
-     'DisableBackup', 'DeleteBackupData', 'CrossRegionRestore', 'Undelete'
+     'DisableBackup', 'DeleteBackupData', 'CrossRegionRestore', 'Undelete',
+     'UpdateCustomerManagedKey'
     :type operation: str or
      ~azure.mgmt.recoveryservicesbackup.models.JobOperationType
     :param job_id: JobID represents the job uniquely.
@@ -9381,7 +9797,8 @@ class OperationStatusExtendedInfo(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: OperationStatusJobExtendedInfo,
-    OperationStatusJobsExtendedInfo, OperationStatusProvisionILRExtendedInfo
+    OperationStatusJobsExtendedInfo, OperationStatusProvisionILRExtendedInfo,
+    OperationStatusRecoveryPointExtendedInfo
 
     All required parameters must be populated in order to send to Azure.
 
@@ -9398,7 +9815,7 @@ class OperationStatusExtendedInfo(Model):
     }
 
     _subtype_map = {
-        'object_type': {'OperationStatusJobExtendedInfo': 'OperationStatusJobExtendedInfo', 'OperationStatusJobsExtendedInfo': 'OperationStatusJobsExtendedInfo', 'OperationStatusProvisionILRExtendedInfo': 'OperationStatusProvisionILRExtendedInfo'}
+        'object_type': {'OperationStatusJobExtendedInfo': 'OperationStatusJobExtendedInfo', 'OperationStatusJobsExtendedInfo': 'OperationStatusJobsExtendedInfo', 'OperationStatusProvisionILRExtendedInfo': 'OperationStatusProvisionILRExtendedInfo', 'OperationStatusRecoveryPointExtendedInfo': 'OperationStatusRecoveryPointExtendedInfo'}
     }
 
     def __init__(self, **kwargs) -> None:
@@ -9488,6 +9905,39 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
         super(OperationStatusProvisionILRExtendedInfo, self).__init__(**kwargs)
         self.recovery_target = recovery_target
         self.object_type = 'OperationStatusProvisionILRExtendedInfo'
+
+
+class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
+    """Operation status extended info for Updated Recovery Point.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param updated_recovery_point: Recovery Point info with updated source
+     snapshot URI
+    :type updated_recovery_point:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPoint
+    :param deleted_backup_item_version: In case the share is in soft-deleted
+     state, populate this field with deleted backup item
+    :type deleted_backup_item_version: str
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'updated_recovery_point': {'key': 'updatedRecoveryPoint', 'type': 'RecoveryPoint'},
+        'deleted_backup_item_version': {'key': 'deletedBackupItemVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, updated_recovery_point=None, deleted_backup_item_version: str=None, **kwargs) -> None:
+        super(OperationStatusRecoveryPointExtendedInfo, self).__init__(**kwargs)
+        self.updated_recovery_point = updated_recovery_point
+        self.deleted_backup_item_version = deleted_backup_item_version
+        self.object_type = 'OperationStatusRecoveryPointExtendedInfo'
 
 
 class PointInTimeRange(Model):
@@ -10558,7 +11008,7 @@ class SubProtectionPolicy(Model):
     """Sub-protection policy which includes schedule and retention.
 
     :param policy_type: Type of backup policy type. Possible values include:
-     'Invalid', 'Full', 'Differential', 'Log', 'CopyOnlyFull'
+     'Invalid', 'Full', 'Differential', 'Log', 'CopyOnlyFull', 'Incremental'
     :type policy_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.PolicyType
     :param schedule_policy: Backup schedule specified as part of backup
@@ -10831,6 +11281,115 @@ class ValidateOperationsResponse(Model):
         self.validate_operation_response = validate_operation_response
 
 
+class VaultJob(Job):
+    """Vault level Job.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param entity_friendly_name: Friendly name of the entity on which the
+     current job is executing.
+    :type entity_friendly_name: str
+    :param backup_management_type: Backup management type to execute the
+     current job. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
+    :param operation: The operation name.
+    :type operation: str
+    :param status: Job status.
+    :type status: str
+    :param start_time: The start time.
+    :type start_time: datetime
+    :param end_time: The end time.
+    :type end_time: datetime
+    :param activity_id: ActivityId of job.
+    :type activity_id: str
+    :param job_type: Required. Constant filled by server.
+    :type job_type: str
+    :param duration: Time elapsed during the execution of this job.
+    :type duration: timedelta
+    :param actions_info: Gets or sets the state/actions applicable on this job
+     like cancel/retry.
+    :type actions_info: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.JobSupportedAction]
+    :param error_details: Error details on execution of this job.
+    :type error_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.VaultJobErrorInfo]
+    :param extended_info: Additional information about the job.
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.VaultJobExtendedInfo
+    """
+
+    _validation = {
+        'job_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'entity_friendly_name': {'key': 'entityFriendlyName', 'type': 'str'},
+        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'activity_id': {'key': 'activityId', 'type': 'str'},
+        'job_type': {'key': 'jobType', 'type': 'str'},
+        'duration': {'key': 'duration', 'type': 'duration'},
+        'actions_info': {'key': 'actionsInfo', 'type': '[JobSupportedAction]'},
+        'error_details': {'key': 'errorDetails', 'type': '[VaultJobErrorInfo]'},
+        'extended_info': {'key': 'extendedInfo', 'type': 'VaultJobExtendedInfo'},
+    }
+
+    def __init__(self, *, entity_friendly_name: str=None, backup_management_type=None, operation: str=None, status: str=None, start_time=None, end_time=None, activity_id: str=None, duration=None, actions_info=None, error_details=None, extended_info=None, **kwargs) -> None:
+        super(VaultJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id, **kwargs)
+        self.duration = duration
+        self.actions_info = actions_info
+        self.error_details = error_details
+        self.extended_info = extended_info
+        self.job_type = 'VaultJob'
+
+
+class VaultJobErrorInfo(Model):
+    """Vault Job specific error information.
+
+    :param error_code: Error code.
+    :type error_code: int
+    :param error_string: Localized error string.
+    :type error_string: str
+    :param recommendations: List of localized recommendations for above error
+     code.
+    :type recommendations: list[str]
+    """
+
+    _attribute_map = {
+        'error_code': {'key': 'errorCode', 'type': 'int'},
+        'error_string': {'key': 'errorString', 'type': 'str'},
+        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+    }
+
+    def __init__(self, *, error_code: int=None, error_string: str=None, recommendations=None, **kwargs) -> None:
+        super(VaultJobErrorInfo, self).__init__(**kwargs)
+        self.error_code = error_code
+        self.error_string = error_string
+        self.recommendations = recommendations
+
+
+class VaultJobExtendedInfo(Model):
+    """Vault Job for CMK - has CMK specific info.
+
+    :param property_bag: Job properties.
+    :type property_bag: dict[str, str]
+    """
+
+    _attribute_map = {
+        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+    }
+
+    def __init__(self, *, property_bag=None, **kwargs) -> None:
+        super(VaultJobExtendedInfo, self).__init__(**kwargs)
+        self.property_bag = property_bag
+
+
 class WeeklyRetentionFormat(Model):
     """Weekly retention format.
 
@@ -10877,6 +11436,147 @@ class WeeklyRetentionSchedule(Model):
         self.days_of_the_week = days_of_the_week
         self.retention_times = retention_times
         self.retention_duration = retention_duration
+
+
+class WorkloadCrrAccessToken(CrrAccessToken):
+    """WorkloadCrrAccessToken.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param access_token_string: Access token used for authentication
+    :type access_token_string: str
+    :param subscription_id: Subscription Id of the source vault
+    :type subscription_id: str
+    :param resource_group_name: Resource Group name of the source vault
+    :type resource_group_name: str
+    :param resource_name: Resource Name of the source vault
+    :type resource_name: str
+    :param resource_id: Resource Id of the source vault
+    :type resource_id: str
+    :param protection_container_id: Protected item container id
+    :type protection_container_id: long
+    :param recovery_point_id: Recovery Point Id
+    :type recovery_point_id: str
+    :param recovery_point_time: Recovery Point Time
+    :type recovery_point_time: str
+    :param container_name: Container Unique name
+    :type container_name: str
+    :param container_type: Container Type
+    :type container_type: str
+    :param backup_management_type: Backup Management Type
+    :type backup_management_type: str
+    :param datasource_type: Datasource Type
+    :type datasource_type: str
+    :param datasource_name: Datasource Friendly Name
+    :type datasource_name: str
+    :param datasource_id: Datasource Id
+    :type datasource_id: str
+    :param datasource_container_name: Datasource Container Unique Name
+    :type datasource_container_name: str
+    :param coordinator_service_stamp_id: CoordinatorServiceStampId to be used
+     by BCM in restore call
+    :type coordinator_service_stamp_id: str
+    :param coordinator_service_stamp_uri: CoordinatorServiceStampUri to be
+     used by BCM in restore call
+    :type coordinator_service_stamp_uri: str
+    :param protection_service_stamp_id: ProtectionServiceStampId to be used by
+     BCM in restore call
+    :type protection_service_stamp_id: str
+    :param protection_service_stamp_uri: ProtectionServiceStampUri to be used
+     by BCM in restore call
+    :type protection_service_stamp_uri: str
+    :param token_extended_information: Extended Information about the token
+     like FileSpec etc.
+    :type token_extended_information: str
+    :param rp_tier_information: Recovery point Tier Information
+    :type rp_tier_information: dict[str, str]
+    :param rp_original_sa_option: Recovery point information: Original SA
+     option
+    :type rp_original_sa_option: bool
+    :param rp_is_managed_virtual_machine: Recovery point information: Managed
+     virtual machine
+    :type rp_is_managed_virtual_machine: bool
+    :param rp_vm_size_description: Recovery point information: VM size
+     description
+    :type rp_vm_size_description: str
+    :param b_ms_active_region: Active region name of BMS Stamp
+    :type b_ms_active_region: str
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param protectable_object_unique_name:
+    :type protectable_object_unique_name: str
+    :param protectable_object_friendly_name:
+    :type protectable_object_friendly_name: str
+    :param protectable_object_workload_type:
+    :type protectable_object_workload_type: str
+    :param protectable_object_protection_state:
+    :type protectable_object_protection_state: str
+    :param protectable_object_container_host_os_name:
+    :type protectable_object_container_host_os_name: str
+    :param protectable_object_parent_logical_container_name:
+    :type protectable_object_parent_logical_container_name: str
+    :param container_id: Container Id
+    :type container_id: str
+    :param policy_name: Policy Name
+    :type policy_name: str
+    :param policy_id: Policy Id
+    :type policy_id: str
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'access_token_string': {'key': 'accessTokenString', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
+        'resource_name': {'key': 'resourceName', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'protection_container_id': {'key': 'protectionContainerId', 'type': 'long'},
+        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
+        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'str'},
+        'container_name': {'key': 'containerName', 'type': 'str'},
+        'container_type': {'key': 'containerType', 'type': 'str'},
+        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'datasource_type': {'key': 'datasourceType', 'type': 'str'},
+        'datasource_name': {'key': 'datasourceName', 'type': 'str'},
+        'datasource_id': {'key': 'datasourceId', 'type': 'str'},
+        'datasource_container_name': {'key': 'datasourceContainerName', 'type': 'str'},
+        'coordinator_service_stamp_id': {'key': 'coordinatorServiceStampId', 'type': 'str'},
+        'coordinator_service_stamp_uri': {'key': 'coordinatorServiceStampUri', 'type': 'str'},
+        'protection_service_stamp_id': {'key': 'protectionServiceStampId', 'type': 'str'},
+        'protection_service_stamp_uri': {'key': 'protectionServiceStampUri', 'type': 'str'},
+        'token_extended_information': {'key': 'tokenExtendedInformation', 'type': 'str'},
+        'rp_tier_information': {'key': 'rpTierInformation', 'type': '{str}'},
+        'rp_original_sa_option': {'key': 'rpOriginalSAOption', 'type': 'bool'},
+        'rp_is_managed_virtual_machine': {'key': 'rpIsManagedVirtualMachine', 'type': 'bool'},
+        'rp_vm_size_description': {'key': 'rpVMSizeDescription', 'type': 'str'},
+        'b_ms_active_region': {'key': 'bMSActiveRegion', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'protectable_object_unique_name': {'key': 'protectableObjectUniqueName', 'type': 'str'},
+        'protectable_object_friendly_name': {'key': 'protectableObjectFriendlyName', 'type': 'str'},
+        'protectable_object_workload_type': {'key': 'protectableObjectWorkloadType', 'type': 'str'},
+        'protectable_object_protection_state': {'key': 'protectableObjectProtectionState', 'type': 'str'},
+        'protectable_object_container_host_os_name': {'key': 'protectableObjectContainerHostOsName', 'type': 'str'},
+        'protectable_object_parent_logical_container_name': {'key': 'protectableObjectParentLogicalContainerName', 'type': 'str'},
+        'container_id': {'key': 'containerId', 'type': 'str'},
+        'policy_name': {'key': 'policyName', 'type': 'str'},
+        'policy_id': {'key': 'policyId', 'type': 'str'},
+    }
+
+    def __init__(self, *, access_token_string: str=None, subscription_id: str=None, resource_group_name: str=None, resource_name: str=None, resource_id: str=None, protection_container_id: int=None, recovery_point_id: str=None, recovery_point_time: str=None, container_name: str=None, container_type: str=None, backup_management_type: str=None, datasource_type: str=None, datasource_name: str=None, datasource_id: str=None, datasource_container_name: str=None, coordinator_service_stamp_id: str=None, coordinator_service_stamp_uri: str=None, protection_service_stamp_id: str=None, protection_service_stamp_uri: str=None, token_extended_information: str=None, rp_tier_information=None, rp_original_sa_option: bool=None, rp_is_managed_virtual_machine: bool=None, rp_vm_size_description: str=None, b_ms_active_region: str=None, protectable_object_unique_name: str=None, protectable_object_friendly_name: str=None, protectable_object_workload_type: str=None, protectable_object_protection_state: str=None, protectable_object_container_host_os_name: str=None, protectable_object_parent_logical_container_name: str=None, container_id: str=None, policy_name: str=None, policy_id: str=None, **kwargs) -> None:
+        super(WorkloadCrrAccessToken, self).__init__(access_token_string=access_token_string, subscription_id=subscription_id, resource_group_name=resource_group_name, resource_name=resource_name, resource_id=resource_id, protection_container_id=protection_container_id, recovery_point_id=recovery_point_id, recovery_point_time=recovery_point_time, container_name=container_name, container_type=container_type, backup_management_type=backup_management_type, datasource_type=datasource_type, datasource_name=datasource_name, datasource_id=datasource_id, datasource_container_name=datasource_container_name, coordinator_service_stamp_id=coordinator_service_stamp_id, coordinator_service_stamp_uri=coordinator_service_stamp_uri, protection_service_stamp_id=protection_service_stamp_id, protection_service_stamp_uri=protection_service_stamp_uri, token_extended_information=token_extended_information, rp_tier_information=rp_tier_information, rp_original_sa_option=rp_original_sa_option, rp_is_managed_virtual_machine=rp_is_managed_virtual_machine, rp_vm_size_description=rp_vm_size_description, b_ms_active_region=b_ms_active_region, **kwargs)
+        self.protectable_object_unique_name = protectable_object_unique_name
+        self.protectable_object_friendly_name = protectable_object_friendly_name
+        self.protectable_object_workload_type = protectable_object_workload_type
+        self.protectable_object_protection_state = protectable_object_protection_state
+        self.protectable_object_container_host_os_name = protectable_object_container_host_os_name
+        self.protectable_object_parent_logical_container_name = protectable_object_parent_logical_container_name
+        self.container_id = container_id
+        self.policy_name = policy_name
+        self.policy_id = policy_id
+        self.object_type = 'WorkloadCrrAccessToken'
 
 
 class WorkloadInquiryDetails(Model):

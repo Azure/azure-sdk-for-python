@@ -11,13 +11,12 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class ProtectionPolicyOperationStatusesOperations(object):
-    """ProtectionPolicyOperationStatusesOperations operations.
+class CrrOperationStatusOperations(object):
+    """CrrOperationStatusOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +24,7 @@ class ProtectionPolicyOperationStatusesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2020-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2018-12-20".
     """
 
     models = models
@@ -35,29 +34,17 @@ class ProtectionPolicyOperationStatusesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-10-01"
+        self.api_version = "2018-12-20"
 
         self.config = config
 
     def get(
-            self, vault_name, resource_group_name, policy_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Provides the status of the asynchronous operations like backup,
-        restore. The status can be in progress, completed
-        or failed. You can refer to the Operation Status enum for all the
-        possible states of an operation. Some operations
-        create jobs. This method returns the list of jobs associated with
-        operation.
+            self, azure_region, operation_id, custom_headers=None, raw=False, **operation_config):
+        """
 
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
-        :param policy_name: Backup policy name whose operation's status needs
-         to be fetched.
-        :type policy_name: str
-        :param operation_id: Operation ID which represents an operation whose
-         status needs to be fetched.
+        :param azure_region: Azure region to hit Api
+        :type azure_region: str
+        :param operation_id:
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -67,15 +54,14 @@ class ProtectionPolicyOperationStatusesOperations(object):
         :return: OperationStatus or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.OperationStatus or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'azureRegion': self._serialize.url("azure_region", azure_region, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -99,9 +85,7 @@ class ProtectionPolicyOperationStatusesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.NewErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -112,4 +96,4 @@ class ProtectionPolicyOperationStatusesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}/operations/{operationId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrrOperationsStatus/{operationId}'}

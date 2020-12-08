@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -25,6 +27,7 @@ class ProtectionPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2020-10-01".
     """
 
     models = models
@@ -34,6 +37,7 @@ class ProtectionPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2020-10-01"
 
         self.config = config
 
@@ -62,8 +66,6 @@ class ProtectionPoliciesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2019-06-15"
-
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -76,7 +78,7 @@ class ProtectionPoliciesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -135,8 +137,6 @@ class ProtectionPoliciesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2019-06-15"
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -149,7 +149,7 @@ class ProtectionPoliciesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -185,30 +185,9 @@ class ProtectionPoliciesOperations(object):
         return deserialized
     create_or_update.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}'}
 
-    def delete(
+
+    def _delete_initial(
             self, vault_name, resource_group_name, policy_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes specified backup policy from your Recovery Services Vault. This
-        is an asynchronous operation. Status of the
-        operation can be fetched using GetPolicyOperationResult API.
-
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
-        :param policy_name: Backup policy to be deleted.
-        :type policy_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2016-12-01"
-
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -221,7 +200,7 @@ class ProtectionPoliciesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -244,4 +223,50 @@ class ProtectionPoliciesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, vault_name, resource_group_name, policy_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes specified backup policy from your Recovery Services Vault. This
+        is an asynchronous operation. Status of the
+        operation can be fetched using GetProtectionPolicyOperationResult API.
+
+        :param vault_name: The name of the recovery services vault.
+        :type vault_name: str
+        :param resource_group_name: The name of the resource group where the
+         recovery services vault is present.
+        :type resource_group_name: str
+        :param policy_name: Backup policy to be deleted.
+        :type policy_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            vault_name=vault_name,
+            resource_group_name=resource_group_name,
+            policy_name=policy_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}'}

@@ -64,32 +64,6 @@ class ProtectedItemResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProtectedItemResourcePaged, self).__init__(*args, **kwargs)
-class ProtectionIntentResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ProtectionIntentResource <azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ProtectionIntentResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ProtectionIntentResourcePaged, self).__init__(*args, **kwargs)
-class BackupManagementUsagePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`BackupManagementUsage <azure.mgmt.recoveryservicesbackup.models.BackupManagementUsage>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[BackupManagementUsage]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(BackupManagementUsagePaged, self).__init__(*args, **kwargs)
 class BackupEngineBaseResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`BackupEngineBaseResource <azure.mgmt.recoveryservicesbackup.models.BackupEngineBaseResource>` object
@@ -155,6 +129,32 @@ class ProtectionContainerResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProtectionContainerResourcePaged, self).__init__(*args, **kwargs)
+class ProtectionIntentResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ProtectionIntentResource <azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ProtectionIntentResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProtectionIntentResourcePaged, self).__init__(*args, **kwargs)
+class BackupManagementUsagePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BackupManagementUsage <azure.mgmt.recoveryservicesbackup.models.BackupManagementUsage>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BackupManagementUsage]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BackupManagementUsagePaged, self).__init__(*args, **kwargs)
 class ClientDiscoveryValueForSingleApiPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ClientDiscoveryValueForSingleApi <azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryValueForSingleApi>` object

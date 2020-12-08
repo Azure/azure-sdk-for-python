@@ -1,5 +1,28 @@
 # Release History
 
+## 0.10.0 (2020-12-08)
+
+**Features**
+
+  - Model IaasVMRestoreRequest has a new parameter disk_encryption_set_id
+  - Model IaasVMRestoreRequest has a new parameter restore_with_managed_disks
+  - Model BackupResourceConfig has a new parameter cross_region_restore_flag
+  - Model AzureFileshareProtectedItem has a new parameter health_status
+  - Added operation RecoveryPointsOperations.get_access_token
+  - Added operation group AadPropertiesOperations
+  - Added operation group CrossRegionRestoreOperations
+  - Added operation group BackupCrrJobDetailsOperations
+  - Added operation group PrivateEndpointOperations
+  - Added operation group BackupCrrJobsOperations
+  - Added operation group RecoveryPointsCrrOperations
+  - Added operation group CrrOperationResultsOperations
+  - Added operation group CrrOperationStatusOperations
+  - Added operation group BackupProtectedItemsCrrOperations
+
+**Breaking changes**
+
+  - Removed operation RecoveryServicesBackupClientOperationsMixin.get_operation_status1
+
 ## 0.9.0 (2020-12-07)
 
 **Features**

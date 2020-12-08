@@ -10,6 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AADProperties
+    from ._models_py3 import AADPropertiesResource
     from ._models_py3 import AzureBackupGoalFeatureSupportRequest
     from ._models_py3 import AzureBackupServerContainer
     from ._models_py3 import AzureBackupServerEngine
@@ -125,6 +127,12 @@ try:
     from ._models_py3 import ClientDiscoveryValueForSingleApi
     from ._models_py3 import ClientScriptForConnect
     from ._models_py3 import ContainerIdentityInfo
+    from ._models_py3 import CrossRegionRestoreRequest
+    from ._models_py3 import CrossRegionRestoreRequestResource
+    from ._models_py3 import CrrAccessToken
+    from ._models_py3 import CrrAccessTokenResource
+    from ._models_py3 import CrrJobRequest
+    from ._models_py3 import CrrJobRequestResource
     from ._models_py3 import DailyRetentionFormat
     from ._models_py3 import DailyRetentionSchedule
     from ._models_py3 import Day
@@ -197,6 +205,7 @@ try:
     from ._models_py3 import OperationStatusJobExtendedInfo
     from ._models_py3 import OperationStatusJobsExtendedInfo
     from ._models_py3 import OperationStatusProvisionILRExtendedInfo
+    from ._models_py3 import OperationStatusRecoveryPointExtendedInfo
     from ._models_py3 import OperationWorkerResponse
     from ._models_py3 import PointInTimeRange
     from ._models_py3 import PreBackupValidation
@@ -249,9 +258,13 @@ try:
     from ._models_py3 import ValidateOperationResponse
     from ._models_py3 import ValidateOperationsResponse
     from ._models_py3 import ValidateRestoreOperationRequest
+    from ._models_py3 import VaultJob
+    from ._models_py3 import VaultJobErrorInfo
+    from ._models_py3 import VaultJobExtendedInfo
     from ._models_py3 import VaultStorageConfigOperationResultResponse
     from ._models_py3 import WeeklyRetentionFormat
     from ._models_py3 import WeeklyRetentionSchedule
+    from ._models_py3 import WorkloadCrrAccessToken
     from ._models_py3 import WorkloadInquiryDetails
     from ._models_py3 import WorkloadItem
     from ._models_py3 import WorkloadItemResource
@@ -259,6 +272,8 @@ try:
     from ._models_py3 import WorkloadProtectableItemResource
     from ._models_py3 import YearlyRetentionSchedule
 except (SyntaxError, ImportError):
+    from ._models import AADProperties
+    from ._models import AADPropertiesResource
     from ._models import AzureBackupGoalFeatureSupportRequest
     from ._models import AzureBackupServerContainer
     from ._models import AzureBackupServerEngine
@@ -374,6 +389,12 @@ except (SyntaxError, ImportError):
     from ._models import ClientDiscoveryValueForSingleApi
     from ._models import ClientScriptForConnect
     from ._models import ContainerIdentityInfo
+    from ._models import CrossRegionRestoreRequest
+    from ._models import CrossRegionRestoreRequestResource
+    from ._models import CrrAccessToken
+    from ._models import CrrAccessTokenResource
+    from ._models import CrrJobRequest
+    from ._models import CrrJobRequestResource
     from ._models import DailyRetentionFormat
     from ._models import DailyRetentionSchedule
     from ._models import Day
@@ -446,6 +467,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationStatusJobExtendedInfo
     from ._models import OperationStatusJobsExtendedInfo
     from ._models import OperationStatusProvisionILRExtendedInfo
+    from ._models import OperationStatusRecoveryPointExtendedInfo
     from ._models import OperationWorkerResponse
     from ._models import PointInTimeRange
     from ._models import PreBackupValidation
@@ -498,9 +520,13 @@ except (SyntaxError, ImportError):
     from ._models import ValidateOperationResponse
     from ._models import ValidateOperationsResponse
     from ._models import ValidateRestoreOperationRequest
+    from ._models import VaultJob
+    from ._models import VaultJobErrorInfo
+    from ._models import VaultJobExtendedInfo
     from ._models import VaultStorageConfigOperationResultResponse
     from ._models import WeeklyRetentionFormat
     from ._models import WeeklyRetentionSchedule
+    from ._models import WorkloadCrrAccessToken
     from ._models import WorkloadInquiryDetails
     from ._models import WorkloadItem
     from ._models import WorkloadItemResource
@@ -523,19 +549,17 @@ from ._recovery_services_backup_client_enums import (
     EncryptionAtRestType,
     LastUpdateStatus,
     InfrastructureEncryptionState,
-    DataMoveLevel,
-    OperationStatusValues,
     ProvisioningState,
     PrivateEndpointConnectionStatus,
     ProtectionState,
     ResourceHealthStatus,
+    HealthStatus,
     RecoveryType,
     CopyOptions,
     RestoreRequestType,
     WorkloadType,
     PolicyType,
     JobSupportedAction,
-    HealthStatus,
     ProtectedItemState,
     LastBackupStatus,
     ProtectedItemHealthStatus,
@@ -543,10 +567,6 @@ from ._recovery_services_backup_client_enums import (
     OverwriteOptions,
     RecoveryMode,
     SQLDataDirectoryType,
-    StorageType,
-    StorageTypeState,
-    EnhancedSecurityState,
-    SoftDeleteFeatureState,
     RestorePointQueryType,
     RetentionDurationType,
     RecoveryPointTierType,
@@ -559,28 +579,36 @@ from ._recovery_services_backup_client_enums import (
     WeekOfMonth,
     MonthOfYear,
     MabServerType,
+    DataMoveLevel,
     HttpStatusCode,
     DataSourceType,
     CreateMode,
     HealthState,
     ScheduleRunType,
-    SupportStatus,
-    WorkloadItemType,
-    UsagesUnit,
-    ProtectionStatus,
-    FabricName,
-    Type,
-    ValidationStatus,
-    IntentItemType,
+    StorageType,
+    StorageTypeState,
+    EnhancedSecurityState,
+    SoftDeleteFeatureState,
     AzureFileShareType,
     InquiryStatus,
     BackupType,
     OperationType,
     ContainerType,
+    WorkloadItemType,
+    ProtectionStatus,
     BackupItemType,
+    OperationStatusValues,
+    SupportStatus,
+    UsagesUnit,
+    FabricName,
+    Type,
+    ValidationStatus,
+    IntentItemType,
 )
 
 __all__ = [
+    'AADProperties',
+    'AADPropertiesResource',
     'AzureBackupGoalFeatureSupportRequest',
     'AzureBackupServerContainer',
     'AzureBackupServerEngine',
@@ -696,6 +724,12 @@ __all__ = [
     'ClientDiscoveryValueForSingleApi',
     'ClientScriptForConnect',
     'ContainerIdentityInfo',
+    'CrossRegionRestoreRequest',
+    'CrossRegionRestoreRequestResource',
+    'CrrAccessToken',
+    'CrrAccessTokenResource',
+    'CrrJobRequest',
+    'CrrJobRequestResource',
     'DailyRetentionFormat',
     'DailyRetentionSchedule',
     'Day',
@@ -768,6 +802,7 @@ __all__ = [
     'OperationStatusJobExtendedInfo',
     'OperationStatusJobsExtendedInfo',
     'OperationStatusProvisionILRExtendedInfo',
+    'OperationStatusRecoveryPointExtendedInfo',
     'OperationWorkerResponse',
     'PointInTimeRange',
     'PreBackupValidation',
@@ -820,9 +855,13 @@ __all__ = [
     'ValidateOperationResponse',
     'ValidateOperationsResponse',
     'ValidateRestoreOperationRequest',
+    'VaultJob',
+    'VaultJobErrorInfo',
+    'VaultJobExtendedInfo',
     'VaultStorageConfigOperationResultResponse',
     'WeeklyRetentionFormat',
     'WeeklyRetentionSchedule',
+    'WorkloadCrrAccessToken',
     'WorkloadInquiryDetails',
     'WorkloadItem',
     'WorkloadItemResource',
@@ -833,30 +872,28 @@ __all__ = [
     'ProtectionPolicyResourcePaged',
     'JobResourcePaged',
     'ProtectedItemResourcePaged',
-    'ProtectionIntentResourcePaged',
-    'BackupManagementUsagePaged',
     'BackupEngineBaseResourcePaged',
     'ProtectableContainerResourcePaged',
     'WorkloadItemResourcePaged',
     'WorkloadProtectableItemResourcePaged',
     'ProtectionContainerResourcePaged',
+    'ProtectionIntentResourcePaged',
+    'BackupManagementUsagePaged',
     'ClientDiscoveryValueForSingleApiPaged',
     'EncryptionAtRestType',
     'LastUpdateStatus',
     'InfrastructureEncryptionState',
-    'DataMoveLevel',
-    'OperationStatusValues',
     'ProvisioningState',
     'PrivateEndpointConnectionStatus',
     'ProtectionState',
     'ResourceHealthStatus',
+    'HealthStatus',
     'RecoveryType',
     'CopyOptions',
     'RestoreRequestType',
     'WorkloadType',
     'PolicyType',
     'JobSupportedAction',
-    'HealthStatus',
     'ProtectedItemState',
     'LastBackupStatus',
     'ProtectedItemHealthStatus',
@@ -864,10 +901,6 @@ __all__ = [
     'OverwriteOptions',
     'RecoveryMode',
     'SQLDataDirectoryType',
-    'StorageType',
-    'StorageTypeState',
-    'EnhancedSecurityState',
-    'SoftDeleteFeatureState',
     'RestorePointQueryType',
     'RetentionDurationType',
     'RecoveryPointTierType',
@@ -880,23 +913,29 @@ __all__ = [
     'WeekOfMonth',
     'MonthOfYear',
     'MabServerType',
+    'DataMoveLevel',
     'HttpStatusCode',
     'DataSourceType',
     'CreateMode',
     'HealthState',
     'ScheduleRunType',
-    'SupportStatus',
-    'WorkloadItemType',
-    'UsagesUnit',
-    'ProtectionStatus',
-    'FabricName',
-    'Type',
-    'ValidationStatus',
-    'IntentItemType',
+    'StorageType',
+    'StorageTypeState',
+    'EnhancedSecurityState',
+    'SoftDeleteFeatureState',
     'AzureFileShareType',
     'InquiryStatus',
     'BackupType',
     'OperationType',
     'ContainerType',
+    'WorkloadItemType',
+    'ProtectionStatus',
     'BackupItemType',
+    'OperationStatusValues',
+    'SupportStatus',
+    'UsagesUnit',
+    'FabricName',
+    'Type',
+    'ValidationStatus',
+    'IntentItemType',
 ]
