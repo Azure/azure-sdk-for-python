@@ -1,5 +1,5 @@
 {
-    "@id": "dtmi:billmanh:area;1",
+    "@id": "dtmi:mymodels:area;1",
     "@type": "Interface",
     "displayName": "area",
     "contents": [

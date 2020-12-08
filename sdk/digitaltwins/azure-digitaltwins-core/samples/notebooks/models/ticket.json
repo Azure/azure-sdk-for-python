@@ -1,5 +1,5 @@
 {
-    "@id": "dtmi:billmanh:ticket;1",
+    "@id": "dtmi:mymodels:ticket;1",
     "@type": "Interface",
     "displayName": "ticket",
     "contents": [

@@ -1,5 +1,5 @@
 {
-    "@id": "dtmi:billmanh:patron;1",
+    "@id": "dtmi:mymodels:patron;1",
     "@type": "Interface",
     "displayName": "Patron",
     "contents": [

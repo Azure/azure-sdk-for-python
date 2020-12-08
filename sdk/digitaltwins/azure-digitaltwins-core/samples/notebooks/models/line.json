@@ -1,5 +1,5 @@
 {
-    "@id": "dtmi:billmanh:line;1",
+    "@id": "dtmi:mymodels:line;1",
     "@type": "Interface",
     "displayName": "line",
     "contents": [
