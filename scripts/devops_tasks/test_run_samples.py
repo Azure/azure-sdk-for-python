@@ -24,7 +24,7 @@ dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
 
 def prep_samples(targeted_packages):
-    logging.info("running test setup for {}".format(targeted_packages))
+    logging.info("running test samples setup for {}".format(targeted_packages))
     run_check_call(
         [
             sys.executable,
@@ -87,7 +87,7 @@ def run_samples(targeted_packages_directories):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Install Dependencies, Install Packages, Test Azure Packages Samples, Called from DevOps YAML Pipeline"
+        description="Install Dependencies, Install Packages, Test Azure Packages' Samples, Called from DevOps YAML Pipeline"
     )
 
     parser.add_argument(
