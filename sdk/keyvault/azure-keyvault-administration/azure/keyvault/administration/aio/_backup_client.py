@@ -25,7 +25,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
-    async def begin_full_backup(
+    async def begin_backup(
         self, blob_storage_url: str, sas_token: str, **kwargs: "Any"
     ) -> "AsyncLROPoller[BackupOperation]":
         """Begin a full backup of the Key Vault.
@@ -57,7 +57,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
         :param str folder_url: URL for the blob storage resource, including the path to the blob holding the
             backup. This would be the `folder_url` of a :class:`BackupOperation` returned by
-            :func:`begin_full_backup` or :func:`get_backup_status`, for example
+            :func:`begin_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :rtype: ~azure.core.polling.AsyncLROPoller[RestoreOperation]
@@ -86,7 +86,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
         :param str folder_url: URL for the blob storage resource, including the path to the blob holding the
             backup. This would be the `folder_url` of a :class:`BackupOperation` returned by
-            :func:`begin_full_backup` or :func:`get_backup_status`, for example
+            :func:`begin_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :param str key_name: name of the key to restore from the backup

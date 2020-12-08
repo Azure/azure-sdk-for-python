@@ -49,7 +49,7 @@ class BackupClientTests(KeyVaultTestCase):
     async def test_full_backup_and_restore(self, container_uri, sas_token):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
-        backup_poller = await backup_client.begin_full_backup(container_uri, sas_token)
+        backup_poller = await backup_client.begin_backup(container_uri, sas_token)
 
         # check backup status and result
         job_id = backup_poller.polling_method().resource().id
@@ -83,7 +83,7 @@ class BackupClientTests(KeyVaultTestCase):
 
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
-        backup_poller = await backup_client.begin_full_backup(container_uri, sas_token)
+        backup_poller = await backup_client.begin_backup(container_uri, sas_token)
 
         # check backup status and result
         job_id = backup_poller.polling_method().resource().id
@@ -135,7 +135,7 @@ async def test_continuation_token():
     backup_client = KeyVaultBackupClient("vault-url", object())
     backup_client._client = mock_generated_client
     await backup_client.begin_full_restore("storage uri", "sas", continuation_token=expected_token)
-    await backup_client.begin_full_backup("storage uri", "sas", continuation_token=expected_token)
+    await backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
     await backup_client.begin_selective_restore("storage uri", "sas", "key", continuation_token=expected_token)
 
     for method in mock_methods:
