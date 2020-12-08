@@ -1,7 +1,8 @@
 
 import json
 import os 
-from azure.media.livevideoanalytics.edge._generated.models import *
+#from azure.media.livevideoanalytics.edge._generated.models import *
+from azure.media.livevideoanalytics.edge import *
 from azure.iot.hub import IoTHubRegistryManager
 from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 from datetime import time
