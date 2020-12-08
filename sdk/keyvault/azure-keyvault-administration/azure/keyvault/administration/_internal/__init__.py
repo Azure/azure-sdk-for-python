@@ -59,14 +59,14 @@ def parse_folder_url(folder_url):
         parsed = urlparse(folder_url)
 
         # the first segment of the path is the container name
-        container = parsed.path.strip("/").split("/")[0]
+        stripped_path = parsed.path.strip("/")
+        container = stripped_path.split("/")[0]
 
-        # N.B. this discards any SAS token in the URL.
-        # This is intentional--client methods require the SAS token as a separate parameter.
+        # the rest of the path is the folder name
+        folder_name = stripped_path[len(container) + 1 :]
+
+        # this intentionally discards any SAS token in the URL--methods require the SAS token as a separate parameter
         container_url = "{}://{}/{}".format(parsed.scheme, parsed.netloc, container)
-
-        # the folder name is the rest of the path
-        folder_name = parsed.path[len(container) + 1 :].strip("/")
 
         return BackupLocation(container_url, folder_name)
     except:  # pylint:disable=broad-except
