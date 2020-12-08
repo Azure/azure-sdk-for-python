@@ -8,9 +8,3 @@
 
 from ._microsoft_storage_sync import MicrosoftStorageSync
 __all__ = ['MicrosoftStorageSync']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
