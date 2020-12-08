@@ -93,8 +93,12 @@ def _from_entity_datetime(value):
     if re.match("[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{1,10}Z", value) is not None:
         dec_idx = value.index('.')
         value = value[:dec_idx+7] + 'Z'
-    return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ'). \
+        return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ'). \
+            replace(tzinfo=Timezone())
+
+    return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ'). \
         replace(tzinfo=Timezone())
+
 
 
 def _from_entity_guid(value):
