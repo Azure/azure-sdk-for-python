@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MaintenanceManagementClientConfiguration
-from ._maintenance_management_client import MaintenanceManagementClient
-__all__ = ['MaintenanceManagementClient', 'MaintenanceManagementClientConfiguration']
+from ._configuration import MaintenanceClientConfiguration
+from ._maintenance_client import MaintenanceClient
+__all__ = ['MaintenanceClient', 'MaintenanceClientConfiguration']
 
 from .version import VERSION
 
