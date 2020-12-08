@@ -94,13 +94,13 @@ class PipelineClient(PipelineClientBase):
 
     def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
         from .pipeline import Pipeline
-        from .pipeline.policies import (
-            ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
-        )
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
+            from .pipeline.policies import (
+                ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+            )
             policies = [
                 RequestIdPolicy(**kwargs),
                 config.headers_policy,
