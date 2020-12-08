@@ -1,10 +1,12 @@
+import unittest
+
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from azure.mgmt.botservice import AzureBotService
 from azure.mgmt.botservice.models import (
     Bot,
     BotProperties,
     BotChannel,
-    sku
+    Sku
 )
 
 class BotServiceChannelsTestCase(AzureMgmtTestCase):
