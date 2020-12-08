@@ -6,16 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._services_operations import ServicesOperations
-from ._problem_classifications_operations import ProblemClassificationsOperations
-from ._support_tickets_operations import SupportTicketsOperations
-from ._communications_operations import CommunicationsOperations
+VERSION = "6.0.0b1"
 
-__all__ = [
-    'Operations',
-    'ServicesOperations',
-    'ProblemClassificationsOperations',
-    'SupportTicketsOperations',
-    'CommunicationsOperations',
-]
