@@ -37,8 +37,7 @@ class ConfigurationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the user's progress in configuring their environment setting
     """
 
-    NOT_APPLICABLE = "NotApplicable"  #: User either hasn't started configuring their template
-or they haven't started the configuration process.
+    NOT_APPLICABLE = "NotApplicable"  #: User either hasn't started configuring their template or they haven't started the configuration process.
     COMPLETED = "Completed"  #: User is finished modifying the template.
 
 class LabUserAccessMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
