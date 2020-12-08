@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._net_app_management_client import NetAppManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['NetAppManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
