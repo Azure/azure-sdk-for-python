@@ -8,12 +8,14 @@
 
 from ._policy_operations import PolicyOperations
 from ._policy_certificates_operations import PolicyCertificatesOperations
+from ._attestation_operations import AttestationOperations
 from ._signing_certificates_operations import SigningCertificatesOperations
 from ._metadata_configuration_operations import MetadataConfigurationOperations
 
 __all__ = [
     'PolicyOperations',
     'PolicyCertificatesOperations',
+    'AttestationOperations',
     'SigningCertificatesOperations',
     'MetadataConfigurationOperations',
 ]

@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 from ._configuration import AttestationClientConfiguration
 from .operations import PolicyOperations
 from .operations import PolicyCertificatesOperations
+from .operations import AttestationOperations
 from .operations import SigningCertificatesOperations
 from .operations import MetadataConfigurationOperations
 from . import models
@@ -32,25 +33,27 @@ class AttestationClient(object):
     :vartype policy: azure.security.attestation.operations.PolicyOperations
     :ivar policy_certificates: PolicyCertificatesOperations operations
     :vartype policy_certificates: azure.security.attestation.operations.PolicyCertificatesOperations
+    :ivar attestation: AttestationOperations operations
+    :vartype attestation: azure.security.attestation.operations.AttestationOperations
     :ivar signing_certificates: SigningCertificatesOperations operations
     :vartype signing_certificates: azure.security.attestation.operations.SigningCertificatesOperations
     :ivar metadata_configuration: MetadataConfigurationOperations operations
     :vartype metadata_configuration: azure.security.attestation.operations.MetadataConfigurationOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param tenant_base_url: The tenant name, for example https://mytenant.attest.azure.net.
-    :type tenant_base_url: str
+    :param instance_url: The attestation instance base URI, for example https://mytenant.attest.azure.net.
+    :type instance_url: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        tenant_base_url,  # type: str
+        instance_url,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{tenantBaseUrl}'
-        self._config = AttestationClientConfiguration(credential, tenant_base_url, **kwargs)
+        base_url = '{instanceUrl}'
+        self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -61,6 +64,8 @@ class AttestationClient(object):
         self.policy = PolicyOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.policy_certificates = PolicyCertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.attestation = AttestationOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.signing_certificates = SigningCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize)

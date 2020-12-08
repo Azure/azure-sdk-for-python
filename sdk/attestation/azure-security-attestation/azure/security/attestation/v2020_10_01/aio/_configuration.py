@@ -26,25 +26,25 @@ class AttestationClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param tenant_base_url: The tenant name, for example https://mytenant.attest.azure.net.
-    :type tenant_base_url: str
+    :param instance_url: The attestation instance base URI, for example https://mytenant.attest.azure.net.
+    :type instance_url: str
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
-        tenant_base_url: str,
+        instance_url: str,
         **kwargs: Any
     ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        if tenant_base_url is None:
-            raise ValueError("Parameter 'tenant_base_url' must not be None.")
+        if instance_url is None:
+            raise ValueError("Parameter 'instance_url' must not be None.")
         super(AttestationClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.tenant_base_url = tenant_base_url
-        self.api_version = "2018-09-01-preview"
+        self.instance_url = instance_url
+        self.api_version = "2020-10-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://attest.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'security-attestation/{}'.format(VERSION))
         self._configure(**kwargs)

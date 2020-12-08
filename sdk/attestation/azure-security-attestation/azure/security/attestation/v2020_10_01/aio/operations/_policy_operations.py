@@ -39,120 +39,42 @@ class PolicyOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def prepare_to_set(
-        self,
-        tee: Union[str, "_models.TeeKind"],
-        policy_jws: str,
-        **kwargs
-    ) -> Union[str, "_models.CloudError"]:
-        """Accepts a new policy document and returns a JWT which expresses  used in preparation to set attestation policy.
-
-        Accepts a new policy document and returns a JWT which expresses  used in preparation to set
-        attestation policy.
-
-        :param tee: Specifies the trusted execution environment to be used to validate the evidence.
-        :type tee: str or ~azure.security.attestation.models.TeeKind
-        :param policy_jws: JSON Web Signature (See RFC7515) expressing the new policy.
-        :type policy_jws: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: str or CloudError, or the result of cls(response)
-        :rtype: str or ~azure.security.attestation.models.CloudError
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union[str, "_models.CloudError"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
-        content_type = kwargs.pop("content_type", "text/plain")
-        accept = "text/plain, application/json"
-
-        # Construct URL
-        url = self.prepare_to_set.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'tenantBaseUrl': self._serialize.url("self._config.tenant_base_url", self._config.tenant_base_url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['tee'] = self._serialize.query("tee", tee, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(policy_jws, 'str')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 200, 400, 401, 401]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('CloudError', pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    prepare_to_set.metadata = {'url': '/operations/policy/updatepolicy'}  # type: ignore
-
     async def get(
         self,
-        tee: Union[str, "_models.TeeKind"],
+        attestation_type: Union[str, "_models.AttestationType"],
         **kwargs
-    ) -> Union["_models.AttestationPolicy", "_models.CloudError", str]:
-        """Retrieves the current policy for a given kind of TEE.
+    ) -> "_models.PolicyResponse":
+        """Retrieves the current policy for an attestation type.
 
-        Retrieves the current policy for a given kind of TEE.
+        Retrieves the current policy for an attestation type.
 
-        :param tee: Specifies the trusted execution environment to be used to validate the evidence.
-        :type tee: str or ~azure.security.attestation.models.TeeKind
+        :param attestation_type: Specifies the trusted execution environment to be used to validate the
+         evidence.
+        :type attestation_type: str or ~azure.security.attestation.models.AttestationType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AttestationPolicy or CloudError or str, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.AttestationPolicy or ~azure.security.attestation.models.CloudError or str
+        :return: PolicyResponse, or the result of cls(response)
+        :rtype: ~azure.security.attestation.models.PolicyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.AttestationPolicy", "_models.CloudError", str]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'tenantBaseUrl': self._serialize.url("self._config.tenant_base_url", self._config.tenant_base_url, 'str', skip_quote=True),
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
+            'attestationType': self._serialize.url("attestation_type", attestation_type, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['tee'] = self._serialize.query("tee", tee, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -162,65 +84,60 @@ class PolicyOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 401]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('AttestationPolicy', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('CloudError', pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('PolicyResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/operations/policy/current'}  # type: ignore
+    get.metadata = {'url': '/policies/{attestationType}'}  # type: ignore
 
     async def set(
         self,
-        tee: Union[str, "_models.TeeKind"],
+        attestation_type: Union[str, "_models.AttestationType"],
         new_attestation_policy: str,
         **kwargs
-    ) -> Optional[Union["_models.CloudError", str]]:
-        """Sets the policy for a given kind of TEE.
+    ) -> "_models.PolicyResponse":
+        """Sets the policy for a given attestation type.
 
-        Sets the policy for a given kind of TEE.
+        Sets the policy for a given attestation type.
 
-        :param tee: Specifies the trusted execution environment to be used to validate the evidence.
-        :type tee: str or ~azure.security.attestation.models.TeeKind
-        :param new_attestation_policy: JWT Expressing the new policy.
+        :param attestation_type: Specifies the trusted execution environment to be used to validate the
+         evidence.
+        :type attestation_type: str or ~azure.security.attestation.models.AttestationType
+        :param new_attestation_policy: JWT Expressing the new policy whose body is a
+         StoredAttestationPolicy object.
         :type new_attestation_policy: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CloudError or str, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.CloudError or str or None
+        :return: PolicyResponse, or the result of cls(response)
+        :rtype: ~azure.security.attestation.models.PolicyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Union["_models.CloudError", str]]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         content_type = kwargs.pop("content_type", "text/plain")
         accept = "application/json"
 
         # Construct URL
         url = self.set.metadata['url']  # type: ignore
         path_format_arguments = {
-            'tenantBaseUrl': self._serialize.url("self._config.tenant_base_url", self._config.tenant_base_url, 'str', skip_quote=True),
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
+            'attestationType': self._serialize.url("attestation_type", attestation_type, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['tee'] = self._serialize.query("tee", tee, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -234,63 +151,59 @@ class PolicyOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 401]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 400:
-            deserialized = self._deserialize('CloudError', pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('PolicyResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    set.metadata = {'url': '/operations/policy/current'}  # type: ignore
+    set.metadata = {'url': '/policies/{attestationType}'}  # type: ignore
 
     async def reset(
         self,
-        tee: Union[str, "_models.TeeKind"],
+        attestation_type: Union[str, "_models.AttestationType"],
         policy_jws: str,
         **kwargs
-    ) -> Union[str, "_models.CloudError"]:
+    ) -> "_models.PolicyResponse":
         """Resets the attestation policy for the specified tenant and reverts to the default policy.
 
         Resets the attestation policy for the specified tenant and reverts to the default policy.
 
-        :param tee: Specifies the trusted execution environment to be used to validate the evidence.
-        :type tee: str or ~azure.security.attestation.models.TeeKind
+        :param attestation_type: Specifies the trusted execution environment to be used to validate the
+         evidence.
+        :type attestation_type: str or ~azure.security.attestation.models.AttestationType
         :param policy_jws: JSON Web Signature with an empty policy document.
         :type policy_jws: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: str or CloudError, or the result of cls(response)
-        :rtype: str or ~azure.security.attestation.models.CloudError
+        :return: PolicyResponse, or the result of cls(response)
+        :rtype: ~azure.security.attestation.models.PolicyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union[str, "_models.CloudError"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         content_type = kwargs.pop("content_type", "text/plain")
         accept = "application/json"
 
         # Construct URL
         url = self.reset.metadata['url']  # type: ignore
         path_format_arguments = {
-            'tenantBaseUrl': self._serialize.url("self._config.tenant_base_url", self._config.tenant_base_url, 'str', skip_quote=True),
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
+            'attestationType': self._serialize.url("attestation_type", attestation_type, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['tee'] = self._serialize.query("tee", tee, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -304,22 +217,15 @@ class PolicyOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 401]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('CloudError', pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('PolicyResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    reset.metadata = {'url': '/operations/policy/current'}  # type: ignore
+    reset.metadata = {'url': '/policies/{attestationType}:reset'}  # type: ignore

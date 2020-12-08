@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class PolicyCertificatesOperations(object):
-    """PolicyCertificatesOperations operations.
+class AttestationOperations(object):
+    """AttestationOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -43,79 +43,25 @@ class PolicyCertificatesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def get(
+    def attest_open_enclave(
         self,
+        request,  # type: "_models.AttestOpenEnclaveRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.PolicyCertificatesResponse"
-        """Retrieves the set of certificates used to express policy for the current tenant.
+        # type: (...) -> "_models.AttestationResponse"
+        """Attest to an SGX enclave.
 
-        Retrieves the set of certificates used to express policy for the current tenant.
+        Processes an OpenEnclave report , producing an artifact. The type of artifact produced is
+        dependent upon attestation policy.
 
+        :param request: Request object containing the quote.
+        :type request: ~azure.security.attestation.models.AttestOpenEnclaveRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyCertificatesResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.PolicyCertificatesResponse
+        :return: AttestationResponse, or the result of cls(response)
+        :rtype: ~azure.security.attestation.models.AttestationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('PolicyCertificatesResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/certificates'}  # type: ignore
-
-    def add(
-        self,
-        policy_certificate_to_add,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PolicyCertificatesModifyResponse"
-        """Adds a new attestation policy certificate to the set of policy management certificates.
-
-        Adds a new attestation policy certificate to the set of policy management certificates.
-
-        :param policy_certificate_to_add: An RFC7519 JSON Web Token whose body is an RFC7517 JSON Web
-         Key object. The RFC7519 JWT must be signed with one of the existing signing certificates.
-        :type policy_certificate_to_add: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyCertificatesModifyResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.PolicyCertificatesModifyResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesModifyResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AttestationResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -125,7 +71,7 @@ class PolicyCertificatesOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.add.metadata['url']  # type: ignore
+        url = self.attest_open_enclave.metadata['url']  # type: ignore
         path_format_arguments = {
             'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
         }
@@ -141,7 +87,7 @@ class PolicyCertificatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(policy_certificate_to_add, 'str')
+        body_content = self._serialize.body(request, 'AttestOpenEnclaveRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -152,35 +98,33 @@ class PolicyCertificatesOperations(object):
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('PolicyCertificatesModifyResponse', pipeline_response)
+        deserialized = self._deserialize('AttestationResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    add.metadata = {'url': '/certificates:add'}  # type: ignore
+    attest_open_enclave.metadata = {'url': '/attest/OpenEnclave'}  # type: ignore
 
-    def remove(
+    def attest_sgx_enclave(
         self,
-        policy_certificate_to_remove,  # type: str
+        request,  # type: "_models.AttestSgxEnclaveRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.PolicyCertificatesModifyResponse"
-        """Removes the specified policy management certificate. Note that the final policy management certificate cannot be removed.
+        # type: (...) -> "_models.AttestationResponse"
+        """Attest to an SGX enclave.
 
-        Removes the specified policy management certificate. Note that the final policy management
-        certificate cannot be removed.
+        Processes an SGX enclave quote, producing an artifact. The type of artifact produced is
+        dependent upon attestation policy.
 
-        :param policy_certificate_to_remove: An RFC7519 JSON Web Token whose body is an
-         AttestationCertificateManagementBody object. The RFC7519 JWT must be signed with one of the
-         existing signing certificates.
-        :type policy_certificate_to_remove: str
+        :param request: Request object containing the quote.
+        :type request: ~azure.security.attestation.models.AttestSgxEnclaveRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyCertificatesModifyResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.PolicyCertificatesModifyResponse
+        :return: AttestationResponse, or the result of cls(response)
+        :rtype: ~azure.security.attestation.models.AttestationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesModifyResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AttestationResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -190,7 +134,7 @@ class PolicyCertificatesOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.remove.metadata['url']  # type: ignore
+        url = self.attest_sgx_enclave.metadata['url']  # type: ignore
         path_format_arguments = {
             'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
         }
@@ -206,7 +150,7 @@ class PolicyCertificatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(policy_certificate_to_remove, 'str')
+        body_content = self._serialize.body(request, 'AttestSgxEnclaveRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -217,10 +161,75 @@ class PolicyCertificatesOperations(object):
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('PolicyCertificatesModifyResponse', pipeline_response)
+        deserialized = self._deserialize('AttestationResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    remove.metadata = {'url': '/certificates:remove'}  # type: ignore
+    attest_sgx_enclave.metadata = {'url': '/attest/SgxEnclave'}  # type: ignore
+
+    def attest_tpm(
+        self,
+        data=None,  # type: Optional[bytes]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.TpmAttestationResponse"
+        """Attest a Virtualization-based Security (VBS) enclave.
+
+        Processes attestation evidence from a VBS enclave, producing an attestation result. The
+        attestation result produced is dependent upon the attestation policy.
+
+        :param data: Protocol data containing artifacts for attestation.
+        :type data: bytes
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TpmAttestationResponse, or the result of cls(response)
+        :rtype: ~azure.security.attestation.models.TpmAttestationResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TpmAttestationResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        _request = _models.TpmAttestationRequest(data=data)
+        api_version = "2020-10-01"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.attest_tpm.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(_request, 'TpmAttestationRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.CloudError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('TpmAttestationResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    attest_tpm.metadata = {'url': '/attest/Tpm'}  # type: ignore
