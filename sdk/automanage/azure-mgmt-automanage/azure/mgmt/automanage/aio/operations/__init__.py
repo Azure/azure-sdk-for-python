@@ -6,10 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._accounts_operations_async import AccountsOperations
-from ._configuration_profile_assignments_operations_async import ConfigurationProfileAssignmentsOperations
-from ._configuration_profile_preferences_operations_async import ConfigurationProfilePreferencesOperations
-from ._operations_async import Operations
+from ._accounts_operations import AccountsOperations
+from ._configuration_profile_assignments_operations import ConfigurationProfileAssignmentsOperations
+from ._configuration_profile_preferences_operations import ConfigurationProfilePreferencesOperations
+from ._operations import Operations
 
 __all__ = [
     'AccountsOperations',

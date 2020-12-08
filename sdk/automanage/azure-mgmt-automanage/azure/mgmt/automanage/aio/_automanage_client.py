@@ -15,11 +15,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import AutomanageClientConfiguration
-from .operations_async import AccountsOperations
-from .operations_async import ConfigurationProfileAssignmentsOperations
-from .operations_async import ConfigurationProfilePreferencesOperations
-from .operations_async import Operations
+from ._configuration import AutomanageClientConfiguration
+from .operations import AccountsOperations
+from .operations import ConfigurationProfileAssignmentsOperations
+from .operations import ConfigurationProfilePreferencesOperations
+from .operations import Operations
 from .. import models
 
 
@@ -27,13 +27,13 @@ class AutomanageClient(object):
     """Automanage Client.
 
     :ivar accounts: AccountsOperations operations
-    :vartype accounts: automanage_client.aio.operations_async.AccountsOperations
+    :vartype accounts: automanage_client.aio.operations.AccountsOperations
     :ivar configuration_profile_assignments: ConfigurationProfileAssignmentsOperations operations
-    :vartype configuration_profile_assignments: automanage_client.aio.operations_async.ConfigurationProfileAssignmentsOperations
+    :vartype configuration_profile_assignments: automanage_client.aio.operations.ConfigurationProfileAssignmentsOperations
     :ivar configuration_profile_preferences: ConfigurationProfilePreferencesOperations operations
-    :vartype configuration_profile_preferences: automanage_client.aio.operations_async.ConfigurationProfilePreferencesOperations
+    :vartype configuration_profile_preferences: automanage_client.aio.operations.ConfigurationProfilePreferencesOperations
     :ivar operations: Operations operations
-    :vartype operations: automanage_client.aio.operations_async.Operations
+    :vartype operations: automanage_client.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -56,6 +56,7 @@ class AutomanageClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.accounts = AccountsOperations(

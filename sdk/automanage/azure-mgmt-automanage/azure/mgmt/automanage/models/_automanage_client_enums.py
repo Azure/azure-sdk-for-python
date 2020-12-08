@@ -6,56 +6,74 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class ConfigurationProfile(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class ConfigurationProfile(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """A value indicating configuration profile.
     """
 
-    azure_virtual_machine_best_practices_dev_test = "Azure virtual machine best practices – Dev/Test"
-    azure_virtual_machine_best_practices_production = "Azure virtual machine best practices – Production"
+    AZURE_VIRTUAL_MACHINE_BEST_PRACTICES_DEV_TEST = "Azure virtual machine best practices – Dev/Test"
+    AZURE_VIRTUAL_MACHINE_BEST_PRACTICES_PRODUCTION = "Azure virtual machine best practices – Production"
 
-class EnableRealTimeProtection(str, Enum):
+class EnableRealTimeProtection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enables or disables Real Time Protection
     """
 
-    true = "True"
-    false = "False"
+    TRUE = "True"
+    FALSE = "False"
 
-class ProvisioningStatus(str, Enum):
+class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The state of onboarding, which only appears in the response.
     """
 
-    succeeded = "Succeeded"
-    failed = "Failed"
-    created = "Created"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CREATED = "Created"
 
-class ResourceIdentityType(str, Enum):
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the Automanage account. Currently, the only supported type is
     'SystemAssigned', which implicitly creates an identity.
     """
 
-    system_assigned = "SystemAssigned"
-    none = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    NONE = "None"
 
-class RunScheduledScan(str, Enum):
+class RunScheduledScan(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enables or disables a periodic scan for antimalware
     """
 
-    true = "True"
-    false = "False"
+    TRUE = "True"
+    FALSE = "False"
 
-class ScanType(str, Enum):
+class ScanType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of scheduled scan
     """
 
-    quick = "Quick"
-    full = "Full"
+    QUICK = "Quick"
+    FULL = "Full"
 
-class UpdateStatus(str, Enum):
+class UpdateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The state of compliance, which only appears in the response.
     """
 
-    succeeded = "Succeeded"
-    failed = "Failed"
-    created = "Created"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CREATED = "Created"
