@@ -29,30 +29,30 @@ import azure.security.attestation.v2020_10_01.models
 
 AttestationPreparer = functools.partial(
             PowerShellPreparer, "attestation",
-            serializedPolicySigningKey1="junk",
-            policySigningCertificate0='more junk',
+            ATTESTATION_serializedPolicySigningKey1="junk",
+            ATTESTATION_policySigningCertificate0='more junk',
             ATTESTATION_AZURE_AUTHORITY_HOST='xxx',
             ATTESTATION_RESOURCE_GROUP='yyyy',
-            policySigningKey0='keyvalue',
-            policySigningCertificate1='xxx',
+            ATTESTATION_policySigningKey0='keyvalue',
+            ATTESTATION_policySigningCertificate1='xxx',
             ATTESTATION_SUBSCRIPTION_ID='xxx',
-            isolatedSigningKey='xxxx',
-            serializedIsolatedSigningKey='yyyy',
-            serializedPolicySigningKey0='xxxx',
-            locationShortName='xxx',
+            ATTESTATION_isolatedSigningKey='xxxx',
+            ATTESTATION_serializedIsolatedSigningKey='yyyy',
+            ATTESTATION_serializedPolicySigningKey0='xxxx',
+            ATTESTATION_locationShortName='xxx',
             ATTESTATION_ENVIRONMENT='AzureCloud',
-            policySigningKey2='xxxx',
-            isolatedSIgningCertificate='xxxx',
-            serializedPolicySigningKey2='xxx',
+            ATTESTATION_policySigningKey2='xxxx',
+            ATTESTATION_isolatedSIgningCertificate='xxxx',
+            ATTESTATION_serializedPolicySigningKey2='xxx',
             ATTESTATION_SERVICE_MANAGEMENT_URL='xxx',
             ATTESTATION_LOCATION='xxxx',
-            policySigningKey1='xxxx',
+            ATTESTATION_policySigningKey1='xxxx',
             ATTESTATION_CLIENT_ID='xxxx',
             ATTESTATION_CLIENT_SECRET='secret',
             ATTESTATION_TENANT_ID='tenant',
-            policySigningCertificate2='cert2',
-            ISOLATED_ATTESTATION_URL='xxx',
-            AAD_ATTESTATION_URL='yyy',
+            ATTESTATION_policySigningCertificate2='cert2',
+            ATTESTATION_ISOLATED_ATTESTATION_URL='xxx',
+            ATTESTATION_AAD_ATTESTATION_URL='yyy',
             ATTESTATION_RESOURCE_MANAGER_URL='resourcemanager'
         )
 
@@ -161,8 +161,8 @@ class AzureAttestationTest(AzureTestCase):
                 tenant_base_url=self.SharedBaseUri())
             return attest_client
 
-#   @AttestationPreparer()
-    def AadClient(self, AAD_ATTESTATION_URL):
+    @AttestationPreparer()
+    def AadClient(self):
             """
             docstring
             """
@@ -191,10 +191,10 @@ class AzureAttestationTest(AzureTestCase):
         return "https://shareduks.uks.test.attest.azure.net"
 
     def IsolatedBaseUri(self):
-        return self.original_env["ISOLATED_ATTESTATION_URL"]
+        return self.original_env["ATTESTATION_ISOLATED_ATTESTATION_URL"]
 
     def AadBaseUri(self):
-        return self.original_env["AAD_ATTESTATION_URL"]
+        return self.original_env["ATTESTATION_AAD_ATTESTATION_URL"]
     
 class Base64Url:
         @staticmethod
