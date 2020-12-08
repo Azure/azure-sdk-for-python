@@ -16,9 +16,12 @@ jobs:
         Linux_Python35:
           OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.5'
+          CoverageArg: '--disablecov'
         MacOs_Python37:
           OSVmImage: 'macOS-10.15'
           PythonVersion: '3.7'
+          CoverageArg: '--disablecov'
         Linux_Python39:
           OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.9.0'
+          CoverageArg: ''
