@@ -7,10 +7,10 @@ import uuid
 
 from azure_devtools.perfstress_tests import RandomStream, get_random_bytes
 
-from ._test_base_legacy import _LegacyShareTest
+from ._test_base_legacy import _LegacyContainerTest
 
 
-class LegacyUploadTest(_LegacyShareTest):
+class LegacyUploadTest(_LegacyContainerTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.blob_name = "blobtest-" + str(uuid.uuid4())
@@ -25,7 +25,7 @@ class LegacyUploadTest(_LegacyShareTest):
                 stream=data,
                 max_connections=self.args.max_concurrency)
         else:
-            self.service_client.create_file_from_bytes(
+            self.service_client.create_blob_from_bytes(
                 container_name=self.container_name,
                 blob_name=self.blob_name,
                 blob=self.data,

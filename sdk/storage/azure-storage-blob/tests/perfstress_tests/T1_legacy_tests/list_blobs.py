@@ -20,7 +20,7 @@ class LegacyListBlobsTest(_LegacyContainerTest):
                 blob=data)
 
     def run_sync(self):
-        list(self.service_client.list_blobs(container_name=self.container_namey))
+        list(self.service_client.list_blobs(container_name=self.container_name))
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")

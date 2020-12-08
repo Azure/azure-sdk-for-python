@@ -19,6 +19,7 @@ class UploadTest(_BlobTest):
         self.blob_client.upload_blob(
             data,
             length=self.args.size,
+            overwrite=True,
             max_concurrency=self.args.max_concurrency)
 
     async def run_async(self):
@@ -26,6 +27,7 @@ class UploadTest(_BlobTest):
         await self.async_blob_client.upload_blob(
             data,
             length=self.args.size,
+            overwrite=True,
             max_concurrency=self.args.max_concurrency)
 
     @staticmethod
