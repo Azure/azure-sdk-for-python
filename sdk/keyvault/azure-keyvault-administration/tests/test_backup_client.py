@@ -48,7 +48,7 @@ class BackupClientTests(KeyVaultTestCase):
         backup_poller = backup_client.begin_backup(container_uri, sas_token)
 
         # check backup status and result
-        job_id = backup_poller.polling_method().resource().id
+        job_id = backup_poller.polling_method().resource().job_id
         backup_status = backup_client.get_backup_status(job_id)
         assert_in_progress_operation(backup_status)
         backup_operation = backup_poller.result()
@@ -60,7 +60,7 @@ class BackupClientTests(KeyVaultTestCase):
         restore_poller = backup_client.begin_restore(backup_status.folder_url, sas_token)
 
         # check restore status and result
-        job_id = restore_poller.polling_method().resource().id
+        job_id = restore_poller.polling_method().resource().job_id
         restore_status = backup_client.get_restore_status(job_id)
         assert_in_progress_operation(restore_status)
         restore_operation = restore_poller.result()
@@ -82,7 +82,7 @@ class BackupClientTests(KeyVaultTestCase):
         backup_poller = backup_client.begin_backup(container_uri, sas_token)
 
         # check backup status and result
-        job_id = backup_poller.polling_method().resource().id
+        job_id = backup_poller.polling_method().resource().job_id
         backup_status = backup_client.get_backup_status(job_id)
         assert_in_progress_operation(backup_status)
         backup_operation = backup_poller.result()
@@ -94,7 +94,7 @@ class BackupClientTests(KeyVaultTestCase):
         restore_poller = backup_client.begin_selective_restore(backup_status.folder_url, sas_token, key_name)
 
         # check restore status and result
-        job_id = restore_poller.polling_method().resource().id
+        job_id = restore_poller.polling_method().resource().job_id
         restore_status = backup_client.get_restore_status(job_id)
         assert_in_progress_operation(restore_status)
         restore_operation = restore_poller.result()

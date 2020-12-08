@@ -183,7 +183,7 @@ class _Operation(object):
         self.error = kwargs.get("error", None)
         self.start_time = kwargs.get("start_time", None)
         self.end_time = kwargs.get("end_time", None)
-        self.id = kwargs.get("job_id", None)
+        self.job_id = kwargs.get("job_id", None)
 
     @classmethod
     def _wrap_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
