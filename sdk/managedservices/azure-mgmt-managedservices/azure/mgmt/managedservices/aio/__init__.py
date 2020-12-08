@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._managed_services_client import ManagedServicesClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['ManagedServicesClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
