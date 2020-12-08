@@ -275,6 +275,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     """
     def __init__(self, request, aiohttp_response, block_size=None):
         # type: (HttpRequest, aiohttp.ClientResponse, Optional[int]) -> None
+        import aiohttp
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         response = cast(aiohttp.ClientResponse, aiohttp_response)
