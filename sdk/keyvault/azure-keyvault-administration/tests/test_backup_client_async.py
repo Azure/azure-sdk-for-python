@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 import time
 from unittest import mock
+from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
@@ -28,7 +28,9 @@ class BackupClientTests(KeyVaultTestCase):
 
     def setUp(self, *args, **kwargs):
         if self.is_live:
-            self.scrubber.register_name_pair(self.managed_hsm["url"].lower(), self.managed_hsm["playback_url"])
+            real = urlparse(self.managed_hsm["url"])
+            playback = urlparse(self.managed_hsm["playback_url"])
+            self.scrubber.register_name_pair(real.netloc, playback.netloc)
         super().setUp(*args, **kwargs)
 
     @property
@@ -59,8 +61,7 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the backup
-        folder_name = backup_operation.azure_storage_blob_container_uri.split("/")[-1]
-        restore_poller = await backup_client.begin_full_restore(container_uri, sas_token, folder_name)
+        restore_poller = await backup_client.begin_full_restore(backup_status.blob_storage_url, sas_token)
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
@@ -94,8 +95,9 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the key
-        folder_name = backup_operation.azure_storage_blob_container_uri.split("/")[-1]
-        restore_poller = await backup_client.begin_selective_restore(container_uri, sas_token, folder_name, key_name)
+        restore_poller = await backup_client.begin_selective_restore(
+            backup_status.blob_storage_url, sas_token, key_name
+        )
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
@@ -132,11 +134,9 @@ async def test_continuation_token():
 
     backup_client = KeyVaultBackupClient("vault-url", object())
     backup_client._client = mock_generated_client
-    await backup_client.begin_full_restore("storage uri", "sas", "folder", continuation_token=expected_token)
+    await backup_client.begin_full_restore("storage uri", "sas", continuation_token=expected_token)
     await backup_client.begin_full_backup("storage uri", "sas", continuation_token=expected_token)
-    await backup_client.begin_selective_restore(
-        "storage uri", "sas", "folder", "key", continuation_token=expected_token
-    )
+    await backup_client.begin_selective_restore("storage uri", "sas", "key", continuation_token=expected_token)
 
     for method in mock_methods:
         assert method.call_count == 1

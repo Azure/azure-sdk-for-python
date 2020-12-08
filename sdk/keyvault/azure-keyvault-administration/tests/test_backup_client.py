@@ -13,6 +13,7 @@ from azure.keyvault.keys import KeyClient
 from azure.keyvault.administration import KeyVaultBackupClient, BackupOperation
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
+from six.moves.urllib_parse import urlparse
 
 from _shared.helpers import mock
 from _shared.test_case import KeyVaultTestCase
@@ -26,7 +27,9 @@ class BackupClientTests(KeyVaultTestCase):
 
     def setUp(self, *args, **kwargs):
         if self.is_live:
-            self.scrubber.register_name_pair(self.managed_hsm["url"].lower(), self.managed_hsm["playback_url"])
+            real = urlparse(self.managed_hsm["url"])
+            playback = urlparse(self.managed_hsm["playback_url"])
+            self.scrubber.register_name_pair(real.netloc, playback.netloc)
         super(BackupClientTests, self).setUp(*args, **kwargs)
 
     @property
@@ -53,8 +56,7 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the backup
-        folder_name = backup_operation.azure_storage_blob_container_uri.split("/")[-1]
-        restore_poller = backup_client.begin_full_restore(container_uri, sas_token, folder_name)
+        restore_poller = backup_client.begin_full_restore(backup_status.blob_storage_url, sas_token)
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
@@ -88,8 +90,7 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the key
-        folder_name = backup_operation.azure_storage_blob_container_uri.split("/")[-1]
-        restore_poller = backup_client.begin_selective_restore(container_uri, sas_token, folder_name, key_name)
+        restore_poller = backup_client.begin_selective_restore(backup_status.blob_storage_url, sas_token, key_name)
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
@@ -115,9 +116,9 @@ def test_continuation_token():
 
     backup_client = KeyVaultBackupClient("vault-url", object())
     backup_client._client = mock_generated_client
-    backup_client.begin_full_restore("storage uri", "sas", "folder", continuation_token=expected_token)
+    backup_client.begin_full_restore("storage uri", "sas", continuation_token=expected_token)
     backup_client.begin_full_backup("storage uri", "sas", continuation_token=expected_token)
-    backup_client.begin_selective_restore("storage uri", "sas", "folder", "key", continuation_token=expected_token)
+    backup_client.begin_selective_restore("storage uri", "sas", "key", continuation_token=expected_token)
 
     for method in ("begin_full_backup", "begin_full_restore_operation", "begin_selective_key_restore_operation"):
         mock_method = getattr(mock_generated_client, method)
@@ -128,7 +129,7 @@ def test_continuation_token():
 
 def assert_in_progress_operation(operation):
     if isinstance(operation, BackupOperation):
-        assert operation.azure_storage_blob_container_uri is None
+        assert operation.blob_storage_url is None
     assert operation.status == "InProgress"
     assert operation.end_time is None
     assert isinstance(operation.start_time, datetime)
@@ -136,7 +137,7 @@ def assert_in_progress_operation(operation):
 
 def assert_successful_operation(operation):
     if isinstance(operation, BackupOperation):
-        assert operation.azure_storage_blob_container_uri
+        assert operation.blob_storage_url
     assert operation.status == "Succeeded"
     assert isinstance(operation.end_time, datetime)
     assert operation.start_time < operation.end_time
