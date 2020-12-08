@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, cast
 from collections.abc import AsyncIterator
 
 import logging
@@ -277,10 +277,11 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         # type: (HttpRequest, aiohttp.ClientResponse, Optional[int]) -> None
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
-        self.status_code = aiohttp_response.status  # type:ignore
-        self.headers = CIMultiDict(aiohttp_response.headers)    # type:ignore
-        self.reason = aiohttp_response.reason   # type:ignore
-        self.content_type = aiohttp_response.headers.get('content-type')    # type:ignore
+        response = cast(aiohttp.ClientResponse, aiohttp_response)
+        self.status_code = response.status
+        self.headers = CIMultiDict(response.headers)
+        self.reason = response.reason
+        self.content_type = response.headers.get('content-type')
         self._body = None
 
     def body(self) -> bytes:
