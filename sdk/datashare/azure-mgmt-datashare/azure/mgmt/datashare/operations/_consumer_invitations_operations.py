@@ -38,133 +38,6 @@ class ConsumerInvitationsOperations(object):
 
         self.config = config
 
-    def reject_invitation(
-            self, location, invitation_id, custom_headers=None, raw=False, **operation_config):
-        """Rejects the invitation identified by invitationId.
-
-        Reject an invitation.
-
-        :param location: Location of the invitation
-        :type location: str
-        :param invitation_id: Unique id of the invitation.
-        :type invitation_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ConsumerInvitation or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.datashare.models.ConsumerInvitation or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DataShareErrorException<azure.mgmt.datashare.models.DataShareErrorException>`
-        """
-        invitation = models.ConsumerInvitation(invitation_id=invitation_id)
-
-        # Construct URL
-        url = self.reject_invitation.metadata['url']
-        path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(invitation, 'ConsumerInvitation')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DataShareErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ConsumerInvitation', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    reject_invitation.metadata = {'url': '/providers/Microsoft.DataShare/locations/{location}/RejectInvitation'}
-
-    def get(
-            self, location, invitation_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the invitation identified by invitationId.
-
-        Get an invitation.
-
-        :param location: Location of the invitation
-        :type location: str
-        :param invitation_id: An invitation id
-        :type invitation_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ConsumerInvitation or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.datashare.models.ConsumerInvitation or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DataShareErrorException<azure.mgmt.datashare.models.DataShareErrorException>`
-        """
-        # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str'),
-            'invitationId': self._serialize.url("invitation_id", invitation_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DataShareErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ConsumerInvitation', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get.metadata = {'url': '/providers/Microsoft.DataShare/locations/{location}/consumerInvitations/{invitationId}'}
-
     def list_invitations(
             self, skip_token=None, custom_headers=None, raw=False, **operation_config):
         """List the invitations.
@@ -231,3 +104,130 @@ class ConsumerInvitationsOperations(object):
 
         return deserialized
     list_invitations.metadata = {'url': '/providers/Microsoft.DataShare/ListInvitations'}
+
+    def get(
+            self, location, invitation_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the invitation identified by invitationId.
+
+        Get an invitation.
+
+        :param location: Location of the invitation
+        :type location: str
+        :param invitation_id: An invitation id
+        :type invitation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ConsumerInvitation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datashare.models.ConsumerInvitation or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DataShareErrorException<azure.mgmt.datashare.models.DataShareErrorException>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str'),
+            'invitationId': self._serialize.url("invitation_id", invitation_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DataShareErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ConsumerInvitation', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/providers/Microsoft.DataShare/locations/{location}/consumerInvitations/{invitationId}'}
+
+    def reject_invitation(
+            self, location, invitation_id, custom_headers=None, raw=False, **operation_config):
+        """Rejects the invitation identified by invitationId.
+
+        Reject an invitation.
+
+        :param location: Location of the invitation
+        :type location: str
+        :param invitation_id: Unique id of the invitation.
+        :type invitation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ConsumerInvitation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datashare.models.ConsumerInvitation or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DataShareErrorException<azure.mgmt.datashare.models.DataShareErrorException>`
+        """
+        invitation = models.ConsumerInvitation(invitation_id=invitation_id)
+
+        # Construct URL
+        url = self.reject_invitation.metadata['url']
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(invitation, 'ConsumerInvitation')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DataShareErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ConsumerInvitation', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    reject_invitation.metadata = {'url': '/providers/Microsoft.DataShare/locations/{location}/RejectInvitation'}

@@ -40,6 +40,77 @@ class AccountsOperations(object):
 
         self.config = config
 
+    def list_by_subscription(
+            self, skip_token=None, custom_headers=None, raw=False, **operation_config):
+        """List Accounts in a subscription.
+
+        List Accounts in Subscription.
+
+        :param skip_token: Continuation token
+        :type skip_token: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Account
+        :rtype:
+         ~azure.mgmt.datashare.models.AccountPaged[~azure.mgmt.datashare.models.Account]
+        :raises:
+         :class:`DataShareErrorException<azure.mgmt.datashare.models.DataShareErrorException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_by_subscription.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DataShareErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.AccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataShare/accounts'}
+
     def get(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Get an account under a resource group.
@@ -368,77 +439,6 @@ class AccountsOperations(object):
 
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataShare/accounts/{accountName}'}
-
-    def list_by_subscription(
-            self, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """List Accounts in a subscription.
-
-        List Accounts in Subscription.
-
-        :param skip_token: Continuation token
-        :type skip_token: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Account
-        :rtype:
-         ~azure.mgmt.datashare.models.AccountPaged[~azure.mgmt.datashare.models.Account]
-        :raises:
-         :class:`DataShareErrorException<azure.mgmt.datashare.models.DataShareErrorException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_by_subscription.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if skip_token is not None:
-                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DataShareErrorException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.AccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataShare/accounts'}
 
     def list_by_resource_group(
             self, resource_group_name, skip_token=None, custom_headers=None, raw=False, **operation_config):
