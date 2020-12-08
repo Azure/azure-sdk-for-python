@@ -462,6 +462,7 @@ class ContainerProxy(object):
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         indexing_directive=None,  # type: Optional[Any]
+        disable_automatic_id_generation=None, #type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
@@ -475,6 +476,7 @@ class ContainerProxy(object):
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param indexing_directive: Indicate whether the document should be omitted from indexing.
+        :param disable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -488,7 +490,8 @@ class ContainerProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        request_options["disableAutomaticIdGeneration"] = True
+        if disable_automatic_id_generation:
+            request_options["disableAutomaticIdGeneration"] = disable_automatic_id_generation
         if populate_query_metrics:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
