@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 from uuid import UUID
 import logging
 import datetime
+import re
 
 from azure.core.exceptions import ResourceExistsError
 
@@ -89,14 +90,11 @@ class Timezone(datetime.tzinfo):  # pylint: disable : W0223
 
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
-    # if value[-9:] == '.0000000Z':
-    #     value = value[:-9] + 'Z'
-    try:
-        return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ'). \
-            replace(tzinfo=Timezone())
-    except ValueError:
-        return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ'). \
-            replace(tzinfo=Timezone())
+    if re.match("[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{1,10}Z", value) is not None:
+        dec_idx = value.index('.')
+        value = value[:dec_idx] + value[dec_idx:dec_idx+7] + 'Z'
+    return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ'). \
+        replace(tzinfo=Timezone())
 
 
 def _from_entity_guid(value):
