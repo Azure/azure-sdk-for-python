@@ -26,9 +26,8 @@ import base64
 from azure.security.attestation.v2020_10_01 import AttestationClient
 
 AttestationPreparer = functools.partial(
-            PowerShellPreparer, 
-            "attestation",
-            serializedPolicySigningKey1 = "junk",
+            PowerShellPreparer, "attestation",
+            serializedPolicySigningKey1="junk",
             policySigningCertificate0='more junk',
             ATTESTATION_AZURE_AUTHORITY_HOST='xxx',
             ATTESTATION_RESOURCE_GROUP='yyyy',
@@ -69,8 +68,9 @@ class AzureAttestationTest(AzureTestCase):
         assert open_id_metadata["jwks_uri"] == self.SharedBaseUri()+"/certs"
         assert open_id_metadata["issuer"] == self.SharedBaseUri()
 
-    def test_aad_getopenidmetadata(self):
-        attest_client = self.AadClient()
+    @AttestationPreparer()
+    def test_aad_getopenidmetadata(self, aad_attestation_url):
+        attest_client = self.AadClient(aad_attestation_url)
         open_id_metadata = attest_client.metadata_configuration.get()
         print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
@@ -94,7 +94,6 @@ class AzureAttestationTest(AzureTestCase):
                 cert = cryptography.x509.load_der_x509_certificate(der_cert)
                 print(f'Cert  iss: {cert.issuer}; subject: {cert.subject}')
 
-
     def SharedClient(self):
             """
             docstring
@@ -102,26 +101,28 @@ class AzureAttestationTest(AzureTestCase):
             credential = self.get_credential(AttestationClient)
             attest_client = self.create_client_from_credential(AttestationClient,
                 credential=credential,
-                tenant_base_url=AttestationPreparer.shared_uks_base_uri)
+                tenant_base_url=self.SharedBaseUri())
             return attest_client
 
-    def AadClient(self):
+#    @AttestationPreparer()
+    def AadClient(self, aad_attestation_url):
             """
             docstring
             """
             credential = self.get_credential(AttestationClient)
-            baseUri = AttestationPreparer.AAD_ATTESTATION_URL
+            baseUri = aad_attestation_url
             attest_client = self.create_client_from_credential(AttestationClient,
                 credential=credential,
                 tenant_base_url=baseUri)
             return attest_client
 
-    def IsolatedClient(self):
+    @AttestationPreparer()
+    def IsolatedClient(self, ISOLATED_ATTESTATION_URL):
             """
             docstring
             """
             credential = self.get_credential(AttestationClient)
-            baseUri = AttestationPreparer.ISOLATED_ATTESTATION_URL
+            baseUri = ISOLATED_ATTESTATION_URL
             attest_client = self.create_client_from_credential(AttestationClient,
                 credential=credential,
                 tenant_base_url=baseUri)
@@ -129,15 +130,17 @@ class AzureAttestationTest(AzureTestCase):
 
     @staticmethod
     def SharedBaseUri():
-        return AttestationPreparer.shared_uks_base_uri
+        return "https://shareduks.uks.test.attest.azure.net"
 
     @staticmethod
-    def IsolatedBaseUri():
-        return AttestationPreparer.ISOLATED_ATTESTATION_URL
+    @AttestationPreparer()
+    def IsolatedBaseUri(ISOLATED_ATTESTATION_URL):
+        return ISOLATED_ATTESTATION_URL
 
     @staticmethod
-    def AadBaseUri():
-        return AttestationPreparer.AAD_ATTESTATION_URL
+    @AttestationPreparer()
+    def AadBaseUri(AAD_ATTESTATION_URL):
+        return AAD_ATTESTATION_URL
 
 
 
