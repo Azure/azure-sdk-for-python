@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._data_share_management_client import DataShareManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['DataShareManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
