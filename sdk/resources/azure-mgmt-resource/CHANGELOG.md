@@ -1,5 +1,10 @@
 # Release History
 
+## 12.0.0 (2020-12-08)
+
+**Breaking changes**
+  - add lacked api version '2020-10-01' of _resource_management_client for resources
+
 ## 11.0.0 (2020-12-04)
 
 **Features**
