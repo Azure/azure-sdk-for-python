@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-security-attestation/0.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://shareduks.uks.test.attest.azure.net/certificates?api-version=2020-10-01
+  response:
+    body:
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vc2hhcmVkdWtzLnVrcy50ZXN0LmF0dGVzdC5henVyZS5uZXQvY2VydHMiLCAia2lkIjogIjNvNE91bjB2SEZHZTF1Rms1MDNKK1EwVE1wZ1NGMncrM1dYUlYyM2IvckE9IiwgInR5cCI6ICJKV1QifQ.eyJleHAiOiAxNjA3NDY1OTM1LCAiaWF0IjogMTYwNzQ2MjMzNSwgImlzcyI6ICJodHRwczovL3NoYXJlZHVrcy51a3MudGVzdC5hdHRlc3QuYXp1cmUubmV0IiwgIm5iZiI6IDE2MDc0NjIzMzUsICJ4LW1zLXBvbGljeS1jZXJ0aWZpY2F0ZXMiOiB7ImtleXMiOiBbXX19.e62Az-c8uvWcEHdHo4aef3FKuxal3qKsREwwZlQDMGHohTWobdECbLL3xzRpvVbh4DcReKTcpkxKvFjPDtq7sCsdnJ46O_uwgMXya9N4OJrLwTZ5CBYBvcmixYMAzcN5yvbCUXGaNhV_jG_3ML01IetIR5JOSG5d43yUNrKuckk"}'
+    headers:
+      content-length:
+      - '583'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 08 Dec 2020 21:18:55 GMT
+      server:
+      - Kestrel
+      x-ms-maa-service-version:
+      - 1.10.01435.0001
+    status:
+      code: 200
+      message: OK
+version: 1
