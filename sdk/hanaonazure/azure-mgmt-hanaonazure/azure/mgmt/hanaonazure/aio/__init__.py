@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._hana_management_client import HanaManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['HanaManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
