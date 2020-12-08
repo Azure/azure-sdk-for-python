@@ -6,4 +6,3 @@ aiohttp>=3.0; python_version >= '3.5'
 cryptography>=2.1.4
 aiohttp>=3.0; python_version >= '3.5'
 azure-identity
-python-dotenv
