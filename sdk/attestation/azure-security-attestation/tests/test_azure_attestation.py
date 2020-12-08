@@ -100,7 +100,7 @@ class AzureAttestationTest(AzureTestCase):
             for x5c in x5cs:
                 der_cert = base64.b64decode(x5c)
                 cert = cryptography.x509.load_der_x509_certificate(der_cert)
-                print(f'Cert  iss: {cert.issuer}; subject: {cert.subject}')
+                print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 
     def test_aad_getsigningcertificates(self):
         attest_client = self.aad_client()
@@ -116,7 +116,7 @@ class AzureAttestationTest(AzureTestCase):
             for x5c in x5cs:
                 der_cert = base64.b64decode(x5c)
                 cert = cryptography.x509.load_der_x509_certificate(der_cert)
-                print(f'Cert  iss: {cert.issuer}; subject: {cert.subject}')
+                print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 
     def test_isolated_getsigningcertificates(self):
         attest_client = self.isolated_client()
@@ -132,7 +132,7 @@ class AzureAttestationTest(AzureTestCase):
             for x5c in x5cs:
                 der_cert = base64.b64decode(x5c)
                 cert = cryptography.x509.load_der_x509_certificate(der_cert)
-                print(f'Cert  iss: {cert.issuer}; subject: {cert.subject}')
+                print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 
 
     def test_shared_get_policy_sgx(self):
