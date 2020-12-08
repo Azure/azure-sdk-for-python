@@ -50,7 +50,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-    async def begin_full_restore(
+    async def begin_restore(
         self, folder_url: str, sas_token: str, **kwargs: "Any"
     ) -> "AsyncLROPoller[RestoreOperation]":
         """Restore a full backup of a Key Vault.

@@ -47,7 +47,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def begin_full_restore(self, folder_url, sas_token, **kwargs):
+    def begin_restore(self, folder_url, sas_token, **kwargs):
         # type: (str, str, **Any) -> LROPoller[RestoreOperation]
         """Restore a full backup of a Key Vault.
 

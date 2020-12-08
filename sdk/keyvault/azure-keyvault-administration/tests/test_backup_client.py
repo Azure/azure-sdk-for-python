@@ -56,7 +56,7 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the backup
-        restore_poller = backup_client.begin_full_restore(backup_status.folder_url, sas_token)
+        restore_poller = backup_client.begin_restore(backup_status.folder_url, sas_token)
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
@@ -116,7 +116,7 @@ def test_continuation_token():
 
     backup_client = KeyVaultBackupClient("vault-url", object())
     backup_client._client = mock_generated_client
-    backup_client.begin_full_restore("storage uri", "sas", continuation_token=expected_token)
+    backup_client.begin_restore("storage uri", "sas", continuation_token=expected_token)
     backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
     backup_client.begin_selective_restore("storage uri", "sas", "key", continuation_token=expected_token)
 
