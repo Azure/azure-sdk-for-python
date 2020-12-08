@@ -95,7 +95,7 @@ def _from_entity_datetime(value):
         return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ'). \
             replace(tzinfo=Timezone())
     except ValueError:
-        return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.fZ'). \
+        return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ'). \
             replace(tzinfo=Timezone())
 
 
