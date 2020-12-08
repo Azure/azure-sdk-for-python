@@ -8,9 +8,3 @@
 
 from ._app_platform_management_client import AppPlatformManagementClient
 __all__ = ['AppPlatformManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
