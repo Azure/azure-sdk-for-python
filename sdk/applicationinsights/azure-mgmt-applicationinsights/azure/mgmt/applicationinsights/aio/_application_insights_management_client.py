@@ -103,6 +103,7 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-06-17-preview: :mod:`v2018_06_17_preview.models<azure.mgmt.applicationinsights.v2018_06_17_preview.models>`
            * 2019-09-01-preview: :mod:`v2019_09_01_preview.models<azure.mgmt.applicationinsights.v2019_09_01_preview.models>`
            * 2019-10-17-preview: :mod:`v2019_10_17_preview.models<azure.mgmt.applicationinsights.v2019_10_17_preview.models>`
+           * 2020-06-02-preview: :mod:`v2020-06-02-preview.models<azure.mgmt.applicationinsights.v2020-06-02-preview.models>`
            * 2020-02-02-preview: :mod:`v2020_02_02_preview.models<azure.mgmt.applicationinsights.v2020_02_02_preview.models>`
            * 2020-03-01-preview: :mod:`v2020_03_01_preview.models<azure.mgmt.applicationinsights.v2020_03_01_preview.models>`
         """
@@ -123,6 +124,9 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2019-10-17-preview':
             from ..v2019_10_17_preview import models
+            return models
+        elif api_version == '2020-06-02-preview':
+            from ..v2020-06-02-preview import models
             return models
         elif api_version == '2020-02-02-preview':
             from ..v2020_02_02_preview import models
@@ -334,6 +338,19 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def live_token(self):
+        """Instance depends on the API version:
+
+           * 2020-06-02-preview: :class:`LiveTokenOperations<azure.mgmt.applicationinsights.v2020-06-02-preview.aio.operations.LiveTokenOperations>`
+        """
+        api_version = self._get_api_version('live_token')
+        if api_version == '2020-06-02-preview':
+            from ..v2020-06-02-preview.aio.operations import LiveTokenOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'live_token'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def my_workbooks(self):
         """Instance depends on the API version:
 
@@ -352,12 +369,15 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2015-05-01: :class:`Operations<azure.mgmt.applicationinsights.v2015_05_01.aio.operations.Operations>`
            * 2019-09-01-preview: :class:`Operations<azure.mgmt.applicationinsights.v2019_09_01_preview.aio.operations.Operations>`
+           * 2020-06-02-preview: :class:`Operations<azure.mgmt.applicationinsights.v2020-06-02-preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-05-01':
             from ..v2015_05_01.aio.operations import Operations as OperationClass
         elif api_version == '2019-09-01-preview':
             from ..v2019_09_01_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2020-06-02-preview':
+            from ..v2020-06-02-preview.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
