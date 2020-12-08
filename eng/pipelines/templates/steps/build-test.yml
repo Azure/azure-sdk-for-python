@@ -76,5 +76,4 @@ steps:
         arguments: >-
           "${{ parameters.BuildTargetingString }}"
           --service="${{ parameters.ServiceDirectory }}"
-          --test-samples="${{ parameters.TestSamples }}"
       env: ${{ parameters.EnvVars }}

@@ -107,18 +107,7 @@ if __name__ == "__main__":
         ),
     )
 
-    parser.add_argument(
-        "--test-samples",
-        dest="test_samples",
-        default=False,
-        help="Whether or not to execute library samples as tests."
-    )
-
     args = parser.parse_args()
-
-    if args.test_samples is False:
-        logging.info("User opted to not run samples")
-        exit(0)
 
     if args.service:
         service_dir = os.path.join("sdk", args.service)
