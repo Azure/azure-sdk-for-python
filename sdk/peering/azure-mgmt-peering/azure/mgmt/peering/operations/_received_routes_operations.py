@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class PeeringServiceLocationsOperations(object):
-    """PeeringServiceLocationsOperations operations.
+class ReceivedRoutesOperations(object):
+    """ReceivedRoutesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,22 +45,44 @@ class PeeringServiceLocationsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def list_by_peering(
         self,
-        country=None,  # type: Optional[str]
+        resource_group_name,  # type: str
+        peering_name,  # type: str
+        prefix=None,  # type: Optional[str]
+        as_path=None,  # type: Optional[str]
+        origin_as_validation_state=None,  # type: Optional[str]
+        rpki_validation_state=None,  # type: Optional[str]
+        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.PeeringServiceLocationListResult"]
-        """Lists all of the available locations for peering service.
+        # type: (...) -> Iterable["_models.PeeringReceivedRouteListResult"]
+        """Lists the prefixes received over the specified peering under the given subscription and
+        resource group.
 
-        :param country: The country of interest, in which the locations are to be present.
-        :type country: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param peering_name: The name of the peering.
+        :type peering_name: str
+        :param prefix: The optional prefix that can be used to filter the routes.
+        :type prefix: str
+        :param as_path: The optional AS path that can be used to filter the routes.
+        :type as_path: str
+        :param origin_as_validation_state: The optional origin AS validation state that can be used to
+         filter the routes.
+        :type origin_as_validation_state: str
+        :param rpki_validation_state: The optional RPKI validation state that can be used to filter the
+         routes.
+        :type rpki_validation_state: str
+        :param skip_token: The optional page continuation token that is used in the event of paginated
+         result.
+        :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PeeringServiceLocationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.peering.models.PeeringServiceLocationListResult]
+        :return: An iterator like instance of either PeeringReceivedRouteListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.peering.models.PeeringReceivedRouteListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PeeringServiceLocationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PeeringReceivedRouteListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -75,15 +97,25 @@ class PeeringServiceLocationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list_by_peering.metadata['url']  # type: ignore
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if country is not None:
-                    query_parameters['country'] = self._serialize.query("country", country, 'str')
+                if prefix is not None:
+                    query_parameters['prefix'] = self._serialize.query("prefix", prefix, 'str')
+                if as_path is not None:
+                    query_parameters['asPath'] = self._serialize.query("as_path", as_path, 'str')
+                if origin_as_validation_state is not None:
+                    query_parameters['originAsValidationState'] = self._serialize.query("origin_as_validation_state", origin_as_validation_state, 'str')
+                if rpki_validation_state is not None:
+                    query_parameters['rpkiValidationState'] = self._serialize.query("rpki_validation_state", rpki_validation_state, 'str')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -94,7 +126,7 @@ class PeeringServiceLocationsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('PeeringServiceLocationListResult', pipeline_response)
+            deserialized = self._deserialize('PeeringReceivedRouteListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -116,4 +148,4 @@ class PeeringServiceLocationsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peeringServiceLocations'}  # type: ignore
+    list_by_peering.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/receivedRoutes'}  # type: ignore
