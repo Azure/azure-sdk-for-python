@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._healthcare_apis_management_client import HealthcareApisManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['HealthcareApisManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
