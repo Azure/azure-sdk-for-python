@@ -4,11 +4,7 @@
 # ------------------------------------
 from collections import namedtuple
 
-try:
-    import urllib.parse as parse
-except ImportError:
-    # pylint:disable=import-error
-    import urlparse as parse  # type: ignore
+from six.moves.urllib_parse import urlparse
 
 from .challenge_auth_policy import ChallengeAuthPolicy, ChallengeAuthPolicyBase
 from .client_base import KeyVaultClientBase
@@ -29,7 +25,7 @@ _VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
 def parse_vault_id(url):
     try:
-        parsed_uri = parse.urlparse(url)
+        parsed_uri = urlparse(url)
     except Exception:  # pylint: disable=broad-except
         raise ValueError("'{}' is not not a valid url".format(url))
     if not (parsed_uri.scheme and parsed_uri.hostname):
@@ -60,8 +56,18 @@ def parse_folder_url(folder_url):
     """
 
     try:
-        folder_name = folder_url.rstrip("/").split("/")[-1]
-        container_url = folder_url[: folder_url.rindex(folder_name) - 1]
+        parsed = urlparse(folder_url)
+
+        # the first segment of the path is the container name
+        container = parsed.path.strip("/").split("/")[0]
+
+        # N.B. this discards any SAS token in the URL.
+        # This is intentional--client methods require the SAS token as a separate parameter.
+        container_url = "{}://{}/{}".format(parsed.scheme, parsed.netloc, container)
+
+        # the folder name is the rest of the path
+        folder_name = parsed.path[len(container) + 1 :].strip("/")
+
         return BackupLocation(container_url, folder_name)
     except:  # pylint:disable=broad-except
         raise ValueError(

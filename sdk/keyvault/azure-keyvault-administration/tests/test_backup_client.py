@@ -11,6 +11,7 @@ from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.administration import KeyVaultBackupClient, BackupOperation
+from azure.keyvault.administration._internal import parse_folder_url
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
 from six.moves.urllib_parse import urlparse
@@ -141,3 +142,22 @@ def assert_successful_operation(operation):
     assert operation.status == "Succeeded"
     assert isinstance(operation.end_time, datetime)
     assert operation.start_time < operation.end_time
+
+
+@pytest.mark.parametrize(
+    "url,expected_container_url,expected_folder_name",
+    [
+        (
+            "https://account.blob.core.windows.net/backup/mhsm-account-2020090117323313",
+            "https://account.blob.core.windows.net/backup",
+            "mhsm-account-2020090117323313",
+        ),
+        ("https://account.storage/account/storage", "https://account.storage/account", "storage"),
+        ("https://account.storage/a/b/c", "https://account.storage/a", "b/c"),
+        ("https://account.storage/a/b-c", "https://account.storage/a", "b-c"),
+    ],
+)
+def test_parse_folder_url(url, expected_container_url, expected_folder_name):
+    container_url, folder_name = parse_folder_url(url)
+    assert container_url == expected_container_url
+    assert folder_name == expected_folder_name
