@@ -26,14 +26,16 @@ class ProvisioningState(str, Enum):
     failed = "Failed"
 
 
-class Status(str, Enum):
+class DataSetMappingStatus(str, Enum):
 
-    accepted = "Accepted"
-    in_progress = "InProgress"
-    transient_failure = "TransientFailure"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
+    ok = "Ok"
+    broken = "Broken"
+
+
+class OutputType(str, Enum):
+
+    csv = "Csv"
+    parquet = "Parquet"
 
 
 class InvitationStatus(str, Enum):
@@ -42,18 +44,6 @@ class InvitationStatus(str, Enum):
     accepted = "Accepted"
     rejected = "Rejected"
     withdrawn = "Withdrawn"
-
-
-class ShareKind(str, Enum):
-
-    copy_based = "CopyBased"
-    in_place = "InPlace"
-
-
-class SynchronizationMode(str, Enum):
-
-    incremental = "Incremental"
-    full_sync = "FullSync"
 
 
 class DataSetType(str, Enum):
@@ -72,6 +62,16 @@ class DataSetType(str, Enum):
     sql_dw_table = "SqlDWTable"
 
 
+class Status(str, Enum):
+
+    accepted = "Accepted"
+    in_progress = "InProgress"
+    transient_failure = "TransientFailure"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+
+
 class ShareSubscriptionStatus(str, Enum):
 
     active = "Active"
@@ -86,6 +86,12 @@ class RecurrenceInterval(str, Enum):
     day = "Day"
 
 
+class SynchronizationMode(str, Enum):
+
+    incremental = "Incremental"
+    full_sync = "FullSync"
+
+
 class TriggerStatus(str, Enum):
 
     active = "Active"
@@ -93,13 +99,7 @@ class TriggerStatus(str, Enum):
     source_synchronization_setting_deleted = "SourceSynchronizationSettingDeleted"
 
 
-class DataSetMappingStatus(str, Enum):
+class ShareKind(str, Enum):
 
-    ok = "Ok"
-    broken = "Broken"
-
-
-class OutputType(str, Enum):
-
-    csv = "Csv"
-    parquet = "Parquet"
+    copy_based = "CopyBased"
+    in_place = "InPlace"

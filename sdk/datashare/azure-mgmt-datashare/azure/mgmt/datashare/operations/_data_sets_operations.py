@@ -273,7 +273,7 @@ class DataSetsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataShare/accounts/{accountName}/shares/{shareName}/dataSets/{dataSetName}'}
 
     def list_by_share(
-            self, resource_group_name, account_name, share_name, skip_token=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, share_name, skip_token=None, filter=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """List DataSets in a share.
 
         List DataSets in a share.
@@ -286,6 +286,10 @@ class DataSetsOperations(object):
         :type share_name: str
         :param skip_token: continuation token
         :type skip_token: str
+        :param filter: Filters the results using OData syntax.
+        :type filter: str
+        :param orderby: Sorts the results using OData syntax.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -314,6 +318,10 @@ class DataSetsOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
 
             else:
                 url = next_link

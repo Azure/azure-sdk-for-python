@@ -90,32 +90,6 @@ class OperationModelPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationModelPaged, self).__init__(*args, **kwargs)
-class SharePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Share <azure.mgmt.datashare.models.Share>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Share]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(SharePaged, self).__init__(*args, **kwargs)
-class ShareSynchronizationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ShareSynchronization <azure.mgmt.datashare.models.ShareSynchronization>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ShareSynchronization]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ShareSynchronizationPaged, self).__init__(*args, **kwargs)
 class SynchronizationDetailsPaged(Paged):
     """
     A paging container for iterating over a list of :class:`SynchronizationDetails <azure.mgmt.datashare.models.SynchronizationDetails>` object
@@ -129,6 +103,32 @@ class SynchronizationDetailsPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SynchronizationDetailsPaged, self).__init__(*args, **kwargs)
+class ShareSynchronizationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ShareSynchronization <azure.mgmt.datashare.models.ShareSynchronization>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ShareSynchronization]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ShareSynchronizationPaged, self).__init__(*args, **kwargs)
+class SharePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Share <azure.mgmt.datashare.models.Share>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Share]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SharePaged, self).__init__(*args, **kwargs)
 class ProviderShareSubscriptionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ProviderShareSubscription <azure.mgmt.datashare.models.ProviderShareSubscription>` object
@@ -142,19 +142,6 @@ class ProviderShareSubscriptionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProviderShareSubscriptionPaged, self).__init__(*args, **kwargs)
-class ShareSubscriptionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ShareSubscription <azure.mgmt.datashare.models.ShareSubscription>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ShareSubscription]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ShareSubscriptionPaged, self).__init__(*args, **kwargs)
 class SourceShareSynchronizationSettingPaged(Paged):
     """
     A paging container for iterating over a list of :class:`SourceShareSynchronizationSetting <azure.mgmt.datashare.models.SourceShareSynchronizationSetting>` object
@@ -181,6 +168,19 @@ class ShareSubscriptionSynchronizationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ShareSubscriptionSynchronizationPaged, self).__init__(*args, **kwargs)
+class ShareSubscriptionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ShareSubscription <azure.mgmt.datashare.models.ShareSubscription>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ShareSubscription]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ShareSubscriptionPaged, self).__init__(*args, **kwargs)
 class ConsumerSourceDataSetPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ConsumerSourceDataSet <azure.mgmt.datashare.models.ConsumerSourceDataSet>` object
