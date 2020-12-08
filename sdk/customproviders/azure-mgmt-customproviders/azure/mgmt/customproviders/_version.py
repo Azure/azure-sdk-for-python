@@ -6,12 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._custom_resource_provider_operations import CustomResourceProviderOperations
-from ._associations_operations import AssociationsOperations
+VERSION = "1.0.0b1"
 
-__all__ = [
-    'Operations',
-    'CustomResourceProviderOperations',
-    'AssociationsOperations',
-]
