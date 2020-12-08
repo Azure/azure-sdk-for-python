@@ -14,7 +14,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:38:00 GMT
+      - Tue, 08 Dec 2020 02:49:51 GMT
       expires:
       - '-1'
       pragma:
@@ -50,7 +50,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;237,Microsoft.Compute/PutVM30Min;1196
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1196
       x-ms-ratelimit-remaining-subscription-writes:
       - '1197'
     status:
@@ -72,7 +72,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -89,7 +89,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:38:01 GMT
+      - Tue, 08 Dec 2020 02:49:52 GMT
       expires:
       - '-1'
       pragma:
@@ -114,7 +114,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -131,7 +131,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:38:11 GMT
+      - Tue, 08 Dec 2020 02:50:02 GMT
       expires:
       - '-1'
       pragma:
@@ -158,7 +158,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -166,16 +166,16 @@ interactions:
   response:
     body:
       string: '{"value":[{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","notes":"Testing
-        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}]}'
+        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"},{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ResourceMoverRG-eastus-westus/providers/Microsoft.Migrate/moveCollections/MoveCollection-eus-wus-eus2/moveResources/2f2c5e35-c1ed-4391-96c2-7a769318ea32/","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Resources/links/RMS-MoveResource-","type":"Microsoft.Resources/links","name":"RMS-MoveResource-"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '575'
+      - '1138'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:38:11 GMT
+      - Tue, 08 Dec 2020 02:50:02 GMT
       expires:
       - '-1'
       pragma:
@@ -202,7 +202,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -219,7 +219,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:38:11 GMT
+      - Tue, 08 Dec 2020 02:50:02 GMT
       expires:
       - '-1'
       pragma:
@@ -246,7 +246,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -263,7 +263,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 05:38:11 GMT
+      - Tue, 08 Dec 2020 02:50:02 GMT
       expires:
       - '-1'
       pragma:
@@ -292,7 +292,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.3.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -306,7 +306,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Oct 2020 05:38:11 GMT
+      - Tue, 08 Dec 2020 02:50:02 GMT
       expires:
       - '-1'
       pragma:
