@@ -324,7 +324,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                         await asyncio.sleep(2)
 
                 # list read receipts
-                read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=1, skip=1)
+                read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=1, skip=0)
 
                 items = []
                 async for item in read_receipts:
