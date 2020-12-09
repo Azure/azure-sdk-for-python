@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._management_groups_api import ManagementGroupsAPI
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['ManagementGroupsAPI']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
