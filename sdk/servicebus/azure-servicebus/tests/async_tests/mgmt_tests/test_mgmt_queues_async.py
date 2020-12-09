@@ -313,6 +313,7 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             assert queue_description.max_delivery_count == 14
             assert queue_description.max_size_in_megabytes == 3072
             assert queue_description.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True

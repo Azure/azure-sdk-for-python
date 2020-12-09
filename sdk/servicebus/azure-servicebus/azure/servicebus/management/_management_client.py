@@ -129,16 +129,17 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """forward_to requires providing a bearer token in headers for the referenced entity."""
         kwargs['headers'] = kwargs.get('headers', {})
 
-        def _populate_header(uri, header):
+        def _populate_header_within_kwargs(uri, header):
             token = self._credential.get_token(uri).token.decode()
             if not isinstance(self._credential, (ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential)):
                 token = "Bearer {}".format(token)
             kwargs['headers'][header] = token
 
         if entity.forward_to:
-            _populate_header(entity.forward_to, SUPPLEMENTARY_AUTHORIZATION_HEADER)
+            _populate_header_within_kwargs(entity.forward_to, SUPPLEMENTARY_AUTHORIZATION_HEADER)
         if entity.forward_dead_lettered_messages_to:
-            _populate_header(entity.forward_dead_lettered_messages_to, DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER)
+            _populate_header_within_kwargs(entity.forward_dead_lettered_messages_to, \
+                DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER)
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
