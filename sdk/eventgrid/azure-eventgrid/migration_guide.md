@@ -1,0 +1,86 @@
+# Guide for migrating to azure-eventgrid v2.0 from azure-eventgrid v1.3
+
+This guide is intended to assist in the migration to azure-eventgrid v2.0 from azure-eventgrid v1.3. It will focus on side-by-side comparisons for similar operations between the two packages.
+
+Familiarity with the azure-eventgrid v1.3 package is assumed. For those new to the eventgrid client library for Python, please refer to the [README for azure-eventgrid v2.0](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/README.md) rather than this guide.
+
+## Table of contents
+
+## Migration benefits
+
+A natural question to ask when considering whether or not to adopt a new version or library is what the benefits of doing so would be. As Azure has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and to understand the gaps that the Python client libraries have.
+
+There were several areas of consistent feedback expressed across the Azure client library ecosystem. One of the most important is that the client libraries for different Azure services have not had a consistent approach to organization, naming, and API structure. Additionally, many developers have felt that the learning curve was difficult, and the APIs did not offer a good, approachable, and consistent onboarding story for those learning Azure or exploring a specific Azure service.
+
+To try and improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html#design-principles) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines for those interested.
+
+### Cross Service SDK improvements
+
+The modern Event Grid client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as 
+- a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
+
+## Important changes
+
+### Support for Cloud Events
+
+The v2.x major version comes with support for [CloudEvents](https://github.com/cloudevents/spec). Now the cloud native Cloud Events can be directly published using the `CloudEvent` constructor or a as a dictionary as follows:
+
+```Python
+from azure.eventgrid import CloudEvent
+
+cloud_event = CloudEvent(
+    type="Contoso.Items.ItemReceived",
+    source="/contoso/items",
+    data={
+        "itemSku": "Contoso Item SKU #1"
+    },
+    subject="Door1"
+)
+
+# as a dictionary
+
+cloud_event = {
+    "type":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
+    "source":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Storage/storageAccounts/{storage-account}",
+    "data": {"hello": "world"},
+    "subject": "Door1"
+    }
+```
+
+### Client constructors
+
+* The `EventGridClient` in the v1.3 has been replaced with `EventGridPublisherClient`.
+
+| In v1.3 | Equivalent in v2.0 | Sample |
+|---|---|---|
+|`EventGridClient(credentials)`|`EventGridPublisherClient(topic_hostname, credential)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py)|
+
+* Additionally, we now have an `EventGridConsumer` that should be used to deserialize the events.
+
+```Python
+from azure.eventgrid import EventGridConsumer
+
+eg_consumer = EventGridConsumer()
+```
+
+### Publishing Events
+
+The `publish_events` API is replaced with `send` in v2.0. Additionally, `send` API accepts `CloudEvent`, `CustomEvent` along with `EventGridEvent`
+
+| In v1.3 | Equivalent in v2.0 | Sample |
+|---|---|---|
+|`EventGridClient(credentials).publish_events(topic_hostname, events)`|`EventGridPublisherClient(topic_hostname, credential).send(events)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py)|
+
+### Consuming Events
+
+In v2.0, `EventGridConsumer` can be used to decode both Cloud Events and EventGrid Events.
+
+```Python
+EventGridConsumer().decode_cloud_event(cloud_event)
+
+EventGridConsumer().decode_eventgrid_event(eventgrid_event)
+```
+
+## Additional samples
+
+More examples can be found at [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples)
