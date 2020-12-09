@@ -21,7 +21,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
 
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     def test_create_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -30,7 +30,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         assert user.identifier is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     def test_issue_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -42,7 +42,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
     
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     def test_revoke_tokens(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -55,7 +55,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
     
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     def test_delete_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
