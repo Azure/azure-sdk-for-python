@@ -1,10 +1,13 @@
 import ast
 import os
 import enum
-import tokenize
 import argparse
+import importlib
+import inspect
+import json
 import logging
 import inspect
+import subprocess
 from tox_helper_tasks import get_package_details
 try:
     # If I'm started as a module __main__
@@ -30,138 +33,25 @@ class BreakingChangeType(str, enum.Enum):
     REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION = "RemoveOrRenameModuleLevelFunction"
     REMOVE_OR_RENAME_POSITIONAL_PARAM = "RemoveOrRenamePositionalParam"
     ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
-    REMOVE_OR_RENAME_ATTR_FROM_MODEL = "RemoveOrRenameAttrFromModel"
+    REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL = "RemoveOrRenameInstanceAttributeFromModel"
 
 
-def test_tokenize(ignore_dict, file_path, source):
-    for token in tokenize.generate_tokens(lambda: source.readline()):
-        if token.type == tokenize.COMMENT:
-            if token.string.find("breaking-changes") != -1:
-                if file_path not in ignore_dict:
-                    ignore_dict[file_path] = []
-                ignore_dict[file_path].append(token.start[0])
-
-
-class BreakingChange:
-
-    def __init__(self):
-        self.line_number = None
-        self.file_name = None
-        self.breaking_change_type = None
-        self.message = None
-        self.ignore = False
-
-
-class BreakingChangesChecker(ast.NodeVisitor):
-
-    def __init__(self):
-        self.function_nodes = {}
-        self.class_nodes = {}
+class ClassDefTree(ast.NodeVisitor):
+    def __init__(self, name):
+        self.name = name
+        self.cls_node = None
 
     def visit_ClassDef(self, node):
-        if not node.name.startswith("_"):
-            self.class_nodes[node.name] = node
+        if node.name == self.name:
+            self.cls_node = node
         self.generic_visit(node)
-
-    def visit_FunctionDef(self, node):
-        if not node.name.startswith("_"):
-            self.function_nodes[node.name] = node
-        self.generic_visit(node)
-
-
-class Analyzer(ast.NodeVisitor):
-    def __init__(self):
-        self.function_nodes = {}
-        self.class_nodes = {}
-
-    def visit_Module(self, module):
-        for node in module.body:
-            if isinstance(node, ast.FunctionDef):
-                if not node.name.startswith("_"):
-                    self.function_nodes[node.name] = node
-            if isinstance(node, ast.ClassDef):
-                if not node.name.startswith("_"):
-                    self.class_nodes[node.name] = node
-
-
-    # def visit_Assign(self, node):
-    #     if node.targets[0].id == '__all__':
-    #         for elt in node.value.elts:
-    #             self.in_all.append(elt.value)
-    #     self.generic_visit(node)
-    #
-    # def visit_ImportFrom(self, node):
-    #     for api in node.names:
-    #         node_module = "/".join(node.module.split('.'))
-    #         if node_module not in self.public_api:
-    #             self.public_api[node_module] = []
-    #         self.public_api[node_module].append({api.name: None})
-    #     self.generic_visit(node)
-
-
-def test_install_pkg(package_name):
-    import subprocess
-    import sys
-    import time
-    from pypi_tools.pypi import PyPIClient
-
-    client = PyPIClient()
-
-    try:
-        version = client.get_relevant_versions(package_name)
-    except IndexError:
-        exit(0)  # means there is no stable version available on PyPi
-
-    stable_package_path = os.path.join(root_dir, "eng", "tox", "temp")
-    commands = [sys.executable, "-m", "pip", "install", "--no-deps", "-q", f"--target={tmpdir}", f"{package_name}=={version[1]}"]
-    subprocess.check_call(commands)
-    while not os.path.isdir(tmpdir):
-        time.sleep(5)
-
-    return stable_package_path
-
-
-
-def check_positional_params(stable, current):
-    print(stable)
-
-
-def added_positional_parameter(stable, current):
-
-    for module, stable_nodes in stable.items():
-        current_nodes = current[module]
-        for cls, stable_cls_node in stable_nodes["class_nodes"].items():
-            current_cls_node = current_nodes["class_nodes"][cls]
-            check_positional_params(stable_cls_node, current_cls_node)
-
-
-
-def apply_rules(stable, current):
-    breaking_changes = []
-
-    added_positional_parameter(stable, current)
-
-    pass
-
-
-
-def test_breaking_changes(pkg_dir="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\formrecognizer\\azure-ai-formrecognizer", package_name="azure-ai-formrecognizer", namespace="azure.ai.formrecognizer"):
-    import shutil
-    stable_package_path = test_install_pkg(package_name)
-    stable_tree = test_detect_breaking_changes(pkg_dir=stable_package_path, namespace=namespace)
-
-    current_tree = test_detect_breaking_changes(pkg_dir=pkg_dir, namespace=namespace)
-
-    apply_rules(stable_tree, current_tree)
-    shutil.rmtree(tmpdir)
-
 
 
 def test_find_modules(pkg_root_path):
     """Find modules within the package to import and parse
     :param str: pkg_root_path
         Package root path
-    :rtype: list
+    :rtype: dict
     """
     modules = {}
     for root, subdirs, files in os.walk(pkg_root_path):
@@ -205,11 +95,13 @@ def create_function_report(name, f):
             "var_keyword": []
         }
     }
+    # TODO add ignore / metadata
     # source_lines = inspect.getsourcelines(f)[0]
     # if source_lines[0].find("ignore") != -1 and source_lines[0].find("breaking-changes") != -1:
     #     func_obj["ignore"] = True
     #     return func_obj
 
+    # TODO we could capture whether the param has a default value and if that changes
     for par in function.parameters.values():
         if par.kind == par.KEYWORD_ONLY:
             func_obj["parameters"]["keyword_only"].append(par.name)
@@ -225,35 +117,68 @@ def create_function_report(name, f):
     return func_obj
 
 
+def get_properties(name, cls, path):
+    # this only looks at the constructor of the class passed in. if there is a base class it is missed
+    import ast
+
+    with open(path, "r") as source:
+        module = ast.parse(source.read())
+
+    analyzer = ClassDefTree(name)
+    analyzer.visit(module)
+    cls_node = analyzer.cls_node
+    attribute_names = []
+    init_node = [node for node in cls_node.body if isinstance(node, ast.FunctionDef) and node.name == "__init__"]
+    if init_node:
+        assigns = [node for node in init_node[0].body if isinstance(node, ast.Assign)]
+        if assigns:
+            for assign in assigns:
+                if hasattr(assign, "targets"):
+                    for attr in assign.targets:
+                        if hasattr(attr, "attr"):
+                            attribute_names.append(attr.attr)
+    return attribute_names
+
 
 def create_class_report(name, cls):
-    print(cls)
+    # print(cls)
     cls_info = {
         "name": name,
         "type": None,
-        "ignore": False,
         "methods": {},
-        "properties": None
+        "properties": [],
+        "metadata": {
+            "ignore": False,
+            "lineno": None,
+            "path": None,
+        }
     }
 
-    source_lines = inspect.getsourcelines(cls)[0]
-    if source_lines[0].find("ignore") != -1 and source_lines[0].find("breaking-changes") != -1:
-        cls_info["ignore"] = True
+    source_line = inspect.getsourcelines(cls)
+    cls_info["metadata"]["lineno"] = source_line[1]
+    lines = source_line[0]
+    if lines[0].find("ignore") != -1 and lines[0].find("breaking-changes") != -1:
+        cls_info["metadata"]["ignore"] = True
         return cls_info
 
-    base_classes = inspect.getmro(cls)
-    is_enum = True if "Enum" in str(base_classes) else False
+    from enum import Enum
+    is_enum = Enum in cls.__mro__
     if is_enum:
         cls_info["type"] = "Enum"
         cls_info["properties"] = [value for value in dir(cls) if not value.startswith("_")]
         return cls_info
 
-    # we can't get the class instance variables without instantiating the class since these are dynamic, so this is the best we can do
-    try:
-        props = cls.__init__.__code__.co_names
-        cls_info["properties"] = list(props)
-    except AttributeError:
-        cls_info["properties"] = [value for value in dir(cls) if not value.startswith("_")]
+
+    path = inspect.getsourcefile(cls)
+    cls_info["metadata"]["path"] = path
+    class_attributes = get_properties(name, cls, path)
+    if class_attributes:
+        cls_info["properties"] = class_attributes
+    # try:
+    #     props = list(cls.__init__.__code__.co_names)
+    #     cls_info["properties"] = [prop for prop in props if not prop.startswith("_")]
+    # except AttributeError:
+    #     cls_info["properties"] = [value for value in dir(cls) if not value.startswith("_")]
 
     methods = [method for method in dir(cls) if not method.startswith("_")]
     for method in methods:
@@ -269,148 +194,229 @@ def create_class_report(name, cls):
     return cls_info
 
 
-def test_detect_breaking_changes(pkg_dir="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\formrecognizer\\azure-ai-formrecognizer", package_name="azure-ai-formrecognizer", namespace="azure.ai.formrecognizer"):
-    from pathlib import Path
-    import importlib
-    import inspect
-    import types
-    folders = "/".join(namespace.split('.'))
+def test_detect_breaking_changes(package_name, target_module, current):
 
-    modules = test_find_modules(pkg_dir)
+    module = importlib.import_module(target_module)
+    modules = test_find_modules(module.__path__[0])
 
     public_api = {}
-    for key, val in modules.items():
-        public_api[key] = {"class_nodes": {}, "clients": {}, "function_nodes": {}}
-        module = importlib.import_module(key)
+    for module_name, val in modules.items():
+        if module_name == ".":
+            module_name = target_module
+        else:
+            module_name = target_module + "." + module_name
+
+        public_api[module_name] = {"class_nodes": {}, "clients": {}, "function_nodes": {}}
+        module = importlib.import_module(module_name)
         model_names = [model_name for model_name in dir(module)]
         for model_name in model_names:
-            # if model_name.startswith("_"):
-            #     try:
-            #         module = importlib.import_module(f"{key}.{model_name}")
-            #         model_names = [model_name for model_name in dir(module)]
-            #         for model_name in model_names:
-            #             if not model_name.startswith("_"):
-            #                 thing = getattr(module, model_name)
-            #                 if isinstance(thing, types.FunctionType):
-            #                     public_api[key]["function_nodes"].update({model_name: create_function_report(model_name, thing)})
-            #                 else:
-            #                     public_api[key]["class_nodes"].update({model_name: create_class_report(thing)})
-            #     except Exception:
-            #         continue
             if not model_name.startswith("_"):
                 thing = getattr(module, model_name)
                 if inspect.isfunction(thing):
-                    public_api[key]["function_nodes"].update({model_name: create_function_report(model_name, thing)})
+                    public_api[module_name]["function_nodes"].update({model_name: create_function_report(model_name, thing)})
                 elif inspect.isclass(thing) and model_name.endswith("Client"):
-                    public_api[key]["clients"].update({model_name: create_class_report(model_name, thing)})
+                    public_api[module_name]["clients"].update({model_name: create_class_report(model_name, thing)})
                 elif inspect.isclass(thing):
-                    public_api[key]["class_nodes"].update({model_name: create_class_report(model_name, thing)})
-
-    # public_api = {}
-    # for key, val in modules.items():
-    #     public_api[key] = {"class_nodes": {}, "function_nodes": {}}
-    #     for v in val:
-    #         with open(v, "r") as source:
-    #             module = ast.parse(source.read())
-    #
-    #         analyzer = Analyzer()
-    #         analyzer.visit(module)
-    #         if analyzer.class_nodes:
-    #             public_api[key]["class_nodes"].update(analyzer.class_nodes)
-    #         if analyzer.function_nodes:
-    #             public_api[key]["function_nodes"].update(analyzer.function_nodes)
-
-    import json
-    with open("current.json", "w") as fd:
-        json.dump(public_api, fd, indent=2)
+                    public_api[module_name]["class_nodes"].update({model_name: create_class_report(model_name, thing)})
 
     return public_api
 
-    # ignore_dict = {}
-    # for module in public_api:
-    #     for key, value_list in module.public_api.items():
-    #         for value_dict in value_list:
-    #             for api in value_dict:
-    #                 if api not in module.in_all:
-    #                     module.public_api[key].remove(value_dict)
-    #                 if api.startswith("_"):
-    #                     module.public_api[key].remove(value_dict)
-    #
-    #         bc = BreakingChangesChecker(module.public_api[key], module.in_all)
-    #         try:
-    #             with open(module.path.replace("__init__", key), "r") as source:
-    #                 tree = ast.parse(source.read())
-    #                 test_tokenize(ignore_dict, key, source)
-    #             bc.visit(tree)
-    #         except FileNotFoundError:
-    #             pass  # FIXME: need to work out how to open for module imports
 
-    # return public_api, ignore_dict
+class BreakingChange:
+
+    def __init__(self, **kwargs):
+        self.line_number = kwargs.get("line_number")
+        self.file_name = kwargs.get("file_name")
+        self.breaking_change_type = kwargs.get("breaking_change_type")
+        self.message = kwargs.get("message")
+        self.ignore = kwargs.get("ignore", False)
+
+    def __str__(self):
+        return self.message
 
 
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser(
-#         description="Run pylint against target folder. Add a local custom plugin to the path prior to execution. "
-#     )
-#
-#     parser.add_argument(
-#         "-t",
-#         "--target",
-#         dest="target_package",
-#         help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
-#         required=True,
-#     )
-#
-#     args = parser.parse_args()
-#
-#
-#     pkg_dir = os.path.abspath(args.target_package)
-#     package_name, namespace, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
-#     test_breaking_changes(pkg_dir, package_name, namespace)
+def model_or_exposed_class_instance_attribute_removed_or_renamed(stable, current, diff, breaking_changes):
+    from jsondiff.symbols import Symbol
+    for module_name, module in diff.items():
+        if "class_nodes" in module:
+            for model_name, components in module["class_nodes"].items():
+                deleted_indices = []
+                if "properties" in components:
+                    for prop in components["properties"]:
+                        if isinstance(prop, Symbol):
+                            if prop.label == "delete":
+                                deleted_indices = components["properties"][prop]
+                if deleted_indices:
+                    for deleted_idx in deleted_indices:
+                        deleted_property = stable[module_name]["class_nodes"][model_name]["properties"][deleted_idx]
+                        bc = BreakingChange(
+                            breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL,
+                            message=f"The model or publicly exposed class '{model_name}' had its instance variable "
+                                    f"'{deleted_property}' deleted or renamed in the current version"
+                        )
+                        breaking_changes.append(bc)
 
 
+def model_or_exposed_class_removed_or_renamed(stable, current, diff, breaking_changes):
+    from jsondiff.symbols import Symbol
+    for module_name, module in diff.items():
+        if "class_nodes" in module:
+            for model_name, components in module["class_nodes"].items():
+                if isinstance(model_name, Symbol):
+                    if model_name.label == "delete":
+                        for name in components:
+                            bc = BreakingChange(
+                                breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_MODEL,
+                                message=f"The model or publicly exposed class '{name}' was deleted or renamed in the "
+                                        f"current version",
+                            )
+                            breaking_changes.append(bc)
 
 
-def test_create_report():
-    import importlib
-    import inspect
-    import types
-    import importlib.util
-
-    # for module in module_names:
-        # spec = importlib.util.spec_from_file_location(module, package_path[0])
-        # module_to_generate = importlib.util.module_from_spec(spec)
-        # spec.loader.exec_module(module_to_generate)
-        # foo.MyClass()
-    module_to_generate = importlib.import_module("azure.ai.formrecognizer")
-
-
-    print(module_to_generate)
-    # Look for models first
-    l = module_to_generate._api_versions
-    model_names = [model_name for model_name in dir(module_to_generate)]
-    for model_name in model_names:
-        if not model_name.startswith("_"):
-            thing = getattr(module_to_generate, model_name)
-            ff = inspect.getsourcelines(thing)[1]
-            if isinstance(thing, types.FunctionType):
-
-                create_function_report(thing.name)
-            create_empty_class_report(ff)
+def client_method_removed_or_renamed(stable, current, diff, breaking_changes):
+    from jsondiff.symbols import Symbol
+    for module_name, module in diff.items():
+        for client, components in module["clients"].items():
+            if "methods" in components:
+                for method_name, props in components["methods"].items():
+                    if isinstance(method_name, Symbol):
+                        if method_name.label == "delete":
+                            for name in props:
+                                bc = BreakingChange(
+                                    breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_CLIENT_METHOD,
+                                    message=f"The '{client}' method '{name}' was deleted or renamed in the current "
+                                            f"version",
+                                )
+                                breaking_changes.append(bc)
 
 
-class StableAPI:
+def client_removed_or_renamed(stable, current, diff, breaking_changes):
+    from jsondiff.symbols import Symbol
+    for module_name, module in diff.items():
+        if "clients" in module:
+            for operation, client in module["clients"].items():
+                if isinstance(operation, Symbol):
+                    if operation.label == "delete":
+                        bc = BreakingChange(
+                            breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_CLIENT,
+                            message=f"The client {client} was deleted or renamed in the current version"
+                        )
+                        breaking_changes.append(bc)
 
-    def __init__(self):
-        self.my_stable_api = {}
 
-my_api = StableAPI()
+def client_method_positional_parameter_removed_or_renamed(stable, current, diff, breaking_changes):
+    from jsondiff.symbols import Symbol
+    for module_name, module in diff.items():
+        for client, components in module["clients"].items():
+            if "methods" in components:
+                for method_name, props in components["methods"].items():
+                    if "parameters" in props:
+                        for param_type, param_name in props["parameters"].items():
+                            if param_type != "positional_or_keyword":
+                                continue
+                            deleted_indices = []
+                            if isinstance(param_name, dict):
+                                for operation in param_name:
+                                    if operation.label == "delete":
+                                        deleted_indices = props["parameters"][param_type][operation]
+                            if deleted_indices:
+                                for deleted_idx in deleted_indices:
+                                    deleted_parameter = stable[module_name]["clients"][client]["methods"][method_name]["parameters"][param_type][deleted_idx]
+                                    bc = BreakingChange(
+                                        breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
+                                        message=f"The '{client} method '{method_name}' had its {param_type} parameter "
+                                                f"'{deleted_parameter}' deleted or renamed in the current version"
+                                    )
+                                    breaking_changes.append(bc)
+
+def client_method_positional_parameter_added(stable, current, diff, breaking_changes):
+    for module_name, module in diff.items():
+        for client, components in module["clients"].items():
+            if "methods" in components:
+                for method_name, props in components["methods"].items():
+                    if "parameters" in props:
+                        for param_type, param_name in props["parameters"].items():
+                            if param_type != "positional_or_keyword":
+                                continue
+                            inserted_parameters = []
+                            if isinstance(param_name, dict):
+                                for operation in param_name:
+                                    if operation.label == "insert":
+                                        inserted_parameters = props["parameters"][param_type][operation]
+                            if inserted_parameters:
+                                for inserted_param in inserted_parameters:
+                                    bc = BreakingChange(
+                                        breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
+                                        message=f"The '{client} method '{method_name}' had a {param_type} parameter "
+                                                f"'{inserted_param[1]}' inserted in the current version"
+                                    )
+                                    breaking_changes.append(bc)
 
 
-def write_to_object(public_api):
-    my_api.my_stable_api = public_api
-    print(f"in write to object {public_api}")
-    return
+def check_for_breaking_changes(stable, current, diff):
+    breaking_changes = []
+    client_removed_or_renamed(stable, current, diff, breaking_changes)
+    client_method_removed_or_renamed(stable, current, diff, breaking_changes)
+    model_or_exposed_class_removed_or_renamed(stable, current, diff, breaking_changes)
+    model_or_exposed_class_instance_attribute_removed_or_renamed(stable, current, diff, breaking_changes)
+    client_method_positional_parameter_removed_or_renamed(stable, current, diff, breaking_changes)
+    client_method_positional_parameter_added(stable, current, diff, breaking_changes)
+    print([change.message for change in breaking_changes])
+
+def test_compare(pkg_dir):
+    import json_delta
+    import json
+    import jsondiff
+    with open(os.path.join(pkg_dir, "stable.json"), "r") as fd:
+        stable = json.load(fd)
+    with open(os.path.join(pkg_dir, "current.json"), "r") as fd:
+        current = json.load(fd)
+    results1 = json_delta.diff(stable, current)
+    results2 = jsondiff.diff(stable, current)
+
+    check_for_breaking_changes(stable, current, results2)
+
+
+def main(package_name, target_module, version, create_venv, pkg_dir):
+    if create_venv == "False":
+        create_venv = False
+    else:
+        create_venv = True
+
+    if create_venv:
+        packages = [package_name + "==" + version, "aiohttp"]  # need to include aiohttp since some libs import AioHttpTransport from azure.core
+        with create_venv_with_package(packages) as venv:
+            _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
+            args = [
+                venv.env_exe,
+                __file__,
+                "-t",
+                package_name,
+                "-m",
+                target_module,
+                "--create-venv",
+                "False",
+                "-s",
+                version
+            ]
+            try:
+                subprocess.check_call(args)
+            except subprocess.CalledProcessError:
+                # If it fail, just assume this version is too old to get an Autorest report
+                _LOGGER.warning(f"Version {version} seems to be too old to build a report (probably not Autorest based)")
+
+    public_api = test_detect_breaking_changes(package_name, target_module, current=create_venv)
+
+    if create_venv is False:
+        with open("stable.json", "w") as fd:
+            json.dump(public_api, fd, indent=2)
+        return
+
+    with open("current.json", "w") as fd:
+        json.dump(public_api, fd, indent=2)
+
+    test_compare(pkg_dir)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -425,81 +431,50 @@ if __name__ == "__main__":
         required=True,
     )
 
+    parser.add_argument(
+        "-m",
+        "--module",
+        dest="target_module",
+        help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--create-venv",
+        dest="create_env",
+        help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
+        default=True
+    )
+
+    parser.add_argument(
+        "-s",
+        "--stable_version",
+        dest="stable_version",
+        help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
+        default=None
+    )
+
     args = parser.parse_args()
-    print(args)
-    # pkg_dir = os.path.abspath(args.target_package)
-    # package_name, namespace, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    _LOGGER.warning(f"target package {args.target_package}")
+    pkg_dir = os.path.abspath(args.target_package)
+    _LOGGER.warning(f"package dir {pkg_dir}")
+    if args.target_package == ".":
+        package_name, target_module, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    else:
+        package_name, target_module, ver = get_package_details(os.path.join(pkg_dir, "..", "setup.py"))
+    create_env = args.create_env
+    stable_version = args.stable_version
+    if not stable_version:
 
+        from pypi_tools.pypi import PyPIClient
+        client = PyPIClient()
 
-def client_removed_or_renamed(stable, diff):
-
-    pass
-
-def check_for_breaking_changes(stable, diff):
-    breaking_changes = []
-    client_removed_or_renamed(stable, diff)
-
-
-def test_compare():
-    import json_delta
-    import json
-    import jsondiff
-    with open("stable.json", "r") as fd:
-        l = json.load(fd)
-    with open("current.json", "r") as fd:
-        r = json.load(fd)
-    results1 = json_delta.diff(l, r)
-    results2 = jsondiff.diff(l, r)
-
-    return l, results2
-
-
-def test_startrr(package_name="azure-ai-formrecognizer", module_name="azure.ai.formrecognizer"):
-    import subprocess
-    import sys
-    import time
-    from pypi_tools.pypi import PyPIClient
-
-    client = PyPIClient()
-
-    try:
-        version = client.get_relevant_versions(package_name)
-    except IndexError:
-        exit(0)  # means there is no stable version available on PyPi
-
-    # from pathlib import Path
-    # namespaces = []
-    # folders = "/".join(module_name.split('.'))
-    stable_package_path = os.path.join(root_dir, "eng", "tox", "temp")
-    # for path in Path(os.path.join(stable_package_path, folders)).rglob('*__init__.py'):
-    #     if any(p.startswith("_") and p != "__init__.py" for p in path.parts):
-    #         continue
-    #     namespaces.append(str(path))
-
-    namespaces1 = "azure-ai-formrecognizer"
-    # create_report(namespaces1, namespaces)
-
-    f = __file__
-    with create_venv_with_package([f"{package_name}=={str(version[1])}"]) as venv:
-        args = [
-            venv.env_exe,
-            "C:\\Users\krpratic\\azure-sdk-for-python\\eng\\tox\\find_changes.py",
-            "-t",
-            namespaces1,
-            "-p",
-            stable_package_path
-        ]
         try:
-            subprocess.check_call(args)
-        except subprocess.CalledProcessError:
-            # If it fail, just assume this version is too old to get an Autorest report
-            _LOGGER.warning(f"Version {version} seems to be too old to build a report (probably not Autorest based)")
+            stable_version = str(client.get_relevant_versions(package_name)[1])
+        except IndexError:
+            _LOGGER.warning(f"No stable version for {package_name} on PyPi. Exiting...")
+            exit(0)
 
-    test_detect_breaking_changes()
+    main(package_name, target_module, stable_version, create_env, pkg_dir)
 
-    #
-    # commands = [sys.executable, "-m", "pip", "install", "--no-deps", "-q", f"--target={tmpdir}", f"{package_name}=={version[1]}"]
-    # subprocess.check_call(commands)
-    # while not os.path.isdir(tmpdir):
-    #     time.sleep(5)
-    #
+
