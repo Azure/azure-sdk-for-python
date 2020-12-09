@@ -221,7 +221,7 @@ class AzureAttestationTest(AzureTestCase):
         for cert in x5cs:
             der_cert = base64.b64decode(cert)
             cert = cryptography.x509.load_der_x509_certificate(der_cert)
-            print(f'Policy Management Certificate iss: {cert.issuer}; subject: {cert.subject}')
+            print('Policy Management Certificate iss:', cert.issuer, '}; subject: ', cert.subject)
             
 
 
