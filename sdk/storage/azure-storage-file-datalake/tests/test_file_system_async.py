@@ -776,6 +776,41 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_system_sessions_closes_properly_async())
 
+    async def _test_undelete_dir_with_version_id(self):
+        if not self.is_playback():
+            return
+        file_system_client = self.dsc.get_file_system_client('testrestore')
+        dir_path = 'dir10'
+        dir_client = await file_system_client.create_directory(dir_path)
+        resp = await dir_client.delete_directory()
+        with self.assertRaises(HttpResponseError):
+            await file_system_client.get_file_client(dir_path).get_file_properties()
+        restored_dir_client = await file_system_client.undelete_path(dir_path, resp['deletion_id'])
+        resp = await restored_dir_client.get_directory_properties()
+        self.assertIsNotNone(resp)
+
+    @record
+    def test_undelete_dir_with_version_id(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_undelete_dir_with_version_id())
+
+    async def _test_undelete_file_with_version_id(self):
+        if not self.is_playback():
+            return
+        file_system_client = self.dsc.get_file_system_client('testrestore')
+        file_path = 'dir10/fileŇ'
+        dir_client = await file_system_client.create_file(file_path)
+        resp = await dir_client.delete_file()
+        with self.assertRaises(HttpResponseError):
+            await file_system_client.get_file_client(file_path).get_file_properties()
+        restored_file_client = await file_system_client.undelete_path(file_path, resp['deletion_id'])
+        resp = await restored_file_client.get_file_properties()
+        self.assertIsNotNone(resp)
+
+    @record
+    def test_undelete_file_with_version_id(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_undelete_file_with_version_id())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

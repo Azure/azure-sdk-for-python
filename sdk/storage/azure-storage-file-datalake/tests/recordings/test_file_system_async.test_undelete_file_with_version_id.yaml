@@ -1,0 +1,192 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - dde3a5d2-3a52-11eb-8e92-001a7dda7113
+      x-ms-date:
+      - Wed, 09 Dec 2020 19:15:14 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/testrestore/dir10%2Ffile%C5%87?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Wed, 09 Dec 2020 19:15:14 GMT
+      Etag: '"0x8D89C76C24D394F"'
+      Last-Modified: Wed, 09 Dec 2020 19:15:15 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: a337e2d0-101f-0009-5b5f-ce503e000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://1dsxscnapsn4prde12h.dfs.core.windows.net/testrestore/dir10%2Ffile%C5%87?resource=file
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - de22ce6e-3a52-11eb-9fb8-001a7dda7113
+      x-ms-date:
+      - Wed, 09 Dec 2020 19:15:15 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: DELETE
+    uri: https://storagename.dfs.core.windows.net/testrestore/dir10%2Ffile%C5%87?recursive=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Wed, 09 Dec 2020 19:15:14 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent: 'false'
+      x-ms-deletion-id: '132520149153503488'
+      x-ms-request-id: a337e2d3-101f-0009-5c5f-ce503e000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://1dsxscnapsn4prde12h.dfs.core.windows.net/testrestore/dir10%2Ffile%C5%87?recursive=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - de31880a-3a52-11eb-a6cf-001a7dda7113
+      x-ms-date:
+      - Wed, 09 Dec 2020 19:15:15 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/testrestore/dir10/file%C5%87
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Wed, 09 Dec 2020 19:15:15 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-error-code: BlobNotFound
+      x-ms-request-id: 984de561-b01e-000f-285f-cea746000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+    url: https://1dsxscnapsn4prde12h.blob.core.windows.net/testrestore/dir10/file%C5%87
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - de563b62-3a52-11eb-8fca-001a7dda7113
+      x-ms-date:
+      - Wed, 09 Dec 2020 19:15:15 GMT
+      x-ms-undelete-source:
+      - dir10/file%C5%87?deletionid=132520149153503488
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/testrestore/dir10/file%C5%87?comp=undelete
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Wed, 09 Dec 2020 19:15:15 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-request-id: 8e5a56a8-801e-000c-1f5f-cea441000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://1dsxscnapsn4prde12h.blob.core.windows.net/testrestore/dir10/file%C5%87?comp=undelete
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - de7c47b6-3a52-11eb-9084-001a7dda7113
+      x-ms-date:
+      - Wed, 09 Dec 2020 19:15:15 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/testrestore/dir10/file%C5%87
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges: bytes
+      Content-Length: '0'
+      Content-Type: application/octet-stream
+      Date: Wed, 09 Dec 2020 19:15:15 GMT
+      Etag: '"0x8D89C76C24D394F"'
+      Last-Modified: Wed, 09 Dec 2020 19:15:15 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Cool
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Wed, 09 Dec 2020 19:15:15 GMT
+      x-ms-group: $superuser
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-owner: $superuser
+      x-ms-permissions: rw-r-----
+      x-ms-request-id: 8e5a56a9-801e-000c-205f-cea441000000
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://1dsxscnapsn4prde12h.blob.core.windows.net/testrestore/dir10/file%C5%87
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - de863c24-3a52-11eb-9265-001a7dda7113
+      x-ms-date:
+      - Wed, 09 Dec 2020 19:15:16 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/testrestore/dir10/file%C5%87
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges: bytes
+      Content-Length: '0'
+      Content-Type: application/octet-stream
+      Date: Wed, 09 Dec 2020 19:15:15 GMT
+      Etag: '"0x8D89C76C24D394F"'
+      Last-Modified: Wed, 09 Dec 2020 19:15:15 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Cool
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Wed, 09 Dec 2020 19:15:15 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-request-id: 8e5a56aa-801e-000c-215f-cea441000000
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://1dsxscnapsn4prde12h.blob.core.windows.net/testrestore/dir10/file%C5%87
+version: 1

@@ -530,7 +530,33 @@ class FileSystemTest(StorageTestCase):
                 f_client.create_directory()
             with fs_client.get_directory_client("file2") as f_client:
                 f_client.create_directory()
+    @record
+    def test_undelete_dir_with_version_id(self):
+        if not self.is_playback():
+            return
+        file_system_client = self.dsc.get_file_system_client('testrestore')
+        dir_path = 'dir10'
+        dir_client = file_system_client.create_directory(dir_path)
+        resp = dir_client.delete_directory()
+        with self.assertRaises(HttpResponseError):
+            file_system_client.get_file_client(dir_path).get_file_properties()
+        restored_dir_client = file_system_client.undelete_path(dir_path, resp['deletion_id'])
+        resp = restored_dir_client.get_directory_properties()
+        self.assertIsNotNone(resp)
 
+    @record
+    def test_undelete_file_with_version_id(self):
+        if not self.is_playback():
+            return
+        file_system_client = self.dsc.get_file_system_client('testrestore')
+        file_path = 'dir10/fileŇ'
+        dir_client = file_system_client.create_file(file_path)
+        resp = dir_client.delete_file()
+        with self.assertRaises(HttpResponseError):
+            file_system_client.get_file_client(file_path).get_file_properties()
+        restored_file_client = file_system_client.undelete_path(file_path, resp['deletion_id'])
+        resp = restored_file_client.get_file_properties()
+        self.assertIsNotNone(resp)
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

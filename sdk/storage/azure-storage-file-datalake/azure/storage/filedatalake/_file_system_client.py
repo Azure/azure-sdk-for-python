@@ -3,13 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional, Any
+from typing import Optional, Any, Union
+
+from azure.core.exceptions import HttpResponseError
 
 try:
-    from urllib.parse import urlparse, quote
+    from urllib.parse import urlparse, quote, unquote
 except ImportError:
     from urlparse import urlparse # type: ignore
-    from urllib2 import quote  # type: ignore
+    from urllib2 import quote, unquote  # type: ignore
 
 import six
 from azure.core.pipeline import Pipeline
@@ -22,7 +24,7 @@ from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
-from ._deserialize import deserialize_path_properties
+from ._deserialize import deserialize_path_properties, deserialize_metadata, process_storage_error
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -739,6 +741,54 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client = self.get_file_client(file)
         file_client.delete_file(**kwargs)
         return file_client
+
+    def _undelete_path(self, deleted_path_name, deleted_path_version):
+        quoted_path = quote(unquote(deleted_path_name.strip('/')))
+
+        url_and_token = self.url.replace('.dfs.', '.blob.').split('?')
+        try:
+            url = url_and_token[0] + '/' + quoted_path + url_and_token[1]
+        except IndexError:
+            url = url_and_token[0] + '/' + quoted_path
+
+        undelete_source = quoted_path + '?deletionid={}'.format(deleted_path_version) if deleted_path_version else None
+
+        return quoted_path, url, undelete_source
+
+    def undelete_path(self, deleted_path_name, deleted_path_version, **kwargs):
+        # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
+        """Restores soft-deleted path.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
+        :param str deleted_path_name:
+            Specifies the path (file or directory) to restore.
+        :param str deleted_path_version:
+            Specifies the version of the deleted path to restore.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: DataLakeDirectoryClient or DataLakeFileClient
+        """
+        quoted_path, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
+
+        pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+        path_client = AzureDataLakeStorageRESTAPI(
+            url, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline)
+        try:
+            path_client.path.undelete(undelete_source=undelete_source, **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+        resp = path_client.path.get_properties(cls=deserialize_metadata)
+        if resp.get('hdi_isfolder'):
+            return self.get_directory_client(deleted_path_name)
+        return self.get_file_client(deleted_path_name)
 
     def _get_root_directory_client(self):
         # type: () -> DataLakeDirectoryClient
