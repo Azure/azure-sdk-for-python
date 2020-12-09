@@ -17,7 +17,8 @@ For a more complete set of Azure libraries, see the
 
 ## Usage
 
-To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk/python/mgmt)
+
+To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
 
 
 
