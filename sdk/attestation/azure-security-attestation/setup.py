@@ -75,7 +75,7 @@ setup(
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'azure.mgmt',
+        'azure.security',
     ]),
     install_requires=[
         'msrest>=0.5.0',
@@ -83,6 +83,6 @@ setup(
         'azure-common~=1.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-mgmt-nspkg'],
+        ":python_version<'3.0'": ['azure-security-nspkg'],
     }
 )

@@ -26,9 +26,9 @@ import base64
 import jwt
 import pytest
 
-from azure.security.attestation.v2020_10_01 import AttestationClient
-from azure.security.attestation.v2020_10_01.models import AttestationType
-import azure.security.attestation.v2020_10_01.models
+from azure.security.attestation import AttestationClient
+from azure.security.attestation.models import AttestationType
+import azure.security.attestation.models
 
 AttestationPreparer = functools.partial(
             PowerShellPreparer, "attestation",
@@ -147,7 +147,7 @@ class AzureAttestationTest(AzureTestCase):
 
     def test_shared_get_policy_sgx(self):
         attest_client = self.shared_client()
-        default_policy_response = attest_client.policy.get("SgxEnclave")
+        default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
         default_policy = default_policy_response.token
         policy_token = jwt.decode(default_policy, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
         
@@ -166,7 +166,7 @@ class AzureAttestationTest(AzureTestCase):
     @AttestationPreparer()
     def test_isolated_get_policy_sgx(self, attestation_isolated_url):
         attest_client = self.create_client(attestation_isolated_url)
-        default_policy_response = attest_client.policy.get("SgxEnclave")
+        default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
         default_policy = default_policy_response.token
         policy_token = jwt.decode(default_policy, options={"verify_signature":False, "leeway": 10}, leeway=10, algorithms=["none", "RS256"])
         
@@ -185,7 +185,7 @@ class AzureAttestationTest(AzureTestCase):
     @AttestationPreparer()
     def test_aad_get_policy_sgx(self, attestation_aad_url):
         attest_client = self.create_client(attestation_aad_url)
-        default_policy_response = attest_client.policy.get("SgxEnclave")
+        default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
         default_policy = default_policy_response.token
         policy_token = jwt.decode(default_policy, options={"verify_signature":False}, leeway=10, algorithms=["none", "RS256"])
 
