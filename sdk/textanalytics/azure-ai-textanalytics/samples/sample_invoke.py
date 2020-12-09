@@ -39,6 +39,7 @@ class InvokeSample(object):
         ]
         documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(documents)]
 
+        # Version 1 : Build your own body
         request = HttpRequest("POST", "/languages",
             headers={
                 'Content-Type': 'application/json'
@@ -47,6 +48,20 @@ class InvokeSample(object):
                 "documents": documents
             })
         )
+
+        # Version 2 : Use setter to json.dumps for you
+        request = HttpRequest("POST", "/languages",
+            headers={
+                'Content-Type': 'application/json'
+            },
+        )
+        request.set_json_body({
+            "documents": documents
+        })
+
+        # Note on version 2:
+        # - This does not set "content-type", likely it should
+
 
         try:
             response = text_analytics_client.invoke(request)  # type: HttpResponse
