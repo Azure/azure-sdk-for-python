@@ -12,22 +12,6 @@
 from enum import Enum
 
 
-class ResourceIdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
-    none = "None"
-
-
-class PipelineOptions(str, Enum):
-
-    overwrite_tags = "OverwriteTags"
-    overwrite_blobs = "OverwriteBlobs"
-    delete_source_blob_on_success = "DeleteSourceBlobOnSuccess"
-    continue_on_errors = "ContinueOnErrors"
-
-
 class ProvisioningState(str, Enum):
 
     creating = "Creating"
@@ -36,6 +20,52 @@ class ProvisioningState(str, Enum):
     succeeded = "Succeeded"
     failed = "Failed"
     canceled = "Canceled"
+
+
+class ConnectedRegistryMode(str, Enum):
+
+    registry = "Registry"
+    mirror = "Mirror"
+
+
+class ConnectionState(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    syncing = "Syncing"
+    unhealthy = "Unhealthy"
+
+
+class ActivationStatus(str, Enum):
+
+    active = "Active"
+    inactive = "Inactive"
+
+
+class TlsStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class CertificateType(str, Enum):
+
+    local_directory = "LocalDirectory"
+
+
+class LogLevel(str, Enum):
+
+    debug = "Debug"
+    information = "Information"
+    warning = "Warning"
+    error = "Error"
+    none = "None"
+
+
+class AuditLogStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class CreatedByType(str, Enum):
@@ -52,6 +82,22 @@ class LastModifiedByType(str, Enum):
     application = "Application"
     managed_identity = "ManagedIdentity"
     key = "Key"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+
+class PipelineOptions(str, Enum):
+
+    overwrite_tags = "OverwriteTags"
+    overwrite_blobs = "OverwriteBlobs"
+    delete_source_blob_on_success = "DeleteSourceBlobOnSuccess"
+    continue_on_errors = "ContinueOnErrors"
 
 
 class ImportMode(str, Enum):
@@ -145,6 +191,18 @@ class PublicNetworkAccess(str, Enum):
     disabled = "Disabled"
 
 
+class NetworkRuleBypassOptions(str, Enum):
+
+    azure_services = "AzureServices"
+    none = "None"
+
+
+class ZoneRedundancy(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class PasswordName(str, Enum):
 
     password = "password"
@@ -155,6 +213,24 @@ class RegistryUsageUnit(str, Enum):
 
     count = "Count"
     bytes = "Bytes"
+
+
+class TokenCertificateName(str, Enum):
+
+    certificate1 = "certificate1"
+    certificate2 = "certificate2"
+
+
+class TokenPasswordName(str, Enum):
+
+    password1 = "password1"
+    password2 = "password2"
+
+
+class TokenStatus(str, Enum):
+
+    enabled = "enabled"
+    disabled = "disabled"
 
 
 class WebhookStatus(str, Enum):
@@ -266,21 +342,3 @@ class SecretObjectType(str, Enum):
 
     opaque = "Opaque"
     vaultsecret = "Vaultsecret"
-
-
-class TokenCertificateName(str, Enum):
-
-    certificate1 = "certificate1"
-    certificate2 = "certificate2"
-
-
-class TokenPasswordName(str, Enum):
-
-    password1 = "password1"
-    password2 = "password2"
-
-
-class TokenStatus(str, Enum):
-
-    enabled = "enabled"
-    disabled = "disabled"

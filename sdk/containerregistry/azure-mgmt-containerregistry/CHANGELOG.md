@@ -1,5 +1,36 @@
 # Release History
 
+## 4.0.0 (2020-12-09)
+
+**Features**
+
+  - Model ExportPipeline has a new parameter system_data
+  - Model ScopeMap has a new parameter system_data
+  - Model Task has a new parameter system_data
+  - Model TaskRun has a new parameter system_data
+  - Model Token has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model KeyVaultProperties has a new parameter key_rotation_enabled
+  - Model KeyVaultProperties has a new parameter last_key_rotation_timestamp
+  - Model RegistryUpdateParameters has a new parameter network_rule_bypass_options
+  - Model ImportPipeline has a new parameter system_data
+  - Model Run has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model AgentPool has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model PipelineRun has a new parameter system_data
+  - Model Registry has a new parameter system_data
+  - Model Registry has a new parameter network_rule_bypass_options
+  - Model Registry has a new parameter zone_redundancy
+  - Model Webhook has a new parameter system_data
+  - Model Replication has a new parameter zone_redundancy
+  - Model Replication has a new parameter system_data
+  - Added operation group ConnectedRegistriesOperations
+
+**Breaking changes**
+
+  - Model TokenCredentialsProperties no longer has parameter active_directory_object
+
 ## 3.0.0rc15(2020-9-16)
 **Features**
 
