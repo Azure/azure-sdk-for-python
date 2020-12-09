@@ -15,14 +15,14 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8?api-version=2017-10-01
   response:
     body:
-      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8","name":"pyacrb3e116b8","location":"eastus","tags":{},"properties":{"loginServer":"pyacrb3e116b8.azurecr.io","creationDate":"2020-09-17T06:20:28.5005386Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]}}}'
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8","name":"pyacrb3e116b8","location":"eastus","tags":{},"properties":{"loginServer":"pyacrb3e116b8.azurecr.io","creationDate":"2020-12-09T02:55:33.8544109Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]}}}'
     headers:
       cache-control:
       - no-cache
@@ -31,59 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 06:20:31 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"location": "eastus", "properties": {"serviceUri": "http://www.microsoft.com",
-      "actions": ["push"]}}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '101'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8?api-version=2017-10-01
-  response:
-    body:
-      string: '{"type":"Microsoft.ContainerRegistry/registries/webhooks","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8","name":"pyacrb3e116b8","location":"eastus","tags":{},"properties":{"status":"enabled","scope":"","actions":["push"],"provisioningState":"Succeeded"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '435'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 17 Sep 2020 06:20:35 GMT
+      - Wed, 09 Dec 2020 02:55:36 GMT
       expires:
       - '-1'
       pragma:
@@ -104,6 +52,58 @@ interactions:
       code: 200
       message: OK
 - request:
+    body: '{"location": "eastus", "properties": {"serviceUri": "http://www.microsoft.com",
+      "actions": ["push"]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '101'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8?api-version=2017-10-01
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/webhooks","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8","name":"pyacrb3e116b8","location":"eastus","tags":{},"properties":{"status":"enabled","scope":"","actions":["push"],"provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '435'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 09 Dec 2020 02:55:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
     body: null
     headers:
       Accept:
@@ -114,7 +114,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -130,7 +130,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 06:20:35 GMT
+      - Wed, 09 Dec 2020 02:55:41 GMT
       expires:
       - '-1'
       pragma:
@@ -164,7 +164,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
@@ -180,7 +180,150 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 06:20:37 GMT
+      - Wed, 09 Dec 2020 02:55:44 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8?api-version=2017-10-01
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/webhooks","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8","name":"pyacrb3e116b8","location":"eastus","tags":{"key":"value"},"properties":{"status":"enabled","scope":"hello-world","actions":["push"],"provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '459'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 09 Dec 2020 02:55:44 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8/getCallbackConfig?api-version=2017-10-01
+  response:
+    body:
+      string: '{"serviceUri":"http://www.microsoft.com","customHeaders":{"key":"value"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '73'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 09 Dec 2020 02:55:44 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8/ping?api-version=2017-10-01
+  response:
+    body:
+      string: '{"id":"de2c2aec-e886-4b46-8d03-f5902101facf"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '45'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 09 Dec 2020 02:55:45 GMT
       expires:
       - '-1'
       pragma:
@@ -209,154 +352,11 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8?api-version=2017-10-01
-  response:
-    body:
-      string: '{"type":"Microsoft.ContainerRegistry/registries/webhooks","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8","name":"pyacrb3e116b8","location":"eastus","tags":{"key":"value"},"properties":{"status":"enabled","scope":"hello-world","actions":["push"],"provisioningState":"Succeeded"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '459'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 17 Sep 2020 06:20:37 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8/getCallbackConfig?api-version=2017-10-01
-  response:
-    body:
-      string: '{"serviceUri":"http://www.microsoft.com","customHeaders":{"key":"value"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '73'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 17 Sep 2020 06:20:38 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8/ping?api-version=2017-10-01
-  response:
-    body:
-      string: '{"id":"0acb89dd-ae71-41ea-b540-da1a11eff127"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '45'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 17 Sep 2020 06:20:43 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -370,7 +370,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Sep 2020 06:20:47 GMT
+      - Wed, 09 Dec 2020 02:55:48 GMT
       expires:
       - '-1'
       pragma:
@@ -399,7 +399,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc16 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -413,7 +413,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Sep 2020 06:20:53 GMT
+      - Wed, 09 Dec 2020 02:55:55 GMT
       expires:
       - '-1'
       pragma:

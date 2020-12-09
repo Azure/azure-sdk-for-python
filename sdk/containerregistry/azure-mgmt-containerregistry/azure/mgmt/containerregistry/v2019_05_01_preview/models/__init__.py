@@ -51,6 +51,7 @@ try:
     from ._models_py3 import Source
     from ._models_py3 import Status
     from ._models_py3 import StorageAccountProperties
+    from ._models_py3 import SystemData
     from ._models_py3 import Target
     from ._models_py3 import Token
     from ._models_py3 import TokenCertificate
@@ -104,6 +105,7 @@ except (SyntaxError, ImportError):
     from ._models import Source
     from ._models import Status
     from ._models import StorageAccountProperties
+    from ._models import SystemData
     from ._models import Target
     from ._models import Token
     from ._models import TokenCertificate
@@ -135,6 +137,8 @@ from ._container_registry_management_client_enums import (
     TrustPolicyType,
     WebhookStatus,
     WebhookAction,
+    CreatedByType,
+    LastModifiedByType,
     TokenCertificateName,
     TokenPasswordName,
     TokenStatus,
@@ -182,6 +186,7 @@ __all__ = [
     'Source',
     'Status',
     'StorageAccountProperties',
+    'SystemData',
     'Target',
     'Token',
     'TokenCertificate',
@@ -212,6 +217,8 @@ __all__ = [
     'TrustPolicyType',
     'WebhookStatus',
     'WebhookAction',
+    'CreatedByType',
+    'LastModifiedByType',
     'TokenCertificateName',
     'TokenPasswordName',
     'TokenStatus',

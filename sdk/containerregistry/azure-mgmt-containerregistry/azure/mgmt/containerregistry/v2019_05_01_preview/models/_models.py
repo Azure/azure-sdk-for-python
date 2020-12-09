@@ -597,18 +597,24 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.SystemData
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs):
@@ -616,6 +622,7 @@ class ProxyResource(Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class QuarantinePolicy(Model):
@@ -1126,6 +1133,10 @@ class ScopeMap(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.SystemData
     :param description: The user friendly description of the scope map.
     :type description: str
     :ivar scope_map_type: The type of the scope map. E.g. BuildIn scope map.
@@ -1148,6 +1159,7 @@ class ScopeMap(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'scope_map_type': {'readonly': True},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -1158,6 +1170,7 @@ class ScopeMap(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'scope_map_type': {'key': 'properties.type', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
@@ -1313,6 +1326,47 @@ class StorageAccountProperties(Model):
         self.id = kwargs.get('id', None)
 
 
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.LastModifiedByType
+    :param last_modified_at: The timestamp of resource modification (UTC).
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
 class Target(Model):
     """The target of the event.
 
@@ -1374,6 +1428,10 @@ class Token(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.SystemData
     :ivar creation_date: The creation date of scope map.
     :vartype creation_date: datetime
     :ivar provisioning_state: Provisioning state of the resource. Possible
@@ -1398,6 +1456,7 @@ class Token(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -1406,6 +1465,7 @@ class Token(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
