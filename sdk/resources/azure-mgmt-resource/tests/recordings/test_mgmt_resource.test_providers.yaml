@@ -10,11 +10,11 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers?api-version=2020-10-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Management","namespace":"Microsoft.Management","authorization":{"applicationId":"f2c304cf-8e7e-4c3f-8164-16299ad9d272","roleDefinitionId":"c1cf3708-588a-4647-be7f-f400bbe214cf"},"resourceTypes":[{"resourceType":"resources","locations":[],"apiVersions":["2017-11-01-preview","2017-08-31-preview","2017-06-30-preview","2017-05-31-preview"],"capabilities":"None"},{"resourceType":"managementGroups","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2019-11-01","2018-03-01-preview","2018-03-01-beta","2018-01-01-preview","2017-11-01-preview","2017-08-31-preview","2017-06-30-preview","2017-05-31-preview"],"capabilities":"None"},{"resourceType":"getEntities","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2019-11-01","2018-03-01-preview","2018-03-01-beta","2018-01-01-preview"],"capabilities":"None"},{"resourceType":"managementGroups/settings","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2018-03-01-beta"],"capabilities":"None"},{"resourceType":"checkNameAvailability","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2019-11-01","2018-03-01-preview","2018-03-01-beta","2018-01-01-preview"],"capabilities":"None"},{"resourceType":"operationResults","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2019-11-01","2018-03-01-preview","2018-03-01-beta","2018-01-01-preview"],"capabilities":"None"},{"resourceType":"operationResults/asyncOperation","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2019-11-01","2018-03-01-beta"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2019-11-01","2018-03-01-preview","2018-03-01-beta","2018-01-01-preview","2017-11-01-preview","2017-08-31-preview","2017-06-30-preview","2017-05-31-preview"],"capabilities":"None"},{"resourceType":"tenantBackfillStatus","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2019-11-01","2018-03-01-preview","2018-03-01-beta"],"capabilities":"None"},{"resourceType":"startTenantBackfill","locations":[],"apiVersions":["2020-10-01","2020-05-01","2020-02-01","2019-11-01","2018-03-01-preview","2018-03-01-beta"],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.OperationalInsights","namespace":"Microsoft.OperationalInsights","authorizations":[{"applicationId":"d2a0a418-0aac-4541-82b2-b3142c89da77","roleDefinitionId":"86695298-2eb9-48a7-9ec3-2fdb38b6878b"},{"applicationId":"ca7f3f0b-7d91-482c-8e09-c5d840d0eac5","roleDefinitionId":"5d5a2e56-9835-44aa-93db-d2f19e155438"}],"resourceTypes":[{"resourceType":"workspaces","locations":["East
@@ -104,86 +104,100 @@ interactions:
         West","Southeast Asia","South India","Brazil South","Canada East","Canada
         Central","Central US","East US 2","North Central US","West Central US","West
         US 2","Switzerland North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","East US 2 EUAP","Central US EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01","2017-03-01"],"capabilities":"CrossResourceGroupResourceMove,
+        Southeast","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01","2017-03-01"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
-        SupportsLocation"},{"resourceType":"registries/scopeMaps","locations":["West
+        SupportsLocation"},{"resourceType":"registries/connectedRegistries","locations":["West
         US","East US","South Central US","West Europe","North Europe","UK South","UK
         West","Australia East","Australia Southeast","Central India","East Asia","Japan
         East","Japan West","Southeast Asia","South India","Brazil South","Canada East","Canada
         Central","Central US","East US 2","North Central US","West Central US","West
         US 2","Korea Central","France Central","South Africa North","UAE North","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-05-01-preview"],"capabilities":"None"},{"resourceType":"registries/tokens","locations":["West
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview"],"capabilities":"None"},{"resourceType":"registries/connectedRegistries/deactivate","locations":["West
         US","East US","South Central US","West Europe","North Europe","UK South","UK
         West","Australia East","Australia Southeast","Central India","East Asia","Japan
         East","Japan West","Southeast Asia","South India","Brazil South","Canada East","Canada
         Central","Central US","East US 2","North Central US","West Central US","West
         US 2","Korea Central","France Central","South Africa North","UAE North","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-05-01-preview"],"capabilities":"None"},{"resourceType":"registries/generateCredentials","locations":["West
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview"],"capabilities":"None"},{"resourceType":"registries/scopeMaps","locations":["West
         US","East US","South Central US","West Europe","North Europe","UK South","UK
         West","Australia East","Australia Southeast","Central India","East Asia","Japan
         East","Japan West","Southeast Asia","South India","Brazil South","Canada East","Canada
         Central","Central US","East US 2","North Central US","West Central US","West
         US 2","Korea Central","France Central","South Africa North","UAE North","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-05-01-preview"],"capabilities":"None"},{"resourceType":"registries/privateEndpointConnections","locations":["West
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-05-01-preview"],"capabilities":"None"},{"resourceType":"registries/tokens","locations":["West
+        US","East US","South Central US","West Europe","North Europe","UK South","UK
+        West","Australia East","Australia Southeast","Central India","East Asia","Japan
+        East","Japan West","Southeast Asia","South India","Brazil South","Canada East","Canada
+        Central","Central US","East US 2","North Central US","West Central US","West
+        US 2","Korea Central","France Central","South Africa North","UAE North","Switzerland
+        North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-05-01-preview"],"capabilities":"None"},{"resourceType":"registries/generateCredentials","locations":["West
+        US","East US","South Central US","West Europe","North Europe","UK South","UK
+        West","Australia East","Australia Southeast","Central India","East Asia","Japan
+        East","Japan West","Southeast Asia","South India","Brazil South","Canada East","Canada
+        Central","Central US","East US 2","North Central US","West Central US","West
+        US 2","Korea Central","France Central","South Africa North","UAE North","Switzerland
+        North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-05-01-preview"],"capabilities":"None"},{"resourceType":"registries/privateEndpointConnections","locations":["West
         US","East US","South Central US","West Europe","Switzerland North","North
         Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Brazil
         South","Canada East","Canada Central","Central US","East US 2","North Central
         US","West Central US","West US 2","Korea Central","France Central","South
         Africa North","UAE North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/privateEndpointConnectionProxies","locations":["West
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/privateEndpointConnectionProxies","locations":["West
         US","East US","South Central US","West Europe","Switzerland North","North
         Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Brazil
         South","Canada East","Canada Central","Central US","East US 2","North Central
         US","West Central US","West US 2","Korea Central","France Central","South
         Africa North","UAE North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/privateEndpointConnectionProxies/validate","locations":["West
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/privateEndpointConnectionProxies/validate","locations":["West
         US","East US","South Central US","West Europe","Switzerland North","North
         Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Brazil
         South","Canada East","Canada Central","Central US","East US 2","North Central
         US","West Central US","West US 2","Korea Central","France Central","South
         Africa North","UAE North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/privateLinkResources","locations":["West
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/privateLinkResources","locations":["West
         US","East US","South Central US","West Europe","Switzerland North","North
         Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Brazil
         South","Canada East","Canada Central","Central US","East US 2","North Central
         US","West Central US","West US 2","Korea Central","France Central","South
         Africa North","UAE North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/importImage","locations":["South
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/importImage","locations":["South
         Central US","West Central US","East US","West Europe","West US","Japan East","North
         Europe","Southeast Asia","North Central US","East US 2","West US 2","Brazil
         South","Australia East","Central India","Korea Central","France Central","South
         Africa North","UAE North","Central US","Canada East","Canada Central","UK
         South","UK West","Australia Southeast","East Asia","Japan West","South India","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"registries/exportPipelines","locations":["West
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"registries/exportPipelines","locations":["West
         US","East US","South Central US","West Europe","Switzerland North","North
         Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Brazil
         South","Canada East","Canada Central","Central US","East US 2","North Central
         US","West Central US","West US 2","Korea Central","France Central","South
         Africa North","UAE North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview"],"capabilities":"SystemAssignedResourceIdentity"},{"resourceType":"registries/importPipelines","locations":["West
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview"],"capabilities":"SystemAssignedResourceIdentity"},{"resourceType":"registries/importPipelines","locations":["West
         US","East US","South Central US","West Europe","Switzerland North","North
         Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Brazil
         South","Canada East","Canada Central","Central US","East US 2","North Central
         US","West Central US","West US 2","Korea Central","France Central","South
         Africa North","UAE North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview"],"capabilities":"SystemAssignedResourceIdentity"},{"resourceType":"registries/pipelineRuns","locations":["West
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview"],"capabilities":"SystemAssignedResourceIdentity"},{"resourceType":"registries/pipelineRuns","locations":["West
         US","East US","South Central US","West Europe","Switzerland North","North
         Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Brazil
         South","Canada East","Canada Central","Central US","East US 2","North Central
         US","West Central US","West US 2","Korea Central","France Central","South
         Africa North","UAE North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/listBuildSourceUploadUrl","locations":["East
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview"],"capabilities":"None"},{"resourceType":"registries/listBuildSourceUploadUrl","locations":["East
         US","West Europe","West US 2","South Central US","Australia East","Australia
         Southeast","Brazil South","Canada Central","Canada East","Central India","Central
         US","East Asia","East US 2","Japan East","Japan West","North Central US","North
@@ -322,7 +336,7 @@ interactions:
         North","France Central","Central US","Canada East","Canada Central","UK South","UK
         West","Australia Southeast","East Asia","Japan West","South India","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"CrossResourceGroupResourceMove,
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"registries/webhooks","locations":["West
         Central US","East US","West Europe","South Central US","West US","Japan East","North
         Europe","Southeast Asia","North Central US","East US 2","West US 2","Brazil
@@ -330,7 +344,7 @@ interactions:
         North","France Central","Central US","Canada East","Canada Central","UK South","UK
         West","Australia Southeast","East Asia","Japan West","South India","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"CrossResourceGroupResourceMove,
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"registries/webhooks/ping","locations":["West
         Central US","East US","West Europe","South Central US","West US","Japan East","North
         Europe","Southeast Asia","North Central US","East US 2","West US 2","Brazil
@@ -338,21 +352,21 @@ interactions:
         North","France Central","Central US","Canada East","Canada Central","UK South","UK
         West","Australia Southeast","East Asia","Japan West","South India","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"registries/webhooks/getCallbackConfig","locations":["West
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"registries/webhooks/getCallbackConfig","locations":["West
         Central US","East US","West Europe","South Central US","West US","Japan East","North
         Europe","Southeast Asia","North Central US","East US 2","West US 2","Brazil
         South","Australia East","Central India","Korea Central","South Africa North","UAE
         North","France Central","Central US","Canada East","Canada Central","UK South","UK
         West","Australia Southeast","East Asia","Japan West","South India","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"registries/webhooks/listEvents","locations":["West
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"registries/webhooks/listEvents","locations":["West
         Central US","East US","West Europe","South Central US","West US","Japan East","North
         Europe","Southeast Asia","North Central US","East US 2","West US 2","Brazil
         South","Australia East","Central India","Korea Central","South Africa North","UAE
         North","France Central","Central US","Canada East","Canada Central","UK South","UK
         West","Australia Southeast","East Asia","Japan West","South India","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"locations/setupAuth","locations":["East
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"locations/setupAuth","locations":["East
         US","West Europe","West US 2","South Central US","Australia East","Australia
         Southeast","Brazil South","Canada Central","Canada East","Central India","Central
         US","East Asia","East US 2","Japan East","Japan West","North Central US","North
@@ -373,7 +387,7 @@ interactions:
         US","South Africa North","UAE North","Canada East","Canada Central","UK South","UK
         West","Australia Southeast","East Asia","Japan West","South India","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"locations/deleteVirtualNetworkOrSubnets","locations":["West
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"locations/deleteVirtualNetworkOrSubnets","locations":["West
         Central US","East US","West Europe","South Central US","West US","Japan East","North
         Europe","Southeast Asia","North Central US","East US 2","West US 2","Brazil
         South","Australia East","Central India","Korea Central","South Africa North","UAE
@@ -389,21 +403,21 @@ interactions:
         West","Southeast Asia","South India","Brazil South","Canada East","Canada
         Central","Central US","East US 2","North Central US","West Central US","West
         US 2","Switzerland North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01","2017-03-01"],"capabilities":"None"},{"resourceType":"registries/regenerateCredential","locations":["South
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01","2017-03-01"],"capabilities":"None"},{"resourceType":"registries/regenerateCredential","locations":["South
         Central US","West US","East US","West Europe","North Europe","UK South","UK
         West","Australia East","Australia Southeast","Central India","Korea Central","South
         Africa North","UAE North","France Central","East Asia","Japan East","Japan
         West","Southeast Asia","South India","Brazil South","Canada East","Canada
         Central","Central US","East US 2","North Central US","West Central US","West
         US 2","Switzerland North","UAE Central","Switzerland West","Germany West Central","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01","2017-03-01"],"capabilities":"None"},{"resourceType":"registries/listUsages","locations":["West
+        Southeast","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01","2017-03-01"],"capabilities":"None"},{"resourceType":"registries/listUsages","locations":["West
         Central US","East US","West Europe","South Central US","West US","Japan East","North
         Europe","Southeast Asia","North Central US","East US 2","West US 2","Brazil
         South","Australia East","Central India","Korea Central","South Africa North","UAE
         North","France Central","Central US","Canada East","Canada Central","UK South","UK
         West","Australia Southeast","East Asia","Japan West","South India","Switzerland
         North","UAE Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"registries/listPolicies","locations":["West
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01"],"capabilities":"None"},{"resourceType":"registries/listPolicies","locations":["West
         US","East US","South Central US","West Europe","North Europe","UK South","UK
         West","Australia East","Australia Southeast","Central India","Korea Central","South
         Africa North","UAE North","France Central","East Asia","Japan East","Japan
@@ -433,21 +447,21 @@ interactions:
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Korea
         Central","France Central","South Africa North","UAE North","Switzerland North","UAE
         Central","Switzerland West","Germany West Central","Brazil Southeast","East
-        US 2 EUAP","Central US EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01","2017-06-01-preview","2017-03-01","2016-06-27-preview"],"capabilities":"None"},{"resourceType":"operations","locations":["South
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01","2017-06-01-preview","2017-03-01","2016-06-27-preview"],"capabilities":"None"},{"resourceType":"operations","locations":["South
         Central US","East US","West US","Central US","East US 2","North Central US","West
         Central US","West US 2","Brazil South","Canada East","Canada Central","West
         Europe","North Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Korea
         Central","France Central","South Africa North","UAE North","Switzerland North","UAE
         Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01","2017-10-01","2017-06-01-preview","2017-03-01"],"capabilities":"None"},{"resourceType":"locations","locations":["South
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01","2017-10-01","2017-06-01-preview","2017-03-01"],"capabilities":"None"},{"resourceType":"locations","locations":["South
         Central US","East US","West US","Central US","East US 2","North Central US","West
         Central US","West US 2","Brazil South","Canada East","Canada Central","West
         Europe","North Europe","UK South","UK West","Australia East","Australia Southeast","Central
         India","East Asia","Japan East","Japan West","Southeast Asia","South India","Korea
         Central","France Central","South Africa North","UAE North","Switzerland North","UAE
         Central","Switzerland West","Germany West Central","Brazil Southeast","Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2019-12-01-preview","2019-05-01-preview","2019-05-01","2017-10-01","2017-06-01-preview"],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService","namespace":"Microsoft.ContainerService","authorizations":[{"applicationId":"7319c514-987d-4e9b-ac3d-d38c4f427f4c","roleDefinitionId":"1b4a0c7f-2217-416f-acfa-cf73452fdc1c","managedByRoleDefinitionId":"9e3af657-a8ff-583c-a75c-2fe7c4bcb635","managedByAuthorization":{"allowManagedByInheritance":true}},{"applicationId":"6dae42f8-4368-4678-94ff-3960e28e3630","roleDefinitionId":"831388fc-33b1-4dd1-b64c-40fdcaf96654"}],"resourceTypes":[{"resourceType":"containerServices","locations":["Japan
+        US EUAP","East US 2 EUAP"],"apiVersions":["2020-11-01-preview","2019-12-01-preview","2019-05-01-preview","2019-05-01","2017-10-01","2017-06-01-preview"],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService","namespace":"Microsoft.ContainerService","authorizations":[{"applicationId":"7319c514-987d-4e9b-ac3d-d38c4f427f4c","roleDefinitionId":"1b4a0c7f-2217-416f-acfa-cf73452fdc1c","managedByRoleDefinitionId":"9e3af657-a8ff-583c-a75c-2fe7c4bcb635","managedByAuthorization":{"allowManagedByInheritance":true}},{"applicationId":"6dae42f8-4368-4678-94ff-3960e28e3630","roleDefinitionId":"831388fc-33b1-4dd1-b64c-40fdcaf96654"}],"resourceTypes":[{"resourceType":"containerServices","locations":["Japan
         East","Central US","East US 2","Japan West","East Asia","South Central US","North
         Central US","Australia East","Australia Southeast","Brazil South","Southeast
         Asia","West US","West Europe","North Europe","East US","UK West","UK South","West
@@ -2039,7 +2053,8 @@ interactions:
         India","Central US EUAP","North Central US","South Central US","Brazil South","Japan
         East","Japan West","West US 2","East US 2 EUAP","Korea Central","Korea South","France
         Central","France South","South Africa North","South Africa West","UAE North","UAE
-        Central","Germany West Central","Germany North"],"apiVersions":["2020-03-01","2019-10-01","2019-06-01","2019-03-01","2019-02-01","2018-10-01","2018-07-01","2018-04-02","2018-01-01-preview","2017-06-05-preview"],"defaultApiVersion":"2017-06-05-preview","capabilities":"None"},{"resourceType":"locations","locations":[],"apiVersions":["2020-03-01","2019-10-01","2019-06-01","2019-03-01","2019-02-01","2018-10-01","2018-07-01","2018-04-02"],"capabilities":"None"},{"resourceType":"locations/checkNameAvailability","locations":["West
+        Central","Germany West Central","Germany North","Switzerland North","Switzerland
+        West"],"apiVersions":["2020-03-01","2019-10-01","2019-06-01","2019-03-01","2019-02-01","2018-10-01","2018-07-01","2018-04-02","2018-01-01-preview","2017-06-05-preview"],"defaultApiVersion":"2017-06-05-preview","capabilities":"None"},{"resourceType":"locations","locations":[],"apiVersions":["2020-03-01","2019-10-01","2019-06-01","2019-03-01","2019-02-01","2018-10-01","2018-07-01","2018-04-02"],"capabilities":"None"},{"resourceType":"locations/checkNameAvailability","locations":["West
         US","West Europe","North Europe","Southeast Asia","East Asia","Australia East","Australia
         Southeast","East US","Canada Central","Canada East","Central US","East US
         2","UK South","UK West","Central India","South India","North Central US","South
@@ -2141,7 +2156,8 @@ interactions:
         Central US","UK South","Southeast Asia"],"apiVersions":["2020-05-01","2019-12-02-preview","2019-02-28-preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
         SupportsLocation"},{"resourceType":"remoteRenderingAccounts","locations":["East
-        US","East US 2","Southeast Asia","West Europe","West US 2"],"apiVersions":["2020-04-06-preview","2019-12-02-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        US","East US 2","Southeast Asia","West Europe","West US 2","Japan East","Australia
+        East","North Europe","South Central US","UK South"],"apiVersions":["2020-04-06-preview","2019-12-02-preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
         SupportsLocation"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.PowerBI","namespace":"Microsoft.PowerBI","authorizations":[{"applicationId":"00000009-0000-0000-c000-000000000000","roleDefinitionId":"d2079c0c-4a98-48b1-b511-eae3fc2003ab"}],"resourceTypes":[{"resourceType":"workspaceCollections","locations":["South
         Central US","North Central US","East US 2","West US","West Europe","North
@@ -2659,7 +2675,7 @@ interactions:
         Europe","North Europe","France Central","UK South","UK West","France South","Switzerland
         North","Switzerland West"],"apiVersions":["2019-01-01-preview"],"capabilities":"SupportsExtension"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.CostManagement","namespace":"Microsoft.CostManagement","authorizations":[{"applicationId":"3184af01-7a88-49e0-8b55-8ecdce0aa950"}],"resourceTypes":[{"resourceType":"Connectors","locations":["West
         US"],"apiVersions":["2018-08-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"CloudConnectors","locations":[],"apiVersions":["2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts","locations":[],"apiVersions":["2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts/Dimensions","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts/Query","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalSubscriptions/Dimensions","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalSubscriptions/Query","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalSubscriptions","locations":[],"apiVersions":["2019-03-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"Forecast","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2018-12-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"ExternalSubscriptions/Forecast","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2018-12-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts/Forecast","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2018-12-01-preview"],"capabilities":"None"},{"resourceType":"Settings","locations":[],"apiVersions":["2019-01-01-preview"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2019-10-01","2019-01-01","2018-10-01","2018-08-31","2018-08-01-preview","2017-10-01-preview"],"capabilities":"None"},{"resourceType":"register","locations":[],"apiVersions":["2019-03-01-preview","2017-10-01-preview"],"capabilities":"None"},{"resourceType":"Query","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2019-01-01","2018-12-01-preview","2018-10-01-preview","2018-08-31","2018-08-01-preview","2018-05-31"],"capabilities":"SupportsExtension"},{"resourceType":"Dimensions","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2019-01-01","2018-12-01-preview","2018-10-01-preview","2018-08-31","2018-08-01-preview","2018-05-31"],"capabilities":"SupportsExtension"},{"resourceType":"Budgets","locations":[],"apiVersions":["2019-10-01","2019-04-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"ExternalSubscriptions/Alerts","locations":[],"apiVersions":["2019-10-01","2018-08-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts/Alerts","locations":[],"apiVersions":["2019-10-01","2018-08-01-preview"],"capabilities":"None"},{"resourceType":"Alerts","locations":[],"apiVersions":["2019-10-01","2018-08-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"showbackRules","locations":[],"apiVersions":["2019-03-01-preview","2019-02-03-alpha","2019-02-02-alpha","2019-02-01-alpha"],"capabilities":"SupportsExtension"},{"resourceType":"Exports","locations":[],"apiVersions":["2020-06-01","2020-05-01-preview","2019-11-01","2019-10-01","2019-09-01","2019-01-01-preview","2019-01-01"],"capabilities":"SupportsExtension"},{"resourceType":"Reports","locations":[],"apiVersions":["2018-12-01-preview","2018-08-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"Reportconfigs","locations":[],"apiVersions":["2018-05-31"],"capabilities":"SupportsExtension"},{"resourceType":"BillingAccounts","locations":[],"apiVersions":["2018-03-31"],"capabilities":"None"},{"resourceType":"Departments","locations":[],"apiVersions":["2018-03-31"],"capabilities":"None"},{"resourceType":"EnrollmentAccounts","locations":[],"apiVersions":["2018-03-31"],"capabilities":"None"},{"resourceType":"Views","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-04-01-preview"],"capabilities":"SupportsExtension"}],"registrationState":"Registered","registrationPolicy":"RegistrationFree"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.CostManagementExports","namespace":"Microsoft.CostManagementExports","authorizations":[{"applicationId":"e5408ad0-c4e2-43aa-b6f2-3b4951286d99","roleDefinitionId":"5e4888b3-2747-4e5b-9897-ec0865b91bcf"}],"resourceTypes":[{"resourceType":"Operations","locations":[],"apiVersions":["2019-04-01"],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DesktopVirtualization","namespace":"Microsoft.DesktopVirtualization","authorizations":[{"applicationId":"50e95039-b200-4007-bc97-8d5790743a63","roleDefinitionId":"CAD30215-AD1C-43BF-BE90-7BFA8B493E62"},{"applicationId":"9cdead84-a844-4324-93f2-b2e6bb768d07"},{"applicationId":"a85cf173-4192-42f8-81fa-777a763e6e2c"}],"resourceTypes":[{"resourceType":"workspaces","locations":["East
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"CloudConnectors","locations":[],"apiVersions":["2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts","locations":[],"apiVersions":["2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts/Dimensions","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts/Query","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalSubscriptions/Dimensions","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalSubscriptions/Query","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview"],"capabilities":"None"},{"resourceType":"ExternalSubscriptions","locations":[],"apiVersions":["2019-03-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"Forecast","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2018-12-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"ExternalSubscriptions/Forecast","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2018-12-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts/Forecast","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2018-12-01-preview"],"capabilities":"None"},{"resourceType":"Settings","locations":[],"apiVersions":["2019-11-01","2019-01-01-preview"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2019-10-01","2019-01-01","2018-10-01","2018-08-31","2018-08-01-preview","2017-10-01-preview"],"capabilities":"None"},{"resourceType":"register","locations":[],"apiVersions":["2019-03-01-preview","2017-10-01-preview"],"capabilities":"None"},{"resourceType":"Query","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2019-01-01","2018-12-01-preview","2018-10-01-preview","2018-08-31","2018-08-01-preview","2018-05-31"],"capabilities":"SupportsExtension"},{"resourceType":"Dimensions","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-05-01-preview","2019-04-01-preview","2019-03-01-preview","2019-01-01","2018-12-01-preview","2018-10-01-preview","2018-08-31","2018-08-01-preview","2018-05-31"],"capabilities":"SupportsExtension"},{"resourceType":"Budgets","locations":[],"apiVersions":["2019-10-01","2019-04-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"ExternalSubscriptions/Alerts","locations":[],"apiVersions":["2019-10-01","2018-08-01-preview"],"capabilities":"None"},{"resourceType":"ExternalBillingAccounts/Alerts","locations":[],"apiVersions":["2019-10-01","2018-08-01-preview"],"capabilities":"None"},{"resourceType":"Alerts","locations":[],"apiVersions":["2019-10-01","2018-08-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"showbackRules","locations":[],"apiVersions":["2019-03-01-preview","2019-02-03-alpha","2019-02-02-alpha","2019-02-01-alpha"],"capabilities":"SupportsExtension"},{"resourceType":"Exports","locations":[],"apiVersions":["2020-06-01","2020-05-01-preview","2019-11-01","2019-10-01","2019-09-01","2019-01-01-preview","2019-01-01"],"capabilities":"SupportsExtension"},{"resourceType":"Reports","locations":[],"apiVersions":["2018-12-01-preview","2018-08-01-preview"],"capabilities":"SupportsExtension"},{"resourceType":"Reportconfigs","locations":[],"apiVersions":["2018-05-31"],"capabilities":"SupportsExtension"},{"resourceType":"BillingAccounts","locations":[],"apiVersions":["2018-03-31"],"capabilities":"None"},{"resourceType":"Departments","locations":[],"apiVersions":["2018-03-31"],"capabilities":"None"},{"resourceType":"EnrollmentAccounts","locations":[],"apiVersions":["2018-03-31"],"capabilities":"None"},{"resourceType":"Views","locations":[],"apiVersions":["2019-11-01","2019-10-01","2019-04-01-preview"],"capabilities":"SupportsExtension"}],"registrationState":"Registered","registrationPolicy":"RegistrationFree"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.CostManagementExports","namespace":"Microsoft.CostManagementExports","authorizations":[{"applicationId":"e5408ad0-c4e2-43aa-b6f2-3b4951286d99","roleDefinitionId":"5e4888b3-2747-4e5b-9897-ec0865b91bcf"}],"resourceTypes":[{"resourceType":"Operations","locations":[],"apiVersions":["2019-04-01"],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DesktopVirtualization","namespace":"Microsoft.DesktopVirtualization","authorizations":[{"applicationId":"50e95039-b200-4007-bc97-8d5790743a63","roleDefinitionId":"CAD30215-AD1C-43BF-BE90-7BFA8B493E62"},{"applicationId":"9cdead84-a844-4324-93f2-b2e6bb768d07"},{"applicationId":"a85cf173-4192-42f8-81fa-777a763e6e2c"}],"resourceTypes":[{"resourceType":"workspaces","locations":["East
         US","East US 2","West US","West US 2","North Central US","South Central US","West
         Central US","Central US"],"apiVersions":["2020-10-19-preview","2020-09-21-preview","2019-12-10-preview","2019-09-24-preview","2019-01-23-preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"applicationgroups","locations":["East
@@ -2684,7 +2700,8 @@ interactions:
         US","East US 2","West US","West US 2","North Central US","South Central US","West
         Central US","Central US"],"apiVersions":["2020-10-19-preview","2020-09-21-preview","2019-12-10-preview","2019-09-24-preview","2019-01-23-preview"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2019-12-10-preview","2019-09-24-preview","2019-01-23-preview"],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AzureStackHCI","namespace":"Microsoft.AzureStackHCI","authorizations":[{"applicationId":"1412d89f-b8a8-4111-b4fd-e82905cbd85d","roleDefinitionId":"90ffa33f-4875-44d8-b86f-d41c3aa6050e"},{"applicationId":"1322e676-dee7-41ee-a874-ac923822781c","roleDefinitionId":"e91a9804-9f4d-4501-bf85-03bd4ea78451"}],"resourceTypes":[{"resourceType":"clusters","locations":["East
         US","West Europe","Southeast Asia","East US 2 EUAP"],"apiVersions":["2020-10-01"],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"operations","locations":[],"apiVersions":["2020-10-01","2020-03-01-preview"],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.GuestConfiguration","namespace":"Microsoft.GuestConfiguration","authorizations":[{"applicationId":"e935b4a5-8968-416d-8414-caed51c782a9","roleDefinitionId":"9c6ffa40-421e-4dc0-9739-76b0699a11de"}],"resourceTypes":[{"resourceType":"guestConfigurationAssignments","locations":[],"apiVersions":["2020-06-25","2018-11-20","2018-06-30-preview","2018-01-20-preview"],"capabilities":"SupportsExtension"},{"resourceType":"software","locations":["East
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"operations","locations":[],"apiVersions":["2020-10-01","2020-03-01-preview"],"capabilities":"None"},{"resourceType":"locations","locations":[],"apiVersions":["2020-10-01"],"capabilities":"None"},{"resourceType":"locations/operationstatuses","locations":["East
+        US","East US 2 EUAP","West Europe","Southeast Asia"],"apiVersions":["2020-10-01"],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.GuestConfiguration","namespace":"Microsoft.GuestConfiguration","authorizations":[{"applicationId":"e935b4a5-8968-416d-8414-caed51c782a9","roleDefinitionId":"9c6ffa40-421e-4dc0-9739-76b0699a11de"}],"resourceTypes":[{"resourceType":"guestConfigurationAssignments","locations":[],"apiVersions":["2020-06-25","2018-11-20","2018-06-30-preview","2018-01-20-preview"],"capabilities":"SupportsExtension"},{"resourceType":"software","locations":["East
         US 2","South Central US"],"apiVersions":["2018-06-30-preview"],"capabilities":"SupportsExtension"},{"resourceType":"softwareUpdates","locations":["East
         US 2","South Central US"],"apiVersions":["2018-06-30-preview"],"capabilities":"SupportsExtension"},{"resourceType":"softwareUpdateProfile","locations":["East
         US 2","South Central US"],"apiVersions":["2018-06-30-preview"],"capabilities":"SupportsExtension"},{"resourceType":"operations","locations":[],"apiVersions":["2020-06-25","2018-11-20","2018-06-30-preview","2018-01-20-preview"],"capabilities":"None"},{"resourceType":"configurationProfileAssignments","locations":["Central
@@ -3194,32 +3211,32 @@ interactions:
         Central US","North Central US","Japan East","Japan West","Brazil South","Central
         India","South India","West India","Canada Central","Canada East","West US
         2","Korea Central","France Central","UK South","South Africa North","Switzerland
-        North","UAE North"],"apiVersions":["2020-01-01","2017-06-01","2017-01-01"],"defaultApiVersion":"2020-01-01","capabilities":"SupportsTags,
+        North","UAE North","Germany West Central"],"apiVersions":["2020-01-01","2017-06-01","2017-01-01"],"defaultApiVersion":"2020-01-01","capabilities":"SupportsTags,
         SupportsLocation"},{"resourceType":"DomainServices/oucontainer","locations":["West
         US","Central US","East US","South Central US","West Europe","North Europe","East
         Asia","Southeast Asia","East US 2","Australia East","Australia Southeast","West
         Central US","North Central US","Japan East","Japan West","Brazil South","Central
         India","South India","West India","Canada Central","Canada East","West US
         2","Korea Central","France Central","UK South","South Africa North","Switzerland
-        North","UAE North"],"apiVersions":["2020-01-01","2017-06-01"],"defaultApiVersion":"2020-01-01","capabilities":"None"},{"resourceType":"locations","locations":["West
+        North","UAE North","Germany West Central"],"apiVersions":["2020-01-01","2017-06-01"],"defaultApiVersion":"2020-01-01","capabilities":"None"},{"resourceType":"locations","locations":["West
         US","Central US","East US","South Central US","West Europe","North Europe","East
         Asia","Southeast Asia","East US 2","Australia East","Australia Southeast","West
         Central US","North Central US","Japan East","Japan West","Brazil South","Central
         India","South India","West India","Canada Central","Canada East","West US
         2","Korea Central","France Central","UK South","South Africa North","Switzerland
-        North","UAE North"],"apiVersions":["2020-01-01","2017-06-01","2017-01-01"],"defaultApiVersion":"2020-01-01","capabilities":"None"},{"resourceType":"locations/operationresults","locations":["West
+        North","UAE North","Germany West Central"],"apiVersions":["2020-01-01","2017-06-01","2017-01-01"],"defaultApiVersion":"2020-01-01","capabilities":"None"},{"resourceType":"locations/operationresults","locations":["West
         US","Central US","East US","South Central US","West Europe","North Europe","East
         Asia","Southeast Asia","East US 2","Australia East","Australia Southeast","West
         Central US","North Central US","Japan East","Japan West","Brazil South","Central
         India","South India","West India","Canada Central","Canada East","West US
         2","Korea Central","France Central","UK South","South Africa North","Switzerland
-        North","UAE North"],"apiVersions":["2020-01-01","2017-06-01","2017-01-01"],"defaultApiVersion":"2020-01-01","capabilities":"None"},{"resourceType":"operations","locations":["West
+        North","UAE North","Germany West Central"],"apiVersions":["2020-01-01","2017-06-01","2017-01-01"],"defaultApiVersion":"2020-01-01","capabilities":"None"},{"resourceType":"operations","locations":["West
         US","Central US","East US","South Central US","West Europe","North Europe","East
         Asia","Southeast Asia","East US 2","Australia East","Australia Southeast","West
         Central US","North Central US","Japan East","Japan West","Brazil South","Central
         India","South India","West India","Canada Central","Canada East","West US
         2","Korea Central","France Central","UK South","South Africa North","Switzerland
-        North","UAE North"],"apiVersions":["2020-01-01","2017-06-01","2017-01-01"],"defaultApiVersion":"2020-01-01","capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedNetwork","namespace":"Microsoft.ManagedNetwork","authorizations":[{"applicationId":"6d057c82-a784-47ae-8d12-ca7b38cf06b4","roleDefinitionId":"c27dd31e-c1e5-4ab0-93e1-a12ba34f182e"}],"resourceTypes":[{"resourceType":"managedNetworks","locations":["East
+        North","UAE North","Germany West Central"],"apiVersions":["2020-01-01","2017-06-01","2017-01-01"],"defaultApiVersion":"2020-01-01","capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedNetwork","namespace":"Microsoft.ManagedNetwork","authorizations":[{"applicationId":"6d057c82-a784-47ae-8d12-ca7b38cf06b4","roleDefinitionId":"c27dd31e-c1e5-4ab0-93e1-a12ba34f182e"}],"resourceTypes":[{"resourceType":"managedNetworks","locations":["East
         US 2","West US","West US 2","Central US","East US 2 (Stage)"],"apiVersions":["2019-06-01-preview","2018-10-01-preview"],"defaultApiVersion":"2019-06-01-preview","capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"managedNetworks/managedNetworkGroups","locations":["East
         US 2","West US","West US 2","Central US","East US 2 (Stage)"],"apiVersions":["2019-06-01-preview","2018-10-01-preview"],"defaultApiVersion":"2019-06-01-preview","capabilities":"CrossResourceGroupResourceMove,
@@ -3549,7 +3566,10 @@ interactions:
         South","zones":["2","3","1"]},{"location":"Japan East","zones":["2","3","1"]},{"location":"Australia
         East","zones":["2","3","1"]},{"location":"South Africa North","zones":[]},{"location":"South
         Central US","zones":[]},{"location":"Canada Central","zones":["2","3","1"]},{"location":"Germany
-        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"capabilities":"CrossResourceGroupResourceMove,
+        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
         SupportsLocation"},{"resourceType":"virtualMachines/extensions","locations":["East
         US","East US 2","West US","Central US","North Central US","South Central US","North
@@ -3575,7 +3595,10 @@ interactions:
         South","zones":["2","3","1"]},{"location":"Japan East","zones":["2","3","1"]},{"location":"Australia
         East","zones":["2","3","1"]},{"location":"South Africa North","zones":[]},{"location":"South
         Central US","zones":[]},{"location":"Canada Central","zones":["2","3","1"]},{"location":"Germany
-        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"capabilities":"CrossResourceGroupResourceMove,
+        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
         SupportsLocation"},{"resourceType":"virtualMachineScaleSets/extensions","locations":["East
         US","East US 2","West US","Central US","North Central US","South Central US","North
@@ -3787,7 +3810,10 @@ interactions:
         South","zones":["2","3","1"]},{"location":"Japan East","zones":["2","3","1"]},{"location":"Australia
         East","zones":["2","3","1"]},{"location":"South Africa North","zones":[]},{"location":"South
         Central US","zones":[]},{"location":"Canada Central","zones":["2","3","1"]},{"location":"Germany
-        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"capabilities":"CrossResourceGroupResourceMove,
+        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"snapshots","locations":["Southeast
         Asia","East US 2","Central US","West Europe","East US","North Central US","South
         Central US","West US","North Europe","East Asia","Brazil South","West US 2","West
@@ -3795,7 +3821,10 @@ interactions:
         East","Central India","South India","Australia East","Australia Southeast","Korea
         Central","Korea South","West India","France Central","South Africa North","UAE
         North","Australia Central","Switzerland North","Germany West Central","Norway
-        East","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-06-30","2020-05-01","2019-11-01","2019-07-01","2019-03-01","2018-09-30","2018-06-01","2018-04-01","2017-03-30","2016-04-30-preview"],"defaultApiVersion":"2020-06-30","apiProfiles":[{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-03-30"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-04-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        East","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-06-30","2020-05-01","2019-11-01","2019-07-01","2019-03-01","2018-09-30","2018-06-01","2018-04-01","2017-03-30","2016-04-30-preview"],"defaultApiVersion":"2020-06-30","apiProfiles":[{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-03-30"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-04-01"}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"locations/diskoperations","locations":["Southeast
         Asia","East US 2","Central US","West Europe","East US","North Central US","South
         Central US","West US","North Europe","East Asia","Brazil South","West US 2","West
@@ -3826,7 +3855,10 @@ interactions:
         East","Central India","South India","Australia East","Australia Southeast","Korea
         Central","Korea South","West India","France Central","South Africa North","UAE
         North","Australia Central","Switzerland North","Germany West Central","Norway
-        East","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-06-01","2019-12-01","2019-07-01","2019-03-01","2018-10-01","2018-06-01","2018-04-01","2017-12-01","2017-03-30","2016-08-30","2016-04-30-preview"],"defaultApiVersion":"2020-06-01","apiProfiles":[{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-03-30"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-04-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        East","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-06-01","2019-12-01","2019-07-01","2019-03-01","2018-10-01","2018-06-01","2018-04-01","2017-12-01","2017-03-30","2016-08-30","2016-04-30-preview"],"defaultApiVersion":"2020-06-01","apiProfiles":[{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-03-30"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-04-01"}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"locations/logAnalytics","locations":["East
         US","East US 2","West US","Central US","North Central US","South Central US","North
         Europe","West Europe","East Asia","Southeast Asia","Japan East","Japan West","Australia
@@ -3879,7 +3911,10 @@ interactions:
         India","West India","Canada Central","Canada East","West Central US","West
         US 2","UK West","UK South","Korea Central","Korea South","France Central","Australia
         Central","South Africa North","UAE North","Switzerland North","Germany West
-        Central","Norway East","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-07-01","2020-06-01","2020-05-01","2020-04-01","2020-03-01","2020-01-01","2019-12-01","2019-11-01","2019-09-01","2019-08-01","2019-07-01","2019-06-01","2019-04-01","2019-02-01","2018-12-01","2018-11-01","2018-10-01","2018-08-01","2018-07-01","2018-06-01","2018-05-01","2018-04-01","2018-03-01","2018-02-01","2018-01-01","2017-11-01","2017-10-01","2017-09-01","2017-08-01","2017-06-01","2017-04-01","2017-03-01","2016-12-01","2016-11-01","2016-10-01","2016-09-01","2016-08-01","2016-07-01","2016-06-01","2016-03-30","2015-06-15","2015-05-01-preview","2014-12-01-preview"],"defaultApiVersion":"2020-03-01","apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2015-06-15"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-10-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2017-10-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        Central","Norway East","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-07-01","2020-06-01","2020-05-01","2020-04-01","2020-03-01","2020-01-01","2019-12-01","2019-11-01","2019-09-01","2019-08-01","2019-07-01","2019-06-01","2019-04-01","2019-02-01","2018-12-01","2018-11-01","2018-10-01","2018-08-01","2018-07-01","2018-06-01","2018-05-01","2018-04-01","2018-03-01","2018-02-01","2018-01-01","2017-11-01","2017-10-01","2017-09-01","2017-08-01","2017-06-01","2017-04-01","2017-03-01","2016-12-01","2016-11-01","2016-10-01","2016-09-01","2016-08-01","2016-07-01","2016-06-01","2016-03-30","2015-06-15","2015-05-01-preview","2014-12-01-preview"],"defaultApiVersion":"2020-03-01","apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2015-06-15"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-10-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2017-10-01"}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"natGateways","locations":["West
         US","East US","North Europe","West Europe","East Asia","Southeast Asia","North
         Central US","South Central US","Central US","East US 2","Japan East","Japan
@@ -3913,7 +3948,10 @@ interactions:
         South","zones":["2","3","1"]},{"location":"Japan East","zones":["2","3","1"]},{"location":"Australia
         East","zones":["2","3","1"]},{"location":"South Africa North","zones":[]},{"location":"South
         Central US","zones":[]},{"location":"Canada Central","zones":["2","3","1"]},{"location":"Germany
-        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"capabilities":"CrossResourceGroupResourceMove,
+        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"customIpPrefixes","locations":["West
         US","East US","North Europe","West Europe","East Asia","Southeast Asia","North
         Central US","South Central US","Central US","East US 2","Japan East","Japan
@@ -3938,7 +3976,10 @@ interactions:
         India","West India","Canada Central","Canada East","West Central US","West
         US 2","UK West","UK South","Korea Central","Korea South","France Central","Australia
         Central","South Africa North","UAE North","Switzerland North","Germany West
-        Central","Norway East","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-07-01","2020-06-01","2020-05-01","2020-04-01","2020-03-01","2020-01-01","2019-12-01","2019-11-01","2019-09-01","2019-08-01","2019-07-01","2019-06-01","2019-04-01","2019-02-01","2018-12-01","2018-11-01","2018-10-01","2018-08-01","2018-07-01","2018-06-01","2018-05-01","2018-04-01","2018-03-01","2018-02-01","2018-01-01","2017-11-01","2017-10-01","2017-09-01","2017-08-01","2017-06-01","2017-04-01","2017-03-01","2016-12-01","2016-11-01","2016-10-01","2016-09-01","2016-08-01","2016-07-01","2016-06-01","2016-03-30","2015-06-15","2015-05-01-preview","2014-12-01-preview"],"defaultApiVersion":"2020-03-01","apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2015-06-15"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-10-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2017-10-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        Central","Norway East","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-07-01","2020-06-01","2020-05-01","2020-04-01","2020-03-01","2020-01-01","2019-12-01","2019-11-01","2019-09-01","2019-08-01","2019-07-01","2019-06-01","2019-04-01","2019-02-01","2018-12-01","2018-11-01","2018-10-01","2018-08-01","2018-07-01","2018-06-01","2018-05-01","2018-04-01","2018-03-01","2018-02-01","2018-01-01","2017-11-01","2017-10-01","2017-09-01","2017-08-01","2017-06-01","2017-04-01","2017-03-01","2016-12-01","2016-11-01","2016-10-01","2016-09-01","2016-08-01","2016-07-01","2016-06-01","2016-03-30","2015-06-15","2015-05-01-preview","2014-12-01-preview"],"defaultApiVersion":"2020-03-01","apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2015-06-15"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-10-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2017-10-01"}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"privateEndpoints","locations":["West
         US","East US","North Europe","West Europe","East Asia","Southeast Asia","North
         Central US","South Central US","Central US","East US 2","Japan East","Japan
@@ -3962,7 +4003,10 @@ interactions:
         India","Canada Central","Canada East","West Central US","West US 2","UK West","UK
         South","Korea Central","Korea South","France Central","Australia Central","South
         Africa North","UAE North","Switzerland North","Germany West Central","Norway
-        East","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-07-01","2020-06-01","2020-05-01","2020-04-01","2020-03-01","2020-01-01","2019-12-01","2019-11-01","2019-09-01","2019-08-01","2019-07-01","2019-06-01","2019-04-01","2019-02-01","2018-12-01","2018-11-01","2018-10-01","2018-08-01","2018-07-01","2018-06-01","2018-05-01","2018-04-01","2018-03-01","2018-02-01","2018-01-01","2017-11-01","2017-10-01","2017-09-01","2017-08-01","2017-06-01","2017-04-01","2017-03-01","2016-12-01","2016-11-01","2016-10-01","2016-09-01","2016-08-01","2016-07-01","2016-06-01","2016-03-30","2015-06-15","2015-05-01-preview","2014-12-01-preview"],"defaultApiVersion":"2020-03-01","apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2015-06-15"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-10-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2017-10-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        East","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-07-01","2020-06-01","2020-05-01","2020-04-01","2020-03-01","2020-01-01","2019-12-01","2019-11-01","2019-09-01","2019-08-01","2019-07-01","2019-06-01","2019-04-01","2019-02-01","2018-12-01","2018-11-01","2018-10-01","2018-08-01","2018-07-01","2018-06-01","2018-05-01","2018-04-01","2018-03-01","2018-02-01","2018-01-01","2017-11-01","2017-10-01","2017-09-01","2017-08-01","2017-06-01","2017-04-01","2017-03-01","2016-12-01","2016-11-01","2016-10-01","2016-09-01","2016-08-01","2016-07-01","2016-06-01","2016-03-30","2015-06-15","2015-05-01-preview","2014-12-01-preview"],"defaultApiVersion":"2020-03-01","apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2015-06-15"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-10-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2017-10-01"}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"networkSecurityGroups","locations":["West
         US","East US","North Europe","West Europe","East Asia","Southeast Asia","North
         Central US","South Central US","Central US","East US 2","Japan East","Japan
@@ -4019,7 +4063,10 @@ interactions:
         South","zones":["2","3","1"]},{"location":"Japan East","zones":["2","3","1"]},{"location":"Australia
         East","zones":["2","3","1"]},{"location":"South Africa North","zones":[]},{"location":"South
         Central US","zones":[]},{"location":"Canada Central","zones":["2","3","1"]},{"location":"Germany
-        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"capabilities":"CrossResourceGroupResourceMove,
+        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"masterCustomIpPrefixes","locations":["West
         US","East US","North Europe","West Europe","East Asia","Southeast Asia","North
         Central US","South Central US","Central US","East US 2","Japan East","Japan
@@ -4776,8 +4823,8 @@ interactions:
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"customApis","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
@@ -4785,8 +4832,8 @@ interactions:
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"locations","locations":[],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/listWsdlInterfaces","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
@@ -4794,48 +4841,48 @@ interactions:
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/extractApiDefinitionFromWsdl","locations":["North
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/extractApiDefinitionFromWsdl","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
         East","Brazil South","Australia East","Australia Southeast","South India","Central
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/managedApis","locations":["North
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/managedApis","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
         East","Brazil South","Australia East","Australia Southeast","South India","Central
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/runtimes","locations":["North
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/runtimes","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
         East","Brazil South","Australia East","Australia Southeast","South India","Central
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/apiOperations","locations":["North
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/apiOperations","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
         East","Brazil South","Australia East","Australia Southeast","South India","Central
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"connectionGateways","locations":["North
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"connectionGateways","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
         East","Brazil South","Australia East","Australia Southeast","South India","Central
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"locations/connectionGatewayInstallations","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
@@ -4843,8 +4890,8 @@ interactions:
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","France Central","France South","Korea Central","Korea
         South","South Africa West","South Africa North","UAE Central","Switzerland
-        North","Germany North","Germany West Central","Central US EUAP","East US 2
-        EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"checkNameAvailability","locations":["Central
+        North","Switzerland West","Germany North","Germany West Central","Central
+        US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"checkNameAvailability","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
@@ -5071,7 +5118,7 @@ interactions:
         US 2","Japan East","Australia East","Korea Central","France Central","Central
         US","East US 2","East Asia","West US","Canada Central","Central India","UK
         South","UK West","South Africa North","North Central US","Brazil South","Switzerland
-        North","Norway East","Australia Southeast","West Central US"],"apiVersions":["2019-10-17-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        North","Norway East","Australia Southeast","West Central US"],"apiVersions":["2020-11-20","2019-10-17-preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"myWorkbooks","locations":["West
         Europe","South Central US","East US","North Europe","Southeast Asia","West
         US 2","UK South","Canada Central","Central India","Japan East","Australia
@@ -5096,13 +5143,13 @@ interactions:
         Central US"],"apiVersions":["2020-06-02-preview"],"capabilities":"SupportsExtension"},{"resourceType":"dataCollectionRules","locations":["Australia
         Southeast","Japan East","Australia East","Central India","Germany West Central","North
         Central US","South Central US","East US","Central US","West Europe","West
-        US 2","Southeast Asia","East US 2","UK South","North Europe","West US","East
-        US 2 EUAP"],"apiVersions":["2019-11-01-preview"],"defaultApiVersion":"2019-11-01-preview","capabilities":"CrossResourceGroupResourceMove,
+        US 2","Southeast Asia","East US 2","UK South","North Europe","West US","Australia
+        Central","West Central US","East Asia","East US 2 EUAP"],"apiVersions":["2019-11-01-preview"],"defaultApiVersion":"2019-11-01-preview","capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"dataCollectionRuleAssociations","locations":["Australia
         Southeast","Japan East","Australia East","Central India","Germany West Central","North
         Central US","South Central US","East US","Central US","West Europe","West
-        US 2","Southeast Asia","East US 2","UK South","North Europe","West US","East
-        US 2 EUAP"],"apiVersions":["2019-11-01-preview"],"defaultApiVersion":"2019-11-01-preview","capabilities":"SupportsExtension"},{"resourceType":"components/linkedstorageaccounts","locations":["East
+        US 2","Southeast Asia","East US 2","UK South","North Europe","West US","Australia
+        Central","West Central US","East Asia","East US 2 EUAP"],"apiVersions":["2019-11-01-preview"],"defaultApiVersion":"2019-11-01-preview","capabilities":"SupportsExtension"},{"resourceType":"components/linkedstorageaccounts","locations":["East
         US","South Central US","North Europe","West Europe","Southeast Asia","West
         US 2","UK South","Canada Central","Central India","Japan East","Australia
         East","Korea Central","France Central","Central US","East US 2","East Asia","West
@@ -6797,7 +6844,10 @@ interactions:
         US","zones":[]},{"location":"UK South","zones":[]},{"location":"Japan East","zones":[]},{"location":"Australia
         East","zones":[]},{"location":"South Africa North","zones":[]},{"location":"South
         Central US","zones":[]},{"location":"Canada Central","zones":[]},{"location":"Germany
-        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"capabilities":"CrossResourceGroupResourceMove,
+        West Central","zones":[]},{"location":"Brazil South","zones":[]}],"locationMappings":[{"location":"East
+        US 2 EUAP","type":"EdgeZone","extendedLocations":["eastus2euapmockedge","microsoftrrdclab1"]},{"location":"West
+        US","type":"EdgeZone","extendedLocations":["microsoftlosangeles1"]},{"location":"East
+        US 2","type":"EdgeZone","extendedLocations":["attatlanta1"]}],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
         SupportsLocation"},{"resourceType":"operations","locations":["East US","East
         US 2","West US","West Europe","East Asia","Southeast Asia","Japan East","Japan
@@ -7375,44 +7425,57 @@ interactions:
         US","West US 2"],"apiVersions":["2020-05-01-preview"],"defaultApiVersion":"2020-05-01-preview","capabilities":"None"},{"resourceType":"workspaces/operationresults","locations":["West
         US","West US 2"],"apiVersions":["2020-05-01-preview"],"defaultApiVersion":"2020-05-01-preview","capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AVS","namespace":"Microsoft.AVS","authorizations":[{"applicationId":"608f9929-9737-432e-860f-4e1c1821052f","roleDefinitionId":"a12e1b40-7eca-4c51-be1d-d8bc564dcfdd","allowedThirdPartyExtensions":[{"name":"VMCP"}]}],"resourceTypes":[{"resourceType":"operations","locations":[],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"None"},{"resourceType":"locations","locations":[],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"None"},{"resourceType":"locations/checkTrialAvailability","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"None"},{"resourceType":"locations/checkQuotaAvailability","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"None"},{"resourceType":"locations/checkQuotaAvailability","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"None"},{"resourceType":"privateClouds","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"None"},{"resourceType":"privateClouds","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"privateClouds/clusters","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"None"},{"resourceType":"privateClouds/authorizations","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-03-20","2019-08-09-preview"],"capabilities":"None"},{"resourceType":"privateClouds/authorizations","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-03-20"],"capabilities":"None"},{"resourceType":"privateClouds/hcxEnterpriseSites","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-03-20"],"capabilities":"None"},{"resourceType":"privateClouds/hcxEnterpriseSites","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-03-20"],"capabilities":"None"},{"resourceType":"privateClouds/globalReachConnections","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-03-20"],"capabilities":"None"},{"resourceType":"privateClouds/globalReachConnections","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/addons","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/dhcpConfigurations","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/portMirroringProfiles","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/dhcpConfigurations","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/segments","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/portMirroringProfiles","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/vmGroups","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/segments","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/gateways","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/vmGroups","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/virtualMachines","locations":["East
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/gateways","locations":["East
         US","North Central US","West US","West Europe","Australia East","Japan East","UK
-        South","Canada Central"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AzureArcData","namespace":"Microsoft.AzureArcData","authorizations":[],"resourceTypes":[{"resourceType":"locations","locations":[],"apiVersions":["2019-01-01"],"capabilities":"None"},{"resourceType":"Operations","locations":[],"apiVersions":["2020-12-08-preview"],"capabilities":"None"},{"resourceType":"Locations/OperationStatuses","locations":["Japan
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/virtualMachines","locations":["East
+        US","North Central US","West US","West Europe","Australia East","Japan East","UK
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/dnsServices","locations":["East
+        US","North Central US","West US","West Europe","Australia East","Japan East","UK
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"},{"resourceType":"privateClouds/workloadNetworks/dnsZones","locations":["East
+        US","North Central US","West US","West Europe","Australia East","Japan East","UK
+        South","Canada Central","North Europe","Southeast Asia"],"apiVersions":["2020-07-17-preview"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AzureArcData","namespace":"Microsoft.AzureArcData","authorizations":[],"resourceTypes":[{"resourceType":"locations","locations":[],"apiVersions":["2019-01-01"],"capabilities":"None"},{"resourceType":"Operations","locations":[],"apiVersions":["2020-12-08-preview"],"capabilities":"None"},{"resourceType":"Locations/OperationStatuses","locations":["Japan
         East","Australia East","Korea Central","UK South","France Central","East US
         2","Central US","Central US EUAP","West US 2","East Asia","East US","East
-        US 2 EUAP","North Europe","Southeast Asia","West Europe","West US"],"apiVersions":["2019-10-01"],"capabilities":"None"},{"resourceType":"dataControllers","locations":["Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2020-12-08-preview"],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"sqlManagedInstances","locations":["Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2020-12-08-preview"],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"postgresInstances","locations":["Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2020-12-08-preview"],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"sqlServerInstances","locations":["Central
-        US EUAP","East US 2 EUAP"],"apiVersions":["2020-12-08-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        US 2 EUAP","North Europe","Southeast Asia","West Europe"],"apiVersions":["2019-10-01"],"capabilities":"None"},{"resourceType":"dataControllers","locations":["Japan
+        East","Australia East","Korea Central","UK South","France Central","East US
+        2","Central US","West US 2","East US","North Europe","Southeast Asia","West
+        Europe","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-12-08-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"sqlManagedInstances","locations":["Japan
+        East","Australia East","Korea Central","UK South","France Central","East US
+        2","Central US","West US 2","East US","North Europe","Southeast Asia","West
+        Europe","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-12-08-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"postgresInstances","locations":["Japan
+        East","Australia East","Korea Central","UK South","France Central","East US
+        2","Central US","West US 2","East US","North Europe","Southeast Asia","West
+        Europe","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-12-08-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"sqlServerInstances","locations":["Australia
+        East","UK South","East US 2","Central US","East US","North Europe","Southeast
+        Asia","West Europe","West US 2","Central US EUAP","East US 2 EUAP"],"apiVersions":["2020-12-08-preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AzureData","namespace":"Microsoft.AzureData","authorizations":[{"applicationId":"bb55177b-a7d9-4939-a257-8ab53a3b2bc6","roleDefinitionId":"f83de625-af9e-4458-ac9c-e5d62b05fd06"},{"applicationId":"a12e8ccb-0fcd-46f8-b6a1-b9df7a9d7231","roleDefinitionId":"f83de625-af9e-4458-ac9c-e5d62b05fd06"}],"resourceTypes":[{"resourceType":"sqlServerRegistrations","locations":["Australia
         East","Australia Southeast","Canada Central","France Central","Japan East","Japan
         West","Korea Central","Korea South","North Central US","North Europe","South
@@ -7463,7 +7526,7 @@ interactions:
         US"],"apiVersions":["2016-08-18","2015-07-02"],"capabilities":"SupportsTags,
         SupportsLocation"},{"resourceType":"operations","locations":[],"apiVersions":["2016-08-18","2015-07-02"],"capabilities":"None"},{"resourceType":"listCommunicationPreference","locations":[],"apiVersions":["2016-08-18","2015-07-02"],"capabilities":"None"},{"resourceType":"updateCommunicationPreference","locations":[],"apiVersions":["2016-08-18","2015-07-02"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BlockchainTokens","namespace":"Microsoft.BlockchainTokens","resourceTypes":[{"resourceType":"Operations","locations":["West
         US"],"apiVersions":["2019-07-19-preview"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity","namespace":"Microsoft.Capacity","authorizations":[{"applicationId":"4d0ad6c7-f6c3-46d8-ab0d-1406d5e6c86b","roleDefinitionId":"FD9C0A9A-4DB9-4F41-8A61-98385DEB6E2D"},{"applicationId":"fbc197b7-9e9c-4f98-823f-93cb1cb554e6","roleDefinitionId":"941F67D2-083A-4B78-AF91-9B3B30B9B150"}],"resourceTypes":[{"resourceType":"resourceProviders","locations":[],"apiVersions":["2019-07-19-preview"],"capabilities":"None"},{"resourceType":"resources","locations":["South
-        Central US"],"apiVersions":["2019-04-01","2018-06-01","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders","locations":[],"apiVersions":["2020-11-15-preview","2020-11-15-beta","2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2020-06-01","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/reservations","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"listbenefits","locations":[],"apiVersions":["2019-04-01-beta","2019-04-01"],"capabilities":"None"},{"resourceType":"reservations","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2020-06-01","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/reservations/revisions","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"catalogs","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"appliedReservations","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"checkOffers","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"checkScopes","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"calculatePrice","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"calculateExchange","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01"],"capabilities":"None"},{"resourceType":"exchange","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01"],"capabilities":"None"},{"resourceType":"reservationOrders/calculateRefund","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/return","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2020-06-01","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/split","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/merge","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/swap","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01"],"capabilities":"None"},{"resourceType":"validateReservationOrder","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/availableScopes","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/reservations/availableScopes","locations":[],"apiVersions":["2019-04-01-beta","2019-04-01"],"capabilities":"None"},{"resourceType":"commercialReservationOrders","locations":[],"apiVersions":["2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01"],"capabilities":"None"},{"resourceType":"calculatePurchasePrice","locations":[],"apiVersions":["2019-06-01-privatepreview","2019-06-01-beta"],"capabilities":"None"},{"resourceType":"placePurchaseOrder","locations":[],"apiVersions":["2019-06-01-privatepreview","2019-06-01-beta"],"capabilities":"None"},{"resourceType":"checkPurchaseStatus","locations":[],"apiVersions":["2019-06-01-privatepreview","2019-06-01-beta"],"capabilities":"None"},{"resourceType":"ownReservations","locations":[],"apiVersions":["2020-06-01-beta","2020-06-01"],"capabilities":"None"},{"resourceType":"operationResults","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ClassicInfrastructureMigrate","namespace":"Microsoft.ClassicInfrastructureMigrate","authorization":{"applicationId":"5e5abe2b-83cd-4786-826a-a05653ebb103","roleDefinitionId":"766c4d9b-ef83-4f73-8352-1450a506a69b"},"resourceTypes":[{"resourceType":"classicInfrastructureResources","locations":["East
+        Central US"],"apiVersions":["2019-04-01","2018-06-01","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders","locations":[],"apiVersions":["2020-11-15-preview","2020-11-15-beta","2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2020-06-01","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/reservations","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"listbenefits","locations":[],"apiVersions":["2019-04-01-beta","2019-04-01"],"capabilities":"None"},{"resourceType":"reservations","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2020-06-01","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/reservations/revisions","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"catalogs","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"appliedReservations","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"checkOffers","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"checkScopes","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"calculatePrice","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"calculateExchange","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01"],"capabilities":"None"},{"resourceType":"exchange","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01"],"capabilities":"None"},{"resourceType":"reservationOrders/calculateRefund","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/return","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2020-06-01","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/split","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/merge","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/swap","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01"],"capabilities":"None"},{"resourceType":"validateReservationOrder","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/availableScopes","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta","2020-06-01-beta","2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01","2017-11-01-beta","2017-11-01"],"capabilities":"None"},{"resourceType":"reservationOrders/reservations/availableScopes","locations":[],"apiVersions":["2019-04-01-beta","2019-04-01"],"capabilities":"None"},{"resourceType":"commercialReservationOrders","locations":[],"apiVersions":["2019-04-01-beta","2019-04-01","2018-06-01-beta","2018-06-01"],"capabilities":"None"},{"resourceType":"calculatePurchasePrice","locations":[],"apiVersions":["2019-06-01-privatepreview","2019-06-01-beta"],"capabilities":"None"},{"resourceType":"placePurchaseOrder","locations":[],"apiVersions":["2019-06-01-privatepreview","2019-06-01-beta"],"capabilities":"None"},{"resourceType":"checkPurchaseStatus","locations":[],"apiVersions":["2019-06-01-privatepreview","2019-06-01-beta"],"capabilities":"None"},{"resourceType":"ownReservations","locations":[],"apiVersions":["2020-06-01-beta","2020-06-01"],"capabilities":"None"},{"resourceType":"operationResults","locations":[],"apiVersions":["2020-10-01-preview","2020-10-01-beta"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Chaos","namespace":"Microsoft.Chaos","authorizations":[{"applicationId":"ecad3f28-c75d-4414-94e0-a5e1de4df79e","roleDefinitionId":"16f6458e-a375-4d8d-934e-5c9933967cb4"}],"resourceTypes":[{"resourceType":"operations","locations":[],"apiVersions":["2020-09-23-preview","2020-09-14-preview","2020-06-18-preview","2020-05-01-preview"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ClassicInfrastructureMigrate","namespace":"Microsoft.ClassicInfrastructureMigrate","authorization":{"applicationId":"5e5abe2b-83cd-4786-826a-a05653ebb103","roleDefinitionId":"766c4d9b-ef83-4f73-8352-1450a506a69b"},"resourceTypes":[{"resourceType":"classicInfrastructureResources","locations":["East
         Asia","Southeast Asia","East US","East US 2","West US","North Central US","South
         Central US","Central US","North Europe","West Europe","Japan East","Japan
         West","Brazil South","Australia East","Australia Southeast","Central India","West
@@ -7845,7 +7908,7 @@ interactions:
         US","East US","East US 2 EUAP"],"apiVersions":["2019-06-01","2018-02-16-preview"],"capabilities":"SupportsTags,
         SupportsLocation"},{"resourceType":"operations","locations":["West US","East
         US","West Central US","East US 2 EUAP"],"apiVersions":["2019-06-01","2018-02-16-preview"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.WorkloadBuilder","namespace":"Microsoft.WorkloadBuilder","authorizations":[{"applicationId":"63c2c773-89fe-4164-a02f-b8c7fc1772ae","roleDefinitionId":"322358fa-ea51-4f6c-b9d6-3be64015f074"}],"resourceTypes":[{"resourceType":"Locations","locations":[],"apiVersions":["2020-07-01-privatepreview"],"capabilities":"None"},{"resourceType":"Locations/OperationStatuses","locations":["West
-        Central US","East US 2 EUAP"],"apiVersions":["2020-07-01-privatepreview"],"capabilities":"None"},{"resourceType":"Operations","locations":[],"apiVersions":["2020-07-01-privatepreview"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.WorkloadMonitor","namespace":"Microsoft.WorkloadMonitor","authorizations":[{"applicationId":"ddc728e9-153d-4032-ab80-80e57af7a56f","roleDefinitionId":"553f60de-cc15-412f-9fdf-8f5152e7e0f5","managedByRoleDefinitionId":"553f60de-cc15-412f-9fdf-8f5152e7e0f5"}],"resourceTypes":[{"resourceType":"operations","locations":[],"apiVersions":["2020-01-13-preview","2018-08-31-preview"],"capabilities":"None"},{"resourceType":"componentsSummary","locations":[],"apiVersions":["2018-08-31-preview"],"capabilities":"None"},{"resourceType":"monitorInstancesSummary","locations":[],"apiVersions":["2018-08-31-preview"],"capabilities":"None"},{"resourceType":"monitorInstances","locations":[],"apiVersions":["2018-08-31-preview"],"capabilities":"SupportsExtension"},{"resourceType":"components","locations":[],"apiVersions":["2018-08-31-preview"],"capabilities":"SupportsExtension"},{"resourceType":"monitors","locations":[],"apiVersions":["2020-01-13-preview","2018-08-31-preview"],"capabilities":"SupportsExtension"},{"resourceType":"notificationSettings","locations":[],"apiVersions":["2018-08-31-preview"],"capabilities":"SupportsExtension"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Myget.PackageManagement","namespace":"Myget.PackageManagement","resourceTypes":[{"resourceType":"services","locations":["West
+        Central US","East US 2 EUAP"],"apiVersions":["2020-07-01-privatepreview"],"capabilities":"None"},{"resourceType":"Operations","locations":[],"apiVersions":["2020-07-01-privatepreview"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.WorkloadMonitor","namespace":"Microsoft.WorkloadMonitor","authorizations":[{"applicationId":"ddc728e9-153d-4032-ab80-80e57af7a56f","roleDefinitionId":"553f60de-cc15-412f-9fdf-8f5152e7e0f5","managedByRoleDefinitionId":"553f60de-cc15-412f-9fdf-8f5152e7e0f5"}],"resourceTypes":[{"resourceType":"operations","locations":[],"apiVersions":["2020-01-13-preview"],"capabilities":"None"},{"resourceType":"monitors","locations":[],"apiVersions":["2020-01-13-preview"],"capabilities":"SupportsExtension"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Myget.PackageManagement","namespace":"Myget.PackageManagement","resourceTypes":[{"resourceType":"services","locations":["West
         Europe"],"apiVersions":["2015-01-01"],"capabilities":"SupportsTags, SupportsLocation"},{"resourceType":"operations","locations":[],"apiVersions":["2015-01-01"],"capabilities":"None"},{"resourceType":"listCommunicationPreference","locations":[],"apiVersions":["2015-01-01"],"capabilities":"None"},{"resourceType":"updateCommunicationPreference","locations":[],"apiVersions":["2015-01-01"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Paraleap.CloudMonix","namespace":"Paraleap.CloudMonix","resourceTypes":[{"resourceType":"services","locations":["West
         US"],"apiVersions":["2016-08-10"],"capabilities":"SupportsTags, SupportsLocation"},{"resourceType":"operations","locations":[],"apiVersions":["2016-08-10"],"capabilities":"None"},{"resourceType":"listCommunicationPreference","locations":[],"apiVersions":["2016-08-10"],"capabilities":"None"},{"resourceType":"updateCommunicationPreference","locations":[],"apiVersions":["2016-08-10"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Pokitdok.Platform","namespace":"Pokitdok.Platform","resourceTypes":[{"resourceType":"services","locations":["West
         US"],"apiVersions":["2016-05-17"],"capabilities":"SupportsTags, SupportsLocation"},{"resourceType":"operations","locations":[],"apiVersions":["2016-05-17"],"capabilities":"None"},{"resourceType":"listCommunicationPreference","locations":[],"apiVersions":["2016-05-17"],"capabilities":"None"},{"resourceType":"updateCommunicationPreference","locations":[],"apiVersions":["2016-05-17"],"capabilities":"None"}],"registrationState":"NotRegistered","registrationPolicy":"RegistrationRequired"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/RavenHq.Db","namespace":"RavenHq.Db","resourceTypes":[{"resourceType":"databases","locations":["East
@@ -7899,11 +7962,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1098437'
+      - '1106073'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 04 Dec 2020 07:49:09 GMT
+      - Tue, 08 Dec 2020 07:02:14 GMT
       expires:
       - '-1'
       pragma:

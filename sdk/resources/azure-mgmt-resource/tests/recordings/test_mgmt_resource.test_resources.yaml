@@ -10,7 +10,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: HEAD
@@ -26,7 +26,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 04 Dec 2020 07:50:08 GMT
+      - Tue, 08 Dec 2020 07:03:16 GMT
       expires:
       - '-1'
       pragma:
@@ -55,7 +55,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -75,7 +75,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 04 Dec 2020 07:50:17 GMT
+      - Tue, 08 Dec 2020 07:03:24 GMT
       expires:
       - '-1'
       pragma:
@@ -92,9 +92,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;237,Microsoft.Compute/PutVM30Min;1193
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1197
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -109,7 +109,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -129,7 +129,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 04 Dec 2020 07:50:18 GMT
+      - Tue, 08 Dec 2020 07:03:24 GMT
       expires:
       - '-1'
       pragma:
@@ -146,7 +146,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;3993,Microsoft.Compute/LowCostGet30Min;31927
+      - Microsoft.Compute/LowCostGet3Min;3999,Microsoft.Compute/LowCostGet30Min;31994
     status:
       code: 200
       message: OK
@@ -161,11 +161,11 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?$filter=name%20eq%20%27pytestavsetea520dc4%27&api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?$filter=name%20eq%20%27pytestavsetea520dc4%27&api-version=2020-10-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4","name":"pytestavsetea520dc4","type":"Microsoft.Compute/availabilitySets","sku":{"name":"Classic"},"location":"westus"}]}'
@@ -177,7 +177,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 04 Dec 2020 07:50:18 GMT
+      - Tue, 08 Dec 2020 07:03:24 GMT
       expires:
       - '-1'
       pragma:
@@ -204,7 +204,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/11.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -218,7 +218,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 04 Dec 2020 07:50:22 GMT
+      - Tue, 08 Dec 2020 07:03:29 GMT
       expires:
       - '-1'
       pragma:
@@ -231,9 +231,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/DeleteVM3Min;237,Microsoft.Compute/DeleteVM30Min;1194
+      - Microsoft.Compute/DeleteVM3Min;237,Microsoft.Compute/DeleteVM30Min;1197
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14995'
+      - '14999'
     status:
       code: 200
       message: OK
