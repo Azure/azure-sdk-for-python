@@ -8,20 +8,132 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Cookie:
+      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIKZzF_lJliVO_xLoEumtXjFA20WrLnNgvcSTunE5vfPqfhnbC-XrgwFSucxzhh8yYHLpZfwBMx9GQ9wTY_dTeZOhkzNx4henxf1QrEECJ7ygauVRMgfhLK4cVgfI8Sixs8GZ7BliDqzfXK6SCOwPECnuBXBD-3YykC5QlZlvc1L0gAA;
+        fpc=AqzKqpSGzJ5Bm-okCeNoudo; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      User-Agent:
+      - azsdk-python-identity/1.5.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: xxxcommon/discovery/instance?api-version=1.1&authorization_endpoint=xxxcommon/oauth2/authorize
+  response:
+    body:
+      string: '{"tenant_discovery_endpoint":"xxxcommon/.well-known/openid-configuration","api-version":"1.1","metadata":[{"preferred_network":"login.microsoftonline.com","preferred_cache":"login.windows.net","aliases":["login.microsoftonline.com","login.windows.net","login.microsoft.com","sts.windows.net"]},{"preferred_network":"login.partner.microsoftonline.cn","preferred_cache":"login.partner.microsoftonline.cn","aliases":["login.partner.microsoftonline.cn","login.chinacloudapi.cn"]},{"preferred_network":"login.microsoftonline.de","preferred_cache":"login.microsoftonline.de","aliases":["login.microsoftonline.de"]},{"preferred_network":"login.microsoftonline.us","preferred_cache":"login.microsoftonline.us","aliases":["login.microsoftonline.us","login.usgovcloudapi.net"]},{"preferred_network":"login-us.microsoftonline.com","preferred_cache":"login-us.microsoftonline.com","aliases":["login-us.microsoftonline.com"]}]}'
+    headers:
+      access-control-allow-methods:
+      - GET, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      cache-control:
+      - max-age=86400, private
+      content-length:
+      - '945'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 09 Dec 2020 01:40:43 GMT
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      set-cookie:
+      - fpc=AqzKqpSGzJ5Bm-okCeNoudo; expires=Fri, 08-Jan-2021 01:40:43 GMT; path=/;
+        secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.11303.13 - SCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=2fe370d0-ca5e-41d3-b3eb-0ecb1312e5be&grant_type=client_credentials&client_info=1&client_secret=c6842083-3a53-4b0f-b341-abed5729fd5c&scope=https%3A%2F%2Fattest.azure.net%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '189'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIKZzF_lJliVO_xLoEumtXjFA20WrLnNgvcSTunE5vfPqfhnbC-XrgwFSucxzhh8yYHLpZfwBMx9GQ9wTY_dTeZOhkzNx4henxf1QrEECJ7ygauVRMgfhLK4cVgfI8Sixs8GZ7BliDqzfXK6SCOwPECnuBXBD-3YykC5QlZlvc1L0gAA;
+        fpc=AqzKqpSGzJ5Bm-okCeNoudo; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      User-Agent:
+      - azsdk-python-identity/1.5.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 1|730,0|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.7.0
+    method: POST
+    uri: xxxtenant/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":86399,"ext_expires_in":86399,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCIsImtpZCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCJ9.eyJhdWQiOiJodHRwczovL2F0dGVzdC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjA3NDc3NzQzLCJuYmYiOjE2MDc0Nzc3NDMsImV4cCI6MTYwNzU2NDQ0MywiYWlvIjoiRTJSZ1lKajJ2K3h0YWVuZHVzdWJQVll4ZmJteEJRQT0iLCJhcHBpZCI6IjJmZTM3MGQwLWNhNWUtNDFkMy1iM2ViLTBlY2IxMzEyZTViZSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiJjYWMzNDllMC1mODM0LTRmZTktYWQxYi03Mzg1ZmQyMjQyODQiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUjlCdzR5OWV5dE5Ccy1zT3l4TVM1YjRhQUFBLiIsInN1YiI6ImNhYzM0OWUwLWY4MzQtNGZlOS1hZDFiLTczODVmZDIyNDI4NCIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6ImtIOEttQ3B5VWttbkpfV2lKVmtnQUEiLCJ2ZXIiOiIxLjAifQ.FB3tA7ZErcmpI5-Rs7urzbZrH7PJnoo34huHHL__XowMr61bgUjnPmJ4aQvigBCY7_6jdt4uILOTnifoL8_7bLuKf8eVSHpbBW1ea_xvi-ElMA9zKpWSSSpivHk7C10sZC-hLmmQYkUjiHIIV2tOdUHYJxG7u6WyE3HVZRX_F6Ag-7w02nwW2XrbpFSeBlvmm-6g9rqu-QBCPYEplV0H1JzpD5-5TajQ9JwDF3RF2A7DbaxjYvTZ4UYHtFOPocs8XP-GTU9VQ47-jWEwEkqBV8UYajA5ohNd_RtUkYtjPJ6OFIzD2p24jtNooq-KMkcWtTDVQAGLSJ4yI13LF-kzOA"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '1317'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 09 Dec 2020 01:40:43 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=AqzKqpSGzJ5Bm-okCeNoudrujS-SAQAAABsiYtcOAAAA; expires=Fri, 08-Jan-2021
+        01:40:43 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-clitelem:
+      - 1,0,0,,
+      x-ms-ests-server:
+      - 2.1.11303.13 - SCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-security-attestation/0.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://pylarryoattestationaad.wus.attest.azure.net/certificates?api-version=2020-10-01
+    uri: https://pylarryoattestationaad.xxx.attest.azure.net/certificates?api-version=2020-10-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NDc3NDM0LCAiaWF0IjogMTYwNzQ3MzgzNCwgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzQ3MzgzNCwgIngtbXMtcG9saWN5LWNlcnRpZmljYXRlcyI6IHsia2V5cyI6IFtdfX0.hbW538w6xKROBYrfqJCtykqh-SdvS8yzBUF-2B6sUUyVQ0E5k_NfUaSEqZzqfqF9LgtENFftaGMjBfMlZ9OzUmsvhskMOcY-x7KgMF4EHEGj3AhtjvqjPwnG_4wi7jhWB0tlIlpaYouz4nYR7nxp0lvNMbY1Cn9qEp0TIms46q0"}'
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NDgxNjQ1LCAiaWF0IjogMTYwNzQ3ODA0NSwgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzQ3ODA0NSwgIngtbXMtcG9saWN5LWNlcnRpZmljYXRlcyI6IHsia2V5cyI6IFtdfX0.gU1eJx3tYMw5YBy5frPMuniiVE8YK7vudZhsYLqPKPXFcuS79PoJxrdaFBaTpiUA-EoVrgSLiSMb6K-lLTNRFdKNHD30nPV_8d8id-WxNT5LRnJvyh31WAiRM-eCSrshZvRqWLimTQoIKcOWRRTR2nselfEm64-SS9tHqi4-c94"}'
     headers:
       content-length:
       - '604'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Dec 2020 00:30:33 GMT
+      - Wed, 09 Dec 2020 01:40:44 GMT
       server:
       - Kestrel
       x-ms-maa-service-version:

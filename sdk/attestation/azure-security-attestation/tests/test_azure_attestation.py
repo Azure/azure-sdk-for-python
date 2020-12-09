@@ -70,21 +70,23 @@ class AzureAttestationTest(AzureTestCase):
         assert open_id_metadata["jwks_uri"] == self.shared_base_uri()+"/certs"
         assert open_id_metadata["issuer"] == self.shared_base_uri()
 
-    def test_aad_getopenidmetadata(self):
-        attest_client = self.aad_client()
+    @AttestationPreparer()
+    def test_aad_getopenidmetadata(self, attestation_aad_url):
+        attest_client = self.create_client(attestation_aad_url)
         open_id_metadata = attest_client.metadata_configuration.get()
         print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        assert open_id_metadata["jwks_uri"] == self.aad_base_uri()+"/certs"
-        assert open_id_metadata["issuer"] == self.aad_base_uri()
+        assert open_id_metadata["jwks_uri"] == attestation_aad_url+"/certs"
+        assert open_id_metadata["issuer"] == attestation_aad_url
 
-    def test_isolated_getopenidmetadata(self):
-        attest_client = self.isolated_client()
+    @AttestationPreparer()
+    def test_isolated_getopenidmetadata(self, attestation_isolated_url):
+        attest_client = self.create_client(attestation_isolated_url)
         open_id_metadata = attest_client.metadata_configuration.get()
         print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        assert open_id_metadata["jwks_uri"] == self.IsolatedBaseUri()+"/certs"
-        assert open_id_metadata["issuer"] == self.IsolatedBaseUri()
+        assert open_id_metadata["jwks_uri"] == attestation_isolated_url+"/certs"
+        assert open_id_metadata["issuer"] == attestation_isolated_url
 
     def test_shared_getsigningcertificates(self):
         attest_client = self.shared_client()
@@ -120,8 +122,9 @@ class AzureAttestationTest(AzureTestCase):
                 cert = cryptography.x509.load_der_x509_certificate(der_cert)
                 print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 
-    def test_isolated_getsigningcertificates(self):
-        attest_client = self.isolated_client()
+    @AttestationPreparer()
+    def test_isolated_getsigningcertificates(self, attestation_isolated_url):
+        attest_client = self.create_client(attestation_isolated_url)
         signing_certificates = attest_client.signing_certificates.get()
         print ('{}'.format(signing_certificates))
         assert signing_certificates.keys is not None
@@ -155,8 +158,9 @@ class AzureAttestationTest(AzureTestCase):
         policy = Base64Url.decode(encoded=base64urlpolicy)
         print("Default Policy: ", policy)
 
-    def test_isolated_get_policy_sgx(self):
-        attest_client = self.isolated_client()
+    @AttestationPreparer()
+    def test_isolated_get_policy_sgx(self, attestation_isolated_url):
+        attest_client = self.create_client(attestation_isolated_url)
         default_policy_response = attest_client.policy.get("SgxEnclave")
         default_policy = default_policy_response.token
         policy_token = jwt.decode(default_policy, options={"verify_signature":False}, algorithms=["none", "RS256"])
@@ -173,12 +177,13 @@ class AzureAttestationTest(AzureTestCase):
         policy = Base64Url.decode(encoded=base64urlpolicy)
         print("Default Policy: ", policy)
 
-    def test_aad_get_policy_sgx(self):
-        attest_client = self.aad_client()
+    @AttestationPreparer()
+    def test_aad_get_policy_sgx(self, attestation_aad_url):
+        attest_client = self.create_client(attestation_aad_url)
         default_policy_response = attest_client.policy.get("SgxEnclave")
         default_policy = default_policy_response.token
         policy_token = jwt.decode(default_policy, options={"verify_signature":False}, algorithms=["none", "RS256"])
-        
+
         verifyToken=True
         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
         if (unverified_header.get('alg')=='none'):
@@ -191,11 +196,12 @@ class AzureAttestationTest(AzureTestCase):
         policy = Base64Url.decode(encoded=base64urlpolicy)
         print("Default Policy: ", policy)
 
-    def test_aad_get_policy_management_signers(self):
-        attest_client = self.aad_client()
+    @AttestationPreparer()
+    def test_aad_get_policy_management_signers(self, attestation_aad_url):
+        attest_client = self.create_client(attestation_aad_url)
         policy_signers = attest_client.policy_certificates.get()
         default_signers = policy_signers.token
-        policy_token = jwt.decode(default_signers, options={"verify_signature":False}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(default_signers, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
         print("{}".format(policy_token))
         policy_certificates = policy_token["x-ms-policy-certificates"]
         assert len(policy_certificates["keys"])==0
@@ -204,16 +210,17 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.shared_client()
         policy_signers = attest_client.policy_certificates.get()
         default_signers = policy_signers.token
-        policy_token = jwt.decode(default_signers, options={"verify_signature":False}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(default_signers, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
         print("{}".format(policy_token))
         policy_certificates = policy_token["x-ms-policy-certificates"]
         assert len(policy_certificates["keys"])==0
 
-    def test_isolated_get_policy_management_signers(self):
-        attest_client = self.isolated_client()
+    @AttestationPreparer()
+    def test_isolated_get_policy_management_signers(self, attestation_isolated_url):
+        attest_client = self.create_client(attestation_isolated_url)
         policy_signers = attest_client.policy_certificates.get()
         default_signers = policy_signers.token
-        policy_token = jwt.decode(default_signers, options={"verify_signature":False}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(default_signers, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
         print("{}".format(policy_token))
         policy_certificates = policy_token["x-ms-policy-certificates"]
         assert len(policy_certificates["keys"])==1
@@ -243,41 +250,11 @@ class AzureAttestationTest(AzureTestCase):
             """
             return self.create_client(self.shared_base_uri())
 
-#    @AttestationPreparer()
-    def aad_client(self):
-            """
-            docstring
-            """
-            credential = self.get_credential(AttestationClient)
-            baseUri = self.original_env["ATTESTATION_AAD_URL"]
-#            baseUri = ATTESTATION_AAD_ATTESTATION_URL
-            attest_client = self.create_client_from_credential(AttestationClient,
-                credential=credential,
-                instance_url=baseUri)
-            return attest_client
-
-    def isolated_client(self):
-            """
-            docstring
-            """
-            credential = self.get_credential(AttestationClient)
-            baseUri = self.original_env["ATTESTATION_ISOLATED_URL"]
-            attest_client = self.create_client_from_credential(AttestationClient,
-                credential=credential,
-                instance_url=baseUri)
-            return attest_client
-
-
     @staticmethod
     def shared_base_uri():
         return "https://shareduks.uks.test.attest.azure.net"
 
-    def IsolatedBaseUri(self):
-        return self.original_env["ATTESTATION_ISOLATED_URL"]
-
-    def aad_base_uri(self):
-        return self.original_env["ATTESTATION_AAD_URL"]
-    
+   
 class Base64Url:
         @staticmethod
         def encode(unencoded):
