@@ -29,7 +29,7 @@ from azure.security.attestation.v2020_10_01.models import AttestationType
 import azure.security.attestation.v2020_10_01.models
 
 AttestationPreparer = functools.partial(
-            PowerShellPreparer, "attestation",
+            PowerShellPreparer, "ATTESTATION",
             ATTESTATION_AZURE_AUTHORITY_HOST='xxx',
             ATTESTATION_RESOURCE_GROUP='yyyy',
             ATTESTATION_SUBSCRIPTION_ID='xxx',
@@ -102,8 +102,10 @@ class AzureAttestationTest(AzureTestCase):
                 cert = cryptography.x509.load_der_x509_certificate(der_cert)
                 print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 
-    def test_aad_getsigningcertificates(self):
-        attest_client = self.aad_client()
+    @AttestationPreparer()
+    def test_aad_getsigningcertificates(self, attestation_aad_url):
+#        attest_client = self.aad_client()
+        attest_client = self.create_client(attestation_aad_url)
         signing_certificates = attest_client.signing_certificates.get()
         print ('{}'.format(signing_certificates))
         assert signing_certificates.keys is not None
@@ -225,16 +227,21 @@ class AzureAttestationTest(AzureTestCase):
             
 
 
-
-    def shared_client(self):
+    def create_client(self, base_uri):
             """
             docstring
             """
             credential = self.get_credential(AttestationClient)
             attest_client = self.create_client_from_credential(AttestationClient,
                 credential=credential,
-                instance_url=self.shared_base_uri())
+                instance_url=base_uri)
             return attest_client
+
+    def shared_client(self):
+            """
+            docstring
+            """
+            return self.create_client(self.shared_base_uri())
 
 #    @AttestationPreparer()
     def aad_client(self):
