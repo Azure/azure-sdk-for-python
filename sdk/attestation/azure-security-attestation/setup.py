@@ -16,7 +16,7 @@ PACKAGE_NAME = "azure-security-attestation"
 PACKAGE_PPRINT_NAME = "Attestation"
 
 # a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace('-', '/')+'/v2020_10_01'
+package_folder_path = PACKAGE_NAME.replace('-', '/')
 # a-b-c => a.b.c
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
