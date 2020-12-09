@@ -4,7 +4,7 @@
 
 **BugFixes**
 
-* `forward_to` and `forward_dead_lettered_messages_to` will no longer cause authorization errors when uses in `ServiceBusAdministrationClient` for subscriptions.
+* `forward_to` and `forward_dead_lettered_messages_to` will no longer cause authorization errors when used in `ServiceBusAdministrationClient` for queues and subscriptions.
 
 ## 7.0.0 (2020-11-23)
 
