@@ -18,6 +18,19 @@ from helpers_async import async_validating_transport, AsyncMockTransport
 from test_certificate_credential import BOTH_CERTS, CERT_PATH, validate_jwt
 
 
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        CertificateCredential(tenant, "client-id", CERT_PATH)
+
+    invalid_ids = {"", "my tenant", "my_tenant", "/", "\\", '"', "'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            CertificateCredential(tenant, "client-id", CERT_PATH)
+
+
 @pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
@@ -83,7 +96,7 @@ async def test_user_agent():
 async def test_request_url(cert_path, cert_password, authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     access_token = "***"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"

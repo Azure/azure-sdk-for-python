@@ -27,7 +27,7 @@ class ServiceBusSession(BaseSession):
     """
     The ServiceBusSession is used for manage session states and lock renewal.
 
-    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
+    **Please use the property `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
 
     .. admonition:: Example:
@@ -40,13 +40,13 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    async def get_state(self, **kwargs: Any) -> str:
+    async def get_state(self, **kwargs: Any) -> bytes:
         """Get the session state.
 
         Returns None if no state has been set.
 
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: str
 
         .. admonition:: Example:
@@ -58,7 +58,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Get the session state
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -69,8 +69,6 @@ class ServiceBusSession(BaseSession):
             timeout=timeout
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
-        if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode('UTF-8')
         return session_state
 
     async def set_state(self, state: Union[str, bytes, bytearray], **kwargs: Any) -> None:
@@ -78,8 +76,8 @@ class ServiceBusSession(BaseSession):
 
         :param state: The state value.
         :type state: Union[str, bytes, bytearray]
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
 
         .. admonition:: Example:
@@ -91,7 +89,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Set the session state
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -112,10 +110,10 @@ class ServiceBusSession(BaseSession):
         Once the lock is lost the connection will be closed; an expired lock cannot be renewed.
 
         This operation can also be performed as a threaded background task by registering the session
-        with an `azure.servicebus.aio.AutoLockRenew` instance.
+        with an `azure.servicebus.aio.AutoLockRenewer` instance.
 
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime
 
@@ -128,17 +126,17 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
-            mgmt_handlers.default,
+            mgmt_handlers.session_lock_renew_op,
             timeout=timeout
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
-        self._locked_until_utc = utc_from_timestamp(expiry_timestamp) # type: datetime.datetime
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
 
         return self._locked_until_utc

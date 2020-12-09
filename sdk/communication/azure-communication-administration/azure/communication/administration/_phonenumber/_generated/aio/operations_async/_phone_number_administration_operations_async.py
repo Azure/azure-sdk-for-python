@@ -1051,7 +1051,7 @@ class PhoneNumberAdministrationOperations:
         self,
         search_id: str,
         **kwargs
-    ) -> "models.PhoneNumberSearch":
+    ) -> "models.PhoneNumberReservation":
         """Get search by search id.
 
         Get search by search id.
@@ -1059,11 +1059,11 @@ class PhoneNumberAdministrationOperations:
         :param search_id: The search id to be searched for.
         :type search_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PhoneNumberSearch, or the result of cls(response)
-        :rtype: ~azure.communication.administration.models.PhoneNumberSearch
+        :return: PhoneNumberReservation, or the result of cls(response)
+        :rtype: ~azure.communication.administration.models.PhoneNumberReservation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PhoneNumberSearch"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PhoneNumberReservation"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview1"
@@ -1093,7 +1093,7 @@ class PhoneNumberAdministrationOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('PhoneNumberSearch', pipeline_response)
+        deserialized = self._deserialize('PhoneNumberReservation', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

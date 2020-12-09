@@ -42,6 +42,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
      missing in profile.
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = 'v3.0'
@@ -65,6 +66,8 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
             base_url = '{Endpoint}/text/analytics/v3.0'
         elif api_version == 'v3.1-preview.2':
             base_url = '{Endpoint}/text/analytics/v3.1-preview.2'
+        elif api_version == 'v3.1-preview.3':
+            base_url = '{Endpoint}/text/analytics/v3.1-preview.3'
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
@@ -84,12 +87,16 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
 
            * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
            * v3.1-preview.2: :mod:`v3_1_preview_2.models<azure.ai.textanalytics.v3_1_preview_2.models>`
+           * v3.1-preview.3: :mod:`v3_1_preview_3.models<azure.ai.textanalytics.v3_1_preview_3.models>`
         """
         if api_version == 'v3.0':
             from .v3_0 import models
             return models
         elif api_version == 'v3.1-preview.2':
             from .v3_1_preview_2 import models
+            return models
+        elif api_version == 'v3.1-preview.3':
+            from .v3_1_preview_3 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 

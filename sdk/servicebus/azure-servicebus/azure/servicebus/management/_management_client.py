@@ -34,7 +34,7 @@ from ._generated._service_bus_management_client import ServiceBusManagementClien
 from ._model_workaround import avoid_timedelta_overflow
 from . import _constants as constants
 from ._models import QueueRuntimeProperties, QueueProperties, TopicProperties, TopicRuntimeProperties, \
-    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties
+    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties, TrueRuleFilter
 from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
@@ -805,19 +805,18 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          will own the to-be-created rule.
         :param rule_name: Name of the rule.
         :type rule_name: str
-        :keyword filter: The filter of the rule.
+        :keyword filter: The filter of the rule. The default value is ~azure.servicebus.management.TrueRuleFilter
         :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
         :type action: Optional[~azure.servicebus.management.SqlRuleAction]
-
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         rule = RuleProperties(
             rule_name,
-            filter=kwargs.pop("filter", None),
+            filter=kwargs.pop("filter", TrueRuleFilter()),
             action=kwargs.pop("action", None),
             created_at_utc=None
         )
@@ -851,8 +850,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: The subscription that
          owns this rule.
-        :param ~azure.servicebus.management.RuleProperties rule: The rule that is returned from `get_rule`,
-        `create_rule`, or `list_rules` and has the updated properties.
+        :param rule: The rule that is returned from `get_rule`,
+         `create_rule`, or `list_rules` and has the updated properties.
+        :type rule: ~azure.servicebus.management.RuleProperties
+
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)

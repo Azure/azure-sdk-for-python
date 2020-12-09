@@ -1,10 +1,26 @@
 # Release History
 
-## 12.6.0b2 (Unreleased)
+## 12.7.0b1 (2020-12-07)
+**New features**
+- Added `upload_blob_from_url` api on `BlobClient`
+- Added support for leasing blob when get/set tags, listing all tags when find blobs by tags.
 
+
+## 12.6.0 (2020-11-10)
+**Stable release of preview features**
+- Preview feature `ArrowDialect` as output format of `query_blob`
+- Preview feature `undelete_container` on BlobServiceClient.
+- Preview feature Last Access Time.
+
+**Fixes**
+- Fixed the expired Authorization token problem during retry (#14701, #14067)
+- Catch exceptions thrown by async download (#14319)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 ## 12.6.0b1 (2020-10-02)
-**New features***
+**New features**
 - Added support for Arrow format (`ArrowType`) output serialization using `quick_query()`.
 - Added support for undeleting a container.
 - Added support for `LastAccessTime` property on a blob, which could be the last time a blob was written or read.
@@ -249,7 +265,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `LeaseClient`: Handles all lease operations for both containers and blobs.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, container or blob).
-    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-blob).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/storage.html#azure-storage-blob).
 - Copy blob operations now return a polling object that can be used to check the status of the operation, as well as abort the operation.
 - New module level operations for simple upload and download using a blob URL.
 - Download operations now return a streaming object that can download data in multiple ways:

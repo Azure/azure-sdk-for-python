@@ -40,10 +40,11 @@ if TYPE_CHECKING:
 
 
 class FormTrainingClient(FormRecognizerClientBaseAsync):
-    """FormTrainingClient is the Form Recognizer interface to use for creating,
+    """FormTrainingClient is the Form Recognizer interface to use for creating
     and managing custom models. It provides methods for training models on the forms
     you provide, as well as methods for viewing and deleting models, accessing
-    account properties, and copying a model to another Form Recognizer resource.
+    account properties, copying models to another Form Recognizer resource, and
+    composing models from a collection of existing models trained with labels.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -85,7 +86,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
+        'image/jpeg', 'image/png', 'image/tiff'. Other types of content in the container is ignored.
 
         :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public. For more information on setting up a training data set, see:
@@ -108,6 +109,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         :raises ~azure.core.exceptions.HttpResponseError:
             Note that if the training fails, the exception is raised, but a model with an
             "invalid" status is still created. You can delete this model by calling :func:`~delete_model()`
+
         .. versionadded:: v2.1-preview
             The *model_name* keyword argument
 
@@ -235,7 +237,8 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 :caption: List model information for each model on the account.
         """
         return self._client.list_custom_models(  # type: ignore
-            cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
+            cls=kwargs.pop("cls", lambda objs:
+            [CustomFormModelInfo._from_generated(x, api_version=self.api_version) for x in objs]),
             **kwargs
         )
 
@@ -286,6 +289,8 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         response = await self._client.get_custom_model(
             model_id=model_id, include_keys=True, **kwargs
         )
+        if hasattr(response, "composed_train_results") and response.composed_train_results:
+            return CustomFormModel._from_generated_composed(response)
         return CustomFormModel._from_generated(response, api_version=self.api_version)
 
     @distributed_trace_async
@@ -365,12 +370,20 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
+
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            copy_result = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
-            return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
+            copy_operation = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
+            model_id = copy_operation.copy_result.model_id if hasattr(copy_operation, "copy_result") else None
+            if model_id:
+                return CustomFormModelInfo._from_generated(copy_operation, model_id, api_version=self.api_version)
+            if target:
+                return CustomFormModelInfo._from_generated(
+                    copy_operation, target["model_id"], api_version=self.api_version
+                )
+            return CustomFormModelInfo._from_generated(copy_operation, None, api_version=self.api_version)
 
         return await self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
@@ -382,7 +395,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     model_id=target["modelId"],
                     expiration_date_time_ticks=target["expirationDateTimeTicks"]
                 )
-            ),
+            ) if target else None,
             cls=kwargs.pop("cls", _copy_callback),
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
@@ -399,7 +412,11 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         model_ids: List[str],
         **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModel]:
-        """Creates a composed model from a collection of existing trained models with labels.
+        """Creates a composed model from a collection of existing models that were trained with labels.
+
+        A composed model allows multiple models to be called with a single model ID. When a document is
+        submitted to be analyzed with a composed model ID, a classification step is first performed to
+        route it to the correct custom model
 
         :param list[str] model_ids: List of model IDs to use in the composed model.
         :keyword str model_name: An optional, user-defined name to associate with your model.
@@ -410,6 +427,9 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.CustomFormModel]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_create_composed_model* client method
 
         .. admonition:: Example:
 

@@ -7,7 +7,11 @@ import datetime
 
 from azure.mgmt.communication import CommunicationServiceManagementClient
 from azure.mgmt.communication.models import CommunicationServiceResource
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
+from devtools_testutils import(
+    AzureMgmtPreparer,
+    ResourceGroupPreparer,
+    FakeResource
+)
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
@@ -20,6 +24,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             name_prefix="communication",
             resource_group_parameter_name=RESOURCE_GROUP_PARAM,
             disable_recording=True,
+            use_cache=False,
             playback_fake_resource=None,
             client_kwargs=None,
     ):
@@ -31,8 +36,11 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             client_kwargs=client_kwargs,
         )
         self.resource_group_parameter_name = resource_group_parameter_name
+        self.random_name_enabled = True
         self.service_name = "TEST-SERVICE-NAME"
         self.mgmt_client = None
+        self.set_cache(use_cache)
+        self.scrubbed_resource_name = "communicationegrcrs"
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -45,26 +53,27 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
     def create_resource(self, name, **kwargs):
-        self.service_name = self.create_random_name()
-
         if not self.is_live:
+            self.resource = FakeResource(name=self.scrubbed_resource_name, id=name)
+
             return {
-                "connection_string": "endpoint=https://fake-resource.communication.azure.com/;accesskey=fake===",
+                "connection_string": "endpoint=https://{}.communication.azure.com/;accesskey=fake===".format(self.resource.name),
             }
 
+        self.test_class_instance.scrubber.register_name_pair(name, self.scrubbed_resource_name)
         group_name = self._get_resource_group(**kwargs).name
 
-        self.mgmt_client = self.create_mgmt_client(CommunicationServiceManagementClient)
+        self.client = self.create_mgmt_client(CommunicationServiceManagementClient, polling_interval=30)
 
-        resource = self.mgmt_client.communication_service.begin_create_or_update(
+        self.resource = self.client.communication_service.begin_create_or_update(
             group_name,
-            self.service_name,
+            name,
             CommunicationServiceResource(location="global", data_location="UnitedStates")
         ).result()
 
-        primary_connection_string = self.mgmt_client.communication_service.list_keys(
+        primary_connection_string = self.client.communication_service.list_keys(
             group_name,
-            resource.name).primary_connection_string
+            self.resource.name).primary_connection_string
 
         return {
             "connection_string": primary_connection_string,
@@ -75,4 +84,4 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             return
 
         group_name = self._get_resource_group(**kwargs).name
-        self.mgmt_client.communication_service.begin_delete(group_name, self.service_name).wait()
+        self.client.communication_service.begin_delete(group_name, self.service_name).wait()

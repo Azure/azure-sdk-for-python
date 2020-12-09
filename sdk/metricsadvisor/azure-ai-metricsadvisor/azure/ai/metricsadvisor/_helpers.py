@@ -18,7 +18,7 @@ from .models import (
     DataFeedGranularityType,
     DataFeedGranularity,
     DataFeedSchema,
-    Metric,
+    DataFeedMetric,
     DataFeedIngestionSettings,
     AnomalyFeedback,
     ChangePointFeedback,
@@ -137,7 +137,7 @@ def convert_to_generated_data_feed_type(
 
     if isinstance(schema, list):
         schema = DataFeedSchema(
-            metrics=[Metric(name=metric_name) for metric_name in schema]
+            metrics=[DataFeedMetric(name=metric_name) for metric_name in schema]
         )
 
     if isinstance(ingestion_settings, (datetime.datetime, six.string_types)):
@@ -170,9 +170,9 @@ def convert_to_generated_data_feed_type(
         if options and options.missing_data_point_fill_settings else None,
         fill_missing_point_value=options.missing_data_point_fill_settings.custom_fill_value
         if options and options.missing_data_point_fill_settings else None,
-        viewers=options.viewers if options else None,
+        viewers=options.viewer_emails if options else None,
         view_mode=options.access_mode if options else None,
-        admins=options.admins if options else None,
+        admins=options.admin_emails if options else None,
         action_link_template=options.action_link_template if options else None
     )
 

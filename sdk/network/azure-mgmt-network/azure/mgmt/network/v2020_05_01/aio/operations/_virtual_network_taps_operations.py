@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VirtualNetworkTapsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -131,7 +131,13 @@ class VirtualNetworkTapsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'tapName': self._serialize.url("tap_name", tap_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -150,7 +156,7 @@ class VirtualNetworkTapsOperations:
         resource_group_name: str,
         tap_name: str,
         **kwargs
-    ) -> "models.VirtualNetworkTap":
+    ) -> "_models.VirtualNetworkTap":
         """Gets information about the specified virtual network tap.
 
         :param resource_group_name: The name of the resource group.
@@ -162,7 +168,7 @@ class VirtualNetworkTapsOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.VirtualNetworkTap
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkTap"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkTap"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -207,10 +213,10 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        parameters: "models.VirtualNetworkTap",
+        parameters: "_models.VirtualNetworkTap",
         **kwargs
-    ) -> "models.VirtualNetworkTap":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkTap"]
+    ) -> "_models.VirtualNetworkTap":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkTap"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -264,9 +270,9 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        parameters: "models.VirtualNetworkTap",
+        parameters: "_models.VirtualNetworkTap",
         **kwargs
-    ) -> AsyncLROPoller["models.VirtualNetworkTap"]:
+    ) -> AsyncLROPoller["_models.VirtualNetworkTap"]:
         """Creates or updates a Virtual Network Tap.
 
         :param resource_group_name: The name of the resource group.
@@ -286,7 +292,7 @@ class VirtualNetworkTapsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkTap"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkTap"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -311,7 +317,13 @@ class VirtualNetworkTapsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'tapName': self._serialize.url("tap_name", tap_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -329,9 +341,9 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        tap_parameters: "models.TagsObject",
+        tap_parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.VirtualNetworkTap":
+    ) -> "_models.VirtualNetworkTap":
         """Updates an VirtualNetworkTap tags.
 
         :param resource_group_name: The name of the resource group.
@@ -345,7 +357,7 @@ class VirtualNetworkTapsOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.VirtualNetworkTap
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkTap"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkTap"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -394,7 +406,7 @@ class VirtualNetworkTapsOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.VirtualNetworkTapListResult"]:
+    ) -> AsyncIterable["_models.VirtualNetworkTapListResult"]:
         """Gets all the VirtualNetworkTaps in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -402,7 +414,7 @@ class VirtualNetworkTapsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.VirtualNetworkTapListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkTapListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkTapListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -461,7 +473,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.VirtualNetworkTapListResult"]:
+    ) -> AsyncIterable["_models.VirtualNetworkTapListResult"]:
         """Gets all the VirtualNetworkTaps in a subscription.
 
         :param resource_group_name: The name of the resource group.
@@ -471,7 +483,7 @@ class VirtualNetworkTapsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.VirtualNetworkTapListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkTapListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkTapListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -120,7 +120,7 @@ class SearchPageIterator(PageIterator):
 
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
-        return self._client.documents.search_post(search_request=next_page_request)
+        return self._client.documents.search_post(search_request=next_page_request, **self._kwargs)
 
     def _extract_data_cb(self, response):  # pylint:disable=no-self-use
         continuation_token = pack_continuation_token(response)

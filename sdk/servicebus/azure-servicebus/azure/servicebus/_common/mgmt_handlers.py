@@ -4,47 +4,58 @@
 # license information.
 # -------------------------------------------------------------------------
 
+import logging
 import uamqp
+from .message import ServiceBusReceivedMessage
+from ..exceptions import _handle_amqp_mgmt_error
+from .constants import (
+    ServiceBusReceiveMode,
+    MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
+)
 
-from .message import PeekedMessage, ReceivedMessage
-from ..exceptions import ServiceBusError, MessageLockExpired
-from .constants import ReceiveMode
+_LOGGER = logging.getLogger(__name__)
 
 
-def default(status_code, message, description):
+def default(status_code, message, description):  # pylint: disable=inconsistent-return-statements
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()
-    raise ServiceBusError(
-        "Management request returned status code: {}. Description: {}, Data: {}".format(
-            status_code, description, message.get_data()))
+
+    _handle_amqp_mgmt_error(_LOGGER, "Service request failed.", condition, description, status_code)
 
 
-def lock_renew_op(status_code, message, description):
+def session_lock_renew_op(status_code, message, description):  # pylint: disable=inconsistent-return-statements
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()
-    if status_code == 410:
-        raise MessageLockExpired(message=description)
-    raise ServiceBusError(
-        "Management request returned status code: {}. Description: {}, Data: {}".format(
-            status_code, description, message.get_data()))
+
+    _handle_amqp_mgmt_error(_LOGGER, "Session lock renew failed.", condition, description, status_code)
 
 
-def peek_op(status_code, message, description):
+def message_lock_renew_op(status_code, message, description):  # pylint: disable=inconsistent-return-statements
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
+    if status_code == 200:
+        return message.get_data()
+
+    _handle_amqp_mgmt_error(_LOGGER, "Message lock renew failed.", condition, description, status_code)
+
+
+def peek_op(status_code, message, description, receiver):  # pylint: disable=inconsistent-return-statements
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         parsed = []
         for m in message.get_data()[b'messages']:
             wrapped = uamqp.Message.decode_from_bytes(bytearray(m[b'message']))
-            parsed.append(PeekedMessage(wrapped))
+            parsed.append(ServiceBusReceivedMessage(wrapped, is_peeked_message=True, receiver=receiver))
         return parsed
     if status_code in [202, 204]:
         return []
-    error = "Message peek failed with status code: {}.\n".format(status_code)
-    if description:
-        error += "{}.".format(description)
-    raise ServiceBusError(error)
+
+    _handle_amqp_mgmt_error(_LOGGER, "Message peek failed.", condition, description, status_code)
 
 
-def list_sessions_op(status_code, message, description):
+def list_sessions_op(status_code, message, description):  # pylint: disable=inconsistent-return-statements
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         parsed = []
         for m in message.get_data()[b'sessions-ids']:
@@ -52,20 +63,19 @@ def list_sessions_op(status_code, message, description):
         return parsed
     if status_code in [202, 204]:
         return []
-    error = "List sessions failed with status code: {}.\n".format(status_code)
-    if description:
-        error += "{}.".format(description)
-    raise ServiceBusError(error)
+
+    _handle_amqp_mgmt_error(_LOGGER, "List sessions failed.", condition, description, status_code)
 
 
-def deferred_message_op(
+def deferred_message_op(  # pylint: disable=inconsistent-return-statements
         status_code,
         message,
         description,
         receiver,
-        receive_mode=ReceiveMode.PeekLock,
-        message_type=ReceivedMessage
+        receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+        message_type=ServiceBusReceivedMessage
 ):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         parsed = []
         for m in message.get_data()[b'messages']:
@@ -74,16 +84,13 @@ def deferred_message_op(
         return parsed
     if status_code in [202, 204]:
         return []
-    error = "Retrieving deferred messages failed with status code: {}.\n".format(status_code)
-    if description:
-        error += "{}.".format(description)
-    raise ServiceBusError(error)
+
+    _handle_amqp_mgmt_error(_LOGGER, "Retrieving deferred messages failed.", condition, description, status_code)
 
 
-def schedule_op(status_code, message, description):
+def schedule_op(status_code, message, description):  # pylint: disable=inconsistent-return-statements
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()[b'sequence-numbers']
-    error = "Scheduling messages failed with status code: {}.\n".format(status_code)
-    if description:
-        error += "{}.".format(description)
-    raise ServiceBusError(error)
+
+    _handle_amqp_mgmt_error(_LOGGER, "Scheduling messages failed.", condition, description, status_code)

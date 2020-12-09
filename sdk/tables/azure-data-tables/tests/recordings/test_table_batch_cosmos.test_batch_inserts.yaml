@@ -1,0 +1,481 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable70521132"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 17 Nov 2020 01:28:47 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 17 Nov 2020 01:28:47 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable70521132","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      etag:
+      - W/"datetime'2020-11-17T01%3A28%3A48.7360519Z'"
+      location:
+      - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable70521132')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: "--batch_4970fb2f-73d5-4b24-aac8-cd73cdbab221\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\n\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df49774-2874-11eb-9ab7-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"0\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 1\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4bc55-2874-11eb-8d71-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"1\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 2\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4bc56-2874-11eb-aacb-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"2\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 3\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4bc57-2874-11eb-a617-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"3\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 4\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4bc58-2874-11eb-8171-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"4\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 5\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4bc59-2874-11eb-b72f-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"5\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 6\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e350-2874-11eb-a3f0-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"6\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 7\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e351-2874-11eb-8a47-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"7\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 8\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e352-2874-11eb-b68b-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"8\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 9\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e353-2874-11eb-9d6a-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"9\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 10\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e354-2874-11eb-850f-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"10\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 11\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e355-2874-11eb-997a-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"11\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 12\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e356-2874-11eb-ae3b-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"12\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 13\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e357-2874-11eb-8ea8-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"13\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 14\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df4e358-2874-11eb-b8bd-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"14\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 15\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df50a71-2874-11eb-a024-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"15\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 16\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df50a72-2874-11eb-81d2-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"16\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 17\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df50a73-2874-11eb-a1dd-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"17\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 18\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df50a74-2874-11eb-ba27-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"18\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 19\r\n\r\nPOST https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 224\r\nx-ms-date:\
+      \ Tue, 17 Nov 2020 01:28:48 GMT\r\nDate: Tue, 17 Nov 2020 01:28:48 GMT\r\nx-ms-client-request-id:\
+      \ 3df50a75-2874-11eb-8170-58961df361d1\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"19\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_7b206055-7220-4ce8-8309-6607e9cf7cb9--\r\
+      \n\r\n--batch_4970fb2f-73d5-4b24-aac8-cd73cdbab221--\r\n"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '15958'
+      Content-Type:
+      - multipart/mixed; boundary=batch_4970fb2f-73d5-4b24-aac8-cd73cdbab221
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/$batch
+  response:
+    body:
+      string: "--batchresponse_582bea49-f109-4030-9e7e-76c85db30d2a\nContent-Type:\
+        \ multipart/mixed; boundary=changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\r\
+        \n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\nContent-Type:\
+        \ application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1 204 No Content\r\
+        \nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1783175Z'\"\r\nPreference-Applied:\
+        \ return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='0')\r\
+        \nContent-ID: 1\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1788295Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='1')\r\
+        \nContent-ID: 2\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1792391Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='2')\r\
+        \nContent-ID: 3\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1795463Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='3')\r\
+        \nContent-ID: 4\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1799559Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='4')\r\
+        \nContent-ID: 5\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1802631Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='5')\r\
+        \nContent-ID: 6\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1806727Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='6')\r\
+        \nContent-ID: 7\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1809799Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='7')\r\
+        \nContent-ID: 8\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1812871Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='8')\r\
+        \nContent-ID: 9\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1816967Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='9')\r\
+        \nContent-ID: 10\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1821063Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='10')\r\
+        \nContent-ID: 11\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1824135Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='11')\r\
+        \nContent-ID: 12\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1828231Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='12')\r\
+        \nContent-ID: 13\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1831303Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='13')\r\
+        \nContent-ID: 14\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1834375Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='14')\r\
+        \nContent-ID: 15\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1838471Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='15')\r\
+        \nContent-ID: 16\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1841543Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='16')\r\
+        \nContent-ID: 17\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1844615Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='17')\r\
+        \nContent-ID: 18\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1848711Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='18')\r\
+        \nContent-ID: 19\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2020-11-17T01%3A28%3A49.1851783Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='19')\r\
+        \nContent-ID: 20\r\n\r\n\r\n--changesetresponse_625f3c1f-c77c-4496-8723-8fa21ab07260--\n\
+        --batchresponse_582bea49-f109-4030-9e7e-76c85db30d2a--\r\n"
+    headers:
+      content-type:
+      - multipart/mixed; boundary=batchresponse_582bea49-f109-4030-9e7e-76c85db30d2a
+      date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable70521132()?$filter=PartitionKey%20eq%20%27batch_inserts%27
+  response:
+    body:
+      string: '{"value":[{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1783175Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"0","Timestamp":"2020-11-17T01:28:49.1783175Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1788295Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"1","Timestamp":"2020-11-17T01:28:49.1788295Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1792391Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"2","Timestamp":"2020-11-17T01:28:49.1792391Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1795463Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"3","Timestamp":"2020-11-17T01:28:49.1795463Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1799559Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"4","Timestamp":"2020-11-17T01:28:49.1799559Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1802631Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"5","Timestamp":"2020-11-17T01:28:49.1802631Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1806727Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"6","Timestamp":"2020-11-17T01:28:49.1806727Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1809799Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"7","Timestamp":"2020-11-17T01:28:49.1809799Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1812871Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"8","Timestamp":"2020-11-17T01:28:49.1812871Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1816967Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"9","Timestamp":"2020-11-17T01:28:49.1816967Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1821063Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"10","Timestamp":"2020-11-17T01:28:49.1821063Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1824135Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"11","Timestamp":"2020-11-17T01:28:49.1824135Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1828231Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"12","Timestamp":"2020-11-17T01:28:49.1828231Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1831303Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"13","Timestamp":"2020-11-17T01:28:49.1831303Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1834375Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"14","Timestamp":"2020-11-17T01:28:49.1834375Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1838471Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"15","Timestamp":"2020-11-17T01:28:49.1838471Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1841543Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"16","Timestamp":"2020-11-17T01:28:49.1841543Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1844615Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"17","Timestamp":"2020-11-17T01:28:49.1844615Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1848711Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"18","Timestamp":"2020-11-17T01:28:49.1848711Z"},{"odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1851783Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"19","Timestamp":"2020-11-17T01:28:49.1851783Z"}],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#uttable70521132"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable70521132(PartitionKey='batch_inserts',RowKey='1')
+  response:
+    body:
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable70521132/$metadata#uttable70521132/@Element","odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A49.1788295Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"1","Timestamp":"2020-11-17T01:28:49.1788295Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      etag:
+      - W/"datetime'2020-11-17T01%3A28%3A49.1788295Z'"
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 17 Nov 2020 01:28:48 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable70521132')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 17 Nov 2020 01:28:49 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+version: 1

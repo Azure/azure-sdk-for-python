@@ -17,6 +17,8 @@ except ImportError:
 from io import open
 
 from msrestazure.azure_cloud import AZURE_PUBLIC_CLOUD
+# https://github.com/Azure/azure-cli/blob/4e1ff0ec626ea46d74793ad92a1b5eddc2b6e45b/src/azure-cli-core/azure/cli/core/cloud.py#L310
+AZURE_PUBLIC_CLOUD.endpoints.app_insights_resource_id='https://api.applicationinsights.io'
 
 from azure.common.client_factory import *
 
@@ -64,6 +66,16 @@ class TestCommon(unittest.TestCase):
                 self.tenant_id = tenant_id
                 self.base_url = base_url
 
+        class ApplicationInsightsDataClient(object):
+            def __init__(self, credentials, base_url):
+                if credentials is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+                if not base_url:
+                    base_url = 'should not be used'
+
+                self.credentials = credentials
+                self.base_url = base_url
+
         class KeyVaultClient(object):
             def __init__(self, credentials):
                 if credentials is None:
@@ -90,6 +102,11 @@ class TestCommon(unittest.TestCase):
         assert client.credentials == 'credentials'
         assert client.tenant_id == 'tenant_id'
         assert client.base_url == "https://graph.windows.net/"
+
+        client = get_client_from_cli_profile(ApplicationInsightsDataClient)
+        get_azure_cli_credentials.assert_called_with(resource="https://api.applicationinsights.io", with_tenant=True)
+        assert client.credentials == 'credentials'
+        assert client.base_url == "https://api.applicationinsights.io/v1"
 
         client = get_client_from_cli_profile(KeyVaultClient)
         get_azure_cli_credentials.assert_called_with(resource="https://vault.azure.net", with_tenant=True)

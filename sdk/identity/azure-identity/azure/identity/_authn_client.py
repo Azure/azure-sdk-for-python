@@ -22,7 +22,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
-from ._constants import AZURE_CLI_CLIENT_ID, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from ._constants import DEVELOPER_SIGN_ON_CLIENT_ID, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from ._internal import get_default_authority, normalize_authority
 from ._internal.user_agent import USER_AGENT
 
@@ -99,7 +99,7 @@ class AuthnClientBase(ABC):
             "grant_type": "refresh_token",
             "refresh_token": refresh_token["secret"],
             "scope": " ".join(scopes),
-            "client_id": AZURE_CLI_CLIENT_ID,  # TODO: first-party app for SDK?
+            "client_id": DEVELOPER_SIGN_ON_CLIENT_ID,
         }
         return self._prepare_request(form_data=data)
 

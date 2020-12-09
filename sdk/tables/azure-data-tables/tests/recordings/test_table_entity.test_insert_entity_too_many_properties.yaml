@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:06:52 GMT
+      - Tue, 17 Nov 2020 01:08:52 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:06:52 GMT
+      - Tue, 17 Nov 2020 01:08:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 01 Oct 2020 01:06:51 GMT
+      - Tue, 17 Nov 2020 01:08:53 GMT
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('uttable97d21773')
       server:
@@ -233,11 +233,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:06:52 GMT
+      - Tue, 17 Nov 2020 01:08:53 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:06:52 GMT
+      - Tue, 17 Nov 2020 01:08:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -246,14 +246,14 @@ interactions:
     body:
       string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
         entity contains more properties than allowed. Each entity can include up to
-        252 properties to store data. Each entity also has 3 system properties.\nRequestId:f42526c1-6002-0023-0a8f-97b1aa000000\nTime:2020-10-01T01:06:52.4782823Z"}}}'
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:d64ee386-a002-0025-4f7e-bcf0b4000000\nTime:2020-11-17T01:08:54.1819495Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 01 Oct 2020 01:06:51 GMT
+      - Tue, 17 Nov 2020 01:08:54 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -277,11 +277,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Oct 2020 01:06:52 GMT
+      - Tue, 17 Nov 2020 01:08:53 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:06:52 GMT
+      - Tue, 17 Nov 2020 01:08:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -295,7 +295,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 01 Oct 2020 01:06:51 GMT
+      - Tue, 17 Nov 2020 01:08:54 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

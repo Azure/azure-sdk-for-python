@@ -1,0 +1,57 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel77db1685;1?includeModelDefinition=false&api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
+        that matches the provided id(s) dtmi:com:samples:ComponentModel77db1685;1.
+        Check that the Model ID provided is valid by doing a Model_List API call."}}'
+    headers:
+      content-length: '226'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:08 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel77db1685;1?includeModelDefinition=false&api-version=2020-10-31
+- request:
+    body: '[{"@context": "dtmi:dtdl:context;2", "displayName": "TempModel", "contents":
+      [{"@type": "Property", "name": "Prop1", "schema": "string"}, {"@type": "Component",
+      "name": "Component1", "schema": "dtmi:com:samples:ComponentModel77db1685;1"},
+      {"@type": "Telemetry", "name": "Telemetry1", "schema": "integer"}]}]'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '307'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"DTDLParserError","message":"None of the models in
+        this request could be created due to a problem with one or more models: Top-level
+        element requires an identifer but none provided. Add an ''@id'' property whose
+        value is a string that conforms to the DTMI syntax -- see https://github.com/Azure/digital-twin-model-identifier..
+        See model documentation(http://aka.ms/ADTv2Models) for supported format."}}'
+    headers:
+      content-length: '417'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:08 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 400
+      message: Bad Request
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+version: 1

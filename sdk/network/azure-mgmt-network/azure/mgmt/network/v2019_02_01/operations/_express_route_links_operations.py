@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ExpressRouteLinksOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class ExpressRouteLinksOperations(object):
         link_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteLink"
+        # type: (...) -> "_models.ExpressRouteLink"
         """Retrieves the specified ExpressRouteLink resource.
 
         :param resource_group_name: The name of the resource group.
@@ -66,7 +66,7 @@ class ExpressRouteLinksOperations(object):
         :rtype: ~azure.mgmt.network.v2019_02_01.models.ExpressRouteLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteLink"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteLink"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -114,7 +114,7 @@ class ExpressRouteLinksOperations(object):
         express_route_port_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ExpressRouteLinkListResult"]
+        # type: (...) -> Iterable["_models.ExpressRouteLinkListResult"]
         """Retrieve the ExpressRouteLink sub-resources of the specified ExpressRoutePort resource.
 
         :param resource_group_name: The name of the resource group.
@@ -126,7 +126,7 @@ class ExpressRouteLinksOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_02_01.models.ExpressRouteLinkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteLinkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteLinkListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

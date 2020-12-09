@@ -17,29 +17,25 @@ from ._common.constants import (
     MGMT_REQUEST_SESSION_ID,
     MGMT_REQUEST_SESSION_STATE,
 )
-from .exceptions import SessionLockExpired
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
-    from ._servicebus_session_receiver import ServiceBusSessionReceiver
-    from .aio._servicebus_session_receiver_async import ServiceBusSessionReceiver as ServiceBusSessionReceiverAsync
+    from ._servicebus_receiver import ServiceBusReceiver
+    from .aio._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
-    def __init__(self, session_id, receiver, encoding="UTF-8"):
-        # type: (str, Union[ServiceBusSessionReceiver, ServiceBusSessionReceiverAsync], str) -> None
+    def __init__(self, session_id, receiver):
+        # type: (str, Union[ServiceBusReceiver, ServiceBusReceiverAsync]) -> None
         self._session_id = session_id
         self._receiver = receiver
-        self._encoding = encoding
+        self._encoding = "UTF-8"
         self._session_start = None
         self._locked_until_utc = None  # type: Optional[datetime.datetime]
+        self._lock_lost = False
         self.auto_renew_error = None
-
-    def _check_live(self):
-        if self._lock_expired:
-            raise SessionLockExpired(inner_exception=self.auto_renew_error)
 
     @property
     def _lock_expired(self):
@@ -74,10 +70,10 @@ class ServiceBusSession(BaseSession):
     """
     The ServiceBusSession is used for manage session states and lock renewal.
 
-    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
+    **Please use the property `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
 
-    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the session lock.
+    :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the session lock.
     :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 
     .. admonition:: Example:
@@ -91,7 +87,7 @@ class ServiceBusSession(BaseSession):
     """
 
     def get_state(self, **kwargs):
-        # type: (Any) -> str
+        # type: (Any) -> bytes
         # pylint: disable=protected-access
         """Get the session state.
 
@@ -110,7 +106,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Get the session state
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -121,8 +117,6 @@ class ServiceBusSession(BaseSession):
             timeout=timeout
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
-        if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode(self._encoding)
         return session_state
 
     def set_state(self, state, **kwargs):
@@ -144,7 +138,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Set the session state
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -167,7 +161,7 @@ class ServiceBusSession(BaseSession):
         Once the lock is lost the connection will be closed; an expired lock cannot be renewed.
 
         This operation can also be performed as a threaded background task by registering the session
-        with an `azure.servicebus.AutoLockRenew` instance.
+        with an `azure.servicebus.AutoLockRenewer` instance.
 
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
@@ -183,14 +177,14 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         expiry = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
-            mgmt_handlers.default,
+            mgmt_handlers.session_lock_renew_op,
             timeout=timeout
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0  # type: ignore

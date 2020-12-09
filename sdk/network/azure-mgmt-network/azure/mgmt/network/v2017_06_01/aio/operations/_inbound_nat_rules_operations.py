@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class InboundNatRulesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class InboundNatRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         **kwargs
-    ) -> AsyncIterable["models.InboundNatRuleListResult"]:
+    ) -> AsyncIterable["_models.InboundNatRuleListResult"]:
         """Gets all the inbound nat rules in a load balancer.
 
         :param resource_group_name: The name of the resource group.
@@ -60,7 +60,7 @@ class InboundNatRulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2017_06_01.models.InboundNatRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InboundNatRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InboundNatRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -209,7 +209,14 @@ class InboundNatRulesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
+            'inboundNatRuleName': self._serialize.url("inbound_nat_rule_name", inbound_nat_rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -230,7 +237,7 @@ class InboundNatRulesOperations:
         inbound_nat_rule_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.InboundNatRule":
+    ) -> "_models.InboundNatRule":
         """Gets the specified load balancer inbound nat rule.
 
         :param resource_group_name: The name of the resource group.
@@ -246,7 +253,7 @@ class InboundNatRulesOperations:
         :rtype: ~azure.mgmt.network.v2017_06_01.models.InboundNatRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InboundNatRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InboundNatRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -295,10 +302,10 @@ class InboundNatRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         inbound_nat_rule_name: str,
-        inbound_nat_rule_parameters: "models.InboundNatRule",
+        inbound_nat_rule_parameters: "_models.InboundNatRule",
         **kwargs
-    ) -> "models.InboundNatRule":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InboundNatRule"]
+    ) -> "_models.InboundNatRule":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InboundNatRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -354,9 +361,9 @@ class InboundNatRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         inbound_nat_rule_name: str,
-        inbound_nat_rule_parameters: "models.InboundNatRule",
+        inbound_nat_rule_parameters: "_models.InboundNatRule",
         **kwargs
-    ) -> AsyncLROPoller["models.InboundNatRule"]:
+    ) -> AsyncLROPoller["_models.InboundNatRule"]:
         """Creates or updates a load balancer inbound nat rule.
 
         :param resource_group_name: The name of the resource group.
@@ -379,7 +386,7 @@ class InboundNatRulesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InboundNatRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InboundNatRule"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -405,7 +412,14 @@ class InboundNatRulesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
+            'inboundNatRuleName': self._serialize.url("inbound_nat_rule_name", inbound_nat_rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

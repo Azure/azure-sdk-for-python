@@ -9,7 +9,7 @@ from azure.identity import (
     CredentialUnavailableError,
     SharedTokenCacheCredential,
 )
-from azure.identity._constants import AZURE_CLI_CLIENT_ID, EnvironmentVariables
+from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
     MULTIPLE_ACCOUNTS,
@@ -37,6 +37,24 @@ from helpers import (
     Request,
     validating_transport,
 )
+
+
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        record = AuthenticationRecord(tenant, "client-id", "authority", "home.account.id", "username")
+        SharedTokenCacheCredential(authentication_record=record)
+        SharedTokenCacheCredential(authentication_record=record, tenant_id=tenant)
+
+    invalid_ids = {"", "my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        record = AuthenticationRecord(tenant, "client-id", "authority", "home.account.id", "username")
+        with pytest.raises(ValueError):
+            SharedTokenCacheCredential(authentication_record=record)
+        with pytest.raises(ValueError):
+            SharedTokenCacheCredential(authentication_record=record, tenant_id=tenant)
 
 
 def test_supported():
@@ -520,14 +538,16 @@ def test_authority_environment_variable():
 
 
 def test_authentication_record_empty_cache():
-    record = AuthenticationRecord("tenant_id", "client_id", "authority", "home_account_id", "username")
+    record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
 
     def send(request, **_):
         # expecting only MSAL discovery requests
-        assert request.method == 'GET'
+        assert request.method == "GET"
         return get_discovery_response()
 
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=Mock(send=send), _cache=TokenCache())
+    credential = SharedTokenCacheCredential(
+        authentication_record=record, transport=Mock(send=send), _cache=TokenCache()
+    )
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
@@ -544,7 +564,7 @@ def test_authentication_record_no_match():
 
     def send(request, **_):
         # expecting only MSAL discovery requests
-        assert request.method == 'GET'
+        assert request.method == "GET"
         return get_discovery_response()
 
     cache = populated_cache(
@@ -672,7 +692,9 @@ def test_writes_to_cache():
                     utid=utid,
                     access_token=expected_access_token,
                     refresh_token=second_refresh_token,
-                    id_token=build_id_token(aud=AZURE_CLI_CLIENT_ID, object_id=uid, tenant_id=utid, username=username),
+                    id_token=build_id_token(
+                        aud=DEVELOPER_SIGN_ON_CLIENT_ID, object_id=uid, tenant_id=utid, username=username
+                    ),
                 )
             )
         ],

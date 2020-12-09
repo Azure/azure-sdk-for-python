@@ -13,7 +13,7 @@ from .._key_validity import raise_if_time_invalid
 from .._providers import get_local_cryptography_provider, NoLocalCryptography
 from ... import KeyOperation
 from ..._models import KeyVaultKey
-from ..._shared import AsyncKeyVaultClientBase, parse_vault_id
+from ..._shared import AsyncKeyVaultClientBase, parse_key_vault_id
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -50,10 +50,10 @@ class CryptographyClient(AsyncKeyVaultClientBase):
     def __init__(self, key: "Union[KeyVaultKey, str]", credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
         if isinstance(key, KeyVaultKey):
             self._key = key
-            self._key_id = parse_vault_id(key.id)
+            self._key_id = parse_key_vault_id(key.id)
         elif isinstance(key, str):
             self._key = None
-            self._key_id = parse_vault_id(key)
+            self._key_id = parse_key_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
@@ -72,7 +72,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         :rtype: str
         """
-        return "/".join(self._key_id)
+        return self._key_id.source_id
 
     @distributed_trace_async
     async def _initialize(self, **kwargs):
@@ -83,9 +83,10 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         # try to get the key material, if we don't have it and aren't forbidden to do so
         if not (self._key or self._keys_get_forbidden):
             try:
-                self._key = await self._client.get_key(
+                key_bundle = await self._client.get_key(
                     self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
+                self._key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)

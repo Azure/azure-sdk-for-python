@@ -45,7 +45,7 @@ class BodyReplacerProcessor(RecordingProcessor):
 
     def process_response(self, response):
         if is_text_payload(response) and response['body']['string']:
-            response['body'] = self._replace_keys(response['body']['string'])
+            response['body']['string'] = self._replace_keys(response['body']['string'])
 
         return response
 

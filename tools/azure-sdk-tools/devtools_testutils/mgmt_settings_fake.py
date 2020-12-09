@@ -10,7 +10,7 @@ SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
 # Note: Keyvault tests require EnvironmentCredential variables to be populated as well. (AZURE_CLIENT_ID etc)
 TENANT_ID = '00000000-0000-0000-0000-000000000000'
 # Note: Not the OID from the azure portal.  Use 'az ad sp show --id <id> | grep objectId'
-CLIENT_OID = '00000000-0000-0000-0000-000000000000' 
+CLIENT_OID = '00000000-0000-0000-0000-000000000000'
 # Cognitive Services tests
 CS_SUBSCRIPTION_KEY = '0000000000000000000000000000'
 # Event Grid key
@@ -34,9 +34,7 @@ AZURE_STORAGE_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=st
 # https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
 
 def get_azure_core_credentials(**kwargs):
-    # from azure.identity import (
-    #     ClientSecretCredential
-    # )
+    # from azure.identity import ClientSecretCredential
     # return ClientSecretCredential(
     #     client_id = '<AAD App client id>',
     #     client_secret = '<secret for the aad app>',
