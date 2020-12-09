@@ -11,13 +11,12 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class BackupPoliciesOperations(object):
-    """BackupPoliciesOperations operations.
+class BackupCrrJobsOperations(object):
+    """BackupCrrJobsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +24,7 @@ class BackupPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2020-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2018-12-20".
     """
 
     models = models
@@ -35,40 +34,43 @@ class BackupPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-10-01"
+        self.api_version = "2018-12-20"
 
         self.config = config
 
     def list(
-            self, vault_name, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists of backup policies associated with Recovery Services Vault. API
-        provides pagination parameters to fetch
-        scoped results.
+            self, azure_region, filter=None, skip_token=None, resource_id=None, job_name=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of CRR jobs from the target region.
 
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
+        :param azure_region: Azure region to hit Api
+        :type azure_region: str
         :param filter: OData filter options.
         :type filter: str
+        :param skip_token: skipToken Filter.
+        :type skip_token: str
+        :param resource_id: Entire ARM resource id of the resource
+        :type resource_id: str
+        :param job_name: Job Name of the job to be fetched
+        :type job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ProtectionPolicyResource
+        :return: An iterator like instance of JobResource
         :rtype:
-         ~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResourcePaged[~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.recoveryservicesbackup.models.JobResourcePaged[~azure.mgmt.recoveryservicesbackup.models.JobResource]
+        :raises:
+         :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
         """
+        parameters = models.CrrJobRequest(resource_id=resource_id, job_name=job_name)
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'azureRegion': self._serialize.url("azure_region", azure_region, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -78,6 +80,8 @@ class BackupPoliciesOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
             else:
                 url = next_link
@@ -86,6 +90,7 @@ class BackupPoliciesOperations(object):
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -93,8 +98,11 @@ class BackupPoliciesOperations(object):
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+            # Construct body
+            body_content = self._serialize.body(parameters, 'CrrJobRequest')
+
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self._client.post(url, query_parameters, header_parameters, body_content)
             return request
 
         def internal_paging(next_link=None):
@@ -103,9 +111,7 @@ class BackupPoliciesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.NewErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -113,7 +119,7 @@ class BackupPoliciesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ProtectionPolicyResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.JobResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrrJobs'}

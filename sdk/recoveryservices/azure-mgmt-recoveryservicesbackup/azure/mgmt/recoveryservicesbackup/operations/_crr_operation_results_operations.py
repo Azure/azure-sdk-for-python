@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class BMSPrepareDataMoveOperationResultOperations(object):
-    """BMSPrepareDataMoveOperationResultOperations operations.
+class CrrOperationResultsOperations(object):
+    """CrrOperationResultsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -26,7 +26,7 @@ class BMSPrepareDataMoveOperationResultOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2020-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2018-12-20".
     """
 
     models = models
@@ -36,18 +36,17 @@ class BMSPrepareDataMoveOperationResultOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-10-01"
+        self.api_version = "2018-12-20"
 
         self.config = config
 
 
     def _get_initial(
-            self, vault_name, resource_group_name, operation_id, custom_headers=None, raw=False, **operation_config):
+            self, azure_region, operation_id, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'azureRegion': self._serialize.url("azure_region", azure_region, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
         }
@@ -59,7 +58,6 @@ class BMSPrepareDataMoveOperationResultOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -74,26 +72,16 @@ class BMSPrepareDataMoveOperationResultOperations(object):
         if response.status_code not in [200, 202]:
             raise models.NewErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('VaultStorageConfigOperationResultResponse', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-        return deserialized
-
     def get(
-            self, vault_name, resource_group_name, operation_id, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Fetches Operation Result for Prepare Data Move.
+            self, azure_region, operation_id, custom_headers=None, raw=False, polling=True, **operation_config):
+        """
 
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
+        :param azure_region: Azure region to hit Api
+        :type azure_region: str
         :param operation_id:
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -101,20 +89,15 @@ class BMSPrepareDataMoveOperationResultOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         VaultStorageConfigOperationResultResponse or
-         ClientRawResponse<VaultStorageConfigOperationResultResponse> if
-         raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.recoveryservicesbackup.models.VaultStorageConfigOperationResultResponse]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.recoveryservicesbackup.models.VaultStorageConfigOperationResultResponse]]
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
          :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
         """
         raw_result = self._get_initial(
-            vault_name=vault_name,
-            resource_group_name=resource_group_name,
+            azure_region=azure_region,
             operation_id=operation_id,
             custom_headers=custom_headers,
             raw=True,
@@ -122,13 +105,9 @@ class BMSPrepareDataMoveOperationResultOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('VaultStorageConfigOperationResultResponse', response)
-
             if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-            return deserialized
 
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
@@ -137,4 +116,4 @@ class BMSPrepareDataMoveOperationResultOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/operationResults/{operationId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrrOperationResults/{operationId}'}

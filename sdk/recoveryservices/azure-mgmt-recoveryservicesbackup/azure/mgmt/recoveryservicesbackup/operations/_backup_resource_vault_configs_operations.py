@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class BackupResourceVaultConfigsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-06-15".
+    :ivar api_version: Client Api Version. Constant value: "2020-10-01".
     """
 
     models = models
@@ -35,7 +34,7 @@ class BackupResourceVaultConfigsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-15"
+        self.api_version = "2020-10-01"
 
         self.config = config
 
@@ -58,7 +57,8 @@ class BackupResourceVaultConfigsOperations(object):
         :rtype:
          ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -88,9 +88,7 @@ class BackupResourceVaultConfigsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.NewErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -101,7 +99,7 @@ class BackupResourceVaultConfigsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}
 
     def update(
             self, vault_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -125,7 +123,8 @@ class BackupResourceVaultConfigsOperations(object):
         :rtype:
          ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -159,9 +158,7 @@ class BackupResourceVaultConfigsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.NewErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -172,7 +169,7 @@ class BackupResourceVaultConfigsOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}
 
     def put(
             self, vault_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -197,7 +194,7 @@ class BackupResourceVaultConfigsOperations(object):
          ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.recoveryservicesbackup.models.ErrorResponseException>`
+         :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
         """
         # Construct URL
         url = self.put.metadata['url']
@@ -231,7 +228,7 @@ class BackupResourceVaultConfigsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.NewErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -242,4 +239,4 @@ class BackupResourceVaultConfigsOperations(object):
             return client_raw_response
 
         return deserialized
-    put.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}
+    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}

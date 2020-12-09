@@ -14,10 +14,11 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
 from .operations import RecoveryServicesBackupClientOperationsMixin
-from .operations import BackupResourceEncryptionConfigsOperations
-from .operations import BMSPrepareDataMoveOperationResultOperations
-from .operations import PrivateEndpointConnectionOperations
 from .operations import BackupResourceVaultConfigsOperations
+from .operations import BackupResourceEncryptionConfigsOperations
+from .operations import PrivateEndpointConnectionOperations
+from .operations import PrivateEndpointOperations
+from .operations import BMSPrepareDataMoveOperationResultOperations
 from .operations import ProtectedItemsOperations
 from .operations import ProtectedItemOperationResultsOperations
 from .operations import RecoveryPointsOperations
@@ -33,11 +34,6 @@ from .operations import ExportJobsOperationResultsOperations
 from .operations import JobsOperations
 from .operations import BackupProtectedItemsOperations
 from .operations import OperationOperations
-from .operations import ProtectionIntentOperations
-from .operations import BackupStatusOperations
-from .operations import FeatureSupportOperations
-from .operations import BackupProtectionIntentOperations
-from .operations import BackupUsageSummariesOperations
 from .operations import BackupEnginesOperations
 from .operations import ProtectionContainerRefreshOperationResultsOperations
 from .operations import ProtectableContainersOperations
@@ -53,7 +49,20 @@ from .operations import ProtectionPolicyOperationStatusesOperations
 from .operations import BackupProtectableItemsOperations
 from .operations import BackupProtectionContainersOperations
 from .operations import SecurityPINsOperations
+from .operations import AadPropertiesOperations
+from .operations import CrossRegionRestoreOperations
+from .operations import BackupCrrJobDetailsOperations
+from .operations import BackupCrrJobsOperations
+from .operations import CrrOperationResultsOperations
+from .operations import CrrOperationStatusOperations
 from .operations import BackupResourceStorageConfigsOperations
+from .operations import RecoveryPointsCrrOperations
+from .operations import BackupProtectedItemsCrrOperations
+from .operations import ProtectionIntentOperations
+from .operations import BackupStatusOperations
+from .operations import FeatureSupportOperations
+from .operations import BackupProtectionIntentOperations
+from .operations import BackupUsageSummariesOperations
 from .operations import Operations
 from . import models
 
@@ -64,14 +73,16 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
-    :ivar backup_resource_encryption_configs: BackupResourceEncryptionConfigs operations
-    :vartype backup_resource_encryption_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceEncryptionConfigsOperations
-    :ivar bms_prepare_data_move_operation_result: BMSPrepareDataMoveOperationResult operations
-    :vartype bms_prepare_data_move_operation_result: azure.mgmt.recoveryservicesbackup.operations.BMSPrepareDataMoveOperationResultOperations
-    :ivar private_endpoint_connection: PrivateEndpointConnection operations
-    :vartype private_endpoint_connection: azure.mgmt.recoveryservicesbackup.operations.PrivateEndpointConnectionOperations
     :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
     :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
+    :ivar backup_resource_encryption_configs: BackupResourceEncryptionConfigs operations
+    :vartype backup_resource_encryption_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceEncryptionConfigsOperations
+    :ivar private_endpoint_connection: PrivateEndpointConnection operations
+    :vartype private_endpoint_connection: azure.mgmt.recoveryservicesbackup.operations.PrivateEndpointConnectionOperations
+    :ivar private_endpoint: PrivateEndpoint operations
+    :vartype private_endpoint: azure.mgmt.recoveryservicesbackup.operations.PrivateEndpointOperations
+    :ivar bms_prepare_data_move_operation_result: BMSPrepareDataMoveOperationResult operations
+    :vartype bms_prepare_data_move_operation_result: azure.mgmt.recoveryservicesbackup.operations.BMSPrepareDataMoveOperationResultOperations
     :ivar protected_items: ProtectedItems operations
     :vartype protected_items: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemsOperations
     :ivar protected_item_operation_results: ProtectedItemOperationResults operations
@@ -102,16 +113,6 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :vartype backup_protected_items: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsOperations
     :ivar operation: Operation operations
     :vartype operation: azure.mgmt.recoveryservicesbackup.operations.OperationOperations
-    :ivar protection_intent: ProtectionIntent operations
-    :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
-    :ivar backup_status: BackupStatus operations
-    :vartype backup_status: azure.mgmt.recoveryservicesbackup.operations.BackupStatusOperations
-    :ivar feature_support: FeatureSupport operations
-    :vartype feature_support: azure.mgmt.recoveryservicesbackup.operations.FeatureSupportOperations
-    :ivar backup_protection_intent: BackupProtectionIntent operations
-    :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
-    :ivar backup_usage_summaries: BackupUsageSummaries operations
-    :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
     :ivar backup_engines: BackupEngines operations
     :vartype backup_engines: azure.mgmt.recoveryservicesbackup.operations.BackupEnginesOperations
     :ivar protection_container_refresh_operation_results: ProtectionContainerRefreshOperationResults operations
@@ -142,8 +143,34 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :vartype backup_protection_containers: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionContainersOperations
     :ivar security_pi_ns: SecurityPINs operations
     :vartype security_pi_ns: azure.mgmt.recoveryservicesbackup.operations.SecurityPINsOperations
+    :ivar aad_properties: AadProperties operations
+    :vartype aad_properties: azure.mgmt.recoveryservicesbackup.operations.AadPropertiesOperations
+    :ivar cross_region_restore: CrossRegionRestore operations
+    :vartype cross_region_restore: azure.mgmt.recoveryservicesbackup.operations.CrossRegionRestoreOperations
+    :ivar backup_crr_job_details: BackupCrrJobDetails operations
+    :vartype backup_crr_job_details: azure.mgmt.recoveryservicesbackup.operations.BackupCrrJobDetailsOperations
+    :ivar backup_crr_jobs: BackupCrrJobs operations
+    :vartype backup_crr_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupCrrJobsOperations
+    :ivar crr_operation_results: CrrOperationResults operations
+    :vartype crr_operation_results: azure.mgmt.recoveryservicesbackup.operations.CrrOperationResultsOperations
+    :ivar crr_operation_status: CrrOperationStatus operations
+    :vartype crr_operation_status: azure.mgmt.recoveryservicesbackup.operations.CrrOperationStatusOperations
     :ivar backup_resource_storage_configs: BackupResourceStorageConfigs operations
     :vartype backup_resource_storage_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceStorageConfigsOperations
+    :ivar recovery_points_crr: RecoveryPointsCrr operations
+    :vartype recovery_points_crr: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsCrrOperations
+    :ivar backup_protected_items_crr: BackupProtectedItemsCrr operations
+    :vartype backup_protected_items_crr: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsCrrOperations
+    :ivar protection_intent: ProtectionIntent operations
+    :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
+    :ivar backup_status: BackupStatus operations
+    :vartype backup_status: azure.mgmt.recoveryservicesbackup.operations.BackupStatusOperations
+    :ivar feature_support: FeatureSupport operations
+    :vartype feature_support: azure.mgmt.recoveryservicesbackup.operations.FeatureSupportOperations
+    :ivar backup_protection_intent: BackupProtectionIntent operations
+    :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
+    :ivar backup_usage_summaries: BackupUsageSummaries operations
+    :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.recoveryservicesbackup.operations.Operations
 
@@ -165,13 +192,15 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.backup_resource_encryption_configs = BackupResourceEncryptionConfigsOperations(
+        self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.bms_prepare_data_move_operation_result = BMSPrepareDataMoveOperationResultOperations(
+        self.backup_resource_encryption_configs = BackupResourceEncryptionConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connection = PrivateEndpointConnectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
+        self.private_endpoint = PrivateEndpointOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bms_prepare_data_move_operation_result = BMSPrepareDataMoveOperationResultOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protected_items = ProtectedItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -203,16 +232,6 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
             self._client, self.config, self._serialize, self._deserialize)
         self.operation = OperationOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.protection_intent = ProtectionIntentOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_status = BackupStatusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.feature_support = FeatureSupportOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_protection_intent = BackupProtectionIntentOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_usage_summaries = BackupUsageSummariesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.backup_engines = BackupEnginesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protection_container_refresh_operation_results = ProtectionContainerRefreshOperationResultsOperations(
@@ -243,7 +262,33 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
             self._client, self.config, self._serialize, self._deserialize)
         self.security_pi_ns = SecurityPINsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.aad_properties = AadPropertiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.cross_region_restore = CrossRegionRestoreOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_crr_job_details = BackupCrrJobDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_crr_jobs = BackupCrrJobsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.crr_operation_results = CrrOperationResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.crr_operation_status = CrrOperationStatusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recovery_points_crr = RecoveryPointsCrrOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_intent = ProtectionIntentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_status = BackupStatusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.feature_support = FeatureSupportOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_protection_intent = BackupProtectionIntentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_usage_summaries = BackupUsageSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
