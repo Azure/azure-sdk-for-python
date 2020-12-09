@@ -24,7 +24,7 @@ class ConsumerGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-04-01".
+    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ConsumerGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-01"
+        self.api_version = "2018-01-01-preview"
 
         self.config = config
 

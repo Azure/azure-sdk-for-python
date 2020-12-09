@@ -26,6 +26,7 @@ class NamespacesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
     """
 
     models = models
@@ -35,6 +36,7 @@ class NamespacesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2018-01-01-preview"
 
         self.config = config
 
@@ -58,8 +60,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -73,7 +73,7 @@ class NamespacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -137,8 +137,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.create_or_update_ip_filter_rule.metadata['url']
         path_format_arguments = {
@@ -151,7 +149,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -206,8 +204,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.delete_ip_filter_rule.metadata['url']
         path_format_arguments = {
@@ -220,7 +216,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -265,8 +261,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.get_ip_filter_rule.metadata['url']
         path_format_arguments = {
@@ -279,7 +273,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -325,8 +319,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -338,7 +330,7 @@ class NamespacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -395,8 +387,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -409,7 +399,7 @@ class NamespacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -451,8 +441,6 @@ class NamespacesOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -464,7 +452,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -557,8 +545,6 @@ class NamespacesOperations(object):
 
     def _delete_initial(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -570,7 +556,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -656,8 +642,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -669,7 +653,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -725,8 +709,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -738,7 +720,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -794,8 +776,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -809,7 +789,7 @@ class NamespacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -875,8 +855,6 @@ class NamespacesOperations(object):
         """
         parameters = models.VirtualNetworkRule(virtual_network_subnet_id=virtual_network_subnet_id)
 
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.create_or_update_virtual_network_rule.metadata['url']
         path_format_arguments = {
@@ -889,7 +867,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -944,8 +922,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.delete_virtual_network_rule.metadata['url']
         path_format_arguments = {
@@ -958,7 +934,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1004,8 +980,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.get_virtual_network_rule.metadata['url']
         path_format_arguments = {
@@ -1018,7 +992,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1071,8 +1045,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.create_or_update_network_rule_set.metadata['url']
         path_format_arguments = {
@@ -1084,7 +1056,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1138,8 +1110,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2018-01-01-preview"
-
         # Construct URL
         url = self.get_network_rule_set.metadata['url']
         path_format_arguments = {
@@ -1151,7 +1121,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1201,8 +1171,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2017-04-01"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -1216,7 +1184,7 @@ class NamespacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -1283,8 +1251,6 @@ class NamespacesOperations(object):
         """
         parameters = models.AuthorizationRule(rights=rights)
 
-        api_version = "2017-04-01"
-
         # Construct URL
         url = self.create_or_update_authorization_rule.metadata['url']
         path_format_arguments = {
@@ -1297,7 +1263,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1352,8 +1318,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2017-04-01"
-
         # Construct URL
         url = self.delete_authorization_rule.metadata['url']
         path_format_arguments = {
@@ -1366,7 +1330,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1412,8 +1376,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2017-04-01"
-
         # Construct URL
         url = self.get_authorization_rule.metadata['url']
         path_format_arguments = {
@@ -1426,7 +1388,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1478,8 +1440,6 @@ class NamespacesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
-        api_version = "2017-04-01"
-
         # Construct URL
         url = self.list_keys.metadata['url']
         path_format_arguments = {
@@ -1492,7 +1452,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1554,8 +1514,6 @@ class NamespacesOperations(object):
         """
         parameters = models.RegenerateAccessKeyParameters(key_type=key_type, key=key)
 
-        api_version = "2017-04-01"
-
         # Construct URL
         url = self.regenerate_keys.metadata['url']
         path_format_arguments = {
@@ -1568,7 +1526,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1622,8 +1580,6 @@ class NamespacesOperations(object):
         """
         parameters = models.CheckNameAvailabilityParameter(name=name)
 
-        api_version = "2017-04-01"
-
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -1633,7 +1589,7 @@ class NamespacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
