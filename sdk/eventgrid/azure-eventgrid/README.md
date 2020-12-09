@@ -38,11 +38,12 @@ In order to interact with the Event Grid service, you will need to create an ins
 A **topic_hostname** and **credential** are necessary to instantiate the client object.
 
 #### Looking up the endpoint
-You can find the endpoint and the hostname on the Azure portal.
+You can find the topic endpoint within the Event Grid Topic resource on the Azure portal.
+The topic hostname is the URL host component of this endpoint. (Everything up-to and including "eventgrid.azure.net".)
 
 #### Create the client with AzureKeyCredential
 
-To use an API key as the `credential` parameter,
+To use an Access Key as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
 ```python
@@ -50,9 +51,11 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
 
 topic_hostname = "https://<name>.<region>.eventgrid.azure.net"
-credential = AzureKeyCredential("<api_key>")
+credential = AzureKeyCredential("<access_key>")
 eg_publisher_client = EventGridPublisherClient(topic_hostname, credential)
 ```
+
+> **Note:** A client may also be authenticated via SAS signature, using the `EventGridSharedAccessSignatureCredential`.  A sample demonstrating this, as well as how to generate that signature utilizing `generate_shared_access_signature` is available [here][python-eg-sample-publish-sas-signature].
 
 ## Key concepts
 
@@ -250,6 +253,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-sample-consume-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs4_consume_custom_events.py
 [python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py
 [python-eg-sample-consume-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs6_consume_events_using_cloud_events_1.0_schema.py
+[python-eg-sample-publish-sas-signature]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/publish_samples/publish_with_shared_access_signature_sample.py
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
 
 [cla]: https://cla.microsoft.com
