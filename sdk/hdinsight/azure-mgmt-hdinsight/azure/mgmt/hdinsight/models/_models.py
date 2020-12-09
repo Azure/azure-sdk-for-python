@@ -1389,15 +1389,24 @@ class HostInfo(Model):
 
     :param name: The host name
     :type name: str
+    :param fqdn: The Fully Qualified Domain Name of host
+    :type fqdn: str
+    :param effective_disk_encryption_key_url: The effective disk encryption
+     key URL used by the host
+    :type effective_disk_encryption_key_url: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
+        'effective_disk_encryption_key_url': {'key': 'effectiveDiskEncryptionKeyUrl', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(HostInfo, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.fqdn = kwargs.get('fqdn', None)
+        self.effective_disk_encryption_key_url = kwargs.get('effective_disk_encryption_key_url', None)
 
 
 class KafkaRestProperties(Model):
