@@ -4,8 +4,6 @@ This guide is intended to assist in the migration to azure-eventgrid v2.0 from a
 
 Familiarity with the azure-eventgrid v1.3 package is assumed. For those new to the eventgrid client library for Python, please refer to the [README for azure-eventgrid v2.0](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/README.md) rather than this guide.
 
-## Table of contents
-
 ## Migration benefits
 
 A natural question to ask when considering whether or not to adopt a new version or library is what the benefits of doing so would be. As Azure has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and to understand the gaps that the Python client libraries have.
