@@ -6,10 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._connected_cluster_operations import ConnectedClusterOperations
-from ._operations import Operations
-
-__all__ = [
-    'ConnectedClusterOperations',
-    'Operations',
-]
+from ._connected_kubernetes_client import ConnectedKubernetesClient
+__all__ = ['ConnectedKubernetesClient']
