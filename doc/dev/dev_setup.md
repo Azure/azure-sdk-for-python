@@ -32,27 +32,13 @@ or execute the various commands available in the toolbox.
 
 4. Setup your development environment
 
-    Install the development requirements for a specific library (e.g. Azure Form Recognizer) and [Tox](https://tox.readthedocs.io/en/latest/):
+    Install the development requirements for a specific library (e.g. Azure Form Recognizer), [Tox](https://tox.readthedocs.io/en/latest/), and an editable install of your library:
     ```
     azure-sdk-for-python> cd sdk/formrecognizer/azure-ai-formrecognizer
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -r dev_requirements.txt
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install tox tox-monorepo
+    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -e .
     ```
-
-<!-- Do we still follow this recommendation or should we be recommending pip install dev_reqs and tox? -->
-
-<!-- 4.  Setup your env (installing dependencies, etc.)
-
-    ```
-    azure-sdk-for-python> python scripts/dev_setup.py
-    ```
-
-    If you work on a particular package, you can setup only this package to save some installation time:
-
-    ```
-    azure-sdk-for-python> python scripts/dev_setup.py -p azure-mgmt-service
-    ``` -->
-
 
 5.  Create a .env file to store your secrets.
 
