@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2020-04-08)
+## 1.0.0b1 (2020-12-09)
 
 This is beta preview version.
 
