@@ -8,7 +8,7 @@ from ._generated.models import StorageErrorException
 from ._models import PathProperties
 from ._deserialize import return_headers_and_deserialized_path_list
 from ._generated.models import Path
-from ._shared.response_handlers import process_storage_error
+from ._deserialize import process_storage_error
 
 
 class PathPropertiesPaged(PageIterator):

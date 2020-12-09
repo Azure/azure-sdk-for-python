@@ -18,6 +18,8 @@ from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import ContainerClient
+from .._deserialize import process_storage_error, deserialize_metadata
+from .._generated.models import StorageErrorException
 
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
@@ -662,6 +664,41 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         file_client = self.get_file_client(file)
         await file_client.delete_file(**kwargs)
         return file_client
+
+    @distributed_trace_async
+    async def undelete_path(self, deleted_path_name, deleted_path_version, **kwargs):
+        # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
+        """Restores soft-deleted path.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.3.0
+            This operation was introduced in API version '2020-06-12'.
+
+        :param str deleted_path_name:
+            Specifies the name of the deleted container to restore.
+        :param str deleted_path_version:
+            Specifies the version of the deleted container to restore.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.ContainerClient
+        """
+        quoted_path, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
+
+        pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+        path_client = DataLakeStorageClient(url, self.file_system_name, deleted_path_name, pipeline=pipeline)
+        try:
+            await path_client.path.undelete(undelete_source=undelete_source, **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        resp = await path_client.path.get_properties(cls=deserialize_metadata)
+        if resp.get('hdi_isfolder'):
+            return self.get_directory_client(deleted_path_name)
+        return self.get_file_client(deleted_path_name)
 
     def _get_root_directory_client(self):
         # type: () -> DataLakeDirectoryClient
