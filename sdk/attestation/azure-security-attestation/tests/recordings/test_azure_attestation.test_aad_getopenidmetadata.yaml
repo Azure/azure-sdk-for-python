@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIsIFvOtmiRdK1xX_5IBHto-TJ-6VF636D0scadr87Wt738gc1JdHPTmfbup3qwLQV78iXa3ZttdeQeQqcsdrkEp3lJjm7OWD3Zj1-kfM3r3OMyS_RBfdIJbLC3Kvn4rUcOwszyrwIzZOk0IoUIy8VhRM1pRCyCFG3rhD_t7cvlUwgAA;
-        fpc=AicabQASR5BEmlcDUnOGgiM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIMZOcCfbQQT7BIg7jQS3w6-1uk7mOJXNEI-nG5yhpXPECwJ84R7F5znoXFyDVw8liwxLiRek9Orli9ibs4fa_yPr_qYJrJ_jiYTYWYdIYf_Smk1xU0uulj1GOWAI6AcPIIDvMOoe2_lY-RtgqtZsv6jAhdpUbz38cuu3vA5i8EtYgAA;
+        fpc=AgJzF2qtnAtJsDkYGALJjIk; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - azsdk-python-identity/1.5.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -30,11 +30,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Dec 2020 01:40:48 GMT
+      - Wed, 09 Dec 2020 17:44:36 GMT
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=AicabQASR5BEmlcDUnOGgiM; expires=Fri, 08-Jan-2021 01:40:48 GMT; path=/;
+      - fpc=AgJzF2qtnAtJsDkYGALJjIk; expires=Fri, 08-Jan-2021 17:44:37 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.11303.13 - WUS2 ProdSlices
+      - 2.1.11303.13 - EUS ProdSlices
     status:
       code: 200
       message: OK
@@ -61,8 +61,8 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       Cookie:
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIsIFvOtmiRdK1xX_5IBHto-TJ-6VF636D0scadr87Wt738gc1JdHPTmfbup3qwLQV78iXa3ZttdeQeQqcsdrkEp3lJjm7OWD3Zj1-kfM3r3OMyS_RBfdIJbLC3Kvn4rUcOwszyrwIzZOk0IoUIy8VhRM1pRCyCFG3rhD_t7cvlUwgAA;
-        fpc=AicabQASR5BEmlcDUnOGgiM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIMZOcCfbQQT7BIg7jQS3w6-1uk7mOJXNEI-nG5yhpXPECwJ84R7F5znoXFyDVw8liwxLiRek9Orli9ibs4fa_yPr_qYJrJ_jiYTYWYdIYf_Smk1xU0uulj1GOWAI6AcPIIDvMOoe2_lY-RtgqtZsv6jAhdpUbz38cuu3vA5i8EtYgAA;
+        fpc=AgJzF2qtnAtJsDkYGALJjIk; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - azsdk-python-identity/1.5.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-client-cpu:
@@ -79,7 +79,7 @@ interactions:
     uri: xxxtenant/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type":"Bearer","expires_in":86399,"ext_expires_in":86399,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCIsImtpZCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCJ9.eyJhdWQiOiJodHRwczovL2F0dGVzdC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjA3NDc3NzQ4LCJuYmYiOjE2MDc0Nzc3NDgsImV4cCI6MTYwNzU2NDQ0OCwiYWlvIjoiRTJSZ1lQQzVuM2ZjcDNQejNmdmlTM3IrV0UxWURnQT0iLCJhcHBpZCI6IjJmZTM3MGQwLWNhNWUtNDFkMy1iM2ViLTBlY2IxMzEyZTViZSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiJjYWMzNDllMC1mODM0LTRmZTktYWQxYi03Mzg1ZmQyMjQyODQiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUjlCdzR5OWV5dE5Ccy1zT3l4TVM1YjRhQUFBLiIsInN1YiI6ImNhYzM0OWUwLWY4MzQtNGZlOS1hZDFiLTczODVmZDIyNDI4NCIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6ImtaT1RLQXloNkVDb2JiVnQ2WjBoQUEiLCJ2ZXIiOiIxLjAifQ.Av_Nhw8e5_6SOTmPXWRDqiPJD-ZRaXCAw2_iHZuWbHHMWiWrwbtq0SPCRC--WKFO-CuhEir-3jqrE3QgilkzSlVJmpuD9ZzPsQuCaXXCH6AOoAwNkaWc_ri6GTjGgzFM2EBIdSflhRdTZ76Qt17hIuurBj7MDud-mlFj_Hbss6eHeEW3ol1qHhIHE1K8bPLBezcKaVCYV08RtmhbVR5SN0BRx_j8ssGTEHhqVT9-oUuJGG860zEyn9C_jlFFreTOJ2J4odfaFO7t36CMhcpojN6qqufrsaYv3hrccPhRCH2n84QMIIgKMXjDh3j8OaiVzN-05t612ibJJJiud5uOqg"}'
+      string: '{"token_type":"Bearer","expires_in":86399,"ext_expires_in":86399,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCIsImtpZCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCJ9.eyJhdWQiOiJodHRwczovL2F0dGVzdC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjA3NTM1NTc3LCJuYmYiOjE2MDc1MzU1NzcsImV4cCI6MTYwNzYyMjI3NywiYWlvIjoiRTJSZ1lQQ0pZOVo0OVBMVjNyNDhJYldiWHl3T0FRQT0iLCJhcHBpZCI6IjJmZTM3MGQwLWNhNWUtNDFkMy1iM2ViLTBlY2IxMzEyZTViZSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiJjYWMzNDllMC1mODM0LTRmZTktYWQxYi03Mzg1ZmQyMjQyODQiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUjlCdzR5OWV5dE5Ccy1zT3l4TVM1YjRhQUFBLiIsInN1YiI6ImNhYzM0OWUwLWY4MzQtNGZlOS1hZDFiLTczODVmZDIyNDI4NCIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6InFmSVlzXzZoU2tLNm5NaW5LUEJWQUEiLCJ2ZXIiOiIxLjAifQ.KM6OHRzCOYWkes2e1_Sa0roX8BDX5CTuj-cGbw0uQaoQMQhiDs0vA6ta7JC8A2cILK600yy_pL4hCF4OzMmYzeT93Emm6lBeHkjsf6keiiJrtA0B5EYW6wpYiwuKhalH72NGsKBNHrVTsq7szilXEKXmJBVlss_1RajmsxxMdHTUsd0kZm2r7mTAcnMu2Ltz-6rgVPo6eVroptgZmLd2kXKcK1pUzlOLWdAsna2f1jMejjZJC9wqMMtmRot5c635cxxvEJgOC4rjHTJyTKxhvTgbe-JRx6fpIK8pXrvnQXogYPlVVDtruxZ6WaTfHwUrWgMOZJMFjUH_hhZws50oNQ"}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -88,7 +88,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Dec 2020 01:40:48 GMT
+      - Wed, 09 Dec 2020 17:44:36 GMT
       expires:
       - '-1'
       p3p:
@@ -96,8 +96,8 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AicabQASR5BEmlcDUnOGgiPujS-SAQAAACAiYtcOAAAA; expires=Fri, 08-Jan-2021
-        01:40:49 GMT; path=/; secure; HttpOnly; SameSite=None
+      - fpc=AgJzF2qtnAtJsDkYGALJjInujS-SAQAAAAQEY9cOAAAA; expires=Fri, 08-Jan-2021
+        17:44:37 GMT; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
       strict-transport-security:
@@ -107,7 +107,7 @@ interactions:
       x-ms-clitelem:
       - 1,0,0,,
       x-ms-ests-server:
-      - 2.1.11303.13 - NCUS ProdSlices
+      - 2.1.11303.13 - EUS ProdSlices
     status:
       code: 200
       message: OK

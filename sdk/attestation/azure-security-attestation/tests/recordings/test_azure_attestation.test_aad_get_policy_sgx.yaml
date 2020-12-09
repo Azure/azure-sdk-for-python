@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIAC956uc6r8moFIO7DsprqnisPiPaTT2c-noHkhJXxYPW8QfJdb9sl4AVGI8HiI-gD9WcNSnhApIXNBcFsErUu2tn3vTjiCY7U_nw-d4DmOqJJRQv0eZzHRJXCCK8YL2ZVYdbv49TfGHFpwUlbT1gPh82r8wF21UaWT_A2AJEssAgAA;
-        fpc=AiPWzWQpqx9Am0dnZ72f490; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIwN2sYtjSsaspYPWWZx8ZCejPNlGk8V7bgmpqsU6kRPvCqkqWtoEVUw-elR_CGVU3QzJxLJ18tZ0sSQp95ns34xWND9QUNPyKgZtIgAkLLkOfhY_uDfv54klNv3EFTn7iWFigI6ZWKGhwbHKteHTnwRxdkLWGqOE835fMHuNHWpkgAA;
+        fpc=AoKDEPVGunNPsxPPFCailyc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - azsdk-python-identity/1.5.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -30,11 +30,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Dec 2020 01:40:45 GMT
+      - Wed, 09 Dec 2020 17:44:34 GMT
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=AiPWzWQpqx9Am0dnZ72f490; expires=Fri, 08-Jan-2021 01:40:46 GMT; path=/;
+      - fpc=AoKDEPVGunNPsxPPFCailyc; expires=Fri, 08-Jan-2021 17:44:34 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -61,8 +61,8 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       Cookie:
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIAC956uc6r8moFIO7DsprqnisPiPaTT2c-noHkhJXxYPW8QfJdb9sl4AVGI8HiI-gD9WcNSnhApIXNBcFsErUu2tn3vTjiCY7U_nw-d4DmOqJJRQv0eZzHRJXCCK8YL2ZVYdbv49TfGHFpwUlbT1gPh82r8wF21UaWT_A2AJEssAgAA;
-        fpc=AiPWzWQpqx9Am0dnZ72f490; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIwN2sYtjSsaspYPWWZx8ZCejPNlGk8V7bgmpqsU6kRPvCqkqWtoEVUw-elR_CGVU3QzJxLJ18tZ0sSQp95ns34xWND9QUNPyKgZtIgAkLLkOfhY_uDfv54klNv3EFTn7iWFigI6ZWKGhwbHKteHTnwRxdkLWGqOE835fMHuNHWpkgAA;
+        fpc=AoKDEPVGunNPsxPPFCailyc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - azsdk-python-identity/1.5.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-client-cpu:
@@ -79,7 +79,7 @@ interactions:
     uri: xxxtenant/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type":"Bearer","expires_in":86399,"ext_expires_in":86399,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCIsImtpZCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCJ9.eyJhdWQiOiJodHRwczovL2F0dGVzdC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjA3NDc3NzQ2LCJuYmYiOjE2MDc0Nzc3NDYsImV4cCI6MTYwNzU2NDQ0NiwiYWlvIjoiRTJSZ1lJaWJOYXVIYi9heG5MVWZsQ29rdUxYMUFRPT0iLCJhcHBpZCI6IjJmZTM3MGQwLWNhNWUtNDFkMy1iM2ViLTBlY2IxMzEyZTViZSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiJjYWMzNDllMC1mODM0LTRmZTktYWQxYi03Mzg1ZmQyMjQyODQiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUjlCdzR5OWV5dE5Ccy1zT3l4TVM1YjRhQUFBLiIsInN1YiI6ImNhYzM0OWUwLWY4MzQtNGZlOS1hZDFiLTczODVmZDIyNDI4NCIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6ImV2X0VEeTIwbUV5T2JEbGpWV1lmQUEiLCJ2ZXIiOiIxLjAifQ.EF77J8wNhJH1cifahSfVaNIoN9ILYui0MS2PTVa5P4_tdng_qi5PXP3h4znuIGJ3YLfPCzagJltayPc4R_67171ezW7dKyiopBlVS0lpjQ3Z5qYuyjiCpD-o9K5C59T-ajL-S1XT8h_zbTdC0soDFChIoigNGW5kHMOizpo-YFFtL6_zSm6orK_KO77VgQdHEObYP5cWual0DFjLf13Ry7TbASdUgyYUcR0f6k5d1MGiiH-s8JpyUjigewnf68cgny1kkGdHzc4qfGy-X34vs4Klj_KrpLzYxdvuiTOXuhcRNktx088ahTj0lQPJr38n1m5oa-bHnehbTVhU5xnRqA"}'
+      string: '{"token_type":"Bearer","expires_in":86399,"ext_expires_in":86399,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCIsImtpZCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCJ9.eyJhdWQiOiJodHRwczovL2F0dGVzdC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjA3NTM1NTc0LCJuYmYiOjE2MDc1MzU1NzQsImV4cCI6MTYwNzYyMjI3NCwiYWlvIjoiRTJSZ1lQRGFiV01XYnlYeUk2cWJUWWxiY000Y0FBPT0iLCJhcHBpZCI6IjJmZTM3MGQwLWNhNWUtNDFkMy1iM2ViLTBlY2IxMzEyZTViZSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiJjYWMzNDllMC1mODM0LTRmZTktYWQxYi03Mzg1ZmQyMjQyODQiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUjlCdzR5OWV5dE5Ccy1zT3l4TVM1YjRhQUFBLiIsInN1YiI6ImNhYzM0OWUwLWY4MzQtNGZlOS1hZDFiLTczODVmZDIyNDI4NCIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6IjRwVGR2RHVtYlVHV2dmMHhMb2RYQUEiLCJ2ZXIiOiIxLjAifQ.NsRmZ_ci1rxswEDmFecETD4XAcWPt5LxYEQeXw2qiS_sTXN5uJmuNAUEBnDLRqOr-qJoQ8GBP3pJZXzcH1BsNsQTqCPmWK-mFz6pZfic_VK-mKJ_SQRp6xy2xqsPsL_qw44zdnJauKIyPsiUKqy_k27kumc_AmBQCtWBOdDsaKemd86bgKa79w8DdvESeacM2mga0tom3s9QSPJiJi8ccNdBr7EDYQz35KcPjwSpxu37FNG991_KLcRkOZTJB_aH0eHyqTM7JMChVWPA0cAcQSIrXXVWGhzreXZzBZkrpKucxVjTkJVjrnmUWfoi6Rv_dVCWC70lfAZN-neGeH3WkQ"}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -88,7 +88,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Dec 2020 01:40:46 GMT
+      - Wed, 09 Dec 2020 17:44:34 GMT
       expires:
       - '-1'
       p3p:
@@ -96,8 +96,8 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AiPWzWQpqx9Am0dnZ72f493ujS-SAQAAAB0iYtcOAAAA; expires=Fri, 08-Jan-2021
-        01:40:46 GMT; path=/; secure; HttpOnly; SameSite=None
+      - fpc=AoKDEPVGunNPsxPPFCailyfujS-SAQAAAAIEY9cOAAAA; expires=Fri, 08-Jan-2021
+        17:44:35 GMT; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
       strict-transport-security:
@@ -126,14 +126,14 @@ interactions:
     uri: https://pylarryoattestationaad.xxx.attest.azure.net/policies/SgxEnclave?api-version=2020-10-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NDgxNjQ4LCAiaWF0IjogMTYwNzQ3ODA0OCwgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzQ3ODA0OCwgIngtbXMtcG9saWN5IjogImV5SmhiR2NpT2lKdWIyNWxJbjAuZXlKQmRIUmxjM1JoZEdsdmJsQnZiR2xqZVNJNklDSmtiVlo1WXpKc2RtSnFNR2ROVXpSM1R6SkdNV1JIYUhaamJXdzJXVmhTY0dJeU5YbGtWM2hzWXpOMGFrOXNkREJsV0VKc1VGUXdhVXBIYkhwTVYxSnNXVzVXYmxveVJtbGlSMVZwV0ZOQk9WQnBRbmRhV0VwMFlWaFJiMHRVZERsUE1teDZZek5XYUdKdFRteGpibFp6V2xoT04xbDZjR0prU0d4M1dsUXdPVWxwVW5CamVURnJXbGRLTVZveVpHaFpiWGhzU1d3d1oxQlVOR2RoV0U1NlpGZFZiMlJJYkhkYVZEQnBZVmhOZEZwSFZtbGtWMlJ1V1ZkS2MxcFRTWE5KU0Zwb1lraFdiRkJYVFhWa2JVWnpaRmRWY0U4eVRUWlhNMUkxWTBkVk9WQlRTV3RqTW1RMFRGY3hlV015Ykc1aWJWWjVTV3d3WjFCVU5HZGhXRTU2WkZkVmIyUkliSGRhVkRCcFl6SmtORXhYTVhsak1teHVZbTFXZVVscGQyZGtiVVp6WkZkVk9WbDVOVEpaVjNneFdsTnJOMWw2Y0dKa1NHeDNXbFF3T1VscFVucGFNMmQwWWxoS2JHSnRUbk5aV0Zwc1NXd3daMUJVTkdkaFdFNTZaRmRWYjJSSWJIZGFWREJwWXpKa05FeFhNWGxhVnpWcVlrZEdNbHBUU1hOSlNGcG9Za2hXYkZCWFRYVmtiVVp6WkZkVmNFOHlUVFpYTTFJMVkwZFZPVkJUU1d0alNFcDJXa2hXYW1SRE1YQmFRMHBrU1VRd0xVbEhiSHBqTTFac1MwaFNOV05IVlRsSmJrSjVZakpTTVZrelVYUmhWMUZwVEVOQ01sbFhlREZhVkRGcVRHNWFhR0pJVm14TFZIUnFUMngwTUdWWVFteFFWREJwU2toT01tSnBTbVJKUkRBdFNVZHNlbU16Vm14TFNGSTFZMGRWT1VsdVRqSmlhVWx6U1VoYWFHSklWbXhRVjAxMVpHMUdjMlJYVlhCUE1rMDJWek5TTldOSFZUbFFVMGxyWkVkV2JFbHNNR2RRVkRSbllWaE9lbVJYVlc5a1NHeDNXbFF3YVdSSFZteEphWGRuWkcxR2MyUlhWVGxaZVRVeVdWZDRNVnBUYXpkbVZITWlmUS4ifQ.GDLlQpra14W2-RF60wdSzN4sYqi6q6JgF_q8fIbIjjmmF0FN4bCrXW-D_HcVAiReoiq6fNoDcNxZfAF2DbsCgjG8JB9PxkBHVF2_3kNF_6TAHEVTQ54vqPEUqcP1m_8xFgAd0jVK016-rQunHkpxPK_DoUEdfqC5sZqWdGIx_oE"}'
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NTM5NDc2LCAiaWF0IjogMTYwNzUzNTg3NiwgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzUzNTg3NiwgIngtbXMtcG9saWN5IjogImV5SmhiR2NpT2lKdWIyNWxJbjAuZXlKQmRIUmxjM1JoZEdsdmJsQnZiR2xqZVNJNklDSmtiVlo1WXpKc2RtSnFNR2ROVXpSM1R6SkdNV1JIYUhaamJXdzJXVmhTY0dJeU5YbGtWM2hzWXpOMGFrOXNkREJsV0VKc1VGUXdhVXBIYkhwTVYxSnNXVzVXYmxveVJtbGlSMVZwV0ZOQk9WQnBRbmRhV0VwMFlWaFJiMHRVZERsUE1teDZZek5XYUdKdFRteGpibFp6V2xoT04xbDZjR0prU0d4M1dsUXdPVWxwVW5CamVURnJXbGRLTVZveVpHaFpiWGhzU1d3d1oxQlVOR2RoV0U1NlpGZFZiMlJJYkhkYVZEQnBZVmhOZEZwSFZtbGtWMlJ1V1ZkS2MxcFRTWE5KU0Zwb1lraFdiRkJYVFhWa2JVWnpaRmRWY0U4eVRUWlhNMUkxWTBkVk9WQlRTV3RqTW1RMFRGY3hlV015Ykc1aWJWWjVTV3d3WjFCVU5HZGhXRTU2WkZkVmIyUkliSGRhVkRCcFl6SmtORXhYTVhsak1teHVZbTFXZVVscGQyZGtiVVp6WkZkVk9WbDVOVEpaVjNneFdsTnJOMWw2Y0dKa1NHeDNXbFF3T1VscFVucGFNMmQwWWxoS2JHSnRUbk5aV0Zwc1NXd3daMUJVTkdkaFdFNTZaRmRWYjJSSWJIZGFWREJwWXpKa05FeFhNWGxhVnpWcVlrZEdNbHBUU1hOSlNGcG9Za2hXYkZCWFRYVmtiVVp6WkZkVmNFOHlUVFpYTTFJMVkwZFZPVkJUU1d0alNFcDJXa2hXYW1SRE1YQmFRMHBrU1VRd0xVbEhiSHBqTTFac1MwaFNOV05IVlRsSmJrSjVZakpTTVZrelVYUmhWMUZwVEVOQ01sbFhlREZhVkRGcVRHNWFhR0pJVm14TFZIUnFUMngwTUdWWVFteFFWREJwU2toT01tSnBTbVJKUkRBdFNVZHNlbU16Vm14TFNGSTFZMGRWT1VsdVRqSmlhVWx6U1VoYWFHSklWbXhRVjAxMVpHMUdjMlJYVlhCUE1rMDJWek5TTldOSFZUbFFVMGxyWkVkV2JFbHNNR2RRVkRSbllWaE9lbVJYVlc5a1NHeDNXbFF3YVdSSFZteEphWGRuWkcxR2MyUlhWVGxaZVRVeVdWZDRNVnBUYXpkbVZITWlmUS4ifQ.fJ7aX_VBdMQifMS8z0MmP9uBHOpBYNa-ZSDSCEKbXU390Cxh-piBzr2kNOOBvaOMLICrO-DJCtGI1oDqOCHnAZMPOzJG_p8Cd1D4UxwGXDr3bcCmUS2TKX_vtGaYrtvZ5ejiOB4Lta2i2gBbUtgukjD6Cem3Nf7Kf_ZY4AaT0mY"}'
     headers:
       content-length:
       - '1783'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Dec 2020 01:40:47 GMT
+      - Wed, 09 Dec 2020 17:44:36 GMT
       server:
       - Kestrel
       x-ms-maa-service-version:

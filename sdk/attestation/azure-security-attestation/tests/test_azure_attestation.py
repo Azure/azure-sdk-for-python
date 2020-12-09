@@ -21,6 +21,7 @@ from devtools_testutils import AzureTestCase, ResourceGroupPreparer, PowerShellP
 import functools
 import json
 import cryptography
+import cryptography.x509
 import base64
 import jwt
 
