@@ -24,38 +24,39 @@ import cryptography
 import cryptography.x509
 import base64
 import jwt
+import pytest
 
 from azure.security.attestation.v2020_10_01 import AttestationClient
 from azure.security.attestation.v2020_10_01.models import AttestationType
 import azure.security.attestation.v2020_10_01.models
 
 AttestationPreparer = functools.partial(
-            PowerShellPreparer, "ATTESTATION",
-            ATTESTATION_AZURE_AUTHORITY_HOST='xxx',
-            ATTESTATION_RESOURCE_GROUP='yyyy',
-            ATTESTATION_SUBSCRIPTION_ID='xxx',
-            ATTESTATION_LOCATION_SHORT_NAME='xxx',
-            ATTESTATION_ENVIRONMENT='AzureCloud',
-            ATTESTATION_POLICY_SIGNING_KEY0='keyvalue',
-            ATTESTATION_POLICY_SIGNING_KEY1='keyvalue',
-            ATTESTATION_POLICY_SIGNING_KEY2='keyvalue',
-            ATTESTATION_POLICY_SIGNING_CERTIFICATE0='more junk',
-            ATTESTATION_POLICY_SIGNING_CERTIFICATE1='more junk',
-            ATTESTATION_POLICY_SIGNING_CERTIFICATE2='more junk',
-            ATTESTATION_SERIALIZED_POLICY_SIGNING_KEY0="junk",
-            ATTESTATION_SERIALIZED_POLICY_SIGNING_KEY1="junk",
-            ATTESTATION_SERIALIZED_POLICY_SIGNING_KEY2="junk",
-            ATTESTATION_SERIALIZED_ISOLATED_SIGNING_KEY='yyyy',
-            ATTESTATION_ISOLATED_SIGNING_KEY='xxxx',
-            ATTESTATION_ISOLATED_SIGNING_CERTIFICATE='xxxx',
-            ATTESTATION_SERVICE_MANAGEMENT_URL='xxx',
-            ATTESTATION_LOCATION='xxxx',
-            ATTESTATION_CLIENT_ID='xxxx',
-            ATTESTATION_CLIENT_SECRET='secret',
-            ATTESTATION_TENANT_ID='tenant',
-            ATTESTATION_ISOLATED_URL='xxx',
-            ATTESTATION_AAD_URL='yyy',
-            ATTESTATION_RESOURCE_MANAGER_URL='resourcemanager'
+            PowerShellPreparer, "attestation",
+#            attestation_azure_authority_host='xxx',
+#            attestation_resource_group='yyyy',
+#            attestation_subscription_id='xxx',
+#            attestation_location_short_name='xxx',
+#            attestation_environment='AzureCloud',
+            attestation_policy_signing_key0='keyvalue',
+            attestation_policy_signing_key1='keyvalue',
+            attestation_policy_signing_key2='keyvalue',
+            attestation_policy_signing_certificate0='more junk',
+            attestation_policy_signing_certificate1='more junk',
+            attestation_policy_signing_certificate2='more junk',
+            attestation_serialized_policy_signing_key0="junk",
+            attestation_serialized_policy_signing_key1="junk",
+            attestation_serialized_policy_signing_key2="junk",
+            attestation_serialized_isolated_signing_key='yyyy',
+            attestation_isolated_signing_key='xxxx',
+            attestation_isolated_signing_certificate='xxxx',
+            attestation_service_management_url='https://management.core.windows.net/',
+#            attestation_location='xxxx',
+            attestation_client_id='xxxx',
+            attestation_client_secret='secret',
+            attestation_tenant_id='tenant',
+            attestation_isolated_url='https://fakeresource.wus.attest.azure.net',
+            attestation_aad_url='https://fakeresource.wus.attest.azure.net',
+#            attestation_resource_manager_url='https://resourcemanager/zzz'
         )
 
 class AzureAttestationTest(AzureTestCase):
@@ -63,6 +64,7 @@ class AzureAttestationTest(AzureTestCase):
     def setUp(self):
             super(AzureAttestationTest, self).setUp()
 
+    @pytest.mark.live_test_only
     def test_shared_getopenidmetadata(self):
         attest_client = self.shared_client()
         open_id_metadata = attest_client.metadata_configuration.get()
@@ -72,6 +74,7 @@ class AzureAttestationTest(AzureTestCase):
         assert open_id_metadata["issuer"] == self.shared_base_uri()
 
     @AttestationPreparer()
+    @pytest.mark.live_test_only
     def test_aad_getopenidmetadata(self, attestation_aad_url):
         attest_client = self.create_client(attestation_aad_url)
         open_id_metadata = attest_client.metadata_configuration.get()
@@ -81,6 +84,7 @@ class AzureAttestationTest(AzureTestCase):
         assert open_id_metadata["issuer"] == attestation_aad_url
 
     @AttestationPreparer()
+    @pytest.mark.live_test_only
     def test_isolated_getopenidmetadata(self, attestation_isolated_url):
         attest_client = self.create_client(attestation_isolated_url)
         open_id_metadata = attest_client.metadata_configuration.get()
@@ -145,7 +149,7 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.shared_client()
         default_policy_response = attest_client.policy.get("SgxEnclave")
         default_policy = default_policy_response.token
-        policy_token = jwt.decode(default_policy, options={"verify_signature":False}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(default_policy, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
         
         verifyToken=True
         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
@@ -164,7 +168,7 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_isolated_url)
         default_policy_response = attest_client.policy.get("SgxEnclave")
         default_policy = default_policy_response.token
-        policy_token = jwt.decode(default_policy, options={"verify_signature":False}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(default_policy, options={"verify_signature":False, "leeway": 10}, leeway=10, algorithms=["none", "RS256"])
         
         verifyToken=True
         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
@@ -183,7 +187,7 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_aad_url)
         default_policy_response = attest_client.policy.get("SgxEnclave")
         default_policy = default_policy_response.token
-        policy_token = jwt.decode(default_policy, options={"verify_signature":False}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(default_policy, options={"verify_signature":False}, leeway=10, algorithms=["none", "RS256"])
 
         verifyToken=True
         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
@@ -202,7 +206,7 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_aad_url)
         policy_signers = attest_client.policy_certificates.get()
         default_signers = policy_signers.token
-        policy_token = jwt.decode(default_signers, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(default_signers, options={"verify_signature":False}, leeway=10, algorithms=["none", "RS256"])
         print("{}".format(policy_token))
         policy_certificates = policy_token["x-ms-policy-certificates"]
         assert len(policy_certificates["keys"])==0

@@ -8,132 +8,20 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Cookie:
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIwN2sYtjSsaspYPWWZx8ZCejPNlGk8V7bgmpqsU6kRPvCqkqWtoEVUw-elR_CGVU3QzJxLJ18tZ0sSQp95ns34xWND9QUNPyKgZtIgAkLLkOfhY_uDfv54klNv3EFTn7iWFigI6ZWKGhwbHKteHTnwRxdkLWGqOE835fMHuNHWpkgAA;
-        fpc=AoKDEPVGunNPsxPPFCailyc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
-      User-Agent:
-      - azsdk-python-identity/1.5.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: xxxcommon/discovery/instance?api-version=1.1&authorization_endpoint=xxxcommon/oauth2/authorize
-  response:
-    body:
-      string: '{"tenant_discovery_endpoint":"xxxcommon/.well-known/openid-configuration","api-version":"1.1","metadata":[{"preferred_network":"login.microsoftonline.com","preferred_cache":"login.windows.net","aliases":["login.microsoftonline.com","login.windows.net","login.microsoft.com","sts.windows.net"]},{"preferred_network":"login.partner.microsoftonline.cn","preferred_cache":"login.partner.microsoftonline.cn","aliases":["login.partner.microsoftonline.cn","login.chinacloudapi.cn"]},{"preferred_network":"login.microsoftonline.de","preferred_cache":"login.microsoftonline.de","aliases":["login.microsoftonline.de"]},{"preferred_network":"login.microsoftonline.us","preferred_cache":"login.microsoftonline.us","aliases":["login.microsoftonline.us","login.usgovcloudapi.net"]},{"preferred_network":"login-us.microsoftonline.com","preferred_cache":"login-us.microsoftonline.com","aliases":["login-us.microsoftonline.com"]}]}'
-    headers:
-      access-control-allow-methods:
-      - GET, OPTIONS
-      access-control-allow-origin:
-      - '*'
-      cache-control:
-      - max-age=86400, private
-      content-length:
-      - '945'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 09 Dec 2020 17:44:34 GMT
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      set-cookie:
-      - fpc=AoKDEPVGunNPsxPPFCailyc; expires=Fri, 08-Jan-2021 17:44:34 GMT; path=/;
-        secure; HttpOnly; SameSite=None
-      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
-      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ests-server:
-      - 2.1.11303.13 - SCUS ProdSlices
-    status:
-      code: 200
-      message: OK
-- request:
-    body: client_id=2fe370d0-ca5e-41d3-b3eb-0ecb1312e5be&grant_type=client_credentials&client_info=1&client_secret=c6842083-3a53-4b0f-b341-abed5729fd5c&scope=https%3A%2F%2Fattest.azure.net%2F.default
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '189'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      Cookie:
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIwN2sYtjSsaspYPWWZx8ZCejPNlGk8V7bgmpqsU6kRPvCqkqWtoEVUw-elR_CGVU3QzJxLJ18tZ0sSQp95ns34xWND9QUNPyKgZtIgAkLLkOfhY_uDfv54klNv3EFTn7iWFigI6ZWKGhwbHKteHTnwRxdkLWGqOE835fMHuNHWpkgAA;
-        fpc=AoKDEPVGunNPsxPPFCailyc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
-      User-Agent:
-      - azsdk-python-identity/1.5.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-      x-client-cpu:
-      - x64
-      x-client-current-telemetry:
-      - 1|730,0|
-      x-client-os:
-      - win32
-      x-client-sku:
-      - MSAL.Python
-      x-client-ver:
-      - 1.7.0
-    method: POST
-    uri: xxxtenant/oauth2/v2.0/token
-  response:
-    body:
-      string: '{"token_type":"Bearer","expires_in":86399,"ext_expires_in":86399,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCIsImtpZCI6ImtnMkxZczJUMENUaklmajRydDZKSXluZW4zOCJ9.eyJhdWQiOiJodHRwczovL2F0dGVzdC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjA3NTM1NTc0LCJuYmYiOjE2MDc1MzU1NzQsImV4cCI6MTYwNzYyMjI3NCwiYWlvIjoiRTJSZ1lQRGFiV01XYnlYeUk2cWJUWWxiY000Y0FBPT0iLCJhcHBpZCI6IjJmZTM3MGQwLWNhNWUtNDFkMy1iM2ViLTBlY2IxMzEyZTViZSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiJjYWMzNDllMC1mODM0LTRmZTktYWQxYi03Mzg1ZmQyMjQyODQiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUjlCdzR5OWV5dE5Ccy1zT3l4TVM1YjRhQUFBLiIsInN1YiI6ImNhYzM0OWUwLWY4MzQtNGZlOS1hZDFiLTczODVmZDIyNDI4NCIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6IjRwVGR2RHVtYlVHV2dmMHhMb2RYQUEiLCJ2ZXIiOiIxLjAifQ.NsRmZ_ci1rxswEDmFecETD4XAcWPt5LxYEQeXw2qiS_sTXN5uJmuNAUEBnDLRqOr-qJoQ8GBP3pJZXzcH1BsNsQTqCPmWK-mFz6pZfic_VK-mKJ_SQRp6xy2xqsPsL_qw44zdnJauKIyPsiUKqy_k27kumc_AmBQCtWBOdDsaKemd86bgKa79w8DdvESeacM2mga0tom3s9QSPJiJi8ccNdBr7EDYQz35KcPjwSpxu37FNG991_KLcRkOZTJB_aH0eHyqTM7JMChVWPA0cAcQSIrXXVWGhzreXZzBZkrpKucxVjTkJVjrnmUWfoi6Rv_dVCWC70lfAZN-neGeH3WkQ"}'
-    headers:
-      cache-control:
-      - no-store, no-cache
-      content-length:
-      - '1317'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 09 Dec 2020 17:44:34 GMT
-      expires:
-      - '-1'
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      pragma:
-      - no-cache
-      set-cookie:
-      - fpc=AoKDEPVGunNPsxPPFCailyfujS-SAQAAAAIEY9cOAAAA; expires=Fri, 08-Jan-2021
-        17:44:35 GMT; path=/; secure; HttpOnly; SameSite=None
-      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
-      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-clitelem:
-      - 1,0,0,,
-      x-ms-ests-server:
-      - 2.1.11303.13 - NCUS ProdSlices
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-security-attestation/0.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://pylarryoattestationaad.xxx.attest.azure.net/policies/SgxEnclave?api-version=2020-10-01
+    uri: https://fakeresource.wus.attest.azure.net/policies/SgxEnclave?api-version=2020-10-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NTM5NDc2LCAiaWF0IjogMTYwNzUzNTg3NiwgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzUzNTg3NiwgIngtbXMtcG9saWN5IjogImV5SmhiR2NpT2lKdWIyNWxJbjAuZXlKQmRIUmxjM1JoZEdsdmJsQnZiR2xqZVNJNklDSmtiVlo1WXpKc2RtSnFNR2ROVXpSM1R6SkdNV1JIYUhaamJXdzJXVmhTY0dJeU5YbGtWM2hzWXpOMGFrOXNkREJsV0VKc1VGUXdhVXBIYkhwTVYxSnNXVzVXYmxveVJtbGlSMVZwV0ZOQk9WQnBRbmRhV0VwMFlWaFJiMHRVZERsUE1teDZZek5XYUdKdFRteGpibFp6V2xoT04xbDZjR0prU0d4M1dsUXdPVWxwVW5CamVURnJXbGRLTVZveVpHaFpiWGhzU1d3d1oxQlVOR2RoV0U1NlpGZFZiMlJJYkhkYVZEQnBZVmhOZEZwSFZtbGtWMlJ1V1ZkS2MxcFRTWE5KU0Zwb1lraFdiRkJYVFhWa2JVWnpaRmRWY0U4eVRUWlhNMUkxWTBkVk9WQlRTV3RqTW1RMFRGY3hlV015Ykc1aWJWWjVTV3d3WjFCVU5HZGhXRTU2WkZkVmIyUkliSGRhVkRCcFl6SmtORXhYTVhsak1teHVZbTFXZVVscGQyZGtiVVp6WkZkVk9WbDVOVEpaVjNneFdsTnJOMWw2Y0dKa1NHeDNXbFF3T1VscFVucGFNMmQwWWxoS2JHSnRUbk5aV0Zwc1NXd3daMUJVTkdkaFdFNTZaRmRWYjJSSWJIZGFWREJwWXpKa05FeFhNWGxhVnpWcVlrZEdNbHBUU1hOSlNGcG9Za2hXYkZCWFRYVmtiVVp6WkZkVmNFOHlUVFpYTTFJMVkwZFZPVkJUU1d0alNFcDJXa2hXYW1SRE1YQmFRMHBrU1VRd0xVbEhiSHBqTTFac1MwaFNOV05IVlRsSmJrSjVZakpTTVZrelVYUmhWMUZwVEVOQ01sbFhlREZhVkRGcVRHNWFhR0pJVm14TFZIUnFUMngwTUdWWVFteFFWREJwU2toT01tSnBTbVJKUkRBdFNVZHNlbU16Vm14TFNGSTFZMGRWT1VsdVRqSmlhVWx6U1VoYWFHSklWbXhRVjAxMVpHMUdjMlJYVlhCUE1rMDJWek5TTldOSFZUbFFVMGxyWkVkV2JFbHNNR2RRVkRSbllWaE9lbVJYVlc5a1NHeDNXbFF3YVdSSFZteEphWGRuWkcxR2MyUlhWVGxaZVRVeVdWZDRNVnBUYXpkbVZITWlmUS4ifQ.fJ7aX_VBdMQifMS8z0MmP9uBHOpBYNa-ZSDSCEKbXU390Cxh-piBzr2kNOOBvaOMLICrO-DJCtGI1oDqOCHnAZMPOzJG_p8Cd1D4UxwGXDr3bcCmUS2TKX_vtGaYrtvZ5ejiOB4Lta2i2gBbUtgukjD6Cem3Nf7Kf_ZY4AaT0mY"}'
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NTUwOTQ3LCAiaWF0IjogMTYwNzU0NzM0NywgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzU0NzM0NywgIngtbXMtcG9saWN5IjogImV5SmhiR2NpT2lKdWIyNWxJbjAuZXlKQmRIUmxjM1JoZEdsdmJsQnZiR2xqZVNJNklDSmtiVlo1WXpKc2RtSnFNR2ROVXpSM1R6SkdNV1JIYUhaamJXdzJXVmhTY0dJeU5YbGtWM2hzWXpOMGFrOXNkREJsV0VKc1VGUXdhVXBIYkhwTVYxSnNXVzVXYmxveVJtbGlSMVZwV0ZOQk9WQnBRbmRhV0VwMFlWaFJiMHRVZERsUE1teDZZek5XYUdKdFRteGpibFp6V2xoT04xbDZjR0prU0d4M1dsUXdPVWxwVW5CamVURnJXbGRLTVZveVpHaFpiWGhzU1d3d1oxQlVOR2RoV0U1NlpGZFZiMlJJYkhkYVZEQnBZVmhOZEZwSFZtbGtWMlJ1V1ZkS2MxcFRTWE5KU0Zwb1lraFdiRkJYVFhWa2JVWnpaRmRWY0U4eVRUWlhNMUkxWTBkVk9WQlRTV3RqTW1RMFRGY3hlV015Ykc1aWJWWjVTV3d3WjFCVU5HZGhXRTU2WkZkVmIyUkliSGRhVkRCcFl6SmtORXhYTVhsak1teHVZbTFXZVVscGQyZGtiVVp6WkZkVk9WbDVOVEpaVjNneFdsTnJOMWw2Y0dKa1NHeDNXbFF3T1VscFVucGFNMmQwWWxoS2JHSnRUbk5aV0Zwc1NXd3daMUJVTkdkaFdFNTZaRmRWYjJSSWJIZGFWREJwWXpKa05FeFhNWGxhVnpWcVlrZEdNbHBUU1hOSlNGcG9Za2hXYkZCWFRYVmtiVVp6WkZkVmNFOHlUVFpYTTFJMVkwZFZPVkJUU1d0alNFcDJXa2hXYW1SRE1YQmFRMHBrU1VRd0xVbEhiSHBqTTFac1MwaFNOV05IVlRsSmJrSjVZakpTTVZrelVYUmhWMUZwVEVOQ01sbFhlREZhVkRGcVRHNWFhR0pJVm14TFZIUnFUMngwTUdWWVFteFFWREJwU2toT01tSnBTbVJKUkRBdFNVZHNlbU16Vm14TFNGSTFZMGRWT1VsdVRqSmlhVWx6U1VoYWFHSklWbXhRVjAxMVpHMUdjMlJYVlhCUE1rMDJWek5TTldOSFZUbFFVMGxyWkVkV2JFbHNNR2RRVkRSbllWaE9lbVJYVlc5a1NHeDNXbFF3YVdSSFZteEphWGRuWkcxR2MyUlhWVGxaZVRVeVdWZDRNVnBUYXpkbVZITWlmUS4ifQ.dq3_XwY81BNl0N0RGraE2to_G67oTUT6MpRXv9J40zjM-z6w4Soj5GSQnRJnsPYoYoDSR93R2uK1L3-wcLa4vigLGreovel2xh7cmkIRDgNv2pwIIkKPgxvFx0oBgd0Bed3Gr747MZQqRk3hVWGoGw0kVi91kBe9iDsx3i82Siw"}'
     headers:
       content-length:
       - '1783'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Dec 2020 17:44:36 GMT
+      - Wed, 09 Dec 2020 20:55:47 GMT
       server:
       - Kestrel
       x-ms-maa-service-version:
