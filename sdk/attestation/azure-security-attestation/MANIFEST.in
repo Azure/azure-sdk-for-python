@@ -1,4 +1,4 @@
 recursive-include tests *.py *.yaml
 include *.md
-include azure/security/attestation/v2020_10_01/__init__.py
+include azure/security/attestation/__init__.py
 

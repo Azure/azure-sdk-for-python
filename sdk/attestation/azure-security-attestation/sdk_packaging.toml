@@ -1,7 +1,7 @@
 [packaging]
-package_name = "azure-mgmt-attestation"
-package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "MyService Management"
+package_name = "azure-security-attestation"
+package_nspkg = "azure-security-nspkg"
+package_pprint_name = "Microsoft Azure Attestation Dataplane"
 package_doc_id = ""
 is_stable = false
 is_arm = true
