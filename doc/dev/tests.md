@@ -5,12 +5,11 @@ In this section, we will provide the introduction to the testing framework by:
 - [Integrating with pytest](#integrate-with-the-pytest-test-framework)
 - [Using Tox](#tox)
 - [The `devtools_testutils` package](#devtools_testutils-package)
-- [Writing Python Tests](#Writing-python-tests)
+- [Writing New Tests](#Writing-new-tests)
 - [Define our credentials and settings](#define-credentials)
-- [Setting up your test directory](#setting-up-your-test-directory)
 - [Create live test resources](#create-live-test-resources)
-- [Write our test](#writing-a-functional-test)
-- [Adding an async test](#adding-an-async-test)
+- [Write our test](#writing-your-test)
+- [An example test](#an-example-test)
 - [Run and record our tests](#run-and-record-the-test)
 
 ## Setup the development environment
@@ -113,7 +112,7 @@ A quick description of the five commands above:
 ## `devtools_testutils` Package
 The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package are the preparers that will be commonly used throughout the repository to test various resources. A preparer is a way to programmatically create fresh resources to run our tests against and then deleting them after running a test suite. These are helpful to help guarantee standardized behavior by starting each test group from a fresh resource and account. For more information on writing and building preparers following this tutorial on how to create the [app-configuration account preparer](https://github.com/Azure/azure-sdk-pr/issues/458).
 
-Also in this package is the `AzureTestCase` object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history).
+Also in this package is the `AzureTestCase` object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
 
 ## Writing New Tests
 SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
@@ -129,64 +128,26 @@ When you run tests in playback mode, they use a fake credentials file, located a
 
 In live mode, the credentials need to be real so that we can actually connect to the service. Copy the `mgmt_settings_fake.py` file to a new file named `mgmt_settings_real.py` within the same directory. Then make the following changes:
 1. Change the value of the `SUBSCRIPTION_ID` variable to your organizations subscription ID. (If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal](https://portal.azure.com/).)
-2. Change the `get_azure_core_credentials(**kwargs):` function to construct and return a `ClientSecretCredential` object. The `client_id`, `client_secret`, `tenant_id` are the same values that you set in your environment values section of the [implementation intro setup](https://github.com/Azure/azure-sdk-pr/tree/master/training/azure-sdk-implement/tutorials/implementation-intro/setup). The `mgmt_settings_real.py` file should look like this:
+2. Create a `.env` file at the root of the repository (in the same directory as the `sdk`, `tools`, `eng` folders). In this file you can define any environment variables you need for a test and that will be loaded by the `AzureTestCase` file. Start by defining `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` which are available after creating a Service Principal or can be retrieved from the Azure Portal if you have already created a Service Principal.
+3. Change the `get_azure_core_credentials(**kwargs):` function to construct and return a `ClientSecretCredential` object. The `client_id`, `client_secret`, `tenant_id` are provided when you create a service principal. These values can be found in the Azure Portal The `mgmt_settings_real.py` file should look like this:
 ```python
     def get_azure_core_credentials(**kwargs):
         from azure.identity import ClientSecretCredential
         import os
         return ClientSecretCredential(
-            client_id = os.environ['API-LEARN_AZURE_CLIENT_ID'],
-            client_secret = os.environ['API-LEARN_AZURE_CLIENT_SECRET'],
-            tenant_id = os.environ['API-LEARN_AZURE_TENANT_ID']
+            client_id = os.environ['AZURE_CLIENT_ID'],
+            client_secret = os.environ['AZURE_CLIENT_SECRET'],
+            tenant_id = os.environ['AZURE_TENANT_ID']
         )
 ```
-3. Add a variable that holds the value of your account url, this is used by the test framework to ensure this value does not leak into the public github repository.
-```python
-# App Config URL
-APP_CONFIG_URL = "<my_url>"
-```
 
-### Create the test file
-
-In the `test_app_config.py` file add the following block of code:
-
-```python
-import os
-import pytest
-
-from devtools_testutils import AzureTestCase
-
-from azure.learnappconfig import AppConfigurationClient
-from azure.core.exceptions import ResourceNotFoundError
-
-# A fake URL to replace the real value in your recordings. This ensures the GitHub repository won't have leaked secrets
-APP_CONFIG_URL = "https://fake-app-config-url.azconfig.io"
-
-class AppConfigurationClientTest(AzureTestCase):
-    def __init__(self, *args, **kwargs):
-        super(AppConfigurationClientTest, self).__init__(*args, **kwargs)
-        self.env_color = os.environ.get('API-LEARN_SETTING_COLOR_VALUE', "Green")
-        self.env_color_key = os.environ.get('API-LEARN_SETTING_COLOR_KEY', "FontColor")
-        self.env_greeting = os.environ.get('API-LEARN_SETTING_TEXT_VALUE', "Hello World!")
-        self.env_greeting_key = os.environ.get('API-LEARN_SETTING_TEXT_KEY', "Greeting")
-
-    def setUp(self):
-        super(AppConfigurationClientTest, self).setUp()
-        # Set the env variable AZURE_APP_CONFIG_URL or put APP_CONFIG_URL in your "mgmt_settings_real.py" file
-        self.app_config_url = self.set_value_to_scrub('APP_CONFIG_URL', APP_CONFIG_URL)
-```
-Here we are going to store the default values for our settings programatically to test against later.
-
-The `setUp` method registers a "scrubber" and determines whether the tests are to be done in live or playback mode. This method also sets up the configurations for our recording infrastructure. These two methods will be pretty similar across testing libraries.
-
-If you need logging functionality for your testing, pytest also offers [logging](https://docs.pytest.org/en/stable/logging.html) capabilities either inline through the `caplog` fixture or with command line flags.
 
 ## Create Live Test Resources
 The Azure Python SDK library has two ways of providing live resources to our tests:
 * Using an individualized preparer
     * [Storage preparer](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py)
     * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/tests/test_blob_client.py#L49-L61) for the blob client
-* Using an ArmTemplate and the PowerShellPreparer
+* Using an ArmTemplate and the PowerShellPreparer (we will show the latter)
     * [PowerShell preparer](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py)
     * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/schemaregistry/azure-schemaregistry/tests/test_schema_registry.py#L30-L39) for the schemaregistry library
 
@@ -194,7 +155,7 @@ If your library has a management plane library, you can build a preparer specifi
 
 1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be done in the portal by creating the resources and at the very last step (Review + create) clicking "Download a template for automation". This template should be saved in a file named `test-resources.json` under the directory that contains your library (`sdk/<my_library>/test-resources.json`).
 2. Use the [`New-TestResources.ps1`](https://github.com/Azure/azure-sdk-for-python/tree/master/eng/common/TestResources#on-the-desktop) script to deploy those resources.
-3. Set the environment variables returned from step 2 in your current shell or create a `.env` file at the root of the repo to hold these secrets. If you choose the latter method, you will have to make sure all the key-value pairs are in the format `<key_name>=<value>`, free of quotations and the `${env:<key_name>} = '<value>'` formatting used in PowerShell.
+3. Set the environment variables returned from step 2 in your current shell or create a `.env` file at the root of the repo to hold these secrets. If you choose the latter method, you will have to make sure all the key-value pairs are in the format `<key_name>=<value>`, free of quotations and the `${env:<key_name>} = '<value>'` formatting used in PowerShell. The names of the environment variables should be in the pattern `<LIBRARY>_...`, ie. `TABLES_PRIMARY_KEY`, `FORMRECOGNIZER_ACCOUNT_URL`, `EVENTHUBS_SECRET_KEY`.
 4. Create a partial implementation of the PowerShellPreparer to pass in your specific environment variables. An example implementation is shown below for schemaregistry
 
 ```python
@@ -211,37 +172,87 @@ MyServicePreparer = functool.partial(
 The parameters for the functool are:
 * The `PowerShellPreparer` class
 * The library folder that holds your code (ie. `sdk/schemaregistry`). This value is used to search your environment variables.
-* The 
+* The keys that you need returned from your environment variables and a fake value for replacing the actual value in the recordings.
 
+## Write your tests
 
+In the `tests` directory create a file with the naming pattern `test_<what_you_are_testing>.py`. The base of each testing file will be roughly the same:
 
+```python
+import functools
+import pytest
 
-## Writing a functional test
-Now let's add the logic into our functional test. Update the method to look like the following:
+from devtools_testutils import AzureTestCase, PowerShellPreparer
+
+from azure.schemaregistry import SchemaRegistryClient
+
+SchemaRegistryPreparer = functools.partial(
+    PowerShellPreparer, 'schemaregistry',
+    schemaregistry_endpoint="fake_resouce.servicebus.windows.net",
+    schemaregistry_group="fakegroup"
+)
+
+class TestSchemaRegistry(AzureTestCase):
+
+# Start with any helper functions you might need, for example a client creation method:
+    def create_schemareg_client(self, endpoint):
+        credential = self.get_credential(SchemaRegistryClient)
+        client = self.create_client_from_credential(SchemaRegistryClient, credential=credential, endpoint=endpoint)
+        return client
+
+    ...
+
+# Write your tests
+    @SchemaRegistryPreparer()
+    def test_client_creation(self, schemaregistry_endpoint):
+        client = self.create_schemareg_client(schemaregistry_endpoint)
+        assert client is not None
+
+```
+
+There's a lot going on in the example so we'll take this piece by piece:
+
+* Import everything you will need in your tests as normal, add to your imports the line `from devtools_testutils import AzureTestCase, PowerShellPreparer`. These two objects give our tests a lot of the desired powers.
+* `AzureTestCase`: the test class should inherit from this object (`class TestSchemaRegistry(AzureTestCase)`), doing so sets up the recording infrastructure and the client creation methods.
+* `PowerShellPreparer`: this preparer serves two purposes.
+    * First, it will provide the live keys we need to test our library against live resources.
+    * Second, it will keep those same live keys out of our recordings to make sure that we are not leaking our secrets into the recordings.
+    * Building your preparer is simple, you'll use the `functools.partial` method to do so. The arguments are in the following order:
+        1. `PowerShellPreparer` class
+        2. The directory that you are building your library from. In our schemaregistry example, it's just `schemaregistry`.
+        3. The remaining arguments are going to be key-value kwargs. The key is going to be any environment variable that you need for your tests, spelled exactly the same as it is in the environment variable. The value is a **fake** value to replace your real value in the recording. The fake value should be a close copy of the real value and a unique value to the other key-value pairs.
+* At the top of your test class you should include any helper methods you will need. Most libraries will have a client creation method to eliminate repetitive code.
+* Following your helper methods will be your actual tests. All test methods must start with "test". The preparer built at the top of the file should decorate your test in the fashion: `@MyPreparer()`.
+    * The signature of your test will always contain `self`, and following self will be all the keys that you need from your preparer. A test does not need to have every key passed into it, the test framework will take care of passing in only the parameters specifically requested in the test signature.
+
+If you need logging functionality for your testing, pytest also offers [logging](https://docs.pytest.org/en/stable/logging.html) capabilities either inline through the `caplog` fixture or with command line flags.
+
+## An example test
+An example test for schemaregistry looks like:
 ```python
 class AppConfigTestCase(AzureTestCase):
 
     ...
-    def test_get_key_value(self):
-        credential = self.get_credential(AppConfigurationClient)
-        client = self.create_client_from_credential(AppConfigurationClient, credential=credential, account_url=self.app_config_url)
-        assert client is not None
+    @SchemaRegistryPreparer()
+    def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group):
+        client = self.create_client(schemaregistry_endpoint)
+        schema_name = self.get_resource_name('test-schema-basic')
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+        serialization_type = "Avro"
+        schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-        assert self.env_color == client.get_configuration_setting(self.env_color_key)['value']
-        assert self.env_greeting == client.get_configuration_setting(self.env_greeting_key)['value']
+        assert schema_properties.schema_id is not None
+        assert schema_properties.location is not None
+        assert schema_properties.location_by_id is not None
+        assert schema_properties.version is 1
+        assert schema_properties.serialization_type == "Avro"
 
-    def test_get_invalid_key(self):
-        credential = self.get_credential(AppConfigurationClient)
-        client = self.create_client_from_credential(AppConfigurationClient, credential=credential, account_url=self.app_config_url)
-        assert client is not None
-
-        with pytest.raises(ResourceNotFoundError):
-            client.get_configuration_setting("KEY_THAT_DOES_NOT_EXIST")
+        with pytest.raises(HttpResponseError):
+            client.get_schema('a' * 32)
 ```
-The `AzureTestCase` class has the ability to define a client by passing in the client object and the account URL, without having to worry about identity. Test files should not import `azure.identity`, the `self.create_basic_client` will take care of loading environment variables and creating the default credentials. This test doesn't actually send any information to the service, it's simply checking that the client is created from the information we provide. If it fails we would be confident that there is an issue with our client side logic and should revisit it.
+The `AzureTestCase` class has the ability to define a client by passing in the client object and the account URL, without having to worry about identity. Test files should not import `azure.identity`, the `self.create_basic_client` will take care of loading environment variables and creating the default credentials.
 
-The test infrastructure heavily leverages the `assert` keyword, which tests if the condition following it is true, and if it is not the program will raise an `AssertionError`. When writing tests, any uncaught exception results in a failure, from an assert or from the code itself (ie. `TypeError`, `ValueError`, `HttpResponseError`, etc.). In the first test there are two assert statements, the first checking to verify that the returned color is the same as the one set in the API Design tutorial, and the second to verify the same for the greeting.
-The second test uses a [context manager](https://docs.python.org/3/library/contextlib.html) used from the `pytest` library that tests whether the following block of code will raise a certain exception. The context manager represents the following code block:
+The test infrastructure heavily leverages the `assert` keyword, which tests if the condition following it is true, and if it is not the program will raise an `AssertionError`. When writing tests, any uncaught exception results in a failure, from an assert or from the code itself (ie. `TypeError`, `ValueError`, `HttpResponseError`, etc.). The assert statements are testing that all the exected properties of the returned object are not `None`, and the last two assert statements verify that the tested properties are a given value. The last two lines of the test use a [context manager](https://docs.python.org/3/library/contextlib.html) used from the `pytest` library that tests whether the following block of code will raise a certain exception. The context manager represents the following code block:
 
 ## Run and record the test
 
@@ -252,5 +263,3 @@ From your terminal run the `pytest` command to run all the tests that you have w
 ```
 
 Your update should run smooth and have 4 passing tests. Now if you look at the contents of your `tests` directory there should be a new directory called `recording` with four `.yaml` files. Each `yaml` file is a recording for a single test. To run a test in playback mode change the `testsettings_local.cfg` to `live-mode: false` and rerun the tests with the same command. The test infrastructure will use the `.yaml` recordings to mock the HTTP traffic and run the tests.
-
-## Using Live Resources
