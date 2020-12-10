@@ -9,11 +9,7 @@ from azure.keyvault.certificates import CertificatePolicy, CertificateContentTyp
 from azure.keyvault.certificates.aio import CertificateClient
 
 from _shared.preparer import CachedKeyVaultPreparer
-from _shared.preparer_async import KeyVaultClientPreparer as _KeyVaultClientPreparer
 from _shared.test_case_async import KeyVaultTestCase
-
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, CertificateClient)
 
 
 def print(*args):
@@ -35,9 +31,11 @@ def test_create_certificate():
 
 class TestExamplesKeyVault(KeyVaultTestCase):
     @CachedKeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_certificate_crud_operations(self, client, **kwargs):
-        certificate_client = client
+    async def test_example_certificate_crud_operations(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient, is_async=True)
+        certificate_client = self.create_client_from_credential(
+            CertificateClient, credential=credential, vault_url=vault_uri
+        )
 
         # [START create_certificate]
         from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
@@ -55,6 +53,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
         cert_name = "cert-name"
+        await certificate_client.purge_deleted_certificate(certificate_name=cert_name)
+        await asyncio.sleep(60)
 
         certificate = await certificate_client.create_certificate(certificate_name=cert_name, policy=cert_policy)
 
@@ -106,10 +106,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_certificate.recovery_id)
         # [END delete_certificate]
 
+        # purge the certificate
+        await certificate_client.purge_deleted_certificate(certificate_name=cert_name)
+
     @CachedKeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_certificate_list_operations(self, client, **kwargs):
-        certificate_client = client
+    async def test_example_certificate_list_operations(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient, is_async=True)
+        certificate_client = self.create_client_from_credential(
+            CertificateClient, credential=credential, vault_url=vault_uri
+        )
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -167,9 +172,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_certificates]
 
     @CachedKeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_certificate_backup_restore(self, client, **kwargs):
-        certificate_client = client
+    async def test_example_certificate_backup_restore(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient, is_async=True)
+        certificate_client = self.create_client_from_credential(
+            CertificateClient, credential=credential, vault_url=vault_uri
+        )
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -214,9 +221,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END restore_certificate]
 
     @CachedKeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_certificate_recover(self, client, **kwargs):
-        certificate_client = client
+    async def test_example_certificate_recover(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient, is_async=True)
+        certificate_client = self.create_client_from_credential(
+            CertificateClient, credential=credential, vault_url=vault_uri
+        )
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -253,9 +262,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END recover_deleted_certificate]
 
     @CachedKeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_contacts(self, client, **kwargs):
-        certificate_client = client
+    async def test_example_contacts(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient, is_async=True)
+        certificate_client = self.create_client_from_credential(
+            CertificateClient, credential=credential, vault_url=vault_uri
+        )
 
         # [START set_contacts]
         from azure.keyvault.certificates import CertificateContact
@@ -293,9 +304,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END delete_contacts]
 
     @CachedKeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_issuers(self, client, **kwargs):
-        certificate_client = client
+    async def test_example_issuers(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient, is_async=True)
+        certificate_client = self.create_client_from_credential(
+            CertificateClient, credential=credential, vault_url=vault_uri
+        )
 
         # [START create_issuer]
         from azure.keyvault.certificates import AdministratorContact

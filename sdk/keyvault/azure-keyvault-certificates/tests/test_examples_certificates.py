@@ -118,6 +118,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_certificate.recovery_id)
         # [END delete_certificate]
 
+        # purge the certificate
+        certificate_client.purge_deleted_certificate(cert_name)
+
     @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_certificate_list_operations(self, client, **kwargs):
@@ -177,6 +180,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.scheduled_purge_date)
             print(certificate.deleted_on)
         # [END list_deleted_certificates]
+
+        # purge the certificates
+        for certificate in deleted_certificates:
+            certificate_client.purge_deleted_certificate(certificate_name=certificate.name)
 
     @CachedKeyVaultPreparer()
     @KeyVaultClientPreparer()

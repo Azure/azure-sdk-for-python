@@ -18,12 +18,13 @@ from _shared.test_case_async import KeyVaultTestCase
 class MergeCertificateTest(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, match_body=False, custom_request_matchers=[json_attribute_matcher], **kwargs)
-
-    @CachedKeyVaultPreparer()
-    async def test_merge_certificate(self, vault_uri, **kwargs):
+        vault_uri = ""  # TODO: get this from environment variables
         credential = self.get_credential(CertificateClient, is_async=True)
         client = self.create_client_from_credential(CertificateClient, credential=credential, vault_url=vault_uri)
 
+    @CachedKeyVaultPreparer()
+    @KeyVaultClientPreparer(CertificateClient)
+    async def test_merge_certificate(self, client, **kwargs):
         cert_name = self.get_resource_name("mergeCertificate")
         cert_policy = CertificatePolicy(
             issuer_name=WellKnownIssuerNames.unknown, subject="CN=MyCert", certificate_transparency=False

@@ -192,9 +192,9 @@ class AzureTestCase(ReplayableTest):
 
     def get_credential(self, client_class, **kwargs):
 
-        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
-        client_id = os.environ.get("AZURE_CLIENT_ID", None)
-        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+        tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(self._real_settings, "TENANT_ID", None))
+        client_id = os.environ.get("AZURE_CLIENT_ID", getattr(self._real_settings, "CLIENT_ID", None))
+        secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(self._real_settings, "CLIENT_SECRET", None))
         is_async = kwargs.pop("is_async", False)
 
         if tenant_id and client_id and secret and self.is_live:
