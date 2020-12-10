@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class QueryOperations(object):
-    """QueryOperations operations.
+class ForecastOperations(object):
+    """ForecastOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,13 +47,14 @@ class QueryOperations(object):
     def usage(
         self,
         scope,  # type: str
-        parameters,  # type: "_models.QueryDefinition"
+        parameters,  # type: "_models.ForecastDefinition"
+        filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.QueryResult"
-        """Query the usage data for scope defined.
+        """Lists the forecast charges for scope defined.
 
-        :param scope: The scope associated with query and export operations. This includes
+        :param scope: The scope associated with forecast operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope and
@@ -70,8 +71,12 @@ class QueryOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
         :type scope: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Query Config operation.
-        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
+        :param parameters: Parameters supplied to the CreateOrUpdate Forecast Config operation.
+        :type parameters: ~azure.mgmt.costmanagement.models.ForecastDefinition
+        :param filter: May be used to filter forecasts by properties/usageDate (Utc time),
+         properties/chargeType or properties/grain. The filter supports 'eq', 'lt', 'gt', 'le', 'ge',
+         and 'and'. It does not currently support 'ne', 'or', or 'not'.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryResult, or the result of cls(response)
         :rtype: ~azure.mgmt.costmanagement.models.QueryResult
@@ -95,6 +100,8 @@ class QueryOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -103,7 +110,7 @@ class QueryOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'QueryDefinition')
+        body_content = self._serialize.body(parameters, 'ForecastDefinition')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -120,17 +127,18 @@ class QueryOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    usage.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/query'}  # type: ignore
+    usage.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/forecast'}  # type: ignore
 
-    def usage_by_external_cloud_provider_type(
+    def external_cloud_provider_usage(
         self,
         external_cloud_provider_type,  # type: Union[str, "_models.ExternalCloudProviderType"]
         external_cloud_provider_id,  # type: str
-        parameters,  # type: "_models.QueryDefinition"
+        parameters,  # type: "_models.ForecastDefinition"
+        filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.QueryResult"
-        """Query the usage data for external cloud provider type defined.
+        """Lists the forecast charges for external cloud provider type defined.
 
         :param external_cloud_provider_type: The external cloud provider type associated with
          dimension/query operations. This includes 'externalSubscriptions' for linked account and
@@ -139,8 +147,12 @@ class QueryOperations(object):
         :param external_cloud_provider_id: This can be '{externalSubscriptionId}' for linked account or
          '{externalBillingAccountId}' for consolidated account used with dimension/query operations.
         :type external_cloud_provider_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Query Config operation.
-        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
+        :param parameters: Parameters supplied to the CreateOrUpdate Forecast Config operation.
+        :type parameters: ~azure.mgmt.costmanagement.models.ForecastDefinition
+        :param filter: May be used to filter forecasts by properties/usageDate (Utc time),
+         properties/chargeType or properties/grain. The filter supports 'eq', 'lt', 'gt', 'le', 'ge',
+         and 'and'. It does not currently support 'ne', 'or', or 'not'.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryResult, or the result of cls(response)
         :rtype: ~azure.mgmt.costmanagement.models.QueryResult
@@ -156,7 +168,7 @@ class QueryOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.usage_by_external_cloud_provider_type.metadata['url']  # type: ignore
+        url = self.external_cloud_provider_usage.metadata['url']  # type: ignore
         path_format_arguments = {
             'externalCloudProviderType': self._serialize.url("external_cloud_provider_type", external_cloud_provider_type, 'str'),
             'externalCloudProviderId': self._serialize.url("external_cloud_provider_id", external_cloud_provider_id, 'str'),
@@ -165,6 +177,8 @@ class QueryOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -173,7 +187,7 @@ class QueryOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'QueryDefinition')
+        body_content = self._serialize.body(parameters, 'ForecastDefinition')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -190,4 +204,4 @@ class QueryOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    usage_by_external_cloud_provider_type.metadata = {'url': '/providers/Microsoft.CostManagement/{externalCloudProviderType}/{externalCloudProviderId}/query'}  # type: ignore
+    external_cloud_provider_usage.metadata = {'url': '/providers/Microsoft.CostManagement/{externalCloudProviderType}/{externalCloudProviderId}/forecast'}  # type: ignore
