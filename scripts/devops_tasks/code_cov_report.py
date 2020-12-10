@@ -54,8 +54,8 @@ def create_coverage_report():
 
         condense_nodes = []
         master_package = False
-        for i, child in enumerate(packages):
-            print(child.tag, child.attrib)
+        for child in packages:
+            # print(child.tag, child.attrib)
 
             test_str = "sdk.{}.{}.{}".format(
                 folder,
@@ -65,12 +65,15 @@ def create_coverage_report():
             print(test_str)
 
             if test_str in child.attrib['name']:
-                print("condense_package")
+                # print("condense_package")
                 condense_nodes.append(child)
 
-        print(condense_nodes)
+        print("Condensing:")
+        for n in condense_nodes:
+            print(n.tag, n.attrib)
+        # print(condense_nodes)
         packages_nodes.append(condense_nodes)
-        print()
+        # print()
 
 
     nodes_to_remove = []
@@ -82,24 +85,22 @@ def create_coverage_report():
 
 
             for node in nodes[1:]:
-                print(node.tag, node.attrib)
+                # print(node.tag, node.attrib)
                 temp_classes = node.find('classes')
 
                 for _class in temp_classes:
                     first_package_classes.append(_class)
                 nodes_to_remove.append(node)
-            # ET.dump(first_package)
 
-    print(nodes_to_remove)
-
+    print("\nRemoving nodes:")
     for n in nodes_to_remove:
         print(n.tag, n.attrib)
 
         packages_root.remove(n)
 
-    ET.ElementTree(root).write("coverage.xml")
+    ET.ElementTree(root).write(coverage_file)
 
-    print("\n\n\n")
+    print("\n\n\nFinal packages")
     for package in packages_root:
         print(package.tag, package.attrib)
 
