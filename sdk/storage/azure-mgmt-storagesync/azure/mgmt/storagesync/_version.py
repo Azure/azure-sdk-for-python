@@ -6,11 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._microsoft_storage_sync import MicrosoftStorageSync
-__all__ = ['MicrosoftStorageSync']
+VERSION = "1.0.0b1"
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
