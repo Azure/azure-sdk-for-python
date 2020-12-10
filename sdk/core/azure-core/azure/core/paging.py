@@ -71,7 +71,7 @@ def _get_request(continuation_token, paging_method):
         request = paging_method._initial_request  # pylint: disable=protected-access
     else:
         request = paging_method._next_request_callback(continuation_token)  # pylint: disable=protected-access
-        request = paging_method.mutate_next_request(continuation_token, request)  # pylint: disable=protected-access
+        request = paging_method.mutate_next_request(continuation_token, request, paging_method._initial_request)  # pylint: disable=protected-access
     return request
 
 def _handle_response(continuation_token, paging_method, response):
@@ -111,7 +111,7 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def mutate_next_request(self, continuation_token, next_request):
+    def mutate_next_request(self, continuation_token, next_request, initial_request):
         # type: (Any, HttpRequest) -> HttpRequest
         """Mutate next request if there are any modifications that need to be
         made to what azure core assumes the next request will be.
@@ -119,6 +119,9 @@ class PagingMethodABC():
         :param any continuation_token: Token passed to indicate continued paging, and how to get next page
         :param next_request: What azure core assumes your next request to be.
         :type next_request: ~azure.core.pipeline.transport.HttpRequest
+        :param initial_request: The initial request object you passed in. You can use the initial
+         request to help mutate the next request object.
+        :type initial_request: ~azure.core.pipeline.transport.HttpRequest
         :return: A request object to make the next request to the service with
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -214,7 +217,8 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :keyword callable next_request_callback: A partial function that will take
          in the continuation token and return the request for a subsequent call to the service.
          If you don't pass one in, we will create one for you, based off of the initial_request
-         you pass in. We will assume the continuation token is the url for the next request.
+         you pass in. We will assume the continuation token is the url for the next request, and we will
+         also format the URL based off of the `path_format_arguments` you initialize you pass in.
         :keyword str item_name: Specifies the name of the property that provides the collection of pageable
          items. Defaults to `value`.
         :keyword callable cls: A custom type or function that will modify each element of the pageable items.
@@ -235,7 +239,7 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._operation_config = kwargs
         self._validate_inputs()
 
-    def mutate_next_request(self, continuation_token, next_request):
+    def mutate_next_request(self, continuation_token, next_request, initial_request):
         # type: (Any, HttpRequest) -> HttpRequest
         """Mutate next request if there are any modifications that need to be
         made to what azure core assumes the next request will be.
@@ -243,6 +247,9 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :param any continuation_token: Token passed to indicate continued paging, and how to get next page
         :param next_request: What azure core assumes your next request to be.
         :type next_request: ~azure.core.pipeline.transport.HttpRequest
+        :param initial_request: The initial request object you passed in. You can use the initial
+         request to help mutate the next request object.
+        :type initial_request: ~azure.core.pipeline.transport.HttpRequest
         :return: A request object to make the next request to the service with
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -331,7 +338,8 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         :keyword callable next_request_callback: A partial function that will take
          in the continuation token and return the request for a subsequent call to the service.
          If you don't pass one in, we will create one for you, based off of the initial_request
-         you pass in.
+         you pass in.  We will assume the continuation token is the url for the next request, and we will
+         also format the URL based off of the `path_format_arguments` you initialize you pass in.
         :keyword str item_name: Specifies the name of the property that provides the collection of pageable
          items. Defaults to `value`.
         :keyword callable cls: A custom type or function that will modify each element of the pageable items.
