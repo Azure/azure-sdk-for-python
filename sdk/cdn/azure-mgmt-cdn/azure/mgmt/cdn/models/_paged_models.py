@@ -116,6 +116,136 @@ class EdgeNodePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(EdgeNodePaged, self).__init__(*args, **kwargs)
+class UsagePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Usage <azure.mgmt.cdn.models.Usage>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Usage]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(UsagePaged, self).__init__(*args, **kwargs)
+class AFDDomainPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AFDDomain <azure.mgmt.cdn.models.AFDDomain>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AFDDomain]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AFDDomainPaged, self).__init__(*args, **kwargs)
+class AFDEndpointPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AFDEndpoint <azure.mgmt.cdn.models.AFDEndpoint>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AFDEndpoint]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AFDEndpointPaged, self).__init__(*args, **kwargs)
+class AFDOriginGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AFDOriginGroup <azure.mgmt.cdn.models.AFDOriginGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AFDOriginGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AFDOriginGroupPaged, self).__init__(*args, **kwargs)
+class AFDOriginPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AFDOrigin <azure.mgmt.cdn.models.AFDOrigin>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AFDOrigin]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AFDOriginPaged, self).__init__(*args, **kwargs)
+class RoutePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Route <azure.mgmt.cdn.models.Route>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Route]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RoutePaged, self).__init__(*args, **kwargs)
+class RuleSetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RuleSet <azure.mgmt.cdn.models.RuleSet>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RuleSet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RuleSetPaged, self).__init__(*args, **kwargs)
+class RulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Rule <azure.mgmt.cdn.models.Rule>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Rule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RulePaged, self).__init__(*args, **kwargs)
+class SecurityPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecurityPolicy <azure.mgmt.cdn.models.SecurityPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecurityPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecurityPolicyPaged, self).__init__(*args, **kwargs)
+class SecretPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Secret <azure.mgmt.cdn.models.Secret>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Secret]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecretPaged, self).__init__(*args, **kwargs)
 class CdnWebApplicationFirewallPolicyPaged(Paged):
     """
     A paging container for iterating over a list of :class:`CdnWebApplicationFirewallPolicy <azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicy>` object

@@ -22,6 +22,18 @@ from .operations import CustomDomainsOperations
 from .operations import ResourceUsageOperations
 from .operations import Operations
 from .operations import EdgeNodesOperations
+from .operations import AFDProfilesOperations
+from .operations import AFDCustomDomainsOperations
+from .operations import AFDEndpointsOperations
+from .operations import AFDOriginGroupsOperations
+from .operations import AFDOriginsOperations
+from .operations import RoutesOperations
+from .operations import RuleSetsOperations
+from .operations import RulesOperations
+from .operations import SecurityPoliciesOperations
+from .operations import SecretsOperations
+from .operations import ValidateOperations
+from .operations import LogAnalyticsOperations
 from .operations import PoliciesOperations
 from .operations import ManagedRuleSetsOperations
 from . import models
@@ -49,6 +61,30 @@ class CdnManagementClient(CdnManagementClientOperationsMixin, SDKClient):
     :vartype operations: azure.mgmt.cdn.operations.Operations
     :ivar edge_nodes: EdgeNodes operations
     :vartype edge_nodes: azure.mgmt.cdn.operations.EdgeNodesOperations
+    :ivar afd_profiles: AFDProfiles operations
+    :vartype afd_profiles: azure.mgmt.cdn.operations.AFDProfilesOperations
+    :ivar afd_custom_domains: AFDCustomDomains operations
+    :vartype afd_custom_domains: azure.mgmt.cdn.operations.AFDCustomDomainsOperations
+    :ivar afd_endpoints: AFDEndpoints operations
+    :vartype afd_endpoints: azure.mgmt.cdn.operations.AFDEndpointsOperations
+    :ivar afd_origin_groups: AFDOriginGroups operations
+    :vartype afd_origin_groups: azure.mgmt.cdn.operations.AFDOriginGroupsOperations
+    :ivar afd_origins: AFDOrigins operations
+    :vartype afd_origins: azure.mgmt.cdn.operations.AFDOriginsOperations
+    :ivar routes: Routes operations
+    :vartype routes: azure.mgmt.cdn.operations.RoutesOperations
+    :ivar rule_sets: RuleSets operations
+    :vartype rule_sets: azure.mgmt.cdn.operations.RuleSetsOperations
+    :ivar rules: Rules operations
+    :vartype rules: azure.mgmt.cdn.operations.RulesOperations
+    :ivar security_policies: SecurityPolicies operations
+    :vartype security_policies: azure.mgmt.cdn.operations.SecurityPoliciesOperations
+    :ivar secrets: Secrets operations
+    :vartype secrets: azure.mgmt.cdn.operations.SecretsOperations
+    :ivar validate: Validate operations
+    :vartype validate: azure.mgmt.cdn.operations.ValidateOperations
+    :ivar log_analytics: LogAnalytics operations
+    :vartype log_analytics: azure.mgmt.cdn.operations.LogAnalyticsOperations
     :ivar policies: Policies operations
     :vartype policies: azure.mgmt.cdn.operations.PoliciesOperations
     :ivar managed_rule_sets: ManagedRuleSets operations
@@ -59,17 +95,22 @@ class CdnManagementClient(CdnManagementClientOperationsMixin, SDKClient):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param subscription_id1: Azure Subscription ID.
+    :type subscription_id1: str
+    :param api_version1: Version of the API to be used with the client
+     request. Current version is 2019-09-01.
+    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, api_version1, base_url=None):
 
-        self.config = CdnManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = CdnManagementClientConfiguration(credentials, subscription_id, subscription_id1, api_version1, base_url)
         super(CdnManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-04-15'
+        self.api_version = '2020-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -88,6 +129,30 @@ class CdnManagementClient(CdnManagementClientOperationsMixin, SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.edge_nodes = EdgeNodesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.afd_profiles = AFDProfilesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.afd_custom_domains = AFDCustomDomainsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.afd_endpoints = AFDEndpointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.afd_origin_groups = AFDOriginGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.afd_origins = AFDOriginsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.routes = RoutesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.rule_sets = RuleSetsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.rules = RulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.security_policies = SecurityPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.secrets = SecretsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.validate = ValidateOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.log_analytics = LogAnalyticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.policies = PoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)

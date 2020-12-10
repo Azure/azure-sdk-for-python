@@ -21,6 +21,13 @@ class SkuName(str, Enum):
     standard_china_cdn = "Standard_ChinaCdn"
     standard_microsoft = "Standard_Microsoft"
     premium_china_cdn = "Premium_ChinaCdn"
+    standard_azure_front_door = "Standard_AzureFrontDoor"
+    premium_azure_front_door = "Premium_AzureFrontDoor"
+    standard_955_band_width_china_cdn = "Standard_955BandWidth_ChinaCdn"
+    standard_avg_band_width_china_cdn = "Standard_AvgBandWidth_ChinaCdn"
+    standard_plus_china_cdn = "StandardPlus_ChinaCdn"
+    standard_plus_955_band_width_china_cdn = "StandardPlus_955BandWidth_ChinaCdn"
+    standard_plus_avg_band_width_china_cdn = "StandardPlus_AvgBandWidth_ChinaCdn"
 
 
 class ProfileResourceState(str, Enum):
@@ -109,6 +116,7 @@ class QueryStringOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
+    reg_ex = "RegEx"
 
 
 class PostArgsOperator(str, Enum):
@@ -122,6 +130,7 @@ class PostArgsOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
+    reg_ex = "RegEx"
 
 
 class RequestUriOperator(str, Enum):
@@ -135,6 +144,7 @@ class RequestUriOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
+    reg_ex = "RegEx"
 
 
 class RequestHeaderOperator(str, Enum):
@@ -148,6 +158,7 @@ class RequestHeaderOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
+    reg_ex = "RegEx"
 
 
 class RequestBodyOperator(str, Enum):
@@ -161,6 +172,7 @@ class RequestBodyOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
+    reg_ex = "RegEx"
 
 
 class UrlPathOperator(str, Enum):
@@ -175,6 +187,7 @@ class UrlPathOperator(str, Enum):
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
     wildcard = "Wildcard"
+    reg_ex = "RegEx"
 
 
 class UrlFileExtensionOperator(str, Enum):
@@ -188,6 +201,7 @@ class UrlFileExtensionOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
+    reg_ex = "RegEx"
 
 
 class UrlFileNameOperator(str, Enum):
@@ -201,6 +215,7 @@ class UrlFileNameOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
+    reg_ex = "RegEx"
 
 
 class CookiesOperator(str, Enum):
@@ -214,6 +229,7 @@ class CookiesOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
     greater_than = "GreaterThan"
     greater_than_or_equal = "GreaterThanOrEqual"
+    reg_ex = "RegEx"
 
 
 class RedirectType(str, Enum):
@@ -340,6 +356,121 @@ class CertificateType(str, Enum):
 class ResourceType(str, Enum):
 
     microsoft_cdn_profiles_endpoints = "Microsoft.Cdn/Profiles/Endpoints"
+
+
+class IdentityType(str, Enum):
+
+    user = "user"
+    application = "application"
+    managed_identity = "managedIdentity"
+    key = "key"
+
+
+class ValidateSecretType(str, Enum):
+
+    url_signing_key = "UrlSigningKey"
+    managed_certificate = "ManagedCertificate"
+    customer_certificate = "CustomerCertificate"
+
+
+class Status(str, Enum):
+
+    valid = "Valid"
+    invalid = "Invalid"
+    access_denied = "AccessDenied"
+    certificate_expired = "CertificateExpired"
+
+
+class AfdCertificateType(str, Enum):
+
+    customer_certificate = "CustomerCertificate"
+    managed_certificate = "ManagedCertificate"
+
+
+class AfdMinimumTlsVersion(str, Enum):
+
+    tls10 = "TLS10"
+    tls12 = "TLS12"
+
+
+class AfdProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    updating = "Updating"
+    deleting = "Deleting"
+    creating = "Creating"
+
+
+class DeploymentStatus(str, Enum):
+
+    not_started = "NotStarted"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class DomainValidationState(str, Enum):
+
+    unknown = "Unknown"
+    submitting = "Submitting"
+    pending = "Pending"
+    timed_out = "TimedOut"
+    pending_revalidation = "PendingRevalidation"
+    approved = "Approved"
+
+
+class EnabledState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class AFDEndpointProtocols(str, Enum):
+
+    http = "Http"
+    https = "Https"
+
+
+class SecretType(str, Enum):
+
+    url_signing_key = "UrlSigningKey"
+    customer_certificate = "CustomerCertificate"
+    managed_certificate = "ManagedCertificate"
+
+
+class SharedPrivateLinkResourceStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+    timeout = "Timeout"
+
+
+class ForwardingProtocol(str, Enum):
+
+    http_only = "HttpOnly"
+    https_only = "HttpsOnly"
+    match_request = "MatchRequest"
+
+
+class LinkToDefaultDomain(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class HttpsRedirect(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class MatchProcessingBehavior(str, Enum):
+
+    continue_enum = "Continue"
+    stop = "Stop"
 
 
 class PolicyEnabledState(str, Enum):
