@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._microsoft_serial_console_client import MicrosoftSerialConsoleClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['MicrosoftSerialConsoleClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
