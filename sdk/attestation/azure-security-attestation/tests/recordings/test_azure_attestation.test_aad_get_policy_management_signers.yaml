@@ -14,14 +14,14 @@ interactions:
     uri: https://fakeresource.wus.attest.azure.net/certificates?api-version=2020-10-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NjI1MTg4LCAiaWF0IjogMTYwNzYyMTU4OCwgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzYyMTU4OCwgIngtbXMtcG9saWN5LWNlcnRpZmljYXRlcyI6IHsia2V5cyI6IFtdfX0.ch3tujMmrKChuI1kNCZPvHvT5Yh2Z4EIoZpZ2QXgiLSyORv5VLmL_LGAI9N6_P70EFdvTzKUhOUGqqrACpyACDkY0R-eko9h5wwnggSFvE57pkNK-1wqY5WrEbdt_nGXiLxq1iuLPcFuwQp7i4-5gyhIA__KPeYNH84apgo3AB8"}'
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NjI3NDE3LCAiaWF0IjogMTYwNzYyMzgxNywgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzYyMzgxNywgIngtbXMtcG9saWN5LWNlcnRpZmljYXRlcyI6IHsia2V5cyI6IFtdfX0.As_5hIHROW75T2CLnx_OZ7siycDsyH29-iX4vp0G5oJeDap7NbqxzNMQKY3NsayORBjVGySdqHpgwlbrQ1gYr9iHB-V7YbkXW3t4xO8RaX5G2iM9f_jeV0m36EBr_ohX7e3ePtVdKhtvWJ7nPPr3cZJjzhdXxLRlHN2DtX1UW1M"}'
     headers:
       content-length:
       - '604'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Dec 2020 17:33:08 GMT
+      - Thu, 10 Dec 2020 18:10:17 GMT
       server:
       - Kestrel
       x-ms-maa-service-version:

@@ -14,14 +14,14 @@ interactions:
     uri: https://shareduks.uks.test.attest.azure.net/certificates?api-version=2020-10-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vc2hhcmVkdWtzLnVrcy50ZXN0LmF0dGVzdC5henVyZS5uZXQvY2VydHMiLCAia2lkIjogIjNvNE91bjB2SEZHZTF1Rms1MDNKK1EwVE1wZ1NGMncrM1dYUlYyM2IvckE9IiwgInR5cCI6ICJKV1QifQ.eyJleHAiOiAxNjA3NjI1MjAxLCAiaWF0IjogMTYwNzYyMTYwMSwgImlzcyI6ICJodHRwczovL3NoYXJlZHVrcy51a3MudGVzdC5hdHRlc3QuYXp1cmUubmV0IiwgIm5iZiI6IDE2MDc2MjE2MDEsICJ4LW1zLXBvbGljeS1jZXJ0aWZpY2F0ZXMiOiB7ImtleXMiOiBbXX19.Y6XUk_MctftX1Zk_s295mMW0ldb3pfhlSPKCrNAidWDzQ7340Y4nP1F0gDeMD35bobScI-RFdxG1KVXH_rzzNNlgrGORFlGlj9b9KFntvVXJFUaqPEpHS5ErsG23fi6h9FyiVFfGecnt77wiBxtL0wrAzhdll3_Pf2TJkXROtYs"}'
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vc2hhcmVkdWtzLnVrcy50ZXN0LmF0dGVzdC5henVyZS5uZXQvY2VydHMiLCAia2lkIjogIjNvNE91bjB2SEZHZTF1Rms1MDNKK1EwVE1wZ1NGMncrM1dYUlYyM2IvckE9IiwgInR5cCI6ICJKV1QifQ.eyJleHAiOiAxNjA3NjI3NDMxLCAiaWF0IjogMTYwNzYyMzgzMSwgImlzcyI6ICJodHRwczovL3NoYXJlZHVrcy51a3MudGVzdC5hdHRlc3QuYXp1cmUubmV0IiwgIm5iZiI6IDE2MDc2MjM4MzEsICJ4LW1zLXBvbGljeS1jZXJ0aWZpY2F0ZXMiOiB7ImtleXMiOiBbXX19.JCg0mAjDoNBXkWWHPeSusPUICJfeWn47Ol8hjfJwZPSdCDp9cOLUliC56tpCIv5UvabxKWO002_kfZf_wqU4mSHAQ2Z4EHTdJD_ob3z1B9KK0VqJgPlsGGDUes0oD83768cvVHvyJGePaqICVDd7ltGZb-a--_ohiM8N8pnJZ9Q"}'
     headers:
       content-length:
       - '583'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Dec 2020 17:33:21 GMT
+      - Thu, 10 Dec 2020 18:10:31 GMT
       server:
       - Kestrel
       x-ms-maa-service-version:

@@ -68,6 +68,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -78,9 +79,8 @@ setup(
         'azure.security',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
-        'msrestazure>=0.4.32,<2.0.0',
-        'azure-common~=1.1',
+        "azure-core<2.0.0,>=1.8.2",
+        "msrest>=0.6.0",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-security-nspkg'],
