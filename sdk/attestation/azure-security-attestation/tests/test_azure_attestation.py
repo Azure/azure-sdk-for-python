@@ -173,7 +173,11 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_isolated_url)
         default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
         default_policy = default_policy_response.token
-        policy_token = jwt.decode(default_policy, options={"verify_signature":False, "leeway": 10}, leeway=10, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(
+            default_policy, 
+            options={"verify_signature":False, "verify_exp": False}, 
+            leeway=10, 
+            algorithms=["none", "RS256"])
         
         verifyToken=True
         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
