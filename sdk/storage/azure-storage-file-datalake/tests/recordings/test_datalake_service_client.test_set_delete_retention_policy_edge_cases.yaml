@@ -1,0 +1,290 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><DeleteRetentionPolicy><Enabled>true</Enabled><Days>1</Days></DeleteRetentionPolicy></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '176'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e5c79d5c-3b15-11eb-9b31-c8348e5fffbf
+      x-ms-date:
+      - Thu, 10 Dec 2020 18:31:20 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Thu, 10 Dec 2020 18:31:22 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - 007cca83-901e-002f-5122-cf714a000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e6dc6482-3b15-11eb-a167-c8348e5fffbf
+      x-ms-date:
+      - Thu, 10 Dec 2020 18:31:21 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /><DeleteRetentionPolicy><Enabled>true</Enabled><Days>1</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>errors/error/404error.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 10 Dec 2020 18:31:22 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - 007cca8e-901e-002f-5222-cf714a000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><DeleteRetentionPolicy><Enabled>true</Enabled><Days>365</Days></DeleteRetentionPolicy></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '178'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e6fd74d5-3b15-11eb-8302-c8348e5fffbf
+      x-ms-date:
+      - Thu, 10 Dec 2020 18:31:22 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Thu, 10 Dec 2020 18:31:23 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - 007cca8f-901e-002f-5322-cf714a000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e7203f28-3b15-11eb-b325-c8348e5fffbf
+      x-ms-date:
+      - Thu, 10 Dec 2020 18:31:22 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /><DeleteRetentionPolicy><Enabled>true</Enabled><Days>365</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>errors/error/404error.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 10 Dec 2020 18:31:23 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - 007cca90-901e-002f-5422-cf714a000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e74183b5-3b15-11eb-b76f-c8348e5fffbf
+      x-ms-date:
+      - Thu, 10 Dec 2020 18:31:22 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /><DeleteRetentionPolicy><Enabled>true</Enabled><Days>365</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>errors/error/404error.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 10 Dec 2020 18:31:23 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - 007cca91-901e-002f-5522-cf714a000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><DeleteRetentionPolicy><Enabled>true</Enabled><Days>366</Days></DeleteRetentionPolicy></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '178'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e762bbb1-3b15-11eb-be0e-c8348e5fffbf
+      x-ms-date:
+      - Thu, 10 Dec 2020 18:31:22 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:007cca92-901e-002f-5622-cf714a000000\nTime:2020-12-10T18:31:23.9596050Z</Message><LineNumber>2</LineNumber><LinePosition>91</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+    headers:
+      Content-Length:
+      - '375'
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 10 Dec 2020 18:31:23 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidXmlDocument
+      x-ms-request-id:
+      - 007cca92-901e-002f-5622-cf714a000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 400
+      message: XML specified is not syntactically valid.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e7838f3c-3b15-11eb-8f0c-c8348e5fffbf
+      x-ms-date:
+      - Thu, 10 Dec 2020 18:31:22 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /><DeleteRetentionPolicy><Enabled>true</Enabled><Days>365</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>errors/error/404error.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 10 Dec 2020 18:31:23 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - 007cca93-901e-002f-5722-cf714a000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 200
+      message: OK
+version: 1
