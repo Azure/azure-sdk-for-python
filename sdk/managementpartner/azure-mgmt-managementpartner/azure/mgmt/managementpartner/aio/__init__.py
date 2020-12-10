@@ -6,12 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._partner_operations import PartnerOperations
-from ._operation_operations import OperationOperations
-from ._partners_operations import PartnersOperations
-
-__all__ = [
-    'PartnerOperations',
-    'OperationOperations',
-    'PartnersOperations',
-]
+from ._ace_provisioning_management_partner_api import ACEProvisioningManagementPartnerAPI
+__all__ = ['ACEProvisioningManagementPartnerAPI']
