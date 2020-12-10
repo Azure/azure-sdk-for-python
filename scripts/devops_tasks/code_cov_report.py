@@ -68,7 +68,7 @@ def create_coverage_report():
                 # print("condense_package")
                 condense_nodes.append(child)
 
-        print("Condensing:")
+        print("Condensing into one:")
         for n in condense_nodes:
             print(n.tag, n.attrib)
         # print(condense_nodes)
