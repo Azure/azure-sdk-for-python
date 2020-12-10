@@ -149,7 +149,11 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.shared_client()
         default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
         default_policy = default_policy_response.token
-        policy_token = jwt.decode(default_policy, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(
+            default_policy,
+            options={"verify_signature":False, 'verify_exp': False},
+            leeway=10,
+            algorithms=["none", "RS256"])
         
         verifyToken=True
         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
@@ -157,8 +161,9 @@ class AzureAttestationTest(AzureTestCase):
           verifyToken = False
         policyjwt = jwt.decode(
             policy_token["x-ms-policy"],
+            leeway=10,
             algorithms=["none", "RS256"],
-            options={"verify_signature": verifyToken})
+            options={"verify_signature":False, 'verify_exp': False})
         base64urlpolicy = policyjwt.get("AttestationPolicy")
         policy = Base64Url.decode(encoded=base64urlpolicy)
         print("Default Policy: ", policy)
@@ -176,8 +181,9 @@ class AzureAttestationTest(AzureTestCase):
           verifyToken = False
         policyjwt = jwt.decode(
             policy_token["x-ms-policy"],
+            leeway=10,
             algorithms=["none", "RS256"],
-            options={"verify_signature": verifyToken})
+            options={"verify_signature":False, 'verify_exp': False})
         base64urlpolicy = policyjwt.get("AttestationPolicy")
         policy = Base64Url.decode(encoded=base64urlpolicy)
         print("Default Policy: ", policy)
@@ -187,7 +193,11 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_aad_url)
         default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
         default_policy = default_policy_response.token
-        policy_token = jwt.decode(default_policy, options={"verify_signature":False}, leeway=10, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(
+            default_policy, 
+            options={"verify_signature":False, 'verify_exp': False},
+            leeway=10, 
+            algorithms=["none", "RS256"])
 
         verifyToken=True
         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
@@ -195,8 +205,9 @@ class AzureAttestationTest(AzureTestCase):
           verifyToken = False
         policyjwt = jwt.decode(
             policy_token["x-ms-policy"],
+            leeway=10,
             algorithms=["none", "RS256"],
-            options={"verify_signature": verifyToken})
+            options={"verify_signature":False, 'verify_exp': False})
         base64urlpolicy = policyjwt.get("AttestationPolicy")
         policy = Base64Url.decode(encoded=base64urlpolicy)
         print("Default Policy: ", policy)
@@ -206,7 +217,11 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_aad_url)
         policy_signers = attest_client.policy_certificates.get()
         default_signers = policy_signers.token
-        policy_token = jwt.decode(default_signers, options={"verify_signature":False}, leeway=10, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(
+            default_signers, 
+            options={"verify_signature":False, 'verify_exp': False},
+            leeway=10, 
+            algorithms=["none", "RS256"])
         print("{}".format(policy_token))
         policy_certificates = policy_token["x-ms-policy-certificates"]
         assert len(policy_certificates["keys"])==0
@@ -215,7 +230,11 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.shared_client()
         policy_signers = attest_client.policy_certificates.get()
         default_signers = policy_signers.token
-        policy_token = jwt.decode(default_signers, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(
+            default_signers, 
+            options={"verify_signature":False, 'verify_exp': False},
+            leeway=10,
+            algorithms=["none", "RS256"])
         print("{}".format(policy_token))
         policy_certificates = policy_token["x-ms-policy-certificates"]
         assert len(policy_certificates["keys"])==0
@@ -225,7 +244,11 @@ class AzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_isolated_url)
         policy_signers = attest_client.policy_certificates.get()
         default_signers = policy_signers.token
-        policy_token = jwt.decode(default_signers, options={"verify_signature":False, "leeway": 10}, algorithms=["none", "RS256"])
+        policy_token = jwt.decode(
+            default_signers, 
+            options={"verify_signature":False, 'verify_exp': False},
+            leeway=10,
+            algorithms=["none", "RS256"])
         print("{}".format(policy_token))
         policy_certificates = policy_token["x-ms-policy-certificates"]
         assert len(policy_certificates["keys"])==1
