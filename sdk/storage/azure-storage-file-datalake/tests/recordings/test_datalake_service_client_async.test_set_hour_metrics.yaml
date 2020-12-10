@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
@@ -30,7 +30,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://2vxxscnapams20ptf01c.blob.preprod.core.windows.net/?restype=service&comp=properties
+    url: https://storagename.blob.core.windows.net/?restype=service&comp=properties
 - request:
     body: null
     headers:
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://storagename.blob.preprod.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
@@ -61,5 +61,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://2vxxscnapams20ptf01c.blob.preprod.core.windows.net/?restype=service&comp=properties
+    url: https://storagename.blob.core.windows.net/?restype=service&comp=properties
 version: 1
