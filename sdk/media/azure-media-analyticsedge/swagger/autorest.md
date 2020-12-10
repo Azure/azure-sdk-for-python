@@ -10,7 +10,7 @@ autorest --v3 --python
 ## Settings
 
 ```yaml
-require: <<LocalPathToPrivateRepo--LVA-Release-do-not-delete--branch>>Azure\azure-rest-api-specs-pr\specification\mediaservices\data-plane\readme.md
+require: https://github.com/Azure/azure-rest-api-specs/blob/7b34c62199a8d84f7252dcb8b08c1b593ae65124/specification/mediaservices/data-plane/readme.md
 output-folder: ../azure/media/livevideoanalytics/edge/_generated
 namespace: azure.media.livevideoanalytics.edge
 no-namespace-folders: true
