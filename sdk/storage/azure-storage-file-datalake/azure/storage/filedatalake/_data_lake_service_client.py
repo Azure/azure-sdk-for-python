@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from copy import deepcopy
 from typing import Optional, List, Dict, Any
 
 try:
