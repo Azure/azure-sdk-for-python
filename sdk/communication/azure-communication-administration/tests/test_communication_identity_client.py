@@ -25,7 +25,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     def test_create_user_from_managed_identity(self, connection_string):
-        endpoint = get_endpoint_from_connection_string(connection_string)
+        endpoint = self.get_endpoint_from_connection_string(connection_string)
         identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         user = identity_client.create_user()
 

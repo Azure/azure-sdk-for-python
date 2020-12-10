@@ -12,6 +12,7 @@ from _shared.helper import URIIdentityReplacer
 from _shared.asynctestcase  import AsyncCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
 from _shared.communication_service_preparer import CommunicationServicePreparer
+from azure.identity import DefaultAzureCredential
 
 class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
@@ -19,6 +20,18 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         self.recording_processors.extend([
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
+    
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    @pytest.mark.asyncio
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_create_user_from_managed_identity(self, connection_string):
+        endpoint = self.get_endpoint_from_connection_string(connection_string)
+        identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
+        async with identity_client:
+            user = await identity_client.create_user()
+
+        assert user.identifier is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
@@ -69,3 +82,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             await identity_client.delete_user(user)
 
         assert user.identifier is not None
+
+    def get_endpoint_from_connection_string(self, connection_string):
+        return connection_string.split("=")[1].split("/;")[0]

@@ -10,12 +10,8 @@ interactions:
       - keep-alive
       Content-Length:
       - '0'
-      Date:
-      - Thu, 10 Dec 2020 22:51:26 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-return-client-request-id:
-      - 'true'
     method: POST
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2020-07-20-preview2
   response:
@@ -27,15 +23,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Dec 2020 22:51:26 GMT
+      - Thu, 10 Dec 2020 22:52:36 GMT
       ms-cv:
-      - 7v+JU+4sXEu3iOcMG67i8g.0
+      - MomL+0MB7EyhD2dh2BIUOw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 26ms
+      - 484ms
     status:
       code: 200
       message: OK

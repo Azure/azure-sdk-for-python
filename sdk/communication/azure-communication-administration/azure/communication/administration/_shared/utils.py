@@ -13,8 +13,6 @@ from typing import (  # pylint: disable=unused-import
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.communication.administration._shared.policy import HMACCredentialsPolicy
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
@@ -70,16 +68,3 @@ def create_access_token(token):
         return AccessToken(token, datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC))
     except ValueError:
         raise ValueError(token_parse_err_msg)
-
-def get_authentication_policy(endpoint, credential):
-    if credential is None:
-        raise ValueError("Parameter 'credential' must not be None.")
-    if hasattr(credential, "get_token"):
-        return BearerTokenCredentialPolicy(
-            credential, "https://communication.azure.com//.default")
-    if isinstance(credential, str):
-        return HMACCredentialsPolicy(endpoint, credential)
-
-    raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
-                    "or a token credential from azure.identity".format(type(credential)))
-
