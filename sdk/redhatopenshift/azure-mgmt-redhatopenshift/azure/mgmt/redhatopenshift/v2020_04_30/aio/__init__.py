@@ -6,10 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._open_shift_clusters_operations import OpenShiftClustersOperations
-
-__all__ = [
-    'Operations',
-    'OpenShiftClustersOperations',
-]
+from ._azure_red_hat_open_shift4_client import AzureRedHatOpenShift4Client
+__all__ = ['AzureRedHatOpenShift4Client']
