@@ -29,7 +29,7 @@ class LiveTokenOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.applicationinsights.v2020-06-02-preview.models
+    :type models: ~azure.mgmt.applicationinsights.v2020_06_02_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -56,7 +56,7 @@ class LiveTokenOperations(object):
         :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LiveTokenResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.applicationinsights.v2020-06-02-preview.models.LiveTokenResponse
+        :rtype: ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.LiveTokenResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LiveTokenResponse"]
