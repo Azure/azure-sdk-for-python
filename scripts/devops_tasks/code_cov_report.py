@@ -164,7 +164,7 @@ def recursive_set_name(root):
 
 
 def create_new_node(package_tuple, packages_root):
-    print(f"ROOT: {packages_root.tag}")
+    # print(f"ROOT: {packages_root.tag}")
     directory, package_name = package_tuple
     new_node = ET.Element('package')
     name = 'sdk' + '.' + directory + '.' + package_name
