@@ -6,10 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._source_control_configurations_operations import SourceControlConfigurationsOperations
-from ._operations import Operations
-
-__all__ = [
-    'SourceControlConfigurationsOperations',
-    'Operations',
-]
+from ._source_control_configuration_client import SourceControlConfigurationClient
+__all__ = ['SourceControlConfigurationClient']
