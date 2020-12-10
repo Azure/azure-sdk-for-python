@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._attestation_management_client import AttestationManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['AttestationManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
