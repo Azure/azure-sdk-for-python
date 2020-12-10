@@ -8,8 +8,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 # Usage
 
 
-Management](https://docs.microsoft.com/python/api/overview/azure/) on	To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
-docs.microsoft.com.	
+To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
 
 
 For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/)
