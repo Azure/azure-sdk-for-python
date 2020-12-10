@@ -5,25 +5,24 @@ import argparse
 import importlib
 import inspect
 import json
+import json
+import ast
 import logging
 import inspect
 import subprocess
+from enum import Enum
 from tox_helper_tasks import get_package_details
 try:
-    # If I'm started as a module __main__
+    # won't be able to import these in the created venv
     from packaging_tools.venvtools import create_venv_with_package
+    import json_delta
+    import jsondiff
 except (ModuleNotFoundError, ImportError) as e:
-    # If I'm started by my main directly
     pass
 
 
-
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-tmpdir = "temp"
-
-
 _LOGGER = logging.getLogger(__name__)
-
 
 
 class BreakingChangeType(str, enum.Enum):
@@ -34,6 +33,7 @@ class BreakingChangeType(str, enum.Enum):
     REMOVE_OR_RENAME_POSITIONAL_PARAM = "RemoveOrRenamePositionalParam"
     ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
     REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL = "RemoveOrRenameInstanceAttributeFromModel"
+    REMOVED_KWARGS_FROM_CLIENT_METHOD = "RemovedKwargsFromClientMethod"
 
 
 class ClassDefTree(ast.NodeVisitor):
@@ -119,8 +119,6 @@ def create_function_report(name, f):
 
 def get_properties(name, cls, path):
     # this only looks at the constructor of the class passed in. if there is a base class it is missed
-    import ast
-
     with open(path, "r") as source:
         module = ast.parse(source.read())
 
@@ -141,7 +139,6 @@ def get_properties(name, cls, path):
 
 
 def create_class_report(name, cls):
-    # print(cls)
     cls_info = {
         "name": name,
         "type": None,
@@ -161,7 +158,6 @@ def create_class_report(name, cls):
         cls_info["metadata"]["ignore"] = True
         return cls_info
 
-    from enum import Enum
     is_enum = Enum in cls.__mro__
     if is_enum:
         cls_info["type"] = "Enum"
@@ -235,146 +231,165 @@ class BreakingChange:
         return self.message
 
 
-def model_or_exposed_class_instance_attribute_removed_or_renamed(stable, current, diff, breaking_changes):
-    from jsondiff.symbols import Symbol
-    for module_name, module in diff.items():
-        if "class_nodes" in module:
-            for model_name, components in module["class_nodes"].items():
-                deleted_indices = []
-                if "properties" in components:
-                    for prop in components["properties"]:
-                        if isinstance(prop, Symbol):
-                            if prop.label == "delete":
-                                deleted_indices = components["properties"][prop]
-                if deleted_indices:
-                    for deleted_idx in deleted_indices:
-                        deleted_property = stable[module_name]["class_nodes"][model_name]["properties"][deleted_idx]
-                        bc = BreakingChange(
-                            breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL,
-                            message=f"The model or publicly exposed class '{model_name}' had its instance variable "
-                                    f"'{deleted_property}' deleted or renamed in the current version"
-                        )
-                        breaking_changes.append(bc)
+class BreakingChangesTracker:
+    
+    def __init__(self, stable, current, diff):
+        self.stable = stable
+        self.current = current
+        self.diff = diff
+        self.breaking_changes = []
 
+    def run_checks(self):
+        self.run_client_level_checks()
+        self.run_class_level_checks()
+        self.run_function_level_checks()
 
-def model_or_exposed_class_removed_or_renamed(stable, current, diff, breaking_changes):
-    from jsondiff.symbols import Symbol
-    for module_name, module in diff.items():
-        if "class_nodes" in module:
-            for model_name, components in module["class_nodes"].items():
-                if isinstance(model_name, Symbol):
-                    if model_name.label == "delete":
-                        for name in components:
-                            bc = BreakingChange(
-                                breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_MODEL,
-                                message=f"The model or publicly exposed class '{name}' was deleted or renamed in the "
-                                        f"current version",
+    def run_client_level_checks(self):
+        for module_name, module in self.diff.items():
+            for client, components in module.get("clients", {}).items():
+                self.client_removed_or_renamed(client)
+                self.client_method_removed_or_renamed(client, components)
+                for method_name, props in components.get("methods", {}).items():
+                    for param_type, param_name in props.get("parameters", {}).items():
+                        if param_type == "positional_or_keyword":
+                            self.client_method_positional_parameter_added(param_name, param_type, props, method_name)
+                            self.client_method_positional_parameter_removed_or_renamed(
+                                module_name, client, param_name, param_type, props, method_name
                             )
-                            breaking_changes.append(bc)
+                        # if param_type == "var_keyword":
+                        #     self.client_method_kwargs_removed(module_name, param_name, param_type, props, method_name)
 
+    def run_class_level_checks(self):
+        for module_name, module in self.diff.items():
+            for model_name, components in module.get("class_nodes", {}).items():
+                self.model_or_exposed_class_instance_attribute_removed_or_renamed(module_name, model_name, components)
+                self.model_or_exposed_class_removed_or_renamed(model_name, components)
 
-def client_method_removed_or_renamed(stable, current, diff, breaking_changes):
-    from jsondiff.symbols import Symbol
-    for module_name, module in diff.items():
-        for client, components in module["clients"].items():
-            if "methods" in components:
-                for method_name, props in components["methods"].items():
-                    if isinstance(method_name, Symbol):
-                        if method_name.label == "delete":
-                            for name in props:
-                                bc = BreakingChange(
-                                    breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_CLIENT_METHOD,
-                                    message=f"The '{client}' method '{name}' was deleted or renamed in the current "
-                                            f"version",
-                                )
-                                breaking_changes.append(bc)
+    def run_function_level_checks(self):
+        for module_name, module in self.diff.items():
+            for function_name, components in module.get("function_nodes", {}).items():
+                self.module_level_function_removed_or_renamed(function_name, components)
 
+    def module_level_function_removed_or_renamed(self, function_name, components):
+        if isinstance(function_name, jsondiff.Symbol):
+            if function_name.label == "delete":
+                for function in components:
+                    bc = BreakingChange(
+                        breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION,
+                        message=f"The publicly exposed function '{function}' was deleted or renamed in the current version"
+                    )
+                    self.breaking_changes.append(bc)
 
-def client_removed_or_renamed(stable, current, diff, breaking_changes):
-    from jsondiff.symbols import Symbol
-    for module_name, module in diff.items():
-        if "clients" in module:
-            for operation, client in module["clients"].items():
-                if isinstance(operation, Symbol):
-                    if operation.label == "delete":
+    def model_or_exposed_class_instance_attribute_removed_or_renamed(self, module_name, model_name, components):
+        deleted_indices = []
+        if "properties" in components:
+            for prop in components["properties"]:
+                if isinstance(prop, jsondiff.Symbol):
+                    if prop.label == "delete":
+                        deleted_indices = components["properties"][prop]
+            if deleted_indices:
+                for deleted_idx in deleted_indices:
+                    deleted_property = self.stable[module_name]["class_nodes"][model_name]["properties"][
+                        deleted_idx]
+                    bc = BreakingChange(
+                        breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL,
+                        message=f"The model or publicly exposed class '{model_name}' had its instance variable "
+                                f"'{deleted_property}' deleted or renamed in the current version"
+                    )
+                    self.breaking_changes.append(bc)
+
+    def model_or_exposed_class_removed_or_renamed(self, model_name, components):
+        if isinstance(model_name, jsondiff.Symbol):
+            if model_name.label == "delete":
+                for name in components:
+                    bc = BreakingChange(
+                        breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_MODEL,
+                        message=f"The model or publicly exposed class '{name}' was deleted or renamed in the "
+                                f"current version",
+                    )
+                    self.breaking_changes.append(bc)
+
+    def client_method_positional_parameter_added(self, param_name, param_type, props, method_name):
+        inserted_parameters = []
+        if isinstance(param_name, dict):
+            for operation in param_name:
+                if operation.label == "insert":
+                    inserted_parameters = props["parameters"][param_type][operation]
+        if inserted_parameters:
+            for inserted_param in inserted_parameters:
+                bc = BreakingChange(
+                    breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
+                    message=f"The '{client} method '{method_name}' had a {param_type} parameter "
+                            f"'{inserted_param[1]}' inserted in the current version"
+                )
+                self.breaking_changes.append(bc)
+
+    def client_method_positional_parameter_removed_or_renamed(self, module_name, client, param_name, param_type, props, method_name):
+        deleted_indices = []
+        if isinstance(param_name, dict):
+            for operation in param_name:
+                if operation.label == "delete":
+                    deleted_indices = props["parameters"][param_type][operation]
+        if deleted_indices:
+            for deleted_idx in deleted_indices:
+                deleted_parameter = self.stable[module_name]["clients"][client]["methods"][method_name]["parameters"][param_type][deleted_idx]
+                bc = BreakingChange(
+                    breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
+                    message=f"The '{client} method '{method_name}' had its {param_type} parameter "
+                            f"'{deleted_parameter}' deleted or renamed in the current version"
+                )
+                self.breaking_changes.append(bc)
+
+    # def client_method_kwargs_removed(self, module_name, param_name, param_type, props, method_name):
+    #     deleted_indices = []
+    #     if isinstance(param_name, dict):
+    #         for operation in param_name:
+    #             if operation.label == "delete":
+    #                 deleted_indices = props["parameters"][param_type][operation]
+    #     if deleted_indices:
+    #         for deleted_idx in deleted_indices:
+    #             deleted_parameter = self.stable[module_name]["clients"][client]["methods"][method_name]["parameters"][param_type][deleted_idx]
+    #             bc = BreakingChange(
+    #                 breaking_change_type=BreakingChangeType.REMOVED_KWARGS_FROM_CLIENT_METHOD,
+    #                 message=f"The '{client} method '{method_name}' had its **kwargs parameter deleted"
+    #             )
+    #             self.breaking_changes.append(bc)
+
+    def client_removed_or_renamed(self, client):
+        if isinstance(client, jsondiff.Symbol):
+            if client.label == "delete":
+                bc = BreakingChange(
+                    breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_CLIENT,
+                    message=f"The client {client} was deleted or renamed in the current version"
+                )
+                self.breaking_changes.append(bc)
+
+    def client_method_removed_or_renamed(self, client, components):
+        for method_name, props in components.get("methods", {}).items():
+            if isinstance(method_name, jsondiff.Symbol):
+                if method_name.label == "delete":
+                    for name in props:
                         bc = BreakingChange(
-                            breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_CLIENT,
-                            message=f"The client {client} was deleted or renamed in the current version"
+                            breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_CLIENT_METHOD,
+                            message=f"The '{client}' method '{name}' was deleted or renamed in the current "
+                                    f"version",
                         )
-                        breaking_changes.append(bc)
+                        self.breaking_changes.append(bc)
 
 
-def client_method_positional_parameter_removed_or_renamed(stable, current, diff, breaking_changes):
-    from jsondiff.symbols import Symbol
-    for module_name, module in diff.items():
-        for client, components in module["clients"].items():
-            if "methods" in components:
-                for method_name, props in components["methods"].items():
-                    if "parameters" in props:
-                        for param_type, param_name in props["parameters"].items():
-                            if param_type != "positional_or_keyword":
-                                continue
-                            deleted_indices = []
-                            if isinstance(param_name, dict):
-                                for operation in param_name:
-                                    if operation.label == "delete":
-                                        deleted_indices = props["parameters"][param_type][operation]
-                            if deleted_indices:
-                                for deleted_idx in deleted_indices:
-                                    deleted_parameter = stable[module_name]["clients"][client]["methods"][method_name]["parameters"][param_type][deleted_idx]
-                                    bc = BreakingChange(
-                                        breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
-                                        message=f"The '{client} method '{method_name}' had its {param_type} parameter "
-                                                f"'{deleted_parameter}' deleted or renamed in the current version"
-                                    )
-                                    breaking_changes.append(bc)
+def test_compare(pkg_dir="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\formrecognizer\\azure-ai-formrecognizer"):
 
-def client_method_positional_parameter_added(stable, current, diff, breaking_changes):
-    for module_name, module in diff.items():
-        for client, components in module["clients"].items():
-            if "methods" in components:
-                for method_name, props in components["methods"].items():
-                    if "parameters" in props:
-                        for param_type, param_name in props["parameters"].items():
-                            if param_type != "positional_or_keyword":
-                                continue
-                            inserted_parameters = []
-                            if isinstance(param_name, dict):
-                                for operation in param_name:
-                                    if operation.label == "insert":
-                                        inserted_parameters = props["parameters"][param_type][operation]
-                            if inserted_parameters:
-                                for inserted_param in inserted_parameters:
-                                    bc = BreakingChange(
-                                        breaking_change_type=BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
-                                        message=f"The '{client} method '{method_name}' had a {param_type} parameter "
-                                                f"'{inserted_param[1]}' inserted in the current version"
-                                    )
-                                    breaking_changes.append(bc)
-
-
-def check_for_breaking_changes(stable, current, diff):
-    breaking_changes = []
-    client_removed_or_renamed(stable, current, diff, breaking_changes)
-    client_method_removed_or_renamed(stable, current, diff, breaking_changes)
-    model_or_exposed_class_removed_or_renamed(stable, current, diff, breaking_changes)
-    model_or_exposed_class_instance_attribute_removed_or_renamed(stable, current, diff, breaking_changes)
-    client_method_positional_parameter_removed_or_renamed(stable, current, diff, breaking_changes)
-    client_method_positional_parameter_added(stable, current, diff, breaking_changes)
-    print([change.message for change in breaking_changes])
-
-def test_compare(pkg_dir):
-    import json_delta
-    import json
-    import jsondiff
     with open(os.path.join(pkg_dir, "stable.json"), "r") as fd:
         stable = json.load(fd)
     with open(os.path.join(pkg_dir, "current.json"), "r") as fd:
         current = json.load(fd)
-    results1 = json_delta.diff(stable, current)
-    results2 = jsondiff.diff(stable, current)
+    # results1 = json_delta.diff(stable, current)
+    diff = jsondiff.diff(stable, current)
 
-    check_for_breaking_changes(stable, current, results2)
+    bc = BreakingChangesTracker(stable, current, diff)
+    bc.run_checks()
+
+    print([change.message for change in bc.breaking_changes])
 
 
 def main(package_name, target_module, version, create_venv, pkg_dir):
@@ -384,7 +399,7 @@ def main(package_name, target_module, version, create_venv, pkg_dir):
         create_venv = True
 
     if create_venv:
-        packages = [package_name + "==" + version, "aiohttp"]  # need to include aiohttp since some libs import AioHttpTransport from azure.core
+        packages = [f"{package_name}=={version}", "aiohttp"]
         with create_venv_with_package(packages) as venv:
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
             args = [
