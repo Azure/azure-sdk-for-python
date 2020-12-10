@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import List, Optional
+
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
@@ -26,11 +28,14 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = code
+        self.message = message
 
 
 class LiveTokenResponse(msrest.serialization.Model):
@@ -80,13 +85,18 @@ class OperationInfo(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        provider: Optional[str] = None,
+        resource: Optional[str] = None,
+        operation: Optional[str] = None,
+        description: Optional[str] = None,
         **kwargs
     ):
         super(OperationInfo, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
 
 
 class OperationLive(msrest.serialization.Model):
@@ -95,7 +105,7 @@ class OperationLive(msrest.serialization.Model):
     :param name: Name of the operation.
     :type name: str
     :param display: Display name of the operation.
-    :type display: ~azure.mgmt.applicationinsights.v2020-06-02-preview.models.OperationInfo
+    :type display: ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.OperationInfo
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Properties of the operation.
@@ -111,20 +121,25 @@ class OperationLive(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: Optional[str] = None,
+        display: Optional["OperationInfo"] = None,
+        origin: Optional[str] = None,
+        properties: Optional[object] = None,
         **kwargs
     ):
         super(OperationLive, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
-        self.origin = kwargs.get('origin', None)
-        self.properties = kwargs.get('properties', None)
+        self.name = name
+        self.display = display
+        self.origin = origin
+        self.properties = properties
 
 
 class OperationsListResult(msrest.serialization.Model):
     """Result of the List Operations operation.
 
     :param value: A collection of operations.
-    :type value: list[~azure.mgmt.applicationinsights.v2020-06-02-preview.models.OperationLive]
+    :type value: list[~azure.mgmt.applicationinsights.v2020_06_02_preview.models.OperationLive]
     :param next_link: URL to get the next set of operation list results if there are any.
     :type next_link: str
     """
@@ -136,8 +151,11 @@ class OperationsListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["OperationLive"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(OperationsListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link

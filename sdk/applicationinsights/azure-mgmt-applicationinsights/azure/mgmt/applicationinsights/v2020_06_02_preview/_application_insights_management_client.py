@@ -6,43 +6,46 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
 
 from ._configuration import ApplicationInsightsManagementClientConfiguration
 from .operations import Operations
 from .operations import LiveTokenOperations
-from .. import models
+from . import models
 
 
 class ApplicationInsightsManagementClient(object):
     """Composite Swagger for Application Insights Management Client.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.applicationinsights.v2020-06-02-preview.aio.operations.Operations
+    :vartype operations: azure.mgmt.applicationinsights.v2020_06_02_preview.operations.Operations
     :ivar live_token: LiveTokenOperations operations
-    :vartype live_token: azure.mgmt.applicationinsights.v2020-06-02-preview.aio.operations.LiveTokenOperations
+    :vartype live_token: azure.mgmt.applicationinsights.v2020_06_02_preview.operations.LiveTokenOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param str base_url: Service URL
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        base_url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        credential,  # type: "TokenCredential"
+        base_url=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = ApplicationInsightsManagementClientConfiguration(credential, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -54,12 +57,15 @@ class ApplicationInsightsManagementClient(object):
         self.live_token = LiveTokenOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "ApplicationInsightsManagementClient":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> ApplicationInsightsManagementClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)
