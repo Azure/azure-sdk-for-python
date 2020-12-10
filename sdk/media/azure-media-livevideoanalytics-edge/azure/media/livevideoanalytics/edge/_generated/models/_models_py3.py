@@ -22,14 +22,16 @@ class MethodRequest(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar method_name: method name.Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
     }
 
@@ -62,7 +64,7 @@ class ItemNonSetRequestBase(MethodRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -71,7 +73,7 @@ class ItemNonSetRequestBase(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
@@ -991,7 +993,7 @@ class MediaGraphInstanceActivateRequest(ItemNonSetRequestBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -1000,7 +1002,7 @@ class MediaGraphInstanceActivateRequest(ItemNonSetRequestBase):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
@@ -1058,7 +1060,7 @@ class MediaGraphInstanceDeActivateRequest(ItemNonSetRequestBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -1067,7 +1069,7 @@ class MediaGraphInstanceDeActivateRequest(ItemNonSetRequestBase):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
@@ -1097,7 +1099,7 @@ class MediaGraphInstanceDeleteRequest(ItemNonSetRequestBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -1106,7 +1108,7 @@ class MediaGraphInstanceDeleteRequest(ItemNonSetRequestBase):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
@@ -1136,7 +1138,7 @@ class MediaGraphInstanceGetRequest(ItemNonSetRequestBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -1145,7 +1147,7 @@ class MediaGraphInstanceGetRequest(ItemNonSetRequestBase):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
@@ -1173,14 +1175,16 @@ class MediaGraphInstanceListRequest(MethodRequest):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar method_name: method name.Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
     }
 
@@ -1245,7 +1249,7 @@ class MediaGraphInstanceSetRequest(MethodRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -1254,7 +1258,7 @@ class MediaGraphInstanceSetRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'instance': {'required': True},
     }
@@ -1285,7 +1289,7 @@ class MediaGraphInstanceSetRequestBody(MediaGraphInstance, MethodRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -1299,7 +1303,7 @@ class MediaGraphInstanceSetRequestBody(MediaGraphInstance, MethodRequest):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
@@ -1996,7 +2000,7 @@ class MediaGraphTopologyDeleteRequest(ItemNonSetRequestBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -2005,7 +2009,7 @@ class MediaGraphTopologyDeleteRequest(ItemNonSetRequestBase):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
@@ -2035,7 +2039,7 @@ class MediaGraphTopologyGetRequest(ItemNonSetRequestBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -2044,7 +2048,7 @@ class MediaGraphTopologyGetRequest(ItemNonSetRequestBase):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
@@ -2072,14 +2076,16 @@ class MediaGraphTopologyListRequest(MethodRequest):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar method_name: method name.Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
     }
 
@@ -2149,7 +2155,7 @@ class MediaGraphTopologySetRequest(MethodRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -2158,7 +2164,7 @@ class MediaGraphTopologySetRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'graph': {'required': True},
     }
@@ -2189,7 +2195,7 @@ class MediaGraphTopologySetRequestBody(MediaGraphTopology, MethodRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: method name.Constant filled by server.
+    :ivar method_name: Required. method name.Constant filled by server.
     :vartype method_name: str
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
@@ -2203,7 +2209,7 @@ class MediaGraphTopologySetRequestBody(MediaGraphTopology, MethodRequest):
     """
 
     _validation = {
-        'method_name': {'readonly': True},
+        'method_name': {'required': True, 'readonly': True},
         'api_version': {'constant': True},
         'name': {'required': True},
     }
