@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -18,13 +17,13 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class AccountFiltersOperations(object):
-    """AccountFiltersOperations operations.
+class PrivateEndpointConnectionsOperations(object):
+    """PrivateEndpointConnectionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -51,102 +50,21 @@ class AccountFiltersOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.AccountFilterCollection"]
-        """List Account Filters.
+        # type: (...) -> "_models.PrivateEndpointConnectionListResult"
+        """Get all private endpoint connections.
 
-        List Account Filters in the Media Services account.
+        Get all private endpoint connections.
 
         :param resource_group_name: The name of the resource group within the Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AccountFilterCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.media.models.AccountFilterCollection]
+        :return: PrivateEndpointConnectionListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.media.models.PrivateEndpointConnectionListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccountFilterCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize('AccountFilterCollection', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/accountFilters'}  # type: ignore
-
-    def get(
-        self,
-        resource_group_name,  # type: str
-        account_name,  # type: str
-        filter_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.AccountFilter"]
-        """Get an Account Filter.
-
-        Get the details of an Account Filter in the Media Services account.
-
-        :param resource_group_name: The name of the resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param account_name: The Media Services account name.
-        :type account_name: str
-        :param filter_name: The Account Filter name.
-        :type filter_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AccountFilter, or the result of cls(response)
-        :rtype: ~azure.mgmt.media.models.AccountFilter or None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AccountFilter"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -155,12 +73,11 @@ class AccountFiltersOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.get.metadata['url']  # type: ignore
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'filterName': self._serialize.url("filter_name", filter_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -176,48 +93,112 @@ class AccountFiltersOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AccountFilter', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/accountFilters/{filterName}'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/privateEndpointConnections'}  # type: ignore
 
-    def create_or_update(
+    def get(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        filter_name,  # type: str
-        parameters,  # type: "_models.AccountFilter"
+        name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.AccountFilter"
-        """Create or update an Account Filter.
+        # type: (...) -> "_models.PrivateEndpointConnection"
+        """Get private endpoint connection.
 
-        Creates or updates an Account Filter in the Media Services account.
+        Get private endpoint connection.
 
         :param resource_group_name: The name of the resource group within the Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param filter_name: The Account Filter name.
-        :type filter_name: str
-        :param parameters: The request parameters.
-        :type parameters: ~azure.mgmt.media.models.AccountFilter
+        :param name:
+        :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AccountFilter, or the result of cls(response)
-        :rtype: ~azure.mgmt.media.models.AccountFilter
+        :return: PrivateEndpointConnection, or the result of cls(response)
+        :rtype: ~azure.mgmt.media.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccountFilter"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-05-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ApiError, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/privateEndpointConnections/{name}'}  # type: ignore
+
+    def create_or_update(
+        self,
+        resource_group_name,  # type: str
+        account_name,  # type: str
+        name,  # type: str
+        parameters,  # type: "_models.PrivateEndpointConnection"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.PrivateEndpointConnection"
+        """Update private endpoint connection.
+
+        Update private endpoint connection.
+
+        :param resource_group_name: The name of the resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name.
+        :type account_name: str
+        :param name:
+        :type name: str
+        :param parameters: The request parameters.
+        :type parameters: ~azure.mgmt.media.models.PrivateEndpointConnection
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PrivateEndpointConnection, or the result of cls(response)
+        :rtype: ~azure.mgmt.media.models.PrivateEndpointConnection
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -232,7 +213,7 @@ class AccountFiltersOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'filterName': self._serialize.url("filter_name", filter_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -246,47 +227,43 @@ class AccountFiltersOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'AccountFilter')
+        body_content = self._serialize.body(parameters, 'PrivateEndpointConnection')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('AccountFilter', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('AccountFilter', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/accountFilters/{filterName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/privateEndpointConnections/{name}'}  # type: ignore
 
     def delete(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        filter_name,  # type: str
+        name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Delete an Account Filter.
+        """Delete private endpoint connection.
 
-        Deletes an Account Filter in the Media Services account.
+        Delete private endpoint connection.
 
         :param resource_group_name: The name of the resource group within the Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param filter_name: The Account Filter name.
-        :type filter_name: str
+        :param name:
+        :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -306,7 +283,7 @@ class AccountFiltersOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'filterName': self._serialize.url("filter_name", filter_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -322,7 +299,7 @@ class AccountFiltersOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -330,78 +307,4 @@ class AccountFiltersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/accountFilters/{filterName}'}  # type: ignore
-
-    def update(
-        self,
-        resource_group_name,  # type: str
-        account_name,  # type: str
-        filter_name,  # type: str
-        parameters,  # type: "_models.AccountFilter"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AccountFilter"
-        """Update an Account Filter.
-
-        Updates an existing Account Filter in the Media Services account.
-
-        :param resource_group_name: The name of the resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param account_name: The Media Services account name.
-        :type account_name: str
-        :param filter_name: The Account Filter name.
-        :type filter_name: str
-        :param parameters: The request parameters.
-        :type parameters: ~azure.mgmt.media.models.AccountFilter
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AccountFilter, or the result of cls(response)
-        :rtype: ~azure.mgmt.media.models.AccountFilter
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccountFilter"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'filterName': self._serialize.url("filter_name", filter_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'AccountFilter')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('AccountFilter', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/accountFilters/{filterName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/privateEndpointConnections/{name}'}  # type: ignore
