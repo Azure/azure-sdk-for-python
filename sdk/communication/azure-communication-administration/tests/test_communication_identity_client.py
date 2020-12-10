@@ -13,6 +13,7 @@ from _shared.testcase import (
 )
 from devtools_testutils import ResourceGroupPreparer
 from _shared.communication_service_preparer import CommunicationServicePreparer 
+from azure.identity import DefaultAzureCredential
 
 class CommunicationIdentityClientTest(CommunicationTestCase):
     def setUp(self):
@@ -20,6 +21,15 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         self.recording_processors.extend([
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
+    
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    def test_create_user_from_managed_identity(self, connection_string):
+        endpoint = get_endpoint_from_connection_string(connection_string)
+        identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
+        user = identity_client.create_user()
+
+        assert user.identifier is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
@@ -65,3 +75,6 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         identity_client.delete_user(user)
 
         assert user.identifier is not None
+    
+    def get_endpoint_from_connection_string(self, connection_string):
+        return connection_string.split("=")[1].split("/;")[0]

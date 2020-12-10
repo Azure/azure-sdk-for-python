@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._identity._generated._communication_identity_client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
 from ._identity._generated.models import CommunicationIdentityToken
-from ._shared.utils import parse_connection_str
+from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._shared.policy import HMACCredentialsPolicy
 from ._shared.models import CommunicationUser
 from ._version import SDK_MONIKER
@@ -49,7 +49,7 @@ class CommunicationIdentityClient(object):
         self._endpoint = endpoint
         self._identity_service_client = CommunicationIdentityClientGen(
             self._endpoint,
-            authentication_policy=HMACCredentialsPolicy(endpoint, credential),
+            authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
