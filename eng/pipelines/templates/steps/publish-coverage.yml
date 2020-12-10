@@ -14,5 +14,5 @@ steps:
     continueOnError: true
     condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
     inputs:
-      codeCoverageTool: JaCoCo #Cobertura
+      codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'

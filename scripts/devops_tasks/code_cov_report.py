@@ -224,4 +224,4 @@ def create_default_attribs(node, name):
     node.set('name', name)
 
 
-create_coverage_report()
+# create_coverage_report()
