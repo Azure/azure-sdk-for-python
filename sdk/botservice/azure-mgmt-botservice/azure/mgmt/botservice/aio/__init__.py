@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._azure_bot_service import AzureBotService
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['AzureBotService']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
