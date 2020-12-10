@@ -46,6 +46,8 @@ The topic hostname is the URL host component of this endpoint. (Everything up-to
 To use an Access Key as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
+> **Note:** The Access Key may be found in the azure portal in the "Access Keys" menu of the Event Grid Topic resource.  They may also be obtained via the azure CLI, or the `azure-mgmt-eventgrid` library.
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
@@ -74,6 +76,7 @@ The following sections provide several code snippets covering some of the most c
 
 * [Send an Event Grid Event](#send-an-event-grid-event)
 * [Send a Cloud Event](#send-a-cloud-event)
+* [Send to a Domain](#send-to-a-domain)
 * [Consume an eventgrid Event](#consume-an-event-grid-event)
 * [Consume a cloud Event](#consume-a-cloud-event)
 
@@ -100,6 +103,7 @@ credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(topic_hostname, credential)
 
 client.send(event)
+# Note: Events may also be sent as a list, e.g: client.send([event])
 ```
 
 ### Send a Cloud Event
@@ -124,6 +128,36 @@ credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(topic_hostname, credential)
 
 client.send(event)
+# Note: Events may also be sent as a list, e.g: client.send([event])
+```
+
+### Send to a Domain
+
+This example illustrates sending to a Domain, whereas the earlier samples sent to a Topic.
+
+The primary difference is that for `EventGridEvents` a topic must be defined in the event being sent, such that it can be routed within the Domain.
+
+```Python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+
+key = os.environ["EG_ACCESS_KEY"]
+domain_hostname = os.environ["EG_DOMAIN_HOSTNAME"]
+
+event = EventGridEvent(
+    subject="Door1",
+    data={"team": "azure-sdk"},
+    event_type="Azure.Sdk.Demo",
+    data_version="2.0",
+    topic="test"
+)
+
+credential = AzureKeyCredential(key)
+client = EventGridPublisherClient(domain_hostname, credential)
+
+client.send(event)
+# Note: Events may also be sent as a list, e.g: client.send([event])
 ```
 
 ### Consume an Event Grid Event
@@ -146,7 +180,7 @@ eg_storage_dict = {
     "dataVersion":"2.0",
     "metadataVersion":"1",
     "eventTime":"2020-08-07T02:28:23.867525Z",
-    "topic":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.EventGrid/topics/eventgridegsub"
+    "topic":"/subscriptions/fake-subscription-id/resourceGroups/fake-resource-group/providers/Microsoft.EventGrid/topics/eventgridegsub"
 }
 
 deserialized_event = consumer.decode_eventgrid_event(eg_storage_dict)
@@ -167,7 +201,7 @@ consumer = EventGridConsumer()
 
 cloud_storage_dict = {
     "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
-    "source":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Storage/storageAccounts/{storage-account}",
+    "source":"/subscriptions/fake-subscription-id/resourceGroups/fake-resource-group/providers/Microsoft.Storage/storageAccounts/fake-storage-account",
     "data":{
         "api":"PutBlockList",
     },

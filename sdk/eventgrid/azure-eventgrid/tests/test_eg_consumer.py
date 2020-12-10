@@ -19,6 +19,7 @@ from _mocks import (
     cloud_storage_dict,
     cloud_storage_string,
     cloud_storage_bytes,
+    cloud_storage_queue_json,
     cloud_custom_dict,
     cloud_custom_string,
     cloud_custom_bytes,
@@ -50,7 +51,12 @@ class EventGridConsumerTests(AzureMgmtTestCase):
         deserialized_event = client.decode_cloud_event(cloud_storage_bytes)
         assert deserialized_event.__class__ == CloudEvent
         assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
-    
+
+    def test_eg_consumer_cloud_storage_queue_json(self, **kwargs):
+        client = EventGridConsumer()
+        deserialized_event = client.decode_cloud_event(cloud_storage_queue_json)
+        assert deserialized_event.__class__ == CloudEvent
+        assert deserialized_event.data
 
     def test_eg_consumer_cloud_custom_dict(self, **kwargs):
         client = EventGridConsumer()

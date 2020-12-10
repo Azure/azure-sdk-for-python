@@ -2,4 +2,4 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../core/azure-core
 -e ../../identity/azure-identity
--e ../azure-mgmt-eventgrid
+azure-mgmt-eventgrid==3.0.0rc8

@@ -22,15 +22,15 @@ class EventMixin(object):
     def _deserialize_data(event, event_type):
         """
         Sets the data of the desrialized event to strongly typed event object if event type exists in _event_mappings.
-        Otherwise, sets it to None.
+        Otherwise, leaves it as-is.
 
         :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
         """
         # if system event type defined, set event.data to system event object
         try:
             event.data = (_event_mappings[event_type]).deserialize(event.data)
-        except KeyError: # else, if custom event, then event.data is dict and should be set to None
-            event.data = None
+        except KeyError: # else, if custom event, then event.data is dict and is left as-is.
+            pass
 
     @staticmethod
     def _from_json(event, encode):
@@ -137,6 +137,7 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     All required parameters must be populated in order to send to Azure.
 
     :param topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
+                  Is required for Domain topics.
     :type topic: str
     :param subject: Required. A resource path relative to the topic path.
     :type subject: str
@@ -144,11 +145,11 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :type data: object
     :param event_type: Required. The type of the event that occurred.
     :type event_type: str
+    :param data_version: Required. The schema version of the data object.
+    :type data_version: str
     :ivar metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
         If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
-    :param data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
-    :type data_version: str
     :param id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event.
     :type id: Optional[str]

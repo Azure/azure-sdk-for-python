@@ -24,6 +24,14 @@ cloud_storage_dict = {
 cloud_storage_string = json.dumps(cloud_storage_dict)
 cloud_storage_bytes = cloud_storage_string.encode("utf-8")
 
+# A representative sample from an E2E use case of storage queues, used because it once reprod a failure.
+cloud_storage_queue_json = json.dumps({"id":"96ff7bc3-ff73-4eb9-aa1b-26f354610fe3",
+                            "source":"datapoint",
+                            "data":{"event":"added","SKU":"ABK8765","status":"success"},
+                            "type":"test_data",
+                            "time":"2020-12-09T21:14:40.000973Z",
+                            "specversion":"1.0"})
+
 # custom cloud event
 cloud_custom_dict = {
     "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
