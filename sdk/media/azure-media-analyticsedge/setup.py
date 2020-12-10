@@ -13,7 +13,7 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-media-livevideoanalytics-edge"
+PACKAGE_NAME = "azure-media-analytics-edge"
 PACKAGE_PPRINT_NAME = "Azure Media Live Video Analytics Edge SDK"
 
 # a-b-c => a/b/c
