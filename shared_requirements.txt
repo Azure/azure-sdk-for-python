@@ -88,6 +88,7 @@ azure-nspkg
 azure-keyvault-nspkg
 azure-schemaregistry==1.0.0b1
 azure-search-nspkg
+azure-security-nspkg
 azure-synapse-nspkg
 azure-servicebus~=0.21.1
 azure-servicefabric~=6.3.0.0
