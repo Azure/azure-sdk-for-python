@@ -9,19 +9,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-security-attestation/0.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-security-attestation/0.1.0-preview Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://shareduks.uks.test.attest.azure.net/certificates?api-version=2020-10-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vc2hhcmVkdWtzLnVrcy50ZXN0LmF0dGVzdC5henVyZS5uZXQvY2VydHMiLCAia2lkIjogIjNvNE91bjB2SEZHZTF1Rms1MDNKK1EwVE1wZ1NGMncrM1dYUlYyM2IvckE9IiwgInR5cCI6ICJKV1QifQ.eyJleHAiOiAxNjA3NTY0MjMwLCAiaWF0IjogMTYwNzU2MDYzMCwgImlzcyI6ICJodHRwczovL3NoYXJlZHVrcy51a3MudGVzdC5hdHRlc3QuYXp1cmUubmV0IiwgIm5iZiI6IDE2MDc1NjA2MzAsICJ4LW1zLXBvbGljeS1jZXJ0aWZpY2F0ZXMiOiB7ImtleXMiOiBbXX19.U4zQ7viFuQuTFJ6_GdNYq6N7cRmmXLhBv1F9AuIWO4N5CtOMwEkMjdmXRp_bUT8zpBE0mU3ROfYmx7gCJx0ZbKOyBFUBXhcJATISWWbmWCB9rGpl6XagWvoOFs3iI-RD80SLN4IkJtz4dn8qYB6UfL1bOb7SDgoC_RQtWKdwKpc"}'
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vc2hhcmVkdWtzLnVrcy50ZXN0LmF0dGVzdC5henVyZS5uZXQvY2VydHMiLCAia2lkIjogIjNvNE91bjB2SEZHZTF1Rms1MDNKK1EwVE1wZ1NGMncrM1dYUlYyM2IvckE9IiwgInR5cCI6ICJKV1QifQ.eyJleHAiOiAxNjA3NTY1NTg0LCAiaWF0IjogMTYwNzU2MTk4NCwgImlzcyI6ICJodHRwczovL3NoYXJlZHVrcy51a3MudGVzdC5hdHRlc3QuYXp1cmUubmV0IiwgIm5iZiI6IDE2MDc1NjE5ODQsICJ4LW1zLXBvbGljeS1jZXJ0aWZpY2F0ZXMiOiB7ImtleXMiOiBbXX19.QksrEJ6LEv06F7M5vMGTYA5xtOMEDqG3PFPMTy5kjSxVbMz20w5c2BbBc9FWF6GFuv9FVhd8vYZ-0R0Z2a0K6C4LrNJ1sZvmrYZogFhINvZo210h2T4k62tNT2TU9F_ipfH0e9FdBIk8D7wkcDkWwi5wCquHntVD9IX8T9IqXrc"}'
     headers:
       content-length:
       - '583'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Dec 2020 00:37:09 GMT
+      - Thu, 10 Dec 2020 00:59:43 GMT
       server:
       - Kestrel
       x-ms-maa-service-version:

@@ -9,19 +9,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-security-attestation/0.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-security-attestation/0.1.0-preview Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fakeresource.wus.attest.azure.net/certificates?api-version=2020-10-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NTY0MjE3LCAiaWF0IjogMTYwNzU2MDYxNywgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzU2MDYxNywgIngtbXMtcG9saWN5LWNlcnRpZmljYXRlcyI6IHsia2V5cyI6IFtdfX0.GA_15bhJ_4c4qBz-NrAgVgpXN0RRUyEq3CuX5XP0EPI09aKcglkgg0enShrLPixm7_uSE-Xgv3f3I1-ks0eAgYpvue8Sta7WysMHGsZ_T0_rMDc-0npdcliVLsci7dKzfF0rJ70g5BiKrtjSx482BLsHRaTGNegHWbGBgroCj_4"}'
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NTY1NTY5LCAiaWF0IjogMTYwNzU2MTk2OSwgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzU2MTk2OSwgIngtbXMtcG9saWN5LWNlcnRpZmljYXRlcyI6IHsia2V5cyI6IFtdfX0.PWaf_-Obg6jlBiF_ccZ_yUGB0FDx10-PTHhsaN3JgDa3im9NMWHLCr8AkipaaFQ1iDGVcQYSDTPcd-LiQ5bSnB4c6EKLegeCvSt4PAT4XRbNQIW4joWDLrCwo1Q0AUN9Mhkc0clCZmfas-0ZyUd7dojAwsagF7lYNDljXafc2Is"}'
     headers:
       content-length:
       - '604'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Dec 2020 00:36:57 GMT
+      - Thu, 10 Dec 2020 00:59:28 GMT
       server:
       - Kestrel
       x-ms-maa-service-version:
