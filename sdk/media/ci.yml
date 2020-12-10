@@ -34,4 +34,6 @@ extends:
       safeName: azuremedialvaedge
     - name: azure_media_nspkg
       safeName: azuremedianspkg
+    - name: azure_media_analyticsedge
+      safeName: azuremediaanalyticsedge
 
