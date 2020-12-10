@@ -40,6 +40,11 @@ pytest sdk/storage/azure-mgmt-storage/
 pytest sdk/storage/azure-mgmt-storage/tests/test_mgmt_storage.py
 ```
 
+If you have print statements in your tests for debugging you can add the `-s` flag to send those print statements to standard output:
+```Shell
+pytest sdk/storage/azure-mgmt-storage/ -s
+```
+
 By default, tests run in playback mode, using recordings of HTTP interactions to simulate requests made against Azure and allow the tests to run offline. To run the tests in live (or "recording") mode, you'll need to set up token-based Azure authentication.
 
 ## Getting Azure credentials
@@ -76,11 +81,16 @@ credentials = UserPassCredentials(
 Follow this detailed tutorial to set up an Active Directory application and service principal:
 https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/
 
-To use the credentials from Python, you need the application ID (a.k.a. client ID), authentication key (a.k.a. client secret), tenant ID and subscription ID from the Azure portal for use in the next step. [This section of the above tutorial](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
+To use the credentials from Python, you need:
+* the application ID (a.k.a. client ID)
+* authentication key (a.k.a. client secret)
+* tenant ID
+* subscription ID from the Azure portal
+[This section of the above tutorial](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
 
 The recommended practice is to store these three values in environment variables called `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET`. To set an environment variable use the following commands:
 ```Shell
-$env:AZURE_TENANT_ID=<value>        # PowerShell only
+$env:AZURE_TENANT_ID='<value>'        # PowerShell only
 set AZURE_TENANT_ID=<value>         # Windows CMD (alternatively, use export AZURE_TENANT_ID=<value> to export to the global env)
 export AZURE_TENANT_ID=<value>      # Linux shell only
 ```
@@ -101,7 +111,7 @@ credentials = ServicePrincipalCredentials(
 
 ## Providing credentials to the tests
 
-When you run tests in playback mode, they use a fake credentials file, located at `tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`, to simulate authenticating with Azure.
+When you run tests in playback mode, they use a fake credentials file, located at `tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`, to simulate authenticating with Azure. In most scenarios you will not have to adjust this file, you will have to make edits to this file if your service uses values that are not already included in the `mgmt_settings_fake.py` file.g
 
 In live mode, you need to use real credentials like those you obtained in the previous section. To enable the tests to use them, make a copy of the `mgmt_settings_fake.py` file in the same location, and rename it `mgmt_settings_real.py`.
 Then make the following changes:

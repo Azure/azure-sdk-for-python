@@ -88,6 +88,11 @@ azure-sdk-for-python\sdk\api-learn\azure-learnappconfig> pytest -k <keyword>
 azure-sdk-for-python\sdk\api-learn\azure-learnappconfig> pytest <test_file.py> -k <keyword>
 ```
 
+If you have print statements in your tests for debugging you can add the `-s` flag to send those print statements to standard output:
+```Shell
+pytest sdk/storage/azure-mgmt-storage/ -s
+```
+
 The implementation tutorial is already configured according to the [Template SDK Directory](https://github.com/Azure/azure-sdk-for-python/tree/training/sdk/api-learn/implementation-tutorial) and therefore already has a test directory ready for us to work with.
 
 ## Tox
