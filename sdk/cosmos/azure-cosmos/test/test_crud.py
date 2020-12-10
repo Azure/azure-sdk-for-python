@@ -699,17 +699,6 @@ class CRUDTests(unittest.TestCase):
         # create document with float partitionKey
         created_collection.create_item(body=document_definition)
 
-        document_definition = {'name': 'sample document',
-                               'spam': 'eggs',
-                               'pk': 'value'}
-
-        # Should throw an error because automatic id generation is disabled always.
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            created_collection.create_item,
-            document_definition
-        )
-
         created_db.delete_container(created_collection)
 
     def test_partitioned_collection_conflict_crud_and_query(self):
