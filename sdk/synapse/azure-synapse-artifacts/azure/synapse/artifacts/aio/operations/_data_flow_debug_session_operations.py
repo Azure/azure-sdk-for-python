@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class DataFlowDebugSessionOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,10 +44,10 @@ class DataFlowDebugSessionOperations:
 
     async def _create_data_flow_debug_session_initial(
         self,
-        request: "models.CreateDataFlowDebugSessionRequest",
+        request: "_models.CreateDataFlowDebugSessionRequest",
         **kwargs
-    ) -> Optional["models.CreateDataFlowDebugSessionResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CreateDataFlowDebugSessionResponse"]]
+    ) -> Optional["_models.CreateDataFlowDebugSessionResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CreateDataFlowDebugSessionResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -81,7 +81,7 @@ class DataFlowDebugSessionOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -100,9 +100,9 @@ class DataFlowDebugSessionOperations:
 
     async def begin_create_data_flow_debug_session(
         self,
-        request: "models.CreateDataFlowDebugSessionRequest",
+        request: "_models.CreateDataFlowDebugSessionRequest",
         **kwargs
-    ) -> AsyncLROPoller["models.CreateDataFlowDebugSessionResponse"]:
+    ) -> AsyncLROPoller["_models.CreateDataFlowDebugSessionResponse"]:
         """Creates a data flow debug session.
 
         :param request: Data flow debug session definition.
@@ -118,7 +118,7 @@ class DataFlowDebugSessionOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CreateDataFlowDebugSessionResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CreateDataFlowDebugSessionResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -141,7 +141,11 @@ class DataFlowDebugSessionOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -158,7 +162,7 @@ class DataFlowDebugSessionOperations:
     def query_data_flow_debug_sessions_by_workspace(
         self,
         **kwargs
-    ) -> AsyncIterable["models.QueryDataFlowDebugSessionsResponse"]:
+    ) -> AsyncIterable["_models.QueryDataFlowDebugSessionsResponse"]:
         """Query all active data flow debug sessions.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -166,7 +170,7 @@ class DataFlowDebugSessionOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.QueryDataFlowDebugSessionsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QueryDataFlowDebugSessionsResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryDataFlowDebugSessionsResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -215,7 +219,7 @@ class DataFlowDebugSessionOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.CloudError, response)
+                error = self._deserialize(_models.CloudError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -228,9 +232,9 @@ class DataFlowDebugSessionOperations:
 
     async def add_data_flow(
         self,
-        request: "models.DataFlowDebugPackage",
+        request: "_models.DataFlowDebugPackage",
         **kwargs
-    ) -> "models.AddDataFlowToDebugSessionResponse":
+    ) -> "_models.AddDataFlowToDebugSessionResponse":
         """Add a data flow into debug session.
 
         :param request: Data flow debug session definition with debug content.
@@ -240,7 +244,7 @@ class DataFlowDebugSessionOperations:
         :rtype: ~azure.synapse.artifacts.models.AddDataFlowToDebugSessionResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AddDataFlowToDebugSessionResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddDataFlowToDebugSessionResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -274,7 +278,7 @@ class DataFlowDebugSessionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AddDataFlowToDebugSessionResponse', pipeline_response)
@@ -287,7 +291,7 @@ class DataFlowDebugSessionOperations:
 
     async def delete_data_flow_debug_session(
         self,
-        request: "models.DeleteDataFlowDebugSessionRequest",
+        request: "_models.DeleteDataFlowDebugSessionRequest",
         **kwargs
     ) -> None:
         """Deletes a data flow debug session.
@@ -333,7 +337,7 @@ class DataFlowDebugSessionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -343,10 +347,10 @@ class DataFlowDebugSessionOperations:
 
     async def _execute_command_initial(
         self,
-        request: "models.DataFlowDebugCommandRequest",
+        request: "_models.DataFlowDebugCommandRequest",
         **kwargs
-    ) -> Optional["models.DataFlowDebugCommandResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DataFlowDebugCommandResponse"]]
+    ) -> Optional["_models.DataFlowDebugCommandResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DataFlowDebugCommandResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -380,7 +384,7 @@ class DataFlowDebugSessionOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -399,9 +403,9 @@ class DataFlowDebugSessionOperations:
 
     async def begin_execute_command(
         self,
-        request: "models.DataFlowDebugCommandRequest",
+        request: "_models.DataFlowDebugCommandRequest",
         **kwargs
-    ) -> AsyncLROPoller["models.DataFlowDebugCommandResponse"]:
+    ) -> AsyncLROPoller["_models.DataFlowDebugCommandResponse"]:
         """Execute a data flow debug command.
 
         :param request: Data flow debug command definition.
@@ -417,7 +421,7 @@ class DataFlowDebugSessionOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowDebugCommandResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowDebugCommandResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -440,7 +444,11 @@ class DataFlowDebugSessionOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

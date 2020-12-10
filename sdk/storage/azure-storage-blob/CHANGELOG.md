@@ -1,6 +1,9 @@
 # Release History
 
-## 12.6.1 (Unreleased)
+## 12.7.0b1 (2020-12-07)
+**New features**
+- Added `upload_blob_from_url` api on `BlobClient`
+- Added support for leasing blob when get/set tags, listing all tags when find blobs by tags.
 
 
 ## 12.6.0 (2020-11-10)
@@ -17,7 +20,7 @@
 - Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 ## 12.6.0b1 (2020-10-02)
-**New features***
+**New features**
 - Added support for Arrow format (`ArrowType`) output serialization using `quick_query()`.
 - Added support for undeleting a container.
 - Added support for `LastAccessTime` property on a blob, which could be the last time a blob was written or read.

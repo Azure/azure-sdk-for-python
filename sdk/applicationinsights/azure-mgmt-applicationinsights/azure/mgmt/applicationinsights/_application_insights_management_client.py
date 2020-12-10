@@ -9,35 +9,34 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import ApplicationInsightsManagementClientConfiguration
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
+class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
+    """Composite Swagger for Application Insights Management Client.
 
-class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
-    """Composite Swagger for Application Insights Management Client
-
-    This ready contains multiple API versions, to help you deal with all Azure clouds
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
-    By default, uses latest API version available on public Azure.
-    For production, you should stick a particular api-version and/or profile.
-    The profile sets a mapping between the operation group and an API version.
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :ivar config: Configuration for client.
-    :vartype config: ApplicationInsightsManagementClientConfiguration
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
@@ -46,7 +45,7 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2020-03-01-preview'
+    DEFAULT_API_VERSION = '2017-10-01'
     _PROFILE_TAG = "azure.mgmt.applicationinsights.ApplicationInsightsManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -56,33 +55,36 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
             'api_keys': '2015-05-01',
             'component_available_features': '2015-05-01',
             'component_current_billing_features': '2015-05-01',
-            'component_current_pricing_plan': '2017-10-01',
             'component_feature_capabilities': '2015-05-01',
             'component_quota_status': '2015-05-01',
-            'components': '2020-02-02-preview',
-            'ea_subscription_list_migration_date': '2017-10-01',
-            'ea_subscription_migrate_to_new_pricing_model': '2017-10-01',
-            'ea_subscription_rollback_to_legacy_pricing_model': '2017-10-01',
+            'components': '2015-05-01',
             'export_configurations': '2015-05-01',
             'favorites': '2015-05-01',
+            'my_workbooks': '2015-05-01',
             'operations': '2015-05-01',
-            'proactive_detection_configurations': '2018-05-01-preview',
-            'queries': '2019-09-01-preview',
-            'query_packs': '2019-09-01-preview',
+            'proactive_detection_configurations': '2015-05-01',
             'web_test_locations': '2015-05-01',
             'web_tests': '2015-05-01',
             'work_item_configurations': '2015-05-01',
-            'workbook_templates': '2019-10-17-preview',
-            'workbooks': '2018-06-17-preview',
+            'workbooks': '2015-05-01',
         }},
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = ApplicationInsightsManagementClientConfiguration(credentials, subscription_id, base_url)
+    def __init__(
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = ApplicationInsightsManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ApplicationInsightsManagementClient, self).__init__(
-            credentials,
-            self.config,
             api_version=api_version,
             profile=profile
         )
@@ -103,6 +105,7 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
            * 2019-10-17-preview: :mod:`v2019_10_17_preview.models<azure.mgmt.applicationinsights.v2019_10_17_preview.models>`
            * 2020-02-02-preview: :mod:`v2020_02_02_preview.models<azure.mgmt.applicationinsights.v2020_02_02_preview.models>`
            * 2020-03-01-preview: :mod:`v2020_03_01_preview.models<azure.mgmt.applicationinsights.v2020_03_01_preview.models>`
+           * 2020-06-02-preview: :mod:`v2020_06_02_preview.models<azure.mgmt.applicationinsights.v2020_06_02_preview.models>`
         """
         if api_version == '2015-05-01':
             from .v2015_05_01 import models
@@ -128,7 +131,10 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2020-03-01-preview':
             from .v2020_03_01_preview import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        elif api_version == '2020-06-02-preview':
+            from .v2020_06_02_preview import models
+            return models
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def analytics_items(self):
@@ -140,8 +146,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import AnalyticsItemsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'analytics_items'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def annotations(self):
@@ -153,8 +159,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import AnnotationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'annotations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def api_keys(self):
@@ -166,8 +172,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import APIKeysOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'api_keys'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def component_available_features(self):
@@ -179,8 +185,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import ComponentAvailableFeaturesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'component_available_features'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def component_current_billing_features(self):
@@ -192,8 +198,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import ComponentCurrentBillingFeaturesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'component_current_billing_features'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def component_current_pricing_plan(self):
@@ -205,8 +211,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2017-10-01':
             from .v2017_10_01.operations import ComponentCurrentPricingPlanOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'component_current_pricing_plan'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def component_feature_capabilities(self):
@@ -218,8 +224,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import ComponentFeatureCapabilitiesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'component_feature_capabilities'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def component_linked_storage_accounts(self):
@@ -231,8 +237,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2020-03-01-preview':
             from .v2020_03_01_preview.operations import ComponentLinkedStorageAccountsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'component_linked_storage_accounts'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def component_quota_status(self):
@@ -244,8 +250,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import ComponentQuotaStatusOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'component_quota_status'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def components(self):
@@ -263,8 +269,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2020-02-02-preview':
             from .v2020_02_02_preview.operations import ComponentsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'components'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def ea_subscription_list_migration_date(self):
@@ -276,8 +282,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2017-10-01':
             from .v2017_10_01.operations import EASubscriptionListMigrationDateOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'ea_subscription_list_migration_date'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def ea_subscription_migrate_to_new_pricing_model(self):
@@ -289,8 +295,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2017-10-01':
             from .v2017_10_01.operations import EASubscriptionMigrateToNewPricingModelOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'ea_subscription_migrate_to_new_pricing_model'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def ea_subscription_rollback_to_legacy_pricing_model(self):
@@ -302,8 +308,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2017-10-01':
             from .v2017_10_01.operations import EASubscriptionRollbackToLegacyPricingModelOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'ea_subscription_rollback_to_legacy_pricing_model'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def export_configurations(self):
@@ -315,8 +321,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import ExportConfigurationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'export_configurations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def favorites(self):
@@ -328,21 +334,53 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import FavoritesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'favorites'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def live_token(self):
+        """Instance depends on the API version:
+
+           * 2020-06-02-preview: :class:`LiveTokenOperations<azure.mgmt.applicationinsights.v2020_06_02_preview.operations.LiveTokenOperations>`
+        """
+        api_version = self._get_api_version('live_token')
+        if api_version == '2020-06-02-preview':
+            from .v2020_06_02_preview.operations import LiveTokenOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'live_token'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def my_workbooks(self):
+        """Instance depends on the API version:
+
+           * 2015-05-01: :class:`MyWorkbooksOperations<azure.mgmt.applicationinsights.v2015_05_01.operations.MyWorkbooksOperations>`
+        """
+        api_version = self._get_api_version('my_workbooks')
+        if api_version == '2015-05-01':
+            from .v2015_05_01.operations import MyWorkbooksOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'my_workbooks'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def operations(self):
         """Instance depends on the API version:
 
            * 2015-05-01: :class:`Operations<azure.mgmt.applicationinsights.v2015_05_01.operations.Operations>`
+           * 2019-09-01-preview: :class:`Operations<azure.mgmt.applicationinsights.v2019_09_01_preview.operations.Operations>`
+           * 2020-06-02-preview: :class:`Operations<azure.mgmt.applicationinsights.v2020_06_02_preview.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import Operations as OperationClass
+        elif api_version == '2019-09-01-preview':
+            from .v2019_09_01_preview.operations import Operations as OperationClass
+        elif api_version == '2020-06-02-preview':
+            from .v2020_06_02_preview.operations import Operations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def proactive_detection_configurations(self):
@@ -357,8 +395,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2018-05-01-preview':
             from .v2018_05_01_preview.operations import ProactiveDetectionConfigurationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'proactive_detection_configurations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def queries(self):
@@ -370,8 +408,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2019-09-01-preview':
             from .v2019_09_01_preview.operations import QueriesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'queries'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def query_packs(self):
@@ -383,8 +421,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2019-09-01-preview':
             from .v2019_09_01_preview.operations import QueryPacksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'query_packs'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def web_test_locations(self):
@@ -396,8 +434,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import WebTestLocationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'web_test_locations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def web_tests(self):
@@ -409,8 +447,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import WebTestsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'web_tests'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def work_item_configurations(self):
@@ -422,8 +460,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import WorkItemConfigurationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'work_item_configurations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def workbook_templates(self):
@@ -435,8 +473,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2019-10-17-preview':
             from .v2019_10_17_preview.operations import WorkbookTemplatesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'workbook_templates'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def workbooks(self):
@@ -451,5 +489,13 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2018-06-17-preview':
             from .v2018_06_17_preview.operations import WorkbooksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'workbooks'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

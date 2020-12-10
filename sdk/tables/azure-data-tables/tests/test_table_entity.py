@@ -293,6 +293,29 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/15554")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_query_user_filter_multiple_params(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': 'True',
+                'rk': entity['RowKey']
+            }
+            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+
+            # Assert  --- Does this mean insert returns nothing?
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+        finally:
+            self._tear_down()
+
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_invalid_filter(self, resource_group, location, storage_account, storage_account_key):
@@ -1340,7 +1363,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_zero_entities(self, resource_group, location, storage_account, storage_account_key):

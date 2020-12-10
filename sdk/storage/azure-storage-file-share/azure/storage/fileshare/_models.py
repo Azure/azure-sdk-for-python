@@ -6,6 +6,8 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+from enum import Enum
+
 from azure.core.paging import PageIterator
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -332,6 +334,10 @@ class ShareProperties(DictMixin):
     :ivar int remaining_retention_days:
         To indicate how many remaining days the deleted share will be kept.
         This is a service returned value, and the value will be set when list shared including deleted ones.
+    :ivar ~azure.storage.fileshare.models.ShareRootSquash or str root_squash:
+        Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
+    :ivar list(str) protocols:
+        Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
     """
 
     def __init__(self, **kwargs):
@@ -351,7 +357,9 @@ class ShareProperties(DictMixin):
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
         self.lease = LeaseProperties(**kwargs)
-
+        self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
+            if kwargs.get('x-ms-enabled-protocols', None) else None
+        self.root_squash = kwargs.get('x-ms-root-squash', None)
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
@@ -371,6 +379,10 @@ class ShareProperties(DictMixin):
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+        props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
+            if generated.properties.enabled_protocols else None
+        props.root_squash = generated.properties.root_squash
+
         return props
 
 
@@ -704,6 +716,12 @@ class FileProperties(DictMixin):
         props.metadata = generated.properties.metadata
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         return props
+
+
+class ShareProtocols(str, Enum):
+    """Enabled protocols on the share"""
+    SMB = "SMB"
+    NFS = "NFS"
 
 
 class CopyProperties(DictMixin):
