@@ -2,5 +2,4 @@ recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
 include azure/security/__init__.py
-include azure/security/attestation/__init__.py
 
