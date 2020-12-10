@@ -6,26 +6,22 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-from datetime import datetime, timedelta
 
 from msrest.exceptions import ValidationError
 
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 
-from azure.core import MatchConditions
 
-from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess
+from azure.storage.filedatalake import DataLakeServiceClient
 from testcase import (
     StorageTestCase,
     record,
 )
 
 # ------------------------------------------------------------------------------
-from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
 from azure.storage.filedatalake._models import DatalakeAnalyticsLogging, DatalakeMetrics, DatalakeRetentionPolicy, \
     DatalakeStaticWebsite, CorsRule
 
-TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
 

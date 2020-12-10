@@ -443,7 +443,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
-    def set_service_properties(
+    async def set_service_properties(
             self, analytics_logging=None,  # type: Optional[DatalakeAnalyticsLogging]
             hour_metrics=None,  # type: Optional[DatalakeMetrics]
             minute_metrics=None,  # type: Optional[DatalakeMetrics]
@@ -494,7 +494,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        return self._blob_service_client.set_service_properties(analytics_logging=analytics_logging,
+        return await self._blob_service_client.set_service_properties(analytics_logging=analytics_logging,
                                                                 hour_metrics=hour_metrics,
                                                                 minute_metrics=minute_metrics,
                                                                 cors=cors,
@@ -503,7 +503,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                                                                 static_website=static_website,
                                                                 **kwargs)  # pylint: disable=protected-access
 
-    def get_service_properties(self, **kwargs):
+    async def get_service_properties(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's datalake service, including
         Azure Storage Analytics.
@@ -517,7 +517,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: Dict[str, Any]
         """
-        props = self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
+        props = await self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
         props["analytics_logging"] = DatalakeAnalyticsLogging._from_generated(props["analytics_logging"])
         props["hour_metrics"] = DatalakeMetrics._from_generated(props["hour_metrics"])
         props["minute_metrics"] = DatalakeMetrics._from_generated(props["minute_metrics"])
