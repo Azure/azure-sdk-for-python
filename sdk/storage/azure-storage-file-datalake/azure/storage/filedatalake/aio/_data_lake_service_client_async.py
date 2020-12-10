@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from typing import Any
+from typing import Optional, List, Any
 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
@@ -18,7 +18,8 @@ from .._shared.policies_async import ExponentialRetry
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._models import FileSystemPropertiesPaged
-from .._models import UserDelegationKey, LocationMode
+from .._models import UserDelegationKey, LocationMode, DatalakeAnalyticsLogging, DatalakeMetrics, CorsRule, \
+    DatalakeRetentionPolicy, DatalakeStaticWebsite
 
 
 class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClientBase):
@@ -441,3 +442,79 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
+
+    def set_service_properties(
+            self, analytics_logging=None,  # type: Optional[DatalakeAnalyticsLogging]
+            hour_metrics=None,  # type: Optional[DatalakeMetrics]
+            minute_metrics=None,  # type: Optional[DatalakeMetrics]
+            cors=None,  # type: Optional[List[CorsRule]]
+            target_version=None,  # type: Optional[str]
+            delete_retention_policy=None,  # type: Optional[DatalakeRetentionPolicy]
+            static_website=None,  # type: Optional[DatalakeStaticWebsite]
+            **kwargs
+    ):
+        # type: (...) -> None
+        """Sets the properties of a storage account's Datalake service, including
+        Azure Storage Analytics.
+
+        If an element (e.g. analytics_logging) is left as None, the
+        existing settings on the service for that functionality are preserved.
+
+        :param analytics_logging:
+            Groups the Azure Analytics Logging settings.
+        :type analytics_logging: ~azure.storage.filedatalake.DatalakeAnalyticsLogging
+        :param hour_metrics:
+            The hour metrics settings provide a summary of request
+            statistics grouped by API in hourly aggregates.
+        :type hour_metrics: ~azure.storage.filedatalake.DatalakeMetrics
+        :param minute_metrics:
+            The minute metrics settings provide request statistics
+            for each minute.
+        :type minute_metrics: ~azure.storage.filedatalake.DatalakeMetrics
+        :param cors:
+            You can include up to five CorsRule elements in the
+            list. If an empty list is specified, all CORS rules will be deleted,
+            and CORS will be disabled for the service.
+        :type cors: list[~azure.storage.filedatalake.DatalakeCorsRule]
+        :param str target_version:
+            Indicates the default version to use for requests if an incoming
+            request's version is not specified.
+        :param delete_retention_policy:
+            The delete retention policy specifies whether to retain deleted files/directories.
+            It also specifies the number of days and versions of file/directory to keep.
+        :type delete_retention_policy: ~azure.storage.filedatalake.DatalakeRetentionPolicy
+        :param static_website:
+            Specifies whether the static website feature is enabled,
+            and if yes, indicates the index document and 404 error document to use.
+        :type static_website: ~azure.storage.filedatalake.DatalakeStaticWebsite
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        return self._blob_service_client.set_service_properties(analytics_logging=analytics_logging,
+                                                                hour_metrics=hour_metrics,
+                                                                minute_metrics=minute_metrics,
+                                                                cors=cors,
+                                                                target_version=target_version,
+                                                                delete_retention_policy=delete_retention_policy,
+                                                                static_website=static_website,
+                                                                **kwargs)  # pylint: disable=protected-access
+
+    def get_service_properties(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
+        """Gets the properties of a storage account's datalake service, including
+        Azure Storage Analytics.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An object containing datalake service properties such as
+            analytics logging, hour/minute metrics, cors rules, etc.
+        :rtype: Dict[str, Any]
+        """
+        props = self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
+        props["analytics_logging"] = DatalakeAnalyticsLogging._from_generated(props["analytics_logging"])
+        props["hour_metrics"] = DatalakeMetrics._from_generated(props["hour_metrics"])
+        props["minute_metrics"] = DatalakeMetrics._from_generated(props["minute_metrics"])
+        props["delete_retention_policy"] = DatalakeRetentionPolicy._from_generated(props["delete_retention_policy"])
+        props["static_website"] = DatalakeStaticWebsite._from_generated(props["static_website"])
+        return props
