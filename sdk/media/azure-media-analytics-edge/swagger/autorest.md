@@ -11,8 +11,8 @@ autorest --v3 --python
 
 ```yaml
 require: https://github.com/Azure/azure-rest-api-specs/blob/7b34c62199a8d84f7252dcb8b08c1b593ae65124/specification/mediaservices/data-plane/readme.md
-output-folder: ../azure/media/livevideoanalytics/edge/_generated
-namespace: azure.media.livevideoanalytics.edge
+output-folder: ../azure/media/analyticsedge/_generated
+namespace: azure.media.analyticsedge
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: false

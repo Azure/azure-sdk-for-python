@@ -14,12 +14,11 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-media-analytics-edge"
+NAMESPACE_NAME = "azure.media.analyticsedge"
 PACKAGE_PPRINT_NAME = "Azure Media Live Video Analytics Edge SDK"
 
 # a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace('-', '/')
-# a-b-c => a.b.c
-namespace_name = PACKAGE_NAME.replace('-', '.')
+package_folder_path = NAMESPACE_NAME.replace('.', '/')
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
