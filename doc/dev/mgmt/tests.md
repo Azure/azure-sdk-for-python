@@ -5,7 +5,6 @@
     -   [Setting up a test environment](#setting-up-a-test-environment)
     -   [Running the tests](#running-the-tests)
     -   [Getting Azure credentials](#getting-azure-credentials)
-        -   [Get a token with Azure Active Directory user/password](#get-a-token-with-azure-active-directory-userpassword)
         -   [Get a token with Active Directory application and service principal](#get-a-token-with-active-directory-application-and-service-principal)
     -   [Providing credentials to the tests](#providing-credentials-to-the-tests)
     -   [Running tests in live mode](#running-tests-in-live-mode)
@@ -50,31 +49,7 @@ By default, tests run in playback mode, using recordings of HTTP interactions to
 ## Getting Azure credentials
 
 There are several ways to authenticate to Azure, but to be able to record test HTTP interactions, you must use an OAuth authentication method which gives you a token:
-- Azure Active Directory user/password
 - Active Directory application and service principal
-
-Certificate authentication does not allow you to record HTTP queries for testing.
-
-<!-- If it's deprecated, do we want to have it in docs? -->
-<!-- ### Get a token with Azure Active Directory user/password. This is considered deprecated and should not be used anymore (https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate?view=azure-python#mgmt-auth-legacy).
-
-1.  Connect to the [Azure Classic Portal](https://manage.windowsazure.com/) with your admin account.
-2.  Create a user in your default AAD https://azure.microsoft.com/documentation/articles/active-directory-create-users/
-   **You must NOT activate Multi-Factor Authentication!**
-3.  Go to Settings - Administrators.
-4.  Click on *Add* and enter the email of the new user.
-    Check the checkbox of the subscription you want to test with this user.
-5.  Login to Azure Portal with this new user to change the temporary password to a new one.
-    You will not be able to use the temporary password for OAuth login.
-
-You are now able to log in Python using OAuth. You can test with this code:
-```python
-from azure.common.credentials import UserPassCredentials
-credentials = UserPassCredentials(
-    'user@domain.com',     # Your new user
-    'my_smart_password',   # Your password
-)
-``` -->
 
 ### Get a token with Active Directory application and service principal
 
@@ -82,10 +57,10 @@ Follow this detailed tutorial to set up an Active Directory application and serv
 https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/
 
 To use the credentials from Python, you need:
-* the application ID (a.k.a. client ID)
-* authentication key (a.k.a. client secret)
-* tenant ID
-* subscription ID from the Azure portal
+* Application ID (a.k.a. client ID)
+* Authentication key (a.k.a. client secret)
+* Tenant ID
+* Subscription ID from the Azure portal
 [This section of the above tutorial](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
 
 The recommended practice is to store these three values in environment variables called `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET`. To set an environment variable use the following commands:
