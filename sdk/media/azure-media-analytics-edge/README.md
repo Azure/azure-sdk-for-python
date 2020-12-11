@@ -16,7 +16,7 @@ Use the client library for Live Video Analytics on IoT Edge to:
 Install the Live Video Analytics client library for Python with pip:
 
 ```bash
-pip install azure-media-livevideoanalytics-edge
+pip install azure-media-analytics-edge
 ```
 ### Prerequisites
 

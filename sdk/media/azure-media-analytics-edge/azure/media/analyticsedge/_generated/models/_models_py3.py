@@ -115,7 +115,7 @@ class MediaGraphSink(msrest.serialization.Model):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     """
 
     _validation = {
@@ -158,7 +158,7 @@ class MediaGraphAssetSink(MediaGraphSink):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param asset_name_pattern: Required. A name pattern when creating new assets. The pattern must
      include at least one system variable. See the documentation for available variables and
      additional examples.
@@ -260,7 +260,7 @@ class MediaGraphProcessor(msrest.serialization.Model):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     """
 
     _validation = {
@@ -306,15 +306,15 @@ class MediaGraphExtensionProcessorBase(MediaGraphProcessor):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param endpoint: Required. Endpoint to which this processor should connect.
-    :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
+    :type endpoint: ~azure.media.analyticsedge.models.MediaGraphEndpoint
     :param image: Required. Describes the parameters of the image that is sent as input to the
      endpoint.
-    :type image: ~azure.media.livevideoanalytics.edge.models.MediaGraphImage
+    :type image: ~azure.media.analyticsedge.models.MediaGraphImage
     :param sampling_options: Describes the sampling options to be applied when forwarding samples
      to the extension.
-    :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
+    :type sampling_options: ~azure.media.analyticsedge.models.MediaGraphSamplingOptions
     """
 
     _validation = {
@@ -366,15 +366,15 @@ class MediaGraphCognitiveServicesVisionExtension(MediaGraphExtensionProcessorBas
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param endpoint: Required. Endpoint to which this processor should connect.
-    :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
+    :type endpoint: ~azure.media.analyticsedge.models.MediaGraphEndpoint
     :param image: Required. Describes the parameters of the image that is sent as input to the
      endpoint.
-    :type image: ~azure.media.livevideoanalytics.edge.models.MediaGraphImage
+    :type image: ~azure.media.analyticsedge.models.MediaGraphImage
     :param sampling_options: Describes the sampling options to be applied when forwarding samples
      to the extension.
-    :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
+    :type sampling_options: ~azure.media.analyticsedge.models.MediaGraphSamplingOptions
     """
 
     _validation = {
@@ -451,7 +451,7 @@ class MediaGraphEndpoint(msrest.serialization.Model):
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
     :param credentials: Polymorphic credentials to be presented to the endpoint.
-    :type credentials: ~azure.media.livevideoanalytics.edge.models.MediaGraphCredentials
+    :type credentials: ~azure.media.analyticsedge.models.MediaGraphCredentials
     :param url: Required. Url for the endpoint.
     :type url: str
     """
@@ -495,7 +495,7 @@ class MediaGraphFileSink(MediaGraphSink):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param base_directory_path: Required. Absolute directory for all outputs to the Edge device
      from this sink.
     :type base_directory_path: str
@@ -554,18 +554,17 @@ class MediaGraphGrpcExtension(MediaGraphExtensionProcessorBase):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param endpoint: Required. Endpoint to which this processor should connect.
-    :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
+    :type endpoint: ~azure.media.analyticsedge.models.MediaGraphEndpoint
     :param image: Required. Describes the parameters of the image that is sent as input to the
      endpoint.
-    :type image: ~azure.media.livevideoanalytics.edge.models.MediaGraphImage
+    :type image: ~azure.media.analyticsedge.models.MediaGraphImage
     :param sampling_options: Describes the sampling options to be applied when forwarding samples
      to the extension.
-    :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
+    :type sampling_options: ~azure.media.analyticsedge.models.MediaGraphSamplingOptions
     :param data_transfer: Required. How media should be transferred to the inference engine.
-    :type data_transfer:
-     ~azure.media.livevideoanalytics.edge.models.MediaGraphGrpcExtensionDataTransfer
+    :type data_transfer: ~azure.media.analyticsedge.models.MediaGraphGrpcExtensionDataTransfer
     :param extension_configuration: Optional configuration to pass to the gRPC extension.
     :type extension_configuration: str
     """
@@ -618,8 +617,7 @@ class MediaGraphGrpcExtensionDataTransfer(msrest.serialization.Model):
     :type shared_memory_size_mi_b: str
     :param mode: Required. How frame data should be transmitted to the inference engine. Possible
      values include: "Embedded", "SharedMemory".
-    :type mode: str or
-     ~azure.media.livevideoanalytics.edge.models.MediaGraphGrpcExtensionDataTransferMode
+    :type mode: str or ~azure.media.analyticsedge.models.MediaGraphGrpcExtensionDataTransferMode
     """
 
     _validation = {
@@ -654,15 +652,15 @@ class MediaGraphHttpExtension(MediaGraphExtensionProcessorBase):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param endpoint: Required. Endpoint to which this processor should connect.
-    :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
+    :type endpoint: ~azure.media.analyticsedge.models.MediaGraphEndpoint
     :param image: Required. Describes the parameters of the image that is sent as input to the
      endpoint.
-    :type image: ~azure.media.livevideoanalytics.edge.models.MediaGraphImage
+    :type image: ~azure.media.analyticsedge.models.MediaGraphImage
     :param sampling_options: Describes the sampling options to be applied when forwarding samples
      to the extension.
-    :type sampling_options: ~azure.media.livevideoanalytics.edge.models.MediaGraphSamplingOptions
+    :type sampling_options: ~azure.media.analyticsedge.models.MediaGraphSamplingOptions
     """
 
     _validation = {
@@ -739,9 +737,9 @@ class MediaGraphImage(msrest.serialization.Model):
     """Describes the properties of an image frame.
 
     :param scale: The scaling mode for the image.
-    :type scale: ~azure.media.livevideoanalytics.edge.models.MediaGraphImageScale
+    :type scale: ~azure.media.analyticsedge.models.MediaGraphImageScale
     :param format: Encoding settings for an image.
-    :type format: ~azure.media.livevideoanalytics.edge.models.MediaGraphImageFormat
+    :type format: ~azure.media.analyticsedge.models.MediaGraphImageFormat
     """
 
     _attribute_map = {
@@ -885,7 +883,7 @@ class MediaGraphImageFormatRaw(MediaGraphImageFormat):
      values include: "Yuv420p", "Rgb565be", "Rgb565le", "Rgb555be", "Rgb555le", "Rgb24", "Bgr24",
      "Argb", "Rgba", "Abgr", "Bgra".
     :type pixel_format: str or
-     ~azure.media.livevideoanalytics.edge.models.MediaGraphImageFormatRawPixelFormat
+     ~azure.media.analyticsedge.models.MediaGraphImageFormatRawPixelFormat
     """
 
     _validation = {
@@ -917,7 +915,7 @@ class MediaGraphImageScale(msrest.serialization.Model):
     :param mode: Required. Describes the modes for scaling an input video frame into an image,
      before it is sent to an inference engine. Possible values include: "PreserveAspectRatio",
      "Pad", "Stretch".
-    :type mode: str or ~azure.media.livevideoanalytics.edge.models.MediaGraphImageScaleMode
+    :type mode: str or ~azure.media.analyticsedge.models.MediaGraphImageScaleMode
     :param width: The desired output width of the image.
     :type width: str
     :param height: The desired output height of the image.
@@ -957,9 +955,9 @@ class MediaGraphInstance(msrest.serialization.Model):
     :type name: str
     :param system_data: The system data for a resource. This is used by both topologies and
      instances.
-    :type system_data: ~azure.media.livevideoanalytics.edge.models.MediaGraphSystemData
+    :type system_data: ~azure.media.analyticsedge.models.MediaGraphSystemData
     :param properties: Properties of a media graph instance.
-    :type properties: ~azure.media.livevideoanalytics.edge.models.MediaGraphInstanceProperties
+    :type properties: ~azure.media.analyticsedge.models.MediaGraphInstanceProperties
     """
 
     _validation = {
@@ -1029,7 +1027,7 @@ class MediaGraphInstanceCollection(msrest.serialization.Model):
     """A collection of media graph instances.
 
     :param value: A collection of media graph instances.
-    :type value: list[~azure.media.livevideoanalytics.edge.models.MediaGraphInstance]
+    :type value: list[~azure.media.analyticsedge.models.MediaGraphInstance]
     :param continuation_token: A continuation token to use in subsequent calls to enumerate through
      the graph instance collection. This is used when the collection contains too many results to
      return in one response.
@@ -1212,11 +1210,10 @@ class MediaGraphInstanceProperties(msrest.serialization.Model):
      topology with this name should already have been set in the Edge module.
     :type topology_name: str
     :param parameters: List of one or more graph instance parameters.
-    :type parameters:
-     list[~azure.media.livevideoanalytics.edge.models.MediaGraphParameterDefinition]
+    :type parameters: list[~azure.media.analyticsedge.models.MediaGraphParameterDefinition]
     :param state: Allowed states for a graph instance. Possible values include: "Inactive",
      "Activating", "Active", "Deactivating".
-    :type state: str or ~azure.media.livevideoanalytics.edge.models.MediaGraphInstanceState
+    :type state: str or ~azure.media.analyticsedge.models.MediaGraphInstanceState
     """
 
     _attribute_map = {
@@ -1254,7 +1251,7 @@ class MediaGraphInstanceSetRequest(MethodRequest):
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param instance: Required. Represents an instance of a media graph.
-    :type instance: ~azure.media.livevideoanalytics.edge.models.MediaGraphInstance
+    :type instance: ~azure.media.analyticsedge.models.MediaGraphInstance
     """
 
     _validation = {
@@ -1297,9 +1294,9 @@ class MediaGraphInstanceSetRequestBody(MediaGraphInstance, MethodRequest):
     :type name: str
     :param system_data: The system data for a resource. This is used by both topologies and
      instances.
-    :type system_data: ~azure.media.livevideoanalytics.edge.models.MediaGraphSystemData
+    :type system_data: ~azure.media.analyticsedge.models.MediaGraphSystemData
     :param properties: Properties of a media graph instance.
-    :type properties: ~azure.media.livevideoanalytics.edge.models.MediaGraphInstanceProperties
+    :type properties: ~azure.media.analyticsedge.models.MediaGraphInstanceProperties
     """
 
     _validation = {
@@ -1345,7 +1342,7 @@ class MediaGraphIoTHubMessageSink(MediaGraphSink):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this sink node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param hub_output_name: Required. Name of the output path to which the media graph will publish
      message. These messages can then be delivered to desired destinations by declaring routes
      referencing the output path in the IoT Edge deployment manifest.
@@ -1468,11 +1465,11 @@ class MediaGraphMotionDetectionProcessor(MediaGraphProcessor):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param sensitivity: Enumeration that specifies the sensitivity of the motion detection
      processor. Possible values include: "Low", "Medium", "High".
     :type sensitivity: str or
-     ~azure.media.livevideoanalytics.edge.models.MediaGraphMotionDetectionSensitivity
+     ~azure.media.analyticsedge.models.MediaGraphMotionDetectionSensitivity
     :param output_motion_region: Indicates whether the processor should detect and output the
      regions, within the video frame, where motion was detected. Default is true.
     :type output_motion_region: bool
@@ -1519,8 +1516,7 @@ class MediaGraphNodeInput(msrest.serialization.Model):
      input to this node.
     :type node_name: str
     :param output_selectors: Allows for the selection of particular streams from another node.
-    :type output_selectors:
-     list[~azure.media.livevideoanalytics.edge.models.MediaGraphOutputSelector]
+    :type output_selectors: list[~azure.media.analyticsedge.models.MediaGraphOutputSelector]
     """
 
     _attribute_map = {
@@ -1548,8 +1544,7 @@ class MediaGraphOutputSelector(msrest.serialization.Model):
     :ivar property: The stream property to compare with. Default value: "mediaType".
     :vartype property: str
     :param operator: The operator to compare streams by. Possible values include: "is", "isNot".
-    :type operator: str or
-     ~azure.media.livevideoanalytics.edge.models.MediaGraphOutputSelectorOperator
+    :type operator: str or ~azure.media.analyticsedge.models.MediaGraphOutputSelectorOperator
     :param value: Value to compare against.
     :type value: str
     """
@@ -1587,7 +1582,7 @@ class MediaGraphParameterDeclaration(msrest.serialization.Model):
     :type name: str
     :param type: Required. The type of the parameter. Possible values include: "String",
      "SecretString", "Int", "Double", "Bool".
-    :type type: str or ~azure.media.livevideoanalytics.edge.models.MediaGraphParameterType
+    :type type: str or ~azure.media.analyticsedge.models.MediaGraphParameterType
     :param description: Description of the parameter.
     :type description: str
     :param default: The default value for the parameter to be used if the media graph instance does
@@ -1701,9 +1696,9 @@ class MediaGraphRtspSource(MediaGraphSource):
     :type name: str
     :param transport: Underlying RTSP transport. This is used to enable or disable HTTP tunneling.
      Possible values include: "Http", "Tcp".
-    :type transport: str or ~azure.media.livevideoanalytics.edge.models.MediaGraphRtspTransport
+    :type transport: str or ~azure.media.analyticsedge.models.MediaGraphRtspTransport
     :param endpoint: Required. RTSP endpoint of the stream that is being connected to.
-    :type endpoint: ~azure.media.livevideoanalytics.edge.models.MediaGraphEndpoint
+    :type endpoint: ~azure.media.analyticsedge.models.MediaGraphEndpoint
     """
 
     _validation = {
@@ -1771,7 +1766,7 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
     :type name: str
     :param inputs: Required. An array of the names of the other nodes in the media graph, the
      outputs of which are used as input for this processor node.
-    :type inputs: list[~azure.media.livevideoanalytics.edge.models.MediaGraphNodeInput]
+    :type inputs: list[~azure.media.analyticsedge.models.MediaGraphNodeInput]
     :param activation_evaluation_window: The period of time over which the gate gathers input
      events before evaluating them.
     :type activation_evaluation_window: str
@@ -1859,17 +1854,15 @@ class MediaGraphTlsEndpoint(MediaGraphEndpoint):
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
     :param credentials: Polymorphic credentials to be presented to the endpoint.
-    :type credentials: ~azure.media.livevideoanalytics.edge.models.MediaGraphCredentials
+    :type credentials: ~azure.media.analyticsedge.models.MediaGraphCredentials
     :param url: Required. Url for the endpoint.
     :type url: str
     :param trusted_certificates: Trusted certificates when authenticating a TLS connection. Null
      designates that Azure Media Service's source of trust should be used.
-    :type trusted_certificates:
-     ~azure.media.livevideoanalytics.edge.models.MediaGraphCertificateSource
+    :type trusted_certificates: ~azure.media.analyticsedge.models.MediaGraphCertificateSource
     :param validation_options: Validation options to use when authenticating a TLS connection. By
      default, strict validation is used.
-    :type validation_options:
-     ~azure.media.livevideoanalytics.edge.models.MediaGraphTlsValidationOptions
+    :type validation_options: ~azure.media.analyticsedge.models.MediaGraphTlsValidationOptions
     """
 
     _validation = {
@@ -1936,9 +1929,9 @@ class MediaGraphTopology(msrest.serialization.Model):
     :type name: str
     :param system_data: The system data for a resource. This is used by both topologies and
      instances.
-    :type system_data: ~azure.media.livevideoanalytics.edge.models.MediaGraphSystemData
+    :type system_data: ~azure.media.analyticsedge.models.MediaGraphSystemData
     :param properties: A description of the properties of a media graph topology.
-    :type properties: ~azure.media.livevideoanalytics.edge.models.MediaGraphTopologyProperties
+    :type properties: ~azure.media.analyticsedge.models.MediaGraphTopologyProperties
     """
 
     _validation = {
@@ -1969,7 +1962,7 @@ class MediaGraphTopologyCollection(msrest.serialization.Model):
     """A collection of media graph topologies.
 
     :param value: A collection of media graph topologies.
-    :type value: list[~azure.media.livevideoanalytics.edge.models.MediaGraphTopology]
+    :type value: list[~azure.media.analyticsedge.models.MediaGraphTopology]
     :param continuation_token: A continuation token to use in subsequent calls to enumerate through
      the graph topologies collection. This is used when the collection contains too many results to
      return in one response.
@@ -2112,14 +2105,13 @@ class MediaGraphTopologyProperties(msrest.serialization.Model):
     :type description: str
     :param parameters: The list of parameters defined in the topology. The value for these
      parameters are supplied by instances of this topology.
-    :type parameters:
-     list[~azure.media.livevideoanalytics.edge.models.MediaGraphParameterDeclaration]
+    :type parameters: list[~azure.media.analyticsedge.models.MediaGraphParameterDeclaration]
     :param sources: The list of source nodes in this topology.
-    :type sources: list[~azure.media.livevideoanalytics.edge.models.MediaGraphSource]
+    :type sources: list[~azure.media.analyticsedge.models.MediaGraphSource]
     :param processors: The list of processor nodes in this topology.
-    :type processors: list[~azure.media.livevideoanalytics.edge.models.MediaGraphProcessor]
+    :type processors: list[~azure.media.analyticsedge.models.MediaGraphProcessor]
     :param sinks: The list of sink nodes in this topology.
-    :type sinks: list[~azure.media.livevideoanalytics.edge.models.MediaGraphSink]
+    :type sinks: list[~azure.media.analyticsedge.models.MediaGraphSink]
     """
 
     _attribute_map = {
@@ -2160,7 +2152,7 @@ class MediaGraphTopologySetRequest(MethodRequest):
     :ivar api_version: api version. Default value: "2.0".
     :vartype api_version: str
     :param graph: Required. The definition of a media graph topology.
-    :type graph: ~azure.media.livevideoanalytics.edge.models.MediaGraphTopology
+    :type graph: ~azure.media.analyticsedge.models.MediaGraphTopology
     """
 
     _validation = {
@@ -2203,9 +2195,9 @@ class MediaGraphTopologySetRequestBody(MediaGraphTopology, MethodRequest):
     :type name: str
     :param system_data: The system data for a resource. This is used by both topologies and
      instances.
-    :type system_data: ~azure.media.livevideoanalytics.edge.models.MediaGraphSystemData
+    :type system_data: ~azure.media.analyticsedge.models.MediaGraphSystemData
     :param properties: A description of the properties of a media graph topology.
-    :type properties: ~azure.media.livevideoanalytics.edge.models.MediaGraphTopologyProperties
+    :type properties: ~azure.media.analyticsedge.models.MediaGraphTopologyProperties
     """
 
     _validation = {
@@ -2248,7 +2240,7 @@ class MediaGraphUnsecuredEndpoint(MediaGraphEndpoint):
     :param type: Required. The discriminator for derived types.Constant filled by server.
     :type type: str
     :param credentials: Polymorphic credentials to be presented to the endpoint.
-    :type credentials: ~azure.media.livevideoanalytics.edge.models.MediaGraphCredentials
+    :type credentials: ~azure.media.analyticsedge.models.MediaGraphCredentials
     :param url: Required. Url for the endpoint.
     :type url: str
     """
