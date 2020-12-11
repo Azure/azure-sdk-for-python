@@ -13,10 +13,10 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AlertsManagementClientConfiguration
+from .operations import ActionRulesOperations
 from .operations import Operations
 from .operations import AlertsOperations
 from .operations import SmartGroupsOperations
-from .operations import ActionRulesOperations
 from .operations import SmartDetectorAlertRulesOperations
 from . import models
 
@@ -27,14 +27,14 @@ class AlertsManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: AlertsManagementClientConfiguration
 
+    :ivar action_rules: ActionRules operations
+    :vartype action_rules: azure.mgmt.alertsmanagement.operations.ActionRulesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.alertsmanagement.operations.Operations
     :ivar alerts: Alerts operations
     :vartype alerts: azure.mgmt.alertsmanagement.operations.AlertsOperations
     :ivar smart_groups: SmartGroups operations
     :vartype smart_groups: azure.mgmt.alertsmanagement.operations.SmartGroupsOperations
-    :ivar action_rules: ActionRules operations
-    :vartype action_rules: azure.mgmt.alertsmanagement.operations.ActionRulesOperations
     :ivar smart_detector_alert_rules: SmartDetectorAlertRules operations
     :vartype smart_detector_alert_rules: azure.mgmt.alertsmanagement.operations.SmartDetectorAlertRulesOperations
 
@@ -56,13 +56,13 @@ class AlertsManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.action_rules = ActionRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.alerts = AlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.smart_groups = SmartGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.action_rules = ActionRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.smart_detector_alert_rules = SmartDetectorAlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
