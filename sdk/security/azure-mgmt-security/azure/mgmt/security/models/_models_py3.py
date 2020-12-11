@@ -532,13 +532,12 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(ActiveConnectionsNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(ActiveConnectionsNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'ActiveConnectionsNotInAllowedRange'  # type: str
         self.rule_type = 'ActiveConnectionsNotInAllowedRange'  # type: str
 
@@ -1461,13 +1460,12 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(AmqpC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(AmqpC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'AmqpC2DMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'AmqpC2DMessagesNotInAllowedRange'  # type: str
 
@@ -1535,13 +1533,12 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(AmqpC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(AmqpC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'AmqpC2DRejectedMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'AmqpC2DRejectedMessagesNotInAllowedRange'  # type: str
 
@@ -1609,13 +1606,12 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(AmqpD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(AmqpD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'AmqpD2CMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'AmqpD2CMessagesNotInAllowedRange'  # type: str
 
@@ -3232,11 +3228,10 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         allowlist_values: List[str],
         **kwargs
     ):
-        super(ConnectionToIpNotAllowed, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
+        super(ConnectionToIpNotAllowed, self).__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type = 'ConnectionToIpNotAllowed'  # type: str
         self.rule_type = 'ConnectionToIpNotAllowed'  # type: str
 
@@ -3934,13 +3929,12 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(DirectMethodInvokesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(DirectMethodInvokesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'DirectMethodInvokesNotInAllowedRange'  # type: str
         self.rule_type = 'DirectMethodInvokesNotInAllowedRange'  # type: str
 
@@ -4168,13 +4162,12 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(FailedLocalLoginsNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(FailedLocalLoginsNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'FailedLocalLoginsNotInAllowedRange'  # type: str
         self.rule_type = 'FailedLocalLoginsNotInAllowedRange'  # type: str
 
@@ -4242,13 +4235,12 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(FileUploadsNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(FileUploadsNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'FileUploadsNotInAllowedRange'  # type: str
         self.rule_type = 'FileUploadsNotInAllowedRange'  # type: str
 
@@ -4479,13 +4471,12 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(HttpC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(HttpC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'HttpC2DMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'HttpC2DMessagesNotInAllowedRange'  # type: str
 
@@ -4553,13 +4544,12 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(HttpC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(HttpC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'HttpC2DRejectedMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'HttpC2DRejectedMessagesNotInAllowedRange'  # type: str
 
@@ -4627,13 +4617,12 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(HttpD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(HttpD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'HttpD2CMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'HttpD2CMessagesNotInAllowedRange'  # type: str
 
@@ -6702,11 +6691,10 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         allowlist_values: List[str],
         **kwargs
     ):
-        super(LocalUserNotAllowed, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
+        super(LocalUserNotAllowed, self).__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type = 'LocalUserNotAllowed'  # type: str
         self.rule_type = 'LocalUserNotAllowed'  # type: str
 
@@ -6868,13 +6856,12 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(MqttC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(MqttC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'MqttC2DMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'MqttC2DMessagesNotInAllowedRange'  # type: str
 
@@ -6942,13 +6929,12 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(MqttC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(MqttC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'MqttC2DRejectedMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'MqttC2DRejectedMessagesNotInAllowedRange'  # type: str
 
@@ -7016,13 +7002,12 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(MqttD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(MqttD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'MqttD2CMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'MqttD2CMessagesNotInAllowedRange'  # type: str
 
@@ -7848,11 +7833,10 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         allowlist_values: List[str],
         **kwargs
     ):
-        super(ProcessNotAllowed, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
+        super(ProcessNotAllowed, self).__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type = 'ProcessNotAllowed'  # type: str
         self.rule_type = 'ProcessNotAllowed'  # type: str
 
@@ -8054,13 +8038,12 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(QueuePurgesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(QueuePurgesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'QueuePurgesNotInAllowedRange'  # type: str
         self.rule_type = 'QueuePurgesNotInAllowedRange'  # type: str
 
@@ -10392,13 +10375,12 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(TwinUpdatesNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(TwinUpdatesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'TwinUpdatesNotInAllowedRange'  # type: str
         self.rule_type = 'TwinUpdatesNotInAllowedRange'  # type: str
 
@@ -10466,13 +10448,12 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
         self,
         *,
         is_enabled: bool,
-        is_enabled: bool,
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
         **kwargs
     ):
-        super(UnauthorizedOperationsNotInAllowedRange, self).__init__(is_enabled=is_enabled, is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
+        super(UnauthorizedOperationsNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'UnauthorizedOperationsNotInAllowedRange'  # type: str
         self.rule_type = 'UnauthorizedOperationsNotInAllowedRange'  # type: str
 
