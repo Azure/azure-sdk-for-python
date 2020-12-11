@@ -30,11 +30,8 @@ extends:
     Artifacts:
     - name: azure_mgmt_media
       safeName: azuremgmtmedia
-    - name: azure_media_lva_edge
-      safeName: azuremedialvaedge
     - name: azure_media_nspkg
       safeName: azuremedianspkg
-    - name: azure_media_analyticsedge
     - name: azure_media_analytics_edge
       safeName: azuremediaanalyticsedge
 
