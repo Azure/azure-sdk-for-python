@@ -49,11 +49,13 @@ class EventMixin(object):
 
 class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
+       Note: CloudEvents can only be sent to a topic of CloudEvent schema.  For EventGrid schema, use EventGridEvent.
 
     All required parameters must be populated in order to send to Azure.
 
     :param source: Required. Identifies the context in which an event happened. The combination of id and source must
-        be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
+        be unique for each distinct event, and otherwise can be any user-defined string.
+        If publishing to a domain topic, source must be the domain name.
     :type source: str
     :param data: Event data specific to the event type.
     :type data: object
@@ -131,21 +133,22 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
 
 class EventGridEvent(InternalEventGridEvent, EventMixin):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
+    Note: EventGridEvents can only be sent to a topic of EventGridEvent schema.  For CloudEvent schema, use CloudEvent.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :param topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
-                  Is required for Domain topics.
+                  Is required for Domain topics, and a domain topic may be specified which doesn't yet exist.
     :type topic: str
-    :param subject: Required. A resource path relative to the topic path.
+    :param subject: Required. A resource path relative to the topic path.  Can be any user-defined string.
     :type subject: str
     :param data: Event data specific to the event type.
     :type data: object
-    :param event_type: Required. The type of the event that occurred.
+    :param event_type: Required. The type of the event that occurred.  Can be any user-defined string.
     :type event_type: str
-    :param data_version: Required. The schema version of the data object.
+    :param data_version: Required. The schema version of the data object.  Can be any user-defined string.
     :type data_version: str
     :ivar metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
         If not provided, EventGrid will stamp onto event.

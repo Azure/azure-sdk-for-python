@@ -63,6 +63,12 @@ eg_publisher_client = EventGridPublisherClient(topic_hostname, credential)
 
 Information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc]
 
+### Topic
+A channel within the EventGrid service to send events.  Must be of CloudEvent or EventGridEvent schema, (decided at creation time) and the corrosponding event type must be used.
+
+### Domain Topic
+A domain exists to rout arbitrary named topics within it.  Topics must not exist beforehand if using a domain, topic name can be provided at send time.  Simply provide the domain endpoint at client construction instead of topic endpoint.
+
 ### EventGridPublisherClient
 `EventGridPublisherClient` provides operations to send event data to topic hostname specified during client initialization.
 Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can be sent.
@@ -83,6 +89,7 @@ The following sections provide several code snippets covering some of the most c
 ### Send an Event Grid Event
 
 This example publishes an Event Grid event.
+> **Note:** It is important to know if your topic supports Cloud or EventGrid events beforehand, otherwise send() will throw an exception.
 
 ```Python
 import os
@@ -109,6 +116,7 @@ client.send(event)
 ### Send a Cloud Event
 
 This example publishes a Cloud event.
+> **Note:** It is important to know if your topic supports Cloud or EventGrid events beforehand, otherwise send() will throw an exception.
 
 ```Python
 import os
