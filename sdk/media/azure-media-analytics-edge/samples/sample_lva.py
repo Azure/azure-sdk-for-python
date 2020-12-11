@@ -7,9 +7,9 @@ from azure.iot.hub import IoTHubRegistryManager
 from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 from datetime import time
 
-device_id = "enter-your-device-name"
-module_d = "enter-your-module-name"
-connection_string = "enter-your-connection-string"
+device_id = "device-name"
+module_d = "module-name"
+connection_string = "connection-string"
 graph_instance_name = "graphInstance1"
 graph_topology_name = "graphTopology1"
 graph_url = "rtsp://sample-url-from-camera"

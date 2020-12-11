@@ -2,7 +2,7 @@ import pytest
 from azure.media.analyticsedge import *
 
 class TestGraphBuildSerialize():
-    def test_build_graph_serialize():
+    def test_build_graph_serialize(self):
         graph_topology_name = "graphTopology1"
         graph_properties = MediaGraphTopologyProperties()
         graph_properties.description = "Continuous video recording to an Azure Media Services Asset"
