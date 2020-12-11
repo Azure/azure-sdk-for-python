@@ -72,8 +72,9 @@ steps:
     - task: PythonScript@0
       displayName: 'Test Samples'
       inputs:
-        scriptPath: 'scripts/devops_tasks/test_run_samples.py'
+        scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
         arguments: >-
           "${{ parameters.BuildTargetingString }}"
           --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="samples"
       env: ${{ parameters.EnvVars }}

@@ -16,72 +16,56 @@ from common_tasks import (
     process_glob_string,
 )
 
-
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
 
-def prep_samples(targeted_packages):
-    logging.info("running test samples setup for {}".format(targeted_packages))
-    run_check_call(
-        [
-            sys.executable,
-            dev_setup_script_location,
-            "--disabledevelop",
-            "-p",
-            ",".join([os.path.basename(p) for p in targeted_packages])
-        ],
-        root_dir,
-    )
+def run_samples(targeted_package):
+    logging.info("running samples for {}".format(targeted_package))
 
-
-def run_samples(targeted_packages_directories):
-    logging.info("running samples for {}".format(targeted_packages))
     samples_errors = []
+    sample_paths = []
+    samples_dir_path = os.path.abspath(os.path.join(targeted_package, "samples"))
 
-    for pkg_dir in targeted_packages_directories:
+    for path, subdirs, files in os.walk(samples_dir_path):
+        for name in files:
+            if fnmatch(name, "*.py"):
+                sample_paths.append(os.path.abspath(os.path.join(path, name)))
 
-        sample_paths = []
-        samples_dir_path = os.path.abspath(os.path.join(pkg_dir, "samples"))
-        for path, subdirs, files in os.walk(samples_dir_path):
-            for name in files:
-                if fnmatch(name, "*.py"):
-                    sample_paths.append(os.path.abspath(os.path.join(path, name)))
+    if not sample_paths:
+        logging.info(
+            "No samples found in {}".format(targeted_package)
+        )
+        exit(0)
 
-        if not sample_paths:
-            logging.info(
-                "No samples found in {}".format(targeted_packages_directories)
-            )
+    for sample in sample_paths:
+        if sys.version_info < (3, 5) and sample.endswith("_async.py"):
             continue
 
-        for sample in sample_paths:
-            if sys.version_info < (3, 5) and sample.endswith("_async.py"):
-                continue
+        logging.info(
+            "Testing {}".format(sample)
+        )
+        command_array = [sys.executable, sample]
+        errors = run_check_call(command_array, root_dir, always_exit=False)
 
+        sample_name = os.path.basename(sample)
+        if errors:
+            samples_errors.append(sample_name)
             logging.info(
-                "Testing {}".format(sample)
+                "ERROR: {}".format(sample_name)
             )
-            command_array = [sys.executable, sample]
-            errors = run_check_call(command_array, root_dir, always_exit=False)
-
-            if errors:
-                samples_errors.append(sample)
-                logging.info(
-                    "ERROR: {}".format(sample)
-                )
-            else:
-                logging.info(
-                    "SUCCESS: {}.".format(sample)
-                )
+        else:
+            logging.info(
+                "SUCCESS: {}.".format(sample_name)
+            )
 
     if samples_errors:
         logging.error("Sample(s) that ran with errors: {}".format(samples_errors))
         exit(1)
 
     logging.info(
-        "All samples ran successfully in {}".format(targeted_packages_directories)
+        "All samples ran successfully in {}".format(targeted_package)
     )
 
 
@@ -91,36 +75,18 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "glob_string",
-        nargs="?",
-        help=(
-            "A comma separated list of glob strings that will target the top level directories that contain packages."
-            'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
-        ),
-    )
-
-    parser.add_argument(
-        "--service",
-        help=(
-            "Name of service directory (under sdk/) to test samples."
-            "Example: --service applicationinsights"
-        ),
+        "-t",
+        "--target",
+        dest="target_package",
+        help="The target package directory on disk. The target module passed to run mypy will be <target_package>/azure.",
+        required=True,
     )
 
     args = parser.parse_args()
 
-    if args.service:
-        service_dir = os.path.join("sdk", args.service)
-        target_dir = os.path.join(root_dir, service_dir)
-    else:
-        target_dir = root_dir
-
-    targeted_packages = process_glob_string(args.glob_string, target_dir)
-
-    if len(targeted_packages) == 0:
-        exit(0)
+    service_dir = os.path.join("sdk", args.target_package)
+    target_dir = os.path.join(root_dir, service_dir)
 
     logging.info("User opted to run samples")
 
-    prep_samples(targeted_packages)
-    run_samples(targeted_packages)
+    run_samples(target_dir)
