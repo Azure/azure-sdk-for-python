@@ -51,20 +51,20 @@ class KeyVaultRoleAssignment(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._assignment_id = kwargs.get("assignment_id")
+        self._role_assignment_id = kwargs.get("role_assignment_id")
         self._name = kwargs.get("name")
         self._properties = kwargs.get("properties")
         self._type = kwargs.get("assignment_type")
 
     def __repr__(self):
         # type: () -> str
-        return "KeyVaultRoleAssignment<{}>".format(self._assignment_id)
+        return "KeyVaultRoleAssignment<{}>".format(self._role_assignment_id)
 
     @property
-    def assignment_id(self):
+    def role_assignment_id(self):
         # type: () -> str
         """unique identifier for this assignment"""
-        return self._assignment_id
+        return self._role_assignment_id
 
     @property
     def name(self):
@@ -102,7 +102,7 @@ class KeyVaultRoleAssignment(object):
     @classmethod
     def _from_generated(cls, role_assignment):
         return cls(
-            assignment_id=role_assignment.id,
+            role_assignment_id=role_assignment.id,
             name=role_assignment.name,
             assignment_type=role_assignment.type,
             properties=KeyVaultRoleAssignmentProperties._from_generated(role_assignment.properties),
@@ -183,7 +183,7 @@ class _Operation(object):
         self.error = kwargs.get("error", None)
         self.start_time = kwargs.get("start_time", None)
         self.end_time = kwargs.get("end_time", None)
-        self.id = kwargs.get("job_id", None)
+        self.job_id = kwargs.get("job_id", None)
 
     @classmethod
     def _wrap_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
@@ -200,11 +200,11 @@ class BackupOperation(_Operation):
     :ivar datetime.datetime start_time: UTC start time of the operation
     :ivar datetime.datetime end_time: UTC end time of the operation
     :ivar str job_id: identifier for the operation
-    :ivar str blob_storage_url: URL of the Azure blob storage container which contains the backup
+    :ivar str folder_url: URL of the Azure blob storage container which contains the backup
     """
 
     def __init__(self, **kwargs):
-        self.blob_storage_url = kwargs.pop("azure_storage_blob_container_uri", None)
+        self.folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
         super(BackupOperation, self).__init__(**kwargs)
 
 
