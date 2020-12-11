@@ -115,6 +115,15 @@ Mypy install and run.
 
 SDK performance testing is supported via the custom `perfstress` framework. For full details on this framework, and how to write and run tests for an SDK - see the [perfstress tests documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/perfstress_tests.md).
 
+### Line Endings
+This repository enforces LF line endings for all files via .gitattributes. Windows developers who use an editor that
+cannot deal with LF can configure their local git to apply CRLF on checkout (and remove on commit, so that they are
+never propagated outwith their machines):
+
+```
+git config --global core.autocrlf true
+```
+
 ### More Reading
 
 We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
