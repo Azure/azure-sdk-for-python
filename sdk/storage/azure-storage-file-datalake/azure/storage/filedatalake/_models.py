@@ -830,6 +830,26 @@ class AccessControlChanges(DictMixin):
         self.continuation = continuation
 
 
+class DeletedPathProperties(DictMixin):
+    """
+    Properties populated for a deleted path.
+
+    :ivar str name:
+        The name of the file in the path.
+    :ivar ~datetime.datetime deleted_time:
+        A datetime object representing the time at which the path was deleted.
+    :ivar int remaining_retention_days:
+        The number of days that the path will be retained before being permanently deleted by the service.
+    :ivar str deletion_id:
+        The id associated with the deleted path.
+    """
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.deletion_id = None
+
+
 class DatalakeAnalyticsLogging(Logging):
     """Azure Analytics Logging settings.
 
