@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class BillingMetersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class BillingMetersOperations(object):
         billing_location=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BillingMeterCollection"]
+        # type: (...) -> Iterable["_models.BillingMeterCollection"]
         """Gets a list of meters for a given location.
 
         Gets a list of meters for a given location.
@@ -62,7 +62,7 @@ class BillingMetersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.BillingMeterCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BillingMeterCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BillingMeterCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

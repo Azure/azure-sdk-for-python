@@ -1,6 +1,17 @@
 # Release History
 
 ## 4.0.0b3 (Unreleased)
+### Breaking Changes
+- Removed `folder_name` parameter from `KeyVaultBackupClient.begin_full_restore`
+  and `.begin_selective_restore`
+- Renamed `BackupOperation.azure_storage_blob_container_uri` to `.blob_storage_url`
+- Renamed `blob_storage_uri` parameters of `KeyVaultBackupClient` methods to
+  `blob_storage_url`
+- Renamed `KeyVaultPermission` attributes:
+  - `actions` -> `allowed_actions`
+  - `data_actions` -> `allowed_data_actions`
+  - `not_actions` -> `denied_actions`
+  - `not_data_actions` -> `denied_data_actions`
 
 
 ## 4.0.0b2 (2020-10-06)

@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import functools
+import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport

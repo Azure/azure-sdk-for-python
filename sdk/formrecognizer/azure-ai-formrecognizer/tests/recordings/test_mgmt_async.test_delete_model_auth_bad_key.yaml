@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/xx
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/xx
   response:
     body:
       string: '{"error": {"code": "401", "message": "Access denied due to invalid
@@ -15,9 +15,9 @@ interactions:
         an active subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       content-length: '224'
-      date: Mon, 14 Sep 2020 20:39:06 GMT
+      date: Fri, 30 Oct 2020 01:25:48 GMT
     status:
       code: 401
       message: PermissionDenied
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/custom/models/xx
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/custom/models/xx
 version: 1

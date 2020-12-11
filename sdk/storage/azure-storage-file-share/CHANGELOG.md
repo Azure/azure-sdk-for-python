@@ -1,6 +1,11 @@
 # Release History
 
-## 12.3.1 (Unreleased)
+## 12.4.0b2 (Unreleased)
+
+
+## 12.4.0b1 (2020-12-07)
+**New features**
+- Added support for enabling root squash and share protocols for file share.
 
 
 ## 12.3.0 (2020-11-10)

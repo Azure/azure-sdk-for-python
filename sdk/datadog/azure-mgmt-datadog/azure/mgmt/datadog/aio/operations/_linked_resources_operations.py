@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class LinkedResourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class LinkedResourcesOperations:
         resource_group_name: str,
         monitor_name: str,
         **kwargs
-    ) -> AsyncIterable["models.LinkedResourceListResponse"]:
+    ) -> AsyncIterable["_models.LinkedResourceListResponse"]:
         """List all Azure resources associated to the same Datadog organization as the target resource.
 
         List all Azure resources associated to the same Datadog organization as the target resource.
@@ -61,7 +61,7 @@ class LinkedResourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_datadog_client.models.LinkedResourceListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LinkedResourceListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkedResourceListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,7 +108,7 @@ class LinkedResourcesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

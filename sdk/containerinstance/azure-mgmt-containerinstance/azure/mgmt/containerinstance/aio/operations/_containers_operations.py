@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class ContainersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class ContainersOperations:
         container_name: str,
         tail: Optional[int] = None,
         **kwargs
-    ) -> "models.Logs":
+    ) -> "_models.Logs":
         """Get the logs for a specified container instance.
 
         Get the logs for a specified container instance in a specified resource group and container
@@ -67,7 +67,7 @@ class ContainersOperations:
         :rtype: ~azure.mgmt.containerinstance.models.Logs
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Logs"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Logs"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,9 +116,9 @@ class ContainersOperations:
         resource_group_name: str,
         container_group_name: str,
         container_name: str,
-        container_exec_request: "models.ContainerExecRequest",
+        container_exec_request: "_models.ContainerExecRequest",
         **kwargs
-    ) -> "models.ContainerExecResponse":
+    ) -> "_models.ContainerExecResponse":
         """Executes a command in a specific container instance.
 
         Executes a command for a specific container instance in a specified resource group and
@@ -137,7 +137,7 @@ class ContainersOperations:
         :rtype: ~azure.mgmt.containerinstance.models.ContainerExecResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerExecResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerExecResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

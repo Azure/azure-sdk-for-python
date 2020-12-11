@@ -32,7 +32,6 @@ class TableServicePropertiesTest(TableTestCase):
         self._assert_metrics_equal(prop['minute_metrics'], Metrics())
         self._assert_cors_equal(prop['cors'], list())
 
-
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
             assert log1 ==  log2
@@ -44,7 +43,6 @@ class TableServicePropertiesTest(TableTestCase):
         assert log1.delete ==  log2.delete
         self._assert_retention_equal(log1.retention_policy, log2.retention_policy)
 
-
     def _assert_delete_retention_policy_equal(self, policy1, policy2):
         if policy1 is None or policy2 is None:
             assert policy1 ==  policy2
@@ -52,7 +50,6 @@ class TableServicePropertiesTest(TableTestCase):
 
         assert policy1.enabled ==  policy2.enabled
         assert policy1.days ==  policy2.days
-
 
     def _assert_static_website_equal(self, prop1, prop2):
         if prop1 is None or prop2 is None:
@@ -63,14 +60,12 @@ class TableServicePropertiesTest(TableTestCase):
         assert prop1.index_document ==  prop2.index_document
         assert prop1.error_document404_path ==  prop2.error_document404_path
 
-
     def _assert_delete_retention_policy_not_equal(self, policy1, policy2):
         if policy1 is None or policy2 is None:
             assert policy1 != policy2
             return
 
         assert not (policy1.enabled == policy2.enabled and policy1.days == policy2.days)
-
 
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:
@@ -81,7 +76,6 @@ class TableServicePropertiesTest(TableTestCase):
         assert metrics1.enabled ==  metrics2.enabled
         assert metrics1.include_apis ==  metrics2.include_apis
         self._assert_retention_equal(metrics1.retention_policy, metrics2.retention_policy)
-
 
     def _assert_cors_equal(self, cors1, cors2):
         if cors1 is None or cors2 is None:
@@ -99,11 +93,9 @@ class TableServicePropertiesTest(TableTestCase):
             assert len(rule1.exposed_headers) ==  len(rule2.exposed_headers)
             assert len(rule1.allowed_headers) ==  len(rule2.allowed_headers)
 
-
     def _assert_retention_equal(self, ret1, ret2):
         assert ret1.enabled ==  ret2.enabled
         assert ret1.days ==  ret2.days
-
 
     # --Test cases per service ---------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -111,8 +103,6 @@ class TableServicePropertiesTest(TableTestCase):
     async def test_table_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key, logging_enable=True)
         # Act
         resp = await tsc.set_service_properties(
@@ -127,15 +117,12 @@ class TableServicePropertiesTest(TableTestCase):
             time.sleep(30)
         self._assert_properties_default(await tsc.get_service_properties())
 
-
     # --Test cases per feature ---------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_logging_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -148,14 +135,11 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -168,14 +152,11 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -189,14 +170,11 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
@@ -223,7 +201,6 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
-
     # --Test cases for errors ---------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -233,8 +210,6 @@ class TableServicePropertiesTest(TableTestCase):
                           RetentionPolicy,
                           True, None)
 
-
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
@@ -248,8 +223,6 @@ class TableServicePropertiesTest(TableTestCase):
         with pytest.raises(HttpResponseError):
             await tsc.set_service_properties(None, None, None, cors)
 
-
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_retention_too_long_async(self, resource_group, location, storage_account, storage_account_key):

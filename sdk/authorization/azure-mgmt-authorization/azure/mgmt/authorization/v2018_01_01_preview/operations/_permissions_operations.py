@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PermissionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class PermissionsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PermissionGetResult"]
+        # type: (...) -> Iterable["_models.PermissionGetResult"]
         """Gets all permissions the caller has for a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -60,7 +60,7 @@ class PermissionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.PermissionGetResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PermissionGetResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PermissionGetResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -125,7 +125,7 @@ class PermissionsOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PermissionGetResult"]
+        # type: (...) -> Iterable["_models.PermissionGetResult"]
         """Gets all permissions the caller has for a resource.
 
         :param resource_group_name: The name of the resource group.
@@ -143,7 +143,7 @@ class PermissionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.PermissionGetResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PermissionGetResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PermissionGetResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

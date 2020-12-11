@@ -5,12 +5,10 @@
 import asyncio
 import functools
 import codecs
-import hashlib
-import os
 import logging
 import json
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError
 from azure.keyvault.keys import JsonWebKey
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
@@ -297,7 +295,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     async def test_backup_restore(self, client, **kwargs):
         self.assertIsNotNone(client)
@@ -315,10 +313,13 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         await client.delete_key(created_bundle.name)
         # can add test case to see if we do get_deleted should return error
 
+        # purge key
+        await client.purge_deleted_key(created_bundle.name)
+
         # restore key
-        restored = await client.restore_key_backup(key_backup)
-        self.assertEqual(created_bundle.id, restored.id)
-        self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
+        restore_function = functools.partial(client.restore_key_backup, key_backup)
+        restored_key = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
+        self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()

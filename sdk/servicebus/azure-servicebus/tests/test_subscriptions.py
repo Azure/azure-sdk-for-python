@@ -11,10 +11,10 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, ServiceBusMessage, ReceiveMode
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiveMode
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
-from azure.servicebus._common.constants import SubQueue
+from azure.servicebus._common.constants import ServiceBusSubQueue
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -63,7 +63,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     receiver.receive_messages(max_wait_time=-1)
 
                 with pytest.raises(ValueError):
-                    receiver.get_streaming_message_iter(max_wait_time=0)
+                    receiver._get_streaming_message_iter(max_wait_time=0)
 
                 count = 0
                 for message in receiver:
@@ -141,7 +141,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock,
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                 prefetch_count=10
             ) as receiver:
 
@@ -165,7 +165,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK
             ) as receiver:
                 count = 0
                 for message in receiver:
@@ -177,9 +177,9 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
             with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
-                sub_queue = SubQueue.DeadLetter,
+                sub_queue = ServiceBusSubQueue.DEAD_LETTER,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK
             ) as dl_receiver:
                 count = 0
                 for message in dl_receiver:
