@@ -32,7 +32,6 @@ try:
     from ._models_py3 import Detector
     from ._models_py3 import Diagnostics
     from ._models_py3 import ErrorResponse, ErrorResponseException
-    from ._models_py3 import ErrorResponse1, ErrorResponse1Exception
     from ._models_py3 import ErrorResponseBody
     from ._models_py3 import Essentials
     from ._models_py3 import ManagedResource
@@ -43,6 +42,7 @@ try:
     from ._models_py3 import PatchObject
     from ._models_py3 import Resource
     from ._models_py3 import Scope
+    from ._models_py3 import SmartDetectorErrorResponse, SmartDetectorErrorResponseException
     from ._models_py3 import SmartGroup
     from ._models_py3 import SmartGroupAggregatedProperty
     from ._models_py3 import SmartGroupModification
@@ -75,7 +75,6 @@ except (SyntaxError, ImportError):
     from ._models import Detector
     from ._models import Diagnostics
     from ._models import ErrorResponse, ErrorResponseException
-    from ._models import ErrorResponse1, ErrorResponse1Exception
     from ._models import ErrorResponseBody
     from ._models import Essentials
     from ._models import ManagedResource
@@ -86,6 +85,7 @@ except (SyntaxError, ImportError):
     from ._models import PatchObject
     from ._models import Resource
     from ._models import Scope
+    from ._models import SmartDetectorErrorResponse, SmartDetectorErrorResponseException
     from ._models import SmartGroup
     from ._models import SmartGroupAggregatedProperty
     from ._models import SmartGroupModification
@@ -101,6 +101,10 @@ from ._paged_models import AlertRulePaged
 from ._paged_models import OperationPaged
 from ._paged_models import SmartGroupPaged
 from ._alerts_management_client_enums import (
+    ScopeType,
+    Operator,
+    SuppressionType,
+    ActionRuleStatus,
     Severity,
     SignalType,
     AlertState,
@@ -109,10 +113,6 @@ from ._alerts_management_client_enums import (
     AlertModificationEvent,
     SmartGroupModificationEvent,
     State,
-    ScopeType,
-    Operator,
-    SuppressionType,
-    ActionRuleStatus,
     AlertRuleState,
     TimeRange,
     AlertsSortByFields,
@@ -143,7 +143,6 @@ __all__ = [
     'Detector',
     'Diagnostics',
     'ErrorResponse', 'ErrorResponseException',
-    'ErrorResponse1', 'ErrorResponse1Exception',
     'ErrorResponseBody',
     'Essentials',
     'ManagedResource',
@@ -154,6 +153,7 @@ __all__ = [
     'PatchObject',
     'Resource',
     'Scope',
+    'SmartDetectorErrorResponse', 'SmartDetectorErrorResponseException',
     'SmartGroup',
     'SmartGroupAggregatedProperty',
     'SmartGroupModification',
@@ -163,11 +163,15 @@ __all__ = [
     'SuppressionConfig',
     'SuppressionSchedule',
     'ThrottlingInformation',
+    'ActionRulePaged',
     'OperationPaged',
     'AlertPaged',
     'SmartGroupPaged',
-    'ActionRulePaged',
     'AlertRulePaged',
+    'ScopeType',
+    'Operator',
+    'SuppressionType',
+    'ActionRuleStatus',
     'Severity',
     'SignalType',
     'AlertState',
@@ -176,10 +180,6 @@ __all__ = [
     'AlertModificationEvent',
     'SmartGroupModificationEvent',
     'State',
-    'ScopeType',
-    'Operator',
-    'SuppressionType',
-    'ActionRuleStatus',
     'AlertRuleState',
     'TimeRange',
     'AlertsSortByFields',
