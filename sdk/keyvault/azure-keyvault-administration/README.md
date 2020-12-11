@@ -234,9 +234,9 @@ sas_token = "<your-sas-token>"  # replace with a sas token to your storage accou
 
 # performing a full key backup is a long-running operation. Calling result() on the poller will wait
 # until the backup is completed, then return an object representing the backup operation.
-backup_operation = client.begin_full_backup(blob_storage_url, sas_token).result()
+backup_operation = client.begin_backup(blob_storage_url, sas_token).result()
 
-print(backup_operation.blob_storage_url)
+print(backup_operation.folder_url)
 print(backup_operation.status)
 print(backup_operation.job_id)
 ```
@@ -263,7 +263,7 @@ blob_url = "<your-blob-url>"
 
 # performing a full key restore is a long-running operation. Calling `result()` on the poller will wait
 # until the restore is completed, then return an object representing the restore operation.
-restore_operation = client.begin_full_restore(blob_url, sas_token).result()
+restore_operation = client.begin_restore(blob_url, sas_token).result()
 
 print(restore_operation.status)
 print(restore_operation.job_id)
