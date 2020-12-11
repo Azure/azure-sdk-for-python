@@ -30,3 +30,6 @@ extends:
     Artifacts:
     - name: azure_mgmt_media
       safeName: azuremgmtmedia
+    - name: azure_media_nspkg
+      safeName: azuremedianspkg
+
