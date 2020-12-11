@@ -1,9 +1,8 @@
 
 import json
 import os 
-#from azure.media.livevideoanalytics.edge._generated.models import *
 from azure.media.analyticsedge import *
-from azure.iot.hub import IoTHubRegistryManager
+from azure.iot.hub import IoTHubRegistryManager #run pip install azure-iot-hub to get this package
 from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 from datetime import time
 

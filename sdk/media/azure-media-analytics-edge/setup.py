@@ -48,19 +48,6 @@ with open('README.md', encoding='utf-8') as f:
 with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
-exclude_packages = [
-        'tests',
-        'tests.*',
-        'samples',
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
-    ]
-if sys.version_info < (3, 5, 3):
-    exclude_packages.extend([
-        '*.aio',
-        '*.aio.*'
-    ])
-
 setup(
     name=PACKAGE_NAME,
     version=version,
@@ -70,7 +57,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/appconfiguration/azure-appconfiguration',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/media/azure-nedua-analytics-edge',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
@@ -85,10 +72,17 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=exclude_packages),
+    packages=find_packages(
+        exclude=[
+            "samples",
+            "tests",
+            # Exclude packages that will be covered by PEP420 or nspkg
+            "azure",
+            "azure.media",
+        ]
+    ),
     install_requires=[
         "msrest>=0.5.0",
-        "azure-core<2.0.0,>=1.2.2",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
