@@ -70,8 +70,7 @@ def _get_request(continuation_token, paging_method):
     if not continuation_token:
         request = paging_method._initial_request  # pylint: disable=protected-access
     else:
-        request = paging_method._next_request_callback(continuation_token)  # pylint: disable=protected-access
-        request = paging_method.mutate_next_request(continuation_token, request, paging_method._initial_request)  # pylint: disable=protected-access
+        request = paging_method._next_request_algorithm.get_next_request(continuation_token, paging_method._initial_request)  # pylint: disable=protected-access
     return request
 
 def _handle_response(continuation_token, paging_method, response):
@@ -96,10 +95,56 @@ def _get_page(continuation_token, paging_method, initial_response):
     )
     return _handle_response(continuation_token, paging_method, response)
 
+@add_metaclass(ABCMeta)
+class NextRequestAlgorithmABC():
+
+    def get_next_request(self, continuation_token, initial_request):
+        # type: (Any, HttpRequest) -> HttpRequest
+        """Return next request.
+
+        :param client: The client used to make requests
+        :type client: ~azure.core.PipelineClient
+        :param callable deserialize_output: Callback to deserialize response output
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+class TokenToNextLink(NextRequestAlgorithmABC):
+
+    def __init__(self, path_format_arguments=None):
+        self._path_format_arguments = path_format_arguments
+
+    def get_next_request(self, continuation_token, initial_request):
+        request = initial_request
+        url = continuation_token
+        if self._path_format_arguments:
+            url = self._client.format_url(continuation_token, **self._path_format_arguments)
+        request.url = url
+        return request
+
+class TokenToHeader(NextRequestAlgorithmABC):
+
+    def __init__(self, header_name):
+        self._header_name = header_name
+
+    def get_next_request(self, continuation_token, initial_request):
+        request = initial_request
+        request.headers[self._header_name] = continuation_token
+        return request
+
+class TokenToCallback(NextRequestAlgorithmABC):
+
+    def __init__(self, next_request_callback):
+        self._next_request_callback = next_request_callback
+
+    def get_next_request(self, continuation_token, initial_request):
+        return self._next_request_callback(continuation_token)
 
 
 @add_metaclass(ABCMeta)
 class PagingMethodABC():
+
+    def __init__(self, next_request_algorithm):
+        self._next_request_algorithm = next_request_algorithm
 
     def initialize(self, client, deserialize_output, **kwargs):
         # type: (PipelineClient, Callable, Any) -> None
@@ -108,22 +153,7 @@ class PagingMethodABC():
         :param client: The client used to make requests
         :type client: ~azure.core.PipelineClient
         :param callable deserialize_output: Callback to deserialize response output
-        """
-        raise NotImplementedError("This method needs to be implemented")
-
-    def mutate_next_request(self, continuation_token, next_request, initial_request):
-        # type: (Any, HttpRequest) -> HttpRequest
-        """Mutate next request if there are any modifications that need to be
-        made to what azure core assumes the next request will be.
-
-        :param any continuation_token: Token passed to indicate continued paging, and how to get next page
-        :param next_request: What azure core assumes your next request to be.
-        :type next_request: ~azure.core.pipeline.transport.HttpRequest
-        :param initial_request: The initial request object you passed in. You can use the initial
-         request to help mutate the next request object.
-        :type initial_request: ~azure.core.pipeline.transport.HttpRequest
-        :return: A request object to make the next request to the service with
-        :rtype: ~azure.core.pipeline.transport.HttpRequest
+        :param next_request_algorithm: Algorithm that returns the next request.
         """
         raise NotImplementedError("This method needs to be implemented")
 
@@ -170,33 +200,19 @@ class PagingMethodABC():
 
 
 class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-attributes
-    def __init__(self, path_format_arguments=None):
-        """This is the most common paging method. It takes in an initial request object
-        and a partial for next requests. Once deserializing the data and returning the iterable
-        of paged items, it passes the continuation token from the response to the partial for the next
-        request. It keeps paging until a subsequent call to the service returns an empty continuation token.
-
-        :param dict[str, any] path_format_arguments: Any path formatting arguments you would need
-         to format the endpoint for your next call
+    def __init__(self, next_request_algorithm):
+        """This is the most common paging method. It takes in an initial request object, then starts
+        paging when users start iterating.
         """
+        super(BasicPagingMethod, self).__init__(next_request_algorithm)
         self._client = None
         self._deserialize_output = None
         self._item_name = None
         self._continuation_token_location = None
         self._cls = None
         self._error_map = None
-        self._next_request_callback = None
         self._initial_request = None
         self._operation_config = None
-        self._path_format_arguments = path_format_arguments
-
-    def _default_next_request_callback(self, continuation_token):
-        request = self._initial_request
-        url = continuation_token
-        if self._path_format_arguments:
-            url = self._client.format_url(continuation_token, **self._path_format_arguments)
-        request.url = url
-        return request
 
     def _validate_inputs(self):
         if not self._initial_request:
@@ -209,23 +225,17 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :param client: The client used to make requests
         :type client: ~azure.core.PipelineClient
         :param callable deserialize_output: Callback to deserialize response output
-        :keyword initial_request: Required. The request for our intial call to the service
+        :keyword initial_request: Required. The request for our initial call to the service
          to begin paging
         :paramtype initial_request: ~azure.core.pipeline.transport.HttpRequest
         :keyword str continuation_token_location: Required. Specifies the name of the property that provides
          the continuation token. Common values include `next_link` and `token`.
-        :keyword callable next_request_callback: A partial function that will take
-         in the continuation token and return the request for a subsequent call to the service.
-         If you don't pass one in, we will create one for you, based off of the initial_request
-         you pass in. We will assume the continuation token is the url for the next request, and we will
-         also format the URL based off of the `path_format_arguments` you initialize you pass in.
         :keyword str item_name: Specifies the name of the property that provides the collection of pageable
          items. Defaults to `value`.
         :keyword callable cls: A custom type or function that will modify each element of the pageable items.
          Takes a list of iterables as an input.
         """
         self._initial_request = kwargs.pop("initial_request", None)
-        self._next_request_callback = kwargs.pop("next_request_callback", self._default_next_request_callback)
         self._client = client
         self._deserialize_output = deserialize_output
         self._item_name = kwargs.pop("item_name", "value")
@@ -238,22 +248,6 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._error_map.update(kwargs.pop('error_map', {}))
         self._operation_config = kwargs
         self._validate_inputs()
-
-    def mutate_next_request(self, continuation_token, next_request, initial_request):
-        # type: (Any, HttpRequest) -> HttpRequest
-        """Mutate next request if there are any modifications that need to be
-        made to what azure core assumes the next request will be.
-
-        :param any continuation_token: Token passed to indicate continued paging, and how to get next page
-        :param next_request: What azure core assumes your next request to be.
-        :type next_request: ~azure.core.pipeline.transport.HttpRequest
-        :param initial_request: The initial request object you passed in. You can use the initial
-         request to help mutate the next request object.
-        :type initial_request: ~azure.core.pipeline.transport.HttpRequest
-        :return: A request object to make the next request to the service with
-        :rtype: ~azure.core.pipeline.transport.HttpRequest
-        """
-        return next_request
 
     def get_list_elements(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
@@ -308,15 +302,12 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
 
 
 class PagingMethodWithInitialResponse(BasicPagingMethod):
-    def __init__(self, path_format_arguments=None):
+    def __init__(self, next_request_algorithm):
         """Use this paging method if paging has started before user starts iterating.
         Currently only scenario is LRO + paging, where the final response of the LRO operation
         is the initial page.
-
-        :param dict[str, any] path_format_arguments: Any path formatting arguments you would need
-         to format the endpoint for your next call
         """
-        super(PagingMethodWithInitialResponse, self).__init__(path_format_arguments)
+        super(PagingMethodWithInitialResponse, self).__init__(next_request_algorithm)
         self._initial_response = None
 
     def _validate_inputs(self):
@@ -335,11 +326,6 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         :paramtype initial_response: ~azure.core.pipeline.transport.HttpResponse
         :keyword str continuation_token_location: Required. Specifies the name of the property that provides
          the continuation token. Common values include `next_link` and `token`.
-        :keyword callable next_request_callback: A partial function that will take
-         in the continuation token and return the request for a subsequent call to the service.
-         If you don't pass one in, we will create one for you, based off of the initial_request
-         you pass in.  We will assume the continuation token is the url for the next request, and we will
-         also format the URL based off of the `path_format_arguments` you initialize you pass in.
         :keyword str item_name: Specifies the name of the property that provides the collection of pageable
          items. Defaults to `value`.
         :keyword callable cls: A custom type or function that will modify each element of the pageable items.
