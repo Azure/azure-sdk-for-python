@@ -47,7 +47,7 @@ Across all modern Azure client libraries, clients consistently take an endpoint 
 
 #### Authenticating
 
-Previously in `azure-keyvault` you could create a `KeyVaultClient` by using `ServicePrincipalCredentials` from `azure-common-credentials`:
+Previously in `azure-keyvault` you could create a `KeyVaultClient` by using `ServicePrincipalCredentials` from `azure.common`:
 
 ```python
 from azure.common.credentials import ServicePrincipalCredentials
@@ -62,7 +62,7 @@ credentials = ServicePrincipalCredentials(
 certificate_client = KeyVaultClient(credentials)
 ```
 
-Now in `azure-keyvault-certificates` you can create a `CertificateClient` with a `DefaultAzureCredential` from [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md), where the credential reads the **AZURE_CLIENT_ID** ("client id" above), **AZURE_CLIENT_SECRET** ("client secret" above), and **AZURE_TENANT_ID** ("tenant id" above) environment variables:
+Now in `azure-keyvault-certificates` you can create a `CertificateClient` using any credential from [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md). Below is an example using [`DefaultAzureCredential`](https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python):
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -86,13 +86,13 @@ from azure.keyvault.certificates.aio import CertificateClient
 credential = DefaultAzureCredential()
 
 # call close when the client is no longer needed
-client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ...
-await client.close()
+await certificate_client.close()
 
 # alternatively, use the client as an async context manager
-client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-async with client:
+certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+async with certificate_client:
   ...
 ```
 
@@ -101,17 +101,6 @@ async with client:
 In `azure-keyvault` you could create a certificate by using `KeyVaultClient`'s `create_certificate` method, which required a vault endpoint and certificate name. This method returned a `CertificateOperation`.
 
 ```python
-from azure.common.credentials import ServicePrincipalCredentials
-from azure.keyvault import KeyVaultClient
-
-credentials = ServicePrincipalCredentials(
-    client_id="client id",
-    secret="client secret",
-    tenant="tenant id"
-)
-
-certificate_client = KeyVaultClient(credentials)
-
 operation = certificate_client.create_certificate(
     vault_base_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
@@ -121,17 +110,12 @@ operation = certificate_client.create_certificate(
 Now in `azure-keyvault-certificates` you can use the `begin_create_certificate` method to create a new certificate or new version of an existing certificate with the specified name. Before creating a certificate, a management policy for the certificate can be created or a default policy can be used. This method returns a long running operation poller that can be used to check the status or result of the operation.
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy
-
-credential = DefaultAzureCredential()
-
-certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-
 create_certificate_poller = certificate_client.begin_create_certificate(
     certificate_name="cert-name",
     policy=CertificatePolicy.get_default()
 )
+
+# calling result() will block execution until the certificate creation operation completes
 certificate = create_certificate_poller.result()
 ```
 
@@ -142,17 +126,6 @@ If you would like to check the status of your certificate creation, you can call
 In `azure-keyvault` you could retrieve a certificate (as a `CertificateBundle`) by using `get_certificate` and specifying the desired vault endpoint, certificate name, and certificate version. You could retrieve the versions of a certificate with the `get_certificate_versions` method, which returned an iterator-like object.
 
 ```python
-from azure.common.credentials import ServicePrincipalCredentials
-from azure.keyvault import KeyVaultClient
-
-credentials = ServicePrincipalCredentials(
-    client_id="client id",
-    secret="client secret",
-    tenant="tenant id"
-)
-
-certificate_client = KeyVaultClient(credentials)
-
 certificate_versions = certificate_client.get_certificate_versions(
     vault_base_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
@@ -169,13 +142,6 @@ for certificate_version in certificate_versions:
 Now in `azure-keyvault-certificates` you can retrieve the latest version of a certificate (as a `KeyVaultCertificate`) by using `get_certificate` and providing a certificate name.
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient
-
-credential = DefaultAzureCredential()
-
-certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-
 certificate = certificate_client.get_certificate(certificate_name="cert-name")
 
 print(certificate.name)
@@ -186,13 +152,6 @@ print(certificate.policy.issuer_name)
 You can use `get_certificate_version` to retrieve a specific version of a certificate.
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient
-
-credential = DefaultAzureCredential()
-
-certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-
 certificate = certificate_client.get_certificate_version(certificate_name="cert-name", version="cert-version")
 ```
 
@@ -201,17 +160,6 @@ certificate = certificate_client.get_certificate_version(certificate_name="cert-
 In `azure-keyvault` you could list the properties of certificates in a specified vault with the `get_certificates` method. This returned an iterator-like object containing `CertificateItem` instances.
 
 ```python
-from azure.common.credentials import ServicePrincipalCredentials
-from azure.keyvault import KeyVaultClient
-
-credentials = ServicePrincipalCredentials(
-    client_id="client id",
-    secret="client secret",
-    tenant="tenant id"
-)
-
-certificate_client = KeyVaultClient(credentials)
-
 certificates = certificate_client.get_certificates(vault_base_url="https://my-key-vault.vault.azure.net/")
 
 for certificate in certificates:
@@ -222,13 +170,6 @@ for certificate in certificates:
 Now in `azure-keyvault-certificates` you can list the properties of certificates in a vault with the `list_properties_of_certificates` method. This returns an iterator-like object containing `CertificateProperties` instances.
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient
-
-credential = DefaultAzureCredential()
-
-certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-
 certificates = certificate_client.list_properties_of_certificates()
 
 for certificate in certificates:
@@ -241,40 +182,21 @@ for certificate in certificates:
 In `azure-keyvault` you could delete all versions of a certificate with the `delete_certificate` method. This returned information about the deleted certificate (as a `DeletedCertificateBundle`), but you you could not poll the deletion operation to know when it completed. This would be valuable information if you intended to permanently delete the deleted certificate with `purge_deleted_certificate`.
 
 ```python
-from azure.common.credentials import ServicePrincipalCredentials
-from azure.keyvault import KeyVaultClient
-
-credentials = ServicePrincipalCredentials(
-    client_id="client id",
-    secret="client secret",
-    tenant="tenant id"
-)
-
-certificate_client = KeyVaultClient(credentials)
-
 deleted_certificate = certificate_client.delete_certificate(
     vault_base_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
 )
 
-# wait for the deletion to complete
-
+# this purge would fail if deletion hadn't finished
 certificate_client.purge_deleted_certificate(
     vault_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
 )
 ```
 
-Now in `azure-keyvault-certificates` you can delete a certificate with `begin_delete_certificate`, which returns a long operation poller object that can be used to wait/check on the operation as you would with the poller received from `begin_create_certificate`. Calling `result()` on the poller will return information about the deleted certificate (as a `DeletedCertificate`) without waiting for the operation to complete, but calling `wait()` will wait for the deletion to complete. Again, `purge_deleted_certificate` will permanently delete your deleted certificate and make it unrecoverable.
+Now in `azure-keyvault-certificates` you can delete a certificate with `begin_delete_certificate`, which returns a long operation poller object that can be used to wait/check on the operation much like you would with the poller received from `begin_create_certificate`. Calling `result()` on the poller will return information about the deleted certificate (as a `DeletedCertificate`) without waiting for the operation to complete, but calling `wait()` will wait for the deletion to complete. Again, `purge_deleted_certificate` will permanently delete your deleted certificate and make it unrecoverable.
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient
-
-credential = DefaultAzureCredential()
-
-certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-
 deleted_certificate_poller = certificate_client.begin_delete_certificate(certificate_name="cert-name")
 deleted_certificate = deleted_certificate_poller.result()
 
