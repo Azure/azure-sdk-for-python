@@ -16,7 +16,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Mapping, Optional
+    from typing import Any, Dict, Optional
     from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential
     from azure.core.pipeline import PipelineRequest
 
