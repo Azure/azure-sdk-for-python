@@ -39,6 +39,8 @@ from .exceptions import (
     ResourceNotFoundError
 )
 
+from .pipeline import PipelineResponse
+
 if TYPE_CHECKING:
     from typing import (
         Any,
@@ -48,7 +50,7 @@ if TYPE_CHECKING:
         Iterable,
         Tuple,
     )
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from .pipeline.transport import HttpRequest, HttpResponse
     from ._pipeline_client import PipelineClient
 
 _LOGGER = logging.getLogger(__name__)
@@ -66,13 +68,6 @@ def _extract_data_helper(pipeline_response, paging_method):
 def _extract_data(pipeline_response, paging_method):
     return _extract_data_helper(pipeline_response, paging_method)
 
-def _get_request(continuation_token, paging_method):
-    if not continuation_token:
-        request = paging_method._initial_request  # pylint: disable=protected-access
-    else:
-        request = paging_method._next_request_algorithm.get_next_request(continuation_token, paging_method._initial_request)  # pylint: disable=protected-access
-    return request
-
 def _handle_response(continuation_token, paging_method, response):
     http_response = response.http_response
     status_code = http_response.status_code
@@ -85,76 +80,43 @@ def _handle_response(continuation_token, paging_method, response):
         paging_method._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]  # pylint: disable=protected-access
     return response
 
-def _get_page(continuation_token, paging_method, initial_response):
-    if not continuation_token and initial_response:
-        return initial_response
-    request = _get_request(continuation_token, paging_method)
-
-    response = paging_method._client._pipeline.run(  # pylint: disable=protected-access
+def _make_call(request, paging_method):
+    return paging_method._client._pipeline.run(  # pylint: disable=protected-access
         request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
     )
+
+def _get_page(continuation_token, paging_method):
+    if not continuation_token:
+        initial_state = paging_method._initial_state  # pylint: disable=protected-access
+        if isinstance(initial_state, PipelineResponse):
+            response = initial_state
+        else:
+            response = _make_call(initial_state, paging_method)
+    else:
+        initial_request = paging_method._initial_request  # pylint: disable=protected-access
+        request = paging_method.get_next_request(continuation_token, initial_request)  # pylint: disable=protected-access
+        response = _make_call(request, paging_method)
     return _handle_response(continuation_token, paging_method, response)
-
-@add_metaclass(ABCMeta)
-class NextRequestAlgorithmABC():
-
-    def get_next_request(self, continuation_token, initial_request):
-        # type: (Any, HttpRequest) -> HttpRequest
-        """Return next request.
-
-        :param client: The client used to make requests
-        :type client: ~azure.core.PipelineClient
-        :param callable deserialize_output: Callback to deserialize response output
-        """
-        raise NotImplementedError("This method needs to be implemented")
-
-class TokenToNextLink(NextRequestAlgorithmABC):
-
-    def __init__(self, path_format_arguments=None):
-        self._path_format_arguments = path_format_arguments
-
-    def get_next_request(self, continuation_token, initial_request):
-        request = initial_request
-        url = continuation_token
-        if self._path_format_arguments:
-            url = self._client.format_url(continuation_token, **self._path_format_arguments)
-        request.url = url
-        return request
-
-class TokenToHeader(NextRequestAlgorithmABC):
-
-    def __init__(self, header_name):
-        self._header_name = header_name
-
-    def get_next_request(self, continuation_token, initial_request):
-        request = initial_request
-        request.headers[self._header_name] = continuation_token
-        return request
-
-class TokenToCallback(NextRequestAlgorithmABC):
-
-    def __init__(self, next_request_callback):
-        self._next_request_callback = next_request_callback
-
-    def get_next_request(self, continuation_token, initial_request):
-        return self._next_request_callback(continuation_token)
 
 
 @add_metaclass(ABCMeta)
 class PagingMethodABC():
 
-    def __init__(self, next_request_algorithm):
-        self._next_request_algorithm = next_request_algorithm
-
-    def initialize(self, client, deserialize_output, **kwargs):
-        # type: (PipelineClient, Callable, Any) -> None
+    def initialize(self, client, deserialize_output, initial_state, **kwargs):
+        # type: (PipelineClient, Callable, Any, Any) -> None
         """Initializes PagingMethod with variables passed through ItemPaged
 
         :param client: The client used to make requests
         :type client: ~azure.core.PipelineClient
         :param callable deserialize_output: Callback to deserialize response output
-        :param next_request_algorithm: Algorithm that returns the next request.
+        :param any initial_state: The initial state of paging. Can be an initial request,
+         can be the initial response for paging, if the initial request has already been
+         made. The latter occurs in LRO + paging, as the final resource of the LRO call
+         is the initial paging response.
         """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def get_next_request(self, continuation_token, initial_request):
         raise NotImplementedError("This method needs to be implemented")
 
     # extracting data from response
@@ -199,35 +161,36 @@ class PagingMethodABC():
         raise NotImplementedError("This method needs to be implemented")
 
 
-class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-attributes
-    def __init__(self, next_request_algorithm):
-        """This is the most common paging method. It takes in an initial request object, then starts
-        paging when users start iterating.
+class CallbackPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-attributes
+    def __init__(self, next_request_callback, **kwargs):  #  pylint: disable=unused-argument
+        """Base paging method. Accepts the callback for the next request as an init arg.
+
+        :param callable next_request_callback: Takes the continuation token as input and
+         outputs the next  request
         """
-        super(BasicPagingMethod, self).__init__(next_request_algorithm)
+        self._next_request_callback = next_request_callback
+        self._path_format_arguments = None
         self._client = None
         self._deserialize_output = None
         self._item_name = None
         self._continuation_token_location = None
         self._cls = None
         self._error_map = None
-        self._initial_request = None
         self._operation_config = None
+        self._initial_state = None
+        self._initial_request = None
 
-    def _validate_inputs(self):
-        if not self._initial_request:
-            raise TypeError("BasicPagingMethod is missing required keyword-only arg initial_request")
-
-    def initialize(self, client, deserialize_output, **kwargs):
-        # type: (PipelineClient, Callable, Any) -> None
+    def initialize(self, client, deserialize_output, initial_state, **kwargs):
+        # type: (PipelineClient, Callable, Any, Any) -> None
         """Initializes BasicPagingMethod with variables passed through ItemPaged
 
         :param client: The client used to make requests
         :type client: ~azure.core.PipelineClient
         :param callable deserialize_output: Callback to deserialize response output
-        :keyword initial_request: Required. The request for our initial call to the service
-         to begin paging
-        :paramtype initial_request: ~azure.core.pipeline.transport.HttpRequest
+        :param any initial_state: The initial state of paging. Can be an initial request,
+         can be the initial response for paging, if the initial request has already been
+         made. The latter occurs in LRO + paging, as the final resource of the LRO call
+         is the initial paging response.
         :keyword str continuation_token_location: Required. Specifies the name of the property that provides
          the continuation token. Common values include `next_link` and `token`.
         :keyword str item_name: Specifies the name of the property that provides the collection of pageable
@@ -235,9 +198,12 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         :keyword callable cls: A custom type or function that will modify each element of the pageable items.
          Takes a list of iterables as an input.
         """
-        self._initial_request = kwargs.pop("initial_request", None)
         self._client = client
         self._deserialize_output = deserialize_output
+        self._initial_state = initial_state
+        self._initial_request = (
+            initial_state.http_response.request if isinstance(initial_state, PipelineResponse) else initial_state
+        )
         self._item_name = kwargs.pop("item_name", "value")
         self._cls = kwargs.pop("_cls", None)
         self._continuation_token_location = kwargs.pop("continuation_token_location", None)
@@ -247,7 +213,10 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         }
         self._error_map.update(kwargs.pop('error_map', {}))
         self._operation_config = kwargs
-        self._validate_inputs()
+        self._path_format_arguments = kwargs.pop("path_format_arguments", {})
+
+    def get_next_request(self, continuation_token, initial_request):
+        return self._next_request_callback(continuation_token)
 
     def get_list_elements(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
@@ -300,40 +269,30 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
             )
         return getattr(deserialized, self._continuation_token_location)
 
+class NextLinkPagingMethod(CallbackPagingMethod):
+    """Most common paging method. Uses the continuation token as the URL for the next call.
+    """
+    def __init__(self, **kwargs):
 
-class PagingMethodWithInitialResponse(BasicPagingMethod):
-    def __init__(self, next_request_algorithm):
-        """Use this paging method if paging has started before user starts iterating.
-        Currently only scenario is LRO + paging, where the final response of the LRO operation
-        is the initial page.
-        """
-        super(PagingMethodWithInitialResponse, self).__init__(next_request_algorithm)
-        self._initial_response = None
+        def _next_link_callback(continuation_token):
+            request = self._initial_request
+            next_link = continuation_token
+            next_link = self._client.format_url(next_link, **self._path_format_arguments)
+            request.url = next_link
+            return request
+        super(NextLinkPagingMethod, self).__init__(next_request_callback=_next_link_callback)
 
-    def _validate_inputs(self):
-        if not self._initial_response:
-            raise TypeError("BasicPagingMethod is missing required keyword-only arg initial_response")
+class HeaderPagingMethod(CallbackPagingMethod):
+    """Passes continuation token as a header parameter to next call.
+    """
+    def __init__(self, header_name, **kwargs):
+        def _header_callback(continuation_token):
+            request = self._initial_request
+            request.headers[self._header_name] = continuation_token
+            return request
 
-    def initialize(self, client, deserialize_output, **kwargs):
-        # type: (PipelineClient, Callable, Any) -> None
-        """Initializes PagingMethodWithInitialResponse with variables passed through ItemPaged
-
-        :param client: The client used to make requests
-        :type client: ~azure.core.PipelineClient
-        :param callable deserialize_output: Callback to deserialize response output
-        :keyword initial_response: Required. The response of the first request to start paging. In LRO + paging,
-         the LRO function's final returned object is the initial response.
-        :paramtype initial_response: ~azure.core.pipeline.transport.HttpResponse
-        :keyword str continuation_token_location: Required. Specifies the name of the property that provides
-         the continuation token. Common values include `next_link` and `token`.
-        :keyword str item_name: Specifies the name of the property that provides the collection of pageable
-         items. Defaults to `value`.
-        :keyword callable cls: A custom type or function that will modify each element of the pageable items.
-         Takes a list of iterables as an input.
-        """
-        self._initial_response = kwargs.pop("initial_response", None)
-        super(PagingMethodWithInitialResponse, self).initialize(client, deserialize_output, **kwargs)
-        self._initial_request = self._initial_response.http_response.request
+        super(HeaderPagingMethod, self).__init__(next_request_callback=_header_callback)
+        self._header_name = header_name
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
@@ -370,7 +329,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
             self._paging_method.initialize(**kwargs)
         self._extract_data = extract_data or functools.partial(_extract_data, paging_method=self._paging_method)
         self._get_page = get_next or functools.partial(
-            _get_page, paging_method=self._paging_method, initial_response=kwargs.get("initial_response")
+            _get_page, paging_method=self._paging_method
         )
 
         self.continuation_token = continuation_token

@@ -35,10 +35,11 @@ from typing import (
     Optional,
     Awaitable,
 )
+from .pipeline import PipelineResponse
 from .pipeline._tools_async import await_result as _await_result
 
 from .exceptions import AzureError
-from .paging import PagingMethodABC, _extract_data_helper, _get_request, _handle_response
+from .paging import PagingMethodABC, _extract_data_helper, _handle_response
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,14 +56,22 @@ def _extract_data(pipeline_response, paging_method):
     continuation_token, list_of_elem = _extract_data_helper(pipeline_response, paging_method)
     return continuation_token, AsyncList(list_of_elem)
 
-async def _get_page(continuation_token, paging_method, initial_response):
-    if not continuation_token and initial_response:
-        return initial_response
-    request = _get_request(continuation_token, paging_method)
-
-    response = await paging_method._client._pipeline.run(  # pylint: disable=protected-access
+async def _make_call(request, paging_method):
+    return await paging_method._client._pipeline.run(  # pylint: disable=protected-access
         request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
     )
+
+async def _get_page(continuation_token, paging_method):
+    if not continuation_token:
+        initial_state = paging_method._initial_state  # pylint: disable=protected-access
+        if isinstance(initial_state, PipelineResponse):
+            response = initial_state
+        else:
+            response = await _make_call(initial_state, paging_method)
+    else:
+        initial_request = paging_method._initial_request  # pylint: disable=protected-access
+        request = paging_method.get_next_request(continuation_token, initial_request)  # pylint: disable=protected-access
+        response = await _make_call(request, paging_method)
     return _handle_response(continuation_token, paging_method, response)
 
 class AsyncList(AsyncIterator[ReturnType]):
@@ -125,7 +134,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 
         self._extract_data = extract_data or functools.partial(_extract_data, paging_method=self._paging_method)
         self._get_page = get_next or functools.partial(
-            _get_page, paging_method=self._paging_method, initial_response=kwargs.get("initial_response")
+            _get_page, paging_method=self._paging_method
         )
 
         self.continuation_token = continuation_token
