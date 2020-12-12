@@ -101,13 +101,12 @@ from .operations import ManagedInstanceOperations
 from .operations import ServerAzureADAdministratorsOperations
 from .operations import SyncGroupsOperations
 from .operations import SyncMembersOperations
-from .operations import ManagedInstancesOperations
-from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
 from .operations import ServerAzureADOnlyAuthenticationsOperations
-from .operations import ImportExportOperations
+from .operations import ManagedInstancesOperations
 from .operations import ManagedInstanceAzureADOnlyAuthenticationsOperations
 from .operations import ServerTrustGroupsOperations
+from .operations import ServerDevOpsAuditSettingsOperations
 from . import models
 
 
@@ -293,20 +292,18 @@ class SqlManagementClient(SDKClient):
     :vartype sync_groups: azure.mgmt.sql.operations.SyncGroupsOperations
     :ivar sync_members: SyncMembers operations
     :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
-    :ivar managed_instances: ManagedInstances operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
-    :ivar managed_database_restore_details: ManagedDatabaseRestoreDetails operations
-    :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
     :ivar managed_databases: ManagedDatabases operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar server_azure_ad_only_authentications: ServerAzureADOnlyAuthentications operations
     :vartype server_azure_ad_only_authentications: azure.mgmt.sql.operations.ServerAzureADOnlyAuthenticationsOperations
-    :ivar import_export: ImportExport operations
-    :vartype import_export: azure.mgmt.sql.operations.ImportExportOperations
+    :ivar managed_instances: ManagedInstances operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar managed_instance_azure_ad_only_authentications: ManagedInstanceAzureADOnlyAuthentications operations
     :vartype managed_instance_azure_ad_only_authentications: azure.mgmt.sql.operations.ManagedInstanceAzureADOnlyAuthenticationsOperations
     :ivar server_trust_groups: ServerTrustGroups operations
     :vartype server_trust_groups: azure.mgmt.sql.operations.ServerTrustGroupsOperations
+    :ivar server_dev_ops_audit_settings: ServerDevOpsAuditSettings operations
+    :vartype server_dev_ops_audit_settings: azure.mgmt.sql.operations.ServerDevOpsAuditSettingsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -503,17 +500,15 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.sync_members = SyncMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.managed_databases = ManagedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_azure_ad_only_authentications = ServerAzureADOnlyAuthenticationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.import_export = ImportExportOperations(
+        self.managed_instances = ManagedInstancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_azure_ad_only_authentications = ManagedInstanceAzureADOnlyAuthenticationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_trust_groups = ServerTrustGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_dev_ops_audit_settings = ServerDevOpsAuditSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)

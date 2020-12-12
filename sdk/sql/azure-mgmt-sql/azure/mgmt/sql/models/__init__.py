@@ -84,7 +84,6 @@ try:
     from ._models_py3 import LongTermRetentionBackup
     from ._models_py3 import ManagedBackupShortTermRetentionPolicy
     from ._models_py3 import ManagedDatabase
-    from ._models_py3 import ManagedDatabaseRestoreDetailsResult
     from ._models_py3 import ManagedDatabaseSecurityAlertPolicy
     from ._models_py3 import ManagedDatabaseUpdate
     from ._models_py3 import ManagedInstance
@@ -100,6 +99,9 @@ try:
     from ._models_py3 import ManagedInstanceOperationParametersPair
     from ._models_py3 import ManagedInstanceOperationSteps
     from ._models_py3 import ManagedInstancePairInfo
+    from ._models_py3 import ManagedInstancePecProperty
+    from ._models_py3 import ManagedInstancePrivateEndpointConnectionProperties
+    from ._models_py3 import ManagedInstancePrivateEndpointProperty
     from ._models_py3 import ManagedInstancePrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ManagedInstanceUpdate
     from ._models_py3 import ManagedInstanceVcoresCapability
@@ -130,6 +132,9 @@ try:
     from ._models_py3 import PrivateLinkResourceProperties
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
+    from ._models_py3 import QueryMetricInterval
+    from ._models_py3 import QueryMetricProperties
+    from ._models_py3 import QueryStatisticsProperties
     from ._models_py3 import ReadScaleCapability
     from ._models_py3 import RecommendedElasticPool
     from ._models_py3 import RecommendedElasticPoolMetric
@@ -151,6 +156,7 @@ try:
     from ._models_py3 import ServerBlobAuditingPolicy
     from ._models_py3 import ServerCommunicationLink
     from ._models_py3 import ServerConnectionPolicy
+    from ._models_py3 import ServerDevOpsAuditingSettings
     from ._models_py3 import ServerDnsAlias
     from ._models_py3 import ServerDnsAliasAcquisition
     from ._models_py3 import ServerInfo
@@ -182,7 +188,9 @@ try:
     from ._models_py3 import SyncGroupSchemaTable
     from ._models_py3 import SyncGroupSchemaTableColumn
     from ._models_py3 import SyncMember
+    from ._models_py3 import SystemData
     from ._models_py3 import TdeCertificate
+    from ._models_py3 import TopQueries
     from ._models_py3 import TrackedResource
     from ._models_py3 import TransparentDataEncryption
     from ._models_py3 import TransparentDataEncryptionActivity
@@ -273,7 +281,6 @@ except (SyntaxError, ImportError):
     from ._models import LongTermRetentionBackup
     from ._models import ManagedBackupShortTermRetentionPolicy
     from ._models import ManagedDatabase
-    from ._models import ManagedDatabaseRestoreDetailsResult
     from ._models import ManagedDatabaseSecurityAlertPolicy
     from ._models import ManagedDatabaseUpdate
     from ._models import ManagedInstance
@@ -289,6 +296,9 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstanceOperationParametersPair
     from ._models import ManagedInstanceOperationSteps
     from ._models import ManagedInstancePairInfo
+    from ._models import ManagedInstancePecProperty
+    from ._models import ManagedInstancePrivateEndpointConnectionProperties
+    from ._models import ManagedInstancePrivateEndpointProperty
     from ._models import ManagedInstancePrivateLinkServiceConnectionStateProperty
     from ._models import ManagedInstanceUpdate
     from ._models import ManagedInstanceVcoresCapability
@@ -319,6 +329,9 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkResourceProperties
     from ._models import PrivateLinkServiceConnectionStateProperty
     from ._models import ProxyResource
+    from ._models import QueryMetricInterval
+    from ._models import QueryMetricProperties
+    from ._models import QueryStatisticsProperties
     from ._models import ReadScaleCapability
     from ._models import RecommendedElasticPool
     from ._models import RecommendedElasticPoolMetric
@@ -340,6 +353,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerBlobAuditingPolicy
     from ._models import ServerCommunicationLink
     from ._models import ServerConnectionPolicy
+    from ._models import ServerDevOpsAuditingSettings
     from ._models import ServerDnsAlias
     from ._models import ServerDnsAliasAcquisition
     from ._models import ServerInfo
@@ -371,7 +385,9 @@ except (SyntaxError, ImportError):
     from ._models import SyncGroupSchemaTable
     from ._models import SyncGroupSchemaTableColumn
     from ._models import SyncMember
+    from ._models import SystemData
     from ._models import TdeCertificate
+    from ._models import TopQueries
     from ._models import TrackedResource
     from ._models import TransparentDataEncryption
     from ._models import TransparentDataEncryptionActivity
@@ -445,6 +461,7 @@ from ._paged_models import ServerAzureADAdministratorPaged
 from ._paged_models import ServerAzureADOnlyAuthenticationPaged
 from ._paged_models import ServerBlobAuditingPolicyPaged
 from ._paged_models import ServerCommunicationLinkPaged
+from ._paged_models import ServerDevOpsAuditingSettingsPaged
 from ._paged_models import ServerDnsAliasPaged
 from ._paged_models import ServerKeyPaged
 from ._paged_models import ServerPaged
@@ -462,6 +479,7 @@ from ._paged_models import SyncFullSchemaPropertiesPaged
 from ._paged_models import SyncGroupLogPropertiesPaged
 from ._paged_models import SyncGroupPaged
 from ._paged_models import SyncMemberPaged
+from ._paged_models import TopQueriesPaged
 from ._paged_models import TransparentDataEncryptionActivityPaged
 from ._paged_models import UsagePaged
 from ._paged_models import VirtualClusterPaged
@@ -544,15 +562,18 @@ from ._sql_management_client_enums import (
     ManagedInstanceLicenseType,
     ManagedInstanceProxyOverride,
     StorageAccountType,
-    StorageKeyType,
+    QueryTimeGrainType,
+    QueryMetricUnitType,
     CreateMode,
     SampleName,
     DatabaseStatus,
     DatabaseLicenseType,
     DatabaseReadScale,
     SecondaryType,
+    StorageKeyType,
     ElasticPoolState,
     ElasticPoolLicenseType,
+    CreatedByType,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
@@ -563,6 +584,8 @@ from ._sql_management_client_enums import (
     DatabaseState4,
     DatabaseState5,
     DatabaseState6,
+    AggregationFunctionType,
+    MetricType,
     ReplicaType,
 )
 
@@ -641,7 +664,6 @@ __all__ = [
     'LongTermRetentionBackup',
     'ManagedBackupShortTermRetentionPolicy',
     'ManagedDatabase',
-    'ManagedDatabaseRestoreDetailsResult',
     'ManagedDatabaseSecurityAlertPolicy',
     'ManagedDatabaseUpdate',
     'ManagedInstance',
@@ -657,6 +679,9 @@ __all__ = [
     'ManagedInstanceOperationParametersPair',
     'ManagedInstanceOperationSteps',
     'ManagedInstancePairInfo',
+    'ManagedInstancePecProperty',
+    'ManagedInstancePrivateEndpointConnectionProperties',
+    'ManagedInstancePrivateEndpointProperty',
     'ManagedInstancePrivateLinkServiceConnectionStateProperty',
     'ManagedInstanceUpdate',
     'ManagedInstanceVcoresCapability',
@@ -687,6 +712,9 @@ __all__ = [
     'PrivateLinkResourceProperties',
     'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
+    'QueryMetricInterval',
+    'QueryMetricProperties',
+    'QueryStatisticsProperties',
     'ReadScaleCapability',
     'RecommendedElasticPool',
     'RecommendedElasticPoolMetric',
@@ -708,6 +736,7 @@ __all__ = [
     'ServerBlobAuditingPolicy',
     'ServerCommunicationLink',
     'ServerConnectionPolicy',
+    'ServerDevOpsAuditingSettings',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
     'ServerInfo',
@@ -739,7 +768,9 @@ __all__ = [
     'SyncGroupSchemaTable',
     'SyncGroupSchemaTableColumn',
     'SyncMember',
+    'SystemData',
     'TdeCertificate',
+    'TopQueries',
     'TrackedResource',
     'TransparentDataEncryption',
     'TransparentDataEncryptionActivity',
@@ -832,11 +863,13 @@ __all__ = [
     'SyncGroupLogPropertiesPaged',
     'SyncGroupPaged',
     'SyncMemberPaged',
-    'ManagedInstancePaged',
     'ManagedDatabasePaged',
     'ServerAzureADOnlyAuthenticationPaged',
+    'ManagedInstancePaged',
+    'TopQueriesPaged',
     'ManagedInstanceAzureADOnlyAuthenticationPaged',
     'ServerTrustGroupPaged',
+    'ServerDevOpsAuditingSettingsPaged',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
@@ -911,15 +944,18 @@ __all__ = [
     'ManagedInstanceLicenseType',
     'ManagedInstanceProxyOverride',
     'StorageAccountType',
-    'StorageKeyType',
+    'QueryTimeGrainType',
+    'QueryMetricUnitType',
     'CreateMode',
     'SampleName',
     'DatabaseStatus',
     'DatabaseLicenseType',
     'DatabaseReadScale',
     'SecondaryType',
+    'StorageKeyType',
     'ElasticPoolState',
     'ElasticPoolLicenseType',
+    'CreatedByType',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
@@ -930,5 +966,7 @@ __all__ = [
     'DatabaseState4',
     'DatabaseState5',
     'DatabaseState6',
+    'AggregationFunctionType',
+    'MetricType',
     'ReplicaType',
 ]

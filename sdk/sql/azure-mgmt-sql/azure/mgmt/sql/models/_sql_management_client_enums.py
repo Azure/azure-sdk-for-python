@@ -480,7 +480,9 @@ class PrivateEndpointProvisioningState(str, Enum):
 
 class IdentityType(str, Enum):
 
+    none = "None"
     system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
 
 
 class ServerPublicNetworkAccess(str, Enum):
@@ -635,10 +637,18 @@ class StorageAccountType(str, Enum):
     zrs = "ZRS"
 
 
-class StorageKeyType(str, Enum):
+class QueryTimeGrainType(str, Enum):
 
-    shared_access_key = "SharedAccessKey"
-    storage_access_key = "StorageAccessKey"
+    pt1_h = "PT1H"
+    p1_d = "P1D"
+
+
+class QueryMetricUnitType(str, Enum):
+
+    percentage = "percentage"
+    kb = "KB"
+    microseconds = "microseconds"
+    count = "count"
 
 
 class CreateMode(str, Enum):
@@ -705,6 +715,12 @@ class SecondaryType(str, Enum):
     named = "Named"
 
 
+class StorageKeyType(str, Enum):
+
+    shared_access_key = "SharedAccessKey"
+    storage_access_key = "StorageAccessKey"
+
+
 class ElasticPoolState(str, Enum):
 
     creating = "Creating"
@@ -716,6 +732,14 @@ class ElasticPoolLicenseType(str, Enum):
 
     license_included = "LicenseIncluded"
     base_price = "BasePrice"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
@@ -786,6 +810,24 @@ class DatabaseState6(str, Enum):
     all = "All"
     live = "Live"
     deleted = "Deleted"
+
+
+class AggregationFunctionType(str, Enum):
+
+    avg = "avg"
+    min = "min"
+    max = "max"
+    stdev = "stdev"
+    sum = "sum"
+
+
+class MetricType(str, Enum):
+
+    cpu = "cpu"
+    io = "io"
+    log_io = "logIo"
+    duration = "duration"
+    dtu = "dtu"
 
 
 class ReplicaType(str, Enum):

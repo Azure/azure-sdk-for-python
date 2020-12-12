@@ -625,8 +625,7 @@ class Database(TrackedResource):
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
     :param storage_account_type: The storage account type used to store
-     backups for this database. Currently the only supported option is GRS
-     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
@@ -640,7 +639,7 @@ class Database(TrackedResource):
     :vartype resumed_date: datetime
     :param maintenance_configuration_id: Maintenance configuration id assigned
      to the database. This configuration defines the period when the
-     maintenance updates will be rolled out.
+     maintenance updates will occur.
     :type maintenance_configuration_id: str
     """
 
@@ -1289,8 +1288,7 @@ class DatabaseUpdate(Model):
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
     :param storage_account_type: The storage account type used to store
-     backups for this database. Currently the only supported option is GRS
-     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
@@ -1304,7 +1302,7 @@ class DatabaseUpdate(Model):
     :vartype resumed_date: datetime
     :param maintenance_configuration_id: Maintenance configuration id assigned
      to the database. This configuration defines the period when the
-     maintenance updates will be rolled out.
+     maintenance updates will occur.
     :type maintenance_configuration_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -1905,7 +1903,7 @@ class ElasticPool(TrackedResource):
     :type license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
     :param maintenance_configuration_id: Maintenance configuration id assigned
      to the elastic pool. This configuration defines the period when the
-     maintenance updates will be rolled out.
+     maintenance updates will will occur.
     :type maintenance_configuration_id: str
     """
 
@@ -2557,7 +2555,7 @@ class ElasticPoolUpdate(Model):
     :type license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
     :param maintenance_configuration_id: Maintenance configuration id assigned
      to the elastic pool. This configuration defines the period when the
-     maintenance updates will be rolled out.
+     maintenance updates will will occur.
     :type maintenance_configuration_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -4828,86 +4826,6 @@ class ManagedDatabase(TrackedResource):
         self.last_backup_name = kwargs.get('last_backup_name', None)
 
 
-class ManagedDatabaseRestoreDetailsResult(ProxyResource):
-    """A managed database restore details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar status: Restore status.
-    :vartype status: str
-    :ivar current_restoring_file_name: Current restoring file name.
-    :vartype current_restoring_file_name: str
-    :ivar last_restored_file_name: Last restored file name.
-    :vartype last_restored_file_name: str
-    :ivar last_restored_file_time: Last restored file time.
-    :vartype last_restored_file_time: datetime
-    :ivar percent_completed: Percent completed.
-    :vartype percent_completed: float
-    :ivar unrestorable_files: List of unrestorable files.
-    :vartype unrestorable_files: list[str]
-    :ivar number_of_files_detected: Number of files detected.
-    :vartype number_of_files_detected: long
-    :ivar last_uploaded_file_name: Last uploaded file name.
-    :vartype last_uploaded_file_name: str
-    :ivar last_uploaded_file_time: Last uploaded file time.
-    :vartype last_uploaded_file_time: datetime
-    :ivar block_reason: The reason why restore is in Blocked state.
-    :vartype block_reason: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
-        'current_restoring_file_name': {'readonly': True},
-        'last_restored_file_name': {'readonly': True},
-        'last_restored_file_time': {'readonly': True},
-        'percent_completed': {'readonly': True},
-        'unrestorable_files': {'readonly': True},
-        'number_of_files_detected': {'readonly': True},
-        'last_uploaded_file_name': {'readonly': True},
-        'last_uploaded_file_time': {'readonly': True},
-        'block_reason': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'current_restoring_file_name': {'key': 'properties.currentRestoringFileName', 'type': 'str'},
-        'last_restored_file_name': {'key': 'properties.lastRestoredFileName', 'type': 'str'},
-        'last_restored_file_time': {'key': 'properties.lastRestoredFileTime', 'type': 'iso-8601'},
-        'percent_completed': {'key': 'properties.percentCompleted', 'type': 'float'},
-        'unrestorable_files': {'key': 'properties.unrestorableFiles', 'type': '[str]'},
-        'number_of_files_detected': {'key': 'properties.numberOfFilesDetected', 'type': 'long'},
-        'last_uploaded_file_name': {'key': 'properties.lastUploadedFileName', 'type': 'str'},
-        'last_uploaded_file_time': {'key': 'properties.lastUploadedFileTime', 'type': 'iso-8601'},
-        'block_reason': {'key': 'properties.blockReason', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedDatabaseRestoreDetailsResult, self).__init__(**kwargs)
-        self.status = None
-        self.current_restoring_file_name = None
-        self.last_restored_file_name = None
-        self.last_restored_file_time = None
-        self.percent_completed = None
-        self.unrestorable_files = None
-        self.number_of_files_detected = None
-        self.last_uploaded_file_name = None
-        self.last_uploaded_file_time = None
-        self.block_reason = None
-
-
 class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
     """A managed database security alert policy.
 
@@ -5208,6 +5126,10 @@ class ManagedInstance(TrackedResource):
     :param maintenance_configuration_id: Specifies maintenance configuration
      id to apply to this managed instance.
     :type maintenance_configuration_id: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a managed instance.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ManagedInstancePecProperty]
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
@@ -5217,6 +5139,8 @@ class ManagedInstance(TrackedResource):
      include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
+    :param zone_redundant: Whether or not the multi-az is enabled.
+    :type zone_redundant: bool
     """
 
     _validation = {
@@ -5228,6 +5152,7 @@ class ManagedInstance(TrackedResource):
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5258,8 +5183,10 @@ class ManagedInstance(TrackedResource):
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ManagedInstancePecProperty]'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -5286,8 +5213,10 @@ class ManagedInstance(TrackedResource):
         self.timezone_id = kwargs.get('timezone_id', None)
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
         self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
+        self.private_endpoint_connections = None
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
         self.storage_account_type = kwargs.get('storage_account_type', None)
+        self.zone_redundant = kwargs.get('zone_redundant', None)
 
 
 class ManagedInstanceAdministrator(ProxyResource):
@@ -5898,6 +5827,85 @@ class ManagedInstancePairInfo(Model):
         self.partner_managed_instance_id = kwargs.get('partner_managed_instance_id', None)
 
 
+class ManagedInstancePecProperty(Model):
+    """A private endpoint connection under a managed instance.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Private endpoint connection properties
+    :vartype properties:
+     ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ManagedInstancePrivateEndpointConnectionProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstancePecProperty, self).__init__(**kwargs)
+        self.id = None
+        self.properties = None
+
+
+class ManagedInstancePrivateEndpointConnectionProperties(Model):
+    """Properties of a private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint:
+     ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
+    :param private_link_service_connection_state: Connection State of the
+     Private Endpoint Connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.sql.models.ManagedInstancePrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the Private Endpoint Connection.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'ManagedInstancePrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'ManagedInstancePrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstancePrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
+
+
+class ManagedInstancePrivateEndpointProperty(Model):
+    """ManagedInstancePrivateEndpointProperty.
+
+    :param id: Resource id of the private endpoint.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstancePrivateEndpointProperty, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
 class ManagedInstancePrivateLinkServiceConnectionStateProperty(Model):
     """ManagedInstancePrivateLinkServiceConnectionStateProperty.
 
@@ -5942,6 +5950,8 @@ class ManagedInstanceUpdate(Model):
 
     :param sku: Managed instance sku
     :type sku: ~azure.mgmt.sql.models.Sku
+    :param identity: Managed instance identity
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
      'Updating', 'Unknown', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
@@ -6018,6 +6028,10 @@ class ManagedInstanceUpdate(Model):
     :param maintenance_configuration_id: Specifies maintenance configuration
      id to apply to this managed instance.
     :type maintenance_configuration_id: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a managed instance.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ManagedInstancePecProperty]
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
@@ -6027,6 +6041,8 @@ class ManagedInstanceUpdate(Model):
      include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
+    :param zone_redundant: Whether or not the multi-az is enabled.
+    :type zone_redundant: bool
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -6036,10 +6052,12 @@ class ManagedInstanceUpdate(Model):
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
@@ -6060,14 +6078,17 @@ class ManagedInstanceUpdate(Model):
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ManagedInstancePecProperty]'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.managed_instance_create_mode = kwargs.get('managed_instance_create_mode', None)
         self.fully_qualified_domain_name = None
@@ -6088,8 +6109,10 @@ class ManagedInstanceUpdate(Model):
         self.timezone_id = kwargs.get('timezone_id', None)
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
         self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
+        self.private_endpoint_connections = None
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
         self.storage_account_type = kwargs.get('storage_account_type', None)
+        self.zone_redundant = kwargs.get('zone_redundant', None)
         self.tags = kwargs.get('tags', None)
 
 
@@ -7146,6 +7169,157 @@ class PrivateLinkServiceConnectionStateProperty(Model):
         self.actions_required = None
 
 
+class QueryMetricInterval(Model):
+    """Properties of a query metrics interval.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar interval_start_time: The start time for the metric interval
+     (ISO-8601 format).
+    :vartype interval_start_time: str
+    :ivar interval_type: Interval type (length). Possible values include:
+     'PT1H', 'P1D'
+    :vartype interval_type: str or ~azure.mgmt.sql.models.QueryTimeGrainType
+    :ivar execution_count: Execution count of a query in this interval.
+    :vartype execution_count: long
+    :param metrics: List of metric objects for this interval
+    :type metrics: list[~azure.mgmt.sql.models.QueryMetricProperties]
+    """
+
+    _validation = {
+        'interval_start_time': {'readonly': True},
+        'interval_type': {'readonly': True},
+        'execution_count': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'interval_start_time': {'key': 'intervalStartTime', 'type': 'str'},
+        'interval_type': {'key': 'intervalType', 'type': 'str'},
+        'execution_count': {'key': 'executionCount', 'type': 'long'},
+        'metrics': {'key': 'metrics', 'type': '[QueryMetricProperties]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QueryMetricInterval, self).__init__(**kwargs)
+        self.interval_start_time = None
+        self.interval_type = None
+        self.execution_count = None
+        self.metrics = kwargs.get('metrics', None)
+
+
+class QueryMetricProperties(Model):
+    """Properties of a topquery metric in one interval.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name information for the metric.
+    :vartype name: str
+    :ivar display_name: The UI appropriate name for the metric.
+    :vartype display_name: str
+    :ivar unit: The unit of the metric. Possible values include: 'percentage',
+     'KB', 'microseconds', 'count'
+    :vartype unit: str or ~azure.mgmt.sql.models.QueryMetricUnitType
+    :ivar value: The value of the metric.
+    :vartype value: float
+    :ivar min: Metric value when min() aggregate function is used over the
+     interval.
+    :vartype min: float
+    :ivar max: Metric value when max() aggregate function is used over the
+     interval.
+    :vartype max: float
+    :ivar avg: Metric value when avg() aggregate function is used over the
+     interval.
+    :vartype avg: float
+    :ivar sum: Metric value when sum() aggregate function is used over the
+     interval.
+    :vartype sum: float
+    :ivar stdev: Metric value when stdev aggregate function is used over the
+     interval.
+    :vartype stdev: float
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'display_name': {'readonly': True},
+        'unit': {'readonly': True},
+        'value': {'readonly': True},
+        'min': {'readonly': True},
+        'max': {'readonly': True},
+        'avg': {'readonly': True},
+        'sum': {'readonly': True},
+        'stdev': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'float'},
+        'min': {'key': 'min', 'type': 'float'},
+        'max': {'key': 'max', 'type': 'float'},
+        'avg': {'key': 'avg', 'type': 'float'},
+        'sum': {'key': 'sum', 'type': 'float'},
+        'stdev': {'key': 'stdev', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QueryMetricProperties, self).__init__(**kwargs)
+        self.name = None
+        self.display_name = None
+        self.unit = None
+        self.value = None
+        self.min = None
+        self.max = None
+        self.avg = None
+        self.sum = None
+        self.stdev = None
+
+
+class QueryStatisticsProperties(Model):
+    """Properties of a query execution statistics.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar database_name: Database name of the database in which this query was
+     executed.
+    :vartype database_name: str
+    :ivar query_id: Unique query id (unique within one database).
+    :vartype query_id: str
+    :ivar start_time: The start time for the metric (ISO-8601 format).
+    :vartype start_time: str
+    :ivar end_time: The end time for the metric (ISO-8601 format).
+    :vartype end_time: str
+    :param intervals: List of intervals with appropriate metric data
+    :type intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
+    """
+
+    _validation = {
+        'database_name': {'readonly': True},
+        'query_id': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+        'query_id': {'key': 'queryId', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
+        'intervals': {'key': 'intervals', 'type': '[QueryMetricInterval]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QueryStatisticsProperties, self).__init__(**kwargs)
+        self.database_name = None
+        self.query_id = None
+        self.start_time = None
+        self.end_time = None
+        self.intervals = kwargs.get('intervals', None)
+
+
 class ReadScaleCapability(Model):
     """The read scale capability.
 
@@ -7582,7 +7756,8 @@ class ResourceIdentity(Model):
     :vartype principal_id: str
     :param type: The identity type. Set this to 'SystemAssigned' in order to
      automatically create and assign an Azure Active Directory principal for
-     the resource. Possible values include: 'SystemAssigned'
+     the resource. Possible values include: 'None', 'SystemAssigned',
+     'UserAssigned'
     :type type: str or ~azure.mgmt.sql.models.IdentityType
     :ivar tenant_id: The Azure Active Directory tenant id.
     :vartype tenant_id: str
@@ -8383,6 +8558,93 @@ class ServerConnectionPolicy(ProxyResource):
         self.kind = None
         self.location = None
         self.connection_type = kwargs.get('connection_type', None)
+
+
+class ServerDevOpsAuditingSettings(ProxyResource):
+    """A server DevOps auditing settings.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: SystemData of ServerDevOpsAuditSettingsResource.
+    :vartype system_data: ~azure.mgmt.sql.models.SystemData
+    :param is_azure_monitor_target_enabled: Specifies whether DevOps audit
+     events are sent to Azure Monitor.
+     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
+     and 'IsAzureMonitorTargetEnabled' as true.
+     When using REST API to configure DevOps audit, Diagnostic Settings with
+     'DevOpsOperationsAudit' diagnostic logs category on the master database
+     should be also created.
+     Diagnostic Settings URI format:
+     PUT
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     For more information, see [Diagnostic Settings REST
+     API](https://go.microsoft.com/fwlink/?linkid=2033207)
+     or [Diagnostic Settings
+     PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
+    :type is_azure_monitor_target_enabled: bool
+    :param state: Required. Specifies the state of the audit. If state is
+     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
+     Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+     https://MyAccount.blob.core.windows.net). If state is Enabled,
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
+    :type storage_endpoint: str
+    :param storage_account_access_key: Specifies the identifier key of the
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
+    :type storage_account_access_key: str
+    :param storage_account_subscription_id: Specifies the blob storage
+     subscription Id.
+    :type storage_account_subscription_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
+        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
+        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
+        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerDevOpsAuditingSettings, self).__init__(**kwargs)
+        self.system_data = None
+        self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.state = kwargs.get('state', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
 
 
 class ServerDnsAlias(ProxyResource):
@@ -9944,6 +10206,61 @@ class SyncMember(ProxyResource):
         self.sync_state = None
 
 
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar created_by: A string identifier for the identity that created the
+     resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource:
+     <User|Application|ManagedIdentity|Key>. Possible values include: 'User',
+     'Application', 'ManagedIdentity', 'Key'
+    :vartype created_by_type: str or ~azure.mgmt.sql.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: datetime
+    :ivar last_modified_by: A string identifier for the identity that last
+     modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the
+     resource: <User|Application|ManagedIdentity|Key>. Possible values include:
+     'User', 'Application', 'ManagedIdentity', 'Key'
+    :vartype last_modified_by_type: str or
+     ~azure.mgmt.sql.models.CreatedByType
+    :ivar last_modified_at: The timestamp of last modification (UTC).
+    :vartype last_modified_at: datetime
+    """
+
+    _validation = {
+        'created_by': {'readonly': True},
+        'created_by_type': {'readonly': True},
+        'created_at': {'readonly': True},
+        'last_modified_by': {'readonly': True},
+        'last_modified_by_type': {'readonly': True},
+        'last_modified_at': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = None
+        self.created_by_type = None
+        self.created_at = None
+        self.last_modified_by = None
+        self.last_modified_by_type = None
+        self.last_modified_at = None
+
+
 class TdeCertificate(ProxyResource):
     """A TDE certificate that can be uploaded into a server.
 
@@ -9984,6 +10301,61 @@ class TdeCertificate(ProxyResource):
         super(TdeCertificate, self).__init__(**kwargs)
         self.private_blob = kwargs.get('private_blob', None)
         self.cert_password = kwargs.get('cert_password', None)
+
+
+class TopQueries(Model):
+    """TopQueries.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar number_of_queries: Requested number of top queries.
+    :vartype number_of_queries: int
+    :ivar aggregation_function: Aggregation function used to calculate query
+     metrics.
+    :vartype aggregation_function: str
+    :ivar observation_metric: Metric used to rank queries.
+    :vartype observation_metric: str
+    :ivar interval_type: Interval type (length). Possible values include:
+     'PT1H', 'P1D'
+    :vartype interval_type: str or ~azure.mgmt.sql.models.QueryTimeGrainType
+    :ivar start_time: The start time for the metric (ISO-8601 format).
+    :vartype start_time: str
+    :ivar end_time: The end time for the metric (ISO-8601 format).
+    :vartype end_time: str
+    :param queries: List of top resource consuming queries with appropriate
+     metric data
+    :type queries: list[~azure.mgmt.sql.models.QueryStatisticsProperties]
+    """
+
+    _validation = {
+        'number_of_queries': {'readonly': True},
+        'aggregation_function': {'readonly': True},
+        'observation_metric': {'readonly': True},
+        'interval_type': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'number_of_queries': {'key': 'numberOfQueries', 'type': 'int'},
+        'aggregation_function': {'key': 'aggregationFunction', 'type': 'str'},
+        'observation_metric': {'key': 'observationMetric', 'type': 'str'},
+        'interval_type': {'key': 'intervalType', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
+        'queries': {'key': 'queries', 'type': '[QueryStatisticsProperties]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TopQueries, self).__init__(**kwargs)
+        self.number_of_queries = None
+        self.aggregation_function = None
+        self.observation_metric = None
+        self.interval_type = None
+        self.start_time = None
+        self.end_time = None
+        self.queries = kwargs.get('queries', None)
 
 
 class TransparentDataEncryption(ProxyResource):
