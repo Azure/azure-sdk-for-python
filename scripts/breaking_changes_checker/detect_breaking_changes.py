@@ -179,7 +179,7 @@ def create_class_report(name, cls):
     return cls_info
 
 
-def get_full_module_name(module_name, target_module):
+def resolve_module_name(module_name, target_module):
     if module_name == ".":
         module_name = target_module
     else:
@@ -194,7 +194,7 @@ def test_detect_breaking_changes(target_module="azure.storage.blob"):
 
     public_api = {}
     for module_name, val in modules.items():
-        module_name = get_full_module_name(module_name, target_module)
+        module_name = resolve_module_name(module_name, target_module)
         public_api[module_name] = {"class_nodes": {}, "function_nodes": {}}
         module = importlib.import_module(module_name)
         importables = [importable for importable in dir(module)]
@@ -205,7 +205,7 @@ def test_detect_breaking_changes(target_module="azure.storage.blob"):
                     public_api[module_name]["function_nodes"].update({importable: create_function_report(importable, live_obj)})
                 elif inspect.isclass(live_obj):
                     public_api[module_name]["class_nodes"].update({importable: create_class_report(importable, live_obj)})
-                # else:  # Constants, etc. Nothing of interest at the moment
+                # else:  # Constants, version, etc. Nothing of interest at the moment
                 #     public_api[module_name]["others"].update({importable: live_obj})
 
     return public_api
@@ -269,9 +269,9 @@ class BreakingChangesTracker:
         return formatted
 
     def run_checks(self):
-        # self.run_class_level_diff_checks()
-        # self.run_function_level_diff_checks()
-        self.check_positional_parameter_ordering()  # won't show up in a diff
+        self.run_class_level_diff_checks()
+        self.run_function_level_diff_checks()
+        self.check_positional_parameter_ordering()  # won't show up in a diff, need to iterate over stable vs current
 
     def run_class_level_diff_checks(self):
         for module_name, module in self.diff.items():
@@ -318,7 +318,6 @@ class BreakingChangesTracker:
                         self.check_positional_parameter_added(
                             module_name, param_name, param_type, function_name, class_name
                         )
-                        # TODO what if added positional with default? should still report?
                     else:
                         stable_default = stable_parameters_node[param_type][param_name]
                         self.check_positional_parameter_default_value_changed(
@@ -333,12 +332,15 @@ class BreakingChangesTracker:
             current_cls = self.current[key]["class_nodes"]
             class_keys = stable_cls.keys() & current_cls.keys()
             for cls in class_keys:
-                stable_method_nodes = self.stable[key]["class_nodes"][cls]["methods"]
-                current_method_nodes = self.current[key]["class_nodes"][cls]["methods"]
+                stable_method_nodes = stable_cls[cls]["methods"]
+                current_method_nodes = current_cls[cls]["methods"]
                 method_keys = stable_method_nodes.keys() & current_method_nodes.keys()
                 for method in method_keys:
-                    stable_params = self.stable[key]["class_nodes"][cls]["methods"][method]["parameters"]["positional_or_keyword"].keys()
-                    current_params = self.current[key]["class_nodes"][cls]["methods"][method]["parameters"]["positional_or_keyword"].keys()
+                    stable_params = stable_method_nodes[method]["parameters"]["positional_or_keyword"].keys()
+                    current_params = current_method_nodes[method]["parameters"]["positional_or_keyword"].keys()
+                    if len(stable_params) != len(current_params):
+                        # a parameter was deleted and that breaking change was already reported so skip
+                        continue
                     for key1, key2 in zip(stable_params, current_params):
                         if key1 != key2:
                             self.breaking_changes.append(
@@ -351,8 +353,11 @@ class BreakingChangesTracker:
             current_funcs = self.current[key]["function_nodes"]
             func_nodes = stable_funcs.keys() & current_funcs.keys()
             for func in func_nodes:
-                stable_params = self.stable[key]["function_nodes"][func]["parameters"]["positional_or_keyword"].keys()
-                current_params = self.current[key]["function_nodes"][func]["parameters"]["positional_or_keyword"].keys()
+                stable_params = stable_funcs[func]["parameters"]["positional_or_keyword"].keys()
+                current_params = current_funcs[func]["parameters"]["positional_or_keyword"].keys()
+                if len(stable_params) != len(current_params):
+                    # a parameter was deleted and that breaking change was already reported so skip
+                    continue
                 for key1, key2 in zip(stable_params, current_params):
                     if key1 != key2:
                         self.breaking_changes.append(
@@ -388,7 +393,7 @@ class BreakingChangesTracker:
         deleted_params = []
         if param_name.label == "delete":
             deleted_params = deleted
-        elif param_name.label == "replace":
+        elif param_name.label == "replace":  # replace means all positional parameters were removed
             deleted_params = stable_parameters_node[param_type]
 
         for deleted in deleted_params:
@@ -435,17 +440,6 @@ class BreakingChangesTracker:
                     bc = self.REMOVE_OR_RENAME_MODEL.format(f"{module_name}.{name}")
                 self.breaking_changes.append(bc)
 
-    def check_module_level_function_removed_or_renamed(self, module_name, function_name, function_components):
-        if isinstance(function_name, jsondiff.Symbol):
-            deleted_functions = []
-            if function_name.label == "delete":
-                deleted_functions = function_components
-            elif function_name.label == "replace":
-                deleted_functions = self.stable[module_name]["function_nodes"]
-
-            for function in deleted_functions:
-                self.breaking_changes.append(self.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION.format(f"{module_name}.{function}"))
-
     def check_class_method_removed_or_renamed(self, module_name, class_name, method_name, method_components, stable_methods_node):
         if isinstance(method_name, jsondiff.Symbol):
             methods_deleted = []
@@ -461,6 +455,16 @@ class BreakingChangesTracker:
                     bc = self.REMOVE_OR_RENAME_MODEL_METHOD.format(f"{module_name}.{class_name}", method)
                 self.breaking_changes.append(bc)
 
+    def check_module_level_function_removed_or_renamed(self, module_name, function_name, function_components):
+        if isinstance(function_name, jsondiff.Symbol):
+            deleted_functions = []
+            if function_name.label == "delete":
+                deleted_functions = function_components
+            elif function_name.label == "replace":
+                deleted_functions = self.stable[module_name]["function_nodes"]
+
+            for function in deleted_functions:
+                self.breaking_changes.append(self.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION.format(f"{module_name}.{function}"))
 
 # "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\formrecognizer\\azure-ai-formrecognizer"
 # "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-blob"
@@ -484,13 +488,10 @@ def test_compare(pkg_dir="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storag
 
 
 
-def main(package_name, target_module, version, create_venv, pkg_dir):
-    if create_venv == "False":
-        create_venv = False
-    else:
-        create_venv = True
+def main(package_name, target_module, version, in_venv, pkg_dir):
+    in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
-    if create_venv:
+    if not in_venv:
         packages = [f"{package_name}=={version}", "aiohttp"]
         with create_venv_with_package(packages) as venv:
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
@@ -501,8 +502,8 @@ def main(package_name, target_module, version, create_venv, pkg_dir):
                 package_name,
                 "-m",
                 target_module,
-                "--create-venv",
-                "False",
+                "--in-venv",
+                "true",
                 "-s",
                 version
             ]
@@ -511,24 +512,28 @@ def main(package_name, target_module, version, create_venv, pkg_dir):
             except subprocess.CalledProcessError:
                 _LOGGER.warning(f"Version {version} failed to create a JSON report.")
 
-    public_api = test_detect_breaking_changes(target_module)
+    try:
+        public_api = test_detect_breaking_changes(target_module)
 
-    if create_venv is False:
-        with open("stable.json", "w") as fd:
+        if in_venv:
+            with open("stable.json", "w") as fd:
+                json.dump(public_api, fd, indent=2)
+            _LOGGER.info("stable.json is written.")
+            return
+
+        with open("current.json", "w") as fd:
             json.dump(public_api, fd, indent=2)
-        _LOGGER.info("stable.json is written.")
-        return
+        _LOGGER.info("current.json is written.")
 
-    with open("current.json", "w") as fd:
-        json.dump(public_api, fd, indent=2)
-    _LOGGER.info("current.json is written.")
-
+    except Exception as err:  # catch any issues with capturing the public API and building the report
+        print("\n*****See aka.ms/breaking-changes-tool to resolve any build issues*****\n")
+        raise err
     # test_compare(pkg_dir, version)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Run pylint against target folder. Add a local custom plugin to the path prior to execution. "
+        description="Run breaking changes checks against target folder."
     )
 
     parser.add_argument(
@@ -543,39 +548,38 @@ if __name__ == "__main__":
         "-m",
         "--module",
         dest="target_module",
-        help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
+        help="The target module. The target module passed will be the top most module in the package",
     )
 
     parser.add_argument(
         "-v",
-        "--create-venv",
-        dest="create_env",
-        help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
-        default=True
+        "--in-venv",
+        dest="in_venv",
+        help="Check if we are in the newly created venv.",
+        default=False
     )
 
     parser.add_argument(
         "-s",
         "--stable_version",
         dest="stable_version",
-        help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
+        help="The stable version of the target package, if it exists on PyPi.",
         default=None
     )
 
     args = parser.parse_args()
-    create_env = args.create_env
+    in_venv = args.in_venv
     stable_version = args.stable_version
 
     pkg_dir = os.path.abspath(args.target_package)
     package_name = os.path.basename(pkg_dir)
-
+    logging.basicConfig(level=logging.INFO)
     if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
         _LOGGER.info(f"{package_name} opted out of breaking changes checks. See aka.ms/breaking-changes-tool to opt-in.")
         exit(0)
 
-    logging.basicConfig(level=logging.INFO)
-
     target_module = package_name.replace("-", ".")
+
     if not stable_version:
 
         from pypi_tools.pypi import PyPIClient
@@ -587,6 +591,6 @@ if __name__ == "__main__":
             _LOGGER.warning(f"No stable version for {package_name} on PyPi. Exiting...")
             exit(0)
 
-    main(package_name, target_module, stable_version, create_env, pkg_dir)
+    main(package_name, target_module, stable_version, in_venv, pkg_dir)
 
 
