@@ -22,6 +22,7 @@ class LegacyUploadTest(_LegacyShareTest):
             directory_name=None,
             file_name=self.file_name,
             stream=data,
+            count=self.args.size,
             max_connections=self.args.max_concurrency)
 
     async def run_async(self):
