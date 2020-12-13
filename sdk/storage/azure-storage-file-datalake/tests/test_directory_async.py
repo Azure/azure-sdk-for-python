@@ -233,8 +233,6 @@ class DirectoryTest(StorageTestCase):
         await directory_client.create_directory(metadata=metadata)
 
         await directory_client.delete_directory()
-        # Assert
-        self.assertIsNone(response)
 
     @record
     def test_delete_directory_async(self):
