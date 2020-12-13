@@ -4,6 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+from typing import Optional, Union
+
+from ._generated.models import ListBlobsShowOnly
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -17,8 +20,8 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import LocationMode, FileSystemProperties, PublicAccess
-from ._list_paths_helper import PathPropertiesPaged
+from ._models import LocationMode, FileSystemProperties, PublicAccess, DeletedPathProperties
+from ._list_paths_helper import PathPropertiesPaged, DirectoryPathPrefix
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
@@ -99,6 +102,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
         self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = DataLakeStorageClient(self._container_client.url,
+                                                                         file_system_name,
+                                                                         None,
+                                                                         pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
@@ -837,3 +844,31 @@ class FileSystemClient(StorageAccountHostsMixin):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
+
+    def get_deleted_paths(self,
+                          name_starts_with=None,    # type: Optional[str],
+                          **kwargs):
+        # type: (...) -> ItemPaged[Union[DeletedPathProperties, DirectoryPathPrefix]]
+        """Returns a generator to list the paths(could be files or directories) under the specified file system.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+        :param str name_starts_with:
+            Filters the results to return only paths under the specified path.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of PathProperties.
+        :rtype:
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties] or
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DirectoryPathPrefix]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
+            showonly=ListBlobsShowOnly.deleted,
+            delimiter="",
+            timeout=timeout,
+            **kwargs)
+        return DirectoryPathPrefix(
+            command, prefix=name_starts_with,
+            results_per_page=results_per_page, **kwargs)

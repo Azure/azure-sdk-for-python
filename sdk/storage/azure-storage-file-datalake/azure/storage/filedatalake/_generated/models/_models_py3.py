@@ -57,6 +57,9 @@ class BlobHierarchyListSegment(Model):
         'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]'},
         'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]'},
     }
+    _xml_map = {
+        'name': 'Blobs'
+    }
 
     def __init__(self, *, blob_items, blob_prefixes=None, **kwargs) -> None:
         super(BlobHierarchyListSegment, self).__init__(**kwargs)
@@ -102,6 +105,9 @@ class BlobItemInternal(Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
         'deletion_id': {'key': 'DeletionId', 'type': 'str'},
     }
+    _xml_map = {
+        'name': 'Blob'
+    }
 
     def __init__(self, *, name: str, deleted: bool, snapshot: str, properties, version_id: str=None, is_current_version: bool=None, deletion_id: str=None, **kwargs) -> None:
         super(BlobItemInternal, self).__init__(**kwargs)
@@ -128,12 +134,15 @@ class BlobPrefix(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+    }
+    _xml_map = {
+        'name': 'BlobPrefix'
     }
 
-    def __init__(self, *, name: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(BlobPrefix, self).__init__(**kwargs)
-        self.name = name
+        self.name = kwargs.get('name', None)
 
 
 class BlobPropertiesInternal(Model):
@@ -240,6 +249,9 @@ class BlobPropertiesInternal(Model):
         'is_sealed': {'key': 'Sealed', 'type': 'bool'},
         'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
         'delete_time': {'key': 'DeleteTime', 'type': 'rfc-1123'},
+    }
+    _xml_map = {
+        'name': 'Properties'
     }
 
     def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, copy_id: str=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier_inferred: bool=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, tag_count: int=None, expires_on=None, is_sealed: bool=None, last_accessed_on=None, delete_time=None, **kwargs) -> None:
@@ -371,6 +383,9 @@ class ListBlobsHierarchySegmentResponse(Model):
         'delimiter': {'key': 'Delimiter', 'type': 'str'},
         'segment': {'key': 'Segment', 'type': 'BlobHierarchyListSegment'},
         'next_marker': {'key': 'NextMarker', 'type': 'str'},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, *, service_endpoint: str, container_name: str, segment, prefix: str=None, marker: str=None, max_results: int=None, delimiter: str=None, next_marker: str=None, **kwargs) -> None:

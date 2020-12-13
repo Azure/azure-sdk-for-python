@@ -19,7 +19,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import ContainerClient
 from .._deserialize import process_storage_error, deserialize_metadata
-from .._generated.models import StorageErrorException
+from .._generated.models import StorageErrorException, ListBlobsShowOnly
 
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
@@ -29,7 +29,8 @@ from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import DataLakeStorageClient
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._models import FileSystemProperties, PublicAccess
+from .._models import FileSystemProperties, PublicAccess, DeletedPathProperties
+from ._list_paths_helper import DirectoryPathPrefix
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -91,6 +92,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = DataLakeStorageClient(self._container_client.url,
+                                                                         file_system_name,
+                                                                         None,
+                                                                         pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):
@@ -787,3 +792,32 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)
+
+    @distributed_trace
+    def get_deleted_paths(self,
+                          name_starts_with=None,    # type: Optional[str],
+                          **kwargs):
+        # type: (...) -> AsyncItemPaged[Union[DeletedPathProperties, DirectoryPathPrefix]]
+        """Returns a generator to list the paths(could be files or directories) under the specified file system.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+        :param str name_starts_with:
+            Filters the results to return only paths under the specified path.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of PathProperties.
+        :rtype:
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties] or
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DirectoryPathPrefix]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
+            showonly=ListBlobsShowOnly.deleted,
+            delimiter="",
+            timeout=timeout,
+            **kwargs)
+        return DirectoryPathPrefix(
+            command, prefix=name_starts_with,
+            results_per_page=results_per_page, **kwargs)
