@@ -29,8 +29,8 @@ from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import DataLakeStorageClient
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._models import FileSystemProperties, PublicAccess, DeletedPathProperties
-from ._list_paths_helper import DirectoryPathPrefix
+from .._models import FileSystemProperties, PublicAccess, DeletedFileProperties
+from ._list_paths_helper import DeletedDirectoryPath
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -797,7 +797,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     def get_deleted_paths(self,
                           name_starts_with=None,    # type: Optional[str],
                           **kwargs):
-        # type: (...) -> AsyncItemPaged[Union[DeletedPathProperties, DirectoryPathPrefix]]
+        # type: (...) -> AsyncItemPaged[Union[DeletedFileProperties, DeletedDirectoryPath]]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -818,6 +818,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             delimiter="",
             timeout=timeout,
             **kwargs)
-        return DirectoryPathPrefix(
+        return DeletedDirectoryPath(
             command, prefix=name_starts_with,
             results_per_page=results_per_page, **kwargs)

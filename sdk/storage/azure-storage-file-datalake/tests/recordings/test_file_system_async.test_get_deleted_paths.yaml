@@ -5,9 +5,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5c4e2876-3d0a-11eb-b178-c8348e5fffbf
+      - 27385cd5-3d0c-11eb-9aa4-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:47 GMT
+      - Sun, 13 Dec 2020 06:26:37 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -16,12 +16,12 @@ interactions:
     body:
       string: ''
     headers:
-      Date: Sun, 13 Dec 2020 06:13:47 GMT
-      ETag: '"0x8D89F2E40B77FAF"'
-      Last-Modified: Sun, 13 Dec 2020 06:13:47 GMT
+      Date: Sun, 13 Dec 2020 06:26:37 GMT
+      ETag: '"0x8D89F300BA19116"'
+      Last-Modified: Sun, 13 Dec 2020 06:26:37 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
-      x-ms-request-id: 930012f9-501e-0020-7217-d10726000000
+      x-ms-request-id: d8bde6e2-001e-0012-3518-d10751000000
       x-ms-version: '2020-04-08'
     status:
       code: 201
@@ -33,9 +33,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5cb70d52-3d0a-11eb-9691-c8348e5fffbf
+      - 27a07654-3d0c-11eb-b2d1-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:47 GMT
+      - Sun, 13 Dec 2020 06:26:37 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -47,11 +47,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:49 GMT
-      ETag: '"0x8D89F2E4211504C"'
-      Last-Modified: Sun, 13 Dec 2020 06:13:49 GMT
+      Date: Sun, 13 Dec 2020 06:26:37 GMT
+      ETag: '"0x8D89F300C086F84"'
+      Last-Modified: Sun, 13 Dec 2020 06:26:38 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 31a547fa-401f-003c-3417-d15546000000
+      x-ms-request-id: 2bc864fd-201f-0005-0a18-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -63,9 +63,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5e133b62-3d0a-11eb-b81f-c8348e5fffbf
+      - 28050524-3d0c-11eb-a4a3-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:50 GMT
+      - Sun, 13 Dec 2020 06:26:38 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -77,11 +77,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:49 GMT
-      ETag: '"0x8D89F2E4230A195"'
-      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Date: Sun, 13 Dec 2020 06:26:37 GMT
+      ETag: '"0x8D89F300C224BC6"'
+      Last-Modified: Sun, 13 Dec 2020 06:26:38 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 31a547fd-401f-003c-3517-d15546000000
+      x-ms-request-id: 2bc864fe-201f-0005-0b18-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -93,9 +93,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5e2e3d6d-3d0a-11eb-8491-c8348e5fffbf
+      - 281e99a3-3d0c-11eb-bd12-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:50 GMT
+      - Sun, 13 Dec 2020 06:26:38 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -107,11 +107,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:49 GMT
-      ETag: '"0x8D89F2E424B0E62"'
-      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Date: Sun, 13 Dec 2020 06:26:38 GMT
+      ETag: '"0x8D89F300C3B67F6"'
+      Last-Modified: Sun, 13 Dec 2020 06:26:38 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 31a547fe-401f-003c-3617-d15546000000
+      x-ms-request-id: 2bc864ff-201f-0005-0c18-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -123,9 +123,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5e480f56-3d0a-11eb-9364-c8348e5fffbf
+      - 2837fdec-3d0c-11eb-bcc3-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:50 GMT
+      - Sun, 13 Dec 2020 06:26:38 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -137,11 +137,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:49 GMT
-      ETag: '"0x8D89F2E426522A8"'
-      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Date: Sun, 13 Dec 2020 06:26:38 GMT
+      ETag: '"0x8D89F300C54EA3A"'
+      Last-Modified: Sun, 13 Dec 2020 06:26:38 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 31a547ff-401f-003c-3717-d15546000000
+      x-ms-request-id: 2bc86500-201f-0005-0d18-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -153,9 +153,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5e624e24-3d0a-11eb-84cb-c8348e5fffbf
+      - 285150b5-3d0c-11eb-bc93-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:50 GMT
+      - Sun, 13 Dec 2020 06:26:39 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -167,11 +167,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:49 GMT
-      ETag: '"0x8D89F2E427F14A6"'
-      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Date: Sun, 13 Dec 2020 06:26:38 GMT
+      ETag: '"0x8D89F300C6E1A0A"'
+      Last-Modified: Sun, 13 Dec 2020 06:26:38 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 31a54800-401f-003c-3817-d15546000000
+      x-ms-request-id: 2bc86501-201f-0005-0e18-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -183,9 +183,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5e7c1b0c-3d0a-11eb-9980-c8348e5fffbf
+      - 2871e44f-3d0c-11eb-ba7f-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:50 GMT
+      - Sun, 13 Dec 2020 06:26:39 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -197,11 +197,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:49 GMT
-      ETag: '"0x8D89F2E429A64E8"'
-      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Date: Sun, 13 Dec 2020 06:26:38 GMT
+      ETag: '"0x8D89F300C905842"'
+      Last-Modified: Sun, 13 Dec 2020 06:26:39 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 31a54801-401f-003c-3917-d15546000000
+      x-ms-request-id: 2bc86502-201f-0005-0f18-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -213,9 +213,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5e97442b-3d0a-11eb-aeff-c8348e5fffbf
+      - 28948888-3d0c-11eb-90fc-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:51 GMT
+      - Sun, 13 Dec 2020 06:26:39 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -227,11 +227,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:51 GMT
-      ETag: '"0x8D89F2E42C29BC2"'
-      Last-Modified: Sun, 13 Dec 2020 06:13:51 GMT
+      Date: Sun, 13 Dec 2020 06:26:38 GMT
+      ETag: '"0x8D89F300CB5BC9E"'
+      Last-Modified: Sun, 13 Dec 2020 06:26:39 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 31a54802-401f-003c-3a17-d15546000000
+      x-ms-request-id: 2bc86503-201f-0005-1018-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -243,9 +243,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5ebf177c-3d0a-11eb-ad24-c8348e5fffbf
+      - 28ba8ff7-3d0c-11eb-b348-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:51 GMT
+      - Sun, 13 Dec 2020 06:26:39 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -255,11 +255,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      Date: Sun, 13 Dec 2020 06:26:39 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132523136312372923'
-      x-ms-request-id: 31a54803-401f-003c-3b17-d15546000000
+      x-ms-deletion-id: '132523143995718653'
+      x-ms-request-id: 2bc86504-201f-0005-1118-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -271,9 +271,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5ee31b14-3d0a-11eb-8cbe-c8348e5fffbf
+      - 28d89f6a-3d0c-11eb-b172-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:51 GMT
+      - Sun, 13 Dec 2020 06:26:39 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -283,11 +283,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      Date: Sun, 13 Dec 2020 06:26:39 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132523136314300597'
-      x-ms-request-id: 31a54804-401f-003c-3c17-d15546000000
+      x-ms-deletion-id: '132523143997564609'
+      x-ms-request-id: 2bc86505-201f-0005-1218-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -299,9 +299,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5eff7a73-3d0a-11eb-88c8-c8348e5fffbf
+      - 28f48635-3d0c-11eb-9708-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:51 GMT
+      - Sun, 13 Dec 2020 06:26:40 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -311,11 +311,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      Date: Sun, 13 Dec 2020 06:26:39 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132523136316147545'
-      x-ms-request-id: 31a54805-401f-003c-3d17-d15546000000
+      x-ms-deletion-id: '132523143999404658'
+      x-ms-request-id: 2bc86506-201f-0005-1318-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -327,9 +327,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5f1d5fa8-3d0a-11eb-af19-c8348e5fffbf
+      - 29109bb8-3d0c-11eb-8511-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:51 GMT
+      - Sun, 13 Dec 2020 06:26:40 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -339,11 +339,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      Date: Sun, 13 Dec 2020 06:26:39 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132523136318113534'
-      x-ms-request-id: 31a54806-401f-003c-3e17-d15546000000
+      x-ms-deletion-id: '132523144001241602'
+      x-ms-request-id: 2bc86507-201f-0005-1418-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -355,9 +355,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5f39f7fc-3d0a-11eb-b254-c8348e5fffbf
+      - 292c7740-3d0c-11eb-89b7-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:52 GMT
+      - Sun, 13 Dec 2020 06:26:40 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -367,11 +367,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:52 GMT
+      Date: Sun, 13 Dec 2020 06:26:39 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132523136320182728'
-      x-ms-request-id: 31a54807-401f-003c-3f17-d15546000000
+      x-ms-deletion-id: '132523144003189457'
+      x-ms-request-id: 2bc86508-201f-0005-1518-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -383,9 +383,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5f5a0af3-3d0a-11eb-a652-c8348e5fffbf
+      - 2958ccc2-3d0c-11eb-8bd1-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:52 GMT
+      - Sun, 13 Dec 2020 06:26:40 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -395,11 +395,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Sun, 13 Dec 2020 06:13:52 GMT
+      Date: Sun, 13 Dec 2020 06:26:40 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132523136322221519'
-      x-ms-request-id: 31a54808-401f-003c-4017-d15546000000
+      x-ms-deletion-id: '132523144006348956'
+      x-ms-request-id: 2bc86509-201f-0005-1618-d1ae5a000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -413,9 +413,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5f79162e-3d0a-11eb-afd0-c8348e5fffbf
+      - 297b9676-3d0c-11eb-8d5c-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:52 GMT
+      - Sun, 13 Dec 2020 06:26:40 GMT
       x-ms-version:
       - '2020-06-12'
     method: GET
@@ -423,38 +423,38 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.preprod.core.windows.net/\" ContainerName=\"fs1ac201283\"><Blobs><BlobPrefix><Name>dir1</Name></BlobPrefix><BlobPrefix><Name>dir2</Name></BlobPrefix><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132523136320182728</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
-        13 Dec 2020 06:13:50 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:50
-        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:51 GMT</Expiry-Time><Etag>0x8D89F2E429A64E8</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://storagename.blob.preprod.core.windows.net/\" ContainerName=\"fs1ac201283\"><Blobs><BlobPrefix><Name>dir1</Name></BlobPrefix><BlobPrefix><Name>dir2</Name></BlobPrefix><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132523144003189457</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:26:39 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:26:39
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:26:40 GMT</Expiry-Time><Etag>0x8D89F300C905842</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
         /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
-        13 Dec 2020 06:13:52 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132523136322221519</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
-        13 Dec 2020 06:13:51 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:51
-        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:52 GMT</Expiry-Time><Etag>0x8D89F2E42C29BC2</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        13 Dec 2020 06:26:40 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132523144006348956</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:26:39 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:26:39
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:26:40 GMT</Expiry-Time><Etag>0x8D89F300CB5BC9E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
         /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
-        13 Dec 2020 06:13:52 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>file0</Name><DeletionId>132523136312372923</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
-        13 Dec 2020 06:13:49 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:49
-        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:51 GMT</Expiry-Time><Etag>0x8D89F2E4211504C</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        13 Dec 2020 06:26:40 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>file0</Name><DeletionId>132523143995718653</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:26:38 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:26:38
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:26:39 GMT</Expiry-Time><Etag>0x8D89F300C086F84</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
         /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
-        13 Dec 2020 06:13:51 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>file1</Name><DeletionId>132523136314300597</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
-        13 Dec 2020 06:13:50 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:50
-        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:51 GMT</Expiry-Time><Etag>0x8D89F2E4230A195</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        13 Dec 2020 06:26:39 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>file1</Name><DeletionId>132523143997564609</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:26:38 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:26:38
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:26:39 GMT</Expiry-Time><Etag>0x8D89F300C224BC6</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
         /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
-        13 Dec 2020 06:13:51 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        13 Dec 2020 06:26:39 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
         /></Blob></Blobs><NextMarker /></EnumerationResults>"
     headers:
       Content-Type: application/xml
-      Date: Sun, 13 Dec 2020 06:13:52 GMT
+      Date: Sun, 13 Dec 2020 06:26:40 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
       Vary: Origin
-      x-ms-request-id: 9300131d-501e-0020-0717-d10726000000
+      x-ms-request-id: d8bde6f1-001e-0012-3618-d10751000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -468,9 +468,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5fb2a968-3d0a-11eb-b6bd-c8348e5fffbf
+      - 29b9c741-3d0c-11eb-a40f-c8348e5fffbf
       x-ms-date:
-      - Sun, 13 Dec 2020 06:13:52 GMT
+      - Sun, 13 Dec 2020 06:26:41 GMT
       x-ms-version:
       - '2020-06-12'
     method: GET
@@ -478,26 +478,26 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.preprod.core.windows.net/\" ContainerName=\"fs1ac201283\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132523136320182728</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
-        13 Dec 2020 06:13:50 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:50
-        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:51 GMT</Expiry-Time><Etag>0x8D89F2E429A64E8</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://storagename.blob.preprod.core.windows.net/\" ContainerName=\"fs1ac201283\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132523144003189457</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:26:39 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:26:39
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:26:40 GMT</Expiry-Time><Etag>0x8D89F300C905842</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
         /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
-        13 Dec 2020 06:13:52 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132523136322221519</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
-        13 Dec 2020 06:13:51 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:51
-        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:52 GMT</Expiry-Time><Etag>0x8D89F2E42C29BC2</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        13 Dec 2020 06:26:40 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132523144006348956</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:26:39 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:26:39
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:26:40 GMT</Expiry-Time><Etag>0x8D89F300CB5BC9E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
         /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
-        13 Dec 2020 06:13:52 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        13 Dec 2020 06:26:40 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
         /></Blob></Blobs><NextMarker /></EnumerationResults>"
     headers:
       Content-Type: application/xml
-      Date: Sun, 13 Dec 2020 06:13:52 GMT
+      Date: Sun, 13 Dec 2020 06:26:40 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
       Vary: Origin
-      x-ms-request-id: 9300131e-501e-0020-0817-d10726000000
+      x-ms-request-id: d8bde6f2-001e-0012-3718-d10751000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
