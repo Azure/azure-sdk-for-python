@@ -86,31 +86,30 @@ def get_parameter_default(param):
     return default_value
 
 
-def create_function_report(name, f):
+def create_function_report(f):
     function = inspect.signature(f)
     func_obj = {
-        "name": name,
-        "parameters": {
-            "positional_only": {},
-            "positional_or_keyword": {},
-            "keyword_only": {},
-            "var_positional": {},
-            "var_keyword": {}
-        }
+        "parameters": {}
     }
 
     for par in function.parameters.values():
         default_value = get_parameter_default(par)
+        param = {par.name: {"default": default_value, "param_type": None}}
+
+        param_type = None
         if par.kind == par.KEYWORD_ONLY:
-            func_obj["parameters"]["keyword_only"].update({par.name: default_value})
+            param_type = "keyword_only"
         elif par.kind == par.POSITIONAL_ONLY:
-            func_obj["parameters"]["positional_only"].update({par.name: default_value})
+            param_type = "positional_only"
         elif par.kind == par.POSITIONAL_OR_KEYWORD:
-            func_obj["parameters"]["positional_or_keyword"].update({par.name: default_value})
+            param_type = "positional_or_keyword"
         elif par.kind == par.VAR_POSITIONAL:
-            func_obj["parameters"]["var_positional"].update({par.name: default_value})
+            param_type = "var_positional"
         elif par.kind == par.VAR_KEYWORD:
-            func_obj["parameters"]["var_keyword"].update({par.name: default_value})
+            param_type = "var_keyword"
+
+        param[par.name]["param_type"] = param_type
+        func_obj["parameters"].update(param)
 
     return func_obj
 
@@ -151,9 +150,8 @@ def get_properties(cls):
     return attribute_names
 
 
-def create_class_report(name, cls):
+def create_class_report(cls):
     cls_info = {
-        "name": name,
         "type": None,
         "methods": {},
         "properties": {},
@@ -171,10 +169,10 @@ def create_class_report(name, cls):
     for method in methods:
         m = getattr(cls, method)
         if inspect.isfunction(m) or inspect.ismethod(m):
-            cls_info["methods"][method] = create_function_report(method, m)
+            cls_info["methods"][method] = create_function_report(m)
 
     cls_init = getattr(cls, "__init__")
-    cls_info["methods"]["__init__"] = create_function_report("__init__", cls_init)
+    cls_info["methods"]["__init__"] = create_function_report(cls_init)
 
     return cls_info
 
@@ -202,9 +200,9 @@ def test_detect_breaking_changes(target_module="azure.storage.blob"):
             if not importable.startswith("_"):
                 live_obj = getattr(module, importable)
                 if inspect.isfunction(live_obj):
-                    public_api[module_name]["function_nodes"].update({importable: create_function_report(importable, live_obj)})
+                    public_api[module_name]["function_nodes"].update({importable: create_function_report(live_obj)})
                 elif inspect.isclass(live_obj):
-                    public_api[module_name]["class_nodes"].update({importable: create_class_report(importable, live_obj)})
+                    public_api[module_name]["class_nodes"].update({importable: create_class_report(live_obj)})
                 # else:  # Constants, version, etc. Nothing of interest at the moment
                 #     public_api[module_name]["others"].update({importable: live_obj})
 
@@ -253,6 +251,12 @@ class BreakingChangesTracker:
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION = \
         "(ChangedParameterOrdering): The publicly exposed function '{}' had its parameters re-ordered " \
         "from '{}' to '{}' in the current version"
+    CHANGED_PARAMETER_TYPE = \
+        "(ChangedParameterType): The class '{}' method '{}' had its parameter '{}' changed from '{}' to '{}' " \
+        "in the current version"
+    CHANGED_PARAMETER_TYPE_OF_FUNCTION = \
+        "(ChangedParameterType): The function '{}' had its parameter '{}' changed from '{}' to '{}' " \
+        "in the current version"
 
     def __init__(self, stable, current, diff):
         self.stable = stable
@@ -271,7 +275,6 @@ class BreakingChangesTracker:
     def run_checks(self):
         self.run_class_level_diff_checks()
         self.run_function_level_diff_checks()
-        self.check_positional_parameter_ordering()  # won't show up in a diff, need to iterate over stable vs current
 
     def run_class_level_diff_checks(self):
         for module_name, module in self.diff.items():
@@ -291,8 +294,9 @@ class BreakingChangesTracker:
                     self.check_class_method_removed_or_renamed(module_name, class_name, method_name, method_components, stable_methods_node)
 
                     if not isinstance(method_name, jsondiff.Symbol):  # skip param checks if method was deleted
-                        stable_parameters_node = self.stable[module_name]["class_nodes"][class_name]["methods"][method_name]["parameters"]
-                        self.run_parameter_level_diff_checks(module_name, method_name, method_components, stable_parameters_node, class_name=class_name)
+                        stable_parameters_node = stable_methods_node[method_name]["parameters"]
+                        current_parameters_node = self.current[module_name]["class_nodes"][class_name]["methods"][method_name]["parameters"]
+                        self.run_parameter_level_diff_checks(module_name, method_name, method_components, stable_parameters_node, current_parameters_node, class_name=class_name)
 
     def run_function_level_diff_checks(self):
         for module_name, module in self.diff.items():
@@ -304,69 +308,66 @@ class BreakingChangesTracker:
 
                 if not isinstance(function_name, jsondiff.Symbol):  # skip param checks if function was deleted
                     stable_parameters_node = self.stable[module_name]["function_nodes"][function_name]["parameters"]
-                    self.run_parameter_level_diff_checks(module_name, function_name, function_components, stable_parameters_node)
+                    current_parameters_node = self.current[module_name]["function_nodes"][function_name]["parameters"]
+                    self.run_parameter_level_diff_checks(module_name, function_name, function_components, stable_parameters_node, current_parameters_node)
 
-    def run_parameter_level_diff_checks(self, module_name, function_name, function_components, stable_parameters_node, class_name=None):
-        for param_type, params in function_components.get("parameters", {}).items():
-            if param_type == "positional_or_keyword":
-                for param_name, default in params.items():
-                    if isinstance(param_name, jsondiff.Symbol):
-                        self.check_positional_parameter_removed_or_renamed(
-                            module_name, param_name, param_type, default, function_name, stable_parameters_node, class_name
-                        )
-                    elif param_name not in stable_parameters_node[param_type]:
-                        self.check_positional_parameter_added(
-                            module_name, param_name, param_type, function_name, class_name
-                        )
-                    else:
-                        stable_default = stable_parameters_node[param_type][param_name]
-                        self.check_positional_parameter_default_value_changed(
-                            module_name, function_name, param_name, default, stable_default, class_name
-                        )
+    def run_parameter_level_diff_checks(self, module_name, function_name, function_components, stable_parameters_node, current_parameters_node, class_name=None):
+        for param_name, diff in function_components.get("parameters", {}).items():
+            for diff_type in diff:
+                if isinstance(param_name, jsondiff.Symbol):
+                    self.check_positional_parameter_removed_or_renamed(
+                        module_name, param_name, stable_parameters_node[diff_type]["param_type"], diff_type, function_name, stable_parameters_node, class_name
+                    )
+                elif param_name not in stable_parameters_node:
+                    self.check_positional_parameter_added(
+                        module_name, param_name, current_parameters_node[param_name]["param_type"], function_name, class_name
+                    )
+                    break
+                elif diff_type == "default":
+                    stable_default = stable_parameters_node[param_name]["default"]
+                    self.check_parameter_default_value_changed(
+                        module_name, function_name, param_name, diff[diff_type], stable_default, class_name
+                    )
+                elif diff_type == "param_type":
+                    self.check_parameter_type_changed(
+                        module_name, function_name, param_name, diff["param_type"], stable_parameters_node, class_name
+                    )
 
-    def check_positional_parameter_ordering(self):
-        keys = self.stable.keys() & self.current.keys()
+        self.check_positional_parameter_ordering(
+            module_name, function_name, stable_parameters_node, current_parameters_node, class_name
+        )
 
-        for key in keys:
-            stable_cls = self.stable[key]["class_nodes"]
-            current_cls = self.current[key]["class_nodes"]
-            class_keys = stable_cls.keys() & current_cls.keys()
-            for cls in class_keys:
-                stable_method_nodes = stable_cls[cls]["methods"]
-                current_method_nodes = current_cls[cls]["methods"]
-                method_keys = stable_method_nodes.keys() & current_method_nodes.keys()
-                for method in method_keys:
-                    stable_params = stable_method_nodes[method]["parameters"]["positional_or_keyword"].keys()
-                    current_params = current_method_nodes[method]["parameters"]["positional_or_keyword"].keys()
-                    if len(stable_params) != len(current_params):
-                        # a parameter was deleted and that breaking change was already reported so skip
-                        continue
-                    for key1, key2 in zip(stable_params, current_params):
-                        if key1 != key2:
-                            self.breaking_changes.append(
-                                self.CHANGED_PARAMETER_ORDERING.format(
-                                    f"{key}.{cls}", method, list(stable_params), list(current_params)
-                                ))
-                            break
+    def check_parameter_type_changed(self, module_name, function_name, param_name, diff, stable_parameters_node, class_name):
+        if class_name:
+            self.breaking_changes.append(
+                self.CHANGED_PARAMETER_TYPE.format(
+                    f"{module_name}.{class_name}", function_name, param_name, stable_parameters_node[param_name]["param_type"], diff
+                ))
+        else:
+            self.breaking_changes.append(
+                self.CHANGED_PARAMETER_TYPE_OF_FUNCTION.format(
+                    f"{module_name}.{function_name}", param_name, stable_parameters_node[param_name]["param_type"], diff
+                ))
 
-            stable_funcs = self.stable[key]["function_nodes"]
-            current_funcs = self.current[key]["function_nodes"]
-            func_nodes = stable_funcs.keys() & current_funcs.keys()
-            for func in func_nodes:
-                stable_params = stable_funcs[func]["parameters"]["positional_or_keyword"].keys()
-                current_params = current_funcs[func]["parameters"]["positional_or_keyword"].keys()
-                if len(stable_params) != len(current_params):
-                    # a parameter was deleted and that breaking change was already reported so skip
-                    continue
-                for key1, key2 in zip(stable_params, current_params):
-                    if key1 != key2:
-                        self.breaking_changes.append(
-                            self.CHANGED_PARAMETER_ORDERING_OF_FUNCTION.format(
-                                f"{key}.{func}", list(stable_params), list(current_params)
-                            ))
-                        break
+    def check_positional_parameter_ordering(self, module_name, function_name, stable_parameters_node, current_parameters_node, class_name=None):
+        if len(stable_parameters_node) != len(current_parameters_node):
+            # a parameter was deleted and that breaking change was already reported so just skip
+            return
+        for param1, param2 in zip(stable_parameters_node, current_parameters_node):
+            if param1 != param2:
+                if class_name:
+                    self.breaking_changes.append(
+                        self.CHANGED_PARAMETER_ORDERING.format(
+                            f"{module_name}.{class_name}", function_name, list(stable_parameters_node), list(current_parameters_node)
+                        ))
+                else:
+                    self.breaking_changes.append(
+                        self.CHANGED_PARAMETER_ORDERING_OF_FUNCTION.format(
+                            f"{module_name}.{function_name}", list(stable_parameters_node), list(current_parameters_node)
+                        ))
+                break
 
-    def check_positional_parameter_default_value_changed(self, module_name, function_name, param_name, default, stable_default, class_name=None):
+    def check_parameter_default_value_changed(self, module_name, function_name, param_name, default, stable_default, class_name=None):
         if default is not None:  # a default was added in the current version
             if default != stable_default:
                 if stable_default is not None:  # There is a stable default
@@ -384,15 +385,18 @@ class BreakingChangesTracker:
                             ))
 
     def check_positional_parameter_added(self, module_name, param_name, param_type, function_name, class_name=None):
-        if class_name:
-            self.breaking_changes.append(self.ADDED_POSITIONAL_PARAM_TO_METHOD.format(f"{module_name}.{class_name}", function_name, param_type, param_name))
-        else:
-            self.breaking_changes.append(self.ADDED_POSITIONAL_PARAM_TO_FUNCTION.format(f"{module_name}.{function_name}", param_type, param_name))
+        if param_type == "positional_or_keyword":
+            if class_name:
+                self.breaking_changes.append(self.ADDED_POSITIONAL_PARAM_TO_METHOD.format(f"{module_name}.{class_name}", function_name, param_type, param_name))
+            else:
+                self.breaking_changes.append(self.ADDED_POSITIONAL_PARAM_TO_FUNCTION.format(f"{module_name}.{function_name}", param_type, param_name))
 
     def check_positional_parameter_removed_or_renamed(self, module_name, param_name, param_type, deleted, function_name, stable_parameters_node, class_name=None):
+        if param_type != "positional_or_keyword":
+            return
         deleted_params = []
         if param_name.label == "delete":
-            deleted_params = deleted
+            deleted_params = [deleted]
         elif param_name.label == "replace":  # replace means all positional parameters were removed
             deleted_params = stable_parameters_node[param_type]
 
@@ -481,11 +485,17 @@ def test_compare(pkg_dir="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storag
 
     if bc.breaking_changes:
         print(bc)
+        remove_json_files(pkg_dir)
         exit(1)
 
+    remove_json_files(pkg_dir)
     package_name = os.path.basename(pkg_dir)
     print(f"\nNo breaking changes found for {package_name} between stable version {version} and current version.")
 
+
+def remove_json_files(pkg_dir):
+    os.remove(os.path.join(pkg_dir, "stable.json"))
+    os.remove(os.path.join(pkg_dir, "current.json"))
 
 
 def main(package_name, target_module, version, in_venv, pkg_dir):
@@ -525,10 +535,12 @@ def main(package_name, target_module, version, in_venv, pkg_dir):
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
+        test_compare(pkg_dir, version)
+
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/breaking-changes-tool to resolve any build issues*****\n")
+        remove_json_files(pkg_dir)
         raise err
-    # test_compare(pkg_dir, version)
 
 
 if __name__ == "__main__":
