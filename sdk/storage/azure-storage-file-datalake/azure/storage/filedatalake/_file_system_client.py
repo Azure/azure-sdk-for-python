@@ -20,9 +20,9 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import LocationMode, FileSystemProperties, PublicAccess, DeletedPathProperties, FileProperties, \
+from ._list_paths_helper import DeletedDirectoryPath
+from ._models import LocationMode, FileSystemProperties, PublicAccess, DeletedFileProperties, FileProperties, \
     DirectoryProperties
-from ._list_paths_helper import DirectoryPathPrefix
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
@@ -887,7 +887,7 @@ class FileSystemClient(StorageAccountHostsMixin):
     def get_deleted_paths(self,
                           name_starts_with=None,    # type: Optional[str],
                           **kwargs):
-        # type: (...) -> ItemPaged[Union[DeletedPathProperties, DirectoryPathPrefix]]
+        # type: (...) -> ItemPaged[Union[DeletedFileProperties, DeletedDirectoryPath]]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -897,8 +897,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype:
-            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties] or
-            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DirectoryPathPrefix]
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedFileProperties] or
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedDirectoryPath]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
@@ -908,6 +908,6 @@ class FileSystemClient(StorageAccountHostsMixin):
             delimiter="",
             timeout=timeout,
             **kwargs)
-        return DirectoryPathPrefix(
+        return DeletedDirectoryPath(
             command, prefix=name_starts_with,
             results_per_page=results_per_page, **kwargs)

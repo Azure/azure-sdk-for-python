@@ -29,8 +29,8 @@ from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties, DeletedPathProperties
-from ._list_paths_helper import DirectoryPathPrefix
+from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties, DeletedFileProperties
+from ._list_paths_helper import DeletedDirectoryPath
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -836,7 +836,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     def get_deleted_paths(self,
                           name_starts_with=None,    # type: Optional[str],
                           **kwargs):
-        # type: (...) -> AsyncItemPaged[Union[DeletedPathProperties, DirectoryPathPrefix]]
+        # type: (...) -> AsyncItemPaged[Union[DeletedFileProperties, DeletedDirectoryPath]]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -846,8 +846,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype:
-            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties] or
-            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DirectoryPathPrefix]
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedFileProperties] or
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedDirectoryPath]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
@@ -857,6 +857,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             delimiter="",
             timeout=timeout,
             **kwargs)
-        return DirectoryPathPrefix(
+        return DeletedDirectoryPath(
             command, prefix=name_starts_with,
             results_per_page=results_per_page, **kwargs)

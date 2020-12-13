@@ -28,7 +28,7 @@ from testcase import (
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import FileSystemSasPermissions
-from azure.storage.filedatalake.aio._list_paths_helper import DirectoryPathPrefix
+from azure.storage.filedatalake.aio._list_paths_helper import DeletedDirectoryPath
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 
@@ -660,7 +660,7 @@ class FileSystemTest(StorageTestCase):
         deleted_file_paths = []
         deleted_directory_paths = []
         for path in first_layer_paths:
-            if isinstance(path, DirectoryPathPrefix):
+            if isinstance(path, DeletedDirectoryPath):
                 deleted_directory_paths.append(path)
             else:
                 deleted_file_paths.append(path)
@@ -671,7 +671,7 @@ class FileSystemTest(StorageTestCase):
         # Assert
         self.assertEqual(len(deleted_directory_paths), 2)
         self.assertEqual(len(deleted_file_paths), 4)
-        self.assertIsInstance(first_layer_paths[0], DirectoryPathPrefix)
+        self.assertIsInstance(first_layer_paths[0], DeletedDirectoryPath)
         self.assertEqual(len(dir3_paths), 2)
         self.assertIsNotNone(dir3_paths[0].deletion_id)
         self.assertIsNotNone(dir3_paths[1].deletion_id)

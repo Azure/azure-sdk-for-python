@@ -10,7 +10,7 @@ from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 
 from .._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code
 from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
-from .._models import DeletedPathProperties
+from .._models import DeletedFileProperties
 
 from .._shared.models import DictMixin
 from .._shared.response_handlers import return_context_and_deserialized
@@ -79,7 +79,7 @@ class DeletedPathPropertiesPaged(AsyncPageIterator):
         return self._response.next_marker or None, self.current_page
 
     def _build_item(self, item):
-        if isinstance(item, DeletedPathProperties):
+        if isinstance(item, DeletedFileProperties):
             return item
         if isinstance(item, BlobItemInternal):
             path = get_deleted_path_properties_from_generated_code(item)  # pylint: disable=protected-access
@@ -104,7 +104,7 @@ class DirectoryPathPrefixPaged(DeletedPathPropertiesPaged):
     def _build_item(self, item):
         item = super(DirectoryPathPrefixPaged, self)._build_item(item)
         if isinstance(item, GenBlobPrefix):
-            return DirectoryPathPrefix(
+            return DeletedDirectoryPath(
                 self._command,
                 container=self.container,
                 prefix=item.name,
@@ -113,7 +113,7 @@ class DirectoryPathPrefixPaged(DeletedPathPropertiesPaged):
         return item
 
 
-class DirectoryPathPrefix(AsyncItemPaged, DictMixin):
+class DeletedDirectoryPath(AsyncItemPaged, DictMixin):
     """An Iterable of deleted path properties.
 
     :ivar str name: The prefix, or "directory name" of the blob.
@@ -125,7 +125,7 @@ class DirectoryPathPrefix(AsyncItemPaged, DictMixin):
     :ivar str delimiter: A delimiting character used for hierarchy listing.
     """
     def __init__(self, *args, **kwargs):
-        super(DirectoryPathPrefix, self).__init__(*args, page_iterator_class=DirectoryPathPrefixPaged, **kwargs)
+        super(DeletedDirectoryPath, self).__init__(*args, page_iterator_class=DirectoryPathPrefixPaged, **kwargs)
         self.name = kwargs.get('prefix')
         self.directory_path = kwargs.get('prefix')
         self.results_per_page = kwargs.get('results_per_page')
