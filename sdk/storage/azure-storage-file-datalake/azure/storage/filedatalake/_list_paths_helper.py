@@ -7,8 +7,7 @@
 from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
 from ._models import DeletedPathProperties
-from ._deserialize import process_storage_error, return_headers_and_deserialized_path_list, \
-    get_deleted_path_properties_from_generated_code
+from ._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code
 from ._generated.models import BlobItemInternal
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
