@@ -232,7 +232,7 @@ class DirectoryTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory(metadata=metadata)
 
-        response = await directory_client.delete_directory()
+        await directory_client.delete_directory()
         # Assert
         self.assertIsNone(response)
 

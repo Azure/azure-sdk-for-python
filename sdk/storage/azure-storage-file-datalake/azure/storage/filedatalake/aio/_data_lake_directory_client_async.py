@@ -180,8 +180,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 4
                 :caption: Delete directory.
         """
-        await self._delete(**kwargs)
-        return
+        return await self._delete(**kwargs)
 
     async def get_directory_properties(self, **kwargs):
         # type: (**Any) -> DirectoryProperties
