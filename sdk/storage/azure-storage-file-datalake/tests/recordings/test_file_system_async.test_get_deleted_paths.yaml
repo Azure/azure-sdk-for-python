@@ -1,0 +1,506 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5c4e2876-3d0a-11eb-b178-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:47 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.preprod.core.windows.net/fs1ac201283?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Sun, 13 Dec 2020 06:13:47 GMT
+      ETag: '"0x8D89F2E40B77FAF"'
+      Last-Modified: Sun, 13 Dec 2020 06:13:47 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-request-id: 930012f9-501e-0020-7217-d10726000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://2vxxscnapams20ptf01c.blob.preprod.core.windows.net/fs1ac201283?restype=container
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5cb70d52-3d0a-11eb-9691-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:47 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/file0?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:49 GMT
+      ETag: '"0x8D89F2E4211504C"'
+      Last-Modified: Sun, 13 Dec 2020 06:13:49 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 31a547fa-401f-003c-3417-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/file0?resource=file
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5e133b62-3d0a-11eb-b81f-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:50 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/file1?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:49 GMT
+      ETag: '"0x8D89F2E4230A195"'
+      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 31a547fd-401f-003c-3517-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/file1?resource=file
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5e2e3d6d-3d0a-11eb-8491-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:50 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir1?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:49 GMT
+      ETag: '"0x8D89F2E424B0E62"'
+      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 31a547fe-401f-003c-3617-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir1?resource=directory
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5e480f56-3d0a-11eb-9364-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:50 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir2?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:49 GMT
+      ETag: '"0x8D89F2E426522A8"'
+      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 31a547ff-401f-003c-3717-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir2?resource=directory
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5e624e24-3d0a-11eb-84cb-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:50 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir3?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:49 GMT
+      ETag: '"0x8D89F2E427F14A6"'
+      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 31a54800-401f-003c-3817-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir3?resource=directory
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5e7c1b0c-3d0a-11eb-9980-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:50 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir3%2Ffile_in_dir3?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:49 GMT
+      ETag: '"0x8D89F2E429A64E8"'
+      Last-Modified: Sun, 13 Dec 2020 06:13:50 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 31a54801-401f-003c-3917-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir3%2Ffile_in_dir3?resource=file
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5e97442b-3d0a-11eb-aeff-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:51 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir3%2Fsubdir%2Ffile_in_subdir?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      ETag: '"0x8D89F2E42C29BC2"'
+      Last-Modified: Sun, 13 Dec 2020 06:13:51 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 31a54802-401f-003c-3a17-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir3%2Fsubdir%2Ffile_in_subdir?resource=file
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5ebf177c-3d0a-11eb-ad24-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:51 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: DELETE
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/file0?recursive=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent: 'false'
+      x-ms-deletion-id: '132523136312372923'
+      x-ms-request-id: 31a54803-401f-003c-3b17-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/file0?recursive=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5ee31b14-3d0a-11eb-8cbe-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:51 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: DELETE
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/file1?recursive=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent: 'false'
+      x-ms-deletion-id: '132523136314300597'
+      x-ms-request-id: 31a54804-401f-003c-3c17-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/file1?recursive=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5eff7a73-3d0a-11eb-88c8-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:51 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: DELETE
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir1?recursive=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent: 'false'
+      x-ms-deletion-id: '132523136316147545'
+      x-ms-request-id: 31a54805-401f-003c-3d17-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir1?recursive=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5f1d5fa8-3d0a-11eb-af19-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:51 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: DELETE
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir2?recursive=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:51 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent: 'false'
+      x-ms-deletion-id: '132523136318113534'
+      x-ms-request-id: 31a54806-401f-003c-3e17-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir2?recursive=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5f39f7fc-3d0a-11eb-b254-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:52 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: DELETE
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir3%2Ffile_in_dir3?recursive=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:52 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent: 'false'
+      x-ms-deletion-id: '132523136320182728'
+      x-ms-request-id: 31a54807-401f-003c-3f17-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir3%2Ffile_in_dir3?recursive=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5f5a0af3-3d0a-11eb-a652-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:52 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: DELETE
+    uri: https://storagename.dfs.preprod.core.windows.net/fs1ac201283/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sun, 13 Dec 2020 06:13:52 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent: 'false'
+      x-ms-deletion-id: '132523136322221519'
+      x-ms-request-id: 31a54808-401f-003c-4017-d15546000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://2vxxscnapams20ptf01c.dfs.preprod.core.windows.net/fs1ac201283/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5f79162e-3d0a-11eb-afd0-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:52 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: GET
+    uri: https://storagename.blob.preprod.core.windows.net/fs1ac201283?delimiter=&showonly=deleted&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.preprod.core.windows.net/\" ContainerName=\"fs1ac201283\"><Blobs><BlobPrefix><Name>dir1</Name></BlobPrefix><BlobPrefix><Name>dir2</Name></BlobPrefix><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132523136320182728</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:13:50 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:50
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:51 GMT</Expiry-Time><Etag>0x8D89F2E429A64E8</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
+        /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
+        13 Dec 2020 06:13:52 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132523136322221519</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:13:51 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:51
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:52 GMT</Expiry-Time><Etag>0x8D89F2E42C29BC2</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
+        /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
+        13 Dec 2020 06:13:52 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>file0</Name><DeletionId>132523136312372923</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:13:49 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:49
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:51 GMT</Expiry-Time><Etag>0x8D89F2E4211504C</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
+        /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
+        13 Dec 2020 06:13:51 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>file1</Name><DeletionId>132523136314300597</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:13:50 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:50
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:51 GMT</Expiry-Time><Etag>0x8D89F2E4230A195</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
+        /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
+        13 Dec 2020 06:13:51 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob></Blobs><NextMarker /></EnumerationResults>"
+    headers:
+      Content-Type: application/xml
+      Date: Sun, 13 Dec 2020 06:13:52 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      Vary: Origin
+      x-ms-request-id: 9300131d-501e-0020-0717-d10726000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://2vxxscnapams20ptf01c.blob.preprod.core.windows.net/fs1ac201283?delimiter=&showonly=deleted&restype=container&comp=list
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5fb2a968-3d0a-11eb-b6bd-c8348e5fffbf
+      x-ms-date:
+      - Sun, 13 Dec 2020 06:13:52 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: GET
+    uri: https://storagename.blob.preprod.core.windows.net/fs1ac201283?prefix=dir3/&delimiter=&showonly=deleted&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.preprod.core.windows.net/\" ContainerName=\"fs1ac201283\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132523136320182728</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:13:50 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:50
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:51 GMT</Expiry-Time><Etag>0x8D89F2E429A64E8</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
+        /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
+        13 Dec 2020 06:13:52 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132523136322221519</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Sun,
+        13 Dec 2020 06:13:51 GMT</Creation-Time><Last-Modified>Sun, 13 Dec 2020 06:13:51
+        GMT</Last-Modified><Expiry-Time>Wed, 16 Dec 2020 06:13:52 GMT</Expiry-Time><Etag>0x8D89F2E42C29BC2</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition
+        /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Sun,
+        13 Dec 2020 06:13:52 GMT</DeletedTime><RemainingRetentionDays>2</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob></Blobs><NextMarker /></EnumerationResults>"
+    headers:
+      Content-Type: application/xml
+      Date: Sun, 13 Dec 2020 06:13:52 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      Vary: Origin
+      x-ms-request-id: 9300131e-501e-0020-0817-d10726000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://2vxxscnapams20ptf01c.blob.preprod.core.windows.net/fs1ac201283?prefix=dir3/&delimiter=&showonly=deleted&restype=container&comp=list
+version: 1

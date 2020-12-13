@@ -28,6 +28,7 @@ from testcase import (
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import FileSystemSasPermissions
+from azure.storage.filedatalake.aio._list_paths_helper import DirectoryPathPrefix
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 
@@ -634,6 +635,53 @@ class FileSystemTest(StorageTestCase):
     def test_list_paths_pages_correctly(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_paths_pages_correctly())
+
+    async def _test_get_deleted_paths(self):
+        # Arrange
+        file_system = await self._create_file_system(file_system_prefix="fs1")
+        file0 = await file_system.create_file("file0")
+        file1 = await file_system.create_file("file1")
+
+        dir1 = await file_system.create_directory("dir1")
+        dir2 = await file_system.create_directory("dir2")
+        dir3 = await file_system.create_directory("dir3")
+        file_in_dir3 = await dir3.create_file("file_in_dir3")
+        file_in_subdir = await dir3.create_file("subdir/file_in_subdir")
+
+        await file0.delete_file()
+        await file1.delete_file()
+        await dir1.delete_directory()
+        await dir2.delete_directory()
+        await file_in_dir3.delete_file()
+        await file_in_subdir.delete_file()
+        first_layer_paths = []
+        async for path in file_system.get_deleted_paths():
+            first_layer_paths.append(path)
+        deleted_file_paths = []
+        deleted_directory_paths = []
+        for path in first_layer_paths:
+            if isinstance(path, DirectoryPathPrefix):
+                deleted_directory_paths.append(path)
+            else:
+                deleted_file_paths.append(path)
+        dir3_paths = []
+        async for path in file_system.get_deleted_paths(name_starts_with="dir3/"):
+            dir3_paths.append(path)
+
+        # Assert
+        self.assertEqual(len(deleted_directory_paths), 2)
+        self.assertEqual(len(deleted_file_paths), 4)
+        self.assertIsInstance(first_layer_paths[0], DirectoryPathPrefix)
+        self.assertEqual(len(dir3_paths), 2)
+        self.assertIsNotNone(dir3_paths[0].deletion_id)
+        self.assertIsNotNone(dir3_paths[1].deletion_id)
+        self.assertEqual(dir3_paths[0].name, 'dir3/file_in_dir3')
+        self.assertEqual(dir3_paths[1].name, 'dir3/subdir/file_in_subdir')
+
+    @record
+    def test_get_deleted_paths(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_deleted_paths())
 
     async def _test_create_directory_from_file_system_client_async(self):
         # Arrange

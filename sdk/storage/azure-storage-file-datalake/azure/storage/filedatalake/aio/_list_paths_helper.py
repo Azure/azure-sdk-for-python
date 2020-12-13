@@ -3,17 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from azure.core.paging import PageIterator, ItemPaged
+# pylint: disable=too-few-public-methods, too-many-instance-attributes
+# pylint: disable=super-init-not-called, too-many-lines
 from azure.core.exceptions import HttpResponseError
-from ._models import DeletedPathProperties
-from ._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code
-from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
-from ._shared.models import DictMixin
-from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
+from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
+
+from .._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code
+from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
+from .._models import DeletedPathProperties
+
+from .._shared.models import DictMixin
+from .._shared.response_handlers import return_context_and_deserialized
 
 
-class DeletedPathPropertiesPaged(PageIterator):
+class DeletedPathPropertiesPaged(AsyncPageIterator):
     """An Iterable of deleted path properties.
 
     :ivar str service_endpoint: The service URL.
@@ -53,9 +56,9 @@ class DeletedPathPropertiesPaged(PageIterator):
         self.current_page = None
         self.location_mode = location_mode
 
-    def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token):
         try:
-            return self._command(
+            return await self._command(
                 prefix=self.prefix,
                 marker=continuation_token or None,
                 max_results=self.results_per_page,
@@ -64,7 +67,7 @@ class DeletedPathPropertiesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, get_next_return):
+    async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
@@ -90,8 +93,8 @@ class DirectoryPathPrefixPaged(DeletedPathPropertiesPaged):
         super(DirectoryPathPrefixPaged, self).__init__(*args, **kwargs)
         self.name = self.prefix
 
-    def _extract_data_cb(self, get_next_return):
-        continuation_token, _ = super(DirectoryPathPrefixPaged, self)._extract_data_cb(get_next_return)
+    async def _extract_data_cb(self, get_next_return):
+        continuation_token, _ = await super(DirectoryPathPrefixPaged, self)._extract_data_cb(get_next_return)
         self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
         self.current_page = [self._build_item(item) for item in self.current_page]
         self.delimiter = self._response.delimiter
@@ -110,7 +113,7 @@ class DirectoryPathPrefixPaged(DeletedPathPropertiesPaged):
         return item
 
 
-class DirectoryPathPrefix(ItemPaged, DictMixin):
+class DirectoryPathPrefix(AsyncItemPaged, DictMixin):
     """An Iterable of deleted path properties.
 
     :ivar str name: The prefix, or "directory name" of the blob.
@@ -129,4 +132,3 @@ class DirectoryPathPrefix(ItemPaged, DictMixin):
         self.file_system = kwargs.get('container')
         self.delimiter = kwargs.get('delimiter')
         self.location_mode = kwargs.get('location_mode')
-

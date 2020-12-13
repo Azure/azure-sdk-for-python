@@ -23,6 +23,7 @@ from testcase import (
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
+from azure.storage.filedatalake._list_paths_helper import DirectoryPathPrefix
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
@@ -395,6 +396,45 @@ class FileSystemTest(StorageTestCase):
 
         self.assertEqual(len(paths), 6)
         self.assertTrue(isinstance(paths[0].last_modified, datetime))
+
+    @record
+    def test_get_deleted_paths(self):
+        # Arrange
+        file_system = self._create_file_system(file_system_prefix="fs1")
+        file0 = file_system.create_file("file0")
+        file1 = file_system.create_file("file1")
+
+        dir1 = file_system.create_directory("dir1")
+        dir2 = file_system.create_directory("dir2")
+        dir3 = file_system.create_directory("dir3")
+        file_in_dir3 = dir3.create_file("file_in_dir3")
+        file_in_subdir = dir3.create_file("subdir/file_in_subdir")
+
+        file0.delete_file()
+        file1.delete_file()
+        dir1.delete_directory()
+        dir2.delete_directory()
+        file_in_dir3.delete_file()
+        file_in_subdir.delete_file()
+        first_layer_paths = list(file_system.get_deleted_paths())
+        deleted_file_paths = []
+        deleted_directory_paths = []
+        for path in first_layer_paths:
+            if isinstance(path, DirectoryPathPrefix):
+                deleted_directory_paths.append(path)
+            else:
+                deleted_file_paths.append(path)
+        dir3_paths = list(file_system.get_deleted_paths(name_starts_with="dir3/"))
+
+        # Assert
+        self.assertEqual(len(deleted_directory_paths), 2)
+        self.assertEqual(len(deleted_file_paths), 4)
+        self.assertIsInstance(first_layer_paths[0], DirectoryPathPrefix)
+        self.assertEqual(len(dir3_paths), 2)
+        self.assertIsNotNone(dir3_paths[0].deletion_id)
+        self.assertIsNotNone(dir3_paths[1].deletion_id)
+        self.assertEqual(dir3_paths[0].name, 'dir3/file_in_dir3')
+        self.assertEqual(dir3_paths[1].name, 'dir3/subdir/file_in_subdir')
 
     @record
     def test_list_paths_which_are_all_files(self):
