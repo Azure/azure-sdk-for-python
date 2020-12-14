@@ -68,3 +68,21 @@ def create_access_token(token):
         return AccessToken(token, datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC))
     except ValueError:
         raise ValueError(token_parse_err_msg)
+
+def get_authentication_policy(
+        endpoint, # type: str
+        credential # type: TokenCredential or str
+    ):
+    # type: (...) -> SansIOHTTPPolicy
+    if credential is None:
+        raise ValueError("Parameter 'credential' must not be None.")
+    if hasattr(credential, "get_token"):
+        from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+        return BearerTokenCredentialPolicy(
+            credential, "https://communication.azure.com//.default")
+    if isinstance(credential, str):
+        from .._shared.policy import HMACCredentialsPolicy
+        return HMACCredentialsPolicy(endpoint, credential)
+
+    raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
+                    "or a token credential from azure.identity".format(type(credential)))

@@ -10,11 +10,10 @@ from .._identity._generated.aio._communication_identity_client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
 from .._identity._generated.models import CommunicationIdentityToken
 
-from .._shared.utils import parse_connection_str
-from .._shared.policy import HMACCredentialsPolicy
+from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._shared.models import CommunicationUser
 from .._version import SDK_MONIKER
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+
 
 class CommunicationIdentityClient:
     """Azure Communication Services Identity client.
@@ -51,7 +50,7 @@ class CommunicationIdentityClient:
         self._endpoint = endpoint
         self._identity_service_client = CommunicationIdentityClientGen(
             self._endpoint,
-            authentication_policy=self.get_authentication_policy(endpoint, credential),
+            authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
@@ -167,16 +166,3 @@ class CommunicationIdentityClient:
         `~azure.communication.administration.aio.CommunicationIdentityClient` session.
         """
         await self._identity_service_client.__aexit__()
-    
-    def get_authentication_policy(self, endpoint, credential):
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        if hasattr(credential, "get_token"):
-            return BearerTokenCredentialPolicy(
-                credential, "https://communication.azure.com//.default")
-        if isinstance(credential, str):
-            return HMACCredentialsPolicy(endpoint, credential, decode_url=True)
-
-        raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
-                        "or a token credential from azure.identity".format(type(credential)))
-    
