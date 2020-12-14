@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 
-from .._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code
+from .._deserialize import process_storage_error, get_deleted_file_properties_from_generated_code
 from .._generated.models import StorageErrorException, BlobItemInternal, BlobPrefix as GenBlobPrefix
 from .._models import DeletedFileProperties
 
@@ -81,7 +81,7 @@ class DeletedPathPropertiesPaged(AsyncPageIterator):
         if isinstance(item, DeletedFileProperties):
             return item
         if isinstance(item, BlobItemInternal):
-            path = get_deleted_path_properties_from_generated_code(item)  # pylint: disable=protected-access
+            path = get_deleted_file_properties_from_generated_code(item)  # pylint: disable=protected-access
             path.file_system = self.container
             return path
         return item
