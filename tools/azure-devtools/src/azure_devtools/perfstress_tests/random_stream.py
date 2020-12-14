@@ -18,7 +18,7 @@ class RandomStream:
 
     def read(self, size=None):
         if self._remaining == 0:
-            return None
+            return b""
 
         if size is None:
             e = self._base_data_length
@@ -33,3 +33,23 @@ class RandomStream:
 
     def remaining(self):
         return self._remaining
+
+
+class WriteStream:
+
+    def __init__(self):
+        self._position = 0
+
+    def write(self, content):
+        length = len(content)
+        self._position += length
+        return length
+
+    def seek(self, index):
+        self._position = index
+
+    def seekable(self):
+        return True
+    
+    def tell(self):
+        return self._position
