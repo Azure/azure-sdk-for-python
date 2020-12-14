@@ -15,11 +15,11 @@ from ._shared.response_handlers import return_context_and_deserialized
 class DeletedPathPropertiesPaged(PageIterator):
     """An Iterable of deleted path properties.
 
-    :ivar str name: Name of the directory path.
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A path name prefix being used to filter the list.
     :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -42,7 +42,6 @@ class DeletedPathPropertiesPaged(PageIterator):
             extract_data=self._extract_data_cb,
             continuation_token=continuation_token or ""
         )
-        self.name = prefix
         self._command = command
         self.service_endpoint = None
         self.prefix = prefix
