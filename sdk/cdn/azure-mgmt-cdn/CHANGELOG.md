@@ -1,5 +1,38 @@
 # Release History
 
+## 6.0.0 (2020-12-14)
+
+**Features**
+
+  - Model ProxyResource has a new parameter system_data
+  - Model OriginGroup has a new parameter system_data
+  - Model Endpoint has a new parameter system_data
+  - Model Origin has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+  - Model EdgeNode has a new parameter system_data
+  - Model CdnWebApplicationFirewallPolicy has a new parameter system_data
+  - Model CustomDomain has a new parameter system_data
+  - Model Profile has a new parameter frontdoor_id
+  - Model Profile has a new parameter system_data
+  - Added operation group AFDEndpointsOperations
+  - Added operation group RuleSetsOperations
+  - Added operation group AFDOriginGroupsOperations
+  - Added operation group ValidateOperations
+  - Added operation group SecretsOperations
+  - Added operation group AFDOriginsOperations
+  - Added operation group SecurityPoliciesOperations
+  - Added operation group RoutesOperations
+  - Added operation group LogAnalyticsOperations
+  - Added operation group AFDProfilesOperations
+  - Added operation group RulesOperations
+  - Added operation group AFDCustomDomainsOperations
+
+**Breaking changes**
+
+  - Parameter odatatype of model UrlSigningActionParameters is now required
+  - Model UrlSigningActionParameters no longer has parameter ip_subnets
+  - Model UrlSigningActionParameters no longer has parameter key_id
+
 ## 5.2.0 (2020-12-01)
 
 **Features**
