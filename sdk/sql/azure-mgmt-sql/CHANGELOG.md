@@ -1,5 +1,26 @@
 # Release History
 
+## 0.25.0 (2020-12-14)
+
+**Features**
+
+  - Model ManagedInstanceUpdate has a new parameter identity
+  - Model ManagedInstanceUpdate has a new parameter private_endpoint_connections
+  - Model ManagedInstanceUpdate has a new parameter zone_redundant
+  - Model ManagedInstance has a new parameter private_endpoint_connections
+  - Model ManagedInstance has a new parameter zone_redundant
+  - Added operation ManagedInstancesOperations.list_by_managed_instance
+  - Added operation DatabasesOperations.import_method
+  - Added operation DatabasesOperations.import_database
+  - Added operation DatabasesOperations.list_inaccessible_by_server
+  - Added operation group ServerDevOpsAuditSettingsOperations
+
+**Breaking changes**
+
+  - Removed operation ServersOperations.import_database
+  - Removed operation group ManagedDatabaseRestoreDetailsOperations
+  - Removed operation group ImportExportOperations
+
 ## 0.24.0 (2020-11-04)
 
 **Features**

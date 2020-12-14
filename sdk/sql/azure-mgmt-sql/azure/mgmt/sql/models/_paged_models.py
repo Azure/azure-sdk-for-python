@@ -1013,19 +1013,6 @@ class SyncMemberPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SyncMemberPaged, self).__init__(*args, **kwargs)
-class ManagedInstancePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ManagedInstance <azure.mgmt.sql.models.ManagedInstance>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ManagedInstance]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ManagedInstancePaged, self).__init__(*args, **kwargs)
 class ManagedDatabasePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ManagedDatabase <azure.mgmt.sql.models.ManagedDatabase>` object
@@ -1052,6 +1039,32 @@ class ServerAzureADOnlyAuthenticationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ServerAzureADOnlyAuthenticationPaged, self).__init__(*args, **kwargs)
+class ManagedInstancePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedInstance <azure.mgmt.sql.models.ManagedInstance>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedInstance]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedInstancePaged, self).__init__(*args, **kwargs)
+class TopQueriesPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`TopQueries <azure.mgmt.sql.models.TopQueries>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TopQueries]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TopQueriesPaged, self).__init__(*args, **kwargs)
 class ManagedInstanceAzureADOnlyAuthenticationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ManagedInstanceAzureADOnlyAuthentication <azure.mgmt.sql.models.ManagedInstanceAzureADOnlyAuthentication>` object
@@ -1078,3 +1091,16 @@ class ServerTrustGroupPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ServerTrustGroupPaged, self).__init__(*args, **kwargs)
+class ServerDevOpsAuditingSettingsPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerDevOpsAuditingSettings <azure.mgmt.sql.models.ServerDevOpsAuditingSettings>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerDevOpsAuditingSettings]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerDevOpsAuditingSettingsPaged, self).__init__(*args, **kwargs)
