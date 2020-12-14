@@ -48,7 +48,7 @@ def deserialize_path_properties(path_list):
     return [PathProperties._from_generated(path) for path in path_list] # pylint: disable=protected-access
 
 
-def get_deleted_path_properties_from_generated_code(generated):
+def get_deleted_file_properties_from_generated_code(generated):
     deleted_path = DeletedFileProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
@@ -72,6 +72,7 @@ def from_blob_properties(blob_properties):
     file_props.remaining_retention_days = blob_properties.remaining_retention_days
     file_props.content_settings = blob_properties.content_settings
     return file_props
+
 
 def normalize_headers(headers):
     normalized = {}
