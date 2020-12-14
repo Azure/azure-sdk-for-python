@@ -215,7 +215,8 @@ class BreakingChangesTracker:
     REMOVE_OR_RENAME_CLIENT_METHOD = \
         "(RemoveOrRenameClientMethod): The '{}' client method '{}' was deleted or renamed in the current version"
     REMOVE_OR_RENAME_MODEL = \
-        "(RemoveOrRenameModel): The model or publicly exposed class '().{}' was deleted or renamed in the current version"
+        "(RemoveOrRenameModel): The model or publicly exposed class '().{}' was deleted or renamed in the current " \
+        "version"
     REMOVE_OR_RENAME_MODEL_METHOD = \
         "(RemoveOrRenameModelMethod): The '{}' method '{}' was deleted or renamed in the current version"
     REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION = \
@@ -263,6 +264,10 @@ class BreakingChangesTracker:
         self.current = current
         self.diff = diff
         self.breaking_changes = []
+        self.module_name = None
+        self.class_name = None
+        self.function_name = None
+        self.parameter_name = None
 
     def __str__(self):
         formatted = "\n"
@@ -278,197 +283,234 @@ class BreakingChangesTracker:
 
     def run_class_level_diff_checks(self):
         for module_name, module in self.diff.items():
+            self.module_name = module_name
             for class_name, class_components in module.get("class_nodes", {}).items():
-                if class_name not in self.stable[module_name]["class_nodes"] and \
-                        not isinstance(class_name, jsondiff.Symbol):
+                self.class_name = class_name
+                stable_class_nodes = self.stable[self.module_name]["class_nodes"]
+                if self.class_name not in stable_class_nodes and not isinstance(class_name, jsondiff.Symbol):
                     continue  # this is a new model/additive change in current version so skip checks
-                self.check_class_removed_or_renamed(module_name, class_name, class_components)
-                self.check_class_instance_attribute_removed_or_renamed(module_name, class_name, class_components)
+
+                self.check_class_removed_or_renamed(class_components)
+                self.check_class_instance_attribute_removed_or_renamed(class_components)
 
                 for method_name, method_components in class_components.get("methods", {}).items():
-                    if method_name not in self.stable[module_name]["class_nodes"][class_name]["methods"] and \
-                            not isinstance(method_name, jsondiff.Symbol):
+                    self.function_name = method_name
+                    stable_methods_node = stable_class_nodes[self.class_name]["methods"]
+                    current_methods_node = self.current[self.module_name]["class_nodes"][self.class_name]["methods"]
+                    if self.function_name not in stable_methods_node and \
+                            not isinstance(self.function_name, jsondiff.Symbol):
                         continue  # this is a new method/additive change in current version so skip checks
 
-                    stable_methods_node = self.stable[module_name]["class_nodes"][class_name]["methods"]
-                    self.check_class_method_removed_or_renamed(module_name, class_name, method_name, method_components, stable_methods_node)
+                    self.check_class_method_removed_or_renamed(method_components, stable_methods_node)
 
-                    if not isinstance(method_name, jsondiff.Symbol):  # skip param checks if method was deleted
-                        stable_parameters_node = stable_methods_node[method_name]["parameters"]
-                        current_parameters_node = self.current[module_name]["class_nodes"][class_name]["methods"][method_name]["parameters"]
-                        self.run_parameter_level_diff_checks(module_name, method_name, method_components, stable_parameters_node, current_parameters_node, class_name=class_name)
+                    if not isinstance(self.function_name, jsondiff.Symbol):  # skip param checks if method was deleted
+                        stable_parameters_node = stable_methods_node[self.function_name]["parameters"]
+                        current_parameters_node = current_methods_node[self.function_name]["parameters"]
+                        self.run_parameter_level_diff_checks(
+                            method_components,
+                            stable_parameters_node,
+                            current_parameters_node,
+                        )
 
     def run_function_level_diff_checks(self):
+        self.class_name = None
         for module_name, module in self.diff.items():
+            self.module_name = module_name
             for function_name, function_components in module.get("function_nodes", {}).items():
-                if function_name not in self.stable[module_name]["function_nodes"] and \
-                        not isinstance(function_name, jsondiff.Symbol):
+                self.function_name = function_name
+                stable_function_nodes = self.stable[self.module_name]["function_nodes"]
+                if self.function_name not in stable_function_nodes and \
+                        not isinstance(self.function_name, jsondiff.Symbol):
                     continue  # this is a new function/additive change in current version so skip checks
-                self.check_module_level_function_removed_or_renamed(module_name, function_name, function_components)
 
-                if not isinstance(function_name, jsondiff.Symbol):  # skip param checks if function was deleted
-                    stable_parameters_node = self.stable[module_name]["function_nodes"][function_name]["parameters"]
-                    current_parameters_node = self.current[module_name]["function_nodes"][function_name]["parameters"]
-                    self.run_parameter_level_diff_checks(module_name, function_name, function_components, stable_parameters_node, current_parameters_node)
+                self.check_module_level_function_removed_or_renamed(function_components)
 
-    def run_parameter_level_diff_checks(self, module_name, function_name, function_components, stable_parameters_node, current_parameters_node, class_name=None):
-        for param_name, diff in function_components.get("parameters", {}).items():
-            for diff_type in diff:
-                if isinstance(param_name, jsondiff.Symbol):
-                    self.check_positional_parameter_removed_or_renamed(
-                        module_name, param_name, stable_parameters_node[diff_type]["param_type"], diff_type, function_name, stable_parameters_node, class_name
+                if not isinstance(self.function_name, jsondiff.Symbol):  # skip param checks if function was deleted
+                    stable_parameters_node = stable_function_nodes[self.function_name]["parameters"]
+                    current_parameters_node = self.current[self.module_name]["function_nodes"][self.function_name]["parameters"]
+                    self.run_parameter_level_diff_checks(
+                        function_components,
+                        stable_parameters_node,
+                        current_parameters_node
                     )
-                elif param_name not in stable_parameters_node:
+
+    def run_parameter_level_diff_checks(self,function_components, stable_parameters_node, current_parameters_node):
+        for param_name, diff in function_components.get("parameters", {}).items():
+            self.parameter_name = param_name
+            for diff_type in diff:
+                if isinstance(self.parameter_name, jsondiff.Symbol):
+                    self.check_positional_parameter_removed_or_renamed(
+                        stable_parameters_node[diff_type]["param_type"],
+                        diff_type,
+                        stable_parameters_node,
+                    )
+                elif self.parameter_name not in stable_parameters_node:
                     self.check_positional_parameter_added(
-                        module_name, param_name, current_parameters_node[param_name]["param_type"], function_name, class_name
+                        current_parameters_node[param_name]["param_type"]
                     )
                     break
                 elif diff_type == "default":
-                    stable_default = stable_parameters_node[param_name]["default"]
+                    stable_default = stable_parameters_node[self.parameter_name]["default"]
                     self.check_parameter_default_value_changed(
-                        module_name, function_name, param_name, diff[diff_type], stable_default, class_name
+                        diff[diff_type], stable_default
                     )
                 elif diff_type == "param_type":
                     self.check_parameter_type_changed(
-                        module_name, function_name, param_name, diff["param_type"], stable_parameters_node, class_name
+                        diff["param_type"], stable_parameters_node
                     )
 
-        self.check_positional_parameter_ordering(
-            module_name, function_name, stable_parameters_node, current_parameters_node, class_name
-        )
+        self.check_positional_parameter_ordering(stable_parameters_node, current_parameters_node)
 
-    def check_parameter_type_changed(self, module_name, function_name, param_name, diff, stable_parameters_node, class_name):
-        if class_name:
+    def check_parameter_type_changed(self, diff, stable_parameters_node):
+        if self.class_name:
             self.breaking_changes.append(
                 self.CHANGED_PARAMETER_TYPE.format(
-                    f"{module_name}.{class_name}", function_name, param_name, stable_parameters_node[param_name]["param_type"], diff
+                    f"{self.module_name}.{self.class_name}", self.function_name, self.parameter_name,
+                    stable_parameters_node[self.parameter_name]["param_type"], diff
                 ))
         else:
             self.breaking_changes.append(
                 self.CHANGED_PARAMETER_TYPE_OF_FUNCTION.format(
-                    f"{module_name}.{function_name}", param_name, stable_parameters_node[param_name]["param_type"], diff
+                    f"{self.module_name}.{self.function_name}", self.parameter_name,
+                    stable_parameters_node[self.parameter_name]["param_type"], diff
                 ))
 
-    def check_positional_parameter_ordering(self, module_name, function_name, stable_parameters_node, current_parameters_node, class_name=None):
+    def check_positional_parameter_ordering(self, stable_parameters_node, current_parameters_node):
         if len(stable_parameters_node) != len(current_parameters_node):
             # a parameter was deleted and that breaking change was already reported so just skip
             return
         for param1, param2 in zip(stable_parameters_node, current_parameters_node):
             if param1 != param2:
-                if class_name:
+                if self.class_name:
                     self.breaking_changes.append(
                         self.CHANGED_PARAMETER_ORDERING.format(
-                            f"{module_name}.{class_name}", function_name, list(stable_parameters_node), list(current_parameters_node)
+                            f"{self.module_name}.{self.class_name}", self.function_name,
+                            list(stable_parameters_node), list(current_parameters_node)
                         ))
                 else:
                     self.breaking_changes.append(
                         self.CHANGED_PARAMETER_ORDERING_OF_FUNCTION.format(
-                            f"{module_name}.{function_name}", list(stable_parameters_node), list(current_parameters_node)
+                            f"{self.module_name}.{self.function_name}",
+                            list(stable_parameters_node), list(current_parameters_node)
                         ))
                 break
 
-    def check_parameter_default_value_changed(self, module_name, function_name, param_name, default, stable_default, class_name=None):
+    def check_parameter_default_value_changed(self, default, stable_default):
         if default is not None:  # a default was added in the current version
             if default != stable_default:
                 if stable_default is not None:  # There is a stable default
                     if stable_default == "none":  # the case in which the stable default was None
                         stable_default = None  # set back to actual None for the message
-                    if class_name:
+                    if self.class_name:
                         self.breaking_changes.append(
                             self.CHANGED_PARAMETER_DEFAULT_VALUE.format(
-                                f"{module_name}.{class_name}", function_name, param_name, stable_default, default
+                                f"{self.module_name}.{self.class_name}", self.function_name,
+                                self.parameter_name, stable_default, default
                             ))
                     else:
                         self.breaking_changes.append(
                             self.CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION.format(
-                                f"{module_name}.{function_name}", param_name, stable_default, default
+                                f"{self.module_name}.{self.function_name}", self.parameter_name,
+                                stable_default, default
                             ))
 
-    def check_positional_parameter_added(self, module_name, param_name, param_type, function_name, class_name=None):
+    def check_positional_parameter_added(self, param_type):
         if param_type == "positional_or_keyword":
-            if class_name:
-                self.breaking_changes.append(self.ADDED_POSITIONAL_PARAM_TO_METHOD.format(f"{module_name}.{class_name}", function_name, param_type, param_name))
+            if self.class_name:
+                self.breaking_changes.append(self.ADDED_POSITIONAL_PARAM_TO_METHOD.format(
+                    f"{self.module_name}.{self.class_name}", self.function_name, param_type, self.parameter_name)
+                )
             else:
-                self.breaking_changes.append(self.ADDED_POSITIONAL_PARAM_TO_FUNCTION.format(f"{module_name}.{function_name}", param_type, param_name))
+                self.breaking_changes.append(self.ADDED_POSITIONAL_PARAM_TO_FUNCTION.format(
+                    f"{self.module_name}.{self.function_name}", param_type, self.parameter_name)
+                )
 
-    def check_positional_parameter_removed_or_renamed(self, module_name, param_name, param_type, deleted, function_name, stable_parameters_node, class_name=None):
+    def check_positional_parameter_removed_or_renamed(self, param_type, deleted, stable_parameters_node):
         if param_type != "positional_or_keyword":
             return
         deleted_params = []
-        if param_name.label == "delete":
+        if self.parameter_name.label == "delete":
             deleted_params = [deleted]
-        elif param_name.label == "replace":  # replace means all positional parameters were removed
+        elif self.parameter_name.label == "replace":  # replace means all positional parameters were removed
             deleted_params = stable_parameters_node[param_type]
 
         for deleted in deleted_params:
             if deleted != "self":
-                if class_name:
+                if self.class_name:
                     self.breaking_changes.append(self.REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_METHOD.format(
-                            f"{module_name}.{class_name}", function_name, param_type, deleted
+                            f"{self.module_name}.{self.class_name}", self.function_name, param_type, deleted
                         ))
                 else:
                     self.breaking_changes.append(self.REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_FUNCTION.format(
-                            f"{module_name}.{function_name}", param_type, deleted
+                            f"{self.module_name}.{self.function_name}", param_type, deleted
                         ))
 
-    def check_class_instance_attribute_removed_or_renamed(self, module_name, class_name, components):
+    def check_class_instance_attribute_removed_or_renamed(self, components):
         for prop in components.get("properties", []):
             if isinstance(prop, jsondiff.Symbol):
                 deleted_props = []
                 if prop.label == "delete":
                     deleted_props = components["properties"][prop]
                 elif prop.label == "replace":
-                    deleted_props = self.stable[module_name]["class_nodes"][class_name]["properties"]
+                    deleted_props = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"]
 
                 for property in deleted_props:
                     if property.endswith("Client"):
-                        bc = self.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_CLIENT.format(f"{module_name}.{class_name}", property)
-                    elif self.stable[module_name]["class_nodes"][class_name]["type"] == "Enum":
-                        bc = self.REMOVE_OR_RENAME_ENUM_VALUE.format(f"{module_name}.{class_name}", property)
+                        bc = self.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_CLIENT.format(
+                            f"{self.module_name}.{self.class_name}", property
+                        )
+                    elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
+                        bc = self.REMOVE_OR_RENAME_ENUM_VALUE.format(
+                            f"{self.module_name}.{self.class_name}", property
+                        )
                     else:
-                        bc = self.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL.format(f"{module_name}.{class_name}", property)
+                        bc = self.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL.format(
+                            f"{self.module_name}.{self.class_name}", property
+                        )
                     self.breaking_changes.append(bc)
 
-    def check_class_removed_or_renamed(self, module_name, model_name, class_components):
-        if isinstance(model_name, jsondiff.Symbol):
+    def check_class_removed_or_renamed(self, class_components):
+        if isinstance(self.class_name, jsondiff.Symbol):
             deleted_classes = []
-            if model_name.label == "delete":
+            if self.class_name.label == "delete":
                 deleted_classes = class_components
-            elif model_name.label == "replace":
-                deleted_classes = self.stable[module_name]["class_nodes"]
+            elif self.class_name.label == "replace":
+                deleted_classes = self.stable[self.module_name]["class_nodes"]
 
             for name in deleted_classes:
                 if name.endswith("Client"):
-                    bc = self.REMOVE_OR_RENAME_CLIENT.format(f"{module_name}.{name}")
+                    bc = self.REMOVE_OR_RENAME_CLIENT.format(f"{self.module_name}.{name}")
                 else:
-                    bc = self.REMOVE_OR_RENAME_MODEL.format(f"{module_name}.{name}")
+                    bc = self.REMOVE_OR_RENAME_MODEL.format(f"{self.module_name}.{name}")
                 self.breaking_changes.append(bc)
 
-    def check_class_method_removed_or_renamed(self, module_name, class_name, method_name, method_components, stable_methods_node):
-        if isinstance(method_name, jsondiff.Symbol):
+    def check_class_method_removed_or_renamed(self, method_components, stable_methods_node):
+        if isinstance(self.function_name, jsondiff.Symbol):
             methods_deleted = []
-            if method_name.label == "delete":
+            if self.function_name.label == "delete":
                 methods_deleted = method_components
-            elif method_name.label == "replace":
+            elif self.function_name.label == "replace":
                 methods_deleted = stable_methods_node
 
             for method in methods_deleted:
-                if class_name.endswith("Client"):
-                    bc = self.REMOVE_OR_RENAME_CLIENT_METHOD.format(f"{module_name}.{class_name}", method)
+                if self.class_name.endswith("Client"):
+                    bc = self.REMOVE_OR_RENAME_CLIENT_METHOD.format(f"{self.module_name}.{self.class_name}", method)
                 else:
-                    bc = self.REMOVE_OR_RENAME_MODEL_METHOD.format(f"{module_name}.{class_name}", method)
+                    bc = self.REMOVE_OR_RENAME_MODEL_METHOD.format(f"{self.module_name}.{self.class_name}", method)
                 self.breaking_changes.append(bc)
 
-    def check_module_level_function_removed_or_renamed(self, module_name, function_name, function_components):
-        if isinstance(function_name, jsondiff.Symbol):
+    def check_module_level_function_removed_or_renamed(self, function_components):
+        if isinstance(self.function_name, jsondiff.Symbol):
             deleted_functions = []
-            if function_name.label == "delete":
+            if self.function_name.label == "delete":
                 deleted_functions = function_components
-            elif function_name.label == "replace":
-                deleted_functions = self.stable[module_name]["function_nodes"]
+            elif self.function_name.label == "replace":
+                deleted_functions = self.stable[self.module_name]["function_nodes"]
 
             for function in deleted_functions:
-                self.breaking_changes.append(self.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION.format(f"{module_name}.{function}"))
+                self.breaking_changes.append(self.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION.format(
+                    f"{self.module_name}.{function}")
+                )
 
 # "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\formrecognizer\\azure-ai-formrecognizer"
 # "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-blob"
@@ -535,7 +577,7 @@ def main(package_name, target_module, version, in_venv, pkg_dir):
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        test_compare(pkg_dir, version)
+        # test_compare(pkg_dir, version)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/breaking-changes-tool to resolve any build issues*****\n")
