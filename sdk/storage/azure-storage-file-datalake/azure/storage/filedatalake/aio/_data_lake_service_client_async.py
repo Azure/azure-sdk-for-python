@@ -518,9 +518,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :rtype: Dict[str, Any]
         """
         props = await self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
-        props["analytics_logging"] = DatalakeAnalyticsLogging._from_generated(props["analytics_logging"])
-        props["hour_metrics"] = DatalakeMetrics._from_generated(props["hour_metrics"])
-        props["minute_metrics"] = DatalakeMetrics._from_generated(props["minute_metrics"])
-        props["delete_retention_policy"] = DatalakeRetentionPolicy._from_generated(props["delete_retention_policy"])
-        props["static_website"] = DatalakeStaticWebsite._from_generated(props["static_website"])
+        props["analytics_logging"] = DatalakeAnalyticsLogging._from_generated(props["analytics_logging"])   # pylint: disable=protected-access
+        props["hour_metrics"] = DatalakeMetrics._from_generated(props["hour_metrics"])  # pylint: disable=protected-access
+        props["minute_metrics"] = DatalakeMetrics._from_generated(props["minute_metrics"])  # pylint: disable=protected-access
+        props["delete_retention_policy"] = DatalakeRetentionPolicy._from_generated(props["delete_retention_policy"])    # pylint: disable=protected-access
+        props["static_website"] = DatalakeStaticWebsite._from_generated(props["static_website"])    # pylint: disable=protected-access
         return props
