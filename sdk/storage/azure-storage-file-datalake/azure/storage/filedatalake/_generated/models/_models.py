@@ -57,6 +57,9 @@ class BlobHierarchyListSegment(Model):
         'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]'},
         'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]'},
     }
+    _xml_map = {
+        'name': 'Blobs'
+    }
 
     def __init__(self, **kwargs):
         super(BlobHierarchyListSegment, self).__init__(**kwargs)
@@ -102,6 +105,9 @@ class BlobItemInternal(Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
         'deletion_id': {'key': 'DeletionId', 'type': 'str'},
     }
+    _xml_map = {
+        'name': 'Blob'
+    }
 
     def __init__(self, **kwargs):
         super(BlobItemInternal, self).__init__(**kwargs)
@@ -128,7 +134,10 @@ class BlobPrefix(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+    }
+    _xml_map = {
+        'name': 'BlobPrefix'
     }
 
     def __init__(self, **kwargs):
@@ -240,6 +249,9 @@ class BlobPropertiesInternal(Model):
         'is_sealed': {'key': 'Sealed', 'type': 'bool'},
         'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
         'delete_time': {'key': 'DeleteTime', 'type': 'rfc-1123'},
+    }
+    _xml_map = {
+        'name': 'Properties'
     }
 
     def __init__(self, **kwargs):
@@ -371,6 +383,9 @@ class ListBlobsHierarchySegmentResponse(Model):
         'delimiter': {'key': 'Delimiter', 'type': 'str'},
         'segment': {'key': 'Segment', 'type': 'BlobHierarchyListSegment'},
         'next_marker': {'key': 'NextMarker', 'type': 'str'},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, **kwargs):
