@@ -40,6 +40,7 @@ try:
     from ._models_py3 import ClusterMonitoringResponse
     from ._models_py3 import ClusterPatchParameters
     from ._models_py3 import ClusterResizeParameters
+    from ._models_py3 import ComputeIsolationProperties
     from ._models_py3 import ComputeProfile
     from ._models_py3 import ConnectivityEndpoint
     from ._models_py3 import DataDisksGroups
@@ -119,6 +120,7 @@ except (SyntaxError, ImportError):
     from ._models import ClusterMonitoringResponse
     from ._models import ClusterPatchParameters
     from ._models import ClusterResizeParameters
+    from ._models import ComputeIsolationProperties
     from ._models import ComputeProfile
     from ._models import ConnectivityEndpoint
     from ._models import DataDisksGroups
@@ -216,6 +218,7 @@ __all__ = [
     'ClusterMonitoringResponse',
     'ClusterPatchParameters',
     'ClusterResizeParameters',
+    'ComputeIsolationProperties',
     'ComputeProfile',
     'ConnectivityEndpoint',
     'DataDisksGroups',
