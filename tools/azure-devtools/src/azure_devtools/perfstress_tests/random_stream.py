@@ -18,7 +18,7 @@ class RandomStream:
 
     def read(self, size=None):
         if self._remaining == 0:
-            return None
+            return b""
 
         if size is None:
             e = self._base_data_length
