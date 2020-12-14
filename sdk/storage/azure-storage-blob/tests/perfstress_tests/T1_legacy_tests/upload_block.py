@@ -14,13 +14,12 @@ class LegacyUploadBlockTest(_LegacyContainerTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.blob_name = "blobblocktest-" + str(uuid.uuid4())
-        self.data = get_random_bytes(self.args.size)
 
     def run_sync(self):
         self.service_client.put_block(
             container_name=self.container_name,
             blob_name=self.blob_name,
-            block=self.data,
+            block=get_random_bytes(self.args.size),
             block_id=str(uuid.uuid4()))
 
     async def run_async(self):

@@ -12,9 +12,8 @@ class ListBlobsTest(_ContainerTest):
 
     async def global_setup(self):
         await super().global_setup()
-        data = get_random_bytes(self.args.size)
         for i in range(self.args.num_blobs):
-            await self.async_container_client.upload_blob("listtest" + str(i), data=data)
+            await self.async_container_client.upload_blob("listtest" + str(i), data=b"")
 
     def run_sync(self):
         list(self.container_client.list_blobs())

@@ -16,13 +16,13 @@ class LegacyUploadFromFileTest(_LegacyContainerTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.blob_name = "containertest-" + str(uuid.uuid4())
-        self.data = get_random_bytes(self.args.size)
 
     async def global_setup(self):
         await super().global_setup()
+        data = get_random_bytes(self.args.size)
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             self.temp_file = temp_file.name
-            temp_file.write(self.data)
+            temp_file.write(data)
 
     async def global_cleanup(self):
         os.remove(self.temp_file)

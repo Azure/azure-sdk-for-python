@@ -13,14 +13,15 @@ class UploadBlockTest(_BlobTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.blob_name = "blobblocktest-" + str(uuid.uuid4())
-        self.data = get_random_bytes(self.args.size)
 
     def run_sync(self):
+        data = get_random_bytes(self.args.size)
         self.blob_client.stage_block(
             block_id=str(uuid.uuid4()),
-            data=self.data)
+            data=data)
 
     async def run_async(self):
+        data = get_random_bytes(self.args.size)
         await self.async_blob_client.stage_block(
             block_id=str(uuid.uuid4()),
-            data=self.data)
+            data=data)

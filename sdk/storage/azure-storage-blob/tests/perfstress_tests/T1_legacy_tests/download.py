@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure_devtools.perfstress_tests import get_random_bytes
+from azure_devtools.perfstress_tests import get_random_bytes, WriteStream
 
 from ._test_base_legacy import _LegacyContainerTest
 
@@ -20,9 +20,11 @@ class LegacyDownloadTest(_LegacyContainerTest):
             blob=data)
 
     def run_sync(self):
-        self.service_client.get_blob_to_bytes(
+        download = WriteStream()
+        self.service_client.get_blob_to_stream(
             container_name=self.container_name,
             blob_name=self.blob_name,
+            stream=download,
             max_connections=self.args.max_concurrency)
 
     async def run_async(self):

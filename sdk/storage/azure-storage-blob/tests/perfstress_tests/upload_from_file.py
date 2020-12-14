@@ -15,13 +15,13 @@ class UploadFromFileTest(_BlobTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.temp_file = None
-        self.data = get_random_bytes(self.args.size)
 
     async def global_setup(self):
         await super().global_setup()
+        data = get_random_bytes(self.args.size)
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             self.temp_file = temp_file.name
-            temp_file.write(self.data)
+            temp_file.write(data)
 
     async def global_cleanup(self):
         os.remove(self.temp_file)

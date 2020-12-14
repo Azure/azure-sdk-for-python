@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure_devtools.perfstress_tests import get_random_bytes
+from azure_devtools.perfstress_tests import get_random_bytes, WriteStream
 
 from ._test_base import _ContainerTest
 
@@ -21,12 +21,14 @@ class DownloadTest(_ContainerTest):
         await self.async_blob_client.upload_blob(data)
 
     def run_sync(self):
+        download = WriteStream()
         stream = self.blob_client.download_blob(max_concurrency=self.args.max_concurrency)
-        stream.readall()
+        stream.readinto(download)
 
     async def run_async(self):
+        download = WriteStream()
         stream = await self.async_blob_client.download_blob(max_concurrency=self.args.max_concurrency)
-        await stream.readall()
+        await stream.readinto(download)
 
     async def close(self):
         await self.async_blob_client.close()
