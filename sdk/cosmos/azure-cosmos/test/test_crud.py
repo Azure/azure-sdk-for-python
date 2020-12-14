@@ -699,9 +699,7 @@ class CRUDTests(unittest.TestCase):
         # create document with float partitionKey
         created_collection.create_item(body=document_definition)
 
-        created_db.delete_container(created_collection)
-
-    document_definition = {'name': 'sample document',
+        document_definition = {'name': 'sample document',
                                'spam': 'eggs',
                                'pk': 'value'}
 
@@ -711,6 +709,8 @@ class CRUDTests(unittest.TestCase):
             created_collection.create_item,
             document_definition
         )
+
+        created_db.delete_container(created_collection)
 
     def test_partitioned_collection_conflict_crud_and_query(self):
         created_db = self.databaseForTest
