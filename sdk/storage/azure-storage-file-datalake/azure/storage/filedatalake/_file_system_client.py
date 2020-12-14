@@ -778,7 +778,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             Specifies the version of the deleted path to restore.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: DataLakeDirectoryClient or DataLakeFileClient
+        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
         """
         _, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
 
