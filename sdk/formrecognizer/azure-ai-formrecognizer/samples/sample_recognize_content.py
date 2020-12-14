@@ -38,7 +38,7 @@ class RecognizeContentSample(object):
 
     def recognize_content(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "./sample_forms/forms/selection_mark_form.pdf"))
+                                                            "..", "./sample_forms/forms/form_selection_mark.png"))
         # [START recognize_content]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -60,6 +60,7 @@ class RecognizeContentSample(object):
             ))
             for table_idx, table in enumerate(content.tables):
                 print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
+                print("Table # {} location on page: {}".format(table_idx, format_bounding_box(table.bounding_box)))
                 for cell in table.cells:
                     print("...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
                         cell.row_index,

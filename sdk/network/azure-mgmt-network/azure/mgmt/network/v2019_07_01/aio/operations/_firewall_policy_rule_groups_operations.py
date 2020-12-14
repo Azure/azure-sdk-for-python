@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class FirewallPolicyRuleGroupsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -135,7 +135,14 @@ class FirewallPolicyRuleGroupsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'firewallPolicyName': self._serialize.url("firewall_policy_name", firewall_policy_name, 'str'),
+            'ruleGroupName': self._serialize.url("rule_group_name", rule_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -155,7 +162,7 @@ class FirewallPolicyRuleGroupsOperations:
         firewall_policy_name: str,
         rule_group_name: str,
         **kwargs
-    ) -> "models.FirewallPolicyRuleGroup":
+    ) -> "_models.FirewallPolicyRuleGroup":
         """Gets the specified FirewallPolicyRuleGroup.
 
         :param resource_group_name: The name of the resource group.
@@ -169,7 +176,7 @@ class FirewallPolicyRuleGroupsOperations:
         :rtype: ~azure.mgmt.network.v2019_07_01.models.FirewallPolicyRuleGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallPolicyRuleGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallPolicyRuleGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -216,10 +223,10 @@ class FirewallPolicyRuleGroupsOperations:
         resource_group_name: str,
         firewall_policy_name: str,
         rule_group_name: str,
-        parameters: "models.FirewallPolicyRuleGroup",
+        parameters: "_models.FirewallPolicyRuleGroup",
         **kwargs
-    ) -> "models.FirewallPolicyRuleGroup":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallPolicyRuleGroup"]
+    ) -> "_models.FirewallPolicyRuleGroup":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallPolicyRuleGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,9 +282,9 @@ class FirewallPolicyRuleGroupsOperations:
         resource_group_name: str,
         firewall_policy_name: str,
         rule_group_name: str,
-        parameters: "models.FirewallPolicyRuleGroup",
+        parameters: "_models.FirewallPolicyRuleGroup",
         **kwargs
-    ) -> AsyncLROPoller["models.FirewallPolicyRuleGroup"]:
+    ) -> AsyncLROPoller["_models.FirewallPolicyRuleGroup"]:
         """Creates or updates the specified FirewallPolicyRuleGroup.
 
         :param resource_group_name: The name of the resource group.
@@ -300,7 +307,7 @@ class FirewallPolicyRuleGroupsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallPolicyRuleGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallPolicyRuleGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -326,7 +333,14 @@ class FirewallPolicyRuleGroupsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'firewallPolicyName': self._serialize.url("firewall_policy_name", firewall_policy_name, 'str'),
+            'ruleGroupName': self._serialize.url("rule_group_name", rule_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -345,7 +359,7 @@ class FirewallPolicyRuleGroupsOperations:
         resource_group_name: str,
         firewall_policy_name: str,
         **kwargs
-    ) -> AsyncIterable["models.FirewallPolicyRuleGroupListResult"]:
+    ) -> AsyncIterable["_models.FirewallPolicyRuleGroupListResult"]:
         """Lists all FirewallPolicyRuleGroups in a FirewallPolicy resource.
 
         :param resource_group_name: The name of the resource group.
@@ -357,7 +371,7 @@ class FirewallPolicyRuleGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_07_01.models.FirewallPolicyRuleGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallPolicyRuleGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallPolicyRuleGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

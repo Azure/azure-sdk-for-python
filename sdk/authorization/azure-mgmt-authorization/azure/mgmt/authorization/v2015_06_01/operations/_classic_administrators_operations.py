@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ClassicAdministratorsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class ClassicAdministratorsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ClassicAdministratorListResult"]
+        # type: (...) -> Iterable["_models.ClassicAdministratorListResult"]
         """Gets service administrator, account administrator, and co-administrators for the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class ClassicAdministratorsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.authorization.v2015_06_01.models.ClassicAdministratorListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClassicAdministratorListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClassicAdministratorListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

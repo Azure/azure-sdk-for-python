@@ -90,7 +90,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             initial_poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
             cont_token = initial_poller.continuation_token()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], continuation_token=cont_token)
+            poller = await client.begin_create_composed_model(None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
 

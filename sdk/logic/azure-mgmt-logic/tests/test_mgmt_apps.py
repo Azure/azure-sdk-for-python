@@ -1,14 +1,15 @@
 ﻿# coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import unittest
 
 import azure.mgmt.logic
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+
 
 class MgmtAppsTest(AzureMgmtTestCase):
 
@@ -21,12 +22,10 @@ class MgmtAppsTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location="West US")
     def test_logic(self, resource_group, location):
         workflow_name = '12HourHeartBeat'
-        self.logic_client.workflows.create_or_update(
-            resource_group.name,
-            workflow_name,
-            azure.mgmt.logic.models.Workflow(
+        # workflow_name1 = workflow_name+'1'
+        workflow=azure.mgmt.logic.models.Workflow(
                 location=location,
-                definition={ 
+                definition={
                     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
                     "contentVersion": "1.0.0.0",
                     "parameters": {},
@@ -35,9 +34,15 @@ class MgmtAppsTest(AzureMgmtTestCase):
                     "outputs": {}
                 }
             )
-        )
+        self.logic_client.workflows.create_or_update(resource_group.name,workflow_name,workflow)
+
+        self.logic_client.workflows.get(resource_group.name, workflow_name)
+
+        # self.logic_client.workflows.update(resource_group.name,workflow_name1)
+
+        self.logic_client.workflows.delete(resource_group.name, workflow_name)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

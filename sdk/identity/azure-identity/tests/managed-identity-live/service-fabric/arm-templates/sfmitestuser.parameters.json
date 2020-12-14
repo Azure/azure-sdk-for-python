@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "value": "sfmi-test"
+        },
+        "clusterLocation": {
+            "value": "westus2"
+        },
+        "applicationTypeName": {
+            "value": "sfmitestuserType"
+        },
+        "applicationTypeVersion": {
+            "value": "1.0.0"
+        },
+        "applicationPackageUrl": {
+            "value": ""
+        },
+        "applicationName": {
+            "value": "sfmitestuser"
+        },
+        "frontEndServiceName": {
+            "value": "sfmitestuser~sfmitestuserfront"
+        },
+        "frontEndServiceTypeName": {
+            "value": "sfmitestuserfrontType"
+        },
+        "userAssignedIdentityName": {
+            "value": "AdminUser"
+        }
+    }
+}

@@ -94,7 +94,7 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_update_success(self, servicebus_namespace_connection_string, **kwargs):
+    def test_mgmt_subscription_update_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "fjrui"
@@ -129,6 +129,16 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
             assert subscription_description.lock_duration == datetime.timedelta(seconds=12)
             # assert topic_description.enable_partitioning == True
             # assert topic_description.requires_session == True
+
+            # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
+            subscription_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            subscription_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)

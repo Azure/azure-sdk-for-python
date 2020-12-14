@@ -19,7 +19,7 @@ from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusEr
 
 Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
 AsyncLockRenewFailureCallback = Callable[[Renewable,
-                                     Optional[Exception]], Awaitable[None]]
+                                          Optional[Exception]], Awaitable[None]]
 
 _log = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class AutoLockRenewer:
      that is being registered. Default value is None (no callback).
     :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
     :param loop: An async event loop.
-    :type loop: ~asyncio.AbstractEventLoop
+    :type loop: Optional[~asyncio.AbstractEventLoop]
 
     .. admonition:: Example:
 
@@ -169,9 +169,9 @@ class AutoLockRenewer:
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         if renewable.locked_until_utc is None:
-            raise ValueError("Only azure.servicebus.ServiceBusReceivedMessage objects in PeekLock receive mode may"
+            raise ValueError("Only azure.servicebus.ServiceBusReceivedMessage objects in PEEK_LOCK receive mode may"
                             "be lock-renewed.  (E.g. only messages received via receive() or the receiver iterator,"
-                            "not using ReceiveAndDelete receive mode, and not returned from Peek)")
+                            "not using RECEIVE_AND_DELETE receive mode, and not returned from Peek)")
 
         starttime = get_renewable_start_time(renewable)
 

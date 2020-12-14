@@ -30,11 +30,9 @@ try:
     service_client = DigitalTwinsClient(url, credential)
 
     # List models
-    # from the samples: dtmi:samples:Room1, dtmi:samples:Wifi1, dtmi:samples:Floor1, dtmi:samples:Building1
-    dependecies_for = ["<MODEL_ID>"]
-    models = service_client.list_models(dependecies_for)
+    models = service_client.list_models()
     for model in models:
-        print(model + '\n')
+        print(model)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

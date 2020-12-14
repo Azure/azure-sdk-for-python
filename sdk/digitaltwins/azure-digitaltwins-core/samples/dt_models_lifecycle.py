@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.digitaltwins.core import DigitalTwinsClient
@@ -23,13 +22,13 @@ from azure.digitaltwins.core import DigitalTwinsClient
 # For the purpose of this example we will create temporary model and a temporay component model using random Ids.
 # We have to make sure these model Ids are unique within the DT instance so we use generated UUIDs.
 try:
-    model_id = 'model-' + str(uuid.uuid4())
-    component_id = 'component-' + str(uuid.uuid4())
+    model_id = 'dtmi:samples:examplemodel;1'
+    component_id = 'dtmi:samples:examplecomponent;1'
 
     temporary_component = {
         "@id": component_id,
         "@type": "Interface",
-        "@context": "dtmi:dtdl:context2",
+        "@context": "dtmi:dtdl:context;2",
         "displayName": "Component1",
         "contents": [
         {
@@ -48,7 +47,7 @@ try:
     temporary_model = {
         "@id": model_id,
         "@type": "Interface",
-        "@context": "dtmi:dtdl:context2",
+        "@context": "dtmi:dtdl:context;2",
         "displayName": "TempModel",
         "contents": [
         {
@@ -99,9 +98,9 @@ try:
     print(get_model)
 
     # List all models
-    listed_models = service_client.list_models(model_id)
+    listed_models = service_client.list_models()
     for model in listed_models:
-        print(model + '\n')
+        print(model)
 
     # Decomission models
     service_client.decommission_model(model_id)

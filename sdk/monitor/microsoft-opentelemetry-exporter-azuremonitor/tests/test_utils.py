@@ -4,7 +4,7 @@
 import os
 import unittest
 
-from microsoft.opentelemetry.exporter.azuremonitor import utils
+from microsoft.opentelemetry.exporter.azuremonitor import _utils
 
 
 class TestUtils(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestUtils(unittest.TestCase):
         )
 
     def test_nanoseconds_to_duration(self):
-        ns_to_duration = utils.ns_to_duration
+        ns_to_duration = _utils.ns_to_duration
         self.assertEqual(ns_to_duration(0), "0.00:00:00.000")
         self.assertEqual(ns_to_duration(1000000), "0.00:00:00.001")
         self.assertEqual(ns_to_duration(1000000000), "0.00:00:01.000")
