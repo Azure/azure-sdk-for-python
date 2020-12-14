@@ -10,6 +10,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
 
 from azure.storage.blob.aio import BlobServiceClient
+from .._deserialize import get_datalake_service_properties
 from .._generated.aio import DataLakeStorageClient
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from ._file_system_client_async import FileSystemClient
@@ -404,6 +405,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         If an element (e.g. analytics_logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
+        .. versionadded:: 12.3.0
+            This operation was introduced in API version '2020-06-12'.
+
         :param analytics_logging:
             Groups the Azure Analytics Logging settings.
         :type analytics_logging: ~azure.storage.filedatalake.DatalakeAnalyticsLogging
@@ -449,6 +453,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         """Gets the properties of a storage account's datalake service, including
         Azure Storage Analytics.
 
+        .. versionadded:: 12.3.0
+            This operation was introduced in API version '2020-06-12'.
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An object containing datalake service properties such as
@@ -456,9 +463,4 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :rtype: Dict[str, Any]
         """
         props = await self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
-        props["analytics_logging"] = DatalakeAnalyticsLogging._from_generated(props["analytics_logging"])   # pylint: disable=protected-access
-        props["hour_metrics"] = DatalakeMetrics._from_generated(props["hour_metrics"])  # pylint: disable=protected-access
-        props["minute_metrics"] = DatalakeMetrics._from_generated(props["minute_metrics"])  # pylint: disable=protected-access
-        props["delete_retention_policy"] = DatalakeRetentionPolicy._from_generated(props["delete_retention_policy"])    # pylint: disable=protected-access
-        props["static_website"] = DatalakeStaticWebsite._from_generated(props["static_website"])    # pylint: disable=protected-access
-        return props
+        return get_datalake_service_properties(props)
