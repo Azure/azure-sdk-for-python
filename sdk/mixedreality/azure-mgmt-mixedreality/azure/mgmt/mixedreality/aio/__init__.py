@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._mixed_reality_client import MixedRealityClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['MixedRealityClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
