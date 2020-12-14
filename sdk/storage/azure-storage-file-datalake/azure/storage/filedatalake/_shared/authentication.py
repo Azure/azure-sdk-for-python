@@ -115,7 +115,8 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def _add_authorization_header(self, request, string_to_sign):
         try:
-            signature = sign_string(self.account_key, string_to_sign)
+            padding = '=' * (4 - len(self.account_key) % 4)
+            signature = sign_string(self.account_key + padding, string_to_sign)
             auth_string = 'SharedKey ' + self.account_name + ':' + signature
             request.http_request.headers['Authorization'] = auth_string
         except Exception as ex:
