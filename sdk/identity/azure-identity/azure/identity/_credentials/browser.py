@@ -6,6 +6,8 @@ import socket
 import uuid
 import webbrowser
 
+from six.moves.urllib_parse import urlparse
+
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
@@ -52,7 +54,14 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._redirect_uri = kwargs.pop("redirect_uri", None)
+        redirect_uri = kwargs.pop("redirect_uri", None)
+        if redirect_uri:
+            self._parsed_url = urlparse(redirect_uri)
+            if not (self._parsed_url.hostname and self._parsed_url.port):
+                raise ValueError('"redirect_uri" must be a URL with port number, for example "http://localhost:8400"')
+        else:
+            self._parsed_url = None
+
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
@@ -64,17 +73,17 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         # start an HTTP server to receive the redirect
         server = None
-        redirect_uri = self._redirect_uri
-        if redirect_uri:
+        if self._parsed_url:
             try:
-                server = self._server_class(redirect_uri, timeout=self._timeout)
+                redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
+                server = self._server_class(self._parsed_url.hostname, self._parsed_url.port, timeout=self._timeout)
             except socket.error:
                 raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri)
         else:
             for port in range(8400, 9000):
                 try:
+                    server = self._server_class("localhost", port, timeout=self._timeout)
                     redirect_uri = "http://localhost:{}".format(port)
-                    server = self._server_class(redirect_uri, timeout=self._timeout)
                     break
                 except socket.error:
                     continue  # keep looking for an open port

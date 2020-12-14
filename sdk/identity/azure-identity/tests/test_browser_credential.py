@@ -323,6 +323,14 @@ def test_no_browser():
         credential.get_token("scope")
 
 
+@pytest.mark.parametrize("redirect_uri", ("http://localhost", "host", "host:42"))
+def test_invalid_redirect_uri(redirect_uri):
+    """The credential should raise ValueError when redirect_uri is invalid or doesn't include a port"""
+
+    with pytest.raises(ValueError):
+        InteractiveBrowserCredential(redirect_uri=redirect_uri)
+
+
 def test_cannot_bind_port():
     """get_token should raise CredentialUnavailableError when the redirect listener can't bind a port"""
 
