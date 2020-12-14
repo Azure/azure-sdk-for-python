@@ -8,7 +8,7 @@ from azure.core.pipeline.transport import (
     AsyncHttpTransport,
 )
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
+from azure.core.pipeline.transport.aiohttp import AioHttpStreamDownloadGenerator
 from unittest import mock
 import pytest
 
