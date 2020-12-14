@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ExpressRouteCircuitsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -129,7 +129,13 @@ class ExpressRouteCircuitsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -148,7 +154,7 @@ class ExpressRouteCircuitsOperations:
         resource_group_name: str,
         circuit_name: str,
         **kwargs
-    ) -> "models.ExpressRouteCircuit":
+    ) -> "_models.ExpressRouteCircuit":
         """Gets information about the specified express route circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -160,7 +166,7 @@ class ExpressRouteCircuitsOperations:
         :rtype: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuit"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuit"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -205,10 +211,10 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: "models.ExpressRouteCircuit",
+        parameters: "_models.ExpressRouteCircuit",
         **kwargs
-    ) -> "models.ExpressRouteCircuit":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuit"]
+    ) -> "_models.ExpressRouteCircuit":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuit"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -262,9 +268,9 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: "models.ExpressRouteCircuit",
+        parameters: "_models.ExpressRouteCircuit",
         **kwargs
-    ) -> AsyncLROPoller["models.ExpressRouteCircuit"]:
+    ) -> AsyncLROPoller["_models.ExpressRouteCircuit"]:
         """Creates or updates an express route circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -284,7 +290,7 @@ class ExpressRouteCircuitsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuit"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuit"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -309,7 +315,13 @@ class ExpressRouteCircuitsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -328,7 +340,7 @@ class ExpressRouteCircuitsOperations:
         resource_group_name: str,
         circuit_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ExpressRouteCircuitsArpTableListResult"]:
+    ) -> AsyncIterable["_models.ExpressRouteCircuitsArpTableListResult"]:
         """The ListArpTable from ExpressRouteCircuit operation retrieves the currently advertised arp
         table associated with the ExpressRouteCircuits in a resource group.
 
@@ -341,7 +353,7 @@ class ExpressRouteCircuitsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitsArpTableListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitsArpTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitsArpTableListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -403,7 +415,7 @@ class ExpressRouteCircuitsOperations:
         resource_group_name: str,
         circuit_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ExpressRouteCircuitsRoutesTableListResult"]:
+    ) -> AsyncIterable["_models.ExpressRouteCircuitsRoutesTableListResult"]:
         """The ListRoutesTable from ExpressRouteCircuit operation retrieves the currently advertised
         routes table associated with the ExpressRouteCircuits in a resource group.
 
@@ -416,7 +428,7 @@ class ExpressRouteCircuitsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitsRoutesTableListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitsRoutesTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitsRoutesTableListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -478,7 +490,7 @@ class ExpressRouteCircuitsOperations:
         resource_group_name: str,
         circuit_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ExpressRouteCircuitsStatsListResult"]:
+    ) -> AsyncIterable["_models.ExpressRouteCircuitsStatsListResult"]:
         """The ListStats ExpressRouteCircuit operation retrieves all the stats from a ExpressRouteCircuits
         in a resource group.
 
@@ -491,7 +503,7 @@ class ExpressRouteCircuitsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitsStatsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitsStatsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitsStatsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -552,7 +564,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ExpressRouteCircuitListResult"]:
+    ) -> AsyncIterable["_models.ExpressRouteCircuitListResult"]:
         """Gets all the express route circuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -562,7 +574,7 @@ class ExpressRouteCircuitsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -621,7 +633,7 @@ class ExpressRouteCircuitsOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ExpressRouteCircuitListResult"]:
+    ) -> AsyncIterable["_models.ExpressRouteCircuitListResult"]:
         """Gets all the express route circuits in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -629,7 +641,7 @@ class ExpressRouteCircuitsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

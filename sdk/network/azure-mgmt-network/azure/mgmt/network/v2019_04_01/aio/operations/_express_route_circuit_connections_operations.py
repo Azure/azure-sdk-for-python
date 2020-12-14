@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ExpressRouteCircuitConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -142,7 +142,15 @@ class ExpressRouteCircuitConnectionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -163,7 +171,7 @@ class ExpressRouteCircuitConnectionsOperations:
         peering_name: str,
         connection_name: str,
         **kwargs
-    ) -> "models.ExpressRouteCircuitConnection":
+    ) -> "_models.ExpressRouteCircuitConnection":
         """Gets the specified Express Route Circuit Connection from the specified express route circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -179,7 +187,7 @@ class ExpressRouteCircuitConnectionsOperations:
         :rtype: ~azure.mgmt.network.v2019_04_01.models.ExpressRouteCircuitConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -228,10 +236,10 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        express_route_circuit_connection_parameters: "models.ExpressRouteCircuitConnection",
+        express_route_circuit_connection_parameters: "_models.ExpressRouteCircuitConnection",
         **kwargs
-    ) -> "models.ExpressRouteCircuitConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitConnection"]
+    ) -> "_models.ExpressRouteCircuitConnection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -289,9 +297,9 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        express_route_circuit_connection_parameters: "models.ExpressRouteCircuitConnection",
+        express_route_circuit_connection_parameters: "_models.ExpressRouteCircuitConnection",
         **kwargs
-    ) -> AsyncLROPoller["models.ExpressRouteCircuitConnection"]:
+    ) -> AsyncLROPoller["_models.ExpressRouteCircuitConnection"]:
         """Creates or updates a Express Route Circuit Connection in the specified express route circuits.
 
         :param resource_group_name: The name of the resource group.
@@ -316,7 +324,7 @@ class ExpressRouteCircuitConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -343,7 +351,15 @@ class ExpressRouteCircuitConnectionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -363,7 +379,7 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ExpressRouteCircuitConnectionListResult"]:
+    ) -> AsyncIterable["_models.ExpressRouteCircuitConnectionListResult"]:
         """Gets all global reach connections associated with a private peering in an express route
         circuit.
 
@@ -378,7 +394,7 @@ class ExpressRouteCircuitConnectionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_04_01.models.ExpressRouteCircuitConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

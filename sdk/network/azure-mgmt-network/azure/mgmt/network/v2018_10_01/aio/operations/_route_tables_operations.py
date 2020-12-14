@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class RouteTablesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -129,7 +129,13 @@ class RouteTablesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -149,7 +155,7 @@ class RouteTablesOperations:
         route_table_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.RouteTable":
+    ) -> "_models.RouteTable":
         """Gets the specified route table.
 
         :param resource_group_name: The name of the resource group.
@@ -163,7 +169,7 @@ class RouteTablesOperations:
         :rtype: ~azure.mgmt.network.v2018_10_01.models.RouteTable
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,10 +216,10 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: "models.RouteTable",
+        parameters: "_models.RouteTable",
         **kwargs
-    ) -> "models.RouteTable":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+    ) -> "_models.RouteTable":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,9 +273,9 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: "models.RouteTable",
+        parameters: "_models.RouteTable",
         **kwargs
-    ) -> AsyncLROPoller["models.RouteTable"]:
+    ) -> AsyncLROPoller["_models.RouteTable"]:
         """Create or updates a route table in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -289,7 +295,7 @@ class RouteTablesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -314,7 +320,13 @@ class RouteTablesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -332,10 +344,10 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.RouteTable":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+    ) -> "_models.RouteTable":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -385,9 +397,9 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> AsyncLROPoller["models.RouteTable"]:
+    ) -> AsyncLROPoller["_models.RouteTable"]:
         """Updates a route table tags.
 
         :param resource_group_name: The name of the resource group.
@@ -407,7 +419,7 @@ class RouteTablesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -432,7 +444,13 @@ class RouteTablesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -450,7 +468,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.RouteTableListResult"]:
+    ) -> AsyncIterable["_models.RouteTableListResult"]:
         """Gets all route tables in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -460,7 +478,7 @@ class RouteTablesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_10_01.models.RouteTableListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTableListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -519,7 +537,7 @@ class RouteTablesOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.RouteTableListResult"]:
+    ) -> AsyncIterable["_models.RouteTableListResult"]:
         """Gets all route tables in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -527,7 +545,7 @@ class RouteTablesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_10_01.models.RouteTableListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTableListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

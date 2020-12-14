@@ -249,16 +249,13 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
-    def test_create_search(self):
-        searchOptions = CreateSearchOptions(
+    def test_reserve_phone_numbers(self):
+        poller = self._phone_number_administration_client.begin_reserve_phone_numbers(
             area_code=self.area_code_for_reservation,
             description="testreservation20200014",
             display_name="testreservation20200014",
             phone_plan_ids=[self.phone_plan_id],
             quantity=1
-        )
-        poller = self._phone_number_administration_client.begin_reserve_phone_numbers(
-            options=searchOptions
         )
         assert poller.result()
 
@@ -277,3 +274,9 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
             reservation_id=self.reservation_id_to_purchase
         )
         assert poller.result()
+
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    def test_list_reservations(self):
+        pages = self._phone_number_administration_client.list_all_reservations()
+        assert pages.next()

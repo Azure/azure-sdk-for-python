@@ -225,31 +225,6 @@ class ArmDisasterRecoveryListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class AuthorizationRuleProperties(msrest.serialization.Model):
-    """AuthorizationRule properties.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param rights: Required. The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
-    """
-
-    _validation = {
-        'rights': {'required': True},
-    }
-
-    _attribute_map = {
-        'rights': {'key': 'rights', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AuthorizationRuleProperties, self).__init__(**kwargs)
-        self.rights = kwargs['rights']
-
-
 class CaptureDescription(msrest.serialization.Model):
     """Properties to configure capture description for eventhub.
 
@@ -357,6 +332,30 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         self.reason = kwargs.get('reason', None)
 
 
+class ConnectionState(msrest.serialization.Model):
+    """ConnectionState information.
+
+    :param status: Status of the connection. Possible values include: "Pending", "Approved",
+     "Rejected", "Disconnected".
+    :type status: str or ~azure.mgmt.servicebus.models.PrivateLinkConnectionStatus
+    :param description: Description of the connection state.
+    :type description: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+
+
 class CorrelationFilter(msrest.serialization.Model):
     """Represents the correlation filter expression.
 
@@ -447,18 +446,76 @@ class Destination(msrest.serialization.Model):
         self.archive_name_format = kwargs.get('archive_name_format', None)
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Error response indicates ServiceBus service is not able to process the incoming request. The reason is provided in the error message.
+class Encryption(msrest.serialization.Model):
+    """Properties to configure Encryption.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param key_vault_properties: Properties of KeyVault.
+    :type key_vault_properties: ~azure.mgmt.servicebus.models.KeyVaultProperties
+    :ivar key_source: Enumerates the possible value of keySource for Encryption. Default value:
+     "Microsoft.KeyVault".
+    :vartype key_source: str
+    """
+
+    _validation = {
+        'key_source': {'constant': True},
+    }
+
+    _attribute_map = {
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'key_source': {'key': 'keySource', 'type': 'str'},
+    }
+
+    key_source = "Microsoft.KeyVault"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Encryption, self).__init__(**kwargs)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+
+
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """The resource management error response.
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.servicebus.models.ErrorResponseError
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponseError'},
     }
 
     def __init__(
@@ -466,8 +523,52 @@ class ErrorResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponseError(msrest.serialization.Model):
+    """The error object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.servicebus.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.servicebus.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponseError, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class Eventhub(Resource):
@@ -493,7 +594,7 @@ class Eventhub(Resource):
     :param partition_count: Number of partitions created for the Event Hub, allowed values are from
      1 to 32 partitions.
     :type partition_count: long
-    :param status: Enumerates the possible values for the status of the Event Hub. Possible values
+    :param status: Enumerates the possible values for the status of a Event Hub. Possible values
      include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
      "Deleting", "Renaming", "Unknown".
     :type status: str or ~azure.mgmt.servicebus.models.EntityStatus
@@ -567,6 +668,152 @@ class EventHubListResult(msrest.serialization.Model):
         super(EventHubListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = None
+
+
+class FailoverProperties(msrest.serialization.Model):
+    """Safe failover is to indicate the service should wait for pending replication to finish before switching to the secondary.
+
+    :param is_safe_failover: Safe failover is to indicate the service should wait for pending
+     replication to finish before switching to the secondary.
+    :type is_safe_failover: bool
+    """
+
+    _attribute_map = {
+        'is_safe_failover': {'key': 'properties.IsSafeFailover', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FailoverProperties, self).__init__(**kwargs)
+        self.is_safe_failover = kwargs.get('is_safe_failover', None)
+
+
+class Identity(msrest.serialization.Model):
+    """Properties to configure Identity for Bring your Own Keys.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param principal_id: ObjectId from the KeyVault.
+    :type principal_id: str
+    :param tenant_id: TenantId from the KeyVault.
+    :type tenant_id: str
+    :ivar type: Enumerates the possible value Identity type, which currently supports only
+     'SystemAssigned'. Default value: "SystemAssigned".
+    :vartype type: str
+    """
+
+    _validation = {
+        'type': {'constant': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "SystemAssigned"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Identity, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+
+
+class IpFilterRule(Resource):
+    """Single item in a List or Get IpFilterRules operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param ip_mask: IP Mask.
+    :type ip_mask: str
+    :param action: The IP Filter Action. Possible values include: "Accept", "Reject".
+    :type action: str or ~azure.mgmt.servicebus.models.IPAction
+    :param filter_name: IP Filter name.
+    :type filter_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'ip_mask': {'key': 'properties.ipMask', 'type': 'str'},
+        'action': {'key': 'properties.action', 'type': 'str'},
+        'filter_name': {'key': 'properties.filterName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IpFilterRule, self).__init__(**kwargs)
+        self.ip_mask = kwargs.get('ip_mask', None)
+        self.action = kwargs.get('action', None)
+        self.filter_name = kwargs.get('filter_name', None)
+
+
+class IpFilterRuleListResult(msrest.serialization.Model):
+    """The response from the List namespace operation.
+
+    :param value: Result of the List IpFilter Rules operation.
+    :type value: list[~azure.mgmt.servicebus.models.IpFilterRule]
+    :param next_link: Link to the next set of results. Not empty if Value contains an incomplete
+     list of IpFilter Rules.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IpFilterRule]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IpFilterRuleListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class KeyVaultProperties(msrest.serialization.Model):
+    """Properties to configure keyVault Properties.
+
+    :param key_name: Name of the Key from KeyVault.
+    :type key_name: str
+    :param key_vault_uri: Uri of KeyVault.
+    :type key_vault_uri: str
+    """
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
+        self.key_vault_uri = kwargs.get('key_vault_uri', None)
 
 
 class MessageCountDetails(msrest.serialization.Model):
@@ -703,7 +950,7 @@ class MigrationConfigProperties(Resource):
 
 
 class NetworkRuleSet(Resource):
-    """Description of NetworkRuleSet resource.
+    """Description of topic resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -747,36 +994,12 @@ class NetworkRuleSet(Resource):
         self.ip_rules = kwargs.get('ip_rules', None)
 
 
-class NetworkRuleSetListResult(msrest.serialization.Model):
-    """The response of the List NetworkRuleSet operation.
-
-    :param value: Result of the List NetworkRuleSet operation.
-    :type value: list[~azure.mgmt.servicebus.models.NetworkRuleSet]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
-     of NetworkRuleSet.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkRuleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(NetworkRuleSetListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
-
-
 class NWRuleSetIpRules(msrest.serialization.Model):
-    """Description of NetWorkRuleSet - IpRules resource.
+    """The response from the List namespace operation.
 
     :param ip_mask: IP Mask.
     :type ip_mask: str
-    :param action: The IP Filter Action. Possible values include: "Allow". Default value: "Allow".
+    :param action: The IP Filter Action. Possible values include: "Allow".
     :type action: str or ~azure.mgmt.servicebus.models.NetworkRuleIPAction
     """
 
@@ -791,16 +1014,16 @@ class NWRuleSetIpRules(msrest.serialization.Model):
     ):
         super(NWRuleSetIpRules, self).__init__(**kwargs)
         self.ip_mask = kwargs.get('ip_mask', None)
-        self.action = kwargs.get('action', "Allow")
+        self.action = kwargs.get('action', None)
 
 
 class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
-    """Description of VirtualNetworkRules - NetworkRules resource.
+    """The response from the List namespace operation.
 
     :param subnet: Subnet properties.
     :type subnet: ~azure.mgmt.servicebus.models.Subnet
     :param ignore_missing_vnet_service_endpoint: Value that indicates whether to ignore missing
-     VNet Service Endpoint.
+     Vnet Service Endpoint.
     :type ignore_missing_vnet_service_endpoint: bool
     """
 
@@ -1055,6 +1278,155 @@ class PremiumMessagingRegionsProperties(msrest.serialization.Model):
         self.full_name = None
 
 
+class PrivateEndpoint(msrest.serialization.Model):
+    """PrivateEndpoint information.
+
+    :param id: The ARM identifier for Private Endpoint.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class PrivateEndpointConnection(Resource):
+    """Properties of the PrivateEndpointConnection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param private_endpoint: The Private Endpoint resource for this Connection.
+    :type private_endpoint: ~azure.mgmt.servicebus.models.PrivateEndpoint
+    :param private_link_service_connection_state: Details about the state of the connection.
+    :type private_link_service_connection_state: ~azure.mgmt.servicebus.models.ConnectionState
+    :param provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
+     values include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+    :type provisioning_state: str or ~azure.mgmt.servicebus.models.EndPointProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'ConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """Result of the list of all private endpoint connections operation.
+
+    :param value: A collection of private endpoint connection resources.
+    :type value: list[~azure.mgmt.servicebus.models.PrivateEndpointConnection]
+    :param next_link: A link for the next page of private endpoint connection resources.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class PrivateLinkResource(msrest.serialization.Model):
+    """Information of the private link resource.
+
+    :param id: Fully qualified identifier of the resource.
+    :type id: str
+    :param name: Name of the resource.
+    :type name: str
+    :param type: Type of the resource.
+    :type type: str
+    :param group_id:
+    :type group_id: str
+    :param required_members: Required Members.
+    :type required_members: list[str]
+    :param required_zone_names: Required Zone Names.
+    :type required_zone_names: list[str]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.required_members = kwargs.get('required_members', None)
+        self.required_zone_names = kwargs.get('required_zone_names', None)
+
+
+class PrivateLinkResourcesListResult(msrest.serialization.Model):
+    """Result of the List private link resources operation.
+
+    :param value: A collection of private link resources.
+    :type value: list[~azure.mgmt.servicebus.models.PrivateLinkResource]
+    :param next_link: A link for the next page of private link resources.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkResourcesListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class RegenerateAccessKeyParameters(msrest.serialization.Model):
     """Parameters supplied to the Regenerate Authorization Rule operation, specifies which key needs to be reset.
 
@@ -1280,8 +1652,10 @@ class SBNamespace(TrackedResource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param sku: Properties of Sku.
+    :param sku: Properties of SKU.
     :type sku: ~azure.mgmt.servicebus.models.SBSku
+    :param identity: Properties of BYOK Identity description.
+    :type identity: ~azure.mgmt.servicebus.models.Identity
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the namespace was created.
@@ -1292,6 +1666,11 @@ class SBNamespace(TrackedResource):
     :vartype service_bus_endpoint: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
+    :param zone_redundant: Enabling this property creates a Premium Service Bus Namespace in
+     regions supported availability zones.
+    :type zone_redundant: bool
+    :param encryption: Properties of BYOK Encryption description.
+    :type encryption: ~azure.mgmt.servicebus.models.Encryption
     """
 
     _validation = {
@@ -1313,11 +1692,14 @@ class SBNamespace(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'SBSku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
+        'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
     }
 
     def __init__(
@@ -1326,11 +1708,14 @@ class SBNamespace(TrackedResource):
     ):
         super(SBNamespace, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
         self.metric_id = None
+        self.zone_redundant = kwargs.get('zone_redundant', None)
+        self.encryption = kwargs.get('encryption', None)
 
 
 class SBNamespaceListResult(msrest.serialization.Model):
@@ -1398,8 +1783,10 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param sku: Properties of Sku.
+    :param sku: Properties of SKU.
     :type sku: ~azure.mgmt.servicebus.models.SBSku
+    :param identity: Properties of BYOK Identity description.
+    :type identity: ~azure.mgmt.servicebus.models.Identity
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the namespace was created.
@@ -1410,6 +1797,11 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     :vartype service_bus_endpoint: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
+    :param zone_redundant: Enabling this property creates a Premium Service Bus Namespace in
+     regions supported availability zones.
+    :type zone_redundant: bool
+    :param encryption: Properties of BYOK Encryption description.
+    :type encryption: ~azure.mgmt.servicebus.models.Encryption
     """
 
     _validation = {
@@ -1430,11 +1822,14 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'SBSku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
+        'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
     }
 
     def __init__(
@@ -1443,11 +1838,14 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     ):
         super(SBNamespaceUpdateParameters, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
         self.metric_id = None
+        self.zone_redundant = kwargs.get('zone_redundant', None)
+        self.encryption = kwargs.get('encryption', None)
 
 
 class SBQueue(Resource):
@@ -1987,15 +2385,9 @@ class SqlRuleAction(Action):
 class Subnet(msrest.serialization.Model):
     """Properties supplied for Subnet.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Resource ID of Virtual Network Subnet.
+    :param id: Resource ID of Virtual Network Subnet.
     :type id: str
     """
-
-    _validation = {
-        'id': {'required': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -2006,4 +2398,64 @@ class Subnet(msrest.serialization.Model):
         **kwargs
     ):
         super(Subnet, self).__init__(**kwargs)
-        self.id = kwargs['id']
+        self.id = kwargs.get('id', None)
+
+
+class VirtualNetworkRule(Resource):
+    """Single item in a List or Get VirtualNetworkRules operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param virtual_network_subnet_id: Resource ID of Virtual Network Subnet.
+    :type virtual_network_subnet_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'virtual_network_subnet_id': {'key': 'properties.virtualNetworkSubnetId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualNetworkRule, self).__init__(**kwargs)
+        self.virtual_network_subnet_id = kwargs.get('virtual_network_subnet_id', None)
+
+
+class VirtualNetworkRuleListResult(msrest.serialization.Model):
+    """The response from the List namespace operation.
+
+    :param value: Result of the List VirtualNetwork Rules operation.
+    :type value: list[~azure.mgmt.servicebus.models.VirtualNetworkRule]
+    :param next_link: Link to the next set of results. Not empty if Value contains an incomplete
+     list of VirtualNetwork Rules.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[VirtualNetworkRule]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualNetworkRuleListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)

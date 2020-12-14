@@ -30,7 +30,8 @@ class MgmtAttestationTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.attestation.AttestationManagementClient
         )
-    
+
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_attestation(self, resource_group):
 

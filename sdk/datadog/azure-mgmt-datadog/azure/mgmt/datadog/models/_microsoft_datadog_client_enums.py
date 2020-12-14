@@ -32,6 +32,8 @@ class LiftrResourceCategories(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     MONITOR_LOGS = "MonitorLogs"
 
 class ManagedIdentityTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Identity type
+    """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"

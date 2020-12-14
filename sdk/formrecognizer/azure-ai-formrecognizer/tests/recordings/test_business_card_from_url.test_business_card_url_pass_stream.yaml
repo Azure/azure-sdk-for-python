@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"source": "<_io.BufferedReader name=\''/Users/isabellacai/Desktop/github_repos/azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png\''>"}'''
+    body: 'b''{"source": "<_io.BufferedReader name=\''C:\\\\\\\\Users\\\\\\\\krpratic\\\\\\\\azure-sdk-for-python\\\\\\\\sdk\\\\\\\\formrecognizer\\\\\\\\azure-ai-formrecognizer\\\\\\\\tests\\\\\\\\sample_forms\\\\\\\\business_cards\\\\\\\\business-card-english.png\''>"}'''
     headers:
       Accept:
       - application/json
@@ -9,26 +9,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '205'
+      - '213'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "43aaa124-9cbe-4922-b2f6-2ecfaa4b7619"},
+      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "a62c73fc-021d-4ce5-a259-a4abfe4f7613"},
         "message": "Image URL is badly formatted."}}'
     headers:
       apim-request-id:
-      - 43aaa124-9cbe-4922-b2f6-2ecfaa4b7619
+      - a62c73fc-021d-4ce5-a259-a4abfe4f7613
       content-length:
       - '144'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 21:58:49 GMT
+      - Wed, 11 Nov 2020 17:54:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:

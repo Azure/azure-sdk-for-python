@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"location": "westus", "tags": {"tag1": "value1", "tag2": "value2"}, "sku":
-      {"name": "Standard", "tier": "Standard"}}'
+      {"name": "Standard", "tier": "standard"}}'
     headers:
       Accept:
       - application/json
@@ -12,18 +12,15 @@ interactions:
       Content-Length:
       - '117'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-02-28T04:04:17.637Z","updatedAt":"2020-02-28T04:04:17.637Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-11-03T02:27:17.463Z","updatedAt":"2020-11-03T02:42:08.58Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
@@ -32,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:04:19 GMT
+      - Tue, 03 Nov 2020 02:42:08 GMT
       expires:
       - '-1'
       pragma:
@@ -51,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -59,29 +56,28 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-02-28T04:04:17.637Z","updatedAt":"2020-02-28T04:04:17.637Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-11-03T02:27:17.463Z","updatedAt":"2020-11-03T02:42:12.58Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '707'
+      - '704'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:04:51 GMT
+      - Tue, 03 Nov 2020 02:42:39 GMT
       expires:
       - '-1'
       pragma:
@@ -112,23 +108,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-02-28T04:04:17.637Z","updatedAt":"2020-02-28T04:05:01.543Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-11-03T02:27:17.463Z","updatedAt":"2020-11-03T02:42:12.58Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '705'
+      - '704'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:05:24 GMT
+      - Tue, 03 Nov 2020 02:42:41 GMT
       expires:
       - '-1'
       pragma:
@@ -150,56 +145,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
-  response:
-    body:
-      string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-02-28T04:04:17.637Z","updatedAt":"2020-02-28T04:05:01.543Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '705'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 28 Feb 2020 04:05:26 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/CH3
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/CH3
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"tags": {"tags": "{''tag1'': ''value1'', ''tag2'': ''value2''}"}}'
+    body: '{"tags": {"tag1": "value1", "tag2": "value2"}}'
     headers:
       Accept:
       - application/json
@@ -208,29 +154,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '58'
+      - '46'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tags":"{''tag1'': ''value1'', ''tag2'': ''value2''}"},"properties":{"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-02-28T04:04:17.637Z","updatedAt":"2020-02-28T04:05:28.697Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-11-03T02:27:17.463Z","updatedAt":"2020-11-03T02:42:43.94Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '722'
+      - '707'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:05:31 GMT
+      - Tue, 03 Nov 2020 02:42:47 GMT
       expires:
       - '-1'
       pragma:
@@ -249,7 +192,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -263,25 +206,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces?api-version=2017-04-01
   response:
     body:
       string: '{"value":[{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tags":"{''tag1'': ''value1'', ''tag2'': ''value2''}"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-02-28T04:04:17.637Z","updatedAt":"2020-02-28T04:05:29.923Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-11-03T02:27:17.463Z","updatedAt":"2020-11-03T02:42:46.263Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '731'
+      - '717'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:05:32 GMT
+      - Tue, 03 Nov 2020 02:42:47 GMT
       expires:
       - '-1'
       pragma:
@@ -312,25 +252,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Relay/namespaces?api-version=2017-04-01
   response:
     body:
       string: '{"value":[{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tags":"{''tag1'': ''value1'', ''tag2'': ''value2''}"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-02-28T04:04:17.637Z","updatedAt":"2020-02-28T04:05:29.923Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2020-11-03T02:27:17.463Z","updatedAt":"2020-11-03T02:42:46.263Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '731'
+      - '717'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:05:33 GMT
+      - Tue, 03 Nov 2020 02:42:47 GMT
       expires:
       - '-1'
       pragma:
@@ -361,10 +298,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/RootManageSharedAccessKey?api-version=2017-04-01
   response:
@@ -379,7 +313,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:05:37 GMT
+      - Tue, 03 Nov 2020 02:42:48 GMT
       expires:
       - '-1'
       pragma:
@@ -412,12 +346,9 @@ interactions:
       Content-Length:
       - '46'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -432,7 +363,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:05:58 GMT
+      - Tue, 03 Nov 2020 02:42:55 GMT
       expires:
       - '-1'
       pragma:
@@ -451,7 +382,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -465,10 +396,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -483,7 +411,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:06:01 GMT
+      - Tue, 03 Nov 2020 02:42:55 GMT
       expires:
       - '-1'
       pragma:
@@ -516,12 +444,9 @@ interactions:
       Content-Length:
       - '56'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -536,7 +461,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:06:19 GMT
+      - Tue, 03 Nov 2020 02:43:02 GMT
       expires:
       - '-1'
       pragma:
@@ -555,7 +480,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1191'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -569,10 +494,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules?api-version=2017-04-01
   response:
@@ -588,7 +510,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:06:20 GMT
+      - Tue, 03 Nov 2020 02:43:03 GMT
       expires:
       - '-1'
       pragma:
@@ -621,15 +543,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=EiIFlllb9Tn7/fDBza5CCHvGuJkraB0chjDw371p4wE=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=7HGD+SBCTU0932/3JiRf4XHMYz3k3pbh9GBHHtpp+ik=","primaryKey":"EiIFlllb9Tn7/fDBza5CCHvGuJkraB0chjDw371p4wE=","secondaryKey":"7HGD+SBCTU0932/3JiRf4XHMYz3k3pbh9GBHHtpp+ik=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=Yi8RP3dNbXJvYM2X6mnMHDuN/w+q/SP6ksjKqFjsxLs=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=li+gCzEZP3UNnnWltV42qF2IAwaNEP0TbyGSQnX6iCU=","primaryKey":"Yi8RP3dNbXJvYM2X6mnMHDuN/w+q/SP6ksjKqFjsxLs=","secondaryKey":"li+gCzEZP3UNnnWltV42qF2IAwaNEP0TbyGSQnX6iCU=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -638,7 +557,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:06:23 GMT
+      - Tue, 03 Nov 2020 02:43:04 GMT
       expires:
       - '-1'
       pragma:
@@ -673,71 +592,14 @@ interactions:
       Content-Length:
       - '25'
       Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
-  response:
-    body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=PsxB2oOuORG5gRHRg7hrymGybtbhDfaOoImoTFb8vPs=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=7HGD+SBCTU0932/3JiRf4XHMYz3k3pbh9GBHHtpp+ik=","primaryKey":"PsxB2oOuORG5gRHRg7hrymGybtbhDfaOoImoTFb8vPs=","secondaryKey":"7HGD+SBCTU0932/3JiRf4XHMYz3k3pbh9GBHHtpp+ik=","keyName":"testingauthrulepy"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '547'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 28 Feb 2020 04:06:41 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/CH3
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/CH3
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"keyType": "SecondaryKey"}'
-    headers:
-      Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '27'
-      Content-Type:
-      - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=PsxB2oOuORG5gRHRg7hrymGybtbhDfaOoImoTFb8vPs=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=pf2BDtHtw0DRLStFGZ3dzhnGKZTO3WjNiC+CrLi1N4c=","primaryKey":"PsxB2oOuORG5gRHRg7hrymGybtbhDfaOoImoTFb8vPs=","secondaryKey":"pf2BDtHtw0DRLStFGZ3dzhnGKZTO3WjNiC+CrLi1N4c=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=Op7C0BsZ1kUEFpKuFSpyr2N1JPgR+a+WKO8rmhhVkQE=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=li+gCzEZP3UNnnWltV42qF2IAwaNEP0TbyGSQnX6iCU=","primaryKey":"Op7C0BsZ1kUEFpKuFSpyr2N1JPgR+a+WKO8rmhhVkQE=","secondaryKey":"li+gCzEZP3UNnnWltV42qF2IAwaNEP0TbyGSQnX6iCU=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -746,7 +608,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:07:00 GMT
+      - Tue, 03 Nov 2020 02:43:11 GMT
       expires:
       - '-1'
       pragma:
@@ -770,6 +632,57 @@ interactions:
       code: 200
       message: OK
 - request:
+    body: '{"keyType": "SecondaryKey"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '27'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
+  response:
+    body:
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=Op7C0BsZ1kUEFpKuFSpyr2N1JPgR+a+WKO8rmhhVkQE=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=6Du9Owm/VHzZf/UVUSmUi29OS+t+W05BE8sgbnmvOAI=","primaryKey":"Op7C0BsZ1kUEFpKuFSpyr2N1JPgR+a+WKO8rmhhVkQE=","secondaryKey":"6Du9Owm/VHzZf/UVUSmUi29OS+t+W05BE8sgbnmvOAI=","keyName":"testingauthrulepy"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '547'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 03 Nov 2020 02:43:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
     body: null
     headers:
       Accept:
@@ -781,10 +694,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -796,7 +706,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 28 Feb 2020 04:07:16 GMT
+      - Tue, 03 Nov 2020 02:43:23 GMT
       expires:
       - '-1'
       pragma:
@@ -811,7 +721,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 200
       message: OK
@@ -825,10 +735,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules?api-version=2017-04-01
   response:
@@ -843,7 +750,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:07:18 GMT
+      - Tue, 03 Nov 2020 02:43:25 GMT
       expires:
       - '-1'
       pragma:
@@ -876,10 +783,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
   response:
@@ -891,7 +795,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 28 Feb 2020 04:07:24 GMT
+      - Tue, 03 Nov 2020 02:43:26 GMT
       expires:
       - '-1'
       location:
@@ -908,7 +812,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -916,14 +820,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-relay/0.2.0 Azure-SDK-For-Python
+      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/operationresults/testingpythontestcasenamespace?api-version=2017-04-01
   response:
@@ -935,7 +838,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 28 Feb 2020 04:07:55 GMT
+      - Tue, 03 Nov 2020 02:43:57 GMT
       expires:
       - '-1'
       pragma:

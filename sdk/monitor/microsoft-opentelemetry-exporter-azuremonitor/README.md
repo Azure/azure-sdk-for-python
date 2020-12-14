@@ -27,14 +27,14 @@ To use this package, you must have:
 
 ### Authenticate the client
 
-Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorSpanExporter` class. You will need a **connection_string** to instantiate the object.
+Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class. You will need a **connection_string** to instantiate the object.
 Please find the samples linked below for demonstration as to how to authenticate using a connection string.
 
 #### [Create Exporter from connection string][sample_authenticate_client_connstr]
 
 ```Python
-from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
-exporter = AzureMonitorSpanExporter(
+from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
+exporter = AzureMonitorTraceExporter(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
 ```
@@ -55,7 +55,7 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [Sampling][sampler_ref]: Sampling is a mechanism to control the noise and overhead introduced by OpenTelemetry by reducing the number of samples of traces collected and sent to the backend.
 
-* [AzureMonitorSpanExporter][client_reference]: This is the class that is initialized to send tracing related telemetry to Azure Monitor.
+* [AzureMonitorTraceExporter][client_reference]: This is the class that is initialized to send tracing related telemetry to Azure Monitor.
 
 * [Exporter Options][exporter_options]: Options to configure Azure exporters. Includes connection_string, instrumentation_key, proxies, timeout etc.
 
@@ -77,9 +77,9 @@ import os
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
-from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
+from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
 
-exporter = AzureMonitorSpanExporter(
+exporter = AzureMonitorTraceExporter(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
 
@@ -90,40 +90,6 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 
 with tracer.start_as_current_span("hello"):
     print("Hello, World!")
-```
-
-### Modifying Traces
-
-* You can pass a callback function to the exporter to process telemetry before it is exported.
-* Your callback function can return False if you do not want this envelope exported.
-* Your callback function must accept an envelope data type as its parameter.
-* You can see the schema for Azure Monitor data types in the envelopes here.
-* The AzureMonitorSpanExporter handles Data data types.
-
-```Python
-from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
-
-# Callback function to add os_type: linux to span properties
-def callback_function(envelope):
-    envelope.data.baseData.properties['os_type'] = 'linux'
-    return True
-
-exporter = AzureMonitorSpanExporter(
-    connection_string='InstrumentationKey=<your-ikey-here>'
-)
-# This line will modify telemetry
-exporter.add_telemetry_processor(callback_function)
-
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-span_processor = BatchExportSpanProcessor(exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
-
-with tracer.start_as_current_span('hello'):
-    print('Hello World!')
 ```
 
 ### Instrumentation with requests library
@@ -142,7 +108,7 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
-from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
+from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
@@ -150,7 +116,7 @@ tracer = trace.get_tracer(__name__)
 # This line causes your calls made with the requests library to be tracked.
 RequestsInstrumentor().instrument()
 span_processor = BatchExportSpanProcessor(
-    AzureMonitorSpanExporter(
+    AzureMonitorTraceExporter(
         connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
     )
 )

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class OpenShiftManagedClustersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class OpenShiftManagedClustersOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.OpenShiftManagedClusterListResult"]:
+    ) -> AsyncIterable["_models.OpenShiftManagedClusterListResult"]:
         """Gets a list of OpenShift managed clusters in the specified subscription.
 
         Gets a list of OpenShift managed clusters in the specified subscription. The operation returns
@@ -57,7 +57,7 @@ class OpenShiftManagedClustersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenShiftManagedClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,7 +116,7 @@ class OpenShiftManagedClustersOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.OpenShiftManagedClusterListResult"]:
+    ) -> AsyncIterable["_models.OpenShiftManagedClusterListResult"]:
         """Lists OpenShift managed clusters in the specified subscription and resource group.
 
         Lists OpenShift managed clusters in the specified subscription and resource group. The
@@ -129,7 +129,7 @@ class OpenShiftManagedClustersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenShiftManagedClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -190,7 +190,7 @@ class OpenShiftManagedClustersOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> "models.OpenShiftManagedCluster":
+    ) -> "_models.OpenShiftManagedCluster":
         """Gets a OpenShift managed cluster.
 
         Gets the details of the managed OpenShift cluster with a specified resource group and name.
@@ -204,7 +204,7 @@ class OpenShiftManagedClustersOperations:
         :rtype: ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedCluster
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenShiftManagedCluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedCluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -249,10 +249,10 @@ class OpenShiftManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: "models.OpenShiftManagedCluster",
+        parameters: "_models.OpenShiftManagedCluster",
         **kwargs
-    ) -> "models.OpenShiftManagedCluster":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenShiftManagedCluster"]
+    ) -> "_models.OpenShiftManagedCluster":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedCluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -306,9 +306,9 @@ class OpenShiftManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: "models.OpenShiftManagedCluster",
+        parameters: "_models.OpenShiftManagedCluster",
         **kwargs
-    ) -> AsyncLROPoller["models.OpenShiftManagedCluster"]:
+    ) -> AsyncLROPoller["_models.OpenShiftManagedCluster"]:
         """Creates or updates an OpenShift managed cluster.
 
         Creates or updates a OpenShift managed cluster with the specified configuration for agents and
@@ -332,7 +332,7 @@ class OpenShiftManagedClustersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenShiftManagedCluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedCluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -357,7 +357,13 @@ class OpenShiftManagedClustersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -375,10 +381,10 @@ class OpenShiftManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.OpenShiftManagedCluster":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenShiftManagedCluster"]
+    ) -> "_models.OpenShiftManagedCluster":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedCluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -428,9 +434,9 @@ class OpenShiftManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> AsyncLROPoller["models.OpenShiftManagedCluster"]:
+    ) -> AsyncLROPoller["_models.OpenShiftManagedCluster"]:
         """Updates tags on an OpenShift managed cluster.
 
         Updates an OpenShift managed cluster with the specified tags.
@@ -452,7 +458,7 @@ class OpenShiftManagedClustersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenShiftManagedCluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedCluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -477,7 +483,13 @@ class OpenShiftManagedClustersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -581,7 +593,13 @@ class OpenShiftManagedClustersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

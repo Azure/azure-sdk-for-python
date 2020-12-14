@@ -16,7 +16,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Mapping, Optional
+    from typing import Any, Dict, Optional
     from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential
     from azure.core.pipeline import PipelineRequest
 
@@ -31,7 +31,7 @@ class _BearerTokenCredentialPolicyBase(object):
     """
 
     def __init__(self, credential, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (TokenCredential, *str, Mapping[str, Any]) -> None
+        # type: (TokenCredential, *str, **Any) -> None
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
@@ -103,7 +103,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     :raises: ValueError or TypeError
     """
     def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
-        # type: (AzureKeyCredential, str, Any) -> None
+        # type: (AzureKeyCredential, str, **Any) -> None
         super(AzureKeyCredentialPolicy, self).__init__()
         self._credential = credential
         if not name:

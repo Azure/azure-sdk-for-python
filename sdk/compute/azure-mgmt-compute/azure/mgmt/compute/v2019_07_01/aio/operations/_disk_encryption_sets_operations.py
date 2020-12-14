@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DiskEncryptionSetsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,10 +47,10 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        disk_encryption_set: "models.DiskEncryptionSet",
+        disk_encryption_set: "_models.DiskEncryptionSet",
         **kwargs
-    ) -> "models.DiskEncryptionSet":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskEncryptionSet"]
+    ) -> "_models.DiskEncryptionSet":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,9 +104,9 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        disk_encryption_set: "models.DiskEncryptionSet",
+        disk_encryption_set: "_models.DiskEncryptionSet",
         **kwargs
-    ) -> AsyncLROPoller["models.DiskEncryptionSet"]:
+    ) -> AsyncLROPoller["_models.DiskEncryptionSet"]:
         """Creates or updates a disk encryption set.
 
         :param resource_group_name: The name of the resource group.
@@ -129,7 +129,7 @@ class DiskEncryptionSetsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskEncryptionSet"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSet"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -154,7 +154,13 @@ class DiskEncryptionSetsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'diskEncryptionSetName': self._serialize.url("disk_encryption_set_name", disk_encryption_set_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -172,10 +178,10 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        disk_encryption_set: "models.DiskEncryptionSetUpdate",
+        disk_encryption_set: "_models.DiskEncryptionSetUpdate",
         **kwargs
-    ) -> "models.DiskEncryptionSet":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskEncryptionSet"]
+    ) -> "_models.DiskEncryptionSet":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -229,9 +235,9 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        disk_encryption_set: "models.DiskEncryptionSetUpdate",
+        disk_encryption_set: "_models.DiskEncryptionSetUpdate",
         **kwargs
-    ) -> AsyncLROPoller["models.DiskEncryptionSet"]:
+    ) -> AsyncLROPoller["_models.DiskEncryptionSet"]:
         """Updates (patches) a disk encryption set.
 
         :param resource_group_name: The name of the resource group.
@@ -254,7 +260,7 @@ class DiskEncryptionSetsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskEncryptionSet"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSet"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -279,7 +285,13 @@ class DiskEncryptionSetsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'diskEncryptionSetName': self._serialize.url("disk_encryption_set_name", disk_encryption_set_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -298,7 +310,7 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         **kwargs
-    ) -> "models.DiskEncryptionSet":
+    ) -> "_models.DiskEncryptionSet":
         """Gets information about a disk encryption set.
 
         :param resource_group_name: The name of the resource group.
@@ -312,7 +324,7 @@ class DiskEncryptionSetsOperations:
         :rtype: ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskEncryptionSet"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -443,7 +455,13 @@ class DiskEncryptionSetsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'diskEncryptionSetName': self._serialize.url("disk_encryption_set_name", disk_encryption_set_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -461,7 +479,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DiskEncryptionSetList"]:
+    ) -> AsyncIterable["_models.DiskEncryptionSetList"]:
         """Lists all the disk encryption sets under a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -471,7 +489,7 @@ class DiskEncryptionSetsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskEncryptionSetList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSetList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -530,7 +548,7 @@ class DiskEncryptionSetsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.DiskEncryptionSetList"]:
+    ) -> AsyncIterable["_models.DiskEncryptionSetList"]:
         """Lists all the disk encryption sets under a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -538,7 +556,7 @@ class DiskEncryptionSetsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskEncryptionSetList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSetList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

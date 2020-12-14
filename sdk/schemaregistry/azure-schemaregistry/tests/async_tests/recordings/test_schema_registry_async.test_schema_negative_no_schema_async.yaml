@@ -5,47 +5,47 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
   response:
     body:
-      string: <Error><Code>400</Code><Detail>SubCode=40000, UnknownType:The request
-        is invalid. [MGResponseHttpError=BadRequest]. TrackingId:67733d61-7b5b-4e51-9b06-72a6afba9bdf_G1,
-        SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/a,
-        Timestamp:2020-09-04T22:07:32</Detail></Error>
+      string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
+        [MGResponseHttpError=BadRequest]. TrackingId:db1f5a7e-069a-421c-9d02-a837d5faf5be_G23,
+        SystemTracker:fake_resource.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
+        Timestamp:2020-11-12T05:59:49"}'
     headers:
-      content-type: application/xml; charset=utf-8
-      date: Fri, 04 Sep 2020 22:07:32 GMT
+      content-type: application/json
+      date: Thu, 12 Nov 2020 05:59:48 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
-    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
+    url: https://seankane.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
   response:
     body:
-      string: <Error><Code>404</Code><Detail>Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        does not exist. TrackingId:17234c8c-2982-4d72-b05d-28df0d550d73_G1, SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2020-09-04T22:07:33</Detail></Error>
+      string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
+        not exist. TrackingId:6df67add-07a4-4367-ad7c-cc936e495364_G23, SystemTracker:fake_resource.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2020-11-12T05:59:49"}'
     headers:
-      content-type: application/xml; charset=utf-8
-      date: Fri, 04 Sep 2020 22:07:32 GMT
+      content-type: application/json
+      date: Thu, 12 Nov 2020 05:59:49 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 404
       message: Not Found
-    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
+    url: https://seankane.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
 version: 1

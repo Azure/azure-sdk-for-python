@@ -86,6 +86,7 @@ azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
 azure-nspkg
 azure-keyvault-nspkg
+azure-media-nspkg
 azure-schemaregistry==1.0.0b1
 azure-search-nspkg
 azure-security-nspkg
@@ -134,10 +135,10 @@ avro<2.0.0,>=1.10.0
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.7.0
 #override azure-keyvault-administration azure-core<2.0.0,>=1.7.0
 #override azure-ai-textanalytics msrest>=0.6.0
-#override azure-ai-textanalytics azure-core<2.0.0,>=1.4.0
+#override azure-ai-textanalytics azure-core<2.0.0,>=1.8.2
 #override azure-search-documents azure-core<2.0.0,>=1.4.0
 #override azure-ai-formrecognizer msrest>=0.6.12
-#override azure-ai-formrecognizer azure-core<2.0.0,>=1.6.0
+#override azure-ai-formrecognizer azure-core<2.0.0,>=1.8.2
 #override azure-storage-blob azure-core<2.0.0,>=1.9.0
 #override azure-storage-blob msrest>=0.6.10
 #override azure-storage-blob-changefeed azure-storage-blob>=12.5.0,<13.0.0
@@ -148,6 +149,8 @@ avro<2.0.0,>=1.10.0
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.9.0
 #override azure-storage-file-datalake msrest>=0.6.10
 #override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.6.0
+#override azure-security-attestation msrest>=0.6.0
+#override azure-security-attestation azure-core<2.0.0,>=1.8.2
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
@@ -165,6 +168,8 @@ opentelemetry-api==0.13b0
 #override azure-synapse-accesscontrol azure-core>=1.6.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.6.0,<2.0.0
 #override azure-synapse-artifacts azure-core>=1.6.0,<2.0.0
+#override azure-synapse-monitoring azure-core>=1.6.0,<2.0.0
+#override azure-synapse-managedprivateendpoints azure-core>=1.6.0,<2.0.0
 #override azure-data-tables msrest>=0.6.10
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
 #override azure-eventgrid msrest>=0.6.19

@@ -16,9 +16,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-storage/16.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-storage/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyc?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyr?api-version=2019-06-01
   response:
     body:
       string: ''
@@ -30,11 +30,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:50:51 GMT
+      - Tue, 24 Nov 2020 09:56:14 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/586d1577-43c3-4e96-a439-ae8648e76a8b?monitor=true&api-version=2019-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/266d459c-0f94-4a53-8abf-328631b454fd?monitor=true&api-version=2019-06-01
       pragma:
       - no-cache
       server:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1193'
     status:
       code: 202
       message: Accepted
@@ -58,12 +58,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-storage/16.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-storage/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/586d1577-43c3-4e96-a439-ae8648e76a8b?monitor=true&api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/266d459c-0f94-4a53-8abf-328631b454fd?monitor=true&api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyc","name":"mystorageaccountxyc","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-09-11T03:50:51.6094613Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-09-11T03:50:51.6094613Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-09-11T03:50:51.5001005Z","primaryEndpoints":{"dfs":"https://mystorageaccountxyc.dfs.core.windows.net/","web":"https://mystorageaccountxyc.z13.web.core.windows.net/","blob":"https://mystorageaccountxyc.blob.core.windows.net/","queue":"https://mystorageaccountxyc.queue.core.windows.net/","table":"https://mystorageaccountxyc.table.core.windows.net/","file":"https://mystorageaccountxyc.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available","secondaryLocation":"westus","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyr","name":"mystorageaccountxyr","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-11-24T09:56:14.5413512Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-11-24T09:56:14.5413512Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-11-24T09:56:14.4163323Z","primaryEndpoints":{"dfs":"https://mystorageaccountxyr.dfs.core.windows.net/","web":"https://mystorageaccountxyr.z13.web.core.windows.net/","blob":"https://mystorageaccountxyr.blob.core.windows.net/","queue":"https://mystorageaccountxyr.queue.core.windows.net/","table":"https://mystorageaccountxyr.table.core.windows.net/","file":"https://mystorageaccountxyr.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available","secondaryLocation":"westus","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -72,7 +72,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 03:51:09 GMT
+      - Tue, 24 Nov 2020 09:56:32 GMT
       expires:
       - '-1'
       pragma:
@@ -104,12 +104,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-storage/16.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-storage/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyc/blobServices/default/containers/myblobcontainer?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyr/blobServices/default/containers/myblobcontainer?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyc/blobServices/default/containers/myblobcontainer","name":"myblobcontainer","type":"Microsoft.Storage/storageAccounts/blobServices/containers"}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyr/blobServices/default/containers/myblobcontainer","name":"myblobcontainer","type":"Microsoft.Storage/storageAccounts/blobServices/containers"}'
     headers:
       cache-control:
       - no-cache
@@ -118,9 +118,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 03:51:09 GMT
+      - Tue, 24 Nov 2020 09:56:32 GMT
       etag:
-      - '"0x8D85605EB8C7B73"'
+      - '"0x8D8905F39247051"'
       expires:
       - '-1'
       pragma:
@@ -132,7 +132,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1192'
     status:
       code: 201
       message: Created
@@ -150,12 +150,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-storage/16.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-storage/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyc/regenerateKey?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/mystorageaccountxyr/regenerateKey?api-version=2019-06-01
   response:
     body:
-      string: '{"keys":[{"keyName":"key1","value":"xEFwaM1PHOtoKgXt1DCcEBwVFxazTCZN8ooqqzBNcZhqmuKJ86RILTlR9cWudj4c4DELblD1BDhJyACuYqh2rw==","permissions":"FULL"},{"keyName":"key2","value":"mRDOJocBoTG4cOvrVgKpzfCyKaftw3Qsz46Zn5gkuHhM83z/JptSOwiym/06PHOqzoc2hm0HpXiqOHiPtqrWZw==","permissions":"FULL"}]}'
+      string: '{"keys":[{"keyName":"key1","value":"sDw7pM/Kr5Ci4H55kXztUsU7MvpClI24i7ReG3wjfUpj6XYOkjtC0b00nUa8YNnzM5m7qCQYE//qRa8+Vul+hg==","permissions":"FULL"},{"keyName":"key2","value":"1fMHRm4/qNmTkL9njuYHz7lwe8VhG5QUGTiRcx7uBF5INyX1otct5hc6wIj8KyXbGfO0sDgOsmc32RJ2gGA1yA==","permissions":"FULL"}]}'
     headers:
       cache-control:
       - no-cache
@@ -164,7 +164,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 03:51:10 GMT
+      - Tue, 24 Nov 2020 09:56:33 GMT
       expires:
       - '-1'
       pragma:
@@ -180,7 +180,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -199,15 +199,15 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"operation":"UpsertLogicalServer","startTime":"2020-09-11T03:51:18.177Z"}'
+      string: '{"operation":"UpsertLogicalServer","startTime":"2020-11-24T09:56:40.713Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/5c9df6a8-9b13-4f79-b9d2-e17367ac06b1?api-version=2019-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -215,11 +215,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:51:17 GMT
+      - Tue, 24 Nov 2020 09:56:40 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/5c9df6a8-9b13-4f79-b9d2-e17367ac06b1?api-version=2019-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
       pragma:
       - no-cache
       server:
@@ -243,12 +243,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/5c9df6a8-9b13-4f79-b9d2-e17367ac06b1?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"5c9df6a8-9b13-4f79-b9d2-e17367ac06b1","status":"InProgress","startTime":"2020-09-11T03:51:18.177Z"}'
+      string: '{"name":"925fd6bf-cfff-46c9-a37b-12c64f518982","status":"InProgress","startTime":"2020-11-24T09:56:40.713Z"}'
     headers:
       cache-control:
       - no-cache
@@ -257,7 +257,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:51:18 GMT
+      - Tue, 24 Nov 2020 09:56:42 GMT
       expires:
       - '-1'
       pragma:
@@ -285,12 +285,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/5c9df6a8-9b13-4f79-b9d2-e17367ac06b1?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"5c9df6a8-9b13-4f79-b9d2-e17367ac06b1","status":"InProgress","startTime":"2020-09-11T03:51:18.177Z"}'
+      string: '{"name":"925fd6bf-cfff-46c9-a37b-12c64f518982","status":"InProgress","startTime":"2020-11-24T09:56:40.713Z"}'
     headers:
       cache-control:
       - no-cache
@@ -299,7 +299,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:51:20 GMT
+      - Tue, 24 Nov 2020 09:56:43 GMT
       expires:
       - '-1'
       pragma:
@@ -327,12 +327,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/5c9df6a8-9b13-4f79-b9d2-e17367ac06b1?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"5c9df6a8-9b13-4f79-b9d2-e17367ac06b1","status":"InProgress","startTime":"2020-09-11T03:51:18.177Z"}'
+      string: '{"name":"925fd6bf-cfff-46c9-a37b-12c64f518982","status":"InProgress","startTime":"2020-11-24T09:56:40.713Z"}'
     headers:
       cache-control:
       - no-cache
@@ -341,7 +341,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:51:21 GMT
+      - Tue, 24 Nov 2020 09:56:44 GMT
       expires:
       - '-1'
       pragma:
@@ -369,12 +369,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/5c9df6a8-9b13-4f79-b9d2-e17367ac06b1?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"5c9df6a8-9b13-4f79-b9d2-e17367ac06b1","status":"InProgress","startTime":"2020-09-11T03:51:18.177Z"}'
+      string: '{"name":"925fd6bf-cfff-46c9-a37b-12c64f518982","status":"InProgress","startTime":"2020-11-24T09:56:40.713Z"}'
     headers:
       cache-control:
       - no-cache
@@ -383,7 +383,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:51:22 GMT
+      - Tue, 24 Nov 2020 09:56:46 GMT
       expires:
       - '-1'
       pragma:
@@ -411,12 +411,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/5c9df6a8-9b13-4f79-b9d2-e17367ac06b1?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"5c9df6a8-9b13-4f79-b9d2-e17367ac06b1","status":"InProgress","startTime":"2020-09-11T03:51:18.177Z"}'
+      string: '{"name":"925fd6bf-cfff-46c9-a37b-12c64f518982","status":"InProgress","startTime":"2020-11-24T09:56:40.713Z"}'
     headers:
       cache-control:
       - no-cache
@@ -425,7 +425,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:51:44 GMT
+      - Tue, 24 Nov 2020 09:57:06 GMT
       expires:
       - '-1'
       pragma:
@@ -453,12 +453,54 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/5c9df6a8-9b13-4f79-b9d2-e17367ac06b1?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"5c9df6a8-9b13-4f79-b9d2-e17367ac06b1","status":"Succeeded","startTime":"2020-09-11T03:51:18.177Z"}'
+      string: '{"name":"925fd6bf-cfff-46c9-a37b-12c64f518982","status":"InProgress","startTime":"2020-11-24T09:56:40.713Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 09:57:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/925fd6bf-cfff-46c9-a37b-12c64f518982?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"925fd6bf-cfff-46c9-a37b-12c64f518982","status":"Succeeded","startTime":"2020-11-24T09:56:40.713Z"}'
     headers:
       cache-control:
       - no-cache
@@ -467,7 +509,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:52:04 GMT
+      - Tue, 24 Nov 2020 09:57:46 GMT
       expires:
       - '-1'
       pragma:
@@ -495,7 +537,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2019-06-01-preview
   response:
@@ -509,7 +551,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:52:04 GMT
+      - Tue, 24 Nov 2020 09:57:47 GMT
       expires:
       - '-1'
       pragma:
@@ -528,8 +570,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"properties": {"state": "Enabled", "storageEndpoint": "https://mystorageaccountxyc.blob.core.windows.net",
-      "storageAccountAccessKey": "xEFwaM1PHOtoKgXt1DCcEBwVFxazTCZN8ooqqzBNcZhqmuKJ86RILTlR9cWudj4c4DELblD1BDhJyACuYqh2rw=="}}'
+    body: '{"properties": {"state": "Enabled", "storageEndpoint": "https://mystorageaccountxyr.blob.core.windows.net",
+      "storageAccountAccessKey": "sDw7pM/Kr5Ci4H55kXztUsU7MvpClI24i7ReG3wjfUpj6XYOkjtC0b00nUa8YNnzM5m7qCQYE//qRa8+Vul+hg=="}}'
     headers:
       Accept:
       - application/json
@@ -542,15 +584,15 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/auditingSettings/default?api-version=2017-03-01-preview
   response:
     body:
-      string: '{"operation":"UpsertServerEngineAuditingPolicy","startTime":"2020-09-11T03:52:05.257Z"}'
+      string: '{"operation":"UpsertServerEngineAuditingPolicy","startTime":"2020-11-24T09:57:48.517Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/auditingSettingsAzureAsyncOperation/a2347448-0a1f-4b43-b522-6b7464f04e4a?api-version=2017-03-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/auditingSettingsAzureAsyncOperation/519e8138-09d1-430c-a814-9f283a692c88?api-version=2017-03-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -558,11 +600,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:52:05 GMT
+      - Tue, 24 Nov 2020 09:57:48 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/auditingSettingsOperationResults/a2347448-0a1f-4b43-b522-6b7464f04e4a?api-version=2017-03-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/auditingSettingsOperationResults/519e8138-09d1-430c-a814-9f283a692c88?api-version=2017-03-01-preview
       pragma:
       - no-cache
       server:
@@ -586,12 +628,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/auditingSettingsAzureAsyncOperation/a2347448-0a1f-4b43-b522-6b7464f04e4a?api-version=2017-03-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/auditingSettingsAzureAsyncOperation/519e8138-09d1-430c-a814-9f283a692c88?api-version=2017-03-01-preview
   response:
     body:
-      string: '{"name":"a2347448-0a1f-4b43-b522-6b7464f04e4a","status":"Succeeded","startTime":"2020-09-11T03:52:05.257Z"}'
+      string: '{"name":"519e8138-09d1-430c-a814-9f283a692c88","status":"Succeeded","startTime":"2020-11-24T09:57:48.517Z"}'
     headers:
       cache-control:
       - no-cache
@@ -600,7 +642,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:53:06 GMT
+      - Tue, 24 Nov 2020 09:58:49 GMT
       expires:
       - '-1'
       pragma:
@@ -628,12 +670,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/auditingSettings/default?api-version=2017-03-01-preview
   response:
     body:
-      string: '{"properties":{"state":"Enabled","storageEndpoint":"https://mystorageaccountxyc.blob.core.windows.net/","retentionDays":0,"auditActionsAndGroups":["SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP","FAILED_DATABASE_AUTHENTICATION_GROUP","BATCH_COMPLETED_GROUP"],"storageAccountSubscriptionId":"00000000-0000-0000-0000-000000000000","isStorageSecondaryKeyInUse":false,"isAzureMonitorTargetEnabled":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/auditingSettings/Default","name":"Default","type":"Microsoft.Sql/servers/auditingSettings"}'
+      string: '{"properties":{"retentionDays":0,"auditActionsAndGroups":["SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP","FAILED_DATABASE_AUTHENTICATION_GROUP","BATCH_COMPLETED_GROUP"],"isStorageSecondaryKeyInUse":false,"isAzureMonitorTargetEnabled":false,"state":"Enabled","storageEndpoint":"https://mystorageaccountxyr.blob.core.windows.net/","storageAccountSubscriptionId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/auditingSettings/Default","name":"Default","type":"Microsoft.Sql/servers/auditingSettings"}'
     headers:
       cache-control:
       - no-cache
@@ -642,7 +684,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:53:06 GMT
+      - Tue, 24 Nov 2020 09:58:49 GMT
       expires:
       - '-1'
       pragma:
@@ -661,8 +703,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"properties": {"state": "Enabled", "storageEndpoint": "https://mystorageaccountxyc.blob.core.windows.net",
-      "storageAccountAccessKey": "xEFwaM1PHOtoKgXt1DCcEBwVFxazTCZN8ooqqzBNcZhqmuKJ86RILTlR9cWudj4c4DELblD1BDhJyACuYqh2rw=="}}'
+    body: '{"properties": {"state": "Enabled", "storageEndpoint": "https://mystorageaccountxyr.blob.core.windows.net",
+      "storageAccountAccessKey": "sDw7pM/Kr5Ci4H55kXztUsU7MvpClI24i7ReG3wjfUpj6XYOkjtC0b00nUa8YNnzM5m7qCQYE//qRa8+Vul+hg=="}}'
     headers:
       Accept:
       - application/json
@@ -675,15 +717,15 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/extendedAuditingSettings/default?api-version=2017-03-01-preview
   response:
     body:
-      string: '{"operation":"UpsertServerEngineAuditingPolicy","startTime":"2020-09-11T03:53:07.64Z"}'
+      string: '{"operation":"UpsertServerEngineAuditingPolicy","startTime":"2020-11-24T09:58:50.12Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/extendedAuditingSettingsAzureAsyncOperation/f9a39fa9-49b4-4177-9794-0a773c1fedc5?api-version=2017-03-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/extendedAuditingSettingsAzureAsyncOperation/96b3167e-1bd8-4d59-b479-1b510bc1c9c1?api-version=2017-03-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -691,11 +733,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:53:07 GMT
+      - Tue, 24 Nov 2020 09:58:50 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/extendedAuditingSettingsOperationResults/f9a39fa9-49b4-4177-9794-0a773c1fedc5?api-version=2017-03-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/extendedAuditingSettingsOperationResults/96b3167e-1bd8-4d59-b479-1b510bc1c9c1?api-version=2017-03-01-preview
       pragma:
       - no-cache
       server:
@@ -719,12 +761,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/extendedAuditingSettingsAzureAsyncOperation/f9a39fa9-49b4-4177-9794-0a773c1fedc5?api-version=2017-03-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/extendedAuditingSettingsAzureAsyncOperation/96b3167e-1bd8-4d59-b479-1b510bc1c9c1?api-version=2017-03-01-preview
   response:
     body:
-      string: '{"name":"f9a39fa9-49b4-4177-9794-0a773c1fedc5","status":"Succeeded","startTime":"2020-09-11T03:53:07.64Z"}'
+      string: '{"name":"96b3167e-1bd8-4d59-b479-1b510bc1c9c1","status":"Succeeded","startTime":"2020-11-24T09:58:50.12Z"}'
     headers:
       cache-control:
       - no-cache
@@ -733,7 +775,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:54:08 GMT
+      - Tue, 24 Nov 2020 09:59:50 GMT
       expires:
       - '-1'
       pragma:
@@ -761,12 +803,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/extendedAuditingSettings/default?api-version=2017-03-01-preview
   response:
     body:
-      string: '{"properties":{"predicateExpression":"","state":"Enabled","storageEndpoint":"https://mystorageaccountxyc.blob.core.windows.net/","retentionDays":0,"auditActionsAndGroups":["SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP","FAILED_DATABASE_AUTHENTICATION_GROUP","BATCH_COMPLETED_GROUP"],"storageAccountSubscriptionId":"00000000-0000-0000-0000-000000000000","isStorageSecondaryKeyInUse":false,"isAzureMonitorTargetEnabled":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/extendedAuditingSettings/Default","name":"Default","type":"Microsoft.Sql/servers/extendedAuditingSettings"}'
+      string: '{"properties":{"predicateExpression":"","retentionDays":0,"auditActionsAndGroups":["SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP","FAILED_DATABASE_AUTHENTICATION_GROUP","BATCH_COMPLETED_GROUP"],"isStorageSecondaryKeyInUse":false,"isAzureMonitorTargetEnabled":false,"state":"Enabled","storageEndpoint":"https://mystorageaccountxyr.blob.core.windows.net/","storageAccountSubscriptionId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/extendedAuditingSettings/Default","name":"Default","type":"Microsoft.Sql/servers/extendedAuditingSettings"}'
     headers:
       cache-control:
       - no-cache
@@ -775,7 +817,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:54:08 GMT
+      - Tue, 24 Nov 2020 09:59:50 GMT
       expires:
       - '-1'
       pragma:
@@ -803,12 +845,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/extendedAuditingSettings/default?api-version=2017-03-01-preview
   response:
     body:
-      string: '{"properties":{"predicateExpression":"","state":"Enabled","storageEndpoint":"https://mystorageaccountxyc.blob.core.windows.net/","retentionDays":0,"auditActionsAndGroups":["SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP","FAILED_DATABASE_AUTHENTICATION_GROUP","BATCH_COMPLETED_GROUP"],"storageAccountSubscriptionId":"00000000-0000-0000-0000-000000000000","isStorageSecondaryKeyInUse":false,"isAzureMonitorTargetEnabled":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/extendedAuditingSettings/Default","name":"Default","type":"Microsoft.Sql/servers/extendedAuditingSettings"}'
+      string: '{"properties":{"predicateExpression":"","retentionDays":0,"auditActionsAndGroups":["SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP","FAILED_DATABASE_AUTHENTICATION_GROUP","BATCH_COMPLETED_GROUP"],"isStorageSecondaryKeyInUse":false,"isAzureMonitorTargetEnabled":false,"state":"Enabled","storageEndpoint":"https://mystorageaccountxyr.blob.core.windows.net/","storageAccountSubscriptionId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/extendedAuditingSettings/Default","name":"Default","type":"Microsoft.Sql/servers/extendedAuditingSettings"}'
     headers:
       cache-control:
       - no-cache
@@ -817,7 +859,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:54:09 GMT
+      - Tue, 24 Nov 2020 09:59:50 GMT
       expires:
       - '-1'
       pragma:
@@ -845,12 +887,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/auditingSettings/default?api-version=2017-03-01-preview
   response:
     body:
-      string: '{"properties":{"state":"Enabled","storageEndpoint":"https://mystorageaccountxyc.blob.core.windows.net/","retentionDays":0,"auditActionsAndGroups":["SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP","FAILED_DATABASE_AUTHENTICATION_GROUP","BATCH_COMPLETED_GROUP"],"storageAccountSubscriptionId":"00000000-0000-0000-0000-000000000000","isStorageSecondaryKeyInUse":false,"isAzureMonitorTargetEnabled":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/auditingSettings/Default","name":"Default","type":"Microsoft.Sql/servers/auditingSettings"}'
+      string: '{"properties":{"retentionDays":0,"auditActionsAndGroups":["SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP","FAILED_DATABASE_AUTHENTICATION_GROUP","BATCH_COMPLETED_GROUP"],"isStorageSecondaryKeyInUse":false,"isAzureMonitorTargetEnabled":false,"state":"Enabled","storageEndpoint":"https://mystorageaccountxyr.blob.core.windows.net/","storageAccountSubscriptionId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/auditingSettings/Default","name":"Default","type":"Microsoft.Sql/servers/auditingSettings"}'
     headers:
       cache-control:
       - no-cache
@@ -859,7 +901,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:54:09 GMT
+      - Tue, 24 Nov 2020 09:59:51 GMT
       expires:
       - '-1'
       pragma:
@@ -889,15 +931,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"operation":"DropLogicalServer","startTime":"2020-09-11T03:54:09.867Z"}'
+      string: '{"operation":"DropLogicalServer","startTime":"2020-11-24T09:59:52.307Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/2b5df85f-6ac3-4baf-b502-7151f7a49199?api-version=2019-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/24a535f1-e709-48aa-a8d7-0afd7a724944?api-version=2019-06-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -905,11 +947,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:54:10 GMT
+      - Tue, 24 Nov 2020 09:59:51 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/2b5df85f-6ac3-4baf-b502-7151f7a49199?api-version=2019-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/24a535f1-e709-48aa-a8d7-0afd7a724944?api-version=2019-06-01-preview
       pragma:
       - no-cache
       server:
@@ -933,12 +975,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/2b5df85f-6ac3-4baf-b502-7151f7a49199?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/24a535f1-e709-48aa-a8d7-0afd7a724944?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"2b5df85f-6ac3-4baf-b502-7151f7a49199","status":"Succeeded","startTime":"2020-09-11T03:54:09.867Z"}'
+      string: '{"name":"24a535f1-e709-48aa-a8d7-0afd7a724944","status":"Succeeded","startTime":"2020-11-24T09:59:52.307Z"}'
     headers:
       cache-control:
       - no-cache
@@ -947,7 +989,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 03:54:25 GMT
+      - Tue, 24 Nov 2020 10:00:07 GMT
       expires:
       - '-1'
       pragma:

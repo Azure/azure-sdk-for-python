@@ -37,6 +37,7 @@ class MgmtKustoTest(AzureMgmtTestCase):
             azure.mgmt.kusto.KustoManagementClient
         )
     
+    @unittest.skip("unavailable in track2")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_kusto_adjusted(self, resource_group):
 

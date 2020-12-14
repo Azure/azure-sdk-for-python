@@ -5,19 +5,12 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
-from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
+from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
 
 
-# Callback function to add os_type: linux to span properties
-def callback_function(envelope):
-    envelope.data.base_data.properties["os_type"] = "linux"
-    return True
-
-
-exporter = AzureMonitorSpanExporter(
+exporter = AzureMonitorTraceExporter(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
-exporter.add_telemetry_processor(callback_function)
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)

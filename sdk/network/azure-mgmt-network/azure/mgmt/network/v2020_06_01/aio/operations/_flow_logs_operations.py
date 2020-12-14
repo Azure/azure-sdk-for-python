@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class FlowLogsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,10 +48,10 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         flow_log_name: str,
-        parameters: "models.FlowLog",
+        parameters: "_models.FlowLog",
         **kwargs
-    ) -> "models.FlowLog":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLog"]
+    ) -> "_models.FlowLog":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLog"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -88,7 +88,7 @@ class FlowLogsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -108,9 +108,9 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         flow_log_name: str,
-        parameters: "models.FlowLog",
+        parameters: "_models.FlowLog",
         **kwargs
-    ) -> AsyncLROPoller["models.FlowLog"]:
+    ) -> AsyncLROPoller["_models.FlowLog"]:
         """Create or update a flow log for the specified network security group.
 
         :param resource_group_name: The name of the resource group.
@@ -132,7 +132,7 @@ class FlowLogsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLog"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLog"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -158,7 +158,14 @@ class FlowLogsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'flowLogName': self._serialize.url("flow_log_name", flow_log_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -177,9 +184,9 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         flow_log_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.FlowLog":
+    ) -> "_models.FlowLog":
         """Update tags of the specified flow log.
 
         :param resource_group_name: The name of the resource group.
@@ -195,7 +202,7 @@ class FlowLogsOperations:
         :rtype: ~azure.mgmt.network.v2020_06_01.models.FlowLog
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLog"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLog"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -232,7 +239,7 @@ class FlowLogsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FlowLog', pipeline_response)
@@ -249,7 +256,7 @@ class FlowLogsOperations:
         network_watcher_name: str,
         flow_log_name: str,
         **kwargs
-    ) -> "models.FlowLog":
+    ) -> "_models.FlowLog":
         """Gets a flow log resource by name.
 
         :param resource_group_name: The name of the resource group.
@@ -263,7 +270,7 @@ class FlowLogsOperations:
         :rtype: ~azure.mgmt.network.v2020_06_01.models.FlowLog
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLog"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLog"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -295,7 +302,7 @@ class FlowLogsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FlowLog', pipeline_response)
@@ -345,7 +352,7 @@ class FlowLogsOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -401,7 +408,14 @@ class FlowLogsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'flowLogName': self._serialize.url("flow_log_name", flow_log_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -420,7 +434,7 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         **kwargs
-    ) -> AsyncIterable["models.FlowLogListResult"]:
+    ) -> AsyncIterable["_models.FlowLogListResult"]:
         """Lists all flow log resources for the specified Network Watcher.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -432,7 +446,7 @@ class FlowLogsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_06_01.models.FlowLogListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLogListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLogListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -479,7 +493,7 @@ class FlowLogsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

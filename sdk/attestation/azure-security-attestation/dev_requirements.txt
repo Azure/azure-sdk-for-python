@@ -1,0 +1,9 @@
+-e ../../../tools/azure-sdk-tools
+aiohttp>=3.0; python_version >= '3.5'
+-e ../../../tools/azure-devtools
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+cryptography>=2.1.4
+aiohttp>=3.0; python_version >= '3.5'
+azure-identity
+../../security/azure-security-nspkg
