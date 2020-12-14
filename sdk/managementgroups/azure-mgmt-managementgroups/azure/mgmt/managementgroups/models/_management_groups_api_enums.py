@@ -9,11 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import ManagementGroupsAPIConfiguration
-from ._management_groups_api import ManagementGroupsAPI
-__all__ = ['ManagementGroupsAPI', 'ManagementGroupsAPIConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class Reason(str, Enum):
 
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class Status(str, Enum):
+
+    not_started = "NotStarted"
+    not_started_but_groups_exist = "NotStartedButGroupsExist"
+    started = "Started"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    completed = "Completed"
+
+
+class Type(str, Enum):
+
+    microsoft_managementmanagement_groups = "Microsoft.Management/managementGroups"
