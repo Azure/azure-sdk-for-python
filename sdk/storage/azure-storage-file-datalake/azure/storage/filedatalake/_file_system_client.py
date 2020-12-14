@@ -6,15 +6,14 @@
 import functools
 from typing import Optional, Union
 
-from ._generated.models import ListBlobsShowOnly
 
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote  # type: ignore
-
 import six
+
 from azure.core.pipeline import Pipeline
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
@@ -27,7 +26,7 @@ from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import DataLakeStorageClient
 from ._deserialize import process_storage_error, deserialize_metadata
-from ._generated.models import StorageErrorException
+from ._generated.models import StorageErrorException, ListBlobsShowOnly
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -742,7 +741,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.ContainerClient
         """
-        quoted_path, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
+        _, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
 
         pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

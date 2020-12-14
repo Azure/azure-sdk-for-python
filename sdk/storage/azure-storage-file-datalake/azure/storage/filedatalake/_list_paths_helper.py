@@ -10,7 +10,7 @@ from ._deserialize import process_storage_error, return_headers_and_deserialized
 from ._generated.models import StorageErrorException, BlobItemInternal, BlobPrefix as GenBlobPrefix
 from ._generated.models import Path
 from ._shared.models import DictMixin
-from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
+from ._shared.response_handlers import return_context_and_deserialized
 
 
 class PathPropertiesPaged(PageIterator):
@@ -175,8 +175,7 @@ class DirectoryPathPrefixPaged(DeletedPathPropertiesPaged):
 class DeletedDirectoryPath(ItemPaged, DictMixin):
     """An Iterable of deleted path properties.
 
-    :ivar str name: The prefix, or "directory name" of the blob.
-    :ivar str directory: A blob name prefix being used to filter the list.
+    :ivar str directory_path: Name of the deleted directory.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
@@ -185,10 +184,8 @@ class DeletedDirectoryPath(ItemPaged, DictMixin):
     """
     def __init__(self, *args, **kwargs):
         super(DeletedDirectoryPath, self).__init__(*args, page_iterator_class=DirectoryPathPrefixPaged, **kwargs)
-        self.name = kwargs.get('prefix')
         self.directory_path = kwargs.get('prefix')
         self.results_per_page = kwargs.get('results_per_page')
         self.file_system = kwargs.get('container')
         self.delimiter = kwargs.get('delimiter')
         self.location_mode = kwargs.get('location_mode')
-
