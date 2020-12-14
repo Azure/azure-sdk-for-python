@@ -117,6 +117,16 @@ class PagingMethodABC():
         raise NotImplementedError("This method needs to be implemented")
 
     def get_next_request(self, continuation_token, initial_request):
+        # type: (Any, HttpRequest) -> HttpRequest
+        """Return the next request object for paging.
+
+        :param any continuation_token: The token used to continue paging
+        :param initial_request: The initial paging request. You can use this as a foundation
+         to build up your next request
+        :type initial_request: ~azure.core.pipeline.transport.HttpRequest
+        :return: Next request for the pager to make
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     # extracting data from response
@@ -216,6 +226,16 @@ class CallbackPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instanc
         self._path_format_arguments = kwargs.pop("path_format_arguments", {})
 
     def get_next_request(self, continuation_token, initial_request):
+        # type: (Any, HttpRequest) -> HttpRequest
+        """Return the next request object for paging.
+
+        :param any continuation_token: The token used to continue paging
+        :param initial_request: The initial paging request. You can use this as a foundation
+         to build up your next request
+        :type initial_request: ~azure.core.pipeline.transport.HttpRequest
+        :return: Next request for the pager to make
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
+        """
         return self._next_request_callback(continuation_token)
 
     def get_list_elements(self, pipeline_response, deserialized):
