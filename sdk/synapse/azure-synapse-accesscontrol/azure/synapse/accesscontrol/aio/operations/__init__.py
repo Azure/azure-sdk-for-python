@@ -6,8 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._access_control_client_operations import AccessControlClientOperationsMixin
+from ._role_assignments_operations import RoleAssignmentsOperations
+from ._role_definitions_operations import RoleDefinitionsOperations
 
 __all__ = [
-    'AccessControlClientOperationsMixin',
+    'RoleAssignmentsOperations',
+    'RoleDefinitionsOperations',
 ]
