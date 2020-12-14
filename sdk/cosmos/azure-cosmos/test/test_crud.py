@@ -701,6 +701,17 @@ class CRUDTests(unittest.TestCase):
 
         created_db.delete_container(created_collection)
 
+    document_definition = {'name': 'sample document',
+                               'spam': 'eggs',
+                               'pk': 'value'}
+
+        # Should throw an error because automatic id generation is disabled always.
+        self.__AssertHTTPFailureWithStatus(
+            StatusCodes.BAD_REQUEST,
+            created_collection.create_item,
+            document_definition
+        )
+
     def test_partitioned_collection_conflict_crud_and_query(self):
         created_db = self.databaseForTest
 
