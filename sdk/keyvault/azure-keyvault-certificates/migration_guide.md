@@ -59,7 +59,7 @@ credentials = ServicePrincipalCredentials(
     tenant="tenant id"
 )
 
-certificate_client = KeyVaultClient(credentials)
+client = KeyVaultClient(credentials)
 ```
 
 Now in `azure-keyvault-certificates` you can create a `CertificateClient` using any credential from [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md). Below is an example using [`DefaultAzureCredential`](https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python):
@@ -101,7 +101,7 @@ async with certificate_client:
 In `azure-keyvault` you could create a certificate by using `KeyVaultClient`'s `create_certificate` method, which required a vault endpoint and certificate name. This method returned a `CertificateOperation`.
 
 ```python
-operation = certificate_client.create_certificate(
+operation = client.create_certificate(
     vault_base_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
 )
@@ -126,13 +126,13 @@ If you would like to check the status of your certificate creation, you can call
 In `azure-keyvault` you could retrieve a certificate (as a `CertificateBundle`) by using `get_certificate` and specifying the desired vault endpoint, certificate name, and certificate version. You could retrieve the versions of a certificate with the `get_certificate_versions` method, which returned an iterator-like object.
 
 ```python
-certificate_versions = certificate_client.get_certificate_versions(
+certificate_versions = client.get_certificate_versions(
     vault_base_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
 )
 
 for certificate_version in certificate_versions:
-    certificate = certificate_client.get_certificate(
+    certificate = client.get_certificate(
         vault_base_url="https://my-key-vault.vault.azure.net/",
         certificate_name="cert-name",
         certificate_version=certificate_version
@@ -160,7 +160,7 @@ certificate = certificate_client.get_certificate_version(certificate_name="cert-
 In `azure-keyvault` you could list the properties of certificates in a specified vault with the `get_certificates` method. This returned an iterator-like object containing `CertificateItem` instances.
 
 ```python
-certificates = certificate_client.get_certificates(vault_base_url="https://my-key-vault.vault.azure.net/")
+certificates = client.get_certificates(vault_base_url="https://my-key-vault.vault.azure.net/")
 
 for certificate in certificates:
     print(certificate.attributes.created)
@@ -182,13 +182,13 @@ for certificate in certificates:
 In `azure-keyvault` you could delete all versions of a certificate with the `delete_certificate` method. This returned information about the deleted certificate (as a `DeletedCertificateBundle`), but you you could not poll the deletion operation to know when it completed. This would be valuable information if you intended to permanently delete the deleted certificate with `purge_deleted_certificate`.
 
 ```python
-deleted_certificate = certificate_client.delete_certificate(
+deleted_certificate = client.delete_certificate(
     vault_base_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
 )
 
 # this purge would fail if deletion hadn't finished
-certificate_client.purge_deleted_certificate(
+client.purge_deleted_certificate(
     vault_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
 )
