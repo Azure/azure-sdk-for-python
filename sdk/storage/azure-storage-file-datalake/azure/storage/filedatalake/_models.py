@@ -18,8 +18,8 @@ from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
-from azure.storage.blob._generated.models import Logging, Metrics, RetentionPolicy, StaticWebsite,\
-    CorsRule as GenCorsRule
+from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
+    RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
 from ._shared.models import DictMixin
 
 
@@ -851,7 +851,7 @@ class DeletedFileProperties(DictMixin):
         self.deletion_id = None
 
 
-class DatalakeAnalyticsLogging(Logging):
+class AnalyticsLogging(GenLogging):
     """Azure Analytics Logging settings.
 
     :keyword str version:
@@ -862,7 +862,7 @@ class DatalakeAnalyticsLogging(Logging):
         Indicates whether all read requests should be logged. The default value is `False`.
     :keyword bool write:
         Indicates whether all write requests should be logged. The default value is `False`.
-    :keyword ~azure.storage.filedatalake.DatalakeRetentionPolicy retention_policy:
+    :keyword ~azure.storage.filedatalake.RetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
     """
@@ -872,7 +872,7 @@ class DatalakeAnalyticsLogging(Logging):
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
         self.write = kwargs.get('write', False)
-        self.retention_policy = kwargs.get('retention_policy') or DatalakeRetentionPolicy()
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -883,16 +883,16 @@ class DatalakeAnalyticsLogging(Logging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=DatalakeRetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
         )
 
 
-class DatalakeMetrics(Metrics):
+class Metrics(GenMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     :keyword str version:
         The version of Storage Analytics to configure. The default value is 1.0.
-    :keyword ~azure.storage.filedatalake.DatalakeRetentionPolicy retention_policy:
+    :keyword ~azure.storage.filedatalake.RetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
     """
@@ -901,7 +901,7 @@ class DatalakeMetrics(Metrics):
         self.version = kwargs.get('version', u'1.0')
         self.enabled = False
         self.include_apis = None
-        self.retention_policy = kwargs.get('retention_policy') or DatalakeRetentionPolicy()
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -911,11 +911,11 @@ class DatalakeMetrics(Metrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=DatalakeRetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
         )
 
 
-class DatalakeRetentionPolicy(RetentionPolicy):
+class RetentionPolicy(GenRetentionPolicy):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -944,7 +944,7 @@ class DatalakeRetentionPolicy(RetentionPolicy):
         )
 
 
-class DatalakeStaticWebsite(StaticWebsite):
+class StaticWebsite(GenStaticWebsite):
     """The properties that enable an account to host a static website.
 
     :keyword bool enabled:

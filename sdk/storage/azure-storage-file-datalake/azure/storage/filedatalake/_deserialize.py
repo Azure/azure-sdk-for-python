@@ -13,7 +13,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifiedError, ClientAuthenticationError, \
     ResourceNotFoundError, ResourceExistsError
 from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedFileProperties, PathProperties, \
-    DatalakeStaticWebsite, DatalakeRetentionPolicy, DatalakeMetrics, DatalakeAnalyticsLogging
+    StaticWebsite, RetentionPolicy, Metrics, AnalyticsLogging  # pylint: disable=protected-access
 from ._shared.models import StorageErrorCode
 
 if TYPE_CHECKING:
@@ -59,15 +59,15 @@ def get_deleted_file_properties_from_generated_code(generated):
 
 
 def get_datalake_service_properties(datalake_properties):
-    datalake_properties["analytics_logging"] = DatalakeAnalyticsLogging._from_generated(
-        datalake_properties["analytics_logging"])  # pylint: disable=protected-access
-    datalake_properties["hour_metrics"] = DatalakeMetrics._from_generated(datalake_properties["hour_metrics"])  # pylint: disable=protected-access
-    datalake_properties["minute_metrics"] = DatalakeMetrics._from_generated(
-        datalake_properties["minute_metrics"])  # pylint: disable=protected-access
-    datalake_properties["delete_retention_policy"] = DatalakeRetentionPolicy._from_generated(
-        datalake_properties["delete_retention_policy"])  # pylint: disable=protected-access
-    datalake_properties["static_website"] = DatalakeStaticWebsite._from_generated(
-        datalake_properties["static_website"])  # pylint: disable=protected-access
+    datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(    # pylint: disable=protected-access
+        datalake_properties["analytics_logging"])
+    datalake_properties["hour_metrics"] = Metrics._from_generated(datalake_properties["hour_metrics"])  # pylint: disable=protected-access
+    datalake_properties["minute_metrics"] = Metrics._from_generated(    # pylint: disable=protected-access
+        datalake_properties["minute_metrics"])
+    datalake_properties["delete_retention_policy"] = RetentionPolicy._from_generated(   # pylint: disable=protected-access
+        datalake_properties["delete_retention_policy"])
+    datalake_properties["static_website"] = StaticWebsite._from_generated(  # pylint: disable=protected-access
+        datalake_properties["static_website"])
     return datalake_properties
 
 

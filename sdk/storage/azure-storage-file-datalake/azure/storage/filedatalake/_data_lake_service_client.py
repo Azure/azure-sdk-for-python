@@ -19,8 +19,8 @@ from ._deserialize import get_datalake_service_properties
 from ._file_system_client import FileSystemClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
-from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode, DatalakeAnalyticsLogging, \
-    CorsRule, DatalakeRetentionPolicy, DatalakeStaticWebsite, DatalakeMetrics
+from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode, AnalyticsLogging, \
+    CorsRule, RetentionPolicy, StaticWebsite, Metrics
 from ._serialize import convert_dfs_url_to_blob_url
 
 
@@ -496,13 +496,13 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             key_resolver_function=self.key_resolver_function)
 
     def set_service_properties(
-            self, analytics_logging=None,  # type: Optional[DatalakeAnalyticsLogging]
-            hour_metrics=None,  # type: Optional[DatalakeMetrics]
-            minute_metrics=None,  # type: Optional[DatalakeMetrics]
+            self, analytics_logging=None,  # type: Optional[AnalyticsLogging]
+            hour_metrics=None,  # type: Optional[Metrics]
+            minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
             target_version=None,  # type: Optional[str]
-            delete_retention_policy=None,  # type: Optional[DatalakeRetentionPolicy]
-            static_website=None,  # type: Optional[DatalakeStaticWebsite]
+            delete_retention_policy=None,  # type: Optional[RetentionPolicy]
+            static_website=None,  # type: Optional[StaticWebsite]
             **kwargs
     ):
         # type: (...) -> None
@@ -517,15 +517,15 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
         :param analytics_logging:
             Groups the Azure Analytics Logging settings.
-        :type analytics_logging: ~azure.storage.filedatalake.DatalakeAnalyticsLogging
+        :type analytics_logging: ~azure.storage.filedatalake.AnalyticsLogging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates.
-        :type hour_metrics: ~azure.storage.filedatalake.DatalakeMetrics
+        :type hour_metrics: ~azure.storage.filedatalake.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute.
-        :type minute_metrics: ~azure.storage.filedatalake.DatalakeMetrics
+        :type minute_metrics: ~azure.storage.filedatalake.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
@@ -537,11 +537,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param delete_retention_policy:
             The delete retention policy specifies whether to retain deleted files/directories.
             It also specifies the number of days and versions of file/directory to keep.
-        :type delete_retention_policy: ~azure.storage.filedatalake.DatalakeRetentionPolicy
+        :type delete_retention_policy: ~azure.storage.filedatalake.RetentionPolicy
         :param static_website:
             Specifies whether the static website feature is enabled,
             and if yes, indicates the index document and 404 error document to use.
-        :type static_website: ~azure.storage.filedatalake.DatalakeStaticWebsite
+        :type static_website: ~azure.storage.filedatalake.StaticWebsite
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
