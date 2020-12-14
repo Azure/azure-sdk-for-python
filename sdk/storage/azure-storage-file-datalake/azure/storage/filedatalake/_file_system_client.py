@@ -736,7 +736,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param str deleted_path_name:
             Specifies the path (file or directory) to restore.
         :param str deleted_path_version:
-            Specifies the version of the deleted container to restore.
+            Specifies the version of the deleted path to restore.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
