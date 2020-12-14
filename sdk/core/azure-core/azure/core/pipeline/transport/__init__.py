@@ -48,21 +48,21 @@ try:
     ])
 
     try:
-        from ._requests_trio import TrioRequestsTransport, TrioRequestsTransportResponse
+        from ._trio_wrapper import TrioRequestsTransport, TrioRequestsTransportResponse
         __all__.extend([
             'TrioRequestsTransport',
             'TrioRequestsTransportResponse'
         ])
     except ImportError:
-        pass  # Trio not installed
+        pass
 
     try:
-        from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
+        from ._aiohttp_wrapper import AioHttpTransport, AioHttpTransportResponse
         __all__.extend([
             'AioHttpTransport',
             'AioHttpTransportResponse',
         ])
     except ImportError:
-        pass  # Aiohttp not installed
+        pass
 except (ImportError, SyntaxError):
     pass  # Asynchronous pipelines not supported.
