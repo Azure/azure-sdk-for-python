@@ -28,6 +28,7 @@ from azure.core.configuration import ConnectionConfiguration
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
 if TYPE_CHECKING:
+    from ._base import HttpRequest
     import aiohttp
 
 class AioHttpTransport(AsyncHttpTransport):
