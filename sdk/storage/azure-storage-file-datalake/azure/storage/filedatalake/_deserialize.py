@@ -12,7 +12,8 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifiedError, ClientAuthenticationError, \
     ResourceNotFoundError, ResourceExistsError
-from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedFileProperties, PathProperties
+from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedFileProperties, PathProperties, \
+    DatalakeStaticWebsite, DatalakeRetentionPolicy, DatalakeMetrics, DatalakeAnalyticsLogging
 from ._shared.models import StorageErrorCode
 
 if TYPE_CHECKING:
@@ -55,6 +56,19 @@ def get_deleted_file_properties_from_generated_code(generated):
     deleted_path.remaining_retention_days = generated.properties.remaining_retention_days
     deleted_path.deletion_id = generated.deletion_id
     return deleted_path
+
+
+def get_datalake_service_properties(datalake_properties):
+    datalake_properties["analytics_logging"] = DatalakeAnalyticsLogging._from_generated(
+        datalake_properties["analytics_logging"])  # pylint: disable=protected-access
+    datalake_properties["hour_metrics"] = DatalakeMetrics._from_generated(datalake_properties["hour_metrics"])  # pylint: disable=protected-access
+    datalake_properties["minute_metrics"] = DatalakeMetrics._from_generated(
+        datalake_properties["minute_metrics"])  # pylint: disable=protected-access
+    datalake_properties["delete_retention_policy"] = DatalakeRetentionPolicy._from_generated(
+        datalake_properties["delete_retention_policy"])  # pylint: disable=protected-access
+    datalake_properties["static_website"] = DatalakeStaticWebsite._from_generated(
+        datalake_properties["static_website"])  # pylint: disable=protected-access
+    return datalake_properties
 
 
 def from_blob_properties(blob_properties):

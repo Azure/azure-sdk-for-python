@@ -11,6 +11,7 @@ from azure.core.pipeline import AsyncPipeline
 
 from azure.storage.blob.aio import BlobServiceClient
 from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._deserialize import get_datalake_service_properties
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from ._file_system_client_async import FileSystemClient
 from .._data_lake_service_client import DataLakeServiceClient as DataLakeServiceClientBase
@@ -518,9 +519,4 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :rtype: Dict[str, Any]
         """
         props = await self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
-        props["analytics_logging"] = DatalakeAnalyticsLogging._from_generated(props["analytics_logging"])   # pylint: disable=protected-access
-        props["hour_metrics"] = DatalakeMetrics._from_generated(props["hour_metrics"])  # pylint: disable=protected-access
-        props["minute_metrics"] = DatalakeMetrics._from_generated(props["minute_metrics"])  # pylint: disable=protected-access
-        props["delete_retention_policy"] = DatalakeRetentionPolicy._from_generated(props["delete_retention_policy"])    # pylint: disable=protected-access
-        props["static_website"] = DatalakeStaticWebsite._from_generated(props["static_website"])    # pylint: disable=protected-access
-        return props
+        return get_datalake_service_properties(props)

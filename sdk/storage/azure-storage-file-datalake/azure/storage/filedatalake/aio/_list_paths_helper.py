@@ -19,6 +19,7 @@ from .._shared.response_handlers import return_context_and_deserialized
 class DeletedPathPropertiesPaged(AsyncPageIterator):
     """An Iterable of deleted path properties.
 
+    :ivar str name: Name of the directory path.
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A path name prefix being used to filter the list.
     :ivar str marker: The continuation token of the current page of results.
@@ -46,6 +47,7 @@ class DeletedPathPropertiesPaged(AsyncPageIterator):
             extract_data=self._extract_data_cb,
             continuation_token=continuation_token or ""
         )
+        self.name = prefix
         self._command = command
         self.service_endpoint = None
         self.prefix = prefix
@@ -74,38 +76,19 @@ class DeletedPathPropertiesPaged(AsyncPageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
-        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
-
-        return self._response.next_marker or None, self.current_page
-
-    def _build_item(self, item):
-        if isinstance(item, DeletedFileProperties):
-            return item
-        if isinstance(item, BlobItemInternal):
-            path = get_deleted_file_properties_from_generated_code(item)  # pylint: disable=protected-access
-            path.file_system = self.container
-            return path
-        return item
-
-
-class DirectoryPathPrefixPaged(DeletedPathPropertiesPaged):
-    def __init__(self, *args, **kwargs):
-        super(DirectoryPathPrefixPaged, self).__init__(*args, **kwargs)
-        self.name = self.prefix
-
-    async def _extract_data_cb(self, get_next_return):
-        continuation_token, _ = await super(DirectoryPathPrefixPaged, self)._extract_data_cb(get_next_return)
         self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
         self.current_page = [self._build_item(item) for item in self.current_page]
         self.delimiter = self._response.delimiter
 
-        return continuation_token, self.current_page
+        return self._response.next_marker or None, self.current_page
 
     def _build_item(self, item):
-        item = super(DirectoryPathPrefixPaged, self)._build_item(item)
+        if isinstance(item, BlobItemInternal):
+            path = get_deleted_file_properties_from_generated_code(item)
+            path.file_system = self.container
+            return path
         if isinstance(item, GenBlobPrefix):
-            return DeletedDirectoryPath(
-                self._command,
+            return DeletedDirectoryProperties(
                 container=self.container,
                 prefix=item.name,
                 results_per_page=self.results_per_page,
@@ -113,19 +96,18 @@ class DirectoryPathPrefixPaged(DeletedPathPropertiesPaged):
         return item
 
 
-class DeletedDirectoryPath(AsyncItemPaged, DictMixin):
-    """An Iterable of deleted path properties.
+class DeletedDirectoryProperties(DictMixin):
+    """Deleted directory properties.
 
-    :ivar str directory_path: Name of the deleted directory.
+    :ivar str name: Name of the deleted directory.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar str file_system: The file system that the deleted paths are listed from.
     :ivar str delimiter: A delimiting character used for hierarchy listing.
     """
-    def __init__(self, *args, **kwargs):
-        super(DeletedDirectoryPath, self).__init__(*args, page_iterator_class=DirectoryPathPrefixPaged, **kwargs)
-        self.directory_path = kwargs.get('prefix')
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('prefix')
         self.results_per_page = kwargs.get('results_per_page')
         self.file_system = kwargs.get('container')
         self.delimiter = kwargs.get('delimiter')

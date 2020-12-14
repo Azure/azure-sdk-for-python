@@ -891,6 +891,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
+
+        .. versionadded:: 12.3.0
+            This operation was introduced in API version '2020-06-12'.
+
         :param str name_starts_with:
             Filters the results to return only paths under the specified path.
         :keyword int timeout:

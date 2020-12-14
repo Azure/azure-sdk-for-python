@@ -85,7 +85,6 @@ class DeletedPathPropertiesPaged(PageIterator):
             return path
         if isinstance(item, GenBlobPrefix):
             return DeletedDirectoryProperties(
-                self._command,
                 container=self.container,
                 prefix=item.name,
                 results_per_page=self.results_per_page,
@@ -94,17 +93,17 @@ class DeletedPathPropertiesPaged(PageIterator):
 
 
 class DeletedDirectoryProperties(DictMixin):
-    """An Iterable of deleted path properties.
+    """Deleted directory properties.
 
-    :ivar str directory_path: Name of the deleted directory.
+    :ivar str name: Name of the deleted directory.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar str file_system: The file system that the deleted paths are listed from.
     :ivar str delimiter: A delimiting character used for hierarchy listing.
     """
-    def __init__(self, *args, **kwargs):
-        self.directory_path = kwargs.get('prefix')
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('prefix')
         self.results_per_page = kwargs.get('results_per_page')
         self.file_system = kwargs.get('container')
         self.delimiter = kwargs.get('delimiter')
