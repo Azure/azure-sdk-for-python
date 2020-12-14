@@ -18,13 +18,14 @@ For a more complete set of Azure libraries, see the
 ## Usage
 
 
-To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
+Management](https://docs.microsoft.com/python/api/overview/azure/) on	To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
+docs.microsoft.com.	
 
 
-
-For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/portal)
-Code samples for this package can be found at [Time Series Insights Management](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/portal) on docs.microsoft.com.
+For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/)
+Code samples for this package can be found at [Mixed Reality Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
 Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+
 
 ## Provide Feedback
 
