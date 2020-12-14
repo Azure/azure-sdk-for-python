@@ -116,8 +116,7 @@ class DirectoryPathPrefixPaged(DeletedPathPropertiesPaged):
 class DeletedDirectoryPath(AsyncItemPaged, DictMixin):
     """An Iterable of deleted path properties.
 
-    :ivar str name: The prefix, or "directory name" of the blob.
-    :ivar str directory: A blob name prefix being used to filter the list.
+    :ivar str directory_path: Name of the deleted directory.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
@@ -126,7 +125,6 @@ class DeletedDirectoryPath(AsyncItemPaged, DictMixin):
     """
     def __init__(self, *args, **kwargs):
         super(DeletedDirectoryPath, self).__init__(*args, page_iterator_class=DirectoryPathPrefixPaged, **kwargs)
-        self.name = kwargs.get('prefix')
         self.directory_path = kwargs.get('prefix')
         self.results_per_page = kwargs.get('results_per_page')
         self.file_system = kwargs.get('container')

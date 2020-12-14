@@ -727,7 +727,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: DataLakeDirectoryClient or DataLakeFileClient
         """
-        quoted_path, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
+        _, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
 
         pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

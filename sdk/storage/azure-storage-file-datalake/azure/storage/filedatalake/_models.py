@@ -18,8 +18,9 @@ from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
+from azure.storage.blob._generated.models import Logging, Metrics, RetentionPolicy, StaticWebsite,\
+    CorsRule as GenCorsRule
 from ._shared.models import DictMixin
-from azure.storage.blob._generated.models import Logging, Metrics, RetentionPolicy, StaticWebsite, CorsRule as GenCorsRule
 
 
 class FileSystemProperties(object):
@@ -861,7 +862,7 @@ class DatalakeAnalyticsLogging(Logging):
         Indicates whether all read requests should be logged. The default value is `False`.
     :keyword bool write:
         Indicates whether all write requests should be logged. The default value is `False`.
-    :keyword ~azure.storage.blob.RetentionPolicy retention_policy:
+    :keyword ~azure.storage.filedatalake.DatalakeRetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
     """
@@ -891,7 +892,7 @@ class DatalakeMetrics(Metrics):
 
     :keyword str version:
         The version of Storage Analytics to configure. The default value is 1.0.
-    :keyword ~azure.storage.blob.RetentionPolicy retention_policy:
+    :keyword ~azure.storage.filedatalake.DatalakeRetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
     """

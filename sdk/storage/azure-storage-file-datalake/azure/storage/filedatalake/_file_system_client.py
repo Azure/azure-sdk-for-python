@@ -12,8 +12,8 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote  # type: ignore
-
 import six
+
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -780,7 +780,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: DataLakeDirectoryClient or DataLakeFileClient
         """
-        quoted_path, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
+        _, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
 
         pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
