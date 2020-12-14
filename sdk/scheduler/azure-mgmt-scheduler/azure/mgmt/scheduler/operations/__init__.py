@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_collections_operations import JobCollectionsOperations
-from .jobs_operations import JobsOperations
+from ._job_collections_operations import JobCollectionsOperations
+from ._jobs_operations import JobsOperations
 
 __all__ = [
     'JobCollectionsOperations',
