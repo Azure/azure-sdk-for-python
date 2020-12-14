@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+from azure.core.configuration import ConnectionConfiguration
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
 if TYPE_CHECKING:
@@ -49,6 +50,13 @@ class AioHttpTransport(AsyncHttpTransport):
             :dedent: 4
             :caption: Asynchronous transport with aiohttp.
     """
+    def __init__(self, *, session=None, loop=None, session_owner=True, **kwargs):
+        self._loop = loop
+        self._session_owner = session_owner
+        self.session = session
+        self.connection_config = ConnectionConfiguration(**kwargs)
+        self._use_env_settings = kwargs.pop('use_env_settings', True)
+
     def __new__(cls, session=None, loop=None, session_owner=True, **kwargs):
         try:
             from .aiohttp import AioHttpTransport as _AioHttpTransport
@@ -66,6 +74,15 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
+    def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None) -> None:
+        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
+        # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
+        self.status_code = aiohttp_response.status
+        self.headers = CIMultiDict(aiohttp_response.headers)
+        self.reason = aiohttp_response.reason
+        self.content_type = aiohttp_response.headers.get('content-type')
+        self._body = None
+
     def __new__(cls, request, aiohttp_response, block_size=None):
         # type: (HttpRequest, aiohttp.ClientResponse, Optional[int]) -> AioHttpTransportResponse
         try:
