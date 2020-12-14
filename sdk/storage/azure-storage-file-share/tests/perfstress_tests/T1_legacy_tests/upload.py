@@ -7,7 +7,7 @@ import uuid
 
 from azure_devtools.perfstress_tests import RandomStream, get_random_bytes
 
-from ._test_base_legacy import _LegacyShareTest
+from ._test_base import _LegacyShareTest
 
 
 class LegacyUploadTest(_LegacyShareTest):

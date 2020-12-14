@@ -9,10 +9,12 @@ import uuid
 
 from azure_devtools.perfstress_tests import get_random_bytes
 
-from ._test_base_legacy import _LegacyShareTest
+from ._test_base import _LegacyShareTest
 
 
 class LegacyUploadFromFileTest(_LegacyShareTest):
+    temp_file = None
+
     def __init__(self, arguments):
         super().__init__(arguments)
         self.file_name = "sharefiletest-" + str(uuid.uuid4())
@@ -21,11 +23,11 @@ class LegacyUploadFromFileTest(_LegacyShareTest):
         await super().global_setup()
         data = get_random_bytes(self.args.size)
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            self.temp_file = temp_file.name
+            LegacyUploadFromFileTest.temp_file = temp_file.name
             temp_file.write(data)
 
     async def global_cleanup(self):
-        os.remove(self.temp_file)
+        os.remove(LegacyUploadFromFileTest.temp_file)
         await super().global_cleanup()
 
     def run_sync(self):
@@ -33,7 +35,7 @@ class LegacyUploadFromFileTest(_LegacyShareTest):
             share_name=self.share_name,
             directory_name=None,
             file_name=self.file_name,
-            local_file_path=self.temp_file,
+            local_file_path=LegacyUploadFromFileTest.temp_file,
             max_connections=self.args.max_concurrency)
 
     async def run_async(self):
