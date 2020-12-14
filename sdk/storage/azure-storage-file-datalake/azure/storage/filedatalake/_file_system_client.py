@@ -734,7 +734,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             This operation was introduced in API version '2020-06-12'.
 
         :param str deleted_path_name:
-            Specifies the name of the deleted container to restore.
+            Specifies the path (file or directory) to restore.
         :param str deleted_path_version:
             Specifies the version of the deleted container to restore.
         :keyword int timeout:
