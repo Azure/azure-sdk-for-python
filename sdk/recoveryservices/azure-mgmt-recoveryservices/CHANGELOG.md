@@ -1,5 +1,11 @@
 # Release History
 
+## 0.6.0 (2020-12-14)
+
+**Features**
+
+  - Model PatchVault has a new parameter identity
+
 ## 0.5.0 (2020-04-21)
 
 **Features**

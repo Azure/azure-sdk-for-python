@@ -425,6 +425,8 @@ class PatchVault(PatchTrackedResource):
     :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
     :param sku:
     :type sku: ~azure.mgmt.recoveryservices.models.Sku
+    :param identity:
+    :type identity: ~azure.mgmt.recoveryservices.models.IdentityData
     """
 
     _validation = {
@@ -442,12 +444,14 @@ class PatchVault(PatchTrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'VaultProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'IdentityData'},
     }
 
     def __init__(self, **kwargs):
         super(PatchVault, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class PrivateEndpoint(Model):
