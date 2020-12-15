@@ -66,6 +66,10 @@ jobs:
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
 
+    - template: /eng/pipelines/templates/steps/create-apireview.yml
+      parameters:
+        Artifacts: ${{ parameters.Artifacts }}
+
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
