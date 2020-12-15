@@ -9,11 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MarketplaceOrderingAgreementsConfiguration
-from ._marketplace_ordering_agreements import MarketplaceOrderingAgreements
-__all__ = ['MarketplaceOrderingAgreements', 'MarketplaceOrderingAgreementsConfiguration']
+from msrest.paging import Paged
 
-from .version import VERSION
 
-__version__ = VERSION
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.marketplaceordering.models.Operation>` object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)

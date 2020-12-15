@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .marketplace_agreements_operations import MarketplaceAgreementsOperations
-from .operations import Operations
+from ._marketplace_agreements_operations import MarketplaceAgreementsOperations
+from ._operations import Operations
 
 __all__ = [
     'MarketplaceAgreementsOperations',
