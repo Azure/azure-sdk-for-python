@@ -21,6 +21,7 @@ from ..._credentials.managed_identity import _ManagedIdentityBase
 if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.configuration import Configuration
+    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,7 +40,7 @@ class ManagedIdentityCredential(AsyncContextManager):
     """
 
     def __init__(self, **kwargs: "Any") -> None:
-        self._credential = None
+        self._credential = None  # type: Optional[AsyncTokenCredential]
 
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
