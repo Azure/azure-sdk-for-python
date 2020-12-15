@@ -238,7 +238,8 @@ def test_interactive_credential(mock_open, redirect_url):
     assert server_class.call_count == 1
 
     if redirect_url:
-        server_class.assert_called_once_with(redirect_url, timeout=ANY)
+        parsed = urllib_parse.urlparse(redirect_url)
+        server_class.assert_called_once_with(parsed.hostname, parsed.port, timeout=ANY)
 
     # token should be cached, get_token shouldn't prompt again
     token = credential.get_token("scope")
@@ -287,11 +288,11 @@ def test_timeout():
 def test_redirect_server():
     # binding a random port prevents races when running the test in parallel
     server = None
+    hostname = "127.0.0.1"
     for _ in range(4):
         try:
             port = random.randint(1024, 65535)
-            url = "http://127.0.0.1:{}".format(port)
-            server = AuthCodeRedirectServer(url, timeout=10)
+            server = AuthCodeRedirectServer(hostname, port, timeout=10)
             break
         except socket.error:
             continue  # keep looking for an open port
@@ -307,7 +308,8 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    response = urllib.request.urlopen(url + "?{}={}".format(expected_param, expected_value))  # nosec
+    url = "http://{}:{}".format(hostname, port) + "?{}={}".format(expected_param, expected_value)
+    response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]
@@ -342,15 +344,13 @@ def test_cannot_bind_port():
 def test_cannot_bind_redirect_uri():
     """When a user specifies a redirect URI, the credential shouldn't attempt to bind another"""
 
-    expected_uri = "http://localhost:42"
-
     server = Mock(side_effect=socket.error)
-    credential = InteractiveBrowserCredential(redirect_uri=expected_uri, _server_class=server)
+    credential = InteractiveBrowserCredential(redirect_uri="http://localhost:42", _server_class=server)
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
 
-    server.assert_called_once_with(expected_uri, timeout=ANY)
+    server.assert_called_once_with("localhost", 42, timeout=ANY)
 
 
 def _validate_auth_request_url(url):
