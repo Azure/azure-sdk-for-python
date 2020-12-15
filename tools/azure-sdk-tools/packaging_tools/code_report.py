@@ -233,7 +233,7 @@ def filter_track2_versions(package_name, versions):
         'azure-mgmt-hybridkubernetes':'1.0.0b1',
         'azure-mgmt-managementgroups':'1.0.0b1',
         'azure-mgmt-resourcemover':'1.0.1b1',
-        'azure-mgmt-synapse':'1.0.0b1',
+        'azure-mgmt-synapse':'1.0.0b1'
     }
     upbound = track2_versions.get(package_name)
     if not upbound:
