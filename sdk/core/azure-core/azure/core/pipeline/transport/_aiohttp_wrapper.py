@@ -23,14 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional
-from multidict import CIMultiDict
-from azure.core.configuration import ConnectionConfiguration
-
-if TYPE_CHECKING:
-    from ._base import HttpRequest
-    import aiohttp
-
 class AioHttpTransport(object):
     """AioHttp HTTP sender implementation.
 
