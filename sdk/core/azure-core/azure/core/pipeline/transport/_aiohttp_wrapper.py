@@ -51,13 +51,6 @@ class AioHttpTransport(object):
             :dedent: 4
             :caption: Asynchronous transport with aiohttp.
     """
-    def __init__(self, *, session=None, loop=None, session_owner=True, **kwargs):
-        self._loop = loop
-        self._session_owner = session_owner
-        self.session = session
-        self.connection_config = ConnectionConfiguration(**kwargs)
-        self._use_env_settings = kwargs.pop('use_env_settings', True)
-
     def __new__(cls, session=None, loop=None, session_owner=True, **kwargs):
         try:
             from .aiohttp import AioHttpTransport as _AioHttpTransport
