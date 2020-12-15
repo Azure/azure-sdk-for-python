@@ -30,7 +30,14 @@ class AsyncRandomStream(BytesIO):
             self._base_data = get_random_bytes(e)
             self._base_data_length = e
         self._remaining = self._remaining - e
+        self._position += e
         return self._base_data[:e]
+    
+    def seek(self, index):
+        self._position = index
+
+    def tell(self):
+        return self._position
 
     def remaining(self):
         return self._remaining
