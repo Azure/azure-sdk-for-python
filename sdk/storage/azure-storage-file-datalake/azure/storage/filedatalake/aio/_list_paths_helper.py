@@ -82,9 +82,9 @@ class DeletedPathPropertiesPaged(AsyncPageIterator):
 
     def _build_item(self, item):
         if isinstance(item, BlobItemInternal):
-            path = get_deleted_file_properties_from_generated_code(item)
-            path.file_system = self.container
-            return path
+            file_props = get_deleted_file_properties_from_generated_code(item)
+            file_props.file_system = self.container
+            return file_props
         if isinstance(item, GenBlobPrefix):
             return DeletedDirectoryProperties(
                 container=self.container,

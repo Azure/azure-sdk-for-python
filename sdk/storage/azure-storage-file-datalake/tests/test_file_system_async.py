@@ -17,8 +17,14 @@ from azure.core import MatchConditions
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
+<<<<<<< HEAD
 from azure.storage.filedatalake import AccessPolicy, generate_directory_sas, DirectorySasPermissions, \
     generate_file_system_sas, generate_account_sas, ResourceTypes, AccountSasPermissions
+=======
+from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, \
+    generate_file_system_sas
+from azure.storage.filedatalake._models import DeletedFileProperties
+>>>>>>> bdb8fe9d38... added test
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake import PublicAccess
 from testcase import (
@@ -677,6 +683,25 @@ class FileSystemTest(StorageTestCase):
         self.assertIsNotNone(dir3_paths[1].deletion_id)
         self.assertEqual(dir3_paths[0].name, 'dir3/file_in_dir3')
         self.assertEqual(dir3_paths[1].name, 'dir3/subdir/file_in_subdir')
+
+        paths_generator1 = file_system.get_deleted_paths(max_results=2).by_page()
+        paths1 = []
+        async for path in await paths_generator1.__anext__():
+            paths1.append(path)
+
+        paths_generator2 = file_system.get_deleted_paths(max_results=4) \
+            .by_page(continuation_token=paths_generator1.continuation_token)
+        paths2 = []
+        async for path in await paths_generator2.__anext__():
+            paths2.append(path)
+
+        # Assert
+        self.assertEqual(len(paths1), 2)
+        self.assertEqual(len(paths2), 4)
+        for path in paths1:
+            self.assertIsInstance(path, DeletedDirectoryProperties)
+        for path in paths2:
+            self.assertIsInstance(path, DeletedFileProperties)
 
     @record
     def test_get_deleted_paths(self):

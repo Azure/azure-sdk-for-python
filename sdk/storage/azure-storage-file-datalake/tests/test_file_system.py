@@ -24,6 +24,7 @@ from testcase import (
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
 from azure.storage.filedatalake._list_paths_helper import DeletedDirectoryProperties
+from azure.storage.filedatalake._models import DeletedFileProperties
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
@@ -400,7 +401,7 @@ class FileSystemTest(StorageTestCase):
     @record
     def test_get_deleted_paths(self):
         # Arrange
-        file_system = self._create_file_system(file_system_prefix="fs1")
+        file_system = self._create_file_system(file_system_prefix="fs")
         file0 = file_system.create_file("file0")
         file1 = file_system.create_file("file1")
 
@@ -435,6 +436,21 @@ class FileSystemTest(StorageTestCase):
         self.assertIsNotNone(dir3_paths[1].deletion_id)
         self.assertEqual(dir3_paths[0].name, 'dir3/file_in_dir3')
         self.assertEqual(dir3_paths[1].name, 'dir3/subdir/file_in_subdir')
+
+        paths_generator1 = file_system.get_deleted_paths(max_results=2).by_page()
+        paths1 = list(next(paths_generator1))
+
+        paths_generator2 = file_system.get_deleted_paths(max_results=4).by_page(
+            continuation_token=paths_generator1.continuation_token)
+        paths2 = list(next(paths_generator2))
+
+        # Assert
+        self.assertEqual(len(paths1), 2)
+        self.assertEqual(len(paths2), 4)
+        for path in paths1:
+            self.assertIsInstance(path, DeletedDirectoryProperties)
+        for path in paths2:
+            self.assertIsInstance(path, DeletedFileProperties)
 
     @record
     def test_list_paths_which_are_all_files(self):
