@@ -21,7 +21,7 @@ jobs:
         MacOs_Python37:
           OSVmImage: 'macOS-10.15'
           PythonVersion: '3.7'
-          CoverageArg: '--disablecov'
+          CoverageArg: ''
       EnvVars:
         AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)
         AZURE_STORAGE_ACCESS_KEY: $(python-eh-livetest-event-hub-storage-access-key)
