@@ -224,7 +224,7 @@ def filter_track2_versions(package_name, versions):
         'azure-mgmt-healthcareapis':'1.0.0b1',
         'azure-mgmt-hybridcompute':'7.0.0b1',
         'azure-mgmt-maintenance':'1.0.0b1',
-        'azure-mgmt-managedservices':'6.0.0b1'
+        'azure-mgmt-managedservices':'6.0.0b1',
         'azure-mgmt-peering':'1.0.0b1',
         'azure-mgmt-automanage':'1.0.0b1',
         'azure-mgmt-applicationinsights':'1.0.0b1',
