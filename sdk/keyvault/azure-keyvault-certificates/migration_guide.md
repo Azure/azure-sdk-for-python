@@ -189,7 +189,7 @@ deleted_certificate = client.delete_certificate(
 
 # this purge would fail if deletion hadn't finished
 client.purge_deleted_certificate(
-    vault_url="https://my-key-vault.vault.azure.net/",
+    vault_base_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
 )
 ```
