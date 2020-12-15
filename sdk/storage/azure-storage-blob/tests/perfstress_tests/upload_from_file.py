@@ -12,27 +12,25 @@ from ._test_base import _BlobTest
 
 
 class UploadFromFileTest(_BlobTest):
-    def __init__(self, arguments):
-        super().__init__(arguments)
-        self.temp_file = None
+    temp_file = None
 
     async def global_setup(self):
         await super().global_setup()
         data = get_random_bytes(self.args.size)
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            self.temp_file = temp_file.name
+            UploadFromFileTest.temp_file = temp_file.name
             temp_file.write(data)
 
     async def global_cleanup(self):
-        os.remove(self.temp_file)
+        os.remove(UploadFromFileTest.temp_file)
         await super().global_cleanup()
 
     def run_sync(self):
-        with open(self.temp_file, 'rb') as fp:
+        with open(UploadFromFileTest.temp_file, 'rb') as fp:
             self.blob_client.upload_blob(fp, max_concurrency=self.args.max_concurrency, overwrite=True)
 
     async def run_async(self):
-        with open(self.temp_file, 'rb') as fp:
+        with open(UploadFromFileTest.temp_file, 'rb') as fp:
             await self.async_blob_client.upload_blob(
                 fp,
                 max_concurrency=self.args.max_concurrency,
