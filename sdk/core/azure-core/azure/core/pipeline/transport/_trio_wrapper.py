@@ -23,11 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._base_async import AsyncHttpResponse
-from ._requests_basic import RequestsTransportResponse
-from ._base_requests_async import RequestsAsyncTransportBase
-
-class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
+class TrioRequestsTransportResponse(object):
     """Asynchronous streaming of data from the response.
     """
     def __new__(cls, **kwargs):
@@ -37,7 +33,7 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         except ImportError:
             raise ImportError("trio package is not installed")
 
-class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
+class TrioRequestsTransport(object):
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the third party trio event loop.
 

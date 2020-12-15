@@ -26,13 +26,12 @@
 from typing import TYPE_CHECKING
 from multidict import CIMultiDict
 from azure.core.configuration import ConnectionConfiguration
-from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
 if TYPE_CHECKING:
     from ._base import HttpRequest
     import aiohttp
 
-class AioHttpTransport(AsyncHttpTransport):
+class AioHttpTransport(object):
     """AioHttp HTTP sender implementation.
 
     Fully asynchronous implementation using the aiohttp library.
@@ -66,7 +65,7 @@ class AioHttpTransport(AsyncHttpTransport):
         except ImportError:
             raise ImportError("aiohttp package is not installed")
 
-class AioHttpTransportResponse(AsyncHttpResponse):
+class AioHttpTransportResponse(object):
     """Methods for accessing response body data.
 
     :param request: The HttpRequest object
