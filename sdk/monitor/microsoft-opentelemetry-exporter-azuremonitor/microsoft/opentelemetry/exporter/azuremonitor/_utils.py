@@ -1,9 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import locale
-import os
 import platform
-import sys
 import threading
 import time
 
