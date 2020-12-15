@@ -159,9 +159,7 @@ class MachinesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all the hybrid machines in the specified resource group. Use the
-        nextLink property in the response to get the next page of hybrid
-        machines.
+        """Lists all the hybrid machines in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -229,9 +227,7 @@ class MachinesOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the hybrid machines in the specified subscription. Use the
-        nextLink property in the response to get the next page of hybrid
-        machines.
+        """Lists all the hybrid machines in the specified subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
