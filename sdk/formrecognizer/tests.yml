@@ -44,7 +44,7 @@ jobs:
           Linux_Python39:
             OSVmImage: 'ubuntu-18.04'
             PythonVersion: '3.9.0'
-            CoverageArg: '--disablecov'
+            CoverageArg: ''
       EnvVars:
         AZURE_FORM_RECOGNIZER_PYTHON_CANARY_API_KEY: $(python-formrecognizer-test-canary-api-key)
         AZURE_FORM_RECOGNIZER_PYTHON_API_KEY: $(python-formrecognizer-test-api-key)
