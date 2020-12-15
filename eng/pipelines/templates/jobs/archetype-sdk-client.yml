@@ -68,8 +68,7 @@ jobs:
 
     - template: /eng/pipelines/templates/steps/create-apireview.yml
       parameters:
-        Artifacts: ${{parameters.Artifacts}}
-
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
