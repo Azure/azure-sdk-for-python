@@ -32,14 +32,14 @@ class SkuTier(str, Enum):
     premium = "Premium"
 
 
-class KeySource(str, Enum):
-
-    microsoft_key_vault = "Microsoft.KeyVault"
-
-
 class IdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
+
+
+class KeySource(str, Enum):
+
+    microsoft_key_vault = "Microsoft.KeyVault"
 
 
 class PrivateLinkConnectionStatus(str, Enum):
@@ -58,17 +58,6 @@ class EndPointProvisioningState(str, Enum):
     succeeded = "Succeeded"
     canceled = "Canceled"
     failed = "Failed"
-
-
-class NetworkRuleIPAction(str, Enum):
-
-    allow = "Allow"
-
-
-class DefaultAction(str, Enum):
-
-    allow = "Allow"
-    deny = "Deny"
 
 
 class AccessRights(str, Enum):
@@ -125,6 +114,17 @@ class EncodingCaptureDescription(str, Enum):
 
     avro = "Avro"
     avro_deflate = "AvroDeflate"
+
+
+class NetworkRuleIPAction(str, Enum):
+
+    allow = "Allow"
+
+
+class DefaultAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
 
 
 class NameSpaceType(str, Enum):

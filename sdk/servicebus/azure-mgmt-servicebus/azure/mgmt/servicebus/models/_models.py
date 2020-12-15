@@ -606,6 +606,24 @@ class Eventhub(Resource):
         self.capture_description = kwargs.get('capture_description', None)
 
 
+class FailoverProperties(Model):
+    """Safe failover is to indicate the service should wait for pending
+    replication to finish before switching to the secondary.
+
+    :param is_safe_failover: Safe failover is to indicate the service should
+     wait for pending replication to finish before switching to the secondary.
+    :type is_safe_failover: bool
+    """
+
+    _attribute_map = {
+        'is_safe_failover': {'key': 'properties.IsSafeFailover', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FailoverProperties, self).__init__(**kwargs)
+        self.is_safe_failover = kwargs.get('is_safe_failover', None)
+
+
 class Identity(Model):
     """Properties to configure Identity for Bring your Own Keys.
 
@@ -805,7 +823,7 @@ class MigrationConfigProperties(Resource):
 
 
 class NetworkRuleSet(Resource):
-    """Description of topic resource.
+    """Description of NetworkRuleSet resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -849,11 +867,12 @@ class NetworkRuleSet(Resource):
 
 
 class NWRuleSetIpRules(Model):
-    """The response from the List namespace operation.
+    """Description of NetWorkRuleSet - IpRules resource.
 
     :param ip_mask: IP Mask
     :type ip_mask: str
-    :param action: The IP Filter Action. Possible values include: 'Allow'
+    :param action: The IP Filter Action. Possible values include: 'Allow'.
+     Default value: "Allow" .
     :type action: str or ~azure.mgmt.servicebus.models.NetworkRuleIPAction
     """
 
@@ -865,16 +884,16 @@ class NWRuleSetIpRules(Model):
     def __init__(self, **kwargs):
         super(NWRuleSetIpRules, self).__init__(**kwargs)
         self.ip_mask = kwargs.get('ip_mask', None)
-        self.action = kwargs.get('action', None)
+        self.action = kwargs.get('action', "Allow")
 
 
 class NWRuleSetVirtualNetworkRules(Model):
-    """The response from the List namespace operation.
+    """Description of VirtualNetworkRules - NetworkRules resource.
 
     :param subnet: Subnet properties
     :type subnet: ~azure.mgmt.servicebus.models.Subnet
     :param ignore_missing_vnet_service_endpoint: Value that indicates whether
-     to ignore missing Vnet Service Endpoint
+     to ignore missing VNet Service Endpoint
     :type ignore_missing_vnet_service_endpoint: bool
     """
 
@@ -1352,6 +1371,8 @@ class SBNamespace(TrackedResource):
     :type tags: dict[str, str]
     :param sku: Properties of SKU
     :type sku: ~azure.mgmt.servicebus.models.SBSku
+    :param identity: Properties of BYOK Identity description
+    :type identity: ~azure.mgmt.servicebus.models.Identity
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the namespace was created
@@ -1389,6 +1410,7 @@ class SBNamespace(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'SBSku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
@@ -1401,6 +1423,7 @@ class SBNamespace(TrackedResource):
     def __init__(self, **kwargs):
         super(SBNamespace, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
@@ -1987,9 +2010,15 @@ class SqlRuleAction(Action):
 class Subnet(Model):
     """Properties supplied for Subnet.
 
-    :param id: Resource ID of Virtual Network Subnet
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Resource ID of Virtual Network Subnet
     :type id: str
     """
+
+    _validation = {
+        'id': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

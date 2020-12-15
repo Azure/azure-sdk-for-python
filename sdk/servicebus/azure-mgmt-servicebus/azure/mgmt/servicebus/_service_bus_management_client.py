@@ -16,16 +16,16 @@ from ._configuration import ServiceBusManagementClientConfiguration
 from .operations import NamespacesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
-from .operations import Operations
+from .operations import DisasterRecoveryConfigsOperations
 from .operations import QueuesOperations
 from .operations import TopicsOperations
-from .operations import DisasterRecoveryConfigsOperations
 from .operations import EventHubsOperations
 from .operations import MigrationConfigsOperations
 from .operations import PremiumMessagingRegionsOperations
 from .operations import RegionsOperations
 from .operations import SubscriptionsOperations
 from .operations import RulesOperations
+from .operations import Operations
 from . import models
 
 
@@ -41,14 +41,12 @@ class ServiceBusManagementClient(SDKClient):
     :vartype private_endpoint_connections: azure.mgmt.servicebus.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.servicebus.operations.PrivateLinkResourcesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.servicebus.operations.Operations
+    :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
+    :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
     :ivar queues: Queues operations
     :vartype queues: azure.mgmt.servicebus.operations.QueuesOperations
     :ivar topics: Topics operations
     :vartype topics: azure.mgmt.servicebus.operations.TopicsOperations
-    :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
-    :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
     :ivar event_hubs: EventHubs operations
     :vartype event_hubs: azure.mgmt.servicebus.operations.EventHubsOperations
     :ivar migration_configs: MigrationConfigs operations
@@ -61,6 +59,8 @@ class ServiceBusManagementClient(SDKClient):
     :vartype subscriptions: azure.mgmt.servicebus.operations.SubscriptionsOperations
     :ivar rules: Rules operations
     :vartype rules: azure.mgmt.servicebus.operations.RulesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.servicebus.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -79,6 +79,7 @@ class ServiceBusManagementClient(SDKClient):
         super(ServiceBusManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2018-01-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -88,13 +89,11 @@ class ServiceBusManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
+        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.topics = TopicsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.event_hubs = EventHubsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -107,4 +106,6 @@ class ServiceBusManagementClient(SDKClient):
         self.subscriptions = SubscriptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.rules = RulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
