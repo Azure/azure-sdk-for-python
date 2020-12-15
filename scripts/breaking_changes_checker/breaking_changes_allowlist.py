@@ -7,5 +7,5 @@
 
 RUN_BREAKING_CHANGES_PACKAGES = [
     "azure-ai-formrecognizer",
-    "azure-storage-blob"
+    "azure-storage-queue",
 ]
