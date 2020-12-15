@@ -74,18 +74,18 @@ def get_authentication_policy(
         credential # type: TokenCredential or str
 ):
     # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialPolicy
-    """Returns the correct authentication policy based 
+    """Returns the correct authentication policy based
     on which credential is being passed.
 
     :param endpoint: The endpoint to which we are authenticating to.
     :type endpoint: str
     :param credential: The credential we use to authenticate to the service
     :type credential: TokenCredential or str
-    
+
     :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
     ~HMACCredentialsPolicy
     """
-    
+
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if hasattr(credential, "get_token"):
