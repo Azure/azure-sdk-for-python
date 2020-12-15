@@ -181,10 +181,12 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
 }
 
 # function is used to auto generate API View
-function Find-python-Artifacts-For-Apireview($artifactDir, $packageName = "")
+function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName = "")
 {
+  # Find wheel file in given artifact directory
+  # Make sure to pick only package with given artifact name
+  $packageName = $artifactName + "-"
   Write-Host "Serching for $($packageName) wheel in artifact path $($artifactDir)"
-  # Find wheel filesin given artifact directory
   $files = Get-ChildItem "${artifactDir}" | Where-Object -FilterScript {$_.Name.StartsWith($packageName) -and $_.Name.EndsWith(".whl")}
   if (!$files)
   {
