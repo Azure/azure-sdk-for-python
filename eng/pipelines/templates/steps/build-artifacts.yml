@@ -90,7 +90,3 @@ steps:
     inputs:
       artifactName: 'documentation'
       pathtoPublish: '$(Build.SourcesDirectory)/_docs'
-
-  - template: /eng/pipelines/templates/steps/create-apireview.yml
-    parameters:
-      Artifacts: ${{parameters.Artifacts}}
