@@ -68,15 +68,6 @@ class AioHttpTransportResponse(object):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, request, aiohttp_response, block_size=None): # pylint: disable=unused-argument
-        # type: (HttpRequest, aiohttp.ClientResponse, Optional[int]) -> None
-        # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
-        self.status_code = aiohttp_response.status
-        self.headers = CIMultiDict(aiohttp_response.headers)
-        self.reason = aiohttp_response.reason
-        self.content_type = aiohttp_response.headers.get('content-type')
-        self._body = None
-
     def __new__(cls, request, aiohttp_response, block_size=None):
         try:
             from .aiohttp import AioHttpTransportResponse as _AioHttpTransportResponse
