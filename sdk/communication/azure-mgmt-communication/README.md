@@ -7,14 +7,13 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-
-To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
-
-
+To learn how to use the management libraries, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt).
  
-For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/)
-Code samples for this package can be found at [Communication Management](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/) on docs.microsoft.com.
-Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/).  
+For docs and references for this service, see [Azure Communication Services](https://docs.microsoft.com/en-us/azure/communication-services/) on docs.microsoft.com.
+
+Code samples for this management package can be found on GitHub at [Getting started - Managing Azure Communication Services using Azure Python SDK](https://github.com/Azure-Samples/azure-samples-python-management/tree/master/samples/communication).  
+Additional GitHub samples using Azure Communication Services are listed at [Communication Samples](https://github.com/Azure/communication#samples).
 
 
 # Provide Feedback
