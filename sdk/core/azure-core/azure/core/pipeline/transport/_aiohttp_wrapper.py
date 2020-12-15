@@ -23,7 +23,15 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-class AioHttpTransport(object):
+class AioHttpTransportMeta(type):
+    def __new__(cls, session=None, loop=None, session_owner=True, **kwargs):
+        try:
+            from .aiohttp import AioHttpTransport as _AioHttpTransport
+            return _AioHttpTransport(session=session, loop=loop, session_owner=session_owner, **kwargs)
+        except ImportError:
+            raise ImportError("aiohttp package is not installed")
+
+class AioHttpTransport(metaclass=AioHttpTransportMeta):
     """AioHttp HTTP sender implementation.
 
     Fully asynchronous implementation using the aiohttp library.
@@ -43,14 +51,18 @@ class AioHttpTransport(object):
             :dedent: 4
             :caption: Asynchronous transport with aiohttp.
     """
-    def __new__(cls, session=None, loop=None, session_owner=True, **kwargs):
+    ...
+
+class AioHttpTransportResponseMeta(type):
+    def __new__(cls, request, aiohttp_response, block_size=None):
         try:
-            from .aiohttp import AioHttpTransport as _AioHttpTransport
-            return _AioHttpTransport(session=session, loop=loop, session_owner=session_owner, **kwargs)
+            from .aiohttp import AioHttpTransportResponse as _AioHttpTransportResponse
+            return _AioHttpTransportResponse(request=request, aiohttp_response=aiohttp_response, block_size=block_size)
         except ImportError:
             raise ImportError("aiohttp package is not installed")
 
-class AioHttpTransportResponse(object):
+
+class AioHttpTransportResponse(metaclass=AioHttpTransportResponseMeta):
     """Methods for accessing response body data.
 
     :param request: The HttpRequest object
@@ -60,9 +72,4 @@ class AioHttpTransportResponse(object):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __new__(cls, request, aiohttp_response, block_size=None):
-        try:
-            from .aiohttp import AioHttpTransportResponse as _AioHttpTransportResponse
-            return _AioHttpTransportResponse(request=request, aiohttp_response=aiohttp_response, block_size=block_size)
-        except ImportError:
-            raise ImportError("aiohttp package is not installed")
+    ...
