@@ -50,6 +50,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
           where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
+    :raises ValueError: invalid `redirect_uri`
     """
 
     def __init__(self, **kwargs):
