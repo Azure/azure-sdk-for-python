@@ -687,7 +687,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Specifies the version of the deleted container to restore.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.blob.ContainerClient
+        :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
+                or azure.storage.file.datalake.aio.DataLakeFileClient
         """
         _, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
 
@@ -807,6 +808,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         :param str name_starts_with:
             Filters the results to return only paths under the specified path.
+        :keyword int max_results:
+            An optional value that specifies the maximum number of items to return per page.
+            If omitted or greater than 5,000, the response will include up to 5,000 items per page.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of PathProperties.
@@ -814,7 +818,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedFileProperties or
             ~azure.storage.filedatalake.DeletedDirectoryProperties]
         """
-        results_per_page = kwargs.pop('results_per_page', None)
+        results_per_page = kwargs.pop('max_results', None)
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
