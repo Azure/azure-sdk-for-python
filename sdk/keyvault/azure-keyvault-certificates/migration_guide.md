@@ -179,7 +179,7 @@ for certificate in certificates:
 
 ### Delete a certificate
 
-In `azure-keyvault` you could delete all versions of a certificate with the `delete_certificate` method. This returned information about the deleted certificate (as a `DeletedCertificateBundle`), but you you could not poll the deletion operation to know when it completed. This would be valuable information if you intended to permanently delete the deleted certificate with `purge_deleted_certificate`.
+In `azure-keyvault` you could delete all versions of a certificate with the `delete_certificate` method. This returned information about the deleted certificate (as a `DeletedCertificateBundle`), but you could not poll the deletion operation to know when it completed. This would be valuable information if you intended to permanently delete the deleted certificate with `purge_deleted_certificate`.
 
 ```python
 deleted_certificate = client.delete_certificate(
@@ -194,7 +194,7 @@ client.purge_deleted_certificate(
 )
 ```
 
-Now in `azure-keyvault-certificates` you can delete a certificate with `begin_delete_certificate`, which returns a long operation poller object that can be used to wait/check on the operation much like you would with the poller received from `begin_create_certificate`. Calling `result()` on the poller will return information about the deleted certificate (as a `DeletedCertificate`) without waiting for the operation to complete, but calling `wait()` will wait for the deletion to complete. Again, `purge_deleted_certificate` will permanently delete your deleted certificate and make it unrecoverable.
+Now in `azure-keyvault-certificates` you can delete a certificate with `begin_delete_certificate`, which returns a long operation poller object that can be used to wait/check on the operation. Calling `result()` on the poller will return information about the deleted certificate (as a `DeletedCertificate`) without waiting for the operation to complete, but calling `wait()` will wait for the deletion to complete. Again, `purge_deleted_certificate` will permanently delete your deleted certificate and make it unrecoverable.
 
 ```python
 deleted_certificate_poller = certificate_client.begin_delete_certificate(certificate_name="cert-name")
