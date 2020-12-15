@@ -186,7 +186,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName = "")
   # Find wheel file in given artifact directory
   # Make sure to pick only package with given artifact name
   $packageName = $artifactName + "-"
-  Write-Host "Serching for $($packageName) wheel in artifact path $($artifactDir)"
+  Write-Host "Searching for $($packageName) wheel in artifact path $($artifactDir)"
   $files = Get-ChildItem "${artifactDir}" | Where-Object -FilterScript {$_.Name.StartsWith($packageName) -and $_.Name.EndsWith(".whl")}
   if (!$files)
   {
