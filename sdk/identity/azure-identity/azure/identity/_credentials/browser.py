@@ -37,7 +37,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
           authenticate work or school accounts.
     :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
-          unspecified, the Azure CLI's ID will be used.
+          unspecified, users will authenticate to an Azure development application.
     :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Azure
           Active Directory, for example "http://localhost:8400". This is only required when passing a value for
           `client_id`, and must match a redirect URI in the application's registration. The credential must be able to
