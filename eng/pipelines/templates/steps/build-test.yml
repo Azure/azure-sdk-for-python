@@ -70,6 +70,7 @@ steps:
 
   - ${{ if eq(parameters['TestSamples'], true) }}:
     - task: PythonScript@0
+      condition: succeededOrFailed()
       displayName: 'Test Samples'
       inputs:
         scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
