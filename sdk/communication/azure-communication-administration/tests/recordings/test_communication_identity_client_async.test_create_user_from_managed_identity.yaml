@@ -1,15 +1,11 @@
 interactions:
 - request:
-    body: ''
+    body: null
     headers:
       Accept:
       - application/json
-      Date:
-      - Thu, 10 Dec 2020 23:18:51 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-return-client-request-id:
-      - 'true'
     method: POST
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2020-07-20-preview2
   response:
@@ -18,13 +14,13 @@ interactions:
     headers:
       api-supported-versions: 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
       content-type: application/json; charset=utf-8
-      date: Thu, 10 Dec 2020 23:18:52 GMT
-      ms-cv: anbtmMJFHkaXus/tF2M+Pg.0
+      date: Thu, 10 Dec 2020 23:20:01 GMT
+      ms-cv: Gwb9usH6vkiba2UJX0iYGA.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 23ms
+      x-processing-time: 501ms
     status:
       code: 200
       message: OK
-    url: https://communication5qkfmzjimd2.communication.azure.com/identities?api-version=2020-07-20-preview2
+    url: https://communicationjbev5ezf56x.communication.azure.com/identities?api-version=2020-07-20-preview2
 version: 1
