@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ComplianceResultsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class ComplianceResultsOperations(object):
         scope,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ComplianceResultList"]
+        # type: (...) -> Iterable["_models.ComplianceResultList"]
         """Security compliance results in the subscription.
 
         :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
@@ -62,7 +62,7 @@ class ComplianceResultsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.ComplianceResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComplianceResultList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComplianceResultList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -123,7 +123,7 @@ class ComplianceResultsOperations(object):
         compliance_result_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ComplianceResult"
+        # type: (...) -> "_models.ComplianceResult"
         """Security Compliance Result.
 
         :param resource_id: The identifier of the resource.
@@ -135,7 +135,7 @@ class ComplianceResultsOperations(object):
         :rtype: ~azure.mgmt.security.models.ComplianceResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComplianceResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComplianceResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class WorkspaceSettingsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class WorkspaceSettingsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WorkspaceSettingList"]
+        # type: (...) -> Iterable["_models.WorkspaceSettingList"]
         """Settings about where we should store your security data and logs. If the result is empty, it
         means that no custom-workspace configuration was set.
 
@@ -58,7 +58,7 @@ class WorkspaceSettingsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.WorkspaceSettingList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkspaceSettingList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceSettingList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -118,7 +118,7 @@ class WorkspaceSettingsOperations(object):
         workspace_setting_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WorkspaceSetting"
+        # type: (...) -> "_models.WorkspaceSetting"
         """Settings about where we should store your security data and logs. If the result is empty, it
         means that no custom-workspace configuration was set.
 
@@ -129,7 +129,7 @@ class WorkspaceSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.WorkspaceSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkspaceSetting"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -172,10 +172,10 @@ class WorkspaceSettingsOperations(object):
     def create(
         self,
         workspace_setting_name,  # type: str
-        workspace_setting,  # type: "models.WorkspaceSetting"
+        workspace_setting,  # type: "_models.WorkspaceSetting"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WorkspaceSetting"
+        # type: (...) -> "_models.WorkspaceSetting"
         """creating settings about where we should store your security data and logs.
 
         :param workspace_setting_name: Name of the security setting.
@@ -187,7 +187,7 @@ class WorkspaceSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.WorkspaceSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkspaceSetting"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -235,10 +235,10 @@ class WorkspaceSettingsOperations(object):
     def update(
         self,
         workspace_setting_name,  # type: str
-        workspace_setting,  # type: "models.WorkspaceSetting"
+        workspace_setting,  # type: "_models.WorkspaceSetting"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WorkspaceSetting"
+        # type: (...) -> "_models.WorkspaceSetting"
         """Settings about where we should store your security data and logs.
 
         :param workspace_setting_name: Name of the security setting.
@@ -250,7 +250,7 @@ class WorkspaceSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.WorkspaceSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkspaceSetting"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
