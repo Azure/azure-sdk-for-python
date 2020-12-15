@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 19 Nov 2020 20:09:37 GMT
+      - Thu, 10 Dec 2020 22:53:44 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -27,15 +27,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 20:09:37 GMT
+      - Thu, 10 Dec 2020 22:53:44 GMT
       ms-cv:
-      - 7RkXhKu55E6VvGuHXPJetw.0
+      - HU9zP3sAB060ixX6PUWTcQ.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 78ms
+      - 24ms
     status:
       code: 200
       message: OK
@@ -51,9 +51,9 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 19 Nov 2020 20:09:37 GMT
+      - Thu, 10 Dec 2020 22:53:44 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -65,13 +65,13 @@ interactions:
       api-supported-versions:
       - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
       date:
-      - Thu, 19 Nov 2020 20:09:38 GMT
+      - Thu, 10 Dec 2020 22:53:45 GMT
       ms-cv:
-      - ae2evu2bf0+8rarm+wY0jQ.0
+      - LUZClOYgLkSQl86bl6mH5A.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 1285ms
+      - 760ms
     status:
       code: 204
       message: No Content

@@ -10,10 +10,10 @@ from .._identity._generated.aio._communication_identity_client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
 from .._identity._generated.models import CommunicationIdentityToken
 
-from .._shared.utils import parse_connection_str
-from .._shared.policy import HMACCredentialsPolicy
+from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._shared.models import CommunicationUser
 from .._version import SDK_MONIKER
+
 
 class CommunicationIdentityClient:
     """Azure Communication Services Identity client.
@@ -50,7 +50,7 @@ class CommunicationIdentityClient:
         self._endpoint = endpoint
         self._identity_service_client = CommunicationIdentityClientGen(
             self._endpoint,
-            authentication_policy=HMACCredentialsPolicy(endpoint, credential, decode_url=True),
+            authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
