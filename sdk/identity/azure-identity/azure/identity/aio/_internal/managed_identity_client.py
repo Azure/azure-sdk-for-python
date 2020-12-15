@@ -10,7 +10,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from ..._internal import _scopes_to_resource
-from ..._internal.managed_identity_client import ManagedIdentityClient, _get_policies
+from ..._internal.managed_identity_client import ManagedIdentityClientBase, _get_policies
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 
 # pylint:disable=async-client-bad-name,missing-client-constructor-parameter-credential
-class AsyncManagedIdentityClient(ManagedIdentityClient):
+class AsyncManagedIdentityClient(ManagedIdentityClientBase):
     def __init__(self, request_factory: "Callable[[str, dict], HttpRequest]", **kwargs: "Any") -> None:
         config = _get_configuration(**kwargs)
         super().__init__(request_factory, _config=config, **kwargs)
