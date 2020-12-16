@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from azure.core.pipeline.policies import SansIOHTTPPolicy
-    from azure.core.pipeline.transport import AsyncHttpResponse
+    from azure.core.pipeline.transport import AsyncHttpResponse, AsyncHttpTransport
 
     PolicyType = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
@@ -86,6 +86,11 @@ def _get_policies(config: "Configuration", **kwargs: "Any") -> "List[PolicyType]
 
 class ArcChallengeAuthPolicy(AsyncHTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
+
+    def __init__(self):
+        # workaround for https://github.com/Azure/azure-sdk-for-python/issues/5797
+        super().__init__()
+        self.next = None  # type: Union[AsyncHTTPPolicy, AsyncHttpTransport]
 
     async def send(self, request: "PipelineRequest") -> "PipelineResponse":
         request.http_request.headers["Metadata"] = "true"
