@@ -14,7 +14,7 @@ In this section, we will provide the introduction to the testing framework by:
 
 ## Setup your development environment
 
-The Azure SDK Python team creates libraries that are compatible with Python 2.7 and 3.5 and up. We will set up working Python virtual environments for Python 2.7, 3.5, and 3.9. Although it is not required to test every PR against all three changes, it is useful to have a virtual environment for each version to make debugging PRs easier locally.
+The Azure SDK Python team creates libraries that are compatible with Python 2.7 and 3.5 and up. We will set up working Python virtual environments for Python 2.7, 3.5, and 3.9. It is recommended to do your development work in Python3, however it is helpful to have virtual environments for other versions to make debugging PRs easier locally.
 
 * Python 3.9: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the [Windows store](https://www.microsoft.com/en-us/p/python-38/9mssztt1n39l) (Windows only).
 * Python 3.5: Use the [python website](https://www.python.org/downloads/release/python-3510/)
@@ -133,7 +133,8 @@ When you run tests in playback mode, they use a fake credentials file, located a
 
 In live mode, the credentials need to be real so that the tests are able to connect to the service. Copy the `mgmt_settings_fake.py` file to a new file named `mgmt_settings_real.py` within the same directory. Then make the following changes:
 1. Change the value of the `SUBSCRIPTION_ID` variable to your organizations subscription ID. If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal](https://portal.azure.com/).
-2. Create a `.env` file at the root of the repository (in the same directory as the `sdk`, `tools`, `eng` folders). In this file you can define any environment variables you need for a test and that will be loaded by the `AzureTestCase` file. Start by defining `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` which are available after creating a Service Principal or can be retrieved from the Azure Portal if you have already created a Service Principal. This file stores secrets in plain text so it is important that the contents of this file are not committed to the git repository.
+2. Create a `.env` file at the root of the repository (in the same directory as the `sdk`, `tools`, `eng` folders). In this file you can define any environment variables you need for a test and that will be loaded by the `AzureTestCase` file. Start by defining `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` which are available after creating a Service Principal or can be retrieved from the Azure Portal if you have already created a Service Principal. If you do not have a Service Principal, check out the [Azure docs](https://docs.microsoft.com/en-us/cli/azure/ad/sp?view=azure-cli-latest#az_ad_sp_create_for_rbac) on a simple one line command to create one. The recommended practice is to include your alias or name in the Service Principal name.
+    Your `.env` file stores secrets in plain text so it is important that the contents of this file are not committed to the git repository.
 3. Change the `get_azure_core_credentials(**kwargs):` function to construct and return a `ClientSecretCredential` object. The `client_id`, `client_secret`, `tenant_id` are provided when you create a service principal. These values can be found in the Azure Portal. This method in your `mgmt_settings_real.py` file should look like this:
 ```python
 def get_azure_core_credentials(**kwargs):
