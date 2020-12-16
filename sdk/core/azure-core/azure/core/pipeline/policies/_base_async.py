@@ -26,9 +26,12 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Generic, TypeVar, Union, Any
+from typing import Generic, TypeVar, Union, Any, TYPE_CHECKING
 
 from azure.core.pipeline import PipelineRequest
+
+if TYPE_CHECKING:
+    from ..transport import AsyncHttpTransport
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore #pylint: disable=unused-import
