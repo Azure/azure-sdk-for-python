@@ -163,7 +163,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret_client.purge_deleted_secret("secret-name")
 
         if self.is_live:
-            time.sleep(15)
+            time.sleep(60)
 
         # [START restore_secret_backup]
         # restores a backed up secret

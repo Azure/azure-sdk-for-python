@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class HubVirtualNetworkConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,10 +48,10 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        hub_virtual_network_connection_parameters: "models.HubVirtualNetworkConnection",
+        hub_virtual_network_connection_parameters: "_models.HubVirtualNetworkConnection",
         **kwargs
-    ) -> "models.HubVirtualNetworkConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubVirtualNetworkConnection"]
+    ) -> "_models.HubVirtualNetworkConnection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubVirtualNetworkConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,9 +107,9 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        hub_virtual_network_connection_parameters: "models.HubVirtualNetworkConnection",
+        hub_virtual_network_connection_parameters: "_models.HubVirtualNetworkConnection",
         **kwargs
-    ) -> AsyncLROPoller["models.HubVirtualNetworkConnection"]:
+    ) -> AsyncLROPoller["_models.HubVirtualNetworkConnection"]:
         """Creates a hub virtual network connection if it doesn't exist else updates the existing one.
 
         :param resource_group_name: The resource group name of the HubVirtualNetworkConnection.
@@ -132,7 +132,7 @@ class HubVirtualNetworkConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubVirtualNetworkConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubVirtualNetworkConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -158,7 +158,14 @@ class HubVirtualNetworkConnectionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -266,7 +273,14 @@ class HubVirtualNetworkConnectionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -286,7 +300,7 @@ class HubVirtualNetworkConnectionsOperations:
         virtual_hub_name: str,
         connection_name: str,
         **kwargs
-    ) -> "models.HubVirtualNetworkConnection":
+    ) -> "_models.HubVirtualNetworkConnection":
         """Retrieves the details of a HubVirtualNetworkConnection.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -300,7 +314,7 @@ class HubVirtualNetworkConnectionsOperations:
         :rtype: ~azure.mgmt.network.v2020_06_01.models.HubVirtualNetworkConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubVirtualNetworkConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubVirtualNetworkConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -347,7 +361,7 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListHubVirtualNetworkConnectionsResult"]:
+    ) -> AsyncIterable["_models.ListHubVirtualNetworkConnectionsResult"]:
         """Retrieves the details of all HubVirtualNetworkConnections.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -359,7 +373,7 @@ class HubVirtualNetworkConnectionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_06_01.models.ListHubVirtualNetworkConnectionsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListHubVirtualNetworkConnectionsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListHubVirtualNetworkConnectionsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

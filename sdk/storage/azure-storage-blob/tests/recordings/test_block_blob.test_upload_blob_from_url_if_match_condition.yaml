@@ -1,0 +1,537 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:39 GMT
+      etag:
+      - '"0x8D89642DD41E438"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:39 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - 1B2M2Y8AsgTpgAmY7PhCfg==
+      date:
+      - Tue, 01 Dec 2020 21:48:39 GMT
+      etag:
+      - '"0x8D89642DD526369"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:39 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:39.8097257Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: fake data
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '9'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - DHa+SUlusmH+AAI91Dli4g==
+      date:
+      - Tue, 01 Dec 2020 21:48:39 GMT
+      etag:
+      - '"0x8D89642DD6419E7"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:39 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - i5c8XC72eYw=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:39.9258087Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Modified-Since:
+      - Tue, 01 Dec 2020 22:03:42 GMT
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e?se=2020-12-01T22%3A48%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=gjMGoKOvg70phbI3g3lgEyWN%2BTJ/1dFu7AcwkZwuopE%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:c6d2b4b0-801e-0058-4d2b-c8029d000000\nTime:2020-12-01T21:48:40.0478576Z</Message></Error>"
+    headers:
+      content-length:
+      - '252'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 01 Dec 2020 21:48:39 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Modified-Since:
+      - Tue, 01 Dec 2020 21:33:42 GMT
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e?se=2020-12-01T22%3A48%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=gjMGoKOvg70phbI3g3lgEyWN%2BTJ/1dFu7AcwkZwuopE%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      etag:
+      - '"0x8D89642DD8711A1"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:40.1559729Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Unmodified-Since:
+      - Tue, 01 Dec 2020 21:33:42 GMT
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e?se=2020-12-01T22%3A48%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=gjMGoKOvg70phbI3g3lgEyWN%2BTJ/1dFu7AcwkZwuopE%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:43 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:c6d2b4d9-801e-0058-6c2b-c8029d000000\nTime:2020-12-01T21:48:40.2680146Z</Message></Error>"
+    headers:
+      content-length:
+      - '252'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Unmodified-Since:
+      - Tue, 01 Dec 2020 22:03:42 GMT
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e?se=2020-12-01T22%3A48%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=gjMGoKOvg70phbI3g3lgEyWN%2BTJ/1dFu7AcwkZwuopE%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:43 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      etag:
+      - '"0x8D89642DDA8D0A6"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:40.3781323Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e?se=2020-12-01T22%3A48%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=gjMGoKOvg70phbI3g3lgEyWN%2BTJ/1dFu7AcwkZwuopE%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:43 GMT
+      x-ms-source-if-modified-since:
+      - Tue, 01 Dec 2020 22:03:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - CannotVerifyCopySource
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 304
+      message: The condition specified using HTTP conditional header(s) is not met.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e?se=2020-12-01T22%3A48%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=gjMGoKOvg70phbI3g3lgEyWN%2BTJ/1dFu7AcwkZwuopE%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:43 GMT
+      x-ms-source-if-modified-since:
+      - Tue, 01 Dec 2020 21:33:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      etag:
+      - '"0x8D89642DDCBEF75"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:40.6072965Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e?se=2020-12-01T22%3A48%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=gjMGoKOvg70phbI3g3lgEyWN%2BTJ/1dFu7AcwkZwuopE%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:43 GMT
+      x-ms-source-if-unmodified-since:
+      - Tue, 01 Dec 2020 21:33:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>CannotVerifyCopySource</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:c6d2b517-801e-0058-142b-c8029d000000\nTime:2020-12-01T21:48:40.7163341Z</Message></Error>"
+    headers:
+      content-length:
+      - '259'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - CannotVerifyCopySource
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainere8d9187e/blobe8d9187e?se=2020-12-01T22%3A48%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=gjMGoKOvg70phbI3g3lgEyWN%2BTJ/1dFu7AcwkZwuopE%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:43 GMT
+      x-ms-source-if-unmodified-since:
+      - Tue, 01 Dec 2020 22:03:42 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainere8d9187e/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      etag:
+      - '"0x8D89642DDED1222"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:40.8244530Z'
+    status:
+      code: 201
+      message: Created
+version: 1

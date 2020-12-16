@@ -260,6 +260,42 @@ class StorageTableEntityTest(TableTestCase):
     # --Test cases for entities ------------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_url_encoding_at_symbol(self, storage_account, storage_account_key):
+
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity = {
+                u"PartitionKey": u"PK",
+                u"RowKey": u"table@storage.com",
+                u"Value": 100
+            }
+
+            for i in range(10):
+                entity[u"RowKey"] += str(i)
+                entity[u"Value"] += i
+                self.table.create_entity(entity)
+
+            f = u"RowKey eq '{}'".format(entity["RowKey"])
+            entities = self.table.query_entities(filter=f)
+            count = 0
+            for e in entities:
+                assert e.PartitionKey == entity[u"PartitionKey"]
+                assert e.RowKey == entity[u"RowKey"]
+                assert e.Value == entity[u"Value"]
+                count += 1
+                self.table.delete_entity(e.PartitionKey, e.RowKey)
+
+            assert count == 1
+
+            count = 0
+            for e in self.table.query_entities(filter=f):
+                count += 1
+            assert count == 0
+        finally:
+            self._tear_down()
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_etag(self, resource_group, location, storage_account, storage_account_key):
 
         self._set_up(storage_account, storage_account_key)
@@ -276,7 +312,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_user_filter(self, resource_group, location, storage_account, storage_account_key):
@@ -291,6 +326,29 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert  --- Does this mean insert returns nothing?
             assert resp is not None
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/15554")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_query_user_filter_multiple_params(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': 'True',
+                'rk': entity['RowKey']
+            }
+            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+
+            # Assert  --- Does this mean insert returns nothing?
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
         finally:
             self._tear_down()
 
@@ -319,7 +377,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_dictionary(self, resource_group, location, storage_account, storage_account_key):
@@ -337,7 +394,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
@@ -359,7 +415,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_with_no_metadata(self, resource_group, location, storage_account, storage_account_key):
@@ -386,7 +441,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_with_full_metadata(self, resource_group, location, storage_account, storage_account_key):
@@ -413,7 +467,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_conflict(self, resource_group, location, storage_account, storage_account_key):
@@ -430,7 +483,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account,
@@ -452,7 +504,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account,
@@ -501,7 +552,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_missing_pk(self, resource_group, location, storage_account, storage_account_key):
@@ -518,7 +568,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_empty_string_pk(self, resource_group, location, storage_account, storage_account_key):
@@ -528,17 +577,12 @@ class StorageTableEntityTest(TableTestCase):
             entity = {'RowKey': u'rk', 'PartitionKey': u''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with pytest.raises(HttpResponseError):
-                    self.table.create_entity(entity=entity)
-            else:
-                resp = self.table.create_entity(entity=entity)
-                self._assert_valid_metadata(resp)
+            resp = self.table.create_entity(entity=entity)
+            self._assert_valid_metadata(resp)
 
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_missing_rk(self, resource_group, location, storage_account, storage_account_key):
@@ -554,7 +598,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_empty_string_rk(self, resource_group, location, storage_account, storage_account_key):
@@ -564,24 +607,17 @@ class StorageTableEntityTest(TableTestCase):
             entity = {'PartitionKey': u'pk', 'RowKey': u''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with pytest.raises(HttpResponseError):
-                    self.table.create_entity(entity=entity)
-            else:
-                resp = self.table.create_entity(entity=entity)
-                self._assert_valid_metadata(resp)
+            resp = self.table.create_entity(entity=entity)
+            self._assert_valid_metadata(resp)
 
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_too_many_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large number of properties.")
         try:
             entity = self._create_random_base_entity_dict()
             for i in range(255):
@@ -595,14 +631,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_property_name_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large property names.")
         try:
             entity = self._create_random_base_entity_dict()
             entity['a' * 256] = 'badval'
@@ -646,7 +679,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_get_entity(self, resource_group, location, storage_account, storage_account_key):
@@ -666,7 +698,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_get_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
@@ -690,7 +721,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_get_entity_if_match(self, resource_group, location, storage_account, storage_account_key):
@@ -720,7 +750,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_get_entity_full_metadata(self, resource_group, location, storage_account, storage_account_key):
@@ -742,7 +771,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_get_entity_no_metadata(self, resource_group, location, storage_account, storage_account_key):
@@ -764,7 +792,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_get_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
@@ -782,7 +809,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_get_entity_with_special_doubles(self, resource_group, location, storage_account, storage_account_key):
@@ -808,7 +834,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_update_entity(self, resource_group, location, storage_account, storage_account_key):
@@ -835,7 +860,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_update_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
@@ -853,7 +877,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_update_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
@@ -876,7 +899,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_update_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
@@ -896,7 +918,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, storage_account,
@@ -917,7 +938,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, storage_account,
@@ -939,7 +959,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, storage_account,
@@ -960,7 +979,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, storage_account,
@@ -982,7 +1000,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_merge_entity(self, resource_group, location, storage_account, storage_account_key):
@@ -1002,7 +1019,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_merge_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
@@ -1020,7 +1036,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_merge_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
@@ -1044,7 +1059,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_merge_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
@@ -1065,7 +1079,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_delete_entity(self, resource_group, location, storage_account, storage_account_key):
@@ -1084,7 +1097,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_delete_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
@@ -1101,7 +1113,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_delete_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
@@ -1121,7 +1132,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_delete_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
@@ -1141,7 +1151,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_unicode_property_value(self, resource_group, location, storage_account, storage_account_key):
@@ -1167,7 +1176,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_unicode_property_name(self, resource_group, location, storage_account, storage_account_key):
@@ -1193,7 +1201,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
@@ -1234,7 +1241,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_empty_and_spaces_property_value(self, resource_group, location, storage_account, storage_account_key):
@@ -1274,7 +1280,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_none_property_value(self, resource_group, location, storage_account, storage_account_key):
@@ -1294,7 +1299,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_binary_property_value(self, resource_group, location, storage_account, storage_account_key):
@@ -1315,7 +1319,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("response time is three hours before the given one")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_timezone(self, resource_group, location, storage_account, storage_account_key):
@@ -1339,7 +1343,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_entities(self, resource_group, location, storage_account, storage_account_key):
@@ -1396,7 +1399,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_zero_entities(self, resource_group, location, storage_account, storage_account_key):
@@ -1413,7 +1415,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_entities_full_metadata(self, resource_group, location, storage_account, storage_account_key):
@@ -1432,7 +1433,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_entities_no_metadata(self, resource_group, location, storage_account, storage_account_key):
@@ -1451,42 +1451,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # TODO: move this over to the batch test file when merged
-    @pytest.mark.skip("Batch not implemented")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_large(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        table_name = self._create_query_table(0)
-        total_entities_count = 1000
-        entities_per_batch = 50
-
-        for j in range(total_entities_count // entities_per_batch):
-            batch = TableBatch()
-            for i in range(entities_per_batch):
-                entity = Entity()
-                entity.PartitionKey = 'large'
-                entity.RowKey = 'batch{0}-item{1}'.format(j, i)
-                entity.test = EntityProperty(True)
-                entity.test2 = 'hello world;' * 100
-                entity.test3 = 3
-                entity.test4 = EntityProperty(1234567890)
-                entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
-                batch.create_entity(entity)
-            self.ts.send_batch(table_name, batch)
-
-        # Act
-        start_time = datetime.now()
-        entities = list(self.ts.query_entities(table_name))
-        elapsed_time = datetime.now() - start_time
-
-        # Assert
-        print('query_entities took {0} secs.'.format(elapsed_time.total_seconds()))
-        # azure allocates 5 seconds to execute a query
-        # if it runs slowly, it will return fewer results and make the test fail
-        assert len(entities) ==  total_entities_count
-
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_entities_with_filter(self, resource_group, location, storage_account, storage_account_key):
@@ -1509,7 +1473,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_entities_with_select(self, resource_group, location, storage_account, storage_account_key):
@@ -1531,7 +1494,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_entities_with_top(self, resource_group, location, storage_account, storage_account_key):
@@ -1548,7 +1510,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_entities_with_top_and_next(self, resource_group, location, storage_account, storage_account_key):
@@ -1590,8 +1551,6 @@ class StorageTableEntityTest(TableTestCase):
     def test_sas_query(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
 
         self._set_up(storage_account, storage_account_key)
         try:
@@ -1628,8 +1587,6 @@ class StorageTableEntityTest(TableTestCase):
     def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
@@ -1666,8 +1623,6 @@ class StorageTableEntityTest(TableTestCase):
     def test_sas_add_inside_range(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
@@ -1703,8 +1658,6 @@ class StorageTableEntityTest(TableTestCase):
     def test_sas_add_outside_range(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
@@ -1739,8 +1692,6 @@ class StorageTableEntityTest(TableTestCase):
     def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
@@ -1776,8 +1727,6 @@ class StorageTableEntityTest(TableTestCase):
     def test_sas_delete(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
@@ -1811,8 +1760,6 @@ class StorageTableEntityTest(TableTestCase):
     def test_sas_upper_case_table_name(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
@@ -1843,15 +1790,13 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Header authorization is malformed")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange

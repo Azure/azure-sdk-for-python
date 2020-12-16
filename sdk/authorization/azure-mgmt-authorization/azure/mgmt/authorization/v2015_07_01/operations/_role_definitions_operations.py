@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class RoleDefinitionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class RoleDefinitionsOperations(object):
         role_definition_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleDefinition"
+        # type: (...) -> "_models.RoleDefinition"
         """Deletes a role definition.
 
         :param scope: The scope of the role definition.
@@ -63,7 +63,7 @@ class RoleDefinitionsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2015_07_01.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -109,7 +109,7 @@ class RoleDefinitionsOperations(object):
         role_definition_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleDefinition"
+        # type: (...) -> "_models.RoleDefinition"
         """Get role definition by name (GUID).
 
         :param scope: The scope of the role definition.
@@ -121,7 +121,7 @@ class RoleDefinitionsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2015_07_01.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -165,10 +165,10 @@ class RoleDefinitionsOperations(object):
         self,
         scope,  # type: str
         role_definition_id,  # type: str
-        role_definition,  # type: "models.RoleDefinition"
+        role_definition,  # type: "_models.RoleDefinition"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleDefinition"
+        # type: (...) -> "_models.RoleDefinition"
         """Creates or updates a role definition.
 
         :param scope: The scope of the role definition.
@@ -182,7 +182,7 @@ class RoleDefinitionsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2015_07_01.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -233,7 +233,7 @@ class RoleDefinitionsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RoleDefinitionListResult"]
+        # type: (...) -> Iterable["_models.RoleDefinitionListResult"]
         """Get all role definitions that are applicable at scope and above.
 
         :param scope: The scope of the role definition.
@@ -246,7 +246,7 @@ class RoleDefinitionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.authorization.v2015_07_01.models.RoleDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -308,7 +308,7 @@ class RoleDefinitionsOperations(object):
         role_definition_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleDefinition"
+        # type: (...) -> "_models.RoleDefinition"
         """Gets a role definition by ID.
 
         :param role_definition_id: The fully qualified role definition ID. Use the format,
@@ -322,7 +322,7 @@ class RoleDefinitionsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2015_07_01.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

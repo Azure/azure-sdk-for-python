@@ -583,67 +583,6 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_reuse(self, resource_group, location, cosmos_account, cosmos_account_key):
-        # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
-        try:
-            table2 = self._get_table_reference('table2')
-            table2.create_table()
-
-            # Act
-            entity = TableEntity()
-            entity.PartitionKey = '003'
-            entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
-
-            batch = TableBatchClient()
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-2'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-4'
-            batch.create_entity(entity)
-
-            self.table.send_batch(batch)
-            table2.send_batch(batch)
-
-            batch = TableBatchClient()
-            entity.RowKey = 'batch_all_operations_together'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-1'
-            batch.delete_item(entity.PartitionKey, entity.RowKey)
-            entity.RowKey = 'batch_all_operations_together-2'
-            entity.test3 = 10
-            batch.update_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            entity.test3 = 100
-            batch.update_entity(entity, mode='MERGE')
-            entity.RowKey = 'batch_all_operations_together-4'
-            entity.test3 = 10
-            batch.upsert_item(entity)
-            entity.RowKey = 'batch_all_operations_together-5'
-            batch.upsert_item(entity, mode='MERGE')
-
-            self.table.send_batch(batch)
-            resp = table2.send_batch(batch)
-
-            # Assert
-            assert 6 ==  len(list(resp))
-            entities = list(self.table.query_items("PartitionKey eq '003'"))
-            assert 5 ==  len(entities)
-        finally:
-            self._tear_down()
-
-    # @pytest.mark.skip("This does not throw an error, but it should")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -695,7 +634,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
+    @pytest.mark.skip("On Cosmos, the limit is not specified.")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -707,7 +646,7 @@ class StorageTableClientTest(TableTestCase):
             self.table.create_entity(entity)
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(BatchErrorException):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
                     entity = TableEntity()

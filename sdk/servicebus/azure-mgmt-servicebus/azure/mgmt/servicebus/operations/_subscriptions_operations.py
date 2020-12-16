@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class SubscriptionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class SubscriptionsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SBSubscriptionListResult"]
+        # type: (...) -> Iterable["_models.SBSubscriptionListResult"]
         """List all the subscriptions under a specified topic.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -74,7 +74,7 @@ class SubscriptionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.servicebus.models.SBSubscriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBSubscriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBSubscriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -126,7 +126,7 @@ class SubscriptionsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -143,10 +143,10 @@ class SubscriptionsOperations(object):
         namespace_name,  # type: str
         topic_name,  # type: str
         subscription_name,  # type: str
-        parameters,  # type: "models.SBSubscription"
+        parameters,  # type: "_models.SBSubscription"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SBSubscription"
+        # type: (...) -> "_models.SBSubscription"
         """Creates a topic subscription.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -164,7 +164,7 @@ class SubscriptionsOperations(object):
         :rtype: ~azure.mgmt.servicebus.models.SBSubscription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBSubscription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -202,7 +202,7 @@ class SubscriptionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SBSubscription', pipeline_response)
@@ -270,7 +270,7 @@ class SubscriptionsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -286,7 +286,7 @@ class SubscriptionsOperations(object):
         subscription_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SBSubscription"
+        # type: (...) -> "_models.SBSubscription"
         """Returns a subscription description for the specified topic.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -302,7 +302,7 @@ class SubscriptionsOperations(object):
         :rtype: ~azure.mgmt.servicebus.models.SBSubscription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBSubscription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -335,7 +335,7 @@ class SubscriptionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SBSubscription', pipeline_response)

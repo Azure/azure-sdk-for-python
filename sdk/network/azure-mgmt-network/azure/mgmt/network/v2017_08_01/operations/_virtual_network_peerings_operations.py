@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class VirtualNetworkPeeringsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -141,7 +141,14 @@ class VirtualNetworkPeeringsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'virtualNetworkPeeringName': self._serialize.url("virtual_network_peering_name", virtual_network_peering_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -162,7 +169,7 @@ class VirtualNetworkPeeringsOperations(object):
         virtual_network_peering_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualNetworkPeering"
+        # type: (...) -> "_models.VirtualNetworkPeering"
         """Gets the specified virtual network peering.
 
         :param resource_group_name: The name of the resource group.
@@ -176,7 +183,7 @@ class VirtualNetworkPeeringsOperations(object):
         :rtype: ~azure.mgmt.network.v2017_08_01.models.VirtualNetworkPeering
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkPeering"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkPeering"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -223,11 +230,11 @@ class VirtualNetworkPeeringsOperations(object):
         resource_group_name,  # type: str
         virtual_network_name,  # type: str
         virtual_network_peering_name,  # type: str
-        virtual_network_peering_parameters,  # type: "models.VirtualNetworkPeering"
+        virtual_network_peering_parameters,  # type: "_models.VirtualNetworkPeering"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualNetworkPeering"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkPeering"]
+        # type: (...) -> "_models.VirtualNetworkPeering"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkPeering"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -283,10 +290,10 @@ class VirtualNetworkPeeringsOperations(object):
         resource_group_name,  # type: str
         virtual_network_name,  # type: str
         virtual_network_peering_name,  # type: str
-        virtual_network_peering_parameters,  # type: "models.VirtualNetworkPeering"
+        virtual_network_peering_parameters,  # type: "_models.VirtualNetworkPeering"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VirtualNetworkPeering"]
+        # type: (...) -> LROPoller["_models.VirtualNetworkPeering"]
         """Creates or updates a peering in the specified virtual network.
 
         :param resource_group_name: The name of the resource group.
@@ -309,7 +316,7 @@ class VirtualNetworkPeeringsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkPeering"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkPeering"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -335,7 +342,14 @@ class VirtualNetworkPeeringsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'virtualNetworkPeeringName': self._serialize.url("virtual_network_peering_name", virtual_network_peering_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -355,7 +369,7 @@ class VirtualNetworkPeeringsOperations(object):
         virtual_network_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.VirtualNetworkPeeringListResult"]
+        # type: (...) -> Iterable["_models.VirtualNetworkPeeringListResult"]
         """Gets all virtual network peerings in a virtual network.
 
         :param resource_group_name: The name of the resource group.
@@ -367,7 +381,7 @@ class VirtualNetworkPeeringsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2017_08_01.models.VirtualNetworkPeeringListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkPeeringListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkPeeringListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

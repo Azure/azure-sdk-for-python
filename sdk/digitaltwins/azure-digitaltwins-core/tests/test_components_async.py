@@ -33,7 +33,23 @@ class DigitalTwinsComponentTests(AzureTestCase):
             endpoint=endpoint,
             **kwargs)
 
+    async def _clean_up_models(self, client, *models):
+        models = []
+        async for m in client.list_models():
+            models.append(m)
+        while models:
+            print("Cleaning up {} models".format(len(models)))
+            for model in models:
+                try:
+                    await client.delete_model(model.id)
+                except:
+                    pass
+            models = []
+            async for m in client.list_models():
+                models.append(m)
+
     async def _set_up_models(self, client):
+        await self._clean_up_models(client)
         component = {
             "@id": COMPONENT_ID,
             "@type": "Interface",
@@ -76,10 +92,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
             }
             ]
         }
-        try:
-            await client.create_models([component, model])
-        except ResourceExistsError:
-            pass
+        await client.create_models([component, model])
 
         temporary_twin = {
             "$metadata": {
@@ -373,6 +386,20 @@ class DigitalTwinsComponentTests(AzureTestCase):
             DIGITAL_TWIN_ID,
             "Component1",
             telemetry
+        )
+        assert published is None
+
+    @DigitalTwinsRGPreparer(name_prefix="dttest")
+    @DigitalTwinsPreparer(name_prefix="dttest")
+    async def test_publish_component_telemetry_with_message_id(self, resource_group, location, digitaltwin):
+        telemetry = {"ComponentTelemetry1": 5} # ComponentTelemetry1
+        client = self._get_client(digitaltwin.host_name)
+        await self._set_up_models(client)
+        published = await client.publish_component_telemetry(
+            DIGITAL_TWIN_ID,
+            "Component1",
+            telemetry,
+            message_id=self.create_random_name('message-')
         )
         assert published is None
 

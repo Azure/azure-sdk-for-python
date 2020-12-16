@@ -1,0 +1,339 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:32 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer7427167e?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:29 GMT
+      etag:
+      - '"0x8D89642D77939BC"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:29 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:32 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer7427167e/blob7427167e
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - 1B2M2Y8AsgTpgAmY7PhCfg==
+      date:
+      - Tue, 01 Dec 2020 21:48:29 GMT
+      etag:
+      - '"0x8D89642D78961EA"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:30 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:30.1038058Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: test
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:33 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer7427167e/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - CY9rzUYh03PK3k6DJie09g==
+      date:
+      - Tue, 01 Dec 2020 21:48:29 GMT
+      etag:
+      - '"0x8D89642D799DFB4"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:30 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - Q7G6/s6+u/k=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:30.2118836Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:33 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 0f7d775f-5eec-4e5a-81da-4116addb338c
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer7427167e/blob1copy?comp=lease
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:29 GMT
+      etag:
+      - '"0x8D89642D799DFB4"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:30 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id:
+      - 0f7d775f-5eec-4e5a-81da-4116addb338c
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-12-01T22%3A48%3A33Z&sp=rt&sv=2020-04-08&sr=b&sig=f1zE79XEiYEmnCP1ctctrHs8VViFnQeyPCSGH9JoDZw%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:33 GMT
+      x-ms-lease-id:
+      - baddde9e-8247-4276-8bfa-c7a8081eba1d
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer7427167e/blob1copy
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithBlobOperation</Code><Message>The
+        lease ID specified did not match the lease ID for the blob.\nRequestId:a522c1b0-201e-008a-362b-c88173000000\nTime:2020-12-01T21:48:30.7144283Z</Message></Error>"
+    headers:
+      content-length:
+      - '264'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 01 Dec 2020 21:48:29 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - LeaseIdMismatchWithBlobOperation
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 412
+      message: The lease ID specified did not match the lease ID for the blob.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-12-01T22%3A48%3A33Z&sp=rt&sv=2020-04-08&sr=b&sig=f1zE79XEiYEmnCP1ctctrHs8VViFnQeyPCSGH9JoDZw%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:33 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer7427167e/blob1copy
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
+        is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:a522c1e7-201e-008a-5c2b-c88173000000\nTime:2020-12-01T21:48:30.8285092Z</Message></Error>"
+    headers:
+      content-length:
+      - '267'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 01 Dec 2020 21:48:29 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - LeaseIdMissing
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 412
+      message: There is currently a lease on the blob and no lease ID was specified
+        in the request.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-12-01T22%3A48%3A33Z&sp=rt&sv=2020-04-08&sr=b&sig=f1zE79XEiYEmnCP1ctctrHs8VViFnQeyPCSGH9JoDZw%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Tue, 01 Dec 2020 21:48:33 GMT
+      x-ms-lease-id:
+      - 0f7d775f-5eec-4e5a-81da-4116addb338c
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer7427167e/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 01 Dec 2020 21:48:29 GMT
+      etag:
+      - '"0x8D89642D809A5C6"'
+      last-modified:
+      - Tue, 01 Dec 2020 21:48:30 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-04-08'
+      x-ms-version-id:
+      - '2020-12-01T21:48:30.9454038Z'
+    status:
+      code: 201
+      message: Created
+version: 1

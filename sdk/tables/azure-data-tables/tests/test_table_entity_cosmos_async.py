@@ -54,16 +54,18 @@ class StorageTableEntityTest(TableTestCase):
 
     async def _tear_down(self):
         if self.is_live:
-            try:
-                await self.ts.delete_table(self.table_name)
-            except:
-                pass
-
-            for table_name in self.query_tables:
+            async with self.ts as t:
                 try:
-                    await self.ts.delete_table(table_name)
+                    await t.delete_table(self.table_name)
                 except:
                     pass
+
+                for table_name in self.query_tables:
+                    try:
+                        await t.delete_table(table_name)
+                    except:
+                        pass
+
 
     # --Helpers-----------------------------------------------------------------
 
@@ -245,6 +247,45 @@ class StorageTableEntityTest(TableTestCase):
         assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
+    @pytest.mark.skip("Forbidden operation")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    async def test_url_encoding_at_symbol(self, cosmos_account, cosmos_account_key):
+
+        await self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            entity = {
+                u"PartitionKey": u"PK",
+                u"RowKey": u"table@storage.com",
+                u"Value": 100
+            }
+
+            await self.table.create_entity(entity)
+
+            f = u"RowKey eq '{}'".format(entity["RowKey"])
+            entities = self.table.query_entities(filter=f)
+
+            count = 0
+            async for e in entities:
+                assert e.PartitionKey == entity[u"PartitionKey"]
+                assert e.RowKey == entity[u"RowKey"]
+                assert e.Value == entity[u"Value"]
+                await self.table.delete_entity(e.PartitionKey, e.RowKey)
+                count += 1
+
+            assert count == 1
+
+            entities = self.table.query_entities(filter=f)
+            count = 0
+            async for e in entities:
+                count += 1
+            assert count == 0
+
+        finally:
+            await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -465,11 +506,8 @@ class StorageTableEntityTest(TableTestCase):
             entity = {'RowKey': 'rk', 'PartitionKey': ''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with pytest.raises(HttpResponseError):
-                    await self.table.create_entity(entity=entity)
-            else:
-                resp = await self.table.create_entity(entity=entity)
+            with pytest.raises(HttpResponseError):
+                await self.table.create_entity(entity=entity)
 
                 # Assert
             #  assert resp is None
@@ -505,11 +543,8 @@ class StorageTableEntityTest(TableTestCase):
             entity = {'PartitionKey': 'pk', 'RowKey': ''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with pytest.raises(HttpResponseError):
-                    await self.table.create_entity(entity=entity)
-            else:
-                resp = await self.table.create_entity(entity=entity)
+            with pytest.raises(HttpResponseError):
+                await self.table.create_entity(entity=entity)
 
                 # Assert
             #  assert resp is None
@@ -518,15 +553,13 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
+    @pytest.mark.skip("Cosmos does not have this limitation")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_entity_too_many_properties(self, resource_group, location, cosmos_account,
                                                      cosmos_account_key):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large number of properties.")
         try:
             entity = self._create_random_base_entity_dict()
             for i in range(255):
@@ -542,15 +575,13 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Cosmos does not have this limitation")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_entity_property_name_too_long(self, resource_group, location, cosmos_account,
                                                         cosmos_account_key):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large property names.")
         try:
             entity = self._create_random_base_entity_dict()
             entity['a' * 256] = 'badval'
@@ -731,7 +762,6 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_update_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1155,7 +1185,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Bad Request: Cosmos cannot handle single quotes in a PK/RK (confirm)")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
@@ -1286,7 +1316,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    @pytest.mark.skip("response time is three hours before the given one")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_timezone(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1318,12 +1348,12 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(2)
+            async with await self._create_query_table(2) as table:
 
-            # Act
-            entities = []
-            async for t in table.list_entities():
-                entities.append(t)
+                # Act
+                entities = []
+                async for t in table.list_entities():
+                    entities.append(t)
 
             # Assert
             assert len(entities) ==  2
@@ -1380,12 +1410,12 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(0)
+            async with await self._create_query_table(0) as table:
 
-            # Act
-            entities = []
-            async for t in table.list_entities():
-                entities.append(t)
+                # Act
+                entities = []
+                async for t in table.list_entities():
+                    entities.append(t)
 
             # Assert
             assert len(entities) ==  0
@@ -1400,12 +1430,12 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(2)
+            async with await self._create_query_table(2) as table:
 
-            # Act
-            entities = []
-            async for t in table.list_entities(headers={'accept': 'application/json;odata=fullmetadata'}):
-                entities.append(t)
+                # Act
+                entities = []
+                async for t in table.list_entities(headers={'accept': 'application/json;odata=fullmetadata'}):
+                    entities.append(t)
 
             # Assert
             assert len(entities) ==  2
@@ -1422,12 +1452,12 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(2)
+            async with await self._create_query_table(2) as table:
 
-            # Act
-            entities = []
-            async for t in table.list_entities(headers={'accept': 'application/json;odata=nometadata'}):
-                entities.append(t)
+                # Act
+                entities = []
+                async for t in table.list_entities(headers={'accept': 'application/json;odata=nometadata'}):
+                    entities.append(t)
 
             # Assert
             assert len(entities) ==  2
@@ -1437,40 +1467,6 @@ class StorageTableEntityTest(TableTestCase):
             await self._tear_down()
             if self.is_live:
                 sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Batch not implemented")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_large(self, resource_group, location, cosmos_account, cosmos_account_key):
-        # Arrange
-        table_name = self._create_query_table(0)
-        total_entities_count = 1000
-        entities_per_batch = 50
-
-        for j in range(total_entities_count // entities_per_batch):
-            batch = TableBatch()
-            for i in range(entities_per_batch):
-                entity = TableEntity()
-                entity.PartitionKey = 'large'
-                entity.RowKey = 'batch{0}-item{1}'.format(j, i)
-                entity.test = EntityProperty(True)
-                entity.test2 = 'hello world;' * 100
-                entity.test3 = 3
-                entity.test4 = EntityProperty(1234567890)
-                entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
-                batch.create_entity(entity)
-            self.ts.commit_batch(table_name, batch)
-
-        # Act
-        start_time = datetime.now()
-        entities = list(self.ts.query_entities(table_name))
-        elapsed_time = datetime.now() - start_time
-
-        # Assert
-        print('query_entities took {0} secs.'.format(elapsed_time.total_seconds()))
-        # azure allocates 5 seconds to execute a query
-        # if it runs slowly, it will return fewer results and make the test fail
-        assert len(entities) ==  total_entities_count
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -1554,13 +1550,11 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(3)
-            # circular dependencies made this return a list not an item paged - problem when calling by page
-            # Act
-            entities = []
-            async for t in table.list_entities(results_per_page=2).by_page():
-                entities.append(t)
+            async with await self._create_query_table(3) as table:
 
+                entities = []
+                async for t in table.list_entities(results_per_page=2).by_page():
+                    entities.append(t)
             # Assert
             assert len(entities) ==  2
         finally:
@@ -1575,23 +1569,23 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(5)
+            async with await self._create_query_table(5) as table:
 
-            # Act
-            resp1 = table.list_entities(results_per_page=2).by_page()
-            entities1 = []
-            async for el in await resp1.__anext__():
-                entities1.append(el)
-            resp2 = table.list_entities(results_per_page=2).by_page(
-                continuation_token=resp1.continuation_token)
-            entities2 = []
-            async for el in await resp2.__anext__():
-                entities2.append(el)
-            resp3 = table.list_entities(results_per_page=2).by_page(
-                continuation_token=resp2.continuation_token)
-            entities3 = []
-            async for el in await resp3.__anext__():
-                entities3.append(el)
+                # Act
+                resp1 = table.list_entities(results_per_page=2).by_page()
+                entities1 = []
+                async for el in await resp1.__anext__():
+                    entities1.append(el)
+                resp2 = table.list_entities(results_per_page=2).by_page(
+                    continuation_token=resp1.continuation_token)
+                entities2 = []
+                async for el in await resp2.__anext__():
+                    entities2.append(el)
+                resp3 = table.list_entities(results_per_page=2).by_page(
+                    continuation_token=resp2.continuation_token)
+                entities3 = []
+                async for el in await resp3.__anext__():
+                    entities3.append(el)
 
             # Assert
             assert len(entities1) ==  2
@@ -1614,8 +1608,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_query(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
 
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
@@ -1657,8 +1649,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_add(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1698,8 +1688,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_add_inside_range(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1738,8 +1726,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_add_outside_range(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1777,8 +1763,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_update(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1817,8 +1801,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_delete(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1855,8 +1837,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_upper_case_table_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1892,15 +1872,13 @@ class StorageTableEntityTest(TableTestCase):
                 sleep(SLEEP_DELAY)
 
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_sas_signed_identifier(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange

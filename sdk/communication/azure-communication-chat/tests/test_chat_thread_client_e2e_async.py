@@ -263,17 +263,3 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
-
-    @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
-    async def test_send_read_receipt(self):
-        async with self.chat_client:
-            await self._create_thread()
-
-            async with self.chat_thread_client:
-                await self._send_message()
-
-                await self.chat_thread_client.send_read_receipt(self.message_id)
-
-            if not self.is_playback():
-                await self.chat_client.delete_chat_thread(self.thread_id)

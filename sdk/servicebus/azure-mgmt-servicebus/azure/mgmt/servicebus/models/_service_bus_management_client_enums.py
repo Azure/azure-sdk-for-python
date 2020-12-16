@@ -46,6 +46,17 @@ class EncodingCaptureDescription(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     AVRO = "Avro"
     AVRO_DEFLATE = "AvroDeflate"
 
+class EndPointProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of the Private Endpoint Connection.
+    """
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
 class EntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Entity status.
     """
@@ -66,6 +77,13 @@ class FilterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     SQL_FILTER = "SqlFilter"
     CORRELATION_FILTER = "CorrelationFilter"
+
+class IPAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The IP Filter Action
+    """
+
+    ACCEPT = "Accept"
+    REJECT = "Reject"
 
 class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The access key to regenerate.
@@ -93,6 +111,15 @@ class NetworkRuleIPAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     ALLOW = "Allow"
+
+class PrivateLinkConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of the connection.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
 
 class ProvisioningStateDR(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the Alias(Disaster Recovery configuration) - possible values 'Accepted'

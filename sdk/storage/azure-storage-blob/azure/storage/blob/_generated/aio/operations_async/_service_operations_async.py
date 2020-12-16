@@ -477,6 +477,7 @@ class ServiceOperations:
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-sku-name': self._deserialize(models.SkuName, response.headers.get('x-ms-sku-name')),
                 'x-ms-account-kind': self._deserialize(models.AccountKind, response.headers.get('x-ms-account-kind')),
+                'x-ms-is-hns-enabled': self._deserialize('bool', response.headers.get('x-ms-is-hns-enabled')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)

@@ -28,6 +28,7 @@ from ._models import (
     ShareSmbSettings,
     SmbMultichannel,
     ShareProtocolSettings,
+    ShareProtocols,
     AccessPolicy,
     FileSasPermissions,
     ShareSasPermissions,
@@ -36,6 +37,9 @@ from ._models import (
 from ._generated.models import (
     HandleItem,
     ShareAccessTier
+)
+from ._generated.models import (
+    ShareRootSquash
 )
 
 __version__ = VERSION
@@ -63,6 +67,7 @@ __all__ = [
     'AccessPolicy',
     'FileSasPermissions',
     'ShareSasPermissions',
+    'ShareProtocols',
     'ShareProperties',
     'DirectoryProperties',
     'FileProperties',
@@ -70,6 +75,7 @@ __all__ = [
     'Handle',
     'NTFSAttributes',
     'HandleItem',
+    'ShareRootSquash',
     'generate_account_sas',
     'generate_share_sas',
     'generate_file_sas'

@@ -30,3 +30,6 @@ pylint==2.5.2; python_version >= '3.4'
 
 ../../../tools/azure-devtools
 ../../../tools/azure-sdk-tools
+
+# python-dotenv
+python-dotenv==0.15.0

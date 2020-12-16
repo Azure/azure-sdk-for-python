@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class DdosCustomPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -130,7 +130,13 @@ class DdosCustomPoliciesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ddosCustomPolicyName': self._serialize.url("ddos_custom_policy_name", ddos_custom_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -149,7 +155,7 @@ class DdosCustomPoliciesOperations:
         resource_group_name: str,
         ddos_custom_policy_name: str,
         **kwargs
-    ) -> "models.DdosCustomPolicy":
+    ) -> "_models.DdosCustomPolicy":
         """Gets information about the specified DDoS custom policy.
 
         :param resource_group_name: The name of the resource group.
@@ -161,7 +167,7 @@ class DdosCustomPoliciesOperations:
         :rtype: ~azure.mgmt.network.v2019_04_01.models.DdosCustomPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosCustomPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosCustomPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -206,10 +212,10 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: "models.DdosCustomPolicy",
+        parameters: "_models.DdosCustomPolicy",
         **kwargs
-    ) -> "models.DdosCustomPolicy":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosCustomPolicy"]
+    ) -> "_models.DdosCustomPolicy":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosCustomPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -263,9 +269,9 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: "models.DdosCustomPolicy",
+        parameters: "_models.DdosCustomPolicy",
         **kwargs
-    ) -> AsyncLROPoller["models.DdosCustomPolicy"]:
+    ) -> AsyncLROPoller["_models.DdosCustomPolicy"]:
         """Creates or updates a DDoS custom policy.
 
         :param resource_group_name: The name of the resource group.
@@ -285,7 +291,7 @@ class DdosCustomPoliciesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosCustomPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosCustomPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -310,7 +316,13 @@ class DdosCustomPoliciesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ddosCustomPolicyName': self._serialize.url("ddos_custom_policy_name", ddos_custom_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -328,10 +340,10 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.DdosCustomPolicy":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosCustomPolicy"]
+    ) -> "_models.DdosCustomPolicy":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosCustomPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -381,9 +393,9 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> AsyncLROPoller["models.DdosCustomPolicy"]:
+    ) -> AsyncLROPoller["_models.DdosCustomPolicy"]:
         """Update a DDoS custom policy tags.
 
         :param resource_group_name: The name of the resource group.
@@ -403,7 +415,7 @@ class DdosCustomPoliciesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosCustomPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosCustomPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -428,7 +440,13 @@ class DdosCustomPoliciesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ddosCustomPolicyName': self._serialize.url("ddos_custom_policy_name", ddos_custom_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

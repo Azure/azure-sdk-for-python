@@ -3,96 +3,62 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ecbb3de6-7926-11ea-a543-001a7dda7113
+      - ac212c68-38ea-11eb-a121-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:27 GMT
+      - Tue, 08 Dec 2020 00:16:52 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690?resource=directory
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4AD10330A2"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 184a8aec-101f-005e-3c33-0da674000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Tue, 08 Dec 2020 00:16:52 GMT
+      Etag: '"0x8D89B0E909A5090"'
+      Last-Modified: Tue, 08 Dec 2020 00:16:53 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5adf10f7-c01f-0036-52f7-cc7b51000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690
-        - resource=directory
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690?resource=directory
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ecdb04d0-7926-11ea-880e-001a7dda7113
+      - ac6e1230-38ea-11eb-8704-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:27 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?resource=file
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4AD10C5D9F"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 184a8aed-101f-005e-3d33-0da674000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Tue, 08 Dec 2020 00:16:52 GMT
+      Etag: '"0x8D89B0E90A78D12"'
+      Last-Modified: Tue, 08 Dec 2020 00:16:53 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5adf10f8-c01f-0036-53f7-cc7b51000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690%2Ffilename
-        - resource=file
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?resource=file
 - request:
     body: abc
     headers:
@@ -101,90 +67,60 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ece393e8-7926-11ea-83ff-001a7dda7113
+      - ac7adfb4-38ea-11eb-a0b5-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:27 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=0&action=append
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 184a8aee-101f-005e-3e33-0da674000000
+      Content-Length: '0'
+      Date: Tue, 08 Dec 2020 00:16:52 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5adf10f9-c01f-0036-54f7-cc7b51000000
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-02-10'
     status:
       code: 202
       message: Accepted
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690%2Ffilename
-        - position=0&action=append
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=0&action=append
 - request:
     body: null
     headers:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - eceb4f1a-7926-11ea-a2c2-001a7dda7113
+      - ac870b3a-38ea-11eb-84ae-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:27 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=3&retainUncommittedData=false&close=false&action=flush
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4AD120B002"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 184a8aef-101f-005e-3f33-0da674000000
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Tue, 08 Dec 2020 00:16:52 GMT
+      Etag: '"0x8D89B0E90C0AC9F"'
+      Last-Modified: Tue, 08 Dec 2020 00:16:53 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5adf10fa-c01f-0036-55f7-cc7b51000000
+      x-ms-request-server-encrypted: 'false'
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690%2Ffilename
-        - position=3&retainUncommittedData=false&close=false&action=flush
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=3&retainUncommittedData=false&close=false&action=flush
 - request:
     body: !!binary |
       kfKoBpjgPBWByb40ARkUrSRpIm3a1DGWLkVxkGSldUUGn/39FOq+IU8QaGD2GmD3zzNVBR2KJKVV
@@ -195,135 +131,87 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ecf8229e-7926-11ea-a872-001a7dda7113
+      - ac940614-38ea-11eb-ad71-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:27 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=0&action=append
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 184a8af0-101f-005e-4033-0da674000000
+      Content-Length: '0'
+      Date: Tue, 08 Dec 2020 00:16:52 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5adf10fb-c01f-0036-56f7-cc7b51000000
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-02-10'
     status:
       code: 202
       message: Accepted
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690%2Ffilename
-        - position=0&action=append
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=0&action=append
 - request:
     body: null
     headers:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ed00019e-7926-11ea-a071-001a7dda7113
+      - ac9ff7f4-38ea-11eb-9516-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:28 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PATCH
-    uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=100&action=flush
+    uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=100&close=true&action=flush
   response:
     body:
-      string: '{"error":{"code":"ConditionNotMet","message":"The condition specified
-        using HTTP conditional header(s) is not met.\nRequestId:184a8af1-101f-005e-4133-0da674000000\nTime:2020-04-07T23:24:27.9915817Z"}}'
+      string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '200'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/json;charset=utf-8
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      Date: Tue, 08 Dec 2020 00:16:52 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ConditionNotMet
-      x-ms-request-id: 184a8af1-101f-005e-4133-0da674000000
-      x-ms-version: '2019-02-02'
+      x-ms-request-id: 5adf10fc-c01f-0036-57f7-cc7b51000000
+      x-ms-version: '2020-02-10'
     status:
       code: 412
       message: The condition specified using HTTP conditional header(s) is not met.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690%2Ffilename
-        - position=100&action=flush
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=100&close=true&action=flush
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ed0883ba-7926-11ea-a5bc-001a7dda7113
+      - acac03e8-38ea-11eb-9ebc-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:28 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?resource=file
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4AD13A2327"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:28 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 184a8af2-101f-005e-4233-0da674000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Tue, 08 Dec 2020 00:16:53 GMT
+      Etag: '"0x8D89B0E90E5C0BD"'
+      Last-Modified: Tue, 08 Dec 2020 00:16:53 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5adf10fd-c01f-0036-58f7-cc7b51000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690%2Ffilename
-        - resource=file
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?resource=file
 - request:
     body: !!binary |
       kfKoBpjgPBWByb40ARkUrSRpIm3a1DGWLkVxkGSldUUGn/39FOq+IU8QaGD2GmD3zzNVBR2KJKVV
@@ -334,105 +222,75 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ed11899e-7926-11ea-ae6a-001a7dda7113
+      - acb95240-38ea-11eb-a5f5-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:28 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=0&action=append
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 184a8af3-101f-005e-4333-0da674000000
+      Content-Length: '0'
+      Date: Tue, 08 Dec 2020 00:16:53 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5adf10fe-c01f-0036-59f7-cc7b51000000
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-02-10'
     status:
       code: 202
       message: Accepted
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690%2Ffilename
-        - position=0&action=append
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=0&action=append
 - request:
     body: null
     headers:
       If-Match:
-      - '"0x8D7DB4AD13A2327"'
+      - '"0x8D89B0E90E5C0BD"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ed19c378-7926-11ea-865d-001a7dda7113
+      - acc64612-38ea-11eb-aa30-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:28 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PATCH
-    uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=100&action=flush
+    uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=100&close=true&action=flush
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:27 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4AD15B79CE"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:28 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 184a8af4-101f-005e-4433-0da674000000
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Tue, 08 Dec 2020 00:16:53 GMT
+      Etag: '"0x8D89B0E91020E91"'
+      Last-Modified: Tue, 08 Dec 2020 00:16:53 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5adf10ff-c01f-0036-5af7-cc7b51000000
+      x-ms-request-server-encrypted: 'false'
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690%2Ffilename
-        - position=100&action=flush
-        - ''
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem76ef1690/directory76ef1690%2Ffilename?position=100&close=true&action=flush
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ed32f1ba-7926-11ea-8377-001a7dda7113
+      - acd5b4fe-38ea-11eb-bedf-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:28 GMT
+      - Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: GET
     uri: https://storagename.blob.core.windows.net/filesystem76ef1690/directory76ef1690/filename
   response:
@@ -441,92 +299,23 @@ interactions:
         kfKoBpjgPBWByb40ARkUrSRpIm3a1DGWLkVxkGSldUUGn/39FOq+IU8QaGD2GmD3zzNVBR2KJKVV
         rS7CuPHARFxbJTHu/FSl0ItCxh52kBrj9rQRCwLbsL5ony2a+VzaToWZQA==
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Accept-Ranges
-      : bytes
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '100'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Range
-      : bytes 0-99/100
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/octet-stream
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:28 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4AD15B79CE"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:28 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Accept-Ranges: bytes
+      Content-Length: '100'
+      Content-Range: bytes 0-99/100
+      Content-Type: application/octet-stream
+      Date: Tue, 08 Dec 2020 00:16:53 GMT
+      Etag: '"0x8D89B0E91020E91"'
+      Last-Modified: Tue, 08 Dec 2020 00:16:53 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Tue, 07 Apr 2020 23:24:28 GMT
+      x-ms-creation-time: Tue, 08 Dec 2020 00:16:53 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: d9e7c9c0-c01e-005d-6c33-0d4710000000
+      x-ms-request-id: eb735260-501e-0034-43f7-ccc5e9000000
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 206
       message: Partial Content
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.blob.core.windows.net
-        - /filesystem76ef1690/directory76ef1690/filename
-        - ''
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - f582168c-7926-11ea-b636-001a7dda7113
-      x-ms-date:
-      - Tue, 07 Apr 2020 23:24:42 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2019-02-02'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystem76ef1690/directory76ef1690?resource=directory
-  response:
-    body:
-      string: '{"error":{"code":"FilesystemNotFound","message":"The specified filesystem
-        does not exist.\nRequestId:5a680a94-e01f-005a-6b33-0d2b73000000\nTime:2020-04-07T23:24:42.4013675Z"}}'
-    headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '175'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/json;charset=utf-8
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:41 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: FilesystemNotFound
-      x-ms-request-id: 5a680a94-e01f-005a-6b33-0d2b73000000
-      x-ms-version: '2019-02-02'
-    status:
-      code: 404
-      message: The specified filesystem does not exist.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem76ef1690/directory76ef1690
-        - resource=directory
-        - ''
+    url: https://amandaadlscanary2.blob.core.windows.net/filesystem76ef1690/directory76ef1690/filename
 version: 1
