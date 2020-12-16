@@ -52,8 +52,7 @@ class PathPropertiesPaged(PageIterator):
                 continuation=continuation_token or None,
                 path=self.path,
                 max_results=self.results_per_page,
-                upn=self.upn,
-                cls=return_headers_and_deserialized_path_list)
+                upn=self.upn)
         except HttpResponseError as error:
             process_storage_error(error)
 
