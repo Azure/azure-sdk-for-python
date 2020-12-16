@@ -2189,7 +2189,7 @@
                 "param_type": "positional_or_keyword"
               },
               "pop_receipt": {
-                "default": "none",
+                "default": null,
                 "param_type": "positional_or_keyword"
               },
               "content": {
