@@ -10,11 +10,11 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, TypeVar, TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._serialize import get_modify_conditions
-from azure.core.exceptions import HttpResponseError
 
 if TYPE_CHECKING:
     from datetime import datetime
