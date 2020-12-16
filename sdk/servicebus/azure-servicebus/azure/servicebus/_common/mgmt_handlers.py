@@ -13,9 +13,9 @@ from .constants import ServiceBusReceiveMode, MGMT_RESPONSE_MESSAGE_ERROR_CONDIT
 _LOGGER = logging.getLogger(__name__)
 
 
-def default(
+def default(  # pylint: disable=inconsistent-return-statements
     status_code, message, description
-):  # pylint: disable=inconsistent-return-statements
+):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
@@ -27,9 +27,9 @@ def default(
     )
 
 
-def session_lock_renew_op(
+def session_lock_renew_op(  # pylint: disable=inconsistent-return-statements
     status_code, message, description
-):  # pylint: disable=inconsistent-return-statements
+):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
@@ -41,9 +41,9 @@ def session_lock_renew_op(
     )
 
 
-def message_lock_renew_op(
+def message_lock_renew_op(  # pylint: disable=inconsistent-return-statements
     status_code, message, description
-):  # pylint: disable=inconsistent-return-statements
+):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
@@ -55,9 +55,9 @@ def message_lock_renew_op(
     )
 
 
-def peek_op(
+def peek_op(  # pylint: disable=inconsistent-return-statements
     status_code, message, description, receiver
-):  # pylint: disable=inconsistent-return-statements
+):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
@@ -79,9 +79,9 @@ def peek_op(
     )
 
 
-def list_sessions_op(
+def list_sessions_op(  # pylint: disable=inconsistent-return-statements
     status_code, message, description
-):  # pylint: disable=inconsistent-return-statements
+):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
@@ -131,9 +131,9 @@ def deferred_message_op(  # pylint: disable=inconsistent-return-statements
     )
 
 
-def schedule_op(
+def schedule_op(  # pylint: disable=inconsistent-return-statements
     status_code, message, description
-):  # pylint: disable=inconsistent-return-statements
+):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
