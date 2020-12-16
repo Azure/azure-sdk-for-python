@@ -1,5 +1,6 @@
 import json
 import time
+import unittest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 import azure.mgmt.netapp.models
@@ -38,6 +39,7 @@ def delete_account(client, rg, acc_name, live=False):
     wait_for_no_account(client, rg, acc_name, live)
 
 
+@unittest.skip("skip test")
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()

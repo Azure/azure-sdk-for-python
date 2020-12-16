@@ -1,5 +1,22 @@
 # Release History
 
+## 14.0.0 (2020-11-23)
+
+**Features**
+
+  - Model ManagedCluster has a new parameter pod_identity_profile
+  - Model ManagedCluster has a new parameter auto_upgrade_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter linux_os_config
+  - Model ManagedClusterAgentPoolProfile has a new parameter kubelet_config
+  - Model ManagedClusterAgentPoolProfile has a new parameter pod_subnet_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter linux_os_config
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter kubelet_config
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter pod_subnet_id
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter private_dns_zone
+  - Model AgentPool has a new parameter linux_os_config
+  - Model AgentPool has a new parameter kubelet_config
+  - Model AgentPool has a new parameter pod_subnet_id
+
 ## 14.0.0b1 (2020-10-23)
 
 This is beta preview version.

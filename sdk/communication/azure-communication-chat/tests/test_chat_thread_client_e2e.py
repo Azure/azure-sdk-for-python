@@ -194,27 +194,3 @@ class ChatThreadClientTest(CommunicationTestCase):
 
         self.chat_thread_client.send_typing_notification()
 
-    @pytest.mark.live_test_only
-    def test_send_read_receipt(self):
-        self._create_thread()
-        self._send_message()
-
-        self.chat_thread_client.send_read_receipt(self.message_id)
-
-    @pytest.mark.live_test_only
-    def test_list_read_receipts(self):
-        self._create_thread()
-        self._send_message()
-
-        # send read receipts first
-        self.chat_thread_client.send_read_receipt(self.message_id)
-        if self.is_live:
-            time.sleep(2)
-
-        # list read receipts
-        read_receipts = self.chat_thread_client.list_read_receipts()
-
-        items = []
-        for item in read_receipts:
-            items.append(item)
-        assert len(items) > 0

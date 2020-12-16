@@ -48,7 +48,7 @@ class TableServiceStatsTest(TableTestCase):
         response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-    @pytest.mark.skip("invalid json")
+    @pytest.mark.skip("JSON is invalid for cosmos")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_table_service_stats_f(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -63,7 +63,7 @@ class TableServiceStatsTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("invalid json")
+    @pytest.mark.skip("JSON is invalid for cosmos")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_table_service_stats_when_unavailable(self, resource_group, location, cosmos_account, cosmos_account_key):

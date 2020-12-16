@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class GalleryImageVersionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,11 +53,11 @@ class GalleryImageVersionsOperations(object):
         gallery_name,  # type: str
         gallery_image_name,  # type: str
         gallery_image_version_name,  # type: str
-        gallery_image_version,  # type: "models.GalleryImageVersion"
+        gallery_image_version,  # type: "_models.GalleryImageVersion"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.GalleryImageVersion"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersion"]
+        # type: (...) -> "_models.GalleryImageVersion"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageVersion"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -118,10 +118,10 @@ class GalleryImageVersionsOperations(object):
         gallery_name,  # type: str
         gallery_image_name,  # type: str
         gallery_image_version_name,  # type: str
-        gallery_image_version,  # type: "models.GalleryImageVersion"
+        gallery_image_version,  # type: "_models.GalleryImageVersion"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.GalleryImageVersion"]
+        # type: (...) -> LROPoller["_models.GalleryImageVersion"]
         """Create or update a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
@@ -151,7 +151,7 @@ class GalleryImageVersionsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersion"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageVersion"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -178,7 +178,15 @@ class GalleryImageVersionsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str'),
+            'galleryImageVersionName': self._serialize.url("gallery_image_version_name", gallery_image_version_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -198,11 +206,11 @@ class GalleryImageVersionsOperations(object):
         gallery_name,  # type: str
         gallery_image_name,  # type: str
         gallery_image_version_name,  # type: str
-        gallery_image_version,  # type: "models.GalleryImageVersionUpdate"
+        gallery_image_version,  # type: "_models.GalleryImageVersionUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.GalleryImageVersion"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersion"]
+        # type: (...) -> "_models.GalleryImageVersion"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageVersion"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -256,10 +264,10 @@ class GalleryImageVersionsOperations(object):
         gallery_name,  # type: str
         gallery_image_name,  # type: str
         gallery_image_version_name,  # type: str
-        gallery_image_version,  # type: "models.GalleryImageVersionUpdate"
+        gallery_image_version,  # type: "_models.GalleryImageVersionUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.GalleryImageVersion"]
+        # type: (...) -> LROPoller["_models.GalleryImageVersion"]
         """Update a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
@@ -289,7 +297,7 @@ class GalleryImageVersionsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersion"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageVersion"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -316,7 +324,15 @@ class GalleryImageVersionsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str'),
+            'galleryImageVersionName': self._serialize.url("gallery_image_version_name", gallery_image_version_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -336,10 +352,10 @@ class GalleryImageVersionsOperations(object):
         gallery_name,  # type: str
         gallery_image_name,  # type: str
         gallery_image_version_name,  # type: str
-        expand=None,  # type: Optional[Union[str, "models.ReplicationStatusTypes"]]
+        expand=None,  # type: Optional[Union[str, "_models.ReplicationStatusTypes"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.GalleryImageVersion"
+        # type: (...) -> "_models.GalleryImageVersion"
         """Retrieves information about a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
@@ -359,7 +375,7 @@ class GalleryImageVersionsOperations(object):
         :rtype: ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersion"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageVersion"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -508,7 +524,15 @@ class GalleryImageVersionsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str'),
+            'galleryImageVersionName': self._serialize.url("gallery_image_version_name", gallery_image_version_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -529,7 +553,7 @@ class GalleryImageVersionsOperations(object):
         gallery_image_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.GalleryImageVersionList"]
+        # type: (...) -> Iterable["_models.GalleryImageVersionList"]
         """List gallery Image Versions in a gallery Image Definition.
 
         :param resource_group_name: The name of the resource group.
@@ -545,7 +569,7 @@ class GalleryImageVersionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersionList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageVersionList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

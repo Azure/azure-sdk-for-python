@@ -11,30 +11,31 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 27 Oct 2020 19:38:11 GMT
+      - Thu, 10 Dec 2020 22:56:02 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicationk453hklaelp.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2020-07-20-preview2
   response:
-    body: '{"id": "sanitized"}'
+    body:
+      string: '{"id": "sanitized"}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 19:38:11 GMT
+      - Thu, 10 Dec 2020 22:56:02 GMT
       ms-cv:
-      - HSwQ+Cp/pEaQxTLGZxF68w.0
+      - oDJ/6Fd/Akyb8xvHgNiFZg.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 20ms
+      - 21ms
     status:
       code: 200
       message: OK
@@ -52,30 +53,31 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 27 Oct 2020 19:38:12 GMT
+      - Thu, 10 Dec 2020 22:56:03 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicationk453hklaelp.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
   response:
-    body: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-10-28T19:38:11.1260242+00:00"}'
+    body:
+      string: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-12-11T22:56:02.5842105+00:00"}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 19:38:11 GMT
+      - Thu, 10 Dec 2020 22:56:02 GMT
       ms-cv:
-      - rPK4RVKyPku6NhzzsDRFMg.0
+      - H7k2wqnJ7kmFo9ykrT3BEg.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 27ms
+      - 36ms
     status:
       code: 200
       message: OK
@@ -93,27 +95,27 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Tue, 27 Oct 2020 19:38:12 GMT
+      - Thu, 10 Dec 2020 22:56:03 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://communicationk453hklaelp.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
       date:
-      - Tue, 27 Oct 2020 19:38:11 GMT
+      - Thu, 10 Dec 2020 22:56:02 GMT
       ms-cv:
-      - auQLGlHFdEy3NcesL/fU3A.0
+      - qPVD2tRlJ0GJUo9HoMJfmQ.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 11ms
+      - 12ms
     status:
       code: 204
       message: No Content

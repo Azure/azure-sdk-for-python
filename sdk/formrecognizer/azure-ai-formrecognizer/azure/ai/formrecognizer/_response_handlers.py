@@ -15,15 +15,16 @@ from ._models import (
     FormTableCell,
     FormPageRange,
     RecognizedForm,
-    FormSelectionMark
+    FormSelectionMark,
+    get_bounding_box
 )
 
 
-def prepare_prebuilt_models(response, **kwargs):
+def prepare_prebuilt_models(response):
     prebuilt_models = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
-    form_page = FormPage._from_generated_prebuilt_model(read_result)
+    form_page = prepare_content_result(response)
 
     for page in document_result:
         model_id = page.model_id if hasattr(page, "model_id") else None
@@ -35,7 +36,7 @@ def prepare_prebuilt_models(response, **kwargs):
             pages=form_page[page.page_range[0]-1:page.page_range[1]],
             form_type=page.doc_type,
             fields={
-                key: FormField._from_generated(key, value, read_result, **kwargs)
+                key: FormField._from_generated(key, value, read_result)
                 for key, value in page.fields.items()
             } if page.fields else None,
             form_type_confidence=doc_type_confidence,
@@ -56,6 +57,7 @@ def prepare_tables(page, read_result):
             column_count=table.columns,
             page_number=page.page,
             cells=[FormTableCell._from_generated(cell, page.page, read_result) for cell in table.cells],
+            bounding_box=get_bounding_box(table) if hasattr(table, "bounding_box") else None
         ) for table in page.tables
     ]
 
@@ -78,7 +80,7 @@ def prepare_content_result(response):
             height=page.height,
             unit=page.unit,
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None,
-            tables=prepare_tables(page_result[idx], read_result),
+            tables=prepare_tables(page_result[idx], read_result) if page_result else None,
             selection_marks=selection_marks
         )
         pages.append(form_page)

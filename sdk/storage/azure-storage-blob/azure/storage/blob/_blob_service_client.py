@@ -30,7 +30,8 @@ from ._generated import AzureBlobStorage
 from ._generated.models import StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
-from ._models import ContainerPropertiesPaged, FilteredBlobPaged
+from ._models import ContainerPropertiesPaged
+from ._list_blobs_helper import FilteredBlobPaged
 from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 
@@ -47,6 +48,7 @@ if TYPE_CHECKING:
         CorsRule,
         RetentionPolicy,
         StaticWebsite,
+        FilteredBlob
     )
 
 

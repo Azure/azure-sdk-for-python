@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ProviderOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,9 +43,9 @@ class ProviderOperations:
 
     def get_available_stacks(
         self,
-        os_type_selected: Optional[Union[str, "models.Enum0"]] = None,
+        os_type_selected: Optional[Union[str, "_models.Enum0"]] = None,
         **kwargs
-    ) -> AsyncIterable["models.ApplicationStackCollection"]:
+    ) -> AsyncIterable["_models.ApplicationStackCollection"]:
         """Get available application frameworks and their versions.
 
         Get available application frameworks and their versions.
@@ -57,7 +57,7 @@ class ProviderOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2016_03_01.models.ApplicationStackCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationStackCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationStackCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,7 +113,7 @@ class ProviderOperations:
     def list_operations(
         self,
         **kwargs
-    ) -> AsyncIterable["models.CsmOperationCollection"]:
+    ) -> AsyncIterable["_models.CsmOperationCollection"]:
         """Gets all available operations for the Microsoft.Web resource provider. Also exposes resource metric definitions.
 
         Gets all available operations for the Microsoft.Web resource provider. Also exposes resource
@@ -124,7 +124,7 @@ class ProviderOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2016_03_01.models.CsmOperationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmOperationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmOperationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -177,9 +177,9 @@ class ProviderOperations:
 
     def get_available_stacks_on_prem(
         self,
-        os_type_selected: Optional[Union[str, "models.Enum1"]] = None,
+        os_type_selected: Optional[Union[str, "_models.Enum1"]] = None,
         **kwargs
-    ) -> AsyncIterable["models.ApplicationStackCollection"]:
+    ) -> AsyncIterable["_models.ApplicationStackCollection"]:
         """Get available application frameworks and their versions.
 
         Get available application frameworks and their versions.
@@ -191,7 +191,7 @@ class ProviderOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2016_03_01.models.ApplicationStackCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationStackCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationStackCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

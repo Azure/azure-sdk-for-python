@@ -245,6 +245,247 @@ class BlockBlobOperations:
 
     upload.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
+    async def put_blob_from_url(
+        self,
+        content_length: int,
+        copy_source: str,
+        timeout: Optional[int] = None,
+        transactional_content_md5: Optional[bytearray] = None,
+        metadata: Optional[str] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+        request_id_parameter: Optional[str] = None,
+        source_content_md5: Optional[bytearray] = None,
+        blob_tags_string: Optional[str] = None,
+        copy_source_blob_properties: Optional[bool] = None,
+        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
+        """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
+        read from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial
+        updates are not supported with Put Blob from URL; the content of an existing blob is
+        overwritten with the content of the new blob.  To perform partial updates to a block blob’s
+        contents using a source URL, use the Put Block from URL API in conjunction with Put Block List.
+
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
+         up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
+         would appear in a request URI. The source blob must either be public or must be authenticated
+         via a shared access signature.
+        :type copy_source: str
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
+         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
+         by the service.
+        :type transactional_content_md5: bytearray
+        :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
+         If no name-value pairs are specified, the operation will copy the metadata from the source blob
+         or file to the destination blob. If one or more name-value pairs are specified, the destination
+         blob is created with the specified metadata, and metadata is not copied from the source blob or
+         file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
+         rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
+         information.
+        :type metadata: str
+        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
+         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
+         provided.
+        :type encryption_algorithm: str
+        :param tier: Optional. Indicates the tier to be set on the blob.
+        :type tier: str or ~azure.storage.blob.models.AccessTierOptional
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
+         from the copy source.
+        :type source_content_md5: bytearray
+        :param blob_tags_string: Optional.  Used to set blob tags in various blob operations.
+        :type blob_tags_string: str
+        :param copy_source_blob_properties: Optional, default is true.  Indicates if properties from
+         the source blob should be copied.
+        :type copy_source_blob_properties: bool
+        :param blob_http_headers: Parameter group.
+        :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
+        :param lease_access_conditions: Parameter group.
+        :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_info: Parameter group.
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Parameter group.
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
+        :param modified_access_conditions: Parameter group.
+        :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :param source_modified_access_conditions: Parameter group.
+        :type source_modified_access_conditions: ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        
+        _blob_content_type = None
+        _blob_content_encoding = None
+        _blob_content_language = None
+        _blob_content_md5 = None
+        _blob_cache_control = None
+        _lease_id = None
+        _blob_content_disposition = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        _encryption_scope = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        _if_match = None
+        _if_none_match = None
+        _if_tags = None
+        _source_if_modified_since = None
+        _source_if_unmodified_since = None
+        _source_if_match = None
+        _source_if_none_match = None
+        _source_if_tags = None
+        if blob_http_headers is not None:
+            _blob_content_type = blob_http_headers.blob_content_type
+            _blob_content_encoding = blob_http_headers.blob_content_encoding
+            _blob_content_language = blob_http_headers.blob_content_language
+            _blob_content_md5 = blob_http_headers.blob_content_md5
+            _blob_cache_control = blob_http_headers.blob_cache_control
+            _blob_content_disposition = blob_http_headers.blob_content_disposition
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+        if cpk_scope_info is not None:
+            _encryption_scope = cpk_scope_info.encryption_scope
+        if lease_access_conditions is not None:
+            _lease_id = lease_access_conditions.lease_id
+        if modified_access_conditions is not None:
+            _if_modified_since = modified_access_conditions.if_modified_since
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
+            _if_match = modified_access_conditions.if_match
+            _if_none_match = modified_access_conditions.if_none_match
+            _if_tags = modified_access_conditions.if_tags
+        if source_modified_access_conditions is not None:
+            _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
+            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+            _source_if_match = source_modified_access_conditions.source_if_match
+            _source_if_none_match = source_modified_access_conditions.source_if_none_match
+            _source_if_tags = source_modified_access_conditions.source_if_tags
+        blob_type = "BlockBlob"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.put_blob_from_url.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-blob-type'] = self._serialize.header("blob_type", blob_type, 'str')
+        if transactional_content_md5 is not None:
+            header_parameters['Content-MD5'] = self._serialize.header("transactional_content_md5", transactional_content_md5, 'bytearray')
+        header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
+        if _blob_content_type is not None:
+            header_parameters['x-ms-blob-content-type'] = self._serialize.header("blob_content_type", _blob_content_type, 'str')
+        if _blob_content_encoding is not None:
+            header_parameters['x-ms-blob-content-encoding'] = self._serialize.header("blob_content_encoding", _blob_content_encoding, 'str')
+        if _blob_content_language is not None:
+            header_parameters['x-ms-blob-content-language'] = self._serialize.header("blob_content_language", _blob_content_language, 'str')
+        if _blob_content_md5 is not None:
+            header_parameters['x-ms-blob-content-md5'] = self._serialize.header("blob_content_md5", _blob_content_md5, 'bytearray')
+        if _blob_cache_control is not None:
+            header_parameters['x-ms-blob-cache-control'] = self._serialize.header("blob_cache_control", _blob_cache_control, 'str')
+        if metadata is not None:
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
+        if _lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
+        if _blob_content_disposition is not None:
+            header_parameters['x-ms-blob-content-disposition'] = self._serialize.header("blob_content_disposition", _blob_content_disposition, 'str')
+        if _encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
+        if _encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
+        if tier is not None:
+            header_parameters['x-ms-access-tier'] = self._serialize.header("tier", tier, 'str')
+        if _if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
+        if _if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", _if_unmodified_since, 'rfc-1123')
+        if _if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
+        if _if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if _if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", _if_tags, 'str')
+        if _source_if_modified_since is not None:
+            header_parameters['x-ms-source-if-modified-since'] = self._serialize.header("source_if_modified_since", _source_if_modified_since, 'rfc-1123')
+        if _source_if_unmodified_since is not None:
+            header_parameters['x-ms-source-if-unmodified-since'] = self._serialize.header("source_if_unmodified_since", _source_if_unmodified_since, 'rfc-1123')
+        if _source_if_match is not None:
+            header_parameters['x-ms-source-if-match'] = self._serialize.header("source_if_match", _source_if_match, 'str')
+        if _source_if_none_match is not None:
+            header_parameters['x-ms-source-if-none-match'] = self._serialize.header("source_if_none_match", _source_if_none_match, 'str')
+        if _source_if_tags is not None:
+            header_parameters['x-ms-source-if-tags'] = self._serialize.header("source_if_tags", _source_if_tags, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        if source_content_md5 is not None:
+            header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
+        if blob_tags_string is not None:
+            header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
+        header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
+        if copy_source_blob_properties is not None:
+            header_parameters['x-ms-copy-source-blob-properties'] = self._serialize.header("copy_source_blob_properties", copy_source_blob_properties, 'bool')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    put_blob_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+
     async def stage_block(
         self,
         block_id: str,

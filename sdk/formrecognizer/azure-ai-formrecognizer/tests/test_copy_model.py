@@ -152,10 +152,84 @@ class TestCopyModel(FormRecognizerTest):
         initial_poller = client.begin_copy_model(model.model_id, target=target)
         cont_token = initial_poller.continuation_token()
 
-        poller = client.begin_copy_model(model.model_id, target=target, continuation_token=cont_token)
+        poller = client.begin_copy_model(model.model_id, None, continuation_token=cont_token)
         result = poller.result()
         self.assertIsNotNone(result)
 
         copied_model = client.get_custom_model(result.model_id)
         self.assertIsNotNone(copied_model)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, copy=True)
+    def test_copy_model_with_labeled_model_name(self, client, container_sas_url, location, resource_id):
+
+        poller = client.begin_training(container_sas_url, use_training_labels=True, model_name="mymodel")
+        model = poller.result()
+
+        target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
+
+        poller = client.begin_copy_model(model.model_id, target=target)
+        copy = poller.result()
+
+        copied_model = client.get_custom_model(copy.model_id)
+
+        self.assertEqual(copy.status, "ready")
+        self.assertIsNotNone(copy.training_started_on)
+        self.assertIsNotNone(copy.training_completed_on)
+        self.assertEqual(target["modelId"], copy.model_id)
+        self.assertNotEqual(target["modelId"], model.model_id)
+        self.assertIsNotNone(copied_model)
+        self.assertEqual(copied_model.model_name, "mymodel")
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, copy=True)
+    def test_copy_model_with_unlabeled_model_name(self, client, container_sas_url, location, resource_id):
+
+        poller = client.begin_training(container_sas_url, use_training_labels=False, model_name="mymodel")
+        model = poller.result()
+
+        target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
+
+        poller = client.begin_copy_model(model.model_id, target=target)
+        copy = poller.result()
+
+        copied_model = client.get_custom_model(copy.model_id)
+
+        self.assertEqual(copy.status, "ready")
+        self.assertIsNotNone(copy.training_started_on)
+        self.assertIsNotNone(copy.training_completed_on)
+        self.assertEqual(target["modelId"], copy.model_id)
+        self.assertNotEqual(target["modelId"], model.model_id)
+        self.assertIsNotNone(copied_model)
+        # self.assertEqual(copied_model.model_name, "mymodel")  # FIXME: still is not returned for unlabeled
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, copy=True)
+    def test_copy_model_with_composed_model(self, client, container_sas_url, location, resource_id):
+
+        poller_1 = client.begin_training(container_sas_url, use_training_labels=True, model_name="model1")
+        model_1 = poller_1.result()
+
+        poller_2 = client.begin_training(container_sas_url, use_training_labels=True, model_name="model2")
+        model_2 = poller_2.result()
+
+        composed_poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_name="composedmodel")
+        composed_model = composed_poller.result()
+
+        target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
+
+        poller = client.begin_copy_model(composed_model.model_id, target=target)
+        copy = poller.result()
+
+        copied_model = client.get_custom_model(copy.model_id)
+
+        self.assertEqual(copy.status, "ready")
+        self.assertIsNotNone(copy.training_started_on)
+        self.assertIsNotNone(copy.training_completed_on)
+        self.assertEqual(target["modelId"], copy.model_id)
+        self.assertNotEqual(target["modelId"], composed_model.model_id)
+        self.assertIsNotNone(copied_model)
+        self.assertEqual(copied_model.model_name, "composedmodel")
+        for submodel in copied_model.submodels:
+            assert submodel.model_id in [model_1.model_id, model_2.model_id]

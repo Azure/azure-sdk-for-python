@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VpnServerConfigurationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class VpnServerConfigurationsOperations:
         resource_group_name: str,
         vpn_server_configuration_name: str,
         **kwargs
-    ) -> "models.VpnServerConfiguration":
+    ) -> "_models.VpnServerConfiguration":
         """Retrieves the details of a VpnServerConfiguration.
 
         :param resource_group_name: The resource group name of the VpnServerConfiguration.
@@ -60,7 +60,7 @@ class VpnServerConfigurationsOperations:
         :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnServerConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,10 +105,10 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        vpn_server_configuration_parameters: "models.VpnServerConfiguration",
+        vpn_server_configuration_parameters: "_models.VpnServerConfiguration",
         **kwargs
-    ) -> "models.VpnServerConfiguration":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfiguration"]
+    ) -> "_models.VpnServerConfiguration":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnServerConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -162,9 +162,9 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        vpn_server_configuration_parameters: "models.VpnServerConfiguration",
+        vpn_server_configuration_parameters: "_models.VpnServerConfiguration",
         **kwargs
-    ) -> AsyncLROPoller["models.VpnServerConfiguration"]:
+    ) -> AsyncLROPoller["_models.VpnServerConfiguration"]:
         """Creates a VpnServerConfiguration resource if it doesn't exist else updates the existing
         VpnServerConfiguration.
 
@@ -187,7 +187,7 @@ class VpnServerConfigurationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnServerConfiguration"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -212,7 +212,13 @@ class VpnServerConfigurationsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vpnServerConfigurationName': self._serialize.url("vpn_server_configuration_name", vpn_server_configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -230,9 +236,9 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        vpn_server_configuration_parameters: "models.TagsObject",
+        vpn_server_configuration_parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.VpnServerConfiguration":
+    ) -> "_models.VpnServerConfiguration":
         """Updates VpnServerConfiguration tags.
 
         :param resource_group_name: The resource group name of the VpnServerConfiguration.
@@ -247,7 +253,7 @@ class VpnServerConfigurationsOperations:
         :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnServerConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -381,7 +387,13 @@ class VpnServerConfigurationsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vpnServerConfigurationName': self._serialize.url("vpn_server_configuration_name", vpn_server_configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -399,7 +411,7 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListVpnServerConfigurationsResult"]:
+    ) -> AsyncIterable["_models.ListVpnServerConfigurationsResult"]:
         """Lists all the vpnServerConfigurations in a resource group.
 
         :param resource_group_name: The resource group name of the VpnServerConfiguration.
@@ -409,7 +421,7 @@ class VpnServerConfigurationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_11_01.models.ListVpnServerConfigurationsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnServerConfigurationsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnServerConfigurationsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -468,7 +480,7 @@ class VpnServerConfigurationsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ListVpnServerConfigurationsResult"]:
+    ) -> AsyncIterable["_models.ListVpnServerConfigurationsResult"]:
         """Lists all the VpnServerConfigurations in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -476,7 +488,7 @@ class VpnServerConfigurationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_11_01.models.ListVpnServerConfigurationsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnServerConfigurationsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnServerConfigurationsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

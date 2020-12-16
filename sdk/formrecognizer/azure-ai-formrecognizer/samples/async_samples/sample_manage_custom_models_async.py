@@ -19,6 +19,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
+    3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
 """
 
 import os
@@ -28,14 +29,15 @@ import asyncio
 class ManageCustomModelsSampleAsync(object):
 
     async def manage_custom_models(self):
-        # [START get_account_properties_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.core.exceptions import ResourceNotFoundError
         from azure.ai.formrecognizer.aio import FormTrainingClient
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
+        # [START get_account_properties_async]
         async with FormTrainingClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_training_client:
@@ -51,17 +53,17 @@ class ManageCustomModelsSampleAsync(object):
             custom_models = form_training_client.list_custom_models()
 
             print("We have models with the following IDs:")
-
-            # Let's pull out the first model
-            first_model = await custom_models.__anext__()
-            print(first_model.model_id)
             async for model in custom_models:
                 print(model.model_id)
             # [END list_custom_models_async]
 
-            # Now we'll get information for the first custom model in the paged list
+            # let's train a model to use for this sample
+            poller = await form_training_client.begin_training(container_sas_url, use_training_labels=False)
+            model = await poller.result()
+
+            # Now we'll get information for the model we just trained
             # [START get_custom_model_async]
-            custom_model = await form_training_client.get_custom_model(model_id=first_model.model_id)
+            custom_model = await form_training_client.get_custom_model(model_id=model.model_id)
             print("\nModel ID: {}".format(custom_model.model_id))
             print("Status: {}".format(custom_model.status))
             print("Model name: {}".format(custom_model.model_name))

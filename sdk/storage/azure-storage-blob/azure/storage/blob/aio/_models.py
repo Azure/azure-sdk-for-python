@@ -8,6 +8,7 @@
 
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
+from .._deserialize import parse_tags
 
 from .._models import ContainerProperties, FilteredBlob
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -136,6 +137,7 @@ class FilteredBlobPaged(AsyncPageIterator):
     @staticmethod
     def _build_item(item):
         if isinstance(item, FilterBlobItem):
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
+            tags = parse_tags(item.tags)
+            blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=tags)
             return blob
         return item

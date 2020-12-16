@@ -103,6 +103,13 @@ class LeaseStatusType(str, Enum):
     unlocked = "unlocked"
 
 
+class ShareRootSquash(str, Enum):
+
+    no_root_squash = "NoRootSquash"
+    root_squash = "RootSquash"
+    all_squash = "AllSquash"
+
+
 class ShareAccessTier(str, Enum):
 
     transaction_optimized = "TransactionOptimized"

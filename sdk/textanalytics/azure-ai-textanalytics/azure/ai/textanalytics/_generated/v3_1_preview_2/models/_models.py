@@ -884,6 +884,8 @@ class PiiDocumentEntities(msrest.serialization.Model):
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
+    :param redacted_text: Required. Returns redacted text.
+    :type redacted_text: str
     :param entities: Required. Recognized entities in the document.
     :type entities: list[~azure.ai.textanalytics.v3_1_preview_2.models.Entity]
     :param warnings: Required. Warnings encountered while processing document.
@@ -891,23 +893,21 @@ class PiiDocumentEntities(msrest.serialization.Model):
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
     :type statistics: ~azure.ai.textanalytics.v3_1_preview_2.models.DocumentStatistics
-    :param redacted_text: Required. Returns redacted text.
-    :type redacted_text: str
     """
 
     _validation = {
         'id': {'required': True},
+        'redacted_text': {'required': True},
         'entities': {'required': True},
         'warnings': {'required': True},
-        'redacted_text': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'redacted_text': {'key': 'redactedText', 'type': 'str'},
         'entities': {'key': 'entities', 'type': '[Entity]'},
         'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
-        'redacted_text': {'key': 'redactedText', 'type': 'str'},
     }
 
     def __init__(
@@ -916,10 +916,10 @@ class PiiDocumentEntities(msrest.serialization.Model):
     ):
         super(PiiDocumentEntities, self).__init__(**kwargs)
         self.id = kwargs['id']
+        self.redacted_text = kwargs['redacted_text']
         self.entities = kwargs['entities']
         self.warnings = kwargs['warnings']
         self.statistics = kwargs.get('statistics', None)
-        self.redacted_text = kwargs['redacted_text']
 
 
 class PiiEntitiesResult(msrest.serialization.Model):

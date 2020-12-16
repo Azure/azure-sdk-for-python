@@ -11,13 +11,15 @@ import logging
 import copy
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any
 
+import six
+
 import uamqp.errors
 import uamqp.message
 from uamqp.constants import MessageState
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
-    ReceiveMode,
+    ServiceBusReceiveMode,
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_SEQUENCE_NUMBER,
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
@@ -30,13 +32,22 @@ from .constants import (
     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION,
     ANNOTATION_SYMBOL_PARTITION_KEY,
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
-    ANNOTATION_SYMBOL_KEY_MAP
+    ANNOTATION_SYMBOL_KEY_MAP,
+    MESSAGE_PROPERTY_MAX_LENGTH
 )
-from ..exceptions import MessageContentTooLarge
-from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
+
+from .utils import (
+    utc_from_timestamp,
+    utc_now,
+    transform_messages_to_sendable_if_needed,
+    trace_message
+)
+from ..exceptions import MessageSizeExceededError
+
 if TYPE_CHECKING:
     from ..aio._servicebus_receiver_async import ServiceBusReceiver as AsyncServiceBusReceiver
     from .._servicebus_receiver import ServiceBusReceiver
+    from azure.core.tracing import AbstractSpan
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,22 +56,22 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
-    :type body: Union[str, bytes]
+    :type body: Optional[Union[str, bytes]]
 
-    :keyword dict application_properties: The user defined properties on the message.
-    :keyword str session_id: The session identifier of the message for a sessionful entity.
-    :keyword str message_id: The id to identify the message.
-    :keyword datetime.datetime scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
-    :keyword datetime.timedelta time_to_live: The life duration of a message.
-    :keyword str content_type: The content type descriptor.
-    :keyword str correlation_id: The correlation identifier.
-    :keyword str subject: The application specific subject, sometimes referred to as label.
-    :keyword str partition_key: The partition key for sending a message to a partitioned entity.
-    :keyword str to: The `to` address used for auto_forward chaining scenarios.
-    :keyword str reply_to: The address of an entity to send replies to.
-    :keyword str reply_to_session_id: The session identifier augmenting the `reply_to` address.
+    :keyword Optional[dict] application_properties: The user defined properties on the message.
+    :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
+    :keyword Optional[str] message_id: The id to identify the message.
+    :keyword Optional[datetime.datetime] scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
+    :keyword Optional[datetime.timedelta] time_to_live: The life duration of a message.
+    :keyword Optional[str] content_type: The content type descriptor.
+    :keyword Optional[str] correlation_id: The correlation identifier.
+    :keyword Optional[str] subject: The application specific subject, sometimes referred to as label.
+    :keyword Optional[str] partition_key: The partition key for sending a message to a partitioned entity.
+    :keyword Optional[str] to: The `to` address used for auto_forward chaining scenarios.
+    :keyword Optional[str] reply_to: The address of an entity to send replies to.
+    :keyword Optional[str] reply_to_session_id: The session identifier augmenting the `reply_to` address.
 
-    :ivar AMQPAnnotatedMessage amqp_annotated_message: Advanced use only.
+    :ivar AMQPAnnotatedMessage raw_amqp_message: Advanced use only.
         The internal AMQP message payload that is sent or received.
 
     .. admonition:: Example:
@@ -75,7 +86,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     """
 
     def __init__(self, body, **kwargs):
-        # type: (Union[str, bytes], Any) -> None
+        # type: (Optional[Union[str, bytes]], Any) -> None
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", 'UTF-8')
@@ -102,19 +113,18 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             self.time_to_live = kwargs.pop("time_to_live", None)
             self.partition_key = kwargs.pop("partition_key", None)
 
-        # If message is the full message, amqp_annotated_message is the "public facing interface" for what we expose.
-        self.amqp_annotated_message = AMQPAnnotatedMessage(self.message) # type: AMQPAnnotatedMessage
+        # If message is the full message, raw_amqp_message is the "public facing interface" for what we expose.
+        self.raw_amqp_message = AMQPAnnotatedMessage(self.message) # type: AMQPAnnotatedMessage
 
     def __str__(self):
         return str(self.message)
 
     def _build_message(self, body):
-        if isinstance(body, list) and body:  # TODO: This only works for a list of bytes/strings
-            self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
-            for more in body[1:]:
-                self.message._body.append(more)  # pylint: disable=protected-access
-        else:
-            self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
+        if not (isinstance(body, (six.string_types, six.binary_type)) or (body is None)):
+            raise TypeError("ServiceBusMessage body must be a string, bytes, or None.  Got instead: {}".format(
+                type(body)))
+
+        self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
     def _set_message_annotations(self, key, value):
         if not self.message.annotations:
@@ -142,7 +152,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def session_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The session identifier of the message for a sessionful entity.
 
         For sessionful entities, this application-defined value specifies the session affiliation of the message.
@@ -161,11 +171,14 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @session_id.setter
     def session_id(self, value):
         # type: (str) -> None
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+
         self._amqp_properties.group_id = value
 
     @property
     def application_properties(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """The user defined properties on the message.
 
         :rtype: dict
@@ -202,6 +215,13 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @partition_key.setter
     def partition_key(self, value):
         # type: (str) -> None
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("partition_key cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+
+        if value and value != self.session_id:
+            raise ValueError(
+                "partition_key:{} cannot be set to a different value than session_id:{}".format(value, self.session_id)
+            )
         self._set_message_annotations(_X_OPT_PARTITION_KEY, value)
 
     @property
@@ -267,7 +287,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def body(self):
-        # type: () -> Union[bytes, Iterable[bytes]]
+        # type: () -> Optional[Union[bytes, Iterable[bytes]]]
         """The body of the Message.
 
         :rtype: bytes or Iterable[bytes]
@@ -276,7 +296,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def content_type(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The content type descriptor.
 
         Optionally describes the payload of the message, with a descriptor following the format of RFC2045, Section 5,
@@ -290,13 +310,13 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.content_type
 
     @content_type.setter
-    def content_type(self, val):
+    def content_type(self, value):
         # type: (str) -> None
-        self._amqp_properties.content_type = val
+        self._amqp_properties.content_type = value
 
     @property
     def correlation_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         # pylint: disable=line-too-long
         """The correlation identifier.
 
@@ -314,13 +334,13 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, val):
+    def correlation_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.correlation_id = val
+        self._amqp_properties.correlation_id = value
 
     @property
     def subject(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The application specific subject, sometimes referred to as a label.
 
         This property enables the application to indicate the purpose of the message to the receiver in a standardized
@@ -334,13 +354,13 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.subject
 
     @subject.setter
-    def subject(self, val):
+    def subject(self, value):
         # type: (str) -> None
-        self._amqp_properties.subject = val
+        self._amqp_properties.subject = value
 
     @property
     def message_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The id to identify the message.
 
         The message identifier is an application-defined value that uniquely identifies the message and its payload.
@@ -357,13 +377,16 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.message_id
 
     @message_id.setter
-    def message_id(self, val):
+    def message_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.message_id = val
+        if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("message_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+
+        self._amqp_properties.message_id = value
 
     @property
     def reply_to(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         # pylint: disable=line-too-long
         """The address of an entity to send replies to.
 
@@ -382,13 +405,13 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.reply_to
 
     @reply_to.setter
-    def reply_to(self, val):
+    def reply_to(self, value):
         # type: (str) -> None
-        self._amqp_properties.reply_to = val
+        self._amqp_properties.reply_to = value
 
     @property
     def reply_to_session_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         # pylint: disable=line-too-long
         """The session identifier augmenting the `reply_to` address.
 
@@ -406,13 +429,18 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.reply_to_group_id
 
     @reply_to_session_id.setter
-    def reply_to_session_id(self, val):
+    def reply_to_session_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.reply_to_group_id = val
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError(
+                "reply_to_session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH)
+            )
+
+        self._amqp_properties.reply_to_group_id = value
 
     @property
     def to(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The `to` address.
 
         This property is reserved for future use in routing scenarios and presently ignored by the broker itself.
@@ -429,9 +457,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.to
 
     @to.setter
-    def to(self, val):
+    def to(self, value):
         # type: (str) -> None
-        self._amqp_properties.to = val
+        self._amqp_properties.to = value
 
 
 class ServiceBusMessageBatch(object):
@@ -441,12 +469,13 @@ class ServiceBusMessageBatch(object):
     ServiceBusMessageBatch helps you create the maximum allowed size batch of `Message` to improve sending performance.
 
     Use the `add` method to add messages until the maximum batch size limit in bytes has been reached -
-    at which point a `ValueError` will be raised.
+    at which point a `MessageSizeExceededError` will be raised.
 
     **Please use the create_message_batch method of ServiceBusSender
     to create a ServiceBusMessageBatch object instead of instantiating a ServiceBusMessageBatch object directly.**
 
-    :param int max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
+    :param Optional[int] max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object
+     can hold.
     """
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int]) -> None
@@ -464,14 +493,16 @@ class ServiceBusMessageBatch(object):
         return "ServiceBusMessageBatch({})".format(batch_repr)
 
     def __len__(self):
+        # type: () -> int
         return self._count
 
-    def _from_list(self, messages):
+    def _from_list(self, messages, parent_span=None):
+        # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
         for each in messages:
             if not isinstance(each, ServiceBusMessage):
-                raise TypeError("Only Message or an iterable object containing Message objects are accepted."
-                                "Received instead: {}".format(each.__class__.__name__))
-            self.add_message(each)
+                raise TypeError("Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
+                                "objects are accepted. Received instead: {}".format(each.__class__.__name__))
+            self._add(each, parent_span)
 
     @property
     def max_size_in_bytes(self):
@@ -496,15 +527,21 @@ class ServiceBusMessageBatch(object):
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
-        If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
+        If this added size results in the batch exceeding the maximum batch size, a `MessageSizeExceededError` will
         be raised.
 
         :param message: The Message to be added to the batch.
         :type message: ~azure.servicebus.ServiceBusMessage
         :rtype: None
-        :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
+        :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
         """
+        return self._add(message)
+
+    def _add(self, message, parent_span=None):
+        # type: (ServiceBusMessage, AbstractSpan) -> None
+        """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_to_sendable_if_needed(message)
+        trace_message(message, parent_span) # parent_span is e.g. if built as part of a send operation.
         message_size = message.message.get_message_encoded_size()
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
@@ -516,8 +553,8 @@ class ServiceBusMessageBatch(object):
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise MessageContentTooLarge(
-                "ServiceBusMessageBatch has reached its size limit: {}".format(
+            raise MessageSizeExceededError(
+                message="ServiceBusMessageBatch has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
             )
@@ -545,10 +582,10 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             :caption: Checking the properties on a received message.
 
     """
-    def __init__(self, message, receive_mode=ReceiveMode.PeekLock, **kwargs):
-        # type: (uamqp.message.Message, ReceiveMode, Any) -> None
+    def __init__(self, message, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, **kwargs):
+        # type: (uamqp.message.Message, Union[ServiceBusReceiveMode, str], Any) -> None
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
-        self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
+        self._settled = (receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
@@ -559,7 +596,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             raise TypeError("ServiceBusReceivedMessage requires a receiver to be initialized. " +
                             "This class should never be initialized by a user; " +
                             "for outgoing messages, the ServiceBusMessage class should be utilized instead.")
-        self._expiry = None # type: Optional[datetime.datetime]
+        self._expiry = None  # type: Optional[datetime.datetime]
 
     @property
     def _lock_expired(self):
@@ -573,7 +610,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         try:
             if self._receiver.session:  # type: ignore
                 raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
-        except AttributeError: # Is not a session receiver
+        except AttributeError:  # Is not a session receiver
             pass
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
             return True
@@ -728,7 +765,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         # type: () -> Optional[Union[uuid.UUID, str]]
         """
         The lock token for the current message serving as a reference to the lock that
-        is being held by the broker in PeekLock mode.
+        is being held by the broker in PEEK_LOCK mode.
 
         :rtype:  ~uuid.UUID or str
         """
@@ -802,7 +839,7 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def application_properties(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """
         Service specific application properties.
 
@@ -816,7 +853,7 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def annotations(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """
         Service specific message annotations. Keys in the dictionary
         must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
@@ -831,7 +868,7 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def delivery_annotations(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """
         Delivery-specific non-standard properties at the head of the message.
         Delivery annotations convey information from the sending peer to the receiving peer.
@@ -861,7 +898,7 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def footer(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """
         The message footer.
 

@@ -24,10 +24,10 @@ class WebSiteManagementClientOperationsMixin(object):
     async def check_name_availability(
         self,
         name: str,
-        type: Union[str, "models.CheckNameResourceTypes"],
+        type: Union[str, "_models.CheckNameResourceTypes"],
         is_fqdn: Optional[bool] = None,
         **kwargs
-    ) -> "models.ResourceNameAvailability":
+    ) -> "_models.ResourceNameAvailability":
         """Check if a resource name is available.
 
         Description for Check if a resource name is available.
@@ -56,13 +56,14 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.check_name_availability(name, type, is_fqdn, **kwargs)
 
     async def get_publishing_user(
         self,
         **kwargs
-    ) -> "models.User":
+    ) -> "_models.User":
         """Gets publishing user.
 
         Description for Gets publishing user.
@@ -85,6 +86,7 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.get_publishing_user(**kwargs)
 
@@ -92,7 +94,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         source_control_type: str,
         **kwargs
-    ) -> "models.SourceControl":
+    ) -> "_models.SourceControl":
         """Gets source control token.
 
         Description for Gets source control token.
@@ -117,13 +119,14 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.get_source_control(source_control_type, **kwargs)
 
     async def get_subscription_deployment_locations(
         self,
         **kwargs
-    ) -> "models.DeploymentLocations":
+    ) -> "_models.DeploymentLocations":
         """Gets list of available geo regions plus ministamps.
 
         Description for Gets list of available geo regions plus ministamps.
@@ -146,6 +149,7 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.get_subscription_deployment_locations(**kwargs)
 
@@ -154,7 +158,7 @@ class WebSiteManagementClientOperationsMixin(object):
         billing_location: Optional[str] = None,
         os_type: Optional[str] = None,
         **kwargs
-    ) -> AsyncItemPaged["models.BillingMeterCollection"]:
+    ) -> AsyncItemPaged["_models.BillingMeterCollection"]:
         """Gets a list of meters for a given location.
 
         Description for Gets a list of meters for a given location.
@@ -179,17 +183,18 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.list_billing_meters(billing_location, os_type, **kwargs)
 
     def list_geo_regions(
         self,
-        sku: Optional[Union[str, "models.SkuName"]] = None,
+        sku: Optional[Union[str, "_models.SkuName"]] = None,
         linux_workers_enabled: Optional[bool] = None,
         xenon_workers_enabled: Optional[bool] = None,
         linux_dynamic_workers_enabled: Optional[bool] = None,
         **kwargs
-    ) -> AsyncItemPaged["models.GeoRegionCollection"]:
+    ) -> AsyncItemPaged["_models.GeoRegionCollection"]:
         """Get a list of available geographical regions.
 
         Description for Get a list of available geographical regions.
@@ -223,13 +228,14 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.list_geo_regions(sku, linux_workers_enabled, xenon_workers_enabled, linux_dynamic_workers_enabled, **kwargs)
 
     def list_premier_add_on_offers(
         self,
         **kwargs
-    ) -> AsyncItemPaged["models.PremierAddOnOfferCollection"]:
+    ) -> AsyncItemPaged["_models.PremierAddOnOfferCollection"]:
         """List all premier add-on offers.
 
         Description for List all premier add-on offers.
@@ -252,14 +258,15 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.list_premier_add_on_offers(**kwargs)
 
     def list_site_identifiers_assigned_to_host_name(
         self,
-        name_identifier: "models.NameIdentifier",
+        name_identifier: "_models.NameIdentifier",
         **kwargs
-    ) -> AsyncItemPaged["models.IdentifierCollection"]:
+    ) -> AsyncItemPaged["_models.IdentifierCollection"]:
         """List all apps that are assigned to a hostname.
 
         Description for List all apps that are assigned to a hostname.
@@ -284,13 +291,14 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.list_site_identifiers_assigned_to_host_name(name_identifier, **kwargs)
 
     async def list_skus(
         self,
         **kwargs
-    ) -> "models.SkuInfos":
+    ) -> "_models.SkuInfos":
         """List all SKUs.
 
         Description for List all SKUs.
@@ -313,13 +321,14 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.list_skus(**kwargs)
 
     def list_source_controls(
         self,
         **kwargs
-    ) -> AsyncItemPaged["models.SourceControlCollection"]:
+    ) -> AsyncItemPaged["_models.SourceControlCollection"]:
         """Gets the source controls available for Azure websites.
 
         Description for Gets the source controls available for Azure websites.
@@ -342,13 +351,14 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.list_source_controls(**kwargs)
 
     async def move(
         self,
         resource_group_name: str,
-        move_resource_envelope: "models.CsmMoveResourceEnvelope",
+        move_resource_envelope: "_models.CsmMoveResourceEnvelope",
         **kwargs
     ) -> None:
         """Move resources between resource groups.
@@ -377,14 +387,15 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.move(resource_group_name, move_resource_envelope, **kwargs)
 
     async def update_publishing_user(
         self,
-        user_details: "models.User",
+        user_details: "_models.User",
         **kwargs
-    ) -> "models.User":
+    ) -> "_models.User":
         """Updates publishing user.
 
         Description for Updates publishing user.
@@ -409,15 +420,16 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.update_publishing_user(user_details, **kwargs)
 
     async def update_source_control(
         self,
         source_control_type: str,
-        request_message: "models.SourceControl",
+        request_message: "_models.SourceControl",
         **kwargs
-    ) -> "models.SourceControl":
+    ) -> "_models.SourceControl":
         """Updates source control token.
 
         Description for Updates source control token.
@@ -444,15 +456,16 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.update_source_control(source_control_type, request_message, **kwargs)
 
     async def validate(
         self,
         resource_group_name: str,
-        validate_request: "models.ValidateRequest",
+        validate_request: "_models.ValidateRequest",
         **kwargs
-    ) -> "models.ValidateResponse":
+    ) -> "_models.ValidateResponse":
         """Validate if a resource can be created.
 
         Description for Validate if a resource can be created.
@@ -479,13 +492,14 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.validate(resource_group_name, validate_request, **kwargs)
 
     async def validate_container_settings(
         self,
         resource_group_name: str,
-        validate_container_settings_request: "models.ValidateContainerSettingsRequest",
+        validate_container_settings_request: "_models.ValidateContainerSettingsRequest",
         **kwargs
     ) -> object:
         """Validate if the container settings are correct.
@@ -510,13 +524,14 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.validate_container_settings(resource_group_name, validate_container_settings_request, **kwargs)
 
     async def validate_move(
         self,
         resource_group_name: str,
-        move_resource_envelope: "models.CsmMoveResourceEnvelope",
+        move_resource_envelope: "_models.CsmMoveResourceEnvelope",
         **kwargs
     ) -> None:
         """Validate whether a resource can be moved.
@@ -545,14 +560,15 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.validate_move(resource_group_name, move_resource_envelope, **kwargs)
 
     async def verify_hosting_environment_vnet(
         self,
-        parameters: "models.VnetParameters",
+        parameters: "_models.VnetParameters",
         **kwargs
-    ) -> "models.VnetValidationFailureDetails":
+    ) -> "_models.VnetValidationFailureDetails":
         """Verifies if this VNET is compatible with an App Service Environment by analyzing the Network Security Group rules.
 
         Description for Verifies if this VNET is compatible with an App Service Environment by
@@ -578,5 +594,6 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.verify_hosting_environment_vnet(parameters, **kwargs)

@@ -1085,20 +1085,19 @@ class FilterBlobItem(msrest.serialization.Model):
     :type name: str
     :param container_name: Required.
     :type container_name: str
-    :param tag_value: Required.
-    :type tag_value: str
+    :param tags: A set of tags. Blob tags.
+    :type tags: ~azure.storage.blob.models.BlobTags
     """
 
     _validation = {
         'name': {'required': True},
         'container_name': {'required': True},
-        'tag_value': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'container_name': {'key': 'ContainerName', 'type': 'str'},
-        'tag_value': {'key': 'TagValue', 'type': 'str'},
+        'tags': {'key': 'Tags', 'type': 'BlobTags'},
     }
     _xml_map = {
         'name': 'Blob'
@@ -1111,7 +1110,7 @@ class FilterBlobItem(msrest.serialization.Model):
         super(FilterBlobItem, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.container_name = kwargs['container_name']
-        self.tag_value = kwargs['tag_value']
+        self.tags = kwargs.get('tags', None)
 
 
 class FilterBlobSegment(msrest.serialization.Model):
@@ -1719,6 +1718,9 @@ class RetentionPolicy(msrest.serialization.Model):
     :param days: Indicates the number of days that metrics or logging or soft-deleted data should
      be retained. All data older than this value will be deleted.
     :type days: int
+    :param allow_permanent_delete: Indicates whether permanent delete is allowed on this storage
+     account.
+    :type allow_permanent_delete: bool
     """
 
     _validation = {
@@ -1729,6 +1731,7 @@ class RetentionPolicy(msrest.serialization.Model):
     _attribute_map = {
         'enabled': {'key': 'Enabled', 'type': 'bool'},
         'days': {'key': 'Days', 'type': 'int'},
+        'allow_permanent_delete': {'key': 'AllowPermanentDelete', 'type': 'bool'},
     }
 
     def __init__(
@@ -1738,6 +1741,7 @@ class RetentionPolicy(msrest.serialization.Model):
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = kwargs['enabled']
         self.days = kwargs.get('days', None)
+        self.allow_permanent_delete = kwargs.get('allow_permanent_delete', None)
 
 
 class SequenceNumberAccessConditions(msrest.serialization.Model):

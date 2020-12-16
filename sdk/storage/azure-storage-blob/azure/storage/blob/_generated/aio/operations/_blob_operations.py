@@ -454,6 +454,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
         request_id_parameter: Optional[str] = None,
+        blob_delete_type: Optional[str] = "Permanent",
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs
@@ -491,6 +492,9 @@ class BlobOperations:
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :param blob_delete_type: Optional.  Only possible value is 'permanent', which specifies to
+         permanently delete a blob if blob soft delete is enabled.
+        :type blob_delete_type: str
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group.
@@ -537,6 +541,8 @@ class BlobOperations:
             query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if blob_delete_type is not None:
+            query_parameters['deletetype'] = self._serialize.query("blob_delete_type", blob_delete_type, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -2918,6 +2924,7 @@ class BlobOperations:
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs
     ) -> "_models.BlobTags":
         """The Get Tags operation enables users to get the tags associated with a blob.
@@ -2940,6 +2947,8 @@ class BlobOperations:
         :type version_id: str
         :param modified_access_conditions: Parameter group.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :param lease_access_conditions: Parameter group.
+        :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobTags, or the result of cls(response)
         :rtype: ~azure.storage.blob.models.BlobTags
@@ -2952,6 +2961,9 @@ class BlobOperations:
         error_map.update(kwargs.pop('error_map', {}))
         
         _if_tags = None
+        _lease_id = None
+        if lease_access_conditions is not None:
+            _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
             _if_tags = modified_access_conditions.if_tags
         comp = "tags"
@@ -2981,6 +2993,8 @@ class BlobOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         if _if_tags is not None:
             header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", _if_tags, 'str')
+        if _lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3014,6 +3028,7 @@ class BlobOperations:
         request_id_parameter: Optional[str] = None,
         tags: Optional["_models.BlobTags"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs
     ) -> None:
         """The Set Tags operation enables users to set tags on a blob.
@@ -3038,6 +3053,8 @@ class BlobOperations:
         :type tags: ~azure.storage.blob.models.BlobTags
         :param modified_access_conditions: Parameter group.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :param lease_access_conditions: Parameter group.
+        :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -3050,6 +3067,9 @@ class BlobOperations:
         error_map.update(kwargs.pop('error_map', {}))
         
         _if_tags = None
+        _lease_id = None
+        if lease_access_conditions is not None:
+            _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
             _if_tags = modified_access_conditions.if_tags
         comp = "tags"
@@ -3082,6 +3102,8 @@ class BlobOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         if _if_tags is not None:
             header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", _if_tags, 'str')
+        if _lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 

@@ -10,9 +10,7 @@ from enum import Enum
 from collections import namedtuple
 from ._helpers import (
     adjust_value_type,
-    adjust_text_angle,
     adjust_confidence,
-    adjust_page_number,
     get_element
 )
 
@@ -37,7 +35,7 @@ def resolve_element(element, read_result):
     raise ValueError("Failed to parse element reference.")
 
 
-def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too-many-return-statements
+def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
     if value is None:
         return value
     if value.type == "string":
@@ -53,20 +51,17 @@ def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too
     if value.type == "time":
         return value.value_time
     if value.type == "array":
-        # business cards pre-built model doesn't return a page number for the `ContactNames` field
-        if "business_card" in kwargs and field == "ContactNames":
-            value = adjust_page_number(value)
         return [
-            FormField._from_generated(field, value, read_result, **kwargs)
+            FormField._from_generated(field, value, read_result)
             for value in value.value_array
         ]
     if value.type == "object":
         return {
-            key: FormField._from_generated(key, value, read_result, **kwargs)
+            key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
-        return value.text
+        return value.text  # FIXME https://github.com/Azure/azure-sdk-for-python/issues/15276
 
     return None
 
@@ -115,12 +110,16 @@ class CustomFormModelStatus(str, Enum):
 
 class FormContentType(str, Enum):
     """Content type for upload.
+
+    .. versionadded:: v2.1-preview
+        Support for image/bmp
     """
 
     APPLICATION_PDF = "application/pdf"
     IMAGE_JPEG = "image/jpeg"
     IMAGE_PNG = "image/png"
     IMAGE_TIFF = "image/tiff"
+    IMAGE_BMP = "image/bmp"
 
 
 class Point(namedtuple("Point", "x y")):
@@ -152,7 +151,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
 class FormElement(object):
     """Base type which includes properties for a form element.
 
-    :ivar str text: The text content of the line.
+    :ivar str text: The text content of the element.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
@@ -192,7 +191,8 @@ class RecognizedForm(object):
         The first and last page number of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
-        words, tables and page metadata.
+        words, selection marks, tables and page metadata.
+
     .. versionadded:: v2.1-preview
         The *form_type_confidence* and *model_id* properties
     """
@@ -247,12 +247,12 @@ class FormField(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, field, value, read_result, **kwargs):
+    def _from_generated(cls, field, value, read_result):
         return cls(
             value_type=adjust_value_type(value.type) if value else None,
             label_data=None,  # not returned with receipt/supervised
             value_data=FieldData._from_generated(value, read_result),
-            value=get_field_value(field, value, read_result, **kwargs),
+            value=get_field_value(field, value, read_result),
             name=field,
             confidence=adjust_confidence(value.confidence) if value else None,
         )
@@ -296,9 +296,12 @@ class FieldData(object):
     :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
-        constitutes of elements such as lines and words.
+        constitutes of elements such as lines, words, and selection marks.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
+
+    .. versionadded:: v2.1-preview
+        *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
     def __init__(self, **kwargs):
@@ -341,7 +344,7 @@ class FieldData(object):
 
 class FormPage(object):
     """Represents a page recognized from the input document. Contains lines,
-    words, tables and page metadata.
+    words, selection marks, tables and page metadata.
 
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
@@ -367,6 +370,7 @@ class FormPage(object):
         logic should be built upon the actual line location instead of order.
     :ivar selection_marks: List of selection marks extracted from the page.
     :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
+
     .. versionadded:: v2.1-preview
         *selection_marks* property
     """
@@ -380,19 +384,6 @@ class FormPage(object):
         self.tables = kwargs.get("tables", None)
         self.lines = kwargs.get("lines", None)
         self.selection_marks = kwargs.get("selection_marks", None)
-
-    @classmethod
-    def _from_generated_prebuilt_model(cls, read_result):
-        return [cls(
-            page_number=page.page,
-            text_angle=adjust_text_angle(page.angle),
-            width=page.width,
-            height=page.height,
-            unit=page.unit,
-            tables=None,  # prebuilt model does not return tables
-            lines=[FormLine._from_generated(line, page=page.page) for line in page.lines]
-            if page.lines else None
-        ) for page in read_result]
 
     def __repr__(self):
         return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={}," \
@@ -423,30 +414,39 @@ class FormLine(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormLine, this is "line".
+    :ivar appearance: Text appearance properties.
+    :vartype appearance: ~azure.ai.formrecognizer.Appearance
+
+    .. versionadded:: v2.1-preview
+        *appearance* property
     """
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(kind="line", **kwargs)
         self.words = kwargs.get("words", None)
+        self.appearance = kwargs.get("appearance", None)
 
     @classmethod
     def _from_generated(cls, line, page):
+        line_appearance = line.appearance if hasattr(line, "appearance") else None
         return cls(
             text=line.text,
             bounding_box=get_bounding_box(line),
             page_number=page,
             words=[FormWord._from_generated(word, page) for word in line.words]
-            if line.words else None
+            if line.words else None,
+            appearance=line_appearance
         )
 
     def __repr__(self):
-        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={})" \
+        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={}, appearance={})" \
             .format(
                 self.text,
                 self.bounding_box,
                 repr(self.words),
                 self.page_number,
-                self.kind
+                self.kind,
+                self.appearance
             )[:1024]
 
 
@@ -499,8 +499,9 @@ class FormSelectionMark(FormElement):
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar float confidence: Confidence value.
-    :ivar str state: Required. State of the selection mark. Possible values include: "selected",
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
+    :ivar str state: State of the selection mark. Possible values include: "selected",
      "unselected".
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
@@ -518,7 +519,7 @@ class FormSelectionMark(FormElement):
     @classmethod
     def _from_generated(cls, mark, page):
         return cls(
-            confidence=mark.confidence,
+            confidence=adjust_confidence(mark.confidence),
             state=mark.state,
             bounding_box=get_bounding_box(mark),
             page_number=page
@@ -546,6 +547,14 @@ class FormTable(object):
         Number of rows in table.
     :ivar int column_count:
         Number of columns in table.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the table. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
+        Units are in pixels for images and inches for PDF.
+
+    .. versionadded:: v2.1-preview
+        The *bounding_box* property.
     """
 
     def __init__(self, **kwargs):
@@ -553,14 +562,16 @@ class FormTable(object):
         self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
+        self.bounding_box = kwargs.get("bounding_box", None)
 
     def __repr__(self):
-        return "FormTable(page_number={}, cells={}, row_count={}, column_count={})" \
+        return "FormTable(page_number={}, cells={}, row_count={}, column_count={}, bounding_box={})" \
             .format(
                 self.page_number,
                 repr(self.cells),
                 self.row_count,
-                self.column_count
+                self.column_count,
+                self.bounding_box
             )[:1024]
 
 
@@ -586,10 +597,13 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
     :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this cell is returned. The list
-        constitutes of elements such as lines and words.
+        constitutes of elements such as lines, words, and selection marks.
         For calls to begin_recognize_content(), this list is always populated.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
+
+    .. versionadded:: v2.1-preview
+        *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
     def __init__(self, **kwargs):
@@ -662,6 +676,7 @@ class CustomFormModel(object):
     :ivar str model_name: Optional user defined model name.
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
+
     .. versionadded:: v2.1-preview
         The *model_name* and *properties* properties.
     """
@@ -740,6 +755,7 @@ class CustomFormSubmodel(object):
         is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
+
     .. versionadded:: v2.1-preview
         The *model_id* property
     """
@@ -854,6 +870,7 @@ class TrainingDocumentInfo(object):
         List of any errors for document.
     :ivar str model_id:
         The model ID that used the document to train.
+
     .. versionadded:: v2.1-preview
         The *model_id* property
     """
@@ -940,6 +957,7 @@ class CustomFormModelInfo(object):
     :vartype model_name: str
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
+
     .. versionadded:: v2.1-preview
         The *model_name* and *properties* properties
     """

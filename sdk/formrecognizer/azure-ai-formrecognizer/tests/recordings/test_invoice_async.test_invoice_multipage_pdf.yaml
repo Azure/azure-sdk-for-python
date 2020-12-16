@@ -1,0 +1,155 @@
+interactions:
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      711607 is larger than 128KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: a480f4c6-c32a-43f3-a75c-4f8623945f7b
+      content-length: '0'
+      date: Wed, 04 Nov 2020 20:46:27 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/a480f4c6-c32a-43f3-a75c-4f8623945f7b
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '231'
+    status:
+      code: 202
+      message: Accepted
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/a480f4c6-c32a-43f3-a75c-4f8623945f7b
+  response:
+    body:
+      string: '{"status": "running", "createdDateTime": "2020-11-04T20:46:28Z", "lastUpdatedDateTime":
+        "2020-11-04T20:46:28Z"}'
+    headers:
+      apim-request-id: 17cb6d57-18b5-4600-8a45-a863d2e404eb
+      content-length: '106'
+      content-type: application/json; charset=utf-8
+      date: Wed, 04 Nov 2020 20:46:33 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '14'
+    status:
+      code: 200
+      message: OK
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/a480f4c6-c32a-43f3-a75c-4f8623945f7b
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/a480f4c6-c32a-43f3-a75c-4f8623945f7b
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2020-11-04T20:46:28Z",
+        "lastUpdatedDateTime": "2020-11-04T20:46:38Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
+        "unit": "inch"}, {"page": 2, "angle": 0, "width": 8.5, "height": 11, "unit":
+        "inch"}], "pageResults": [{"page": 1, "tables": [{"rows": 13, "columns": 4,
+        "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Package", "boundingBox":
+        [0.9975, 4.6436, 2.6168, 4.6436, 2.6168, 4.8578, 0.9975, 4.8578], "elements":
+        []}, {"rowIndex": 0, "columnIndex": 1, "columnSpan": 2, "text": "Included",
+        "boundingBox": [2.6168, 4.6436, 5.7422, 4.6436, 5.7422, 4.8578, 2.6168, 4.8578],
+        "elements": []}, {"rowIndex": 0, "columnIndex": 3, "text": "Price", "boundingBox":
+        [5.7422, 4.6436, 7.4882, 4.6436, 7.4882, 4.8513, 5.7422, 4.8578], "elements":
+        []}, {"rowIndex": 1, "columnIndex": 0, "text": "Gold Sponsor", "boundingBox":
+        [0.9975, 4.8578, 2.6168, 4.8578, 2.6168, 5.0849, 0.9975, 5.0914], "elements":
+        []}, {"rowIndex": 1, "columnIndex": 1, "text": "\uf0b7", "boundingBox": [2.6168,
+        4.8578, 3.15, 4.8578, 3.15, 5.0849, 2.6168, 5.0849], "elements": []}, {"rowIndex":
+        1, "columnIndex": 2, "text": "Full booth", "boundingBox": [3.15, 4.8578, 5.7422,
+        4.8578, 5.7422, 5.0849, 3.15, 5.0849], "elements": []}, {"rowIndex": 1, "columnIndex":
+        3, "text": "$1,500", "boundingBox": [5.7422, 4.8578, 7.4882, 4.8513, 7.4882,
+        5.0849, 5.7422, 5.0849], "elements": []}, {"rowIndex": 2, "columnIndex": 0,
+        "rowSpan": 3, "boundingBox": [0.9975, 5.0914, 2.6168, 5.0849, 2.6168, 5.9222,
+        0.9975, 5.9222], "text": "", "elements": []}, {"rowIndex": 2, "columnIndex":
+        1, "text": "\uf0b7 \uf0b7", "boundingBox": [2.6168, 5.0849, 3.15, 5.0849,
+        3.15, 5.5198, 2.6168, 5.5198], "elements": []}, {"rowIndex": 2, "columnIndex":
+        2, "text": "Pre-keynote thank you Logo on poster", "boundingBox": [3.15, 5.0849,
+        5.7422, 5.0849, 5.7489, 5.5133, 3.15, 5.5198], "elements": []}, {"rowIndex":
+        2, "columnIndex": 3, "boundingBox": [5.7422, 5.0849, 7.4882, 5.0849, 7.4882,
+        5.5198, 5.7489, 5.5133], "text": "", "elements": []}, {"rowIndex": 3, "columnIndex":
+        1, "columnSpan": 2, "text": "\uf0b7 Full page ad in program guide", "boundingBox":
+        [2.6168, 5.5198, 5.7489, 5.5133, 5.7489, 5.7404, 2.6168, 5.7534], "elements":
+        []}, {"rowIndex": 3, "columnIndex": 3, "boundingBox": [5.7489, 5.5133, 7.4882,
+        5.5198, 7.4882, 5.7469, 5.7489, 5.7404], "text": "", "elements": []}, {"rowIndex":
+        4, "columnIndex": 1, "columnSpan": 2, "text": "\uf0b7", "boundingBox": [2.6168,
+        5.7534, 5.7489, 5.7404, 5.7489, 5.9222, 2.6168, 5.9222], "elements": []},
+        {"rowIndex": 4, "columnIndex": 3, "boundingBox": [5.7489, 5.7404, 7.4882,
+        5.7469, 7.4948, 5.9222, 5.7489, 5.9222], "text": "", "elements": []}, {"rowIndex":
+        5, "columnIndex": 0, "rowSpan": 2, "text": "Silver Sponsor", "boundingBox":
+        [0.9975, 5.9222, 2.6168, 5.9222, 2.6168, 6.7853, 0.9975, 6.7788], "elements":
+        []}, {"rowIndex": 5, "columnIndex": 1, "rowSpan": 2, "text": "\uf0b7 \uf0b7
+        \uf0b7 \uf0b7", "boundingBox": [2.6168, 5.9222, 3.15, 5.9222, 3.15, 6.7853,
+        2.6168, 6.7853], "elements": []}, {"rowIndex": 5, "columnIndex": 2, "rowSpan":
+        2, "text": "Full booth Post-keynote thank you Logo on poster Half page ad
+        in program guide", "boundingBox": [3.15, 5.9222, 5.7489, 5.9222, 5.7489, 6.7853,
+        3.15, 6.7853], "elements": []}, {"rowIndex": 5, "columnIndex": 3, "rowSpan":
+        2, "text": "$1,200", "boundingBox": [5.7489, 5.9222, 7.4948, 5.9222, 7.4948,
+        6.7788, 5.7489, 6.7853], "elements": []}, {"rowIndex": 7, "columnIndex": 0,
+        "rowSpan": 2, "text": "Bronze Sponsor", "boundingBox": [0.9975, 6.7788, 2.6168,
+        6.7853, 2.6168, 7.6355, 0.9975, 7.629], "elements": []}, {"rowIndex": 7, "columnIndex":
+        1, "text": "\uf0b7", "boundingBox": [2.6168, 6.7853, 3.15, 6.7853, 3.15, 7.019,
+        2.6168, 7.019], "elements": []}, {"rowIndex": 7, "columnIndex": 2, "rowSpan":
+        2, "text": "Full booth Logo on poster 50% discount on program guide advertisements",
+        "boundingBox": [3.15, 6.7853, 5.7489, 6.7853, 5.7489, 7.6355, 3.1433, 7.6355],
+        "elements": []}, {"rowIndex": 7, "columnIndex": 3, "rowSpan": 2, "text": "$1,000",
+        "boundingBox": [5.7489, 6.7853, 7.4948, 6.7788, 7.4948, 7.6355, 5.7489, 7.6355],
+        "elements": []}, {"rowIndex": 8, "columnIndex": 1, "text": "\uf0b7 \uf0b7",
+        "boundingBox": [2.6168, 7.019, 3.15, 7.019, 3.1433, 7.6355, 2.6168, 7.6355],
+        "elements": []}, {"rowIndex": 9, "columnIndex": 0, "rowSpan": 2, "text": "Full
+        Booth", "boundingBox": [0.9975, 7.629, 2.6168, 7.6355, 2.6102, 8.2651, 0.9975,
+        8.2651], "elements": []}, {"rowIndex": 9, "columnIndex": 1, "rowSpan": 2,
+        "columnSpan": 2, "text": "\uf0b7 Full booth \uf0b7 50% discount on program
+        guide advertisements", "boundingBox": [2.6168, 7.6355, 5.7489, 7.6355, 5.7489,
+        8.2651, 2.6102, 8.2651], "elements": []}, {"rowIndex": 9, "columnIndex": 3,
+        "rowSpan": 2, "text": "$600", "boundingBox": [5.7489, 7.6355, 7.4948, 7.6355,
+        7.4948, 8.2651, 5.7489, 8.2651], "elements": []}, {"rowIndex": 11, "columnIndex":
+        0, "rowSpan": 2, "text": "Half Booth", "boundingBox": [0.9975, 8.2651, 2.6102,
+        8.2651, 2.6102, 8.9011, 0.9975, 8.9011], "elements": []}, {"rowIndex": 11,
+        "columnIndex": 1, "rowSpan": 2, "columnSpan": 2, "text": "\uf0b7 Full booth
+        \uf0b7 25% discount on program guide advertisements", "boundingBox": [2.6102,
+        8.2651, 5.7489, 8.2651, 5.7489, 8.9011, 2.6102, 8.9011], "elements": []},
+        {"rowIndex": 11, "columnIndex": 3, "rowSpan": 2, "text": "$350", "boundingBox":
+        [5.7489, 8.2651, 7.4948, 8.2651, 7.4948, 8.9011, 5.7489, 8.9011], "elements":
+        []}], "boundingBox": [0.994, 4.6469, 7.4953, 4.6454, 7.4964, 8.9061, 0.9936,
+        8.9066]}]}, {"page": 2}], "documentResults": [{"docType": "prebuilt:invoice",
+        "pageRange": [1, 2], "fields": {"VendorName": {"type": "string", "valueString":
+        "Southridge Video", "text": "Southridge Video", "boundingBox": [2.1925, 2.7686,
+        3.3477, 2.7686, 3.3477, 2.9128, 2.1925, 2.9128], "page": 2, "confidence":
+        0.969}, "RemittanceAddressRecipient": {"type": "string", "valueString": "Contoso
+        Ltd.", "text": "Contoso Ltd.", "boundingBox": [1.0078, 3.5739, 1.843, 3.5739,
+        1.843, 3.6897, 1.0078, 3.6897], "page": 1, "confidence": 0.954}, "RemittanceAddress":
+        {"type": "string", "valueString": "2345 Dogwood Lane Birch, Kansas 98123",
+        "text": "2345 Dogwood Lane Birch, Kansas 98123", "boundingBox": [1.0093, 3.7939,
+        2.3768, 3.7939, 2.3768, 4.1518, 1.0093, 4.1518], "page": 1, "confidence":
+        0.952}}}]}}'
+    headers:
+      apim-request-id: 83e15191-9457-4def-9b78-6ce0a70ea17f
+      content-length: '5652'
+      content-type: application/json; charset=utf-8
+      date: Wed, 04 Nov 2020 20:46:38 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '21'
+    status:
+      code: 200
+      message: OK
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/a480f4c6-c32a-43f3-a75c-4f8623945f7b
+version: 1
