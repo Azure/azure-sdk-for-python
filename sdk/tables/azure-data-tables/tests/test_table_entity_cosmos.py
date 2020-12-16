@@ -262,6 +262,43 @@ class StorageTableEntityTest(TableTestCase):
         assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_url_encoding_at_symbol(self, cosmos_account, cosmos_account_key):
+
+        self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            entity = {
+                u"PartitionKey": u"PK",
+                u"RowKey": u"table@storage.com",
+                u"Value": 100
+            }
+
+            for i in range(10):
+                entity[u"RowKey"] += str(i)
+                entity[u"Value"] += i
+                self.table.create_entity(entity)
+
+            f = u"RowKey eq '{}'".format(entity["RowKey"])
+            entities = self.table.query_entities(filter=f)
+            count = 0
+            for e in entities:
+                assert e.PartitionKey == entity[u"PartitionKey"]
+                assert e.RowKey == entity[u"RowKey"]
+                assert e.Value == entity[u"Value"]
+                count += 1
+                self.table.delete_entity(e.PartitionKey, e.RowKey)
+
+            assert count == 1
+
+            count = 0
+            for e in self.table.query_entities(filter=f):
+                count += 1
+            assert count == 0
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")

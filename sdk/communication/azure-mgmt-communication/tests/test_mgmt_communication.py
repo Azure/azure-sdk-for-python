@@ -29,7 +29,7 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_crud(self, resource_group):
         GROUP_NAME = resource_group.name
-        resource_name = "test-resource-crud"
+        resource_name = self.get_resource_name("test-resource-crud")
 
         resource = CommunicationServiceResource(
             location=COMMUNICATION_SERVICE_LOCATION,

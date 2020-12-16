@@ -29,7 +29,7 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_list_by_subscription(self, resource_group):
         GROUP_NAME = resource_group.name
-        resource_name = "test-resource-list-by-subscription"
+        resource_name = self.get_resource_name("test-resource-list-by-subscription")
 
         resource = CommunicationServiceResource(
             location=COMMUNICATION_SERVICE_LOCATION,
@@ -62,7 +62,7 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_list_by_rg(self, resource_group):
         GROUP_NAME = resource_group.name
-        resource_name = "test-resource-list-by-rg"
+        resource_name = self.get_resource_name("test-resource-list-by-rg")
 
         resource = CommunicationServiceResource(
             location=COMMUNICATION_SERVICE_LOCATION,

@@ -247,6 +247,45 @@ class StorageTableEntityTest(TableTestCase):
         assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
+    @pytest.mark.skip("Forbidden operation")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    async def test_url_encoding_at_symbol(self, cosmos_account, cosmos_account_key):
+
+        await self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            entity = {
+                u"PartitionKey": u"PK",
+                u"RowKey": u"table@storage.com",
+                u"Value": 100
+            }
+
+            await self.table.create_entity(entity)
+
+            f = u"RowKey eq '{}'".format(entity["RowKey"])
+            entities = self.table.query_entities(filter=f)
+
+            count = 0
+            async for e in entities:
+                assert e.PartitionKey == entity[u"PartitionKey"]
+                assert e.RowKey == entity[u"RowKey"]
+                assert e.Value == entity[u"Value"]
+                await self.table.delete_entity(e.PartitionKey, e.RowKey)
+                count += 1
+
+            assert count == 1
+
+            entities = self.table.query_entities(filter=f)
+            count = 0
+            async for e in entities:
+                count += 1
+            assert count == 0
+
+        finally:
+            await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")

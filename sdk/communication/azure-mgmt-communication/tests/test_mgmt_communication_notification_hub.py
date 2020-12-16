@@ -35,9 +35,9 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_link_notif_hub(self, resource_group):
         GROUP_NAME = resource_group.name
-        namespace_name = "test-namespace-for-comm"
-        notification_hub_name = "test-notification-hub-for-comm"
-        resource_name = "test-resource-link-notif-hub"
+        namespace_name = self.get_resource_name("test-namespace-for-comm")
+        notification_hub_name = self.get_resource_name("test-notification-hub-for-comm")
+        resource_name = self.get_resource_name("test-resource-link-notif-hub")
 
         # Create the Notification Hubs resource that will be linked to the Communication Service resource
         self.notificationhubs_client.namespaces.create_or_update(
