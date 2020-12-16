@@ -74,7 +74,7 @@ credential = DefaultAzureCredential()
 key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ```
 
-You can also create a `CryptographyClient` to enable cryptographic operations (encrypt/decrypt, wrap/unwrap, sign/verify) using a particular key.
+You can also create a `CryptographyClient` to perform cryptographic operations (encrypt/decrypt, wrap/unwrap, sign/verify) using a particular key.
 
 ```python
 from azure.keyvault.keys.crypto import CryptographyClient
@@ -108,7 +108,7 @@ async with client:
 
 ### Create a key
 
-In `azure-keyvault` you could create a key by using `KeyVaultClient`'s `create_key` method, which required a vault endpoint, key name, and key type. This method returned a `KeyBundle` contianing the key.
+In `azure-keyvault` you could create a key by using `KeyVaultClient`'s `create_key` method, which required a vault endpoint, key name, and key type. This method returned a `KeyBundle` containing the key.
 
 ```python
 # create an RSA key
@@ -131,8 +131,10 @@ key = key_bundle.key
 Now in `azure-keyvault-keys` there are multiple ways to create keys. You can provide a key name and type to the general `create_key` method, or provide just a name to `create_rsa_key` or `create_ec_key`. These methods all return the created key as a `KeyVaultKey`.
 
 ```python
+from azure.keyvault.keys import KeyType, KeyCurveName
+
 # create a key with specified type
-key = key_client.create_key(name="key-name", key_type="oct")
+key = key_client.create_key(name="key-name", key_type=KeyType.ec)
 print(key.name)
 print(key.key_type)
 
@@ -140,7 +142,7 @@ print(key.key_type)
 rsa_key = key_client.create_rsa_key(name="rsa-key-name", size=2048)
 
 # create an elliptic curve key
-ec_key = key_client.create_ec_key(name="ec-key-name", curve="P-256")
+ec_key = key_client.create_ec_key(name="ec-key-name", curve=KeyCurveName.p_256)
 ```
 
 ### Retrieve a key
@@ -250,7 +252,7 @@ operation_result = client.encrypt(
 ciphertext = operation_result.result
 ```
 
-Now in `azure-keyvault-keys` you can perform these cryptographic operations by using a `CryptographyClient`. The key used to create the client will be used for these operations.
+Now in `azure-keyvault-keys` you can perform these cryptographic operations by using a `CryptographyClient`. The key used to create the client will be used for these operations. Cryptographic operations are now performed locally by the client, rather than remotely by Key Vault.
 
 ```python
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
