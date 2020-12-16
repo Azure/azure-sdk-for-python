@@ -74,8 +74,8 @@ def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argu
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
-def return_headers_and_deserialized_path_list(response, deserialized, response_headers):  # pylint: disable=unused-argument
-    return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
+def return_headers_and_deserialized_path_list(deserialized):  # pylint: disable=unused-argument
+    return deserialized
 
 
 def process_storage_error(storage_error):

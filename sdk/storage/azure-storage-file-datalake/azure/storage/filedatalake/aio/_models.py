@@ -85,7 +85,7 @@ class PathPropertiesPaged(AsyncPageIterator):
 
     async def _get_next_cb(self, continuation_token):
         try:
-            return await self._command(
+            return self._command(
                 self.recursive,
                 continuation=continuation_token or None,
                 path=self.path,
@@ -96,10 +96,13 @@ class PathPropertiesPaged(AsyncPageIterator):
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
-        self.path_list, self._response = get_next_return
+        path_list = []
+        async for path in get_next_return:
+            path_list.append(path)
+        self.path_list = path_list
         self.current_page = [self._build_item(item) for item in self.path_list]
 
-        return self._response['continuation'] or None, self.current_page
+        return None, self.current_page
 
     @staticmethod
     def _build_item(item):
