@@ -126,12 +126,17 @@ If you would like to check the status of your certificate creation, you can call
 In `azure-keyvault` you could retrieve a certificate (as a `CertificateBundle`) by using `get_certificate` and specifying the desired vault endpoint, certificate name, and certificate version. You could retrieve the versions of a certificate with the `get_certificate_versions` method, which returned an iterator-like object.
 
 ```python
-certificate_versions = client.get_certificate_versions(
+from azure.keyvault import CertificateId
+
+certificate_items = client.get_certificate_versions(
     vault_base_url="https://my-key-vault.vault.azure.net/",
     certificate_name="cert-name"
 )
 
-for certificate_version in certificate_versions:
+for certificate_item in certificate_items:
+    certificate_id = CertificateId(certificate_item.id)
+    certificate_version = certificate_id.version
+
     certificate = client.get_certificate(
         vault_base_url="https://my-key-vault.vault.azure.net/",
         certificate_name="cert-name",
