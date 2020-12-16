@@ -4,12 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
-
+from azure.core.exceptions import HttpResponseError
 from .._deserialize import (
     process_storage_error)
-from .._generated.models import (
-    StorageErrorException,
-)
 from .._shared.response_handlers import return_response_headers
 from .._shared.uploads_async import (
     upload_data_chunks,
@@ -83,5 +80,5 @@ async def upload_datalake_file(  # pylint: disable=unused-argument
                                        modified_access_conditions=modified_access_conditions,
                                        cls=return_response_headers,
                                        **kwargs)
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         process_storage_error(error)

@@ -24,7 +24,7 @@ from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._models import PathPropertiesPaged
 from ._data_lake_lease_async import DataLakeLeaseClient
 from .._file_system_client import FileSystemClient as FileSystemClientBase
-from .._generated.aio import DataLakeStorageClient
+from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._models import FileSystemProperties, PublicAccess
@@ -88,7 +88,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
-        self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):
