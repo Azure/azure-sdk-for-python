@@ -28,10 +28,12 @@ class ListBlobsTest(_ContainerTest):
                 break
 
     def run_sync(self):
-        list(self.container_client.list_blobs())
+        for _ in self.container_client.list_blobs():
+            pass
 
     async def run_async(self):
-        _ = [b async for b in self.async_container_client.list_blobs()]
+        async for _ in self.async_container_client.list_blobs():
+            pass
 
     @staticmethod
     def add_arguments(parser):
