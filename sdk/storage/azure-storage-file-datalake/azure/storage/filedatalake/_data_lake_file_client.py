@@ -5,8 +5,6 @@
 # --------------------------------------------------------------------------
 from io import BytesIO
 
-from azure.core.exceptions import HttpResponseError
-
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -14,6 +12,7 @@ except ImportError:
 
 import six
 
+from azure.core.exceptions import HttpResponseError
 from ._quick_query_helper import DataLakeFileQueryReader
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
