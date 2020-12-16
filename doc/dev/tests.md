@@ -1,5 +1,5 @@
-# Setup for Testing Tutorial, Python
-In this section, we will provide the introduction to the testing framework by:
+# Setup Python Development Environment
+In this document we will provide the introduction to the testing framework by:
 
 - [Setting up your development environment](#setup-the-development-environment)
 - [Integrating with pytest](#integrate-with-the-pytest-test-framework)
@@ -16,9 +16,9 @@ In this section, we will provide the introduction to the testing framework by:
 
 The Azure SDK Python team creates libraries that are compatible with Python 2.7 and 3.5 and up. We will set up working Python virtual environments for Python 2.7, 3.5, and 3.9. It is recommended to do your development work in Python3, however it is helpful to have virtual environments for other versions to make debugging PRs easier locally.
 
-* Python 3.9: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the [Windows store](https://www.microsoft.com/en-us/p/python-38/9mssztt1n39l) (Windows only).
+* Python 3.9: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the [Windows store](https://www.microsoft.com/p/python-39/9p7qfqmjrfp7) (Windows only).
 * Python 3.5: Use the [python website](https://www.python.org/downloads/release/python-3510/)
-* Python 2.7: Use the [python website](https://www.python.org/downloads/release/python-2710/)
+* Python 2.7: Use the [python website](https://www.python.org/downloads/release/python-2718/)
 ```cmd
 C:\Users> python -m venv env
 C:\Users> env\scripts\activate       # PowerShell only
@@ -36,7 +36,7 @@ C:\Users> python -m venv -p <path/to/Python/Python27/python.exe> py27_venv
 
 In the root directory of our SDK, a number of mandatory files have been added. You will not need to edit these files for this tutorial, but you should be aware about the various components and where to find more details on them. When creating your own SDK, these files can be copied from the [`sdk/template`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/template) project, and modified to your needs.
 
-- README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.docs.microsoft.com/en-us/help/contribute-ref/contribute-ref-how-to-document-sdk?branch=master#readme).
+- README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.docs.microsoft.com/help/contribute-ref/contribute-ref-how-to-document-sdk?branch=master#readme).
 - CHANGELOG.md. This is where you will add the summary of changes for each new release. Please see [the guidance](https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance) for correct formatting.
 - setup.py. This is the 'installer' for your Python SDK. Please see [the guide on Python packaging](https://github.com/Azure/azure-sdk-pr/issues/225) for details on customizing this for a specific package.
 - setup.cfg. This is an artifact used in building the Python package. Please see [the guide on Python packaging](https://github.com/Azure/azure-sdk-pr/issues/225) for details.
@@ -52,16 +52,16 @@ The libraries currently listed in this file include `azure-core` and `azure-iden
 These dependencies can be installed with the following command:
 
 ```cmd
-(env)azure-sdk-for-python\sdk\my_directory\my_library> pip install -r dev_requirements.txt
+(env)azure-sdk-for-python\sdk\my-directory\my-library> pip install -r dev_requirements.txt
 ```
 Next we will install our Python SDK to the virtual environment as an 'editable install' - this means that as we work on the implementation, we will be able to run the package as it develops, as opposed to having to periodically rebuild and reinstall.
 ```cmd
-(env)azure-sdk-for-python\sdk\my_directory\my_library> pip install -e .
+(env)azure-sdk-for-python\sdk\my-directory\my-library> pip install -e .
 ```
 
 We should now be able to open an interactive Python terminal, and execute code from our new SDK
 ```cmd
-(env)azure-sdk-for-python\sdk\my_directory\my_library> python
+(env)azure-sdk-for-python\sdk\my-directory\my-library> python
 
 >>> import azure.my_library
 >>> print(azure.my_library.__version__)
@@ -72,7 +72,7 @@ We should now be able to open an interactive Python terminal, and execute code f
 
 Open the directory for your library in your preferred editor, for example VSCode.
 ```cmd
-(env)azure-sdk-for-python\sdk\my_directory\my_library> code .
+(env)azure-sdk-for-python\sdk\my-directory\my-library> code .
 ```
 
 ## Integrate with the pytest Test Framework
@@ -80,44 +80,44 @@ As a quick background, the Azure SDK uses the [pytest](https://docs.pytest.org/e
 
 With the pytest test suite you can provide directories or specific tests to run rather than running the entire test suite:
 ```cmd
-azure-sdk-for-python\sdk\my_directory\my_library> pytest
-azure-sdk-for-python\sdk\my_directory\my_library> pytest <test_file.py>
+azure-sdk-for-python\sdk\my-directory\my-library> pytest
+azure-sdk-for-python\sdk\my-directory\my-library> pytest <test_file.py>
 ```
 
 In addition you can provide keywords to run specific tests within the suite or within a specific file
 ```cmd
-azure-sdk-for-python\sdk\my_directory\my_library> pytest -k <keyword>
-azure-sdk-for-python\sdk\my_directory\my_library> pytest <test_file.py> -k <keyword>
+azure-sdk-for-python\sdk\my-directory\my-library> pytest -k <keyword>
+azure-sdk-for-python\sdk\my-directory\my-library> pytest <test_file.py> -k <keyword>
 ```
 
 If you have print statements in your tests for debugging you can add the `-s` flag to send those print statements to standard output:
 ```cmd
-azure-sdk-for-python\sdk\my_directory\my_library> pytest sdk/storage/azure-mgmt-storage/ -s
+azure-sdk-for-python\sdk\my-directory\my-library> pytest sdk/storage/azure-mgmt-storage/ -s
 ```
 
 ## Tox
-The Python SDK uses the [tox project](https://tox.readthedocs.io/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with the `app-config` project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
+The Python SDK uses the [tox project](https://tox.readthedocs.io/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with your project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
 `(env) > pip install tox tox-monorepo`.
 
 To run a tox command from your directory use the following commands:
 ```cmd
-azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e sphinx
-azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e lint
-azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e mypy
-azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e whl
-azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e sdist
+azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e sphinx
+azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e lint
+azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e mypy
+azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e whl
+azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e sdist
+azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e samples
 ```
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
 * lint: runs pylint to make sure our code adheres to the style guidance
-* mypy: runs the mypy static type checker for Python to make sure that our types are valid
+* mypy: runs the mypy static type checker for Python to make sure that our types are valid. In order to opt-in to mypy checks, add your package name to [this](https://github.com/Azure/azure-sdk-for-python/blob/master/eng/tox/mypy_hard_failure_packages.py) list of packages.
 * whl: creates a whl package for installing our package
 * sdist: creates a zipped distribution of our files that the end user could install with pip
+* samples: runs all of the samples in the `samples` directory and verifies they are working correctly
 
 ## `devtools_testutils` Package
-The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package are the preparers that will be commonly used throughout the repository to test various resources. A preparer is a way to programmatically create fresh resources to run our tests against and then deleting them after running a test suite. These are helpful to help guarantee standardized behavior by starting each test group from a fresh resource and account. For more information on writing and building preparers following this tutorial on how to create the [app-configuration account preparer](https://github.com/Azure/azure-sdk-pr/issues/458).
-
-Also in this package is the `AzureTestCase` object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
+The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the `AzureTestCase` object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
 
 ## Writing New Tests
 SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
@@ -129,40 +129,29 @@ SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-fo
 Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
 ## Define credentials
-When you run tests in playback mode, they use a fake credentials file, located at `tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py` to simulate authenticating with Azure. The test framework uses the values stored in the `mgmt_settings_real.py` to take care of authenticating clients for you.
+When you run tests in playback mode, they use a fake credentials file, located at `tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py` to simulate authenticating with Azure.
 
-In live mode, the credentials need to be real so that the tests are able to connect to the service. Copy the `mgmt_settings_fake.py` file to a new file named `mgmt_settings_real.py` within the same directory. Then make the following changes:
-1. Change the value of the `SUBSCRIPTION_ID` variable to your organizations subscription ID. If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal](https://portal.azure.com/).
-2. Create a `.env` file at the root of the repository (in the same directory as the `sdk`, `tools`, `eng` folders). In this file you can define any environment variables you need for a test and that will be loaded by the `AzureTestCase` file. Start by defining `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` which are available after creating a Service Principal or can be retrieved from the Azure Portal if you have already created a Service Principal. If you do not have a Service Principal, check out the [Azure docs](https://docs.microsoft.com/en-us/cli/azure/ad/sp?view=azure-cli-latest#az_ad_sp_create_for_rbac) on a simple one line command to create one. The recommended practice is to include your alias or name in the Service Principal name.
+In live mode, the credentials need to be real so that the tests are able to connect to the service. Create a `.env` file at the root of the repository (in the same directory as the `sdk`, `tools`, `eng` folders). In this file you can define any environment variables you need for a test and that will be loaded by the `AzureTestCase` file.
+1. Add the `SUBSCRIPTION_ID` variable with your organizations subscription ID. If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal](https://portal.azure.com/).
+2. Define the `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` which are available after creating a Service Principal or can be retrieved from the Azure Portal if you have already created a Service Principal. If you do not have a Service Principal, check out the [Azure docs](https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az_ad_sp_create_for_rbac) on a simple one line command to create one. The recommended practice is to include your alias or name in the Service Principal name.
     Your `.env` file stores secrets in plain text so it is important that the contents of this file are not committed to the git repository.
-3. Change the `get_azure_core_credentials(**kwargs):` function to construct and return a `ClientSecretCredential` object. The `client_id`, `client_secret`, `tenant_id` are provided when you create a service principal. These values can be found in the Azure Portal. This method in your `mgmt_settings_real.py` file should look like this:
-```python
-def get_azure_core_credentials(**kwargs):
-    from azure.identity import ClientSecretCredential
-    import os
-    return ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
-```
-4. In the same directory as your `mgmt_settings_real.py` file create a `testsettings_local.cfg` and copy and paste the following line:
+3. Create the `tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file and copy and paste the following line:
 ```
 live-mode: true
 ```
 
 ## Create Live Test Resources
 The Azure Python SDK library has two ways of providing live resources to our tests:
-* Using an individualized preparer such as the storage preparer
-    * [Storage preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py)
-    * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/tests/test_blob_client.py#L49-L61) for the blob client
 * Using an ArmTemplate and the PowerShellPreparer (we will demonstrate this one)
     * [PowerShell preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py)
     * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/schemaregistry/azure-schemaregistry/tests/test_schema_registry.py#L30-L39) for the schemaregistry library
+* Using an individualized preparer such as the storage preparer
+    * [Storage preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py)
+    * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/tests/test_blob_client.py#L49-L61) for the blob client
 
 If your library has a management plane library, you can build a preparer specific to your service using the storage preparer as an example. It is recommended that you use a PowerShellPreparer for new libraries and those without management plane libraries. The `PowerShellPreparer` uses the `New-TestResources.ps1` script to deploy resources using an ARM Template. This script and information about running it can be found in the [`eng/common/TestResources`](https://github.com/Azure/azure-sdk-for-python/tree/master/eng/common/TestResources#live-test-resource-management) directory.
 
-1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be done in the portal by creating the resources and at the very last step (Review + Create) clicking "Download a template for automation". Save this template to a `test-resources.json` file under the directory that contains your library (`sdk/<my_library>/test-resources.json`).
+1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be done in the portal by creating the resources and at the very last step (Review + Create) clicking "Download a template for automation". Save this template to a `test-resources.json` file under the directory that contains your library (`sdk/<my-library>/test-resources.json`).
 2. Use the [`New-TestResources.ps1`](https://github.com/Azure/azure-sdk-for-python/tree/master/eng/common/TestResources#on-the-desktop) script to deploy those resources.
 3. Set the environment variables returned from step 2 in your current shell or add them to your `.env` file at the root of the repo to save these secrets. If you choose the latter method, you will have to make sure all the key-value pairs are in the format `<key_name>=<value>`, rather than the  `${env:<key_name>} = '<value>'` formatting used in PowerShell. The names of the environment variables should be in all capital letters, snake case, and be prefixed with the library name. Ie. `TABLES_PRIMARY_KEY`, `FORMRECOGNIZER_ACCOUNT_URL`, `EVENTHUBS_SECRET_KEY`.
 4. Create a partial implementation of the PowerShellPreparer to pass in your specific environment variables. An example implementation is shown below for schemaregistry
@@ -235,7 +224,7 @@ If you need logging functionality for your testing, pytest also offers [logging]
 ## An example test
 An example test for schemaregistry looks like:
 ```python
-class AppConfigTestCase(AzureTestCase):
+class SchemaRegistryTestCase(AzureTestCase):
 
     ...
     @SchemaRegistryPreparer()
@@ -257,7 +246,7 @@ class AppConfigTestCase(AzureTestCase):
 ```
 The `AzureTestCase` class has the ability to define a client by passing in the client object and the account URL, without having to worry about identity. Test files should not import `azure.identity`, the `self.create_basic_client` will take care of loading environment variables and creating the default credentials.
 
-The test infrastructure heavily leverages the `assert` keyword, which tests if the condition following it is true, and if it is not the program will raise an `AssertionError`. When writing tests, any uncaught exception results in a failure, from an assert or from the code itself (ie. `TypeError`, `ValueError`, `HttpResponseError`, etc.). The assert statements are testing that all the exected properties of the returned object are not `None`, and the last two assert statements verify that the tested properties are a given value. The last two lines of the test use a [context manager](https://docs.python.org/3/library/contextlib.html) used from the `pytest` library that tests whether the following block of code will raise a certain exception.
+The test infrastructure heavily leverages the `assert` keyword, which tests if the condition following it is true, and if it is not the program will raise an `AssertionError`. When writing tests, any uncaught exception results in a failure, from an assert or from the code itself (ie. `TypeError`, `ValueError`, `HttpResponseError`, etc.). The assert statements are testing that all the exected properties of the returned object are not `None`, and the last two assert statements verify that the tested properties are a given value. The last two lines of the test use a [context manager](https://docs.python.org/3/library/contextlib.html) used from the `pytest` library that tests whether the following block of code will raise a certain exception. The `client.get_schema('a' * 32)` is expected to fail because it does not exist, and we expect this test to raise an error that is an instance of `HttpResponseError`.
 
 ## Run and record the test
 
@@ -267,7 +256,7 @@ From your terminal run the `pytest` command to run all the tests that you have w
 (env)azure-sdk-for-python\sdk\api-learn\implementation-tutorial> pytest
 ```
 
-Your update should run smooth and have green dots representing passing tests. Now if you look at the contents of your `tests` directory there should be a new directory called `recording` with four `.yaml` files. Each `yaml` file is a recording for a single test. To run a test in playback mode change the `testsettings_local.cfg` to `live-mode: false` and rerun the tests with the same command. The test infrastructure will use the `.yaml` recordings to mock the HTTP traffic and run the tests.
+Your update should run smooth and have green dots representing passing tests. Now if you look at the contents of your `tests` directory there should be a new directory called `recording` with four `.yaml` files. Each `yaml` file is a recording for a single test. To run a test in playback mode change the `testsettings_local.cfg` to `live-mode: false` and rerun the tests with the same command. The test infrastructure will use the automatically created `.yaml` recordings to mock the HTTP traffic and run the tests.
 
 
 ## More Test Examples
@@ -296,84 +285,5 @@ class ExampleStorageTestCase(AzureTestCase):
 
 This simple tests that the client verifies a valid table name before sending the HTTP request (Azure Data Tables can only be alphanumeric values). This test will have no recording associated with it.
 
-Notes:
-1. Tests for data plane libraries should inherit from the `AzureTestCase` superclass. This superclass also takes care of HTTP recording and playback like the `AzureMgmtTestCase` seen in the previous section but handles nuances around creating Clients specifically for the data plane clients.
-2. The `get_credential` method lives in the `AzureTestClass` superclass. It will take care of reading environment variables to create the appropriate credential whether you are running tests live or recorded and whether the test is sync or async.
-3. The `create_client_from_credential` method creates an authenticated client using the credential from the previous method call and any keyword arguments that are necessary for authentication (in this case, an account URL).
-4. `with pytest.raises(ErrorType)` is a common pattern in our tests to validate that a specific type of error is raised by the client in a scenario.
+For more information, refer to the [advanced tests notes](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/tests-advanced.md) on more advanced scenarios and additional information.
 
-### Example 2: Basic Preparer Usage with Storage
-
-```python
-import os
-import pytest
-
-from azure.data.tables import TableServiceClient
-from devtools_testutils import (
-    AzureTestCase,
-    ResourceGroupPreparer,
-    StorageAccountPreparer
-)
-
-class ExampleStorageTestCase(AzureTestCase):
-
-    @ResourceGroupPreparer()
-    @StorageAcountPreparer()
-    def test_create_table(self, resource_group, location, storage_account, storage_account_key):
-        account_url = self.account_url(storage_account, "table")
-        client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
-
-        valid_table_name = "validtablename"
-        table = client.create_table(valid_table_name)
-
-        assert valid_table_name == table.table_name
-```
-
-This test uses preparers to create resources, then creates a table, and finally verifies the name is correct.
-
-Notes:
-1. This test is aiming to create a new Table, which requires a storage account, which in hand requires a resource group. The first decorator (`@ResourceGroupPreparer()`) creates a new resource group, and passes the parameters of this resource group into the `@StorageAccountPreparer()` which creates the storage account. The parameters from the storage account creation is passed into the signature of `test_create_table` .
-2. The `create_client_from_credential` is used again but this time with `storage_account_key` instead of getting a credential from the `self.get_credential` method showed in the previous section. The storage account preparer returns the key for the account which is a valid credential.
-
-
-### Example 3: Cached Preparer Usage
-```python
-import os
-import pytest
-
-from azure.core.exceptions import ResourceExistsError
-from azure.data.tables import TableServiceClient
-from devtools_testutils import (
-    AzureTestCase,
-    CachedResourceGroupPreparer,
-    CachedStorageAccountPreparer
-)
-
-class ExampleStorageTestCase(AzureTestCase):
-
-    @CachedResourceGroupPreparer(name_prefix="storagetest")
-    @CachedStorageAcountPreparer(name_prefix="storagetest")
-    def test_create_table(self, resource_group, location, storage_account, storage_account_key):
-        account_url = self.account_url(storage_account, "table")
-        client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
-
-        valid_table_name = "validtablename"
-        table = client.create_table(valid_table_name)
-
-        assert valid_table_name == table.table_name
-
-    @CachedResourceGroupPreparer(name_prefix="storagetest")
-    @CachedStorageAcountPreparer(name_prefix="storagetest")
-    def test_create_table_if_exists (self, resource_group, location, storage_account, storage_account_key):
-        account_url = self.account_url(storage_account, "table")
-        client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
-
-        valid_table_name = "validtablename"
-        with pytest.raises(ResourceExistsError):
-            table = client.create_table(valid_table_name)
-```
-
-The first test is the same as above, the second test tries to create a table that already exists and asserts that the correct type of error is raised in response. These tests use cached preparers unlike the previous example.
-
-Notes:
-1. The cached preparers here will first look to see if an existing resource group or storage account exists with the given parameters, in this case the `name_prefix`. For more information on what parameters differentiate a new resource group or storage account look for the `self.set_cache()` method in the preparer source code [here](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py#L49). The advantage to using a cached preparer is the time saver to re-using the same resource instead of creating a new resource for each test. However, this can increase the possibility that you have to be more exact about cleaning up the entities created in between test runs.

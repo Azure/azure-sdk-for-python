@@ -14,7 +14,7 @@ IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_s
 
 # Overview
 
-This page is to help you write tests for Azure Python SDK when these tests require Azure HTTP requests. The Azure SDK test framework uses the [`azure-devtools`](https://pypi.python.org/pypi/azure-devtools) package, which in turn rests upon on a HTTP recording system ([vcrpy](https://pypi.python.org/pypi/vcrpy)) that enables tests dependent on network interaction to be run offline.
+This page is to help you write tests for Azure Python SDK when these tests require Azure HTTP requests. The Azure SDK test framework uses the `azure-devtools` package, which in turn rests upon on a HTTP recording system ([vcrpy](https://pypi.python.org/pypi/vcrpy)) that enables tests dependent on network interaction to be run offline.
 
 In this document, we will describe:
 -   How to run the tests offline (using previously recorded HTTP interactions)
@@ -122,7 +122,7 @@ def get_azure_core_credentials(**kwargs):
 To configure the tests to run in live mode, you have two options:
 
 * Set the environment variable `AZURE_TEST_RUN_LIVE` to "true" or "yes". If you want to go back to playback mode you can either unset it entirely or set it to "false" or "no".
-* Create a `testsettings_local.cfg` file in the same directory as `mgmt_settings_real.py`. It should look like the following:
+* Create the `tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file and copy and paste the following line:
     ```
     live-mode: true
     ```
@@ -132,18 +132,11 @@ Now you can run tests using the same method described in [Running the tests](#ru
 
 # Writing new tests
 
-SDK tests are based on the `scenario_tests` subpackage of the [`azure-devtools`](https://pypi.python.org/pypi/azure-devtools) package. `scenario_tests` is a general, mostly abstract framework providing several features useful for the SDK tests, for example:
-
-* HTTP interaction recording and playback using [vcrpy](https://pypi.python.org/pypi/vcrpy)
-* Creation and cleanup of helper resources, such as resource groups, for tests that need them in order to test other services
-* Processors for modifying requests and responses when writing or reading recordings (for example, to avoid recording credential information)
-* Patches for overriding functions and methods that don't work well with tests (such as long-running operations)
-
 Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
 ## Test structure
 
-New tests should be located alongside the packages containing the code they test. For example, the tests for `azure-mgmt-media` are in `azure-mgmt-media/tests`. Each test folder also has a `recordings` subfolder containing one `.yaml` recording file for each test that has the HTTP interactions for the single test (with the authentication secrets scrubbed from the recordings).
+New tests should be located alongside the packages containing the code they test. For example, the tests for `azure-mgmt-media` are in `azure-mgmt-media/tests`.
 
 There are also legacy tests in the following three locations:
 
@@ -154,7 +147,7 @@ For more information about legacy tests, see [Legacy tests](https://github.com/A
 
 ## Writing management plane test with the the Azure Python SDK test framework
 
-This section will demonstrate writing tests using `devtools_testutils` with a few increasingly sophisticated examples to show how to use some of the features of the underlying test frameworks.
+Management plane SDKs are those that are formatted `azure-mgmt-xxxx`, otherwise the SDK is data plane. Management plane SDKs work against the Azure Resource Manager APIs, while the data plane SDKs will work against service APIs. This section will demonstrate writing tests using `devtools_testutils` with a few increasingly sophisticated examples to show how to use some of the features of the underlying test frameworks.
 
 ### Example 1: Basic Azure service interaction and recording
 
