@@ -6,12 +6,12 @@
 # --------------------------------------------------------------------------
 
 from azure.core.paging import PageIterator, ItemPaged
+from azure.core.exceptions import HttpResponseError
 from ._deserialize import get_blob_properties_from_generated_code, parse_tags
 from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
-from azure.core.exceptions import HttpResponseError
 
 
 class BlobPropertiesPaged(PageIterator):

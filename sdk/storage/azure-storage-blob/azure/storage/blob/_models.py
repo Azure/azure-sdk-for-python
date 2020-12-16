@@ -9,6 +9,7 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator
+from azure.core.exceptions import HttpResponseError
 from ._generated.models import ArrowField
 
 from ._shared import decode_base64_to_text
@@ -20,7 +21,6 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
-from azure.core.exceptions import HttpResponseError
 
 
 class BlobType(str, Enum):
