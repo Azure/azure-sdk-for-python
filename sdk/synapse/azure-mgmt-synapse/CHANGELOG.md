@@ -1,5 +1,12 @@
 # Release History
 
+## 0.6.0 (2020-12-17)
+
+**Features**
+
+  - Model DataMaskingPolicy has a new parameter managed_by
+  - Model WorkspacePatchInfo has a new parameter encryption
+
 ## 0.5.0 (2020-11-23)
 
 **Features**
