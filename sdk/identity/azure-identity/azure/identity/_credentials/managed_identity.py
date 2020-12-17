@@ -60,8 +60,10 @@ class ManagedIdentityCredential(object):
 
                 self._credential = AppServiceCredential(**kwargs)
             else:
-                _LOGGER.info("%s will use MSI", self.__class__.__name__)
-                self._credential = MsiCredential(**kwargs)
+                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
+                from .cloud_shell import CloudShellCredential
+
+                self._credential = CloudShellCredential(**kwargs)
         elif os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if (
                 os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
