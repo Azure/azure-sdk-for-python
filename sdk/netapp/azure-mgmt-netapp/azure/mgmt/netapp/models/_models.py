@@ -66,6 +66,10 @@ class ActiveDirectory(Model):
     :param ldap_signing: Specifies whether or not the LDAP traffic needs to be
      signed.
     :type ldap_signing: bool
+    :param security_operators: Domain Users in the Active directory to be
+     given SeSecurityPrivilege privilege (Needed for SMB Continuously available
+     shares for SQL). A list of unique usernames without domain specifier
+    :type security_operators: list[str]
     """
 
     _validation = {
@@ -94,6 +98,7 @@ class ActiveDirectory(Model):
         'server_root_ca_certificate': {'key': 'serverRootCACertificate', 'type': 'str'},
         'aes_encryption': {'key': 'aesEncryption', 'type': 'bool'},
         'ldap_signing': {'key': 'ldapSigning', 'type': 'bool'},
+        'security_operators': {'key': 'securityOperators', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -114,6 +119,7 @@ class ActiveDirectory(Model):
         self.server_root_ca_certificate = kwargs.get('server_root_ca_certificate', None)
         self.aes_encryption = kwargs.get('aes_encryption', None)
         self.ldap_signing = kwargs.get('ldap_signing', None)
+        self.security_operators = kwargs.get('security_operators', None)
 
 
 class AuthorizeRequest(Model):
@@ -1803,6 +1809,14 @@ class Volume(Model):
     :param security_style: The security style of volume. Possible values
      include: 'ntfs', 'unix'
     :type security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
+    :param smb_encryption: Enables encryption for in-flight smb3 data. Only
+     applicable for SMB/DualProtocol volume. To be used with swagger version
+     2020-08-01 or later. Default value: False .
+    :type smb_encryption: bool
+    :param smb_continuously_available: Enables continuously available share
+     property for smb volume. Only applicable for SMB volume. Default value:
+     False .
+    :type smb_continuously_available: bool
     :param throughput_mibps: Maximum throughput in Mibps that can be achieved
      by this volume.
     :type throughput_mibps: float
@@ -1848,6 +1862,8 @@ class Volume(Model):
         'snapshot_directory_visible': {'key': 'properties.snapshotDirectoryVisible', 'type': 'bool'},
         'kerberos_enabled': {'key': 'properties.kerberosEnabled', 'type': 'bool'},
         'security_style': {'key': 'properties.securityStyle', 'type': 'str'},
+        'smb_encryption': {'key': 'properties.smbEncryption', 'type': 'bool'},
+        'smb_continuously_available': {'key': 'properties.smbContinuouslyAvailable', 'type': 'bool'},
         'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
     }
 
@@ -1876,6 +1892,8 @@ class Volume(Model):
         self.snapshot_directory_visible = kwargs.get('snapshot_directory_visible', None)
         self.kerberos_enabled = kwargs.get('kerberos_enabled', False)
         self.security_style = kwargs.get('security_style', None)
+        self.smb_encryption = kwargs.get('smb_encryption', False)
+        self.smb_continuously_available = kwargs.get('smb_continuously_available', False)
         self.throughput_mibps = kwargs.get('throughput_mibps', None)
 
 

@@ -27,7 +27,7 @@ class SnapshotPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-07-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-09-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class SnapshotPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-07-01"
+        self.api_version = "2020-09-01"
 
         self.config = config
 
@@ -440,7 +440,7 @@ class SnapshotPoliciesOperations(object):
 
     def list_volumes(
             self, resource_group_name, account_name, snapshot_policy_name, custom_headers=None, raw=False, **operation_config):
-        """Get volumes associated with snapshot policy.
+        """Get volumes for snapshot policy.
 
         Get volumes associated with snapshot policy.
 

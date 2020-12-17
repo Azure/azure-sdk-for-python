@@ -27,7 +27,7 @@ class VolumesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-07-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-09-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class VolumesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-07-01"
+        self.api_version = "2020-09-01"
 
         self.config = config
 
@@ -815,7 +815,7 @@ class VolumesOperations(object):
 
         Resync the connection on the destination volume. If the operation is
         ran on the source volume it will reverse-resync the connection and sync
-        from source to destination.
+        from destination to source.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
