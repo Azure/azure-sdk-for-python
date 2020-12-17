@@ -129,7 +129,7 @@ SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-fo
 Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
 ## Define credentials
-When you run tests in playback mode, they use a fake credentials file, located at `tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py` to simulate authenticating with Azure.
+When you run tests in playback mode, they use a fake credentials file, located at [`tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake] to simulate authenticating with Azure.
 
 In live mode, the credentials need to be real so that the tests are able to connect to the service. Create a `.env` file at the root of the repository (in the same directory as the `sdk`, `tools`, `eng` folders). In this file you can define any environment variables you need for a test and that will be loaded by the `AzureTestCase` file.
 1. Add the `SUBSCRIPTION_ID` variable with your organizations subscription ID. If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal](https://portal.azure.com/).
@@ -285,5 +285,10 @@ class ExampleStorageTestCase(AzureTestCase):
 
 This simple tests that the client verifies a valid table name before sending the HTTP request (Azure Data Tables can only be alphanumeric values). This test will have no recording associated with it.
 
-For more information, refer to the [advanced tests notes](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/tests-advanced.md) on more advanced scenarios and additional information.
+For more information, refer to the [advanced tests notes][advanced_tests_notes] on more advanced scenarios and additional information.
 
+
+<!-- Links -->
+[advanced_tests_notes]: ./tests-advanced.md
+[azure_devtools]: https://pypi.org/project/azure-devtools/
+[mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
