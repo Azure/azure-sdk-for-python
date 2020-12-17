@@ -468,33 +468,6 @@ class StorageTableClientTest(TableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  storage_account.name
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_table_client_with_invalid_name_async(self):
-        # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format("storage_account_name")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="storage_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."in str(excinfo)
-
-    @AzureTestCase.await_prepared_test
-    async def test_error_with_malformed_conn_str_async(self):
-        # Arrange
-
-        for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
-            for service_type in SERVICES.items():
-                # Act
-                with pytest.raises(ValueError) as e:
-                    service = service_type[0].from_connection_string(conn_str, table_name="test")
-
-                if conn_str in("", "foobar", "foo;bar;baz", ";"):
-                    assert str(e.value) == "Connection string is either blank or malformed."
-                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    assert str(e.value) == "Connection string missing required connection details."
-
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_closing_pipeline_client_async(self, resource_group, location, storage_account, storage_account_key):
@@ -518,6 +491,37 @@ class StorageTableClientTest(TableTestCase):
             service = client(
                 self.account_url(storage_account, "table"), credential=storage_account_key, table_name='table')
             await service.close()
+
+
+class TestTableClient(object):
+
+    @pytest.mark.asyncio
+    async def test_create_table_client_with_invalid_name_async(self):
+        # Arrange
+        table_url = "https://{}.table.core.windows.net:443/foo".format("storage_account_name")
+        invalid_table_name = "my_table"
+
+        # Assert
+        with pytest.raises(ValueError) as excinfo:
+            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="storage_account_key")
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."in str(excinfo)
+
+    @pytest.mark.asyncio
+    async def test_error_with_malformed_conn_str_async(self):
+        # Arrange
+
+        for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
+            for service_type in SERVICES.items():
+                # Act
+                with pytest.raises(ValueError) as e:
+                    service = service_type[0].from_connection_string(conn_str, table_name="test")
+
+                if conn_str in("", "foobar", "foo;bar;baz", ";"):
+                    assert str(e.value) == "Connection string is either blank or malformed."
+                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
+                    assert str(e.value) == "Connection string missing required connection details."
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

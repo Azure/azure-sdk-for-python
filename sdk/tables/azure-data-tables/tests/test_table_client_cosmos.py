@@ -532,37 +532,6 @@ class StorageTableClientTest(TableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  tables_cosmos_account_name
 
-    def test_create_table_client_with_invalid_name(self):
-        # Arrange
-        table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="cosmos_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    def test_error_with_malformed_conn_str(self):
-        # Arrange
-
-        for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
-            for service_type in SERVICES.items():
-                # Act
-                with pytest.raises(ValueError) as e:
-                    service = service_type[0].from_connection_string(conn_str, table_name="test")
-
-                if conn_str in("", "foobar", "foo;bar;baz", ";"):
-                    assert str(e.value) == "Connection string is either blank or malformed."
-                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    assert str(e.value) == "Connection string missing required connection details."
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @CosmosPSPreparer()
     def test_closing_pipeline_client(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -591,6 +560,36 @@ class StorageTableClientTest(TableTestCase):
                 table_name='table')
 
             service.close()
+
+
+class TestCosmosClient(object):
+
+    def test_create_table_client_with_invalid_name(self):
+        # Arrange
+        table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
+        invalid_table_name = "my_table"
+
+        # Assert
+        with pytest.raises(ValueError) as excinfo:
+            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="cosmos_account_key")
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
+
+
+    def test_error_with_malformed_conn_str(self):
+        # Arrange
+
+        for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
+            for service_type in SERVICES.items():
+                # Act
+                with pytest.raises(ValueError) as e:
+                    service = service_type[0].from_connection_string(conn_str, table_name="test")
+
+                if conn_str in("", "foobar", "foo;bar;baz", ";"):
+                    assert str(e.value) == "Connection string is either blank or malformed."
+                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
+                    assert str(e.value) == "Connection string missing required connection details."
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
