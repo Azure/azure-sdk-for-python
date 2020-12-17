@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure_devtools.perfstress_tests import get_random_bytes
+from azure_devtools.perfstress_tests import get_random_bytes, WriteStream
 
 from ._test_base import _FileSystemTest
 
@@ -18,15 +18,18 @@ class DownloadTest(_FileSystemTest):
     async def global_setup(self):
         await super().global_setup()
         data = get_random_bytes(self.args.size)
-        await self.async_file_client.upload_data(data)
+        await self.async_file_client.create_file()
+        await self.async_file_client.upload_data(data, overwrite=True)
 
     def run_sync(self):
+        download = WriteStream()
         stream = self.file_client.download_file(max_concurrency=self.args.max_concurrency)
-        stream.readall()
+        stream.readinto(download)
 
     async def run_async(self):
+        download = WriteStream()
         stream = await self.async_file_client.download_file(max_concurrency=self.args.max_concurrency)
-        await stream.readall()
+        await stream.readinto(download)
 
     async def close(self):
         await self.async_file_client.close()
