@@ -16,16 +16,19 @@ from msrest.exceptions import HttpOperationError
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -49,19 +52,21 @@ class Resource(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -89,20 +94,20 @@ class AttachedDatabaseConfiguration(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: Resource location.
     :type location: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :param database_name: Required. The name of the database which you would
      like to attach, use * if you want to follow all current and future
@@ -125,7 +130,6 @@ class AttachedDatabaseConfiguration(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
         'database_name': {'required': True},
         'cluster_resource_id': {'required': True},
         'attached_database_names': {'readonly': True},
@@ -144,10 +148,10 @@ class AttachedDatabaseConfiguration(ProxyResource):
         'default_principals_modification_kind': {'key': 'properties.defaultPrincipalsModificationKind', 'type': 'str'},
     }
 
-    def __init__(self, *, database_name: str, cluster_resource_id: str, default_principals_modification_kind, location: str=None, **kwargs) -> None:
+    def __init__(self, *, database_name: str, cluster_resource_id: str, default_principals_modification_kind, location: str=None, provisioning_state=None, **kwargs) -> None:
         super(AttachedDatabaseConfiguration, self).__init__(**kwargs)
         self.location = location
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.database_name = database_name
         self.cluster_resource_id = cluster_resource_id
         self.attached_database_names = None
@@ -193,19 +197,21 @@ class AzureCapacity(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -415,20 +421,23 @@ class CloudErrorBody(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -465,13 +474,13 @@ class Cluster(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -487,10 +496,10 @@ class Cluster(TrackedResource):
      'Creating', 'Unavailable', 'Running', 'Deleting', 'Deleted', 'Stopping',
      'Stopped', 'Starting', 'Updating'
     :vartype state: str or ~azure.mgmt.kusto.models.State
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :ivar uri: The cluster URI.
     :vartype uri: str
@@ -535,7 +544,6 @@ class Cluster(TrackedResource):
         'location': {'required': True},
         'sku': {'required': True},
         'state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
         'uri': {'readonly': True},
         'data_ingestion_uri': {'readonly': True},
         'state_reason': {'readonly': True},
@@ -568,13 +576,13 @@ class Cluster(TrackedResource):
         'engine_type': {'key': 'properties.engineType', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, zones=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, engine_type=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, zones=None, identity=None, provisioning_state=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, engine_type=None, **kwargs) -> None:
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.zones = zones
         self.identity = identity
         self.state = None
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.uri = None
         self.data_ingestion_uri = None
         self.state_reason = None
@@ -630,13 +638,13 @@ class ClusterPrincipalAssignment(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param principal_id: Required. The principal ID assigned to the cluster
      principal. It can be a user email, application ID, or security group name.
@@ -653,10 +661,10 @@ class ClusterPrincipalAssignment(ProxyResource):
     :vartype tenant_name: str
     :ivar principal_name: The principal name
     :vartype principal_name: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     """
 
@@ -669,7 +677,6 @@ class ClusterPrincipalAssignment(ProxyResource):
         'principal_type': {'required': True},
         'tenant_name': {'readonly': True},
         'principal_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -685,7 +692,7 @@ class ClusterPrincipalAssignment(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, principal_id: str, role, principal_type, tenant_id: str=None, **kwargs) -> None:
+    def __init__(self, *, principal_id: str, role, principal_type, tenant_id: str=None, provisioning_state=None, **kwargs) -> None:
         super(ClusterPrincipalAssignment, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role = role
@@ -693,7 +700,7 @@ class ClusterPrincipalAssignment(ProxyResource):
         self.principal_type = principal_type
         self.tenant_name = None
         self.principal_name = None
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
 
 
 class ClusterPrincipalAssignmentCheckNameRequest(Model):
@@ -735,13 +742,13 @@ class ClusterUpdate(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -755,10 +762,10 @@ class ClusterUpdate(Resource):
      'Creating', 'Unavailable', 'Running', 'Deleting', 'Deleted', 'Stopping',
      'Stopped', 'Starting', 'Updating'
     :vartype state: str or ~azure.mgmt.kusto.models.State
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :ivar uri: The cluster URI.
     :vartype uri: str
@@ -801,7 +808,6 @@ class ClusterUpdate(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
         'uri': {'readonly': True},
         'data_ingestion_uri': {'readonly': True},
         'state_reason': {'readonly': True},
@@ -833,14 +839,14 @@ class ClusterUpdate(Resource):
         'engine_type': {'key': 'properties.engineType', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, sku=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, engine_type=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, sku=None, identity=None, provisioning_state=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, engine_type=None, **kwargs) -> None:
         super(ClusterUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
         self.sku = sku
         self.identity = identity
         self.state = None
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.uri = None
         self.data_ingestion_uri = None
         self.state_reason = None
@@ -867,13 +873,13 @@ class Database(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: Resource location.
     :type location: str
@@ -970,13 +976,13 @@ class DatabasePrincipalAssignment(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param principal_id: Required. The principal ID assigned to the database
      principal. It can be a user email, application ID, or security group name.
@@ -993,10 +999,10 @@ class DatabasePrincipalAssignment(ProxyResource):
     :vartype tenant_name: str
     :ivar principal_name: The principal name
     :vartype principal_name: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     """
 
@@ -1009,7 +1015,6 @@ class DatabasePrincipalAssignment(ProxyResource):
         'principal_type': {'required': True},
         'tenant_name': {'readonly': True},
         'principal_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1025,7 +1030,7 @@ class DatabasePrincipalAssignment(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, principal_id: str, role, principal_type, tenant_id: str=None, **kwargs) -> None:
+    def __init__(self, *, principal_id: str, role, principal_type, tenant_id: str=None, provisioning_state=None, **kwargs) -> None:
         super(DatabasePrincipalAssignment, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role = role
@@ -1033,7 +1038,7 @@ class DatabasePrincipalAssignment(ProxyResource):
         self.principal_type = principal_type
         self.tenant_name = None
         self.principal_name = None
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
 
 
 class DatabasePrincipalAssignmentCheckNameRequest(Model):
@@ -1130,13 +1135,13 @@ class DataConnection(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: Resource location.
     :type location: str
@@ -1280,13 +1285,13 @@ class EventGridDataConnection(DataConnection):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: Resource location.
     :type location: str
@@ -1319,10 +1324,10 @@ class EventGridDataConnection(DataConnection):
      'Microsoft.Storage.BlobRenamed'
     :type blob_storage_event_type: str or
      ~azure.mgmt.kusto.models.BlobStorageEventType
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     """
 
@@ -1334,7 +1339,6 @@ class EventGridDataConnection(DataConnection):
         'storage_account_resource_id': {'required': True},
         'event_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1354,7 +1358,7 @@ class EventGridDataConnection(DataConnection):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_resource_id: str, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, ignore_first_record: bool=None, blob_storage_event_type=None, **kwargs) -> None:
+    def __init__(self, *, storage_account_resource_id: str, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, ignore_first_record: bool=None, blob_storage_event_type=None, provisioning_state=None, **kwargs) -> None:
         super(EventGridDataConnection, self).__init__(location=location, **kwargs)
         self.storage_account_resource_id = storage_account_resource_id
         self.event_hub_resource_id = event_hub_resource_id
@@ -1364,7 +1368,7 @@ class EventGridDataConnection(DataConnection):
         self.data_format = data_format
         self.ignore_first_record = ignore_first_record
         self.blob_storage_event_type = blob_storage_event_type
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.kind = 'EventGrid'
 
 
@@ -1376,13 +1380,13 @@ class EventHubDataConnection(DataConnection):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: Resource location.
     :type location: str
@@ -1409,10 +1413,10 @@ class EventHubDataConnection(DataConnection):
     :param compression: The event hub messages compression type. Possible
      values include: 'None', 'GZip'
     :type compression: str or ~azure.mgmt.kusto.models.Compression
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     """
 
@@ -1423,7 +1427,6 @@ class EventHubDataConnection(DataConnection):
         'kind': {'required': True},
         'event_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1442,7 +1445,7 @@ class EventHubDataConnection(DataConnection):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, compression=None, **kwargs) -> None:
+    def __init__(self, *, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, compression=None, provisioning_state=None, **kwargs) -> None:
         super(EventHubDataConnection, self).__init__(location=location, **kwargs)
         self.event_hub_resource_id = event_hub_resource_id
         self.consumer_group = consumer_group
@@ -1451,7 +1454,7 @@ class EventHubDataConnection(DataConnection):
         self.data_format = data_format
         self.event_system_properties = event_system_properties
         self.compression = compression
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.kind = 'EventHub'
 
 
@@ -1576,13 +1579,13 @@ class IotHubDataConnection(DataConnection):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: Resource location.
     :type location: str
@@ -1609,10 +1612,10 @@ class IotHubDataConnection(DataConnection):
     :param shared_access_policy_name: Required. The name of the share access
      policy
     :type shared_access_policy_name: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     """
 
@@ -1624,7 +1627,6 @@ class IotHubDataConnection(DataConnection):
         'iot_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
         'shared_access_policy_name': {'required': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1643,7 +1645,7 @@ class IotHubDataConnection(DataConnection):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, iot_hub_resource_id: str, consumer_group: str, shared_access_policy_name: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, **kwargs) -> None:
+    def __init__(self, *, iot_hub_resource_id: str, consumer_group: str, shared_access_policy_name: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, provisioning_state=None, **kwargs) -> None:
         super(IotHubDataConnection, self).__init__(location=location, **kwargs)
         self.iot_hub_resource_id = iot_hub_resource_id
         self.consumer_group = consumer_group
@@ -1652,7 +1654,7 @@ class IotHubDataConnection(DataConnection):
         self.data_format = data_format
         self.event_system_properties = event_system_properties
         self.shared_access_policy_name = shared_access_policy_name
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.kind = 'IotHub'
 
 
@@ -1830,22 +1832,22 @@ class ReadOnlyFollowingDatabase(Database):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: Resource location.
     :type location: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :ivar soft_delete_period: The time the data should be kept before it stops
      being accessible to queries in TimeSpan.
@@ -1871,7 +1873,6 @@ class ReadOnlyFollowingDatabase(Database):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
-        'provisioning_state': {'readonly': True},
         'soft_delete_period': {'readonly': True},
         'leader_cluster_resource_id': {'readonly': True},
         'attached_database_configuration_name': {'readonly': True},
@@ -1893,9 +1894,9 @@ class ReadOnlyFollowingDatabase(Database):
         'principals_modification_kind': {'key': 'properties.principalsModificationKind', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, hot_cache_period=None, statistics=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, provisioning_state=None, hot_cache_period=None, statistics=None, **kwargs) -> None:
         super(ReadOnlyFollowingDatabase, self).__init__(location=location, **kwargs)
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.soft_delete_period = None
         self.hot_cache_period = hot_cache_period
         self.statistics = statistics
@@ -1913,22 +1914,22 @@ class ReadWriteDatabase(Database):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: Resource location.
     :type location: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
+    :param provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Moving'
-    :vartype provisioning_state: str or
+    :type provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :param soft_delete_period: The time the data should be kept before it
      stops being accessible to queries in TimeSpan.
@@ -1947,7 +1948,6 @@ class ReadWriteDatabase(Database):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
-        'provisioning_state': {'readonly': True},
         'is_followed': {'readonly': True},
     }
 
@@ -1964,9 +1964,9 @@ class ReadWriteDatabase(Database):
         'is_followed': {'key': 'properties.isFollowed', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str=None, soft_delete_period=None, hot_cache_period=None, statistics=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, provisioning_state=None, soft_delete_period=None, hot_cache_period=None, statistics=None, **kwargs) -> None:
         super(ReadWriteDatabase, self).__init__(location=location, **kwargs)
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.soft_delete_period = soft_delete_period
         self.hot_cache_period = hot_cache_period
         self.statistics = statistics
