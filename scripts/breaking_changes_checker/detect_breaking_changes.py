@@ -124,7 +124,7 @@ def check_base_classes(cls_node: ast.ClassDef) -> bool:
     return should_look
 
 
-def get_properties(cls: Type):
+def get_properties(cls: Type) -> Dict:
     """Get the public instance variables of the class and any inherited.
 
     :param cls:
@@ -163,7 +163,7 @@ def get_properties(cls: Type):
     return attribute_names
 
 
-def create_function_report(f: Callable, is_async: bool=False):
+def create_function_report(f: Callable, is_async: bool = False) -> Dict:
     function = inspect.signature(f)
     func_obj = {
         "parameters": {},
@@ -227,7 +227,7 @@ def resolve_module_name(module_name: str, target_module: str) -> str:
     return module_name
 
 
-def test_detect_breaking_changes(target_module: str="azure.ai.formrecognizer") -> Dict:
+def test_build_library_report(target_module: str = "azure.ai.formrecognizer") -> Dict:
 
     module = importlib.import_module(target_module)
     modules = test_find_modules(module.__path__[0])
@@ -253,7 +253,7 @@ def test_detect_breaking_changes(target_module: str="azure.ai.formrecognizer") -
 
 # "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\formrecognizer\\azure-ai-formrecognizer"
 # "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-blob"
-def test_compare(pkg_dir: str="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-queue", version: str="") -> None:
+def test_compare_reports(pkg_dir: str="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-queue", version: str = "") -> None:
     package_name = os.path.basename(pkg_dir)
 
     with open(os.path.join(pkg_dir, "stable.json"), "r") as fd:
@@ -308,7 +308,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
                 _LOGGER.warning(f"Version {version} failed to create a JSON report.")
                 exit(1)
     try:
-        public_api = test_detect_breaking_changes(target_module)
+        public_api = test_build_library_report(target_module)
 
         if in_venv:
             with open("stable.json", "w") as fd:
@@ -320,7 +320,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        # test_compare(pkg_dir, version)
+        # test_compare_reports(pkg_dir, version)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")

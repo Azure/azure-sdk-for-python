@@ -1,17 +1,42 @@
-### Breaking Changes Detector Tool
+## Breaking Changes Detector Tool
+
+The breaking changes tool compares the last stable/GA version of the library (if it exists) against the current code 
+(in master) and reports any breaking changes found.
+
+### How to opt-in to running the tool in CI
+
+Add your package name to the `RUN_BREAKING_CHANGES_PACKAGES` found [here](https://github.com/Azure/azure-sdk-for-python/tree/master/scripts/breaking_changes_checker/breaking_changes_allowlist.py).
+
+### Run locally with tox
+
+Install tox and tox-monorepo:
+
+`pip install tox tox-monorepo`
+
+Run the `breaking` environment. Here we run the breaking changes tool against azure-storage-blob, for example:
+
+`C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox -c ../../../eng/tox/tox.ini -e breaking`
 
 
-#### How to opt-in to running the tool in CI
+### Ignore a reported breaking change
 
-### How to run locally with tox
+A breaking change reported by this tool may be acceptable. If it is an approved breaking change (signed off by architecture board)
+or a false positive, then you may add the breaking change to the ignore list.
 
-### How to ignore a reported breaking change
+The ignore list is found [here](https://github.com/Azure/azure-sdk-for-python/tree/master/scripts/breaking_changes_checker/breaking_changes_allowlist.py). 
 
+To add an ignore, you will need the identifier of the breaking change. This includes the breaking change type,
+module name, and optionally class and/or function name, in this order, e.g.
 
 (<breaking-change-type>, <module-name>, <class-name>, <function-name>)
-module_name, class_name, function_name should be the name used in the stable/GA version of the library
 
-Examples:
+Add this signature as a list of tuples under your package name in the `IGNORE_BREAKING_CHANGES` dictionary.
+Note that the names used should be those from the __stable__ package. If I renamed my function from `begin_training` to
+`begin_train_model`, I would put `begin_training` as my function name.
+
+See ignore signature skeletons for each type of breaking change [below](#types-of-breaking-changes-detected)
+
+**Examples:**
 
 ```python
 IGNORE_BREAKING_CHANGES = {
@@ -27,11 +52,11 @@ IGNORE_BREAKING_CHANGES = {
 ```
 
 
+### Types of Breaking Changes Detected
 
-Types of Breaking Changes Detected by this tool
-> Note that this does not cover every kind of breaking change possible
+> Note that this does not cover every kind of breaking change possible.
 
-| Breaking Change Type                                 | Explained (changes are relative to the stable library version)                                                         | Ignore signature IF an approved breaking change or false positive                  |
+| Breaking Change Type                                 | Explained (changes are relative to the stable/GA library version)                                                      | Ignore signature IF an approved breaking change or false positive                  |
 |------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
 | RemovedOrRenamedModule                               | An entire module was removed or renamed in the current version. E.g. `aio` module was removed.                         | ("RemovedOrRenamedModule", "module-name")
 | RemovedOrRenamedClient                               | A client was removed or renamed in the current version.                                                                | ("RemovedOrRenamedClient", "module-name", "client-name")
