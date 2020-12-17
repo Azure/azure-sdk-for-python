@@ -115,6 +115,7 @@ try:
     from ._models_py3 import BlobSink
     from ._models_py3 import BlobSource
     from ._models_py3 import BlobTrigger
+    from ._models_py3 import CMKIdentityDefinition
     from ._models_py3 import CassandraLinkedService
     from ._models_py3 import CassandraSource
     from ._models_py3 import CassandraTableDataset
@@ -228,6 +229,7 @@ try:
     from ._models_py3 import EloquaLinkedService
     from ._models_py3 import EloquaObjectDataset
     from ._models_py3 import EloquaSource
+    from ._models_py3 import EncryptionConfiguration
     from ._models_py3 import EntityReference
     from ._models_py3 import EnvironmentVariableSetup
     from ._models_py3 import ExcelDataset
@@ -757,6 +759,7 @@ except (SyntaxError, ImportError):
     from ._models import BlobSink  # type: ignore
     from ._models import BlobSource  # type: ignore
     from ._models import BlobTrigger  # type: ignore
+    from ._models import CMKIdentityDefinition  # type: ignore
     from ._models import CassandraLinkedService  # type: ignore
     from ._models import CassandraSource  # type: ignore
     from ._models import CassandraTableDataset  # type: ignore
@@ -870,6 +873,7 @@ except (SyntaxError, ImportError):
     from ._models import EloquaLinkedService  # type: ignore
     from ._models import EloquaObjectDataset  # type: ignore
     from ._models import EloquaSource  # type: ignore
+    from ._models import EncryptionConfiguration  # type: ignore
     from ._models import EntityReference  # type: ignore
     from ._models import EnvironmentVariableSetup  # type: ignore
     from ._models import ExcelDataset  # type: ignore
@@ -1491,6 +1495,7 @@ __all__ = [
     'BlobSink',
     'BlobSource',
     'BlobTrigger',
+    'CMKIdentityDefinition',
     'CassandraLinkedService',
     'CassandraSource',
     'CassandraTableDataset',
@@ -1604,6 +1609,7 @@ __all__ = [
     'EloquaLinkedService',
     'EloquaObjectDataset',
     'EloquaSource',
+    'EncryptionConfiguration',
     'EntityReference',
     'EnvironmentVariableSetup',
     'ExcelDataset',

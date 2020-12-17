@@ -6406,7 +6406,7 @@ class AzureSqlSource(TabularSource):
     :type produce_additional_types: object
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.SqlPartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
     """
@@ -6427,7 +6427,7 @@ class AzureSqlSource(TabularSource):
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
         'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'SqlPartitionSettings'},
     }
 
@@ -7764,6 +7764,26 @@ class CmdkeySetup(CustomSetupBase):
         self.target_name = kwargs['target_name']
         self.user_name = kwargs['user_name']
         self.password = kwargs['password']
+
+
+class CMKIdentityDefinition(msrest.serialization.Model):
+    """Managed Identity used for CMK.
+
+    :param user_assigned_identity: The resource id of the user assigned identity to authenticate to
+     customer's key vault.
+    :type user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CMKIdentityDefinition, self).__init__(**kwargs)
+        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
 
 
 class CommonDataServiceForAppsEntityDataset(Dataset):
@@ -12964,6 +12984,47 @@ class EloquaSource(TabularSource):
         self.query = kwargs.get('query', None)
 
 
+class EncryptionConfiguration(msrest.serialization.Model):
+    """Definition of CMK for the factory.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. The name of the key in Azure Key Vault to use as Customer Managed
+     Key.
+    :type key_name: str
+    :param vault_base_url: Required. The url of the Azure Key Vault used for CMK.
+    :type vault_base_url: str
+    :param key_version: The version of the key used for CMK. If not provided, latest version will
+     be used.
+    :type key_version: str
+    :param identity: User assigned identity to use to authenticate to customer's key vault. If not
+     provided Managed Service Identity will be used.
+    :type identity: ~azure.mgmt.datafactory.models.CMKIdentityDefinition
+    """
+
+    _validation = {
+        'key_name': {'required': True},
+        'vault_base_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'vault_base_url': {'key': 'vaultBaseUrl', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'CMKIdentityDefinition'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EncryptionConfiguration, self).__init__(**kwargs)
+        self.key_name = kwargs['key_name']
+        self.vault_base_url = kwargs['vault_base_url']
+        self.key_version = kwargs.get('key_version', None)
+        self.identity = kwargs.get('identity', None)
+
+
 class EntityReference(msrest.serialization.Model):
     """The entity reference.
 
@@ -13185,6 +13246,16 @@ class ExecuteDataFlowActivity(ExecutionActivity):
     :type integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param compute: Compute properties for data flow activity.
     :type compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
+    :param trace_level: Trace level setting used for data flow monitoring output. Supported values
+     are: 'coarse', 'fine', and 'none'. Type: string (or Expression with resultType string).
+    :type trace_level: object
+    :param continue_on_error: Continue on error setting used for data flow execution. Enables
+     processing to continue if a sink fails. Type: boolean (or Expression with resultType boolean).
+    :type continue_on_error: object
+    :param run_concurrently: Concurrent run setting used for data flow execution. Allows sinks with
+     the same save order to be processed concurrently. Type: boolean (or Expression with resultType
+     boolean).
+    :type run_concurrently: object
     """
 
     _validation = {
@@ -13206,6 +13277,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         'staging': {'key': 'typeProperties.staging', 'type': 'DataFlowStagingInfo'},
         'integration_runtime': {'key': 'typeProperties.integrationRuntime', 'type': 'IntegrationRuntimeReference'},
         'compute': {'key': 'typeProperties.compute', 'type': 'ExecuteDataFlowActivityTypePropertiesCompute'},
+        'trace_level': {'key': 'typeProperties.traceLevel', 'type': 'object'},
+        'continue_on_error': {'key': 'typeProperties.continueOnError', 'type': 'object'},
+        'run_concurrently': {'key': 'typeProperties.runConcurrently', 'type': 'object'},
     }
 
     def __init__(
@@ -13218,6 +13292,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         self.staging = kwargs.get('staging', None)
         self.integration_runtime = kwargs.get('integration_runtime', None)
         self.compute = kwargs.get('compute', None)
+        self.trace_level = kwargs.get('trace_level', None)
+        self.continue_on_error = kwargs.get('continue_on_error', None)
+        self.run_concurrently = kwargs.get('run_concurrently', None)
 
 
 class ExecuteDataFlowActivityTypePropertiesCompute(msrest.serialization.Model):
@@ -13345,10 +13422,12 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     :type package_parameters: dict[str, ~azure.mgmt.datafactory.models.SSISExecutionParameter]
     :param project_connection_managers: The project level connection managers to execute the SSIS
      package.
-    :type project_connection_managers: dict[str, object]
+    :type project_connection_managers: dict[str, dict[str,
+     ~azure.mgmt.datafactory.models.SSISExecutionParameter]]
     :param package_connection_managers: The package level connection managers to execute the SSIS
      package.
-    :type package_connection_managers: dict[str, object]
+    :type package_connection_managers: dict[str, dict[str,
+     ~azure.mgmt.datafactory.models.SSISExecutionParameter]]
     :param property_overrides: The property overrides to execute the SSIS package.
     :type property_overrides: dict[str, ~azure.mgmt.datafactory.models.SSISPropertyOverride]
     :param log_location: SSIS package execution log location.
@@ -13379,8 +13458,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
         'project_parameters': {'key': 'typeProperties.projectParameters', 'type': '{SSISExecutionParameter}'},
         'package_parameters': {'key': 'typeProperties.packageParameters', 'type': '{SSISExecutionParameter}'},
-        'project_connection_managers': {'key': 'typeProperties.projectConnectionManagers', 'type': '{object}'},
-        'package_connection_managers': {'key': 'typeProperties.packageConnectionManagers', 'type': '{object}'},
+        'project_connection_managers': {'key': 'typeProperties.projectConnectionManagers', 'type': '{{SSISExecutionParameter}}'},
+        'package_connection_managers': {'key': 'typeProperties.packageConnectionManagers', 'type': '{{SSISExecutionParameter}}'},
         'property_overrides': {'key': 'typeProperties.propertyOverrides', 'type': '{SSISPropertyOverride}'},
         'log_location': {'key': 'typeProperties.logLocation', 'type': 'SSISLogLocation'},
     }
@@ -13621,6 +13700,8 @@ class Factory(Resource):
     :type repo_configuration: ~azure.mgmt.datafactory.models.FactoryRepoConfiguration
     :param global_parameters: List of parameters for factory.
     :type global_parameters: dict[str, ~azure.mgmt.datafactory.models.GlobalParameterSpecification]
+    :param encryption: Properties to enable Customer Managed Key for the factory.
+    :type encryption: ~azure.mgmt.datafactory.models.EncryptionConfiguration
     :param public_network_access: Whether or not public network access is allowed for the data
      factory. Possible values include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.datafactory.models.PublicNetworkAccess
@@ -13650,6 +13731,7 @@ class Factory(Resource):
         'version': {'key': 'properties.version', 'type': 'str'},
         'repo_configuration': {'key': 'properties.repoConfiguration', 'type': 'FactoryRepoConfiguration'},
         'global_parameters': {'key': 'properties.globalParameters', 'type': '{GlobalParameterSpecification}'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionConfiguration'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
@@ -13665,6 +13747,7 @@ class Factory(Resource):
         self.version = None
         self.repo_configuration = kwargs.get('repo_configuration', None)
         self.global_parameters = kwargs.get('global_parameters', None)
+        self.encryption = kwargs.get('encryption', None)
         self.public_network_access = kwargs.get('public_network_access', None)
 
 
@@ -13779,13 +13862,14 @@ class FactoryIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The identity type. Currently the only supported type is 'SystemAssigned'.
-     Default value: "SystemAssigned".
+    :ivar type: Required. The identity type. Default value: "SystemAssigned".
     :vartype type: str
     :ivar principal_id: The principal id of the identity.
     :vartype principal_id: str
     :ivar tenant_id: The client tenant id of the identity.
     :vartype tenant_id: str
+    :param user_assigned_identities: List of user assigned identities for the factory.
+    :type user_assigned_identities: dict[str, object]
     """
 
     _validation = {
@@ -13798,6 +13882,7 @@ class FactoryIdentity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{object}'},
     }
 
     type = "SystemAssigned"
@@ -13809,6 +13894,7 @@ class FactoryIdentity(msrest.serialization.Model):
         super(FactoryIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class FactoryListResponse(msrest.serialization.Model):
@@ -22089,7 +22175,7 @@ class NetezzaSource(TabularSource):
     :type query: object
     :param partition_option: The partition mechanism that will be used for Netezza read in
      parallel. Possible values include: "None", "DataSlice", "DynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.NetezzaPartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for Netezza source partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.NetezzaPartitionSettings
     """
@@ -22107,7 +22193,7 @@ class NetezzaSource(TabularSource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'NetezzaPartitionSettings'},
     }
 
@@ -23470,7 +23556,7 @@ class OracleSource(CopySource):
     :type query_timeout: object
     :param partition_option: The partition mechanism that will be used for Oracle read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.OraclePartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for Oracle source partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.OraclePartitionSettings
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
@@ -23490,7 +23576,7 @@ class OracleSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'oracle_reader_query': {'key': 'oracleReaderQuery', 'type': 'object'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'OraclePartitionSettings'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
@@ -27954,7 +28040,7 @@ class SapHanaSource(TabularSource):
     :type packet_size: object
     :param partition_option: The partition mechanism that will be used for SAP HANA read in
      parallel. Possible values include: "None", "PhysicalPartitionsOfTable", "SapHanaDynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.SapHanaPartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for SAP HANA source
      partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.SapHanaPartitionSettings
@@ -27974,7 +28060,7 @@ class SapHanaSource(TabularSource):
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
         'packet_size': {'key': 'packetSize', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'SapHanaPartitionSettings'},
     }
 
@@ -28564,7 +28650,7 @@ class SapTableSource(TabularSource):
     :param partition_option: The partition mechanism that will be used for SAP table read in
      parallel. Possible values include: "None", "PartitionOnInt", "PartitionOnCalendarYear",
      "PartitionOnCalendarMonth", "PartitionOnCalendarDate", "PartitionOnTime".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.SapTablePartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for SAP table source
      partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.SapTablePartitionSettings
@@ -28589,7 +28675,7 @@ class SapTableSource(TabularSource):
         'batch_size': {'key': 'batchSize', 'type': 'object'},
         'custom_rfc_read_table_function_module': {'key': 'customRfcReadTableFunctionModule', 'type': 'object'},
         'sap_data_column_delimiter': {'key': 'sapDataColumnDelimiter', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'SapTablePartitionSettings'},
     }
 
@@ -30679,7 +30765,7 @@ class SqlDWSource(TabularSource):
     :type stored_procedure_parameters: object
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.SqlPartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
     """
@@ -30699,7 +30785,7 @@ class SqlDWSource(TabularSource):
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'SqlPartitionSettings'},
     }
 
@@ -30834,7 +30920,7 @@ class SqlMISource(TabularSource):
     :type produce_additional_types: object
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.SqlPartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
     """
@@ -30855,7 +30941,7 @@ class SqlMISource(TabularSource):
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
         'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'SqlPartitionSettings'},
     }
 
@@ -31088,7 +31174,7 @@ class SqlServerSource(TabularSource):
     :type produce_additional_types: object
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.SqlPartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
     """
@@ -31109,7 +31195,7 @@ class SqlServerSource(TabularSource):
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
         'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'SqlPartitionSettings'},
     }
 
@@ -31376,7 +31462,7 @@ class SqlSource(TabularSource):
     :type isolation_level: object
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.SqlPartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
     """
@@ -31397,7 +31483,7 @@ class SqlSource(TabularSource):
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
         'isolation_level': {'key': 'isolationLevel', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'SqlPartitionSettings'},
     }
 
@@ -32898,7 +32984,7 @@ class TeradataSource(TabularSource):
     :type query: object
     :param partition_option: The partition mechanism that will be used for teradata read in
      parallel. Possible values include: "None", "Hash", "DynamicRange".
-    :type partition_option: str or ~azure.mgmt.datafactory.models.TeradataPartitionOption
+    :type partition_option: object
     :param partition_settings: The settings that will be leveraged for teradata source
      partitioning.
     :type partition_settings: ~azure.mgmt.datafactory.models.TeradataPartitionSettings
@@ -32917,7 +33003,7 @@ class TeradataSource(TabularSource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'TeradataPartitionSettings'},
     }
 

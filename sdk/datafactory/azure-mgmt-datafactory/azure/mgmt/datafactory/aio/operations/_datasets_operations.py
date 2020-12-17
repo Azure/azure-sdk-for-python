@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class DatasetsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class DatasetsOperations:
         resource_group_name: str,
         factory_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DatasetListResponse"]:
+    ) -> AsyncIterable["_models.DatasetListResponse"]:
         """Lists datasets.
 
         :param resource_group_name: The resource group name.
@@ -58,7 +58,7 @@ class DatasetsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.DatasetListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatasetListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,10 +120,10 @@ class DatasetsOperations:
         resource_group_name: str,
         factory_name: str,
         dataset_name: str,
-        dataset: "models.DatasetResource",
+        dataset: "_models.DatasetResource",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.DatasetResource":
+    ) -> "_models.DatasetResource":
         """Creates or updates a dataset.
 
         :param resource_group_name: The resource group name.
@@ -142,7 +142,7 @@ class DatasetsOperations:
         :rtype: ~azure.mgmt.datafactory.models.DatasetResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatasetResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -198,7 +198,7 @@ class DatasetsOperations:
         dataset_name: str,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.DatasetResource"]:
+    ) -> Optional["_models.DatasetResource"]:
         """Gets a dataset.
 
         :param resource_group_name: The resource group name.
@@ -215,7 +215,7 @@ class DatasetsOperations:
         :rtype: ~azure.mgmt.datafactory.models.DatasetResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DatasetResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DatasetResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
