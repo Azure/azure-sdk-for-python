@@ -320,7 +320,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        test_compare(pkg_dir, version)
+        # test_compare(pkg_dir, version)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")

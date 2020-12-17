@@ -19,6 +19,7 @@ EXPECTED = [
     "(RemoveOrRenamePositionalParam): The 'azure.storage.queue.QueueClient method 'set_queue_access_policy' had its 'positional_or_keyword' parameter 'signed_identifiers' deleted or renamed in the current version",
     "(ChangedParameterDefaultValue): The class 'azure.storage.queue.QueueClient' method 'set_queue_metadata' had its parameter 'metadata' default value changed from 'None' to ''",
     "(RemoveOrRenameModelMethod): The 'azure.storage.queue.QueueSasPermissions' method 'from_string' was deleted or renamed in the current version",
+    "(RemovedFunctionKwargs): The class 'azure.storage.queue.QueueServiceClient' method 'set_service_properties' changed from accepting keyword arguments to not accepting them in the current version",
     "(RemoveOrRenameClientMethod): The 'azure.storage.queue.QueueServiceClient' client method 'get_service_properties' was deleted or renamed in the current version",
     "(RemoveOrRenameEnumValue): The 'azure.storage.queue.StorageErrorCode' enum had its value 'queue_not_found' deleted or renamed in the current version",
     "(RemoveOrRenameModel): The model or publicly exposed class 'azure.storage.queue.QueueMessage' was deleted or renamed in the current version",

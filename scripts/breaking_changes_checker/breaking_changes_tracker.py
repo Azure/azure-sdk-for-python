@@ -33,6 +33,7 @@ class BreakingChangeType(str, Enum):
     CHANGED_PARAMETER_TYPE = "ChangedParameterType"
     CHANGED_FUNCTION_TYPE = "ChangedFunctionType"
     REMOVE_OR_RENAME_MODULE = "RemoveOrRenameModule"
+    REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
 
 
 class BreakingChangesTracker:
@@ -86,6 +87,12 @@ class BreakingChangesTracker:
         "({}): The function '{}.{}' changed from '{}' to '{}' in the current version."
     REMOVE_OR_RENAME_MODULE_MSG = \
         "({}): The '{}' module was deleted or renamed in the current version"
+    REMOVE_CLASS_FUNCTION_KWARGS_MSG = \
+        "({}): The class '{}.{}' method '{}' changed from accepting keyword arguments to not accepting them in " \
+        "the current version"
+    REMOVE_FUNCTION_KWARGS_MSG = \
+        "({}): The function '{}.{}' changed from accepting keyword arguments to not accepting them in " \
+        "the current version"
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
@@ -200,6 +207,10 @@ class BreakingChangesTracker:
                         diff_type,
                         stable_parameters_node,
                     )
+                    self.check_kwargs_removed(
+                        stable_parameters_node[diff_type]["param_type"],
+                        diff_type
+                    )
                 elif self.parameter_name not in stable_parameters_node:
                     self.check_positional_parameter_added(
                         current_parameters_node[param_name]["param_type"]
@@ -217,6 +228,22 @@ class BreakingChangesTracker:
                     self.check_parameter_type_changed(
                         diff["param_type"], stable_parameters_node
                     )
+
+    def check_kwargs_removed(self, param_type, param_name):
+        if param_type == "var_keyword" and param_name == "kwargs":
+            if self.class_name:
+                bc = (
+                    self.REMOVE_CLASS_FUNCTION_KWARGS_MSG,
+                    BreakingChangeType.REMOVED_FUNCTION_KWARGS,
+                    self.module_name, self.class_name, self.function_name
+                )
+            else:
+                bc = (
+                    self.REMOVE_FUNCTION_KWARGS_MSG,
+                    BreakingChangeType.REMOVED_FUNCTION_KWARGS,
+                    self.module_name, self.function_name
+                )
+            self.breaking_changes.append(bc)
 
     def check_module_removed_or_renamed(self, module: Dict) -> Union[bool, None]:
         if isinstance(self.module_name, jsondiff.Symbol):

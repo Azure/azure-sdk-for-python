@@ -1456,10 +1456,6 @@
               "cors": {
                 "default": "none",
                 "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
               }
             },
             "is_async": false
