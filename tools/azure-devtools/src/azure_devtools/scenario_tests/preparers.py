@@ -45,6 +45,11 @@ class AbstractPreparer(object):
         # generated, so in_recording will be True even if live_test is false, so a random name would be given.
         # In cached mode we need to avoid this because then for tests with recordings, they would not have a moniker.
         if (self.live_test or test_class_instance.in_recording) \
+                and not (not test_class_instance.is_live and test_class_instance.in_recording and self._use_cache):
+                raise Exception("This code should not be hit. It could be an issue with a test that is not generating a \
+                    recording. ")
+
+        if (self.live_test or test_class_instance.in_recording) \
                 and not (not self.live_test and test_class_instance.in_recording and self._use_cache):
             resource_name = self.random_name
             if not self.live_test and isinstance(self, RecordingProcessor):
