@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class WebhookOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -89,7 +89,7 @@ class WebhookOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -152,7 +152,7 @@ class WebhookOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -166,7 +166,7 @@ class WebhookOperations:
         automation_account_name: str,
         webhook_name: str,
         **kwargs
-    ) -> "models.Webhook":
+    ) -> "_models.Webhook":
         """Retrieve the webhook identified by webhook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -180,7 +180,7 @@ class WebhookOperations:
         :rtype: ~azure.mgmt.automation.models.Webhook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Webhook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Webhook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -212,7 +212,7 @@ class WebhookOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Webhook', pipeline_response)
@@ -228,9 +228,9 @@ class WebhookOperations:
         resource_group_name: str,
         automation_account_name: str,
         webhook_name: str,
-        parameters: "models.WebhookCreateOrUpdateParameters",
+        parameters: "_models.WebhookCreateOrUpdateParameters",
         **kwargs
-    ) -> "models.Webhook":
+    ) -> "_models.Webhook":
         """Create the webhook identified by webhook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -246,7 +246,7 @@ class WebhookOperations:
         :rtype: ~azure.mgmt.automation.models.Webhook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Webhook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Webhook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -283,7 +283,7 @@ class WebhookOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -303,9 +303,9 @@ class WebhookOperations:
         resource_group_name: str,
         automation_account_name: str,
         webhook_name: str,
-        parameters: "models.WebhookUpdateParameters",
+        parameters: "_models.WebhookUpdateParameters",
         **kwargs
-    ) -> "models.Webhook":
+    ) -> "_models.Webhook":
         """Update the webhook identified by webhook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -321,7 +321,7 @@ class WebhookOperations:
         :rtype: ~azure.mgmt.automation.models.Webhook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Webhook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Webhook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -358,7 +358,7 @@ class WebhookOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Webhook', pipeline_response)
@@ -375,7 +375,7 @@ class WebhookOperations:
         automation_account_name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.WebhookListResult"]:
+    ) -> AsyncIterable["_models.WebhookListResult"]:
         """Retrieve a list of webhooks.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -389,7 +389,7 @@ class WebhookOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.WebhookListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebhookListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebhookListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -438,7 +438,7 @@ class WebhookOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
