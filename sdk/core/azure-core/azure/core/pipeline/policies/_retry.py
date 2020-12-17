@@ -54,12 +54,12 @@ class RetryMode(str, Enum):
     Fixed = 'fixed'
 
 class RetryPolicyBase(object):
+    # pylint: disable=too-many-instance-attributes
     #: Maximum backoff time.
     BACKOFF_MAX = 120
     _SAFE_CODES = set(range(506)) - set([408, 429, 500, 502, 503, 504])
     _RETRY_CODES = set(range(999)) - _SAFE_CODES
 
-    # pylint: disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.total_retries = kwargs.pop('retry_total', 10)
         self.connect_retries = kwargs.pop('retry_connect', 3)
