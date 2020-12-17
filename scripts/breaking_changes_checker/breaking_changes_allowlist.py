@@ -15,6 +15,6 @@ RUN_BREAKING_CHANGES_PACKAGES = [
 
 IGNORE_BREAKING_CHANGES = {
     "azure-ai-formrecognizer": [
-        ("RemoveOrRenameClientMethod", "azure-ai-formrecognizer.aio", "FormTrainingClient", "begin_training")
+        ("RemovedOrRenamedClientMethod", "azure-ai-formrecognizer.aio", "FormTrainingClient", "begin_training")
     ]
 }

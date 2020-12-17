@@ -18,49 +18,49 @@ except ModuleNotFoundError:
 
 
 class BreakingChangeType(str, Enum):
-    REMOVE_OR_RENAME_CLIENT = "RemoveOrRenameClient"
-    REMOVE_OR_RENAME_CLIENT_METHOD = "RemoveOrRenameClientMethod"
-    REMOVE_OR_RENAME_MODEL = "RemoveOrRenameModel"
-    REMOVE_OR_RENAME_MODEL_METHOD = "RemoveOrRenameModelMethod"
-    REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION = "RemoveOrRenameModuleLevelFunction"
-    REMOVE_OR_RENAME_POSITIONAL_PARAM = "RemoveOrRenamePositionalParam"
+    REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"
+    REMOVED_OR_RENAMED_CLIENT_METHOD = "RemovedOrRenamedClientMethod"
+    REMOVED_OR_RENAMED_MODEL = "RemovedOrRenamedModel"
+    REMOVED_OR_RENAMED_MODEL_METHOD = "RemovedOrRenamedModelMethod"
+    REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION = "RemovedOrRenamedModuleLevelFunction"
+    REMOVED_OR_RENAMED_POSITIONAL_PARAM = "RemovedOrRenamedPositionalParam"
     ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
     REMOVED_PARAMETER_DEFAULT_VALUE = "RemovedParameterDefaultValue"
-    REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE = "RemoveOrRenameInstanceAttribute"
-    REMOVE_OR_RENAME_ENUM_VALUE = "RemoveOrRenameEnumValue"
+    REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE = "RemovedOrRenamedInstanceAttribute"
+    REMOVED_OR_RENAMED_ENUM_VALUE = "RemovedOrRenamedEnumValue"
     CHANGED_PARAMETER_DEFAULT_VALUE = "ChangedParameterDefaultValue"
     CHANGED_PARAMETER_ORDERING = "ChangedParameterOrdering"
-    CHANGED_PARAMETER_TYPE = "ChangedParameterType"
-    CHANGED_FUNCTION_TYPE = "ChangedFunctionType"
-    REMOVE_OR_RENAME_MODULE = "RemoveOrRenameModule"
+    CHANGED_PARAMETER_KIND = "ChangedParameterKind"
+    CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
+    REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
 
 
 class BreakingChangesTracker:
-    REMOVE_OR_RENAME_CLIENT_MSG = \
+    REMOVED_OR_RENAMED_CLIENT_MSG = \
         "({}): The client '{}.{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_CLIENT_METHOD_MSG = \
+    REMOVED_OR_RENAMED_CLIENT_METHOD_MSG = \
         "({}): The '{}.{}' client method '{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_MODEL_MSG = \
+    REMOVED_OR_RENAMED_MODEL_MSG = \
         "({}): The model or publicly exposed class '{}.{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_MODEL_METHOD_MSG = \
+    REMOVED_OR_RENAMED_MODEL_METHOD_MSG = \
         "({}): The '{}.{}' method '{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION_MSG = \
+    REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
         "({}): The publicly exposed function '{}.{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_METHOD_MSG = \
+    REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
         "({}): The '{}.{} method '{}' had its '{}' parameter '{}' deleted or renamed in the current version"
-    REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
+    REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
         "({}): The function '{}.{}' had its '{}' parameter '{}' deleted or renamed in the current version"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
         "({}): The '{}.{} method '{}' had a '{}' parameter '{}' inserted in the current version"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
         "({}): The function '{}.{}' had a '{}' parameter '{}' inserted in the current version"
-    REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
+    REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
         "({}): The client '{}.{}' had its instance variable '{}' deleted or renamed in the current version"
-    REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG = \
+    REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG = \
         "({}): The model or publicly exposed class '{}.{}' had its instance variable '{}' deleted or renamed " \
         "in the current version"
-    REMOVE_OR_RENAME_ENUM_VALUE_MSG = \
+    REMOVED_OR_RENAMED_ENUM_VALUE_MSG = \
         "({}): The '{}.{}' enum had its value '{}' deleted or renamed in the current version"
     CHANGED_PARAMETER_DEFAULT_VALUE_MSG = \
         "({}): The class '{}.{}' method '{}' had its parameter '{}' default value changed from '{}' to '{}'"
@@ -77,20 +77,20 @@ class BreakingChangesTracker:
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
         "({}): The publicly exposed function '{}.{}' had its parameters re-ordered from '{}' to '{}' in " \
         "the current version"
-    CHANGED_PARAMETER_TYPE_MSG = \
+    CHANGED_PARAMETER_KIND_MSG = \
         "({}): The class '{}.{}' method '{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
-    CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG = \
+    CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
         "({}): The function '{}.{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
-    CHANGED_CLASS_FUNCTION_TYPE_MSG = \
+    CHANGED_CLASS_FUNCTION_KIND_MSG = \
         "({}): The class '{}.{}' method '{}' changed from '{}' to '{}' in the current version."
-    CHANGED_FUNCTION_TYPE_MSG = \
+    CHANGED_FUNCTION_KIND_MSG = \
         "({}): The function '{}.{}' changed from '{}' to '{}' in the current version."
-    REMOVE_OR_RENAME_MODULE_MSG = \
+    REMOVED_OR_RENAMED_MODULE_MSG = \
         "({}): The '{}' module was deleted or renamed in the current version"
-    REMOVE_CLASS_FUNCTION_KWARGS_MSG = \
+    REMOVED_CLASS_FUNCTION_KWARGS_MSG = \
         "({}): The class '{}.{}' method '{}' changed from accepting keyword arguments to not accepting them in " \
         "the current version"
-    REMOVE_FUNCTION_KWARGS_MSG = \
+    REMOVED_FUNCTION_KWARGS_MSG = \
         "({}): The function '{}.{}' changed from accepting keyword arguments to not accepting them in " \
         "the current version"
 
@@ -229,17 +229,17 @@ class BreakingChangesTracker:
                         diff["param_type"], stable_parameters_node
                     )
 
-    def check_kwargs_removed(self, param_type, param_name):
+    def check_kwargs_removed(self, param_type: str, param_name: str) -> None:
         if param_type == "var_keyword" and param_name == "kwargs":
             if self.class_name:
                 bc = (
-                    self.REMOVE_CLASS_FUNCTION_KWARGS_MSG,
+                    self.REMOVED_CLASS_FUNCTION_KWARGS_MSG,
                     BreakingChangeType.REMOVED_FUNCTION_KWARGS,
                     self.module_name, self.class_name, self.function_name
                 )
             else:
                 bc = (
-                    self.REMOVE_FUNCTION_KWARGS_MSG,
+                    self.REMOVED_FUNCTION_KWARGS_MSG,
                     BreakingChangeType.REMOVED_FUNCTION_KWARGS,
                     self.module_name, self.function_name
                 )
@@ -255,8 +255,8 @@ class BreakingChangesTracker:
 
             for name in deleted_modules:
                 bc = (
-                    self.REMOVE_OR_RENAME_MODULE_MSG,
-                    BreakingChangeType.REMOVE_OR_RENAME_MODULE,
+                    self.REMOVED_OR_RENAMED_MODULE_MSG,
+                    BreakingChangeType.REMOVED_OR_RENAMED_MODULE,
                     name
                 )
                 self.breaking_changes.append(bc)
@@ -283,14 +283,14 @@ class BreakingChangesTracker:
             if self.class_name:
                 self.breaking_changes.append(
                     (
-                        self.CHANGED_CLASS_FUNCTION_TYPE_MSG, BreakingChangeType.CHANGED_FUNCTION_TYPE,
+                        self.CHANGED_CLASS_FUNCTION_KIND_MSG, BreakingChangeType.CHANGED_FUNCTION_KIND,
                         self.module_name, self.class_name, self.function_name, original, change
                     )
                 )
             else:
                 self.breaking_changes.append(
                     (
-                        self.CHANGED_FUNCTION_TYPE_MSG, BreakingChangeType.CHANGED_FUNCTION_TYPE,
+                        self.CHANGED_FUNCTION_KIND_MSG, BreakingChangeType.CHANGED_FUNCTION_KIND,
                         self.module_name, self.function_name, original, change
                     )
                 )
@@ -299,7 +299,7 @@ class BreakingChangesTracker:
         if self.class_name:
             self.breaking_changes.append(
                 (
-                    self.CHANGED_PARAMETER_TYPE_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self.CHANGED_PARAMETER_KIND_MSG, BreakingChangeType.CHANGED_PARAMETER_KIND,
                     self.module_name, self.class_name, self.function_name, self.parameter_name,
                     stable_parameters_node[self.parameter_name]["param_type"], diff
                 )
@@ -307,7 +307,7 @@ class BreakingChangesTracker:
         else:
             self.breaking_changes.append(
                 (
-                    self.CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self.CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_KIND,
                     self.module_name, self.function_name, self.parameter_name,
                     stable_parameters_node[self.parameter_name]["param_type"], diff
                 )
@@ -454,16 +454,16 @@ class BreakingChangesTracker:
                 if self.class_name:
                     self.breaking_changes.append(
                         (
-                            self.REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_METHOD_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
+                            self.REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG,
+                            BreakingChangeType.REMOVED_OR_RENAMED_POSITIONAL_PARAM,
                             self.module_name, self.class_name, self.function_name, param_type, deleted
                         )
                     )
                 else:
                     self.breaking_changes.append(
                         (
-                            self.REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_FUNCTION_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
+                            self.REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG,
+                            BreakingChangeType.REMOVED_OR_RENAMED_POSITIONAL_PARAM,
                             self.module_name, self.function_name, param_type, deleted
                         )
                     )
@@ -480,20 +480,20 @@ class BreakingChangesTracker:
                 for property in deleted_props:
                     if self.class_name.endswith("Client"):
                         bc = (
-                            self.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE,
+                            self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
+                            BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
                             self.module_name, self.class_name, property
                         )
                     elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
                         bc = (
-                            self.REMOVE_OR_RENAME_ENUM_VALUE_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_ENUM_VALUE,
+                            self.REMOVED_OR_RENAMED_ENUM_VALUE_MSG,
+                            BreakingChangeType.REMOVED_OR_RENAMED_ENUM_VALUE,
                             self.module_name, self.class_name, property
                         )
                     else:
                         bc = (
-                            self.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE,
+                            self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
+                            BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
                             self.module_name, self.class_name, property
                         )
                     self.breaking_changes.append(bc)
@@ -509,14 +509,14 @@ class BreakingChangesTracker:
             for name in deleted_classes:
                 if name.endswith("Client"):
                     bc = (
-                        self.REMOVE_OR_RENAME_CLIENT_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_CLIENT,
+                        self.REMOVED_OR_RENAMED_CLIENT_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_CLIENT,
                         self.module_name, name
                     )
                 else:
                     bc = (
-                        self.REMOVE_OR_RENAME_MODEL_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_MODEL,
+                        self.REMOVED_OR_RENAMED_MODEL_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_MODEL,
                         self.module_name, name
                     )
                 self.breaking_changes.append(bc)
@@ -536,14 +536,14 @@ class BreakingChangesTracker:
             for method in methods_deleted:
                 if self.class_name.endswith("Client"):
                     bc = (
-                        self.REMOVE_OR_RENAME_CLIENT_METHOD_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_CLIENT_METHOD,
+                        self.REMOVED_OR_RENAMED_CLIENT_METHOD_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_CLIENT_METHOD,
                         self.module_name, self.class_name, method
                     )
                 else:
                     bc = (
-                        self.REMOVE_OR_RENAME_MODEL_METHOD_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_MODEL_METHOD,
+                        self.REMOVED_OR_RENAMED_MODEL_METHOD_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_MODEL_METHOD,
                         self.module_name, self.class_name, method
                     )
                 self.breaking_changes.append(bc)
@@ -560,8 +560,8 @@ class BreakingChangesTracker:
             for function in deleted_functions:
                 self.breaking_changes.append(
                     (
-                        self.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION,
+                        self.REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION,
                         self.module_name, function
                     )
                 )
