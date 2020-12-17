@@ -31,8 +31,7 @@ from typing import Generic, TypeVar, Optional, Union, Any, TYPE_CHECKING
 from azure.core.pipeline import PipelineRequest
 
 if TYPE_CHECKING:
-    from ..transport import HttpTransport, AsyncHttpTransport
-    from ._base import HTTPPolicy
+    from ..transport import AsyncHttpTransport
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore #pylint: disable=unused-import
@@ -64,7 +63,7 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline
-        self.next = None # type: Optional[Union[HTTPPolicy, HttpTransport, AsyncHTTPPolicy, AsyncHttpTransport]]
+        self.next = None # type: Optional[Union[AsyncHTTPPolicy, AsyncHttpTransport]]
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest):
