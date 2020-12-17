@@ -74,10 +74,6 @@ def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argu
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
-def return_headers_and_deserialized_path_list(deserialized):  # pylint: disable=unused-argument
-    return deserialized
-
-
 def process_storage_error(storage_error):
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
