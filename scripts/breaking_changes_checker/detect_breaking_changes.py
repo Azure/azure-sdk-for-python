@@ -18,10 +18,9 @@ import logging
 import inspect
 import subprocess
 from enum import Enum
-try:
-    from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
-except ModuleNotFoundError:
-    from .breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
+from typing import Dict, Union, Type, Callable
+from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
+from breaking_changes_tracker import BreakingChangesTracker
 try:
     # won't be able to import these in the created venv
     from packaging_tools.venvtools import create_venv_with_package
@@ -35,23 +34,23 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class ClassTreeAnalyzer(ast.NodeVisitor):
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self.name = name
         self.cls_node = None
 
-    def visit_ClassDef(self, node):
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
         if node.name == self.name:
             self.cls_node = node
         self.generic_visit(node)
 
 
-def test_find_modules(pkg_root_path):
+def test_find_modules(pkg_root_path: str) -> Dict:
     """Find modules within the package to import and parse.
     Code borrowed and edited from APIview.
 
     :param str: pkg_root_path
         Package root path
-    :rtype: dict
+    :rtype: Dict
     """
     modules = {}
     for root, subdirs, files in os.walk(pkg_root_path):
@@ -82,7 +81,7 @@ def test_find_modules(pkg_root_path):
     return modules
 
 
-def get_parameter_default(param):
+def get_parameter_default(param: inspect.Parameter) -> None:
     default_value = None
     if param.default is not param.empty:
         default_value = param.default
@@ -96,7 +95,75 @@ def get_parameter_default(param):
     return default_value
 
 
-def create_function_report(f, is_async=False):
+def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
+    func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
+    if func_nodes:
+        assigns = [node for node in func_nodes[0].body if isinstance(node, ast.Assign)]
+        if assigns:
+            for assign in assigns:
+                if hasattr(assign, "targets"):
+                    for attr in assign.targets:
+                        if hasattr(attr, "attr") and not attr.attr.startswith("_"):
+                            attribute_names.update({attr.attr: attr.attr})
+
+
+def check_base_classes(cls_node: ast.ClassDef) -> bool:
+    should_look = False
+    init_node = [
+        node for node in cls_node.body
+        if isinstance(node, ast.FunctionDef) and node.name.startswith("__init__")
+    ]
+    if init_node:
+        if hasattr(init_node, "body"):
+            for node in init_node.body:
+                if isinstance(node, ast.Expr):
+                    if hasattr(node, "value") and isinstance(node.value, ast.Call):
+                        if isinstance(node.value.func, ast.Name):
+                            if node.value.func.id == "super":
+                                should_look = True
+    return should_look
+
+
+def get_properties(cls: Type):
+    """Get the public instance variables of the class and any inherited.
+
+    :param cls:
+    :return:
+    """
+    attribute_names = {}
+
+    path = inspect.getsourcefile(cls)
+    with open(path, "r") as source:
+        module = ast.parse(source.read())
+
+    analyzer = ClassTreeAnalyzer(cls.__name__)
+    analyzer.visit(module)
+    cls_node = analyzer.cls_node
+    extract_base_classes = check_base_classes(cls_node)
+
+    if extract_base_classes:
+        base_classes = inspect.getmro(cls)  # includes cls itself
+        for base_class in base_classes:
+            try:
+                path = inspect.getsourcefile(base_class)
+                if path.find("azure") == -1:
+                    continue
+                with open(path, "r") as source:
+                    module = ast.parse(source.read())
+            except (TypeError, SyntaxError):
+                _LOGGER.info(f"Unable to create ast of {base_class}")
+                continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here with SyntaxError
+
+            analyzer = ClassTreeAnalyzer(base_class.__name__)
+            analyzer.visit(module)
+            cls_node = analyzer.cls_node
+            get_property_names(cls_node, attribute_names)
+    else:
+        get_property_names(cls_node, attribute_names)
+    return attribute_names
+
+
+def create_function_report(f: Callable, is_async: bool=False):
     function = inspect.signature(f)
     func_obj = {
         "parameters": {},
@@ -125,67 +192,7 @@ def create_function_report(f, is_async=False):
     return func_obj
 
 
-def get_property_names(node, attribute_names):
-    func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
-    if func_nodes:
-        assigns = [node for node in func_nodes[0].body if isinstance(node, ast.Assign)]
-        if assigns:
-            for assign in assigns:
-                if hasattr(assign, "targets"):
-                    for attr in assign.targets:
-                        if hasattr(attr, "attr") and not attr.attr.startswith("_"):
-                            attribute_names.update({attr.attr: attr.attr})
-
-
-def get_properties(cls):
-    """Get the public instance variables of the class and any inherited.
-
-    :param cls:
-    :return:
-    """
-    look_at_base_classes = False
-
-    path = inspect.getsourcefile(cls)
-    with open(path, "r") as source:
-        module = ast.parse(source.read())
-
-    analyzer = ClassTreeAnalyzer(cls.__name__)
-    analyzer.visit(module)
-    cls_node = analyzer.cls_node
-    init_node = [node for node in cls_node.body if isinstance(node, ast.FunctionDef) and node.name.startswith("__init__")]
-    if init_node:
-        if hasattr(init_node, "body"):
-            for node in init_node.body:
-                if isinstance(node, ast.Expr):
-                    if hasattr(node, "value") and isinstance(node.value, ast.Call):
-                        if isinstance(node.value.func, ast.Name):
-                            if node.value.func.id == "super":
-                                look_at_base_classes = True
-
-    attribute_names = {}
-    if look_at_base_classes:
-        base_classes = inspect.getmro(cls)  # includes cls itself
-        for base_class in base_classes:
-            try:
-                path = inspect.getsourcefile(base_class)
-                if path.find("azure") == -1:
-                    continue
-                with open(path, "r") as source:
-                    module = ast.parse(source.read())
-            except (TypeError, SyntaxError):
-                _LOGGER.info(f"Unable to create ast of {base_class}")
-                continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here due to SyntaxError
-
-            analyzer = ClassTreeAnalyzer(base_class.__name__)
-            analyzer.visit(module)
-            cls_node = analyzer.cls_node
-            get_property_names(cls_node, attribute_names)
-    else:
-        get_property_names(cls_node, attribute_names)
-    return attribute_names
-
-
-def create_class_report(cls):
+def create_class_report(cls: Type) -> Dict:
     cls_info = {
         "type": None,
         "methods": {},
@@ -200,7 +207,7 @@ def create_class_report(cls):
 
     cls_info["properties"] = get_properties(cls)
 
-    methods = [method for method in dir(cls) if not method.startswith("_")]
+    methods = [method for method in dir(cls) if not method.startswith("_") or method.startswith("__init__")]
     for method in methods:
         async_func = False
         m = getattr(cls, method)
@@ -209,13 +216,10 @@ def create_class_report(cls):
                 async_func = True
             cls_info["methods"][method] = create_function_report(m, async_func)
 
-    cls_init = getattr(cls, "__init__")
-    cls_info["methods"]["__init__"] = create_function_report(cls_init)
-
     return cls_info
 
 
-def resolve_module_name(module_name, target_module):
+def resolve_module_name(module_name: str, target_module: str) -> str:
     if module_name == ".":
         module_name = target_module
     else:
@@ -223,7 +227,7 @@ def resolve_module_name(module_name, target_module):
     return module_name
 
 
-def test_detect_breaking_changes(target_module="azure.ai.formrecognizer"):
+def test_detect_breaking_changes(target_module: str="azure.ai.formrecognizer") -> Dict:
 
     module = importlib.import_module(target_module)
     modules = test_find_modules(module.__path__[0])
@@ -247,491 +251,9 @@ def test_detect_breaking_changes(target_module="azure.ai.formrecognizer"):
     return public_api
 
 
-class BreakingChangeType(str, Enum):
-    REMOVE_OR_RENAME_CLIENT = "RemoveOrRenameClient"
-    REMOVE_OR_RENAME_CLIENT_METHOD = "RemoveOrRenameClientMethod"
-    REMOVE_OR_RENAME_MODEL = "RemoveOrRenameModel"
-    REMOVE_OR_RENAME_MODEL_METHOD = "RemoveOrRenameModelMethod"
-    REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION = "RemoveOrRenameModuleLevelFunction"
-    REMOVE_OR_RENAME_POSITIONAL_PARAM = "RemoveOrRenamePositionalParam"
-    ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
-    REMOVED_PARAMETER_DEFAULT_VALUE = "RemovedParameterDefaultValue"
-    REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE = "RemoveOrRenameInstanceAttribute"
-    REMOVE_OR_RENAME_ENUM_VALUE = "RemoveOrRenameEnumValue"
-    CHANGED_PARAMETER_DEFAULT_VALUE = "ChangedParameterDefaultValue"
-    ADDED_PARAMETER_DEFAULT_VALUE = "AddedParameterDefaultValue"
-    CHANGED_PARAMETER_ORDERING = "ChangedParameterOrdering"
-    CHANGED_PARAMETER_TYPE = "ChangedParameterType"
-    CHANGED_FUNCTION_TYPE = "ChangedFunctionType"
-
-
-class BreakingChangesTracker:
-    REMOVE_OR_RENAME_CLIENT_MSG = \
-        "({}): The client '{}.{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_CLIENT_METHOD_MSG = \
-        "({}): The '{}.{}' client method '{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_MODEL_MSG = \
-        "({}): The model or publicly exposed class '{}.{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_MODEL_METHOD_MSG = \
-        "({}): The '{}.{}' method '{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION_MSG = \
-        "({}): The publicly exposed function '{}.{}' was deleted or renamed in the current version"
-    REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "({}): The '{}.{} method '{}' had its '{}' parameter '{}' deleted or renamed in the current version"
-    REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "({}): The function '{}.{}' had its '{}' parameter '{}' deleted or renamed in the current version"
-    ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
-        "({}): The '{}.{} method '{}' had a '{}' parameter '{}' inserted in the current version"
-    ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
-        "({}): The function '{}.{}' had a '{}' parameter '{}' inserted in the current version"
-    REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
-        "({}): The client '{}.{}' had its instance variable '{}' deleted or renamed in the current version"
-    REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG = \
-        "({}): The model or publicly exposed class '{}.{}' had its instance variable '{}' deleted or renamed " \
-        "in the current version"
-    REMOVE_OR_RENAME_ENUM_VALUE_MSG = \
-        "({}): The '{}.{}' enum had its value '{}' deleted or renamed in the current version"
-    CHANGED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "({}): The class '{}.{}' method '{}' had its parameter '{}' default value changed from '{}' to '{}'"
-    CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "({}): The publicly exposed function '{}.{}' had its parameter '{}' default value changed from '{}' to '{}'"
-    REMOVED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "({}): The class '{}.{}' method '{}' had default value '{}' removed from its parameter '{}' in " \
-        "the current version"
-    REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "({}): The publicly exposed function '{}.{}' had default value '{}' removed from its parameter '{}' in " \
-        "the current version"
-    CHANGED_PARAMETER_ORDERING_MSG = \
-        "({}): The class '{}.{}' method '{}' had its parameters re-ordered from '{}' to '{}' in the current version"
-    CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
-        "({}): The publicly exposed function '{}.{}' had its parameters re-ordered from '{}' to '{}' in " \
-        "the current version"
-    CHANGED_PARAMETER_TYPE_MSG = \
-        "({}): The class '{}.{}' method '{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
-    CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG = \
-        "({}): The function '{}.{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
-    CHANGED_CLASS_FUNCTION_TYPE_MSG = \
-        "({}): The class '{}.{}' method '{}' changed from '{}' to '{}' in the current version."
-    CHANGED_FUNCTION_TYPE_MSG = \
-        "({}): The function '{}.{}' changed from '{}' to '{}' in the current version."
-
-    def __init__(self, stable, current, diff, package_name, **kwargs):
-        self.stable = stable
-        self.current = current
-        self.diff = diff
-        self.breaking_changes = []
-        self.package_name = package_name
-        self.module_name = None
-        self.class_name = None
-        self.function_name = None
-        self.parameter_name = None
-        self.ignore = kwargs.get("ignore", None)
-
-    def __str__(self):
-        formatted = "\n"
-        for bc in self.breaking_changes:
-            formatted += bc
-
-        formatted += "\nSee aka.ms/breaking-changes-tool to resolve any reported breaking changes or false positives.\n"
-        return formatted
-
-    def run_checks(self):
-        self.run_class_level_diff_checks()
-        self.run_function_level_diff_checks()
-        self.check_parameter_ordering()  # not part of diff
-        self.report_breaking_changes()
-
-    def get_reportable_breaking_changes(self, ignore_changes):
-        reportable_changes = []
-        for bc in self.breaking_changes:
-            msg, bc_type, module_name, class_name, *args = bc
-            function_name = args[0] if args else None
-            class_breaking_change = (bc_type, module_name, class_name)
-            function_breaking_change = (bc_type, module_name, class_name, function_name)
-
-            if class_breaking_change in ignore_changes[self.package_name] \
-                    or function_breaking_change in ignore_changes[self.package_name]:
-                continue
-            reportable_changes.append(bc)
-        return reportable_changes
-
-    def report_breaking_changes(self):
-        ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
-        if self.package_name in ignore_changes:
-            self.breaking_changes = self.get_reportable_breaking_changes(ignore_changes)
-
-        for idx, bc in enumerate(self.breaking_changes):
-            msg, *args = bc
-            self.breaking_changes[idx] = msg.format(*args)
-
-    def run_class_level_diff_checks(self):
-        for module_name, module in self.diff.items():
-            self.module_name = module_name
-            for class_name, class_components in module.get("class_nodes", {}).items():
-                self.class_name = class_name
-                stable_class_nodes = self.stable[self.module_name]["class_nodes"]
-                if self.class_name not in stable_class_nodes and not isinstance(class_name, jsondiff.Symbol):
-                    continue  # this is a new model/additive change in current version so skip checks
-
-                class_deleted = self.check_class_removed_or_renamed(class_components)
-                if class_deleted:
-                    continue  # class was deleted, abort other checks
-                self.check_class_instance_attribute_removed_or_renamed(class_components)
-
-                for method_name, method_components in class_components.get("methods", {}).items():
-                    self.function_name = method_name
-                    stable_methods_node = stable_class_nodes[self.class_name]["methods"]
-                    current_methods_node = self.current[self.module_name]["class_nodes"][self.class_name]["methods"]
-                    if self.function_name not in stable_methods_node and \
-                            not isinstance(self.function_name, jsondiff.Symbol):
-                        continue  # this is a new method/additive change in current version so skip checks
-
-                    method_deleted = self.check_class_method_removed_or_renamed(method_components, stable_methods_node)
-                    if method_deleted:
-                        continue  # method was deleted, abort other checks
-
-                    self.check_function_type_changed(method_components)
-
-                    stable_parameters_node = stable_methods_node[self.function_name]["parameters"]
-                    current_parameters_node = current_methods_node[self.function_name]["parameters"]
-                    self.run_parameter_level_diff_checks(
-                        method_components,
-                        stable_parameters_node,
-                        current_parameters_node,
-                    )
-
-    def run_function_level_diff_checks(self):
-        self.class_name = None
-        for module_name, module in self.diff.items():
-            self.module_name = module_name
-            for function_name, function_components in module.get("function_nodes", {}).items():
-                self.function_name = function_name
-                stable_function_nodes = self.stable[self.module_name]["function_nodes"]
-                if self.function_name not in stable_function_nodes and \
-                        not isinstance(self.function_name, jsondiff.Symbol):
-                    continue  # this is a new function/additive change in current version so skip checks
-
-                function_deleted = self.check_module_level_function_removed_or_renamed(function_components)
-                if function_deleted:
-                    continue  # function was deleted, abort other checks
-
-                self.check_function_type_changed(function_components)
-
-                stable_parameters_node = stable_function_nodes[self.function_name]["parameters"]
-                current_parameters_node = self.current[self.module_name]["function_nodes"][self.function_name]["parameters"]
-                self.run_parameter_level_diff_checks(
-                    function_components,
-                    stable_parameters_node,
-                    current_parameters_node
-                )
-
-    def run_parameter_level_diff_checks(self, function_components, stable_parameters_node, current_parameters_node):
-        for param_name, diff in function_components.get("parameters", {}).items():
-            self.parameter_name = param_name
-            for diff_type in diff:
-                if isinstance(self.parameter_name, jsondiff.Symbol):
-                    self.check_positional_parameter_removed_or_renamed(
-                        stable_parameters_node[diff_type]["param_type"],
-                        diff_type,
-                        stable_parameters_node,
-                    )
-                elif self.parameter_name not in stable_parameters_node:
-                    self.check_positional_parameter_added(
-                        current_parameters_node[param_name]["param_type"]
-                    )
-                    break
-                elif diff_type == "default":
-                    stable_default = stable_parameters_node[self.parameter_name]["default"]
-                    self.check_parameter_default_value_changed_or_added(
-                        diff[diff_type], stable_default
-                    )
-                    self.check_parameter_default_value_removed(
-                        diff[diff_type], stable_default
-                    )
-                elif diff_type == "param_type":
-                    self.check_parameter_type_changed(
-                        diff["param_type"], stable_parameters_node
-                    )
-
-    def check_function_type_changed(self, function_components):
-        value = function_components.get("is_async", None)
-        if value is not None:
-            if value is True:
-                change = "asynchronous"
-                original = "synchronous"
-            else:
-                change = "synchronous"
-                original = "asynchronous"
-            if self.class_name:
-                self.breaking_changes.append(
-                    (
-                        self.CHANGED_CLASS_FUNCTION_TYPE_MSG, BreakingChangeType.CHANGED_FUNCTION_TYPE,
-                        self.module_name, self.class_name, self.function_name, original, change
-                    )
-                )
-            else:
-                self.breaking_changes.append(
-                    (
-                        self.CHANGED_FUNCTION_TYPE_MSG, BreakingChangeType.CHANGED_FUNCTION_TYPE,
-                        self.module_name, self.function_name, original, change
-                    )
-                )
-
-    def check_parameter_type_changed(self, diff, stable_parameters_node):
-        if self.class_name:
-            self.breaking_changes.append(
-                (
-                    self.CHANGED_PARAMETER_TYPE_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
-                    self.module_name, self.class_name, self.function_name, self.parameter_name,
-                    stable_parameters_node[self.parameter_name]["param_type"], diff
-                )
-            )
-        else:
-            self.breaking_changes.append(
-                (
-                    self.CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
-                    self.module_name, self.function_name, self.parameter_name,
-                    stable_parameters_node[self.parameter_name]["param_type"], diff
-                )
-            )
-
-    def check_parameter_ordering(self):
-        modules = self.stable.keys() & self.current.keys()
-
-        for module in modules:
-            stable_cls = self.stable[module]["class_nodes"]
-            current_cls = self.current[module]["class_nodes"]
-            class_keys = stable_cls.keys() & current_cls.keys()
-            for cls in class_keys:
-                stable_method_nodes = stable_cls[cls]["methods"]
-                current_method_nodes = current_cls[cls]["methods"]
-                method_keys = stable_method_nodes.keys() & current_method_nodes.keys()
-                for method in method_keys:
-                    stable_params = stable_method_nodes[method]["parameters"].keys()
-                    current_params = current_method_nodes[method]["parameters"].keys()
-                    if len(stable_params) != len(current_params):
-                        # a parameter was deleted and that breaking change was already reported so skip
-                        continue
-                    for key1, key2 in zip(stable_params, current_params):
-                        if key1 != key2:
-                            self.breaking_changes.append(
-                                (
-                                    self.CHANGED_PARAMETER_ORDERING_MSG, BreakingChangeType.CHANGED_PARAMETER_ORDERING,
-                                    module, cls, method, list(stable_params), list(current_params)
-                                )
-                            )
-                            break
-
-            stable_funcs = self.stable[module]["function_nodes"]
-            current_funcs = self.current[module]["function_nodes"]
-            func_nodes = stable_funcs.keys() & current_funcs.keys()
-            for func in func_nodes:
-                stable_params = stable_funcs[func]["parameters"].keys()
-                current_params = current_funcs[func]["parameters"].keys()
-                if len(stable_params) != len(current_params):
-                    # a parameter was deleted and that breaking change was already reported so skip
-                    continue
-                for key1, key2 in zip(stable_params, current_params):
-                    if key1 != key2:
-                        self.breaking_changes.append(
-                            (
-                                self.CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG,
-                                BreakingChangeType.CHANGED_PARAMETER_ORDERING,
-                                module, func, list(stable_params), list(current_params)
-                            )
-                        )
-                        break
-
-    def check_parameter_default_value_removed(self, default, stable_default):
-        if stable_default is not None and default is None:
-            if self.class_name:
-                self.breaking_changes.append(
-                    (
-                        self.REMOVED_PARAMETER_DEFAULT_VALUE_MSG,
-                        BreakingChangeType.REMOVED_PARAMETER_DEFAULT_VALUE,
-                        self.module_name, self.class_name, self.function_name,
-                        default, self.parameter_name
-                    )
-                )
-            else:
-
-                self.breaking_changes.append(
-                    (
-                        self.REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG,
-                        BreakingChangeType.REMOVED_PARAMETER_DEFAULT_VALUE,
-                        self.module_name, self.function_name, default, self.parameter_name
-                    )
-                )
-
-    def check_parameter_default_value_changed_or_added(self, default, stable_default):
-        if default is not None:  # a default was added in the current version
-            if default != stable_default:
-                if stable_default is not None:  # There is a stable default
-                    if stable_default == "none":  # the case in which the stable default was None
-                        stable_default = None  # set back to actual None for the message
-                    if self.class_name:
-                        self.breaking_changes.append(
-                            (
-                                self.CHANGED_PARAMETER_DEFAULT_VALUE_MSG,
-                                BreakingChangeType.CHANGED_PARAMETER_DEFAULT_VALUE,
-                                self.module_name, self.class_name, self.function_name,
-                                self.parameter_name, stable_default, default
-                            )
-                        )
-                    else:
-                        self.breaking_changes.append(
-                            (
-                                self.CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG,
-                                BreakingChangeType.CHANGED_PARAMETER_DEFAULT_VALUE,
-                                self.module_name, self.function_name,
-                                self.parameter_name, stable_default, default
-                            )
-                        )
-
-    def check_positional_parameter_added(self, param_type):
-        if param_type == "positional_or_keyword":
-            if self.class_name:
-                self.breaking_changes.append(
-                    (
-                        self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
-                        self.module_name, self.class_name, self.function_name, param_type, self.parameter_name
-                    )
-                )
-            else:
-                self.breaking_changes.append(
-                    (
-                        self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
-                        self.module_name, self.function_name, param_type, self.parameter_name
-                    )
-                )
-
-    def check_positional_parameter_removed_or_renamed(self, param_type, deleted, stable_parameters_node):
-        if param_type != "positional_or_keyword":
-            return
-        deleted_params = []
-        if self.parameter_name.label == "delete":
-            deleted_params = [deleted]
-        elif self.parameter_name.label == "replace":  # replace means all positional parameters were removed
-            deleted_params = stable_parameters_node[param_type]
-
-        for deleted in deleted_params:
-            if deleted != "self":
-                if self.class_name:
-                    self.breaking_changes.append(
-                        (
-                            self.REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_METHOD_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
-                            self.module_name, self.class_name, self.function_name, param_type, deleted
-                        )
-                    )
-                else:
-                    self.breaking_changes.append(
-                        (
-                            self.REMOVE_OR_RENAME_POSITIONAL_PARAM_OF_FUNCTION_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_POSITIONAL_PARAM,
-                            self.module_name, self.function_name, param_type, deleted
-                        )
-                    )
-
-    def check_class_instance_attribute_removed_or_renamed(self, components):
-        for prop in components.get("properties", []):
-            if isinstance(prop, jsondiff.Symbol):
-                deleted_props = []
-                if prop.label == "delete":
-                    deleted_props = components["properties"][prop]
-                elif prop.label == "replace":
-                    deleted_props = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"]
-
-                for property in deleted_props:
-                    if self.class_name.endswith("Client"):
-                        bc = (
-                            self.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE,
-                            self.module_name, self.class_name, property
-                        )
-                    elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
-                        bc = (
-                            self.REMOVE_OR_RENAME_ENUM_VALUE_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_ENUM_VALUE,
-                            self.module_name, self.class_name, property
-                        )
-                    else:
-                        bc = (
-                            self.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
-                            BreakingChangeType.REMOVE_OR_RENAME_INSTANCE_ATTRIBUTE,
-                            self.module_name, self.class_name, property
-                        )
-                    self.breaking_changes.append(bc)
-
-    def check_class_removed_or_renamed(self, class_components):
-        if isinstance(self.class_name, jsondiff.Symbol):
-            deleted_classes = []
-            if self.class_name.label == "delete":
-                deleted_classes = class_components
-            elif self.class_name.label == "replace":
-                deleted_classes = self.stable[self.module_name]["class_nodes"]
-
-            for name in deleted_classes:
-                if name.endswith("Client"):
-                    bc = (
-                        self.REMOVE_OR_RENAME_CLIENT_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_CLIENT,
-                        self.module_name, name
-                    )
-                else:
-                    bc = (
-                        self.REMOVE_OR_RENAME_MODEL_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_MODEL,
-                        self.module_name, name
-                    )
-                self.breaking_changes.append(bc)
-            return True
-
-    def check_class_method_removed_or_renamed(self, method_components, stable_methods_node):
-        if isinstance(self.function_name, jsondiff.Symbol):
-            methods_deleted = []
-            if self.function_name.label == "delete":
-                methods_deleted = method_components
-            elif self.function_name.label == "replace":
-                methods_deleted = stable_methods_node
-
-            for method in methods_deleted:
-                if self.class_name.endswith("Client"):
-                    bc = (
-                        self.REMOVE_OR_RENAME_CLIENT_METHOD_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_CLIENT_METHOD,
-                        self.module_name, self.class_name, method
-                    )
-                else:
-                    bc = (
-                        self.REMOVE_OR_RENAME_MODEL_METHOD_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_MODEL_METHOD,
-                        self.module_name, self.class_name, method
-                    )
-                self.breaking_changes.append(bc)
-            return True
-
-    def check_module_level_function_removed_or_renamed(self, function_components):
-        if isinstance(self.function_name, jsondiff.Symbol):
-            deleted_functions = []
-            if self.function_name.label == "delete":
-                deleted_functions = function_components
-            elif self.function_name.label == "replace":
-                deleted_functions = self.stable[self.module_name]["function_nodes"]
-
-            for function in deleted_functions:
-                self.breaking_changes.append(
-                    (
-                        self.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION_MSG,
-                        BreakingChangeType.REMOVE_OR_RENAME_MODULE_LEVEL_FUNCTION,
-                        self.module_name, function
-                    )
-                )
-            return True
-
 # "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\formrecognizer\\azure-ai-formrecognizer"
 # "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-blob"
-def test_compare(pkg_dir="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-queue", version=None):
+def test_compare(pkg_dir: str="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-queue", version: str="") -> None:
     package_name = os.path.basename(pkg_dir)
 
     with open(os.path.join(pkg_dir, "stable.json"), "r") as fd:
@@ -743,7 +265,7 @@ def test_compare(pkg_dir="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storag
     bc = BreakingChangesTracker(stable, current, diff, package_name)
     bc.run_checks()
 
-    remove_json_files(pkg_dir)
+    # remove_json_files(pkg_dir)
 
     if bc.breaking_changes:
         print(bc)
@@ -752,7 +274,7 @@ def test_compare(pkg_dir="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storag
     print(f"\nNo breaking changes found for {package_name} between stable version {version} and current version.")
 
 
-def remove_json_files(pkg_dir):
+def remove_json_files(pkg_dir: str) -> None:
     stable_json = os.path.join(pkg_dir, "stable.json")
     current_json = os.path.join(pkg_dir, "current.json")
     if os.path.isfile(stable_json):
@@ -761,7 +283,7 @@ def remove_json_files(pkg_dir):
         os.remove(current_json)
 
 
-def main(package_name, target_module, version, in_venv, pkg_dir):
+def main(package_name: str, target_module: str, version: str, in_venv: Union[bool, str], pkg_dir: str):
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
     if not in_venv:
@@ -784,7 +306,7 @@ def main(package_name, target_module, version, in_venv, pkg_dir):
                 subprocess.check_call(args)
             except subprocess.CalledProcessError:
                 _LOGGER.warning(f"Version {version} failed to create a JSON report.")
-
+                exit(1)
     try:
         public_api = test_detect_breaking_changes(target_module)
 
@@ -798,10 +320,10 @@ def main(package_name, target_module, version, in_venv, pkg_dir):
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        # test_compare(pkg_dir, version)
+        test_compare(pkg_dir, version)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
-        print("\n*****See aka.ms/breaking-changes-tool to resolve any build issues*****\n")
+        print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
         remove_json_files(pkg_dir)
         raise err
 
@@ -850,7 +372,8 @@ if __name__ == "__main__":
     package_name = os.path.basename(pkg_dir)
     logging.basicConfig(level=logging.INFO)
     if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
-        _LOGGER.info(f"{package_name} opted out of breaking changes checks. See aka.ms/breaking-changes-tool to opt-in.")
+        _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
+                     f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
         exit(0)
 
     target_module = package_name.replace("-", ".")

@@ -8,8 +8,7 @@
 import os
 import json
 import jsondiff
-from .. import BreakingChangesTracker
-from .. import RUN_BREAKING_CHANGES_PACKAGES
+from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
 
 
 EXPECTED = [
@@ -37,7 +36,7 @@ EXPECTED = [
 ]
 
 
-def test_all_checkers():
+def test_multiple_checkers():
     with open(os.path.join(os.path.dirname(__file__), "test_stable.json"), "r") as fd:
         stable = json.load(fd)
     with open(os.path.join(os.path.dirname(__file__), "test_current.json"), "r") as fd:
@@ -72,3 +71,273 @@ def test_ignore_checks():
     assert len(bc.breaking_changes)+2 == len(EXPECTED)
     for message in bc.breaking_changes:
         assert message in EXPECTED[:-2]
+
+
+def test_replace_all_params():
+    current = {
+        "azure.ai.formrecognizer": {
+            "function_nodes": {
+                "my_function_name": {
+                    "parameters": {},
+                    "is_async": False
+                }
+            },
+            "class_nodes": {
+                "class_name": {
+                    "methods": {
+                        "one": {
+                            "parameters": {},
+                            "is_async": True
+                        },
+                        "two": {
+                            "parameters": {},
+                            "is_async": True
+                        },
+                    }
+                }
+            }
+        }
+    }
+
+    stable = {
+        "azure.ai.formrecognizer": {
+            "function_nodes": {
+                "my_function_name": {
+                    "is_async": False,
+                    "parameters": {
+                        "testing": {
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        },
+                        "testing2": {
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    }
+                }
+            },
+            "class_nodes": {
+                "class_name": {
+                    "methods": {
+                        "one": {
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True
+                        },
+                        "two": {
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True
+                        },
+                    }
+                }
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(RemoveOrRenamePositionalParam): The 'azure.ai.formrecognizer.class_name method 'one' had its 'positional_or_keyword' parameter 'testing' deleted or renamed in the current version",
+        "(RemoveOrRenamePositionalParam): The 'azure.ai.formrecognizer.class_name method 'two' had its 'positional_or_keyword' parameter 'testing2' deleted or renamed in the current version",
+        "(RemoveOrRenamePositionalParam): The function 'azure.ai.formrecognizer.my_function_name' had its 'positional_or_keyword' parameter 'testing' deleted or renamed in the current version",
+        "(RemoveOrRenamePositionalParam): The function 'azure.ai.formrecognizer.my_function_name' had its 'positional_or_keyword' parameter 'testing2' deleted or renamed in the current version"
+    ]
+
+    diff = jsondiff.diff(stable, current)
+    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc.run_checks()
+
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    for message in bc.breaking_changes:
+        assert message in EXPECTED
+
+
+def test_replace_all_functions():
+    current = {
+        "azure.ai.formrecognizer": {
+            "function_nodes": {},
+            "class_nodes": {
+                "class_name": {
+                    "methods": {}
+                }
+            }
+
+        }
+    }
+
+    stable = {
+        "azure.ai.formrecognizer": {
+            "function_nodes": {
+                "my_function_name": {
+                    "is_async": False,
+                    "parameters": {
+                        "testing": {
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        },
+                        "testing2": {
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    }
+                },
+                "my_function_name2": {
+                    "is_async": False,
+                    "parameters": {
+                        "testing": {
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        },
+                        "testing2": {
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    }
+                },
+            },
+            "class_nodes": {
+                "class_name": {
+                    "methods": {
+                        "one": {
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True
+                        },
+                        "two": {
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True
+                        },
+                    }
+                }
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(RemoveOrRenameModelMethod): The 'azure.ai.formrecognizer.class_name' method 'one' was deleted or renamed in the current version",
+        "(RemoveOrRenameModelMethod): The 'azure.ai.formrecognizer.class_name' method 'two' was deleted or renamed in the current version",
+        "(RemoveOrRenameModuleLevelFunction): The publicly exposed function 'azure.ai.formrecognizer.my_function_name' was deleted or renamed in the current version",
+        "(RemoveOrRenameModuleLevelFunction): The publicly exposed function 'azure.ai.formrecognizer.my_function_name2' was deleted or renamed in the current version"
+    ]
+
+    diff = jsondiff.diff(stable, current)
+    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc.run_checks()
+
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    for message in bc.breaking_changes:
+        assert message in EXPECTED
+
+
+def test_replace_all_classes():
+    current = {
+        "azure.ai.formrecognizer": {
+            "class_nodes": {}
+        }
+    }
+
+    stable = {
+        "azure.ai.formrecognizer": {
+            "class_nodes": {
+                "class_name": {
+                    "methods": {
+                        "one": {
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True
+                        },
+                        "two": {
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True
+                        },
+                    }
+                },
+                "class_name2": {
+                    "methods": {
+                        "one": {
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True
+                        },
+                        "two": {
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True
+                        },
+                    }
+                },
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(RemoveOrRenameModel): The model or publicly exposed class 'azure.ai.formrecognizer.class_name' was deleted or renamed in the current version",
+        "(RemoveOrRenameModel): The model or publicly exposed class 'azure.ai.formrecognizer.class_name2' was deleted or renamed in the current version"
+    ]
+
+    diff = jsondiff.diff(stable, current)
+    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc.run_checks()
+
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    for message in bc.breaking_changes:
+        assert message in EXPECTED
+
+
+def test_replace_all_modules():
+    current = {}
+
+    stable = {
+        "azure.ai.formrecognizer": {
+            "class_nodes": {}
+        },
+        "azure.ai.formrecognizer.aio": {
+            "class_nodes": {}
+        },
+    }
+
+    EXPECTED = [
+        "(RemoveOrRenameModule): The 'azure.ai.formrecognizer' module was deleted or renamed in the current version",
+        "(RemoveOrRenameModule): The 'azure.ai.formrecognizer.aio' module was deleted or renamed in the current version"
+    ]
+
+    diff = jsondiff.diff(stable, current)
+    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc.run_checks()
+
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    for message in bc.breaking_changes:
+        assert message in EXPECTED
