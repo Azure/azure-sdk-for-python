@@ -61,7 +61,7 @@ async def _make_call(request, paging_method):
         request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
     )
 
-async def _get_page(continuation_token, paging_method):
+async def _get_next(continuation_token, paging_method):
     if not continuation_token:
         initial_state = paging_method._initial_state  # pylint: disable=protected-access
         if isinstance(initial_state, PipelineResponse):
@@ -133,8 +133,8 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
             self._paging_method.initialize(**kwargs)
 
         self._extract_data = extract_data or functools.partial(_extract_data, paging_method=self._paging_method)
-        self._get_page = get_next or functools.partial(
-            _get_page, paging_method=self._paging_method
+        self._get_next = get_next or functools.partial(
+            _get_next, paging_method=self._paging_method
         )
 
         self.continuation_token = continuation_token
@@ -147,7 +147,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         if self._did_a_call_already and not self.continuation_token:
             raise StopAsyncIteration("End of paging")
         try:
-            self._response = await self._get_page(self.continuation_token)
+            self._response = await self._get_next(self.continuation_token)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token
