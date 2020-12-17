@@ -112,6 +112,28 @@ class TooManyRedirectsError(HttpResponseError):
 
 *kwargs* are keyword arguments to include with the exception.
 
+### Transport
+
+Some common properties can be configured on transports. They must be passed
+as kwargs arguments while building the transport instance.
+
+#### Transport configurations
+
+| Parameters | Description |
+| --- | --- |
+| connection_timeout | A single float in seconds for the connection timeout. Defaults to 300 seconds. |
+| read_timeout | A single float in seconds for the read timeout. Defaults to 300 seconds. |
+| connection_verify | SSL certificate verification. Enabled by default. Set to False to disable, alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs. |
+| connection_cert | Client-side certificates. You can specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths. |
+| proxies | Dictionary mapping protocol or protocol and hostname to the URL of the proxy. |
+| cookies | Dict or CookieJar object to send with the `Request`. |
+| stream | whether to immediately download the response content. Defaults to ``False``. |
+| connection_data_block_size | The block size of data sent over the connection. Defaults to 4096 bytes. |
+
+#### Async transport
+
+The async transport is designed to be opt-in. [AioHttp](https://pypi.org/project/aiohttp/) is one of the supported implementations of async transport. It is not installed by default. You need to install it separately.
+
 ### Shared modules
 
 #### MatchConditions
