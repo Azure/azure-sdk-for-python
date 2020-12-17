@@ -73,7 +73,8 @@ async def sample_add_feedback_async():
 
 async def sample_get_feedback_async():
     # [START get_feedback_async]
-    from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+    from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
+    from azure.ai.metricsadvisor.aio import MetricsAdvisorClient
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
@@ -90,7 +91,8 @@ async def sample_get_feedback_async():
 
 async def sample_list_feedback_async():
     # [START list_feedback_async]
-    from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+    from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
+    from azure.ai.metricsadvisor.aio import MetricsAdvisorClient
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
