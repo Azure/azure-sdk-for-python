@@ -448,14 +448,6 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -465,10 +457,6 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -483,10 +471,6 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -497,7 +481,6 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(ActiveConnectionsNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'ActiveConnectionsNotInAllowedRange'  # type: str
         self.rule_type = 'ActiveConnectionsNotInAllowedRange'  # type: str
 
 
@@ -1329,14 +1312,6 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -1346,10 +1321,6 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -1364,10 +1335,6 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -1378,7 +1345,6 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(AmqpC2DMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'AmqpC2DMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'AmqpC2DMessagesNotInAllowedRange'  # type: str
 
 
@@ -1397,14 +1363,6 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -1414,10 +1372,6 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -1432,10 +1386,6 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -1446,7 +1396,6 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(AmqpC2DRejectedMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'AmqpC2DRejectedMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'AmqpC2DRejectedMessagesNotInAllowedRange'  # type: str
 
 
@@ -1465,14 +1414,6 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -1482,10 +1423,6 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -1500,10 +1437,6 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -1514,7 +1447,6 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(AmqpD2CMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'AmqpD2CMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'AmqpD2CMessagesNotInAllowedRange'  # type: str
 
 
@@ -2208,7 +2140,7 @@ class AutomationSource(msrest.serialization.Model):
     """The source event types which evaluate the security automation set of rules. For example - security alerts and security assessments. To learn more about the supported security events data models schemas - please visit https://aka.ms/ASCAutomationSchemas.
 
     :param event_source: A valid event source type. Possible values include: "Assessments",
-     "SubAssessments", "Alerts".
+     "SubAssessments", "Alerts", "SecureScores", "SecureScoreControls".
     :type event_source: str or ~azure.mgmt.security.models.EventSource
     :param rule_sets: A set of rules which evaluate upon event interception. A logical disjunction
      is applied between defined rule sets (logical 'or').
@@ -2355,7 +2287,7 @@ class AutoProvisioningSettingList(msrest.serialization.Model):
 
 
 class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):
-    """AWS cloud account connector based assume role, the role enables delegating access to your AWS resources. The role is composed of role arn and external id, for more details, refer to :code:`<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html">Creating a Role to Delegate Permissions to an IAM User (write only)</a>`.
+    """AWS cloud account connector based assume role, the role enables delegating access to your AWS resources. The role is composed of role Amazon Resource Name (ARN) and external ID. For more details, refer to :code:`<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html">Creating a Role to Delegate Permissions to an IAM User (write only)</a>`.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2411,7 +2343,7 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
 
 
 class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
-    """AWS cloud account connector based credentials, the credentials is composed of access key id and secret key, for more details, refer to :code:`<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">Creating an IAM User in Your AWS Account (write only)</a>`.
+    """AWS cloud account connector based credentials, the credentials is composed of access key ID and secret key, for more details, refer to :code:`<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">Creating an IAM User in Your AWS Account (write only)</a>`.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2623,6 +2555,84 @@ class AzureResourceLink(msrest.serialization.Model):
     ):
         super(AzureResourceLink, self).__init__(**kwargs)
         self.id = None
+
+
+class Baseline(msrest.serialization.Model):
+    """Baseline details.
+
+    :param expected_results: Expected results.
+    :type expected_results: list[list[str]]
+    :param updated_time: Baseline update time (UTC).
+    :type updated_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'expected_results': {'key': 'expectedResults', 'type': '[[str]]'},
+        'updated_time': {'key': 'updatedTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Baseline, self).__init__(**kwargs)
+        self.expected_results = kwargs.get('expected_results', None)
+        self.updated_time = kwargs.get('updated_time', None)
+
+
+class BaselineAdjustedResult(msrest.serialization.Model):
+    """The rule result adjusted with baseline.
+
+    :param baseline: Baseline details.
+    :type baseline: ~azure.mgmt.security.models.Baseline
+    :param status: The rule result status. Possible values include: "NonFinding", "Finding",
+     "InternalError".
+    :type status: str or ~azure.mgmt.security.models.RuleStatus
+    :param results_not_in_baseline: Results the are not in baseline.
+    :type results_not_in_baseline: list[list[str]]
+    :param results_only_in_baseline: Results the are in baseline.
+    :type results_only_in_baseline: list[list[str]]
+    """
+
+    _attribute_map = {
+        'baseline': {'key': 'baseline', 'type': 'Baseline'},
+        'status': {'key': 'status', 'type': 'str'},
+        'results_not_in_baseline': {'key': 'resultsNotInBaseline', 'type': '[[str]]'},
+        'results_only_in_baseline': {'key': 'resultsOnlyInBaseline', 'type': '[[str]]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BaselineAdjustedResult, self).__init__(**kwargs)
+        self.baseline = kwargs.get('baseline', None)
+        self.status = kwargs.get('status', None)
+        self.results_not_in_baseline = kwargs.get('results_not_in_baseline', None)
+        self.results_only_in_baseline = kwargs.get('results_only_in_baseline', None)
+
+
+class BenchmarkReference(msrest.serialization.Model):
+    """The benchmark references.
+
+    :param benchmark: The benchmark name.
+    :type benchmark: str
+    :param reference: The benchmark reference.
+    :type reference: str
+    """
+
+    _attribute_map = {
+        'benchmark': {'key': 'benchmark', 'type': 'str'},
+        'reference': {'key': 'reference', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BenchmarkReference, self).__init__(**kwargs)
+        self.benchmark = kwargs.get('benchmark', None)
+        self.reference = kwargs.get('reference', None)
 
 
 class CefExternalSecuritySolution(ExternalSecuritySolution):
@@ -2993,14 +3003,6 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
@@ -3014,19 +3016,11 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
         'description': {'readonly': True},
         'is_enabled': {'required': True},
         'rule_type': {'required': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'value_type': {'readonly': True},
         'allowlist_values': {'required': True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
@@ -3041,7 +3035,6 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
     ):
         super(ConnectionToIpNotAllowed, self).__init__(**kwargs)
         self.rule_type = 'ConnectionToIpNotAllowed'  # type: str
-        self.rule_type = 'ConnectionToIpNotAllowed'  # type: str
 
 
 class ConnectorSetting(Resource):
@@ -3055,8 +3048,8 @@ class ConnectorSetting(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param hybrid_compute_settings: Settings for hybrid compute management, these settings are
-     relevant only Arc autoProvision (Hybrid Compute).
+    :param hybrid_compute_settings: Settings for hybrid compute management. These settings are
+     relevant only for Arc autoProvision (Hybrid Compute).
     :type hybrid_compute_settings: ~azure.mgmt.security.models.HybridComputeSettingsProperties
     :param authentication_details: Settings for authentication management, these settings are
      relevant only for the cloud connector.
@@ -3240,11 +3233,11 @@ class CVSS(msrest.serialization.Model):
         self.base = None
 
 
-class SettingResource(Resource):
+class Setting(Resource):
     """The kind of the security setting.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DataExportSettings, Setting.
+    sub-classes are: DataExportSettings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3276,18 +3269,18 @@ class SettingResource(Resource):
     }
 
     _subtype_map = {
-        'kind': {'DataExportSettings': 'DataExportSettings', 'Setting': 'Setting'}
+        'kind': {'DataExportSettings': 'DataExportSettings'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(SettingResource, self).__init__(**kwargs)
-        self.kind = 'SettingResource'  # type: str
+        super(Setting, self).__init__(**kwargs)
+        self.kind = 'Setting'  # type: str
 
 
-class DataExportSettings(SettingResource):
+class DataExportSettings(Setting):
     """Represents a data export setting.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3440,12 +3433,10 @@ class Device(Resource):
     :vartype last_scan_time: ~datetime.datetime
     :ivar risk_score: risk score of the device.
     :vartype risk_score: int
-    :ivar sensor_name: When the device is unmanaged, the sensor that scanned this device.
-    :vartype sensor_name: str
-    :ivar site_name: The sensor site name.
-    :vartype site_name: str
-    :ivar zone_name: The sensor zone name.
-    :vartype zone_name: str
+    :ivar sensors: List of sensors that scanned this device.
+    :vartype sensors: list[~azure.mgmt.security.models.Sensor]
+    :ivar site: Site data.
+    :vartype site: ~azure.mgmt.security.models.Site
     :ivar device_status: Device status. Possible values include: "Active", "Removed".
     :vartype device_status: str or ~azure.mgmt.security.models.DeviceStatus
     """
@@ -3468,9 +3459,8 @@ class Device(Resource):
         'scanning_functionality': {'readonly': True},
         'last_scan_time': {'readonly': True},
         'risk_score': {'readonly': True, 'maximum': 100, 'minimum': 0},
-        'sensor_name': {'readonly': True},
-        'site_name': {'readonly': True},
-        'zone_name': {'readonly': True},
+        'sensors': {'readonly': True},
+        'site': {'readonly': True},
         'device_status': {'readonly': True},
     }
 
@@ -3499,9 +3489,8 @@ class Device(Resource):
         'scanning_functionality': {'key': 'properties.scanningFunctionality', 'type': 'str'},
         'last_scan_time': {'key': 'properties.lastScanTime', 'type': 'iso-8601'},
         'risk_score': {'key': 'properties.riskScore', 'type': 'int'},
-        'sensor_name': {'key': 'properties.sensorName', 'type': 'str'},
-        'site_name': {'key': 'properties.siteName', 'type': 'str'},
-        'zone_name': {'key': 'properties.zoneName', 'type': 'str'},
+        'sensors': {'key': 'properties.sensors', 'type': '[Sensor]'},
+        'site': {'key': 'properties.site', 'type': 'Site'},
         'device_status': {'key': 'properties.deviceStatus', 'type': 'str'},
     }
 
@@ -3531,9 +3520,8 @@ class Device(Resource):
         self.scanning_functionality = None
         self.last_scan_time = None
         self.risk_score = None
-        self.sensor_name = None
-        self.site_name = None
-        self.zone_name = None
+        self.sensors = None
+        self.site = None
         self.device_status = None
 
 
@@ -3662,14 +3650,6 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -3679,10 +3659,6 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -3697,10 +3673,6 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -3711,7 +3683,6 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(DirectMethodInvokesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'DirectMethodInvokesNotInAllowedRange'  # type: str
         self.rule_type = 'DirectMethodInvokesNotInAllowedRange'  # type: str
 
 
@@ -3878,14 +3849,6 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -3895,10 +3858,6 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -3913,10 +3872,6 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -3927,7 +3882,6 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(FailedLocalLoginsNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'FailedLocalLoginsNotInAllowedRange'  # type: str
         self.rule_type = 'FailedLocalLoginsNotInAllowedRange'  # type: str
 
 
@@ -3946,14 +3900,6 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -3963,10 +3909,6 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -3981,10 +3923,6 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -3995,7 +3933,6 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(FileUploadsNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'FileUploadsNotInAllowedRange'  # type: str
         self.rule_type = 'FileUploadsNotInAllowedRange'  # type: str
 
 
@@ -4055,7 +3992,7 @@ class Firmware(msrest.serialization.Model):
 
 
 class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
-    """GCP cloud account connector based service to service credentials, the credentials is composed of organization id and json api key (write only)</a>.
+    """GCP cloud account connector based service to service credentials, the credentials are composed of the organization ID and a JSON API key (write only).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4071,28 +4008,28 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
      credentials or role-based authentication. For GCP use account organization credentials.Constant
      filled by server.  Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
     :type authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
-    :param organization_id: Required. The Organization ID of the GCP cloud account.
+    :param organization_id: Required. The organization ID of the GCP cloud account.
     :type organization_id: str
     :param type: Required. Type field of the API key (write only).
     :type type: str
-    :param project_id: Required. Project Id field of the API key (write only).
+    :param project_id: Required. Project ID field of the API key (write only).
     :type project_id: str
-    :param private_key_id: Required. Private key Id field of the API key (write only).
+    :param private_key_id: Required. Private key ID field of the API key (write only).
     :type private_key_id: str
     :param private_key: Required. Private key field of the API key (write only).
     :type private_key: str
     :param client_email: Required. Client email field of the API key (write only).
     :type client_email: str
-    :param client_id: Required. Client Id field of the API key (write only).
+    :param client_id: Required. Client ID field of the API key (write only).
     :type client_id: str
-    :param auth_uri: Required. Auth Uri field of the API key (write only).
+    :param auth_uri: Required. Auth URI field of the API key (write only).
     :type auth_uri: str
-    :param token_uri: Required. Token Uri field of the API key (write only).
+    :param token_uri: Required. Token URI field of the API key (write only).
     :type token_uri: str
-    :param auth_provider_x509_cert_url: Required. Auth provider x509 certificate url field of the
+    :param auth_provider_x509_cert_url: Required. Auth provider x509 certificate URL field of the
      API key (write only).
     :type auth_provider_x509_cert_url: str
-    :param client_x509_cert_url: Required. Client x509 certificate url field of the API key (write
+    :param client_x509_cert_url: Required. Client x509 certificate URL field of the API key (write
      only).
     :type client_x509_cert_url: str
     """
@@ -4165,14 +4102,6 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -4182,10 +4111,6 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -4200,10 +4125,6 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -4214,7 +4135,6 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(HttpC2DMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'HttpC2DMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'HttpC2DMessagesNotInAllowedRange'  # type: str
 
 
@@ -4233,14 +4153,6 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -4250,10 +4162,6 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -4268,10 +4176,6 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -4282,7 +4186,6 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(HttpC2DRejectedMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'HttpC2DRejectedMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'HttpC2DRejectedMessagesNotInAllowedRange'  # type: str
 
 
@@ -4301,14 +4204,6 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -4318,10 +4213,6 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -4336,10 +4227,6 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -4350,7 +4237,6 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(HttpD2CMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'HttpD2CMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'HttpD2CMessagesNotInAllowedRange'  # type: str
 
 
@@ -4371,7 +4257,7 @@ class HybridComputeSettingsProperties(msrest.serialization.Model):
     :param resource_group_name: The name of the resource group where Arc (Hybrid Compute)
      connectors are connected.
     :type resource_group_name: str
-    :param region: The location where the meta data of machines will be stored.
+    :param region: The location where the metadata of machines will be stored.
     :type region: str
     :param proxy_server: For a non-Azure machine that is not connected directly to the internet,
      specify a proxy server that the non-Azure machine can use.
@@ -4653,6 +4539,92 @@ class IotAlertList(msrest.serialization.Model):
         self.total_count = None
 
 
+class IotAlertListModel(msrest.serialization.Model):
+    """List of IoT alerts.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List data.
+    :vartype value: list[~azure.mgmt.security.models.IotAlertModel]
+    :ivar next_link: When available, follow the URI to get the next page of data.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IotAlertModel]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IotAlertListModel, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class IotAlertModel(msrest.serialization.Model):
+    """IoT alert.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar system_alert_id: Holds the product canonical identifier of the alert within the scope of
+     a product.
+    :vartype system_alert_id: str
+    :ivar compromised_entity: Display name of the main entity being reported on.
+    :vartype compromised_entity: str
+    :ivar alert_type: The type name of the alert.
+    :vartype alert_type: str
+    :ivar start_time_utc: The impact start time of the alert (the time of the first event or
+     activity included in the alert).
+    :vartype start_time_utc: str
+    :ivar end_time_utc: The impact end time of the alert (the time of the last event or activity
+     included in the alert).
+    :vartype end_time_utc: str
+    :param entities: A list of entities related to the alert.
+    :type entities: list[object]
+    :param extended_properties: A bag of fields which extends the alert information.
+    :type extended_properties: object
+    """
+
+    _validation = {
+        'system_alert_id': {'readonly': True},
+        'compromised_entity': {'readonly': True},
+        'alert_type': {'readonly': True},
+        'start_time_utc': {'readonly': True},
+        'end_time_utc': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'system_alert_id': {'key': 'properties.systemAlertId', 'type': 'str'},
+        'compromised_entity': {'key': 'properties.compromisedEntity', 'type': 'str'},
+        'alert_type': {'key': 'properties.alertType', 'type': 'str'},
+        'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'str'},
+        'end_time_utc': {'key': 'properties.endTimeUtc', 'type': 'str'},
+        'entities': {'key': 'properties.entities', 'type': '[object]'},
+        'extended_properties': {'key': 'properties.extendedProperties', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IotAlertModel, self).__init__(**kwargs)
+        self.system_alert_id = None
+        self.compromised_entity = None
+        self.alert_type = None
+        self.start_time_utc = None
+        self.end_time_utc = None
+        self.entities = kwargs.get('entities', None)
+        self.extended_properties = kwargs.get('extended_properties', None)
+
+
 class IotAlertType(Resource):
     """IoT alert type.
 
@@ -4908,6 +4880,88 @@ class IotRecommendationList(msrest.serialization.Model):
         self.value = None
         self.next_link = None
         self.total_count = None
+
+
+class IotRecommendationListModel(msrest.serialization.Model):
+    """List of IoT recommendations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List data.
+    :vartype value: list[~azure.mgmt.security.models.IotRecommendationModel]
+    :ivar next_link: When available, follow the URI to get the next page of data.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IotRecommendationModel]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IotRecommendationListModel, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class IotRecommendationModel(Resource):
+    """IoT recommendation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar device_id: Identifier of the device being reported on.
+    :vartype device_id: str
+    :ivar recommendation_type: The type name of the recommendation.
+    :vartype recommendation_type: str
+    :ivar discovered_time_utc: The discovery time of the recommendation.
+    :vartype discovered_time_utc: str
+    :param recommendation_additional_data: A bag of fields which extends the recommendation
+     information.
+    :type recommendation_additional_data: object
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'device_id': {'readonly': True},
+        'recommendation_type': {'readonly': True},
+        'discovered_time_utc': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'device_id': {'key': 'properties.deviceId', 'type': 'str'},
+        'recommendation_type': {'key': 'properties.recommendationType', 'type': 'str'},
+        'discovered_time_utc': {'key': 'properties.discoveredTimeUtc', 'type': 'str'},
+        'recommendation_additional_data': {'key': 'properties.recommendationAdditionalData', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IotRecommendationModel, self).__init__(**kwargs)
+        self.device_id = None
+        self.recommendation_type = None
+        self.discovered_time_utc = None
+        self.recommendation_additional_data = kwargs.get('recommendation_additional_data', None)
 
 
 class IotRecommendationType(Resource):
@@ -5701,8 +5755,33 @@ class IoTSecuritySolutionsList(msrest.serialization.Model):
         self.next_link = None
 
 
-class IotSensor(Resource):
-    """IoT sensor.
+class IotSensorsList(msrest.serialization.Model):
+    """List of IoT sensors.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List data.
+    :vartype value: list[~azure.mgmt.security.models.IotSensorsModel]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IotSensorsModel]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IotSensorsList, self).__init__(**kwargs)
+        self.value = None
+
+
+class IotSensorsModel(Resource):
+    """IoT sensor model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5712,54 +5791,75 @@ class IotSensor(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: IoT sensor properties.
-    :type properties: object
+    :ivar connectivity_time: Last connectivity time of the IoT sensor.
+    :vartype connectivity_time: str
+    :ivar creation_time: Creation time of the IoT sensor.
+    :vartype creation_time: str
+    :ivar dynamic_learning: Dynamic mode status of the IoT sensor.
+    :vartype dynamic_learning: bool
+    :ivar learning_mode: Learning mode status of the IoT sensor.
+    :vartype learning_mode: bool
+    :ivar sensor_status: Status of the IoT sensor. Possible values include: "Ok", "Disconnected",
+     "Unavailable".
+    :vartype sensor_status: str or ~azure.mgmt.security.models.SensorStatus
+    :ivar sensor_version: Version of the IoT sensor.
+    :vartype sensor_version: str
+    :param ti_automatic_updates: TI Automatic mode status of the IoT sensor.
+    :type ti_automatic_updates: bool
+    :ivar ti_status: TI Status of the IoT sensor. Possible values include: "Ok", "Failed",
+     "InProgress", "UpdateAvailable".
+    :vartype ti_status: str or ~azure.mgmt.security.models.TiStatus
+    :ivar ti_version: TI Version of the IoT sensor.
+    :vartype ti_version: str
+    :param zone: Zone of the IoT sensor.
+    :type zone: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'connectivity_time': {'readonly': True},
+        'creation_time': {'readonly': True},
+        'dynamic_learning': {'readonly': True},
+        'learning_mode': {'readonly': True},
+        'sensor_status': {'readonly': True},
+        'sensor_version': {'readonly': True},
+        'ti_status': {'readonly': True},
+        'ti_version': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'connectivity_time': {'key': 'properties.connectivityTime', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'str'},
+        'dynamic_learning': {'key': 'properties.dynamicLearning', 'type': 'bool'},
+        'learning_mode': {'key': 'properties.learningMode', 'type': 'bool'},
+        'sensor_status': {'key': 'properties.sensorStatus', 'type': 'str'},
+        'sensor_version': {'key': 'properties.sensorVersion', 'type': 'str'},
+        'ti_automatic_updates': {'key': 'properties.tiAutomaticUpdates', 'type': 'bool'},
+        'ti_status': {'key': 'properties.tiStatus', 'type': 'str'},
+        'ti_version': {'key': 'properties.tiVersion', 'type': 'str'},
+        'zone': {'key': 'properties.zone', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(IotSensor, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-
-
-class IotSensorsList(msrest.serialization.Model):
-    """List of IoT sensors.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: List data.
-    :vartype value: list[~azure.mgmt.security.models.IotSensor]
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[IotSensor]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(IotSensorsList, self).__init__(**kwargs)
-        self.value = None
+        super(IotSensorsModel, self).__init__(**kwargs)
+        self.connectivity_time = None
+        self.creation_time = None
+        self.dynamic_learning = None
+        self.learning_mode = None
+        self.sensor_status = None
+        self.sensor_version = None
+        self.ti_automatic_updates = kwargs.get('ti_automatic_updates', None)
+        self.ti_status = None
+        self.ti_version = None
+        self.zone = kwargs.get('zone', None)
 
 
 class IoTSeverityMetrics(msrest.serialization.Model):
@@ -5787,6 +5887,71 @@ class IoTSeverityMetrics(msrest.serialization.Model):
         self.high = kwargs.get('high', None)
         self.medium = kwargs.get('medium', None)
         self.low = kwargs.get('low', None)
+
+
+class IotSitesList(msrest.serialization.Model):
+    """List of IoT sites.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List data.
+    :vartype value: list[~azure.mgmt.security.models.IotSitesModel]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IotSitesModel]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IotSitesList, self).__init__(**kwargs)
+        self.value = None
+
+
+class IotSitesModel(Resource):
+    """IoT site model.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param display_name: Display name of the IoT site.
+    :type display_name: str
+    :param tags: A set of tags. Tags of the IoT site.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'tags': {'key': 'properties.tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IotSitesModel, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.tags = kwargs.get('tags', None)
 
 
 class IpAddress(msrest.serialization.Model):
@@ -6254,14 +6419,6 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
@@ -6275,19 +6432,11 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
         'description': {'readonly': True},
         'is_enabled': {'required': True},
         'rule_type': {'required': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'value_type': {'readonly': True},
         'allowlist_values': {'required': True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
@@ -6301,7 +6450,6 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
         **kwargs
     ):
         super(LocalUserNotAllowed, self).__init__(**kwargs)
-        self.rule_type = 'LocalUserNotAllowed'  # type: str
         self.rule_type = 'LocalUserNotAllowed'  # type: str
 
 
@@ -6414,14 +6562,6 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -6431,10 +6571,6 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -6449,10 +6585,6 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -6463,7 +6595,6 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(MqttC2DMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'MqttC2DMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'MqttC2DMessagesNotInAllowedRange'  # type: str
 
 
@@ -6482,14 +6613,6 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -6499,10 +6622,6 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -6517,10 +6636,6 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -6531,7 +6646,6 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(MqttC2DRejectedMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'MqttC2DRejectedMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'MqttC2DRejectedMessagesNotInAllowedRange'  # type: str
 
 
@@ -6550,14 +6664,6 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -6567,10 +6673,6 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -6585,10 +6687,6 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -6599,7 +6697,6 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(MqttD2CMessagesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'MqttD2CMessagesNotInAllowedRange'  # type: str
         self.rule_type = 'MqttD2CMessagesNotInAllowedRange'  # type: str
 
 
@@ -6951,19 +7048,37 @@ class PackageDownloads(msrest.serialization.Model):
     :ivar central_manager: All downloads for Central Manager.
     :vartype central_manager: ~azure.mgmt.security.models.PackageDownloadsCentralManager
     :ivar threat_intelligence: All downloads for threat intelligence.
-    :vartype threat_intelligence: ~azure.mgmt.security.models.PackageDownloadsThreatIntelligence
+    :vartype threat_intelligence: list[~azure.mgmt.security.models.PackageDownloadInfo]
+    :ivar snmp: SNMP Server file.
+    :vartype snmp: list[~azure.mgmt.security.models.PackageDownloadInfo]
+    :ivar wmi_tool: Used for local configuration export.
+    :vartype wmi_tool: list[~azure.mgmt.security.models.PackageDownloadInfo]
+    :ivar authorized_devices_import_template: Authorized devices import template.
+    :vartype authorized_devices_import_template:
+     list[~azure.mgmt.security.models.PackageDownloadInfo]
+    :ivar device_information_update_import_template: Authorized devices import template.
+    :vartype device_information_update_import_template:
+     list[~azure.mgmt.security.models.PackageDownloadInfo]
     """
 
     _validation = {
         'sensor': {'readonly': True},
         'central_manager': {'readonly': True},
         'threat_intelligence': {'readonly': True},
+        'snmp': {'readonly': True},
+        'wmi_tool': {'readonly': True},
+        'authorized_devices_import_template': {'readonly': True},
+        'device_information_update_import_template': {'readonly': True},
     }
 
     _attribute_map = {
         'sensor': {'key': 'sensor', 'type': 'PackageDownloadsSensor'},
         'central_manager': {'key': 'centralManager', 'type': 'PackageDownloadsCentralManager'},
-        'threat_intelligence': {'key': 'threatIntelligence', 'type': 'PackageDownloadsThreatIntelligence'},
+        'threat_intelligence': {'key': 'threatIntelligence', 'type': '[PackageDownloadInfo]'},
+        'snmp': {'key': 'snmp', 'type': '[PackageDownloadInfo]'},
+        'wmi_tool': {'key': 'wmiTool', 'type': '[PackageDownloadInfo]'},
+        'authorized_devices_import_template': {'key': 'authorizedDevicesImportTemplate', 'type': '[PackageDownloadInfo]'},
+        'device_information_update_import_template': {'key': 'deviceInformationUpdateImportTemplate', 'type': '[PackageDownloadInfo]'},
     }
 
     def __init__(
@@ -6974,6 +7089,10 @@ class PackageDownloads(msrest.serialization.Model):
         self.sensor = None
         self.central_manager = None
         self.threat_intelligence = None
+        self.snmp = None
+        self.wmi_tool = None
+        self.authorized_devices_import_template = None
+        self.device_information_update_import_template = None
 
 
 class PackageDownloadsCentralManager(msrest.serialization.Model):
@@ -6984,7 +7103,7 @@ class PackageDownloadsCentralManager(msrest.serialization.Model):
     :ivar full: Contains full package downloads.
     :vartype full: ~azure.mgmt.security.models.PackageDownloadsCentralManagerFull
     :ivar upgrade: Central Manager upgrade package downloads (on existing installations).
-    :vartype upgrade: list[~azure.mgmt.security.models.PackageDownloadInfo]
+    :vartype upgrade: list[~azure.mgmt.security.models.UpgradePackageDownloadInfo]
     """
 
     _validation = {
@@ -6994,7 +7113,7 @@ class PackageDownloadsCentralManager(msrest.serialization.Model):
 
     _attribute_map = {
         'full': {'key': 'full', 'type': 'PackageDownloadsCentralManagerFull'},
-        'upgrade': {'key': 'upgrade', 'type': '[PackageDownloadInfo]'},
+        'upgrade': {'key': 'upgrade', 'type': '[UpgradePackageDownloadInfo]'},
     }
 
     def __init__(
@@ -7084,7 +7203,7 @@ class PackageDownloadsSensor(msrest.serialization.Model):
     :ivar full: Contains full package downloads.
     :vartype full: ~azure.mgmt.security.models.PackageDownloadsSensorFull
     :param upgrade: Sensor upgrade package downloads (on existing installations).
-    :type upgrade: list[~azure.mgmt.security.models.PackageDownloadInfo]
+    :type upgrade: list[~azure.mgmt.security.models.UpgradePackageDownloadInfo]
     """
 
     _validation = {
@@ -7093,7 +7212,7 @@ class PackageDownloadsSensor(msrest.serialization.Model):
 
     _attribute_map = {
         'full': {'key': 'full', 'type': 'PackageDownloadsSensorFull'},
-        'upgrade': {'key': 'upgrade', 'type': '[PackageDownloadInfo]'},
+        'upgrade': {'key': 'upgrade', 'type': '[UpgradePackageDownloadInfo]'},
     }
 
     def __init__(
@@ -7167,31 +7286,6 @@ class PackageDownloadsSensorFullOvf(msrest.serialization.Model):
         self.enterprise = None
         self.medium = None
         self.line = None
-
-
-class PackageDownloadsThreatIntelligence(msrest.serialization.Model):
-    """All downloads for threat intelligence.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar link: Download link.
-    :vartype link: str
-    """
-
-    _validation = {
-        'link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'link': {'key': 'link', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PackageDownloadsThreatIntelligence, self).__init__(**kwargs)
-        self.link = None
 
 
 class PathRecommendation(msrest.serialization.Model):
@@ -7339,14 +7433,6 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
@@ -7360,19 +7446,11 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
         'description': {'readonly': True},
         'is_enabled': {'required': True},
         'rule_type': {'required': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'value_type': {'readonly': True},
         'allowlist_values': {'required': True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
@@ -7386,7 +7464,6 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
         **kwargs
     ):
         super(ProcessNotAllowed, self).__init__(**kwargs)
-        self.rule_type = 'ProcessNotAllowed'  # type: str
         self.rule_type = 'ProcessNotAllowed'  # type: str
 
 
@@ -7509,6 +7586,33 @@ class PublisherInfo(msrest.serialization.Model):
         self.version = kwargs.get('version', None)
 
 
+class QueryCheck(msrest.serialization.Model):
+    """The rule query details.
+
+    :param query: The rule query.
+    :type query: str
+    :param expected_result: Expected result.
+    :type expected_result: list[list[str]]
+    :param column_names: Column names of expected result.
+    :type column_names: list[str]
+    """
+
+    _attribute_map = {
+        'query': {'key': 'query', 'type': 'str'},
+        'expected_result': {'key': 'expectedResult', 'type': '[[str]]'},
+        'column_names': {'key': 'columnNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(QueryCheck, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.expected_result = kwargs.get('expected_result', None)
+        self.column_names = kwargs.get('column_names', None)
+
+
 class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
     """Number of device queue purges is not in allowed range.
 
@@ -7516,14 +7620,6 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
     :ivar description: The description of the custom alert.
@@ -7545,20 +7641,12 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'readonly': True},
         'is_enabled': {'required': True},
         'rule_type': {'required': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'min_threshold': {'required': True},
         'max_threshold': {'required': True},
         'time_window_size': {'required': True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
@@ -7573,7 +7661,6 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(QueuePurgesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'QueuePurgesNotInAllowedRange'  # type: str
         self.rule_type = 'QueuePurgesNotInAllowedRange'  # type: str
 
 
@@ -7913,6 +8000,56 @@ class RegulatoryComplianceStandardList(msrest.serialization.Model):
         self.next_link = None
 
 
+class Remediation(msrest.serialization.Model):
+    """Remediation details.
+
+    :param description: Remediation description.
+    :type description: str
+    :param scripts: Remediation script.
+    :type scripts: list[str]
+    :param automated: Is remediation automated.
+    :type automated: bool
+    :param portal_link: Optional link to remediate in Azure Portal.
+    :type portal_link: str
+    """
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'scripts': {'key': 'scripts', 'type': '[str]'},
+        'automated': {'key': 'automated', 'type': 'bool'},
+        'portal_link': {'key': 'portalLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Remediation, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.scripts = kwargs.get('scripts', None)
+        self.automated = kwargs.get('automated', None)
+        self.portal_link = kwargs.get('portal_link', None)
+
+
+class ResetPasswordInput(msrest.serialization.Model):
+    """Reset password input.
+
+    :param appliance_id: The appliance id of the sensor.
+    :type appliance_id: str
+    """
+
+    _attribute_map = {
+        'appliance_id': {'key': 'applianceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResetPasswordInput, self).__init__(**kwargs)
+        self.appliance_id = kwargs.get('appliance_id', None)
+
+
 class Rule(msrest.serialization.Model):
     """Describes remote addresses that is recommended to communicate with the Azure resource on some (Protocol, Port, Direction). All other remote addresses are recommended to be blocked.
 
@@ -7951,6 +8088,354 @@ class Rule(msrest.serialization.Model):
         self.destination_port = kwargs.get('destination_port', None)
         self.protocols = kwargs.get('protocols', None)
         self.ip_addresses = kwargs.get('ip_addresses', None)
+
+
+class RuleResults(Resource):
+    """Rule results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param properties: Rule results properties.
+    :type properties: ~azure.mgmt.security.models.RuleResultsProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'RuleResultsProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleResults, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class RuleResultsInput(msrest.serialization.Model):
+    """Rule results input.
+
+    :param latest_scan: Take results from latest scan.
+    :type latest_scan: bool
+    :param results: Expected results to be inserted into the baseline.
+     Leave this field empty it LatestScan == true.
+    :type results: list[list[str]]
+    """
+
+    _attribute_map = {
+        'latest_scan': {'key': 'latestScan', 'type': 'bool'},
+        'results': {'key': 'results', 'type': '[[str]]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleResultsInput, self).__init__(**kwargs)
+        self.latest_scan = kwargs.get('latest_scan', None)
+        self.results = kwargs.get('results', None)
+
+
+class RuleResultsProperties(msrest.serialization.Model):
+    """Rule results properties.
+
+    :param results: Expected results in the baseline.
+    :type results: list[list[str]]
+    """
+
+    _attribute_map = {
+        'results': {'key': 'results', 'type': '[[str]]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleResultsProperties, self).__init__(**kwargs)
+        self.results = kwargs.get('results', None)
+
+
+class RulesResults(msrest.serialization.Model):
+    """A list of rules results.
+
+    :param value: List of rule results.
+    :type value: list[~azure.mgmt.security.models.RuleResults]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RuleResults]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RulesResults, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class RulesResultsInput(msrest.serialization.Model):
+    """Rules results input.
+
+    :param latest_scan: Take results from latest scan.
+    :type latest_scan: bool
+    :param results: Expected results to be inserted into the baseline.
+     Leave this field empty it LatestScan == true.
+    :type results: dict[str, list[list[str]]]
+    """
+
+    _attribute_map = {
+        'latest_scan': {'key': 'latestScan', 'type': 'bool'},
+        'results': {'key': 'results', 'type': '{[[str]]}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RulesResultsInput, self).__init__(**kwargs)
+        self.latest_scan = kwargs.get('latest_scan', None)
+        self.results = kwargs.get('results', None)
+
+
+class Scan(Resource):
+    """A vulnerability assessment scan record.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param properties: A vulnerability assessment scan record properties.
+    :type properties: ~azure.mgmt.security.models.ScanProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ScanProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Scan, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class ScanProperties(msrest.serialization.Model):
+    """A vulnerability assessment scan record properties.
+
+    :param trigger_type: The scan trigger type. Possible values include: "OnDemand", "Recurring".
+    :type trigger_type: str or ~azure.mgmt.security.models.ScanTriggerType
+    :param state: The scan status. Possible values include: "Failed", "FailedToRun", "InProgress",
+     "Passed".
+    :type state: str or ~azure.mgmt.security.models.ScanState
+    :param server: The server name.
+    :type server: str
+    :param database: The database name.
+    :type database: str
+    :param sql_version: The SQL version.
+    :type sql_version: str
+    :param start_time: The scan start time (UTC).
+    :type start_time: ~datetime.datetime
+    :param end_time: Scan results are valid until end time (UTC).
+    :type end_time: ~datetime.datetime
+    :param high_severity_failed_rules_count: The number of failed rules with high severity.
+    :type high_severity_failed_rules_count: int
+    :param medium_severity_failed_rules_count: The number of failed rules with medium severity.
+    :type medium_severity_failed_rules_count: int
+    :param low_severity_failed_rules_count: The number of failed rules with low severity.
+    :type low_severity_failed_rules_count: int
+    :param total_passed_rules_count: The number of total passed rules.
+    :type total_passed_rules_count: int
+    :param total_failed_rules_count: The number of total failed rules.
+    :type total_failed_rules_count: int
+    :param total_rules_count: The number of total rules assessed.
+    :type total_rules_count: int
+    :param is_baseline_applied: Baseline created for this database, and has one or more rules.
+    :type is_baseline_applied: bool
+    """
+
+    _attribute_map = {
+        'trigger_type': {'key': 'triggerType', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'server': {'key': 'server', 'type': 'str'},
+        'database': {'key': 'database', 'type': 'str'},
+        'sql_version': {'key': 'sqlVersion', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'high_severity_failed_rules_count': {'key': 'highSeverityFailedRulesCount', 'type': 'int'},
+        'medium_severity_failed_rules_count': {'key': 'mediumSeverityFailedRulesCount', 'type': 'int'},
+        'low_severity_failed_rules_count': {'key': 'lowSeverityFailedRulesCount', 'type': 'int'},
+        'total_passed_rules_count': {'key': 'totalPassedRulesCount', 'type': 'int'},
+        'total_failed_rules_count': {'key': 'totalFailedRulesCount', 'type': 'int'},
+        'total_rules_count': {'key': 'totalRulesCount', 'type': 'int'},
+        'is_baseline_applied': {'key': 'isBaselineApplied', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScanProperties, self).__init__(**kwargs)
+        self.trigger_type = kwargs.get('trigger_type', None)
+        self.state = kwargs.get('state', None)
+        self.server = kwargs.get('server', None)
+        self.database = kwargs.get('database', None)
+        self.sql_version = kwargs.get('sql_version', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.high_severity_failed_rules_count = kwargs.get('high_severity_failed_rules_count', None)
+        self.medium_severity_failed_rules_count = kwargs.get('medium_severity_failed_rules_count', None)
+        self.low_severity_failed_rules_count = kwargs.get('low_severity_failed_rules_count', None)
+        self.total_passed_rules_count = kwargs.get('total_passed_rules_count', None)
+        self.total_failed_rules_count = kwargs.get('total_failed_rules_count', None)
+        self.total_rules_count = kwargs.get('total_rules_count', None)
+        self.is_baseline_applied = kwargs.get('is_baseline_applied', None)
+
+
+class ScanResult(Resource):
+    """A vulnerability assessment scan result for a single rule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param properties: A vulnerability assessment scan result properties for a single rule.
+    :type properties: ~azure.mgmt.security.models.ScanResultProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ScanResultProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScanResult, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class ScanResultProperties(msrest.serialization.Model):
+    """A vulnerability assessment scan result properties for a single rule.
+
+    :param rule_id: The rule Id.
+    :type rule_id: str
+    :param status: The rule result status. Possible values include: "NonFinding", "Finding",
+     "InternalError".
+    :type status: str or ~azure.mgmt.security.models.RuleStatus
+    :param is_trimmed: Indicated whether the results specified here are trimmed.
+    :type is_trimmed: bool
+    :param query_results: The results of the query that was run.
+    :type query_results: list[list[str]]
+    :param remediation: Remediation details.
+    :type remediation: ~azure.mgmt.security.models.Remediation
+    :param baseline_adjusted_result: The rule result adjusted with baseline.
+    :type baseline_adjusted_result: ~azure.mgmt.security.models.BaselineAdjustedResult
+    :param rule_metadata: vulnerability assessment rule metadata details.
+    :type rule_metadata: ~azure.mgmt.security.models.VaRule
+    """
+
+    _attribute_map = {
+        'rule_id': {'key': 'ruleId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'is_trimmed': {'key': 'isTrimmed', 'type': 'bool'},
+        'query_results': {'key': 'queryResults', 'type': '[[str]]'},
+        'remediation': {'key': 'remediation', 'type': 'Remediation'},
+        'baseline_adjusted_result': {'key': 'baselineAdjustedResult', 'type': 'BaselineAdjustedResult'},
+        'rule_metadata': {'key': 'ruleMetadata', 'type': 'VaRule'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScanResultProperties, self).__init__(**kwargs)
+        self.rule_id = kwargs.get('rule_id', None)
+        self.status = kwargs.get('status', None)
+        self.is_trimmed = kwargs.get('is_trimmed', None)
+        self.query_results = kwargs.get('query_results', None)
+        self.remediation = kwargs.get('remediation', None)
+        self.baseline_adjusted_result = kwargs.get('baseline_adjusted_result', None)
+        self.rule_metadata = kwargs.get('rule_metadata', None)
+
+
+class ScanResults(msrest.serialization.Model):
+    """A list of vulnerability assessment scan results.
+
+    :param value: List of vulnerability assessment scan results.
+    :type value: list[~azure.mgmt.security.models.ScanResult]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ScanResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScanResults, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class Scans(msrest.serialization.Model):
+    """A list of vulnerability assessment scan records.
+
+    :param value: List of vulnerability assessment scan records.
+    :type value: list[~azure.mgmt.security.models.Scan]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Scan]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Scans, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class ScopeElement(msrest.serialization.Model):
@@ -9212,6 +9697,36 @@ class SensitivityLabel(msrest.serialization.Model):
         self.enabled = kwargs.get('enabled', None)
 
 
+class Sensor(msrest.serialization.Model):
+    """Sensor data.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Sensor name.
+    :vartype name: str
+    :ivar zone: Zone Name.
+    :vartype zone: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'zone': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'zone': {'key': 'zone', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Sensor, self).__init__(**kwargs)
+        self.name = None
+        self.zone = None
+
+
 class ServerVulnerabilityAssessment(Resource):
     """Describes the server vulnerability assessment details on a resource.
 
@@ -9339,7 +9854,7 @@ class ServerVulnerabilityProperties(AdditionalData):
 class ServicePrincipalProperties(msrest.serialization.Model):
     """Details of the service principal.
 
-    :param application_id: Application id of service principal.
+    :param application_id: Application ID of service principal.
     :type application_id: str
     :param secret: A secret string that the application uses to prove its identity, also can be
      referred to as application password (write only).
@@ -9360,53 +9875,13 @@ class ServicePrincipalProperties(msrest.serialization.Model):
         self.secret = kwargs.get('secret', None)
 
 
-class Setting(SettingResource):
-    """Represents a security setting in Azure Security Center.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param kind: Required. the kind of the settings string (DataExportSettings).Constant filled by
-     server.  Possible values include: "DataExportSettings", "AlertSuppressionSetting".
-    :type kind: str or ~azure.mgmt.security.models.SettingKind
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Setting, self).__init__(**kwargs)
-        self.kind = 'Setting'  # type: str
-
-
 class SettingsList(msrest.serialization.Model):
     """Subscription settings list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The settings list.
-    :type value: list[~azure.mgmt.security.models.SettingResource]
+    :type value: list[~azure.mgmt.security.models.Setting]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -9416,7 +9891,7 @@ class SettingsList(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SettingResource]'},
+        'value': {'key': 'value', 'type': '[Setting]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -9427,6 +9902,31 @@ class SettingsList(msrest.serialization.Model):
         super(SettingsList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = None
+
+
+class Site(msrest.serialization.Model):
+    """Site data.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar display_name: Site display name.
+    :vartype display_name: str
+    """
+
+    _validation = {
+        'display_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Site, self).__init__(**kwargs)
+        self.display_name = None
 
 
 class SqlServerVulnerabilityProperties(AdditionalData):
@@ -9746,14 +10246,6 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -9763,10 +10255,6 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -9781,10 +10269,6 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -9795,7 +10279,6 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(TwinUpdatesNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'TwinUpdatesNotInAllowedRange'  # type: str
         self.rule_type = 'TwinUpdatesNotInAllowedRange'  # type: str
 
 
@@ -9814,14 +10297,6 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
     :type rule_type: str
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
     :param min_threshold: Required. The minimum threshold.
     :type min_threshold: int
     :param max_threshold: Required. The maximum threshold.
@@ -9831,10 +10306,6 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'is_enabled': {'required': True},
-        'rule_type': {'required': True},
         'display_name': {'readonly': True},
         'description': {'readonly': True},
         'is_enabled': {'required': True},
@@ -9849,10 +10320,6 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
         'description': {'key': 'description', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
         'min_threshold': {'key': 'minThreshold', 'type': 'int'},
         'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
         'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
@@ -9863,7 +10330,6 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
         **kwargs
     ):
         super(UnauthorizedOperationsNotInAllowedRange, self).__init__(**kwargs)
-        self.rule_type = 'UnauthorizedOperationsNotInAllowedRange'  # type: str
         self.rule_type = 'UnauthorizedOperationsNotInAllowedRange'  # type: str
 
 
@@ -9894,6 +10360,44 @@ class UpdateIotSecuritySolutionData(TagsResource):
         super(UpdateIotSecuritySolutionData, self).__init__(**kwargs)
         self.user_defined_resources = kwargs.get('user_defined_resources', None)
         self.recommendations_configuration = kwargs.get('recommendations_configuration', None)
+
+
+class UpgradePackageDownloadInfo(PackageDownloadInfo):
+    """Information on a specific package upgrade download.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar version: Version number.
+    :vartype version: str
+    :ivar link: Download link.
+    :vartype link: str
+    :ivar version_kind: Kind of the version. Possible values include: "Latest", "Previous",
+     "Preview".
+    :vartype version_kind: str or ~azure.mgmt.security.models.VersionKind
+    :ivar from_version: Minimum base version for upgrade.
+    :vartype from_version: str
+    """
+
+    _validation = {
+        'version': {'readonly': True},
+        'link': {'readonly': True},
+        'version_kind': {'readonly': True},
+        'from_version': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'version': {'key': 'version', 'type': 'str'},
+        'link': {'key': 'link', 'type': 'str'},
+        'version_kind': {'key': 'versionKind', 'type': 'str'},
+        'from_version': {'key': 'fromVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UpgradePackageDownloadInfo, self).__init__(**kwargs)
+        self.from_version = None
 
 
 class UserDefinedResourcesProperties(msrest.serialization.Model):
@@ -9950,6 +10454,59 @@ class UserRecommendation(msrest.serialization.Model):
         super(UserRecommendation, self).__init__(**kwargs)
         self.username = kwargs.get('username', None)
         self.recommendation_action = kwargs.get('recommendation_action', None)
+
+
+class VaRule(msrest.serialization.Model):
+    """vulnerability assessment rule metadata details.
+
+    :param rule_id: The rule Id.
+    :type rule_id: str
+    :param severity: The rule severity. Possible values include: "High", "Medium", "Low",
+     "Informational", "Obsolete".
+    :type severity: str or ~azure.mgmt.security.models.RuleSeverity
+    :param category: The rule category.
+    :type category: str
+    :param rule_type: The rule type. Possible values include: "Binary", "BaselineExpected",
+     "PositiveList", "NegativeList".
+    :type rule_type: str or ~azure.mgmt.security.models.RuleType
+    :param title: The rule title.
+    :type title: str
+    :param description: The rule description.
+    :type description: str
+    :param rationale: The rule rationale.
+    :type rationale: str
+    :param query_check: The rule query details.
+    :type query_check: ~azure.mgmt.security.models.QueryCheck
+    :param benchmark_references: The benchmark references.
+    :type benchmark_references: list[~azure.mgmt.security.models.BenchmarkReference]
+    """
+
+    _attribute_map = {
+        'rule_id': {'key': 'ruleId', 'type': 'str'},
+        'severity': {'key': 'severity', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'rationale': {'key': 'rationale', 'type': 'str'},
+        'query_check': {'key': 'queryCheck', 'type': 'QueryCheck'},
+        'benchmark_references': {'key': 'benchmarkReferences', 'type': '[BenchmarkReference]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VaRule, self).__init__(**kwargs)
+        self.rule_id = kwargs.get('rule_id', None)
+        self.severity = kwargs.get('severity', None)
+        self.category = kwargs.get('category', None)
+        self.rule_type = kwargs.get('rule_type', None)
+        self.title = kwargs.get('title', None)
+        self.description = kwargs.get('description', None)
+        self.rationale = kwargs.get('rationale', None)
+        self.query_check = kwargs.get('query_check', None)
+        self.benchmark_references = kwargs.get('benchmark_references', None)
 
 
 class VendorReference(msrest.serialization.Model):
