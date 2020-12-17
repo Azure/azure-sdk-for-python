@@ -252,7 +252,7 @@ operation_result = client.encrypt(
 ciphertext = operation_result.result
 ```
 
-Now in `azure-keyvault-keys` you can perform these cryptographic operations by using a `CryptographyClient`. The key used to create the client will be used for these operations. Cryptographic operations are now performed locally by the client, rather than remotely by Key Vault.
+Now in `azure-keyvault-keys` you can perform these cryptographic operations by using a `CryptographyClient`. The key used to create the client will be used for these operations. Cryptographic operations are now performed locally by the client when it's intialized with the necessary key material or is able to get that material from Key Vault, and are only performed by the Key Vault service when required key material is unavailable.
 
 ```python
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
