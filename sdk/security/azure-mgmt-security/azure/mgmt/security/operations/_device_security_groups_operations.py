@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DeviceSecurityGroupsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class DeviceSecurityGroupsOperations(object):
         resource_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeviceSecurityGroupList"]
+        # type: (...) -> Iterable["_models.DeviceSecurityGroupList"]
         """Use this method get the list of device security groups for the specified IoT Hub resource.
 
         :param resource_id: The identifier of the resource.
@@ -60,7 +60,7 @@ class DeviceSecurityGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.DeviceSecurityGroupList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeviceSecurityGroupList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeviceSecurityGroupList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,7 +121,7 @@ class DeviceSecurityGroupsOperations(object):
         device_security_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeviceSecurityGroup"
+        # type: (...) -> "_models.DeviceSecurityGroup"
         """Use this method to get the device security group for the specified IoT Hub resource.
 
         :param resource_id: The identifier of the resource.
@@ -134,7 +134,7 @@ class DeviceSecurityGroupsOperations(object):
         :rtype: ~azure.mgmt.security.models.DeviceSecurityGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeviceSecurityGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeviceSecurityGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -178,10 +178,10 @@ class DeviceSecurityGroupsOperations(object):
         self,
         resource_id,  # type: str
         device_security_group_name,  # type: str
-        device_security_group,  # type: "models.DeviceSecurityGroup"
+        device_security_group,  # type: "_models.DeviceSecurityGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeviceSecurityGroup"
+        # type: (...) -> "_models.DeviceSecurityGroup"
         """Use this method to creates or updates the device security group on a specified IoT Hub
         resource.
 
@@ -197,7 +197,7 @@ class DeviceSecurityGroupsOperations(object):
         :rtype: ~azure.mgmt.security.models.DeviceSecurityGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeviceSecurityGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeviceSecurityGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

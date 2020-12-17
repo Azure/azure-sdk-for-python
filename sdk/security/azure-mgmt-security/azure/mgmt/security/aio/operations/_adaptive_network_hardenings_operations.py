@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class AdaptiveNetworkHardeningsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,7 +50,7 @@ class AdaptiveNetworkHardeningsOperations:
         resource_type: str,
         resource_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AdaptiveNetworkHardeningsList"]:
+    ) -> AsyncIterable["_models.AdaptiveNetworkHardeningsList"]:
         """Gets a list of Adaptive Network Hardenings resources in scope of an extended resource.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -67,7 +67,7 @@ class AdaptiveNetworkHardeningsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.AdaptiveNetworkHardeningsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdaptiveNetworkHardeningsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdaptiveNetworkHardeningsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -134,7 +134,7 @@ class AdaptiveNetworkHardeningsOperations:
         resource_name: str,
         adaptive_network_hardening_resource_name: str,
         **kwargs
-    ) -> "models.AdaptiveNetworkHardening":
+    ) -> "_models.AdaptiveNetworkHardening":
         """Gets a single Adaptive Network Hardening resource.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -154,7 +154,7 @@ class AdaptiveNetworkHardeningsOperations:
         :rtype: ~azure.mgmt.security.models.AdaptiveNetworkHardening
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdaptiveNetworkHardening"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdaptiveNetworkHardening"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -205,7 +205,7 @@ class AdaptiveNetworkHardeningsOperations:
         resource_type: str,
         resource_name: str,
         adaptive_network_hardening_resource_name: str,
-        body: "models.AdaptiveNetworkHardeningEnforceRequest",
+        body: "_models.AdaptiveNetworkHardeningEnforceRequest",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -263,7 +263,7 @@ class AdaptiveNetworkHardeningsOperations:
         resource_type: str,
         resource_name: str,
         adaptive_network_hardening_resource_name: str,
-        body: "models.AdaptiveNetworkHardeningEnforceRequest",
+        body: "_models.AdaptiveNetworkHardeningEnforceRequest",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Enforces the given rules on the NSG(s) listed in the request.
@@ -318,7 +318,17 @@ class AdaptiveNetworkHardeningsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceNamespace': self._serialize.url("resource_namespace", resource_namespace, 'str'),
+            'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'adaptiveNetworkHardeningResourceName': self._serialize.url("adaptive_network_hardening_resource_name", adaptive_network_hardening_resource_name, 'str'),
+            'adaptiveNetworkHardeningEnforceAction': self._serialize.url("adaptive_network_hardening_enforce_action", adaptive_network_hardening_enforce_action, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

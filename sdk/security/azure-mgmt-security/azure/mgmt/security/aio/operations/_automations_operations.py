@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class AutomationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class AutomationsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.AutomationList"]:
+    ) -> AsyncIterable["_models.AutomationList"]:
         """Lists all the security automations in the specified subscription. Use the 'nextLink' property
         in the response to get the next page of security automations for the specified subscription.
 
@@ -53,7 +53,7 @@ class AutomationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.AutomationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutomationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutomationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,7 +112,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AutomationList"]:
+    ) -> AsyncIterable["_models.AutomationList"]:
         """Lists all the security automations in the specified resource group. Use the 'nextLink' property
         in the response to get the next page of security automations for the specified resource group.
 
@@ -124,7 +124,7 @@ class AutomationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.AutomationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutomationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutomationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -185,7 +185,7 @@ class AutomationsOperations:
         resource_group_name: str,
         automation_name: str,
         **kwargs
-    ) -> "models.Automation":
+    ) -> "_models.Automation":
         """Retrieves information about the model of a security automation.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -198,7 +198,7 @@ class AutomationsOperations:
         :rtype: ~azure.mgmt.security.models.Automation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Automation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Automation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -243,9 +243,9 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: "models.Automation",
+        automation: "_models.Automation",
         **kwargs
-    ) -> "models.Automation":
+    ) -> "_models.Automation":
         """Creates or updates a security automation. If a security automation is already created and a
         subsequent request is issued for the same automation id, then it will be updated.
 
@@ -261,7 +261,7 @@ class AutomationsOperations:
         :rtype: ~azure.mgmt.security.models.Automation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Automation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Automation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -371,9 +371,9 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: "models.Automation",
+        automation: "_models.Automation",
         **kwargs
-    ) -> "models.AutomationValidationStatus":
+    ) -> "_models.AutomationValidationStatus":
         """Validates the security automation model before create or update. Any validation errors are
         returned to the client.
 
@@ -389,7 +389,7 @@ class AutomationsOperations:
         :rtype: ~azure.mgmt.security.models.AutomationValidationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutomationValidationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutomationValidationStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

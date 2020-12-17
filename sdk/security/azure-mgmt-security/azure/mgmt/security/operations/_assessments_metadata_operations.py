@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class AssessmentsMetadataOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class AssessmentsMetadataOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecurityAssessmentMetadataList"]
+        # type: (...) -> Iterable["_models.SecurityAssessmentMetadataList"]
         """Get metadata information on all assessment types.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class AssessmentsMetadataOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecurityAssessmentMetadataList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadataList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadataList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,7 +113,7 @@ class AssessmentsMetadataOperations(object):
         assessment_metadata_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityAssessmentMetadata"
+        # type: (...) -> "_models.SecurityAssessmentMetadata"
         """Get metadata information on an assessment type.
 
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
@@ -123,7 +123,7 @@ class AssessmentsMetadataOperations(object):
         :rtype: ~azure.mgmt.security.models.SecurityAssessmentMetadata
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadata"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -166,7 +166,7 @@ class AssessmentsMetadataOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecurityAssessmentMetadataList"]
+        # type: (...) -> Iterable["_models.SecurityAssessmentMetadataList"]
         """Get metadata information on all assessment types in a specific subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -174,7 +174,7 @@ class AssessmentsMetadataOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecurityAssessmentMetadataList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadataList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadataList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -234,7 +234,7 @@ class AssessmentsMetadataOperations(object):
         assessment_metadata_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityAssessmentMetadata"
+        # type: (...) -> "_models.SecurityAssessmentMetadata"
         """Get metadata information on an assessment type in a specific subscription.
 
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
@@ -244,7 +244,7 @@ class AssessmentsMetadataOperations(object):
         :rtype: ~azure.mgmt.security.models.SecurityAssessmentMetadata
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadata"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -287,10 +287,10 @@ class AssessmentsMetadataOperations(object):
     def create_in_subscription(
         self,
         assessment_metadata_name,  # type: str
-        assessment_metadata,  # type: "models.SecurityAssessmentMetadata"
+        assessment_metadata,  # type: "_models.SecurityAssessmentMetadata"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityAssessmentMetadata"
+        # type: (...) -> "_models.SecurityAssessmentMetadata"
         """Create metadata information on an assessment type in a specific subscription.
 
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
@@ -302,7 +302,7 @@ class AssessmentsMetadataOperations(object):
         :rtype: ~azure.mgmt.security.models.SecurityAssessmentMetadata
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadata"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
