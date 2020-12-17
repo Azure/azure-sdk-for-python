@@ -44,7 +44,7 @@ See ignore signature skeletons for each type of breaking change [below](#types-o
 IGNORE_BREAKING_CHANGES = {
     "azure-ai-formrecognizer": [
         ("RemovedOrRenamedClientMethod", "azure.ai.formrecognizer.aio", "FormTrainingClient", "begin_training"),
-        ("RemovedOrRenamedModel", "azure.ai.formrecognizer", "FormElement"),
+        ("RemovedOrRenamedClass", "azure.ai.formrecognizer", "FormElement"),
     ],
     "azure-storage-queue": [
         ("RemovedOrRenamedModule", "azure.storage.queue.aio"),
@@ -63,8 +63,8 @@ IGNORE_BREAKING_CHANGES = {
 | RemovedOrRenamedModule                               | An entire module was removed or renamed in the current version. E.g. `aio` module was removed.                         | ("RemovedOrRenamedModule", "module-name")
 | RemovedOrRenamedClient                               | A client was removed or renamed in the current version.                                                                | ("RemovedOrRenamedClient", "module-name", "client-name")
 | RemovedOrRenamedClientMethod                         | A client method was removed or renamed in the current version.                                                         | ("RemovedOrRenamedClientMethod", "module-name", "client-name", "function-name")                                             
-| RemovedOrRenamedModel                                | A model or publicly exposed class was removed or renamed in the current version.                                       | ("RemovedOrRenamedModel", "module-name", "class-name")                                                                                                      
-| RemovedOrRenamedModelMethod                          | A model or publicly exposed class' method was removed or renamed in the current version.                               | ("RemovedOrRenamedModelMethod", "module-name", "class-name", "function-name")                                                                                          
+| RemovedOrRenamedClass                                | A model or publicly exposed class was removed or renamed in the current version.                                       | ("RemovedOrRenamedClass", "module-name", "class-name")                                                                                                      
+| RemovedOrRenamedClassMethod                          | A model or publicly exposed class' method was removed or renamed in the current version.                               | ("RemovedOrRenamedClassMethod", "module-name", "class-name", "function-name")                                                                                          
 | RemovedOrRenamedInstanceAttribute                    | An instance attribute was removed or renamed in the current version.                                                   | ("RemovedOrRenamedInstanceAttribute", "module-name", "class-name") 
 | RemovedOrRenamedEnumValue                            | An enum value was removed or renamed in the current version                                                            | ("RemovedOrRenamedEnumValue", "module-name", "class-name")      
 | RemovedOrRenamedModuleLevelFunction                  | A module level function was removed or renamed in the current version.                                                 | ("RemovedOrRenamedModuleLevelFunction", "module-name", "function-name")                                          

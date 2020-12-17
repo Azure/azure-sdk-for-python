@@ -20,8 +20,8 @@ except ModuleNotFoundError:
 class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"
     REMOVED_OR_RENAMED_CLIENT_METHOD = "RemovedOrRenamedClientMethod"
-    REMOVED_OR_RENAMED_MODEL = "RemovedOrRenamedModel"
-    REMOVED_OR_RENAMED_MODEL_METHOD = "RemovedOrRenamedModelMethod"
+    REMOVED_OR_RENAMED_CLASS = "RemovedOrRenamedClass"
+    REMOVED_OR_RENAMED_CLASS_METHOD = "RemovedOrRenamedClassMethod"
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION = "RemovedOrRenamedModuleLevelFunction"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM = "RemovedOrRenamedPositionalParam"
     ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
@@ -41,9 +41,9 @@ class BreakingChangesTracker:
         "({}): The client '{}.{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_CLIENT_METHOD_MSG = \
         "({}): The '{}.{}' client method '{}' was deleted or renamed in the current version"
-    REMOVED_OR_RENAMED_MODEL_MSG = \
+    REMOVED_OR_RENAMED_CLASS_MSG = \
         "({}): The model or publicly exposed class '{}.{}' was deleted or renamed in the current version"
-    REMOVED_OR_RENAMED_MODEL_METHOD_MSG = \
+    REMOVED_OR_RENAMED_CLASS_METHOD_MSG = \
         "({}): The '{}.{}' method '{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
         "({}): The publicly exposed function '{}.{}' was deleted or renamed in the current version"
@@ -515,8 +515,8 @@ class BreakingChangesTracker:
                     )
                 else:
                     bc = (
-                        self.REMOVED_OR_RENAMED_MODEL_MSG,
-                        BreakingChangeType.REMOVED_OR_RENAMED_MODEL,
+                        self.REMOVED_OR_RENAMED_CLASS_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_CLASS,
                         self.module_name, name
                     )
                 self.breaking_changes.append(bc)
@@ -542,8 +542,8 @@ class BreakingChangesTracker:
                     )
                 else:
                     bc = (
-                        self.REMOVED_OR_RENAMED_MODEL_METHOD_MSG,
-                        BreakingChangeType.REMOVED_OR_RENAMED_MODEL_METHOD,
+                        self.REMOVED_OR_RENAMED_CLASS_METHOD_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_CLASS_METHOD,
                         self.module_name, self.class_name, method
                     )
                 self.breaking_changes.append(bc)

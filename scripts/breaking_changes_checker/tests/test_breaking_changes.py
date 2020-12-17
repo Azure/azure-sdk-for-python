@@ -18,11 +18,11 @@ EXPECTED = [
     "(AddedPositionalParam): The 'azure.storage.queue.QueueClient method 'get_queue_access_policy' had a 'positional_or_keyword' parameter 'queue_name' inserted in the current version",
     "(RemovedOrRenamedPositionalParam): The 'azure.storage.queue.QueueClient method 'set_queue_access_policy' had its 'positional_or_keyword' parameter 'signed_identifiers' deleted or renamed in the current version",
     "(ChangedParameterDefaultValue): The class 'azure.storage.queue.QueueClient' method 'set_queue_metadata' had its parameter 'metadata' default value changed from 'None' to ''",
-    "(RemovedOrRenamedModelMethod): The 'azure.storage.queue.QueueSasPermissions' method 'from_string' was deleted or renamed in the current version",
+    "(RemovedOrRenamedClassMethod): The 'azure.storage.queue.QueueSasPermissions' method 'from_string' was deleted or renamed in the current version",
     "(RemovedFunctionKwargs): The class 'azure.storage.queue.QueueServiceClient' method 'set_service_properties' changed from accepting keyword arguments to not accepting them in the current version",
     "(RemovedOrRenamedClientMethod): The 'azure.storage.queue.QueueServiceClient' client method 'get_service_properties' was deleted or renamed in the current version",
     "(RemovedOrRenamedEnumValue): The 'azure.storage.queue.StorageErrorCode' enum had its value 'queue_not_found' deleted or renamed in the current version",
-    "(RemovedOrRenamedModel): The model or publicly exposed class 'azure.storage.queue.QueueMessage' was deleted or renamed in the current version",
+    "(RemovedOrRenamedClass): The model or publicly exposed class 'azure.storage.queue.QueueMessage' was deleted or renamed in the current version",
     "(ChangedParameterKind): The class 'azure.storage.queue.aio.QueueClient' method 'from_queue_url' had its parameter 'credential' changed from 'positional_or_keyword' to 'keyword_only' in the current version",
     "(RemovedParameterDefaultValue): The class 'azure.storage.queue.aio.QueueClient' method 'update_message' had default value 'None' removed from its parameter 'pop_receipt' in the current version",
     "(ChangedFunctionKind): The class 'azure.storage.queue.aio.QueueServiceClient' method 'get_service_stats' changed from 'asynchronous' to 'synchronous' in the current version.",
@@ -231,8 +231,8 @@ def test_replace_all_functions():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedModelMethod): The 'azure.ai.formrecognizer.class_name' method 'one' was deleted or renamed in the current version",
-        "(RemovedOrRenamedModelMethod): The 'azure.ai.formrecognizer.class_name' method 'two' was deleted or renamed in the current version",
+        "(RemovedOrRenamedClassMethod): The 'azure.ai.formrecognizer.class_name' method 'one' was deleted or renamed in the current version",
+        "(RemovedOrRenamedClassMethod): The 'azure.ai.formrecognizer.class_name' method 'two' was deleted or renamed in the current version",
         "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'azure.ai.formrecognizer.my_function_name' was deleted or renamed in the current version",
         "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'azure.ai.formrecognizer.my_function_name2' was deleted or renamed in the current version"
     ]
@@ -305,8 +305,8 @@ def test_replace_all_classes():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedModel): The model or publicly exposed class 'azure.ai.formrecognizer.class_name' was deleted or renamed in the current version",
-        "(RemovedOrRenamedModel): The model or publicly exposed class 'azure.ai.formrecognizer.class_name2' was deleted or renamed in the current version"
+        "(RemovedOrRenamedClass): The model or publicly exposed class 'azure.ai.formrecognizer.class_name' was deleted or renamed in the current version",
+        "(RemovedOrRenamedClass): The model or publicly exposed class 'azure.ai.formrecognizer.class_name2' was deleted or renamed in the current version"
     ]
 
     diff = jsondiff.diff(stable, current)
