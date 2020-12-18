@@ -34,21 +34,18 @@ class AzureFileStorage(object):
     :vartype directory: azure.storage.fileshare.operations.DirectoryOperations
     :ivar file: FileOperations operations
     :vartype file: azure.storage.fileshare.operations.FileOperations
-    :param version: Specifies the version of the operation to use for this request.
-    :type version: str
     :param url: The URL of the service account, share, directory or file that is the target of the desired operation.
     :type url: str
     """
 
     def __init__(
         self,
-        version,  # type: str
         url,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         base_url = '{url}'
-        self._config = AzureFileStorageConfiguration(version, url, **kwargs)
+        self._config = AzureFileStorageConfiguration(url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

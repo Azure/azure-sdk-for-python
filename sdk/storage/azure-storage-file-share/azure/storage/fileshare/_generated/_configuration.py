@@ -23,27 +23,22 @@ class AzureFileStorageConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param version: Specifies the version of the operation to use for this request.
-    :type version: str
     :param url: The URL of the service account, share, directory or file that is the target of the desired operation.
     :type url: str
     """
 
     def __init__(
         self,
-        version,  # type: str
         url,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if version is None:
-            raise ValueError("Parameter 'version' must not be None.")
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
         super(AzureFileStorageConfiguration, self).__init__(**kwargs)
 
-        self.version = version
         self.url = url
+        self.version = "2020-04-08"
         self.file_range_write_from_url = "update"
         kwargs.setdefault('sdk_moniker', 'azurefilestorage/{}'.format(VERSION))
         self._configure(**kwargs)
