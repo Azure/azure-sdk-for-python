@@ -9,6 +9,7 @@
 from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._generated.models import (
@@ -79,12 +80,26 @@ class MetricsAdvisorClient(object):
 
         self._endpoint = endpoint
 
-        self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
-            endpoint=endpoint,
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-            **kwargs
-        )
+        if isinstance(credential, MetricsAdvisorKeyCredentialPolicy):
+            self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
+                **kwargs
+            )
+        else:
+            scope = endpoint.strip("/") + "/.default"
+            if hasattr(credential, "get_token"):
+                credential_policy = BearerTokenCredentialPolicy(credential, scope)
+            else:
+                raise TypeError("Please provide an instance from azure-identity "
+                                "or a class that implement the 'get_token protocol")
+            self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=credential_policy,
+                **kwargs
+            )
 
     def __repr__(self):
         # type: () -> str
