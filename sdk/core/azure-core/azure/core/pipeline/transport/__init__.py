@@ -50,7 +50,6 @@ try:
 
     if sys.version_info >= (3, 7):
         def __getattr__(name):
-            print("name:" + name)
             if name == 'AioHttpTransport':
                 try:
                     from ._aiohttp import AioHttpTransport
