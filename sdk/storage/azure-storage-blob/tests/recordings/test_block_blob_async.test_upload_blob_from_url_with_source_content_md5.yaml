@@ -3,9 +3,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 01 Dec 2020 21:50:41 GMT
+      - Fri, 18 Dec 2020 01:10:29 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -15,15 +15,15 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 01 Dec 2020 21:50:39 GMT
-      etag: '"0x8D89643246A277F"'
-      last-modified: Tue, 01 Dec 2020 21:50:39 GMT
+      date: Fri, 18 Dec 2020 01:10:28 GMT
+      etag: '"0x8D8A2F1B5C7BE57"'
+      last-modified: Fri, 18 Dec 2020 01:10:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2020-04-08'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/utcontainer17971d05?restype=container
+    url: https://emilydevtest.blob.core.windows.net/utcontainer17971d05?restype=container
 - request:
     body: This is test data to be copied over.
     headers:
@@ -34,11 +34,11 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 01 Dec 2020 21:50:42 GMT
+      - Fri, 18 Dec 2020 01:10:29 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -49,25 +49,24 @@ interactions:
     headers:
       content-length: '0'
       content-md5: BmRZdU7mXzYVn1nIbsazYg==
-      date: Tue, 01 Dec 2020 21:50:39 GMT
-      etag: '"0x8D8964324737B42"'
-      last-modified: Tue, 01 Dec 2020 21:50:39 GMT
+      date: Fri, 18 Dec 2020 01:10:28 GMT
+      etag: '"0x8D8A2F1B5CAAAC3"'
+      last-modified: Fri, 18 Dec 2020 01:10:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: OIyBbegbJhU=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-12-01T21:50:39.1448386Z'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/utcontainer17971d05/blob17971d05
+    url: https://emilydevtest.blob.core.windows.net/utcontainer17971d05/blob17971d05
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 01 Dec 2020 21:50:42 GMT
+      - Fri, 18 Dec 2020 01:10:29 GMT
       x-ms-version:
       - '2020-04-08'
     method: HEAD
@@ -77,30 +76,26 @@ interactions:
       string: ''
     headers:
       accept-ranges: bytes
-      access-control-allow-origin: '*'
-      access-control-expose-headers: x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Content-Type,Last-Modified,ETag,x-ms-creation-time,Content-MD5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,x-ms-access-tier,x-ms-access-tier-inferred,Accept-Ranges,x-ms-last-access-time,Content-Length,Date,Transfer-Encoding
       content-length: '36'
       content-md5: BmRZdU7mXzYVn1nIbsazYg==
       content-type: application/octet-stream
-      date: Tue, 01 Dec 2020 21:50:39 GMT
-      etag: '"0x8D8964324737B42"'
-      last-modified: Tue, 01 Dec 2020 21:50:39 GMT
+      date: Fri, 18 Dec 2020 01:10:28 GMT
+      etag: '"0x8D8A2F1B5CAAAC3"'
+      last-modified: Fri, 18 Dec 2020 01:10:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Tue, 01 Dec 2020 21:50:39 GMT
-      x-ms-is-current-version: 'true'
-      x-ms-last-access-time: Tue, 01 Dec 2020 21:50:39 GMT
+      x-ms-creation-time: Fri, 18 Dec 2020 01:10:29 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-12-01T21:50:39.1448386Z'
     status:
       code: 200
       message: OK
-    url: https://seanmcccanary3.blob.core.windows.net/utcontainer17971d05/blob17971d05
+    url: https://emilydevtest.blob.core.windows.net/utcontainer17971d05/blob17971d05
 - request:
     body: null
     headers:
@@ -109,38 +104,37 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer17971d05/blob17971d05?se=2020-12-01T22%3A50%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=up5263CZVhpGvtTbQ64Jig43Nwzc9SFFHtEGmdTy/IM%3D
+      - https://emilydevtest.blob.core.windows.net/utcontainer17971d05/blob17971d05?se=2020-12-18T02%3A10%3A29Z&sp=rt&sv=2020-04-08&sr=b&sig=coGsEZgqOH7q2A2tm7a9zOc6/3rW6bnG%2BHIgnL8AasA%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Tue, 01 Dec 2020 21:50:42 GMT
+      - Fri, 18 Dec 2020 01:10:29 GMT
       x-ms-source-content-md5:
       - BmRZdU7mXzYVn1nIbsazYg==
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer17971d05/blob1copy
+    uri: https://storagename.blob.core.windows.net/utcontainer17971d05/blobcopy17971d05
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: BmRZdU7mXzYVn1nIbsazYg==
-      date: Tue, 01 Dec 2020 21:50:39 GMT
-      etag: '"0x8D8964324B01A1C"'
-      last-modified: Tue, 01 Dec 2020 21:50:39 GMT
+      date: Fri, 18 Dec 2020 01:10:29 GMT
+      etag: '"0x8D8A2F1B60E288F"'
+      last-modified: Fri, 18 Dec 2020 01:10:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-12-01T21:50:39.5421212Z'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/utcontainer17971d05/blob1copy
+    url: https://emilydevtest.blob.core.windows.net/utcontainer17971d05/blobcopy17971d05
 - request:
     body: null
     headers:
@@ -149,30 +143,30 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer17971d05/blob17971d05?se=2020-12-01T22%3A50%3A42Z&sp=rt&sv=2020-04-08&sr=b&sig=up5263CZVhpGvtTbQ64Jig43Nwzc9SFFHtEGmdTy/IM%3D
+      - https://emilydevtest.blob.core.windows.net/utcontainer17971d05/blob17971d05?se=2020-12-18T02%3A10%3A29Z&sp=rt&sv=2020-04-08&sr=b&sig=coGsEZgqOH7q2A2tm7a9zOc6/3rW6bnG%2BHIgnL8AasA%3D
       x-ms-copy-source-blob-properties:
       - 'false'
       x-ms-date:
-      - Tue, 01 Dec 2020 21:50:42 GMT
+      - Fri, 18 Dec 2020 01:10:29 GMT
       x-ms-source-content-md5:
       - a1L764HCdlK9fYh44aQr3w==
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer17971d05/blob1copy
+    uri: https://storagename.blob.core.windows.net/utcontainer17971d05/blobcopy17971d05
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The
         MD5 value specified in the request did not match with the MD5 value calculated
-        by the server.\nRequestId:7c917b16-701e-0073-492c-c88251000000\nTime:2020-12-01T21:50:39.6145503Z</Message><UserSpecifiedMd5>a1L764HCdlK9fYh44aQr3w==</UserSpecifiedMd5><ServerCalculatedMd5>BmRZdU7mXzYVn1nIbsazYg==</ServerCalculatedMd5></Error>"
+        by the server.\nRequestId:5c8021e4-d01e-0069-51da-d46ab8000000\nTime:2020-12-18T01:10:29.8458892Z</Message><UserSpecifiedMd5>a1L764HCdlK9fYh44aQr3w==</UserSpecifiedMd5><ServerCalculatedMd5>BmRZdU7mXzYVn1nIbsazYg==</ServerCalculatedMd5></Error>"
     headers:
       content-length: '405'
       content-type: application/xml
-      date: Tue, 01 Dec 2020 21:50:39 GMT
+      date: Fri, 18 Dec 2020 01:10:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: Md5Mismatch
       x-ms-version: '2020-04-08'
@@ -180,45 +174,41 @@ interactions:
       code: 400
       message: The MD5 value specified in the request did not match with the MD5 value
         calculated by the server.
-    url: https://seanmcccanary3.blob.core.windows.net/utcontainer17971d05/blob1copy
+    url: https://emilydevtest.blob.core.windows.net/utcontainer17971d05/blobcopy17971d05
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 01 Dec 2020 21:50:42 GMT
+      - Fri, 18 Dec 2020 01:10:29 GMT
       x-ms-version:
       - '2020-04-08'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer17971d05/blob1copy
+    uri: https://storagename.blob.core.windows.net/utcontainer17971d05/blobcopy17971d05
   response:
     body:
       string: ''
     headers:
       accept-ranges: bytes
-      access-control-allow-origin: '*'
-      access-control-expose-headers: x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Content-Type,Last-Modified,ETag,x-ms-creation-time,Content-MD5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,x-ms-access-tier,x-ms-access-tier-inferred,Accept-Ranges,x-ms-last-access-time,Content-Length,Date,Transfer-Encoding
       content-length: '36'
       content-md5: BmRZdU7mXzYVn1nIbsazYg==
       content-type: application/octet-stream
-      date: Tue, 01 Dec 2020 21:50:39 GMT
-      etag: '"0x8D8964324B01A1C"'
-      last-modified: Tue, 01 Dec 2020 21:50:39 GMT
+      date: Fri, 18 Dec 2020 01:10:29 GMT
+      etag: '"0x8D8A2F1B60E288F"'
+      last-modified: Fri, 18 Dec 2020 01:10:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Tue, 01 Dec 2020 21:50:39 GMT
-      x-ms-is-current-version: 'true'
-      x-ms-last-access-time: Tue, 01 Dec 2020 21:50:39 GMT
+      x-ms-creation-time: Fri, 18 Dec 2020 01:10:29 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-12-01T21:50:39.5421212Z'
     status:
       code: 200
       message: OK
-    url: https://seanmcccanary3.blob.core.windows.net/utcontainer17971d05/blob1copy
+    url: https://emilydevtest.blob.core.windows.net/utcontainer17971d05/blobcopy17971d05
 version: 1
