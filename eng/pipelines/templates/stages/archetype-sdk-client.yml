@@ -35,7 +35,7 @@ parameters:
 - name: BuildTargetingString
   type: string
   default: azure-*
-  
+
 
 stages:
   - stage: Build
