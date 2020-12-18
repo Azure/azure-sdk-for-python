@@ -717,6 +717,8 @@ class DataMaskingPolicy(ProxyResource):
     :ivar kind: The kind of data masking policy. Metadata, used for Azure
      portal.
     :vartype kind: str
+    :ivar managed_by: Fully qualified resource ID of the sql pool
+    :vartype managed_by: str
     """
 
     _validation = {
@@ -728,6 +730,7 @@ class DataMaskingPolicy(ProxyResource):
         'masking_level': {'readonly': True},
         'location': {'readonly': True},
         'kind': {'readonly': True},
+        'managed_by': {'readonly': True},
     }
 
     _attribute_map = {
@@ -740,6 +743,7 @@ class DataMaskingPolicy(ProxyResource):
         'masking_level': {'key': 'properties.maskingLevel', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -750,6 +754,7 @@ class DataMaskingPolicy(ProxyResource):
         self.masking_level = None
         self.location = None
         self.kind = None
+        self.managed_by = None
 
 
 class DataMaskingRule(ProxyResource):
@@ -6582,6 +6587,8 @@ class WorkspacePatchInfo(Model):
      ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar provisioning_state: Resource provisioning state
     :vartype provisioning_state: str
+    :param encryption: The encryption details of the workspace
+    :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
     """
 
     _validation = {
@@ -6596,6 +6603,7 @@ class WorkspacePatchInfo(Model):
         'workspace_repository_configuration': {'key': 'properties.workspaceRepositoryConfiguration', 'type': 'WorkspaceRepositoryConfiguration'},
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionDetails'},
     }
 
     def __init__(self, **kwargs):
@@ -6607,6 +6615,7 @@ class WorkspacePatchInfo(Model):
         self.workspace_repository_configuration = kwargs.get('workspace_repository_configuration', None)
         self.purview_configuration = kwargs.get('purview_configuration', None)
         self.provisioning_state = None
+        self.encryption = kwargs.get('encryption', None)
 
 
 class WorkspaceRepositoryConfiguration(Model):
