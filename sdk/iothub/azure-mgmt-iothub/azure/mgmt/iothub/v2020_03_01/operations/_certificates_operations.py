@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,14 +29,14 @@ class CertificatesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.iothub.v2020_03_01.models
+    :type models: ~azure.mgmt.iothub.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class CertificatesOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateListDescription"
+        # type: (...) -> "_models.CertificateListDescription"
         """Get the certificate list.
 
         Returns the list of certificates.
@@ -61,10 +61,10 @@ class CertificatesOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateListDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.CertificateListDescription
+        :rtype: ~azure.mgmt.iothub.models.CertificateListDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateListDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateListDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -95,7 +95,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateListDescription', pipeline_response)
@@ -113,7 +113,7 @@ class CertificatesOperations(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateDescription"
+        # type: (...) -> "_models.CertificateDescription"
         """Get the certificate.
 
         Returns the certificate.
@@ -126,10 +126,10 @@ class CertificatesOperations(object):
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.CertificateDescription
+        :rtype: ~azure.mgmt.iothub.models.CertificateDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -161,7 +161,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateDescription', pipeline_response)
@@ -177,11 +177,11 @@ class CertificatesOperations(object):
         resource_group_name,  # type: str
         resource_name,  # type: str
         certificate_name,  # type: str
-        certificate_description,  # type: "models.CertificateBodyDescription"
+        certificate_description,  # type: "_models.CertificateBodyDescription"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateDescription"
+        # type: (...) -> "_models.CertificateDescription"
         """Upload the certificate to the IoT hub.
 
         Adds new or replaces existing certificate.
@@ -193,16 +193,16 @@ class CertificatesOperations(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param certificate_description: The certificate body.
-        :type certificate_description: ~azure.mgmt.iothub.v2020_03_01.models.CertificateBodyDescription
+        :type certificate_description: ~azure.mgmt.iothub.models.CertificateBodyDescription
         :param if_match: ETag of the Certificate. Do not specify for creating a brand new certificate.
          Required to update an existing certificate.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.CertificateDescription
+        :rtype: ~azure.mgmt.iothub.models.CertificateDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -241,7 +241,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -315,7 +315,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -331,7 +331,7 @@ class CertificatesOperations(object):
         if_match,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateWithNonceDescription"
+        # type: (...) -> "_models.CertificateWithNonceDescription"
         """Generate verification code for proof of possession flow.
 
         Generates verification code for proof of possession flow. The verification code will be used to
@@ -347,10 +347,10 @@ class CertificatesOperations(object):
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateWithNonceDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.CertificateWithNonceDescription
+        :rtype: ~azure.mgmt.iothub.models.CertificateWithNonceDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateWithNonceDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateWithNonceDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -383,7 +383,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateWithNonceDescription', pipeline_response)
@@ -400,10 +400,10 @@ class CertificatesOperations(object):
         resource_name,  # type: str
         certificate_name,  # type: str
         if_match,  # type: str
-        certificate_verification_body,  # type: "models.CertificateVerificationDescription"
+        certificate_verification_body,  # type: "_models.CertificateVerificationDescription"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateDescription"
+        # type: (...) -> "_models.CertificateDescription"
         """Verify certificate's private key possession.
 
         Verifies the certificate's private key possession by providing the leaf cert issued by the
@@ -418,13 +418,13 @@ class CertificatesOperations(object):
         :param if_match: ETag of the Certificate.
         :type if_match: str
         :param certificate_verification_body: The name of the certificate.
-        :type certificate_verification_body: ~azure.mgmt.iothub.v2020_03_01.models.CertificateVerificationDescription
+        :type certificate_verification_body: ~azure.mgmt.iothub.models.CertificateVerificationDescription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.CertificateDescription
+        :rtype: ~azure.mgmt.iothub.models.CertificateDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -462,7 +462,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateDescription', pipeline_response)

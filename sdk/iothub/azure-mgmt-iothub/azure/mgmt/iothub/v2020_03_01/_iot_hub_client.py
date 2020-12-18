@@ -32,19 +32,19 @@ class IotHubClient(object):
     """Use this API to manage the IoT hubs in your Azure subscription.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.iothub.v2020_03_01.operations.Operations
+    :vartype operations: azure.mgmt.iothub.operations.Operations
     :ivar iot_hub_resource: IotHubResourceOperations operations
-    :vartype iot_hub_resource: azure.mgmt.iothub.v2020_03_01.operations.IotHubResourceOperations
+    :vartype iot_hub_resource: azure.mgmt.iothub.operations.IotHubResourceOperations
     :ivar resource_provider_common: ResourceProviderCommonOperations operations
-    :vartype resource_provider_common: azure.mgmt.iothub.v2020_03_01.operations.ResourceProviderCommonOperations
+    :vartype resource_provider_common: azure.mgmt.iothub.operations.ResourceProviderCommonOperations
     :ivar certificates: CertificatesOperations operations
-    :vartype certificates: azure.mgmt.iothub.v2020_03_01.operations.CertificatesOperations
+    :vartype certificates: azure.mgmt.iothub.operations.CertificatesOperations
     :ivar iot_hub: IotHubOperations operations
-    :vartype iot_hub: azure.mgmt.iothub.v2020_03_01.operations.IotHubOperations
+    :vartype iot_hub: azure.mgmt.iothub.operations.IotHubOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.iothub.v2020_03_01.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.iothub.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.iothub.v2020_03_01.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.iothub.operations.PrivateEndpointConnectionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription identifier.
