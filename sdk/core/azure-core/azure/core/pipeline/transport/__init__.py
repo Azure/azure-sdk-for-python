@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
+import sys
 from ._base import HttpTransport, HttpRequest, HttpResponse
 from ._requests_basic import RequestsTransport, RequestsTransportResponse
 
@@ -35,8 +36,8 @@ __all__ = [
     'RequestsTransportResponse',
 ]
 
-#pylint: disable=unused-import
 
+#pylint: disable=unused-import
 try:
     from ._base_async import AsyncHttpTransport, AsyncHttpResponse
     from ._requests_asyncio import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
@@ -47,22 +48,51 @@ try:
         'AsyncioRequestsTransportResponse'
     ])
 
-    try:
-        from ._requests_trio import TrioRequestsTransport, TrioRequestsTransportResponse
-        __all__.extend([
-            'TrioRequestsTransport',
-            'TrioRequestsTransportResponse'
-        ])
-    except ImportError:
-        pass  # Trio not installed
+    if sys.version_info >= (3, 7):
+        def __getattr__(name):
+            print("name:" + name)
+            if name == 'AioHttpTransport':
+                try:
+                    from ._aiohttp import AioHttpTransport
+                    return AioHttpTransport
+                except ImportError:
+                    raise ImportError("aiohttp package is not installed")
+            if name == 'AioHttpTransportResponse':
+                try:
+                    from ._aiohttp import AioHttpTransportResponse
+                    return AioHttpTransportResponse
+                except ImportError:
+                    raise ImportError("aiohttp package is not installed")
+            if name == 'TrioRequestsTransport':
+                try:
+                    from ._requests_trio import TrioRequestsTransport
+                    return TrioRequestsTransport
+                except ImportError:
+                    raise ImportError("trio package is not installed")
+            if name == 'TrioRequestsTransportResponse':
+                try:
+                    from ._requests_trio import TrioRequestsTransportResponse
+                    return TrioRequestsTransportResponse
+                except ImportError:
+                    raise ImportError("trio package is not installed")
 
-    try:
-        from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
-        __all__.extend([
-            'AioHttpTransport',
-            'AioHttpTransportResponse',
-        ])
-    except ImportError:
-        pass  # Aiohttp not installed
+    else:
+        try:
+            from ._requests_trio import TrioRequestsTransport, TrioRequestsTransportResponse
+            __all__.extend([
+                'TrioRequestsTransport',
+                'TrioRequestsTransportResponse'
+            ])
+        except ImportError:
+            pass  # Trio not installed
+
+        try:
+            from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
+            __all__.extend([
+                'AioHttpTransport',
+                'AioHttpTransportResponse',
+            ])
+        except ImportError:
+            pass  # Aiohttp not installed
 except (ImportError, SyntaxError):
     pass  # Asynchronous pipelines not supported.
