@@ -3,26 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
-import unittest
 import pytest
 import platform
 from time import sleep
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
-from devtools_testutils import (
-    ResourceGroupPreparer,
-    StorageAccountPreparer
-)
+from azure.core.exceptions import HttpResponseError
+
 from _shared.testcase import (
     TableTestCase,
     SLEEP_DELAY
 )
-from azure.core.exceptions import HttpResponseError
-from _shared.cosmos_testcase import CachedCosmosAccountPreparer
-
-from devtools_testutils import CachedResourceGroupPreparer
 from preparers import CosmosPreparer
 
 # ------------------------------------------------------------------------------
@@ -587,7 +579,3 @@ class StorageTableClientTest(TableTestCase):
                 table_name='table')
 
             service.close()
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

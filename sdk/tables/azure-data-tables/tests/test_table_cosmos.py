@@ -10,11 +10,21 @@ import sys
 import locale
 import os
 from time import sleep
-
-from azure.data.tables import TableServiceClient
 from datetime import (
     datetime,
     timedelta,
+)
+
+from azure.core.pipeline.transport import RequestsTransport
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceNotFoundError,
+    ResourceExistsError
+)
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import (
+    HeadersPolicy,
+    ContentDecodePolicy,
 )
 
 from azure.data.tables import (
@@ -26,28 +36,13 @@ from azure.data.tables import (
     UpdateMode,
     AccessPolicy,
     TableAnalyticsLogging,
-    Metrics
+    Metrics,
+    TableServiceClient
 )
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import (
-    HeadersPolicy,
-    ContentDecodePolicy,
-)
-
-from _shared.testcase import (
-    TableTestCase,
-    SLEEP_DELAY
-)
-
 from azure.data.tables._authentication import SharedKeyCredentialPolicy
 from azure.data.tables._table_shared_access_signature import generate_account_sas
-from azure.core.pipeline.transport import RequestsTransport
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError
-)
 
+from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import CosmosPreparer
 
 # ------------------------------------------------------------------------------
@@ -87,10 +82,8 @@ class StorageTableTest(TableTestCase):
             except ResourceNotFoundError:
                 pass
 
-
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     def test_create_properties(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # # Arrange
@@ -116,7 +109,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # # Arrange
@@ -133,7 +125,6 @@ class StorageTableTest(TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -152,7 +143,6 @@ class StorageTableTest(TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -184,7 +174,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_create_table_invalid_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -200,7 +189,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_delete_table_invalid_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -215,7 +203,6 @@ class StorageTableTest(TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -234,7 +221,6 @@ class StorageTableTest(TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -255,7 +241,6 @@ class StorageTableTest(TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -284,7 +269,6 @@ class StorageTableTest(TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -317,7 +301,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_delete_table_with_existing_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -334,7 +317,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
                                                                  tables_primary_cosmos_account_key):
@@ -350,7 +332,6 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-
     @CosmosPreparer()
     def test_unicode_create_table_unicode_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -366,7 +347,6 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-
     @CosmosPreparer()
     def test_get_table_acl(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -387,7 +367,6 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-
     @CosmosPreparer()
     def test_set_table_acl_with_empty_signed_identifiers(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
@@ -410,7 +389,6 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-
     @CosmosPreparer()
     def test_set_table_acl_with_empty_signed_identifier(self, tables_cosmos_account_name,
                                                         tables_primary_cosmos_account_key):
@@ -436,7 +414,6 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-
     @CosmosPreparer()
     def test_set_table_acl_with_signed_identifiers(self, tables_cosmos_account_name,
                                                    tables_primary_cosmos_account_key):
@@ -465,7 +442,6 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-
     @CosmosPreparer()
     def test_set_table_acl_too_many_ids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -489,7 +465,6 @@ class StorageTableTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_account_sas(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -534,7 +509,6 @@ class StorageTableTest(TableTestCase):
             self._delete_table(table=table, ts=tsc)
 
     @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
-
     @CosmosPreparer()
     def test_locale(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange

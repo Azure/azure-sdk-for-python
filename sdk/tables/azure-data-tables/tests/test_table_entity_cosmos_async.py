@@ -6,31 +6,33 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import unittest
-
 import pytest
 
-import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
-from time import sleep
-
-from azure.data.tables import generate_table_sas
-from azure.data.tables._generated.models import QueryOptions
-from azure.data.tables.aio import TableServiceClient
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
+from time import sleep
+import uuid
+
+from azure.data.tables import (
+    generate_table_sas,
+    TableEntity,
+    EntityProperty,
+    EdmType,
+    TableSasPermissions,
+    AccessPolicy,
+    UpdateMode
+)
+from azure.data.tables.aio import TableServiceClient
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError)
+    ResourceExistsError,
+)
 
-from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
-from azure.data.tables import TableSasPermissions, AccessPolicy, UpdateMode
-from devtools_testutils import CachedResourceGroupPreparer
-from _shared.cosmos_testcase import CachedCosmosAccountPreparer
 from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import CosmosPreparer
 # ------------------------------------------------------------------------------
@@ -65,7 +67,6 @@ class StorageTableEntityTest(TableTestCase):
                         await t.delete_table(table_name)
                     except:
                         pass
-
 
     # --Helpers-----------------------------------------------------------------
     async def _create_query_table(self, entity_count):
@@ -1845,8 +1846,3 @@ class StorageTableEntityTest(TableTestCase):
             await self._tear_down()
             if self.is_live:
                 sleep(SLEEP_DELAY)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

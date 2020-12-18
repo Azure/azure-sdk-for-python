@@ -6,13 +6,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+
 import sys
 import locale
 import os
-from datetime import (
-    datetime,
-    timedelta,
-)
+from datetime import datetime, timedelta
 
 from azure.data.tables import (
     ResourceTypes,
@@ -38,9 +36,9 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError)
+    ResourceExistsError
+)
 
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 from _shared.testcase import TableTestCase
 from preparers import TablesPreparer
 # ------------------------------------------------------------------------------

@@ -3,13 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 from time import sleep
 
 from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase, SLEEP_DELAY
-
 from preparers import CosmosPreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
@@ -48,7 +46,6 @@ class TableServiceStatsTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("JSON is invalid for cosmos")
-
     @CosmosPreparer()
     def test_table_service_stats_f(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -63,7 +60,6 @@ class TableServiceStatsTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("JSON is invalid for cosmos")
-
     @CosmosPreparer()
     def test_table_service_stats_when_unavailable(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -78,7 +74,3 @@ class TableServiceStatsTest(TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

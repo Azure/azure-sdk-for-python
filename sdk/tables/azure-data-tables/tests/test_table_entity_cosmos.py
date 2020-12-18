@@ -6,29 +6,34 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import unittest
-
 import pytest
 
-import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 from time import sleep
+import uuid
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError)
-from azure.data.tables import TableServiceClient, TableClient, generate_table_sas
-from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
-from azure.data.tables._models import TableSasPermissions, AccessPolicy, UpdateMode
+    ResourceExistsError
+)
+from azure.data.tables import (
+    TableServiceClient,
+    TableClient,
+    generate_table_sas,
+    TableEntity,
+    EntityProperty,
+    EdmType,
+    TableSasPermissions,
+    AccessPolicy,
+    UpdateMode
+)
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
-from _shared.cosmos_testcase import CachedCosmosAccountPreparer
-
 from preparers import CosmosPreparer
 
 # ------------------------------------------------------------------------------
@@ -262,7 +267,6 @@ class StorageTableEntityTest(TableTestCase):
         assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
-
     @CosmosPreparer()
     def test_url_encoding_at_symbol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
@@ -300,7 +304,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_insert_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
@@ -318,7 +321,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_query_user_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -333,7 +335,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_invalid_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -360,8 +361,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
-
     @CosmosPreparer()
     def test_insert_entity_dictionary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -377,7 +376,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_insert_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -399,7 +397,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_insert_entity_with_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -427,7 +424,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_insert_entity_with_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -454,7 +450,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_insert_entity_conflict(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -472,7 +467,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_insert_entity_with_large_int32_value_throws(self, tables_cosmos_account_name,
@@ -495,7 +489,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_insert_entity_with_large_int64_value_throws(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
@@ -516,7 +509,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_insert_entity_with_large_int_success(self, tables_cosmos_account_name,
@@ -545,7 +537,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_insert_entity_missing_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -561,7 +552,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_insert_entity_empty_string_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -580,7 +570,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_insert_entity_missing_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -596,7 +585,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_insert_entity_empty_string_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -616,7 +604,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not have this limitation")
-
     @CosmosPreparer()
     def test_insert_entity_too_many_properties(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -636,7 +623,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not have this limitation")
-
     @CosmosPreparer()
     def test_insert_entity_property_name_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -653,7 +639,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_get_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -673,7 +658,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_get_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -697,7 +681,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_get_entity_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -724,7 +707,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -745,7 +727,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_get_entity_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -768,7 +749,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_get_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -785,7 +765,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_get_entity_with_special_doubles(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -813,7 +792,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_update_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -837,7 +815,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_update_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -854,7 +831,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_update_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -878,7 +854,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_update_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -901,7 +876,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_insert_or_merge_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
@@ -923,7 +897,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_insert_or_merge_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                              tables_primary_cosmos_account_key):
@@ -946,7 +919,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_insert_or_replace_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                            tables_primary_cosmos_account_key):
@@ -968,7 +940,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_insert_or_replace_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
@@ -991,7 +962,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_merge_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1012,7 +982,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_merge_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1031,7 +1000,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_merge_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1056,7 +1024,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
-
     @CosmosPreparer()
     def test_merge_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1077,7 +1044,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_delete_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1096,7 +1062,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_delete_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1112,7 +1077,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_delete_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1133,7 +1097,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_delete_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1152,7 +1115,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_unicode_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1244,7 +1206,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_empty_and_spaces_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1284,7 +1245,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_none_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1303,7 +1263,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_binary_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1326,7 +1285,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("response time is three hours before the given one")
-
     @CosmosPreparer()
     def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1350,7 +1308,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_query_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1368,7 +1325,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_entities_each_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1408,7 +1364,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_query_zero_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1424,7 +1379,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_entities_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1444,7 +1398,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_query_entities_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1462,7 +1415,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_entities_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1486,7 +1438,6 @@ class StorageTableEntityTest(TableTestCase):
             self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
-
     @CosmosPreparer()
     def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1510,7 +1461,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-
     @CosmosPreparer()
     def test_query_entities_with_top(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1526,7 +1476,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     def test_query_entities_with_top_and_next(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1564,7 +1513,6 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_sas_query(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from cosmos key, so this test runs live only
@@ -1597,7 +1545,6 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_sas_add(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from cosmos key, so this test runs live only
@@ -1633,7 +1580,6 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_sas_add_inside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from cosmos key, so this test runs live only
@@ -1668,7 +1614,6 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_sas_add_outside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from cosmos key, so this test runs live only
@@ -1702,7 +1647,6 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_sas_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from cosmos key, so this test runs live only
@@ -1736,7 +1680,6 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_sas_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from cosmos key, so this test runs live only
@@ -1769,7 +1712,6 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_sas_upper_case_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from cosmos key, so this test runs live only
@@ -1806,7 +1748,6 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-
     @CosmosPreparer()
     def test_sas_signed_identifier(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from cosmos key, so this test runs live only
@@ -1845,8 +1786,3 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

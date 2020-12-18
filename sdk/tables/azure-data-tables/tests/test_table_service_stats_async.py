@@ -3,12 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 
-# from azure.data.tabless import TableServiceClient
 from azure.data.tables.aio import TableServiceClient
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
+
 from _shared.testcase import TableTestCase
 from preparers import TablesPreparer
 
@@ -48,8 +46,6 @@ class TableServiceStatsTest(TableTestCase):
         #  response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-
-
     @TablesPreparer()
     async def test_table_service_stats_f(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -59,8 +55,6 @@ class TableServiceStatsTest(TableTestCase):
         stats = await tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
         # Assert
         self._assert_stats_default(stats)
-
-
 
     @TablesPreparer()
     async def test_table_service_stats_when_unavailable(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -73,8 +67,3 @@ class TableServiceStatsTest(TableTestCase):
 
         # Assert
         self._assert_stats_unavailable(stats)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

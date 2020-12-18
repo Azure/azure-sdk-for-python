@@ -6,7 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import unittest
 import pytest
 
 import uuid
@@ -21,7 +20,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError
 )
-from azure.data.tables.aio import TableServiceClient\
+from azure.data.tables.aio import TableServiceClient
 from azure.data.tables import (
     TableEntity,
     UpdateMode,
@@ -410,7 +409,6 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-
     @TablesPreparer()
     async def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -633,7 +631,6 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
-
     @TablesPreparer()
     async def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -675,7 +672,6 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     # @pytest.mark.skip("This does not throw an error, but it should")
-
     @TablesPreparer()
     async def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -725,7 +721,6 @@ class StorageTableBatchTest(TableTestCase):
                 batch.create_entity(entity)
         finally:
             await self._tear_down()
-
 
     @TablesPreparer()
     async def test_batch_too_many_ops(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -806,9 +801,3 @@ class StorageTableBatchTest(TableTestCase):
 
         finally:
             await self._tear_down()
-
-
-
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

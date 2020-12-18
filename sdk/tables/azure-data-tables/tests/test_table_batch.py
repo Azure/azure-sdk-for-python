@@ -6,13 +6,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import unittest
 import pytest
 
-import uuid
 from datetime import datetime
 from dateutil.tz import tzutc
 import sys
+import uuid
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -21,19 +20,21 @@ from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError
 )
-from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode, BatchTransactionResult
-
-from _shared.testcase import TableTestCase
-
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
-
-from azure.data.tables._models import PartialBatchErrorException, BatchErrorException
 from azure.data.tables import (
+    EdmType,
+    TableEntity,
+    EntityProperty,
+    UpdateMode,
+    BatchTransactionResult,
+    BatchErrorException,
     TableServiceClient,
     TableEntity,
     UpdateMode,
 )
+
+from _shared.testcase import TableTestCase
 from preparers import TablesPreparer
+
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
@@ -872,7 +873,3 @@ class StorageTableBatchTest(TableTestCase):
 
         finally:
             self._tear_down()
-
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

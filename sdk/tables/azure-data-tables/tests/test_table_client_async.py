@@ -3,21 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 import platform
 
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
-from devtools_testutils import (
-    ResourceGroupPreparer,
-    CachedResourceGroupPreparer,
-    CachedStorageAccountPreparer,
-    AzureTestCase
-)
+
 from _shared.testcase import TableTestCase
 from preparers import TablesPreparer
-from azure.core.exceptions import HttpResponseError
 # ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'table',
@@ -443,7 +436,6 @@ class StorageTableClientTest(TableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  tables_storage_account_name
 
-    @AzureTestCase.await_prepared_test
     async def test_create_table_client_with_invalid_name_async(self):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format("storage_account_name")
@@ -455,7 +447,6 @@ class StorageTableClientTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."in str(excinfo)
 
-    @AzureTestCase.await_prepared_test
     async def test_error_with_malformed_conn_str_async(self):
         # Arrange
 
@@ -491,6 +482,3 @@ class StorageTableClientTest(TableTestCase):
             service = client(
                 self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key, table_name='table')
             await service.close()
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

@@ -5,20 +5,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import time
 import pytest
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
-
-from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables import TableServiceClient
+from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
+from azure.core.exceptions import HttpResponseError
 
 from _shared.testcase import TableTestCase
-
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 from preparers import TablesPreparer
 
 # ------------------------------------------------------------------------------
@@ -100,7 +94,6 @@ class TableServicePropertiesTest(TableTestCase):
         assert ret1.days ==  ret2.days
 
     # --Test cases per service ---------------------------------------
-
     @TablesPreparer()
     def test_table_service_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -119,9 +112,7 @@ class TableServicePropertiesTest(TableTestCase):
             time.sleep(30)
         self._assert_properties_default(tsc.get_service_properties())
 
-
     # --Test cases per feature ---------------------------------------
-
     @TablesPreparer()
     def test_set_logging(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -137,7 +128,6 @@ class TableServicePropertiesTest(TableTestCase):
             time.sleep(30)
         received_props = tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
-
 
     @TablesPreparer()
     def test_set_hour_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -155,7 +145,6 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-
     @TablesPreparer()
     def test_set_minute_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -172,7 +161,6 @@ class TableServicePropertiesTest(TableTestCase):
             time.sleep(30)
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
-
 
     @TablesPreparer()
     def test_set_cors(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -205,14 +193,12 @@ class TableServicePropertiesTest(TableTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-
     @TablesPreparer()
     def test_retention_no_days(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Assert
         pytest.raises(ValueError,
                           RetentionPolicy,
                           True, None)
-
 
     @TablesPreparer()
     def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -226,7 +212,6 @@ class TableServicePropertiesTest(TableTestCase):
         pytest.raises(HttpResponseError,
                           tsc.set_service_properties, None, None, None, cors)
 
-
     @TablesPreparer()
     def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -238,8 +223,3 @@ class TableServicePropertiesTest(TableTestCase):
         pytest.raises(HttpResponseError,
                           tsc.set_service_properties,
                           None, None, minute_metrics)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

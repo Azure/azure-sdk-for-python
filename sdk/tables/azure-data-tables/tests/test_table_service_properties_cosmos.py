@@ -5,19 +5,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import time
 import pytest
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables import TableServiceClient
+from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 
 from _shared.testcase import TableTestCase
-from _shared.cosmos_testcase import CachedCosmosAccountPreparer
-
 from preparers import CosmosPreparer
 # ------------------------------------------------------------------------------
 
@@ -98,7 +94,6 @@ class TableServicePropertiesTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     def test_table_service_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -117,10 +112,8 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
     # --Test cases per feature ---------------------------------------
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     def test_set_logging(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -138,7 +131,6 @@ class TableServicePropertiesTest(TableTestCase):
             time.sleep(30)
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     def test_set_hour_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -156,7 +148,6 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     def test_set_minute_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -175,7 +166,6 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     def test_set_cors(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -218,7 +208,6 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -234,7 +223,6 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -248,8 +236,3 @@ class TableServicePropertiesTest(TableTestCase):
                           None, None, minute_metrics)
         if self.is_live:
             sleep(SLEEP_DELAY)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

@@ -5,15 +5,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 from time import sleep
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.core.exceptions import HttpResponseError
-
 from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 from azure.data.tables.aio import TableServiceClient
+from azure.core.exceptions import HttpResponseError
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import CosmosPreparer
@@ -96,7 +93,6 @@ class TableServicePropertiesTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     async def test_table_service_properties_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -117,7 +113,6 @@ class TableServicePropertiesTest(TableTestCase):
 
     # --Test cases per feature ---------------------------------------
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     async def test_set_logging_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -135,7 +130,6 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     async def test_set_hour_metrics_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -153,7 +147,6 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     async def test_set_minute_metrics_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -172,7 +165,6 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-
     @CosmosPreparer()
     async def test_set_cors_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -204,7 +196,6 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     # --Test cases for errors ---------------------------------------
-
     @CosmosPreparer()
     async def test_retention_no_days_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Assert
@@ -213,7 +204,6 @@ class TableServicePropertiesTest(TableTestCase):
                           True, None)
         if self.is_live:
             sleep(SLEEP_DELAY)
-
 
     @CosmosPreparer()
     async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -229,8 +219,6 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
-
     @CosmosPreparer()
     async def test_retention_too_long_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -243,8 +231,3 @@ class TableServicePropertiesTest(TableTestCase):
             await tsc.set_service_properties(None, None, minute_metrics)
         if self.is_live:
             sleep(SLEEP_DELAY)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

@@ -5,20 +5,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import time
 import pytest
 
-from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.testcase import TableTestCase
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 from preparers import TablesPreparer
+
 # ------------------------------------------------------------------------------
 
 
@@ -98,7 +95,6 @@ class TableServicePropertiesTest(TableTestCase):
         assert ret1.days ==  ret2.days
 
     # --Test cases per service ---------------------------------------
-
     @TablesPreparer()
     async def test_table_service_properties_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -118,7 +114,6 @@ class TableServicePropertiesTest(TableTestCase):
         self._assert_properties_default(await tsc.get_service_properties())
 
     # --Test cases per feature ---------------------------------------
-
     @TablesPreparer()
     async def test_set_logging_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -134,7 +129,6 @@ class TableServicePropertiesTest(TableTestCase):
             time.sleep(30)
         received_props = await tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
-
 
     @TablesPreparer()
     async def test_set_hour_metrics_async(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -152,7 +146,6 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-
     @TablesPreparer()
     async def test_set_minute_metrics_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -169,7 +162,6 @@ class TableServicePropertiesTest(TableTestCase):
             time.sleep(30)
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
-
 
     @TablesPreparer()
     async def test_set_cors_async(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -202,14 +194,12 @@ class TableServicePropertiesTest(TableTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-
     @TablesPreparer()
     async def test_retention_no_days_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Assert
         pytest.raises(ValueError,
                           RetentionPolicy,
                           True, None)
-
 
     @TablesPreparer()
     async def test_too_many_cors_rules_async(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -223,7 +213,6 @@ class TableServicePropertiesTest(TableTestCase):
         with pytest.raises(HttpResponseError):
             await tsc.set_service_properties(None, None, None, cors)
 
-
     @TablesPreparer()
     async def test_retention_too_long_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -234,8 +223,3 @@ class TableServicePropertiesTest(TableTestCase):
         # Assert
         with pytest.raises(HttpResponseError):
             await tsc.set_service_properties(None, None, minute_metrics)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
