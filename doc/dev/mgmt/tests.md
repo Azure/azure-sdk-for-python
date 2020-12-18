@@ -8,7 +8,7 @@
         -   [Get a token with Active Directory application and service principal](#get-a-token-with-active-directory-application-and-service-principal)
     -   [Providing credentials to the tests](#providing-credentials-to-the-tests)
     -   [Running tests in live mode](#running-tests-in-live-mode)
-- [Using the Azure Python SDK test framework](#using-the-azure-python-sdk-test-framework)
+- [Using the Azure Python SDK test framework](#writing-new-tests)
 
 IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup][dev_setup] in your currently loaded virtual environment.
 
@@ -19,7 +19,7 @@ This page is to help you write tests for Azure Python SDK when these tests requi
 In this document, we will describe:
 -   [How to run the tests online (by authenticating with Azure to record new HTTP interactions)](#running-tests-in-live-mode)
 -   [How to run the tests offline (using previously recorded HTTP interactions)](#running-tests-in-playback-mode)
--   [How to write new tests using our utility classes](#using-the-azure-python-sdk-test-framework)
+-   [How to write new tests using our utility classes](#writing-new-tests)
 
 # Getting the tests to run
 
@@ -119,13 +119,12 @@ These two methods are used by the authentication methods within `AzureTestCase` 
 ## Running tests in live mode
 
 To configure the tests to run in live mode, you have two options:
-
 * Set the environment variable `AZURE_TEST_RUN_LIVE` to "true" or "yes".
 * Create the `tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file and copy and paste the following line:
     ```
     live-mode: true
     ```
-    To go back to playback mode using the config file, change the "true" to "false" or delete the file. (`testsettings_local.cfg` is listed in `.gitignore` and not present in the repo; if it's missing, the tests default to playback mode.)
+(`testsettings_local.cfg` is listed in `.gitignore` and not present in the repo; if it's missing, the tests default to playback mode.)
 
 Now you can run tests using the same method described in [Running the tests](#running-the-tests). You would be well-advised to specify a limited number of tests to run. Running every existing test in live mode will take a very long time and produce a great deal of changes to recording files in your Git repository. However, for changes in the client code, the recordings will need to be committed to the Git repository.
 
@@ -134,7 +133,7 @@ Now that the tests have been run against live resources and generated the HTTP r
 * Set the environment variable `AZURE_TEST_RUN_LIVE` to "false" or "no".
 * Change the `tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file to:
     ```
-    live-mode: true
+    live-mode: false
     ```
 
 # Writing new tests

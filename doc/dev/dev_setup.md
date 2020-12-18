@@ -13,14 +13,15 @@ or execute the various commands available in the toolbox.
 
     Python is also available in Bash for Windows natively.
 
-3.  Clone the repository and go to the folder
+2.  Clone the repository and go to the folder
 
     ```
     git clone https://github.com/Azure/azure-sdk-for-python.git
     cd azure-sdk-for-python
     ```
 
-2.  Create a [virtual environment][virtual_environment]
+3.  Create a [virtual environment][virtual_environment]
+
     You can initialize a virtual environment this way:
 
     ```
