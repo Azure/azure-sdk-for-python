@@ -89,6 +89,7 @@ try:
                     return TrioRequestsTransportResponse
                 except ImportError:
                     raise ImportError("trio package is not installed")
+            return name
 
     else:
         try:
