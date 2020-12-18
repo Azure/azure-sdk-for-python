@@ -19,7 +19,7 @@ recover certificates
 * [recover_purge_operations.py][recover_purge_operations_sample] and [recover_purge_operations_async.py][recover_purge_operations_async_sample] - recover and purge certificates
 * [issuers.py][issuers_sample] and [issuers_async.py][issuers_async_sample] - manage certificate issuers
 * [contacts.py][contacts_sample] and [contacts_async.py][contacts_async_sample] - manage certificate contacts
-* [parse_certificate.py][parse_sample] and [parse_certificate_async.py][parse_async_sample] - extract a certificate's public certificate and private key
+* [parse_certificate.py][parse_sample] and [parse_certificate_async.py][parse_async_sample] - extract a certificate's private key
 
 [backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/samples/backup_restore_operations.py
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/samples/backup_restore_operations_async.py
