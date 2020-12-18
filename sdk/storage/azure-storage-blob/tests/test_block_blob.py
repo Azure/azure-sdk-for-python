@@ -96,7 +96,8 @@ class StorageBlockBlobTest(StorageTestCase):
         source_blob = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
 
-        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         new_blob_client.upload_blob(b'destination blob data')
         # Assert
         with self.assertRaises(ResourceExistsError):
@@ -118,7 +119,8 @@ class StorageBlockBlobTest(StorageTestCase):
         source_blob = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
 
-        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         new_blob = new_blob_client.upload_blob_from_url(source_blob)
         # Assert
         self.assertIsNotNone(new_blob)
@@ -139,7 +141,8 @@ class StorageBlockBlobTest(StorageTestCase):
         source_blob = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
 
-        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob_tier = StandardBlobTier.Hot
         new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
 
@@ -158,7 +161,8 @@ class StorageBlockBlobTest(StorageTestCase):
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
-        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         new_blob_client.upload_blob(data="test")
         new_blob_lease = new_blob_client.acquire_lease()
         with self.assertRaises(HttpResponseError):
@@ -182,7 +186,8 @@ class StorageBlockBlobTest(StorageTestCase):
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
-        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         new_blob_client.upload_blob(data="fake data")
 
         # Assert
@@ -219,7 +224,8 @@ class StorageBlockBlobTest(StorageTestCase):
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
-        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
         new_blob.upload_blob_from_url(
             source_blob_url, include_source_blob_properties=True, cpk=test_cpk)
 
@@ -251,7 +257,8 @@ class StorageBlockBlobTest(StorageTestCase):
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
 
-        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
         new_blob.upload_blob_from_url(source_blob_url,
                                       include_source_blob_properties=True,
                                       tags=new_blob_tags,
@@ -278,7 +285,8 @@ class StorageBlockBlobTest(StorageTestCase):
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
-        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         new_blob.upload_blob_from_url(
@@ -312,8 +320,8 @@ class StorageBlockBlobTest(StorageTestCase):
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
-
-        new_blob_copy1 = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob_copy1 = self.bsc.get_blob_client(self.container_name, blob_name)
         new_blob_copy2 = self.bsc.get_blob_client(self.container_name, 'blob2copy')
         new_blob_copy1.upload_blob_from_url(
             source_blob_url, include_source_blob_properties=True)
