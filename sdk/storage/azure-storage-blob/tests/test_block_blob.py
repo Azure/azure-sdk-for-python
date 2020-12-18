@@ -48,7 +48,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.container_name = self.get_resource_name(container_name)
 
         if self.is_live:
-            self.bsc.create_container(self.container_name)
+            try:
+                self.bsc.create_container(self.container_name)
+            except:
+                pass
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
