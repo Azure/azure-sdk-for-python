@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from typing import Any, Callable, List, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
-    from azure.core.pipeline.transport import HttpTransport, HttpRequest
+    from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 
     Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
@@ -44,7 +44,7 @@ class AsyncManagedIdentityClient(ManagedIdentityClientBase):
         self,
         config: Configuration,
         policies: "Optional[List[Policy]]" = None,
-        transport: "Optional[HttpTransport]" = None,
+        transport: "Optional[AsyncHttpTransport]" = None,
         **kwargs: "Any"
     ) -> AsyncPipeline:
         if policies is None:  # [] is a valid policy list
