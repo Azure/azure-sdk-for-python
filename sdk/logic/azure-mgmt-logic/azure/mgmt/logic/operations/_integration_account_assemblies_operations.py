@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class IntegrationAccountAssembliesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class IntegrationAccountAssembliesOperations(object):
         integration_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AssemblyCollection"]
+        # type: (...) -> Iterable["_models.AssemblyCollection"]
         """List the assemblies for an integration account.
 
         :param resource_group_name: The resource group name.
@@ -63,7 +63,7 @@ class IntegrationAccountAssembliesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.logic.models.AssemblyCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AssemblyCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AssemblyCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,7 +110,7 @@ class IntegrationAccountAssembliesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -128,7 +128,7 @@ class IntegrationAccountAssembliesOperations(object):
         assembly_artifact_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AssemblyDefinition"
+        # type: (...) -> "_models.AssemblyDefinition"
         """Get an assembly for an integration account.
 
         :param resource_group_name: The resource group name.
@@ -142,7 +142,7 @@ class IntegrationAccountAssembliesOperations(object):
         :rtype: ~azure.mgmt.logic.models.AssemblyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AssemblyDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AssemblyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -174,7 +174,7 @@ class IntegrationAccountAssembliesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AssemblyDefinition', pipeline_response)
@@ -190,10 +190,10 @@ class IntegrationAccountAssembliesOperations(object):
         resource_group_name,  # type: str
         integration_account_name,  # type: str
         assembly_artifact_name,  # type: str
-        assembly_artifact,  # type: "models.AssemblyDefinition"
+        assembly_artifact,  # type: "_models.AssemblyDefinition"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AssemblyDefinition"
+        # type: (...) -> "_models.AssemblyDefinition"
         """Create or update an assembly for an integration account.
 
         :param resource_group_name: The resource group name.
@@ -209,7 +209,7 @@ class IntegrationAccountAssembliesOperations(object):
         :rtype: ~azure.mgmt.logic.models.AssemblyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AssemblyDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AssemblyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -246,7 +246,7 @@ class IntegrationAccountAssembliesOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -314,7 +314,7 @@ class IntegrationAccountAssembliesOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -329,7 +329,7 @@ class IntegrationAccountAssembliesOperations(object):
         assembly_artifact_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WorkflowTriggerCallbackUrl"
+        # type: (...) -> "_models.WorkflowTriggerCallbackUrl"
         """Get the content callback url for an integration account assembly.
 
         :param resource_group_name: The resource group name.
@@ -343,7 +343,7 @@ class IntegrationAccountAssembliesOperations(object):
         :rtype: ~azure.mgmt.logic.models.WorkflowTriggerCallbackUrl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkflowTriggerCallbackUrl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkflowTriggerCallbackUrl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -375,7 +375,7 @@ class IntegrationAccountAssembliesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkflowTriggerCallbackUrl', pipeline_response)
