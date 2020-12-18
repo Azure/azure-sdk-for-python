@@ -9,7 +9,7 @@ import pytest
 # from azure.data.tabless import TableServiceClient
 from azure.data.tables import TableServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalResourceGroupPreparer, TableTestCase
+from _shared.testcase import TableTestCase
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -20,7 +20,7 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
                          '></StorageServiceStats> '
 
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
-
+from preparers import TablesPreparer
 
 # --Test Class -----------------------------------------------------------------
 class TableServiceStatsTest(TableTestCase):
@@ -50,22 +50,22 @@ class TableServiceStatsTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
-    def test_table_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
+
+    @TablesPreparer()
+    def test_table_service_stats_f(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
 
         # Act
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
         # Assert
         self._assert_stats_default(stats)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
-    def test_table_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
+
+    @TablesPreparer()
+    def test_table_service_stats_when_unavailable(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
 
         # Act
         stats = tsc.get_service_stats(

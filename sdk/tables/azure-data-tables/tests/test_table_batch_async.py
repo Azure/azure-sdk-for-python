@@ -21,18 +21,18 @@ from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError
 )
-from azure.data.tables.aio import TableServiceClient
-from azure.data.tables._models import BatchErrorException
+from azure.data.tables.aio import TableServiceClient\
 from azure.data.tables import (
     TableEntity,
     UpdateMode,
     EntityProperty,
     EdmType,
-    BatchTransactionResult
+    BatchTransactionResult,
+    BatchErrorException
 )
 
-from _shared.testcase import TableTestCase, LogCaptured
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
+from _shared.testcase import TableTestCase
+from preparers import TablesPreparer
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
@@ -40,8 +40,8 @@ TEST_TABLE_PREFIX = 'table'
 
 class StorageTableBatchTest(TableTestCase):
 
-    async def _set_up(self, storage_account, storage_account_key):
-        self.ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+    async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
@@ -171,11 +171,10 @@ class StorageTableBatchTest(TableTestCase):
 
     #--Test cases for batch ---------------------------------------------
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_single_insert(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -210,11 +209,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_single_update(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_single_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -247,11 +245,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_update(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -283,11 +280,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_merge(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -324,12 +320,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_update_if_match(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_update_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
             resp = await self.table.create_entity(entity=entity)
@@ -356,11 +350,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_update_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_update_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
             resp = await self.table.create_entity(entity)
@@ -386,11 +379,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_insert_replace(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_insert_replace(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -418,11 +410,11 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_insert_merge(self, resource_group, location, storage_account, storage_account_key):
+
+    @TablesPreparer()
+    async def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -449,11 +441,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_delete(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -483,11 +474,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_inserts(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_inserts(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -522,11 +512,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_all_operations_together(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_all_operations_together(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -595,11 +584,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_all_operations_together_context_manager(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_all_operations_together_context_manager(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -645,11 +633,11 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_reuse(self, resource_group, location, storage_account, storage_account_key):
+
+    @TablesPreparer()
+    async def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table2 = self._get_table_reference('table2')
             table2.create_table()
@@ -687,11 +675,11 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     # @pytest.mark.skip("This does not throw an error, but it should")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_same_row_operations_fail(self, resource_group, location, storage_account, storage_account_key):
+
+    @TablesPreparer()
+    async def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)
@@ -714,11 +702,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_different_partition_operations_fail(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_batch_different_partition_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)
@@ -739,11 +726,11 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_too_many_ops(self, resource_group, location, storage_account, storage_account_key):
+
+    @TablesPreparer()
+    async def test_batch_too_many_ops(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)
@@ -763,11 +750,10 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_new_non_existent_table(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_new_non_existent_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
@@ -783,17 +769,16 @@ class StorageTableBatchTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_new_invalid_key(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        invalid_key = storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
-        key_list = list(storage_account_key)
+        invalid_key = tables_primary_storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
+        key_list = list(tables_primary_storage_account_key)
 
         key_list[-6:] = list("0000==")
         invalid_key = ''.join(key_list)
 
-        self.ts = TableServiceClient(self.account_url(storage_account, "table"), invalid_key)
+        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), invalid_key)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
 
@@ -806,11 +791,10 @@ class StorageTableBatchTest(TableTestCase):
             resp = await self.table.send_batch(batch)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_new_delete_nonexistent_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
