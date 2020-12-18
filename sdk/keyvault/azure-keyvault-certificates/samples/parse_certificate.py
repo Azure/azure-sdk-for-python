@@ -66,13 +66,17 @@ try:
     print("Certificate with name '{}' was created".format(created_certificate.name))
 
     # Key Vault also creates a secret with the same name as the created certificate.
-    # This secret contains protected information about the certificate, such as its private key.
+    # This secret contains the certificate's bytes, which include the private key if the certificate's
+    # policy indicates that the key is exportable.
     print("\n.. Get a secret by name")
     certificate_secret = secret_client.get_secret(name=cert_name)
     print("Certificate secret with name '{}' was found.".format(certificate_secret.name))
 
     # Now we can extract the private key and public certificate from the secret using the cryptography
     # package. `additional_certificates` will be empty since the secret only contains one certificate.
+    # This example shows how to parse a certificate in PKCS12 format since it's the default in Key Vault,
+    # but PEM certificates are supported as well. With a PEM certificate, you could use load_pem_private_key
+    # in place of load_key_and_certificates.
     cert_bytes = base64.b64decode(certificate_secret.value)
     private_key, public_certificate, additional_certificates = pkcs12.load_key_and_certificates(
         data=cert_bytes,
