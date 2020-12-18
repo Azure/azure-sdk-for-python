@@ -31,7 +31,7 @@ Usage
 =====
 
 For code examples, see `Key Vault
-<https://docs.microsoft.com/python/api/overview/azure/key-vault>`__
+<https://docs.microsoft.com/python/api/overview/azure/keyvault>`__
 on docs.microsoft.com.
 
 
