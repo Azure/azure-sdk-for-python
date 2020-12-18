@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import itertools
-import functools
 import logging
 from abc import ABCMeta
 from typing import TYPE_CHECKING, Iterator, TypeVar
@@ -58,67 +57,156 @@ _LOGGER = logging.getLogger(__name__)
 ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
 
-def _extract_data_helper(pipeline_response, paging_method):
-    deserialized = paging_method._deserialize_output(pipeline_response)  # pylint: disable=protected-access
-    list_of_elem = paging_method.get_list_elements(pipeline_response, deserialized)  # type: Iterable[ReturnType]
-    list_of_elem = paging_method.mutate_list(pipeline_response, list_of_elem)
-    continuation_token = paging_method.get_continuation_token(pipeline_response, deserialized)
-    return continuation_token, list_of_elem
+class _PagingMethodHandlerBase:
+    def __init__(
+        self,
+        paging_method,
+        deserialize_output,
+        client,
+        initial_state,
+        **kwargs
+    ):
+        self._paging_method = paging_method
+        self._deserialize_output = deserialize_output
+        self._client = client
+        self._initial_state = initial_state
+        self._cls = kwargs.pop("_cls", None)
+        self._error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        self._error_map.update(kwargs.pop('error_map', {}))
+        self._item_name = kwargs.pop("item_name", "value")
+        self._continuation_token_location = kwargs.pop("continuation_token_location", None)
+        self._operation_config = kwargs
 
-def _extract_data(pipeline_response, paging_method):
-    return _extract_data_helper(pipeline_response, paging_method)
+    @property
+    def _initial_request(self):
+        if isinstance(self._initial_state, PipelineResponse):
+            return self._initial_state.http_response.request
+        return self._initial_state
 
-def _handle_response(continuation_token, paging_method, response):
-    http_response = response.http_response
-    status_code = http_response.status_code
-    if status_code < 200 or status_code >= 300:
-        map_error(status_code=status_code, response=http_response, error_map=paging_method._error_map)  # pylint: disable=protected-access
-        error = HttpResponseError(response=http_response)
-        error.continuation_token = continuation_token
-        raise error
-    if "request_id" not in paging_method._operation_config:  # pylint: disable=protected-access
-        paging_method._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]  # pylint: disable=protected-access
-    return response
+    def _handle_response(self, continuation_token, response):
+        http_response = response.http_response
+        status_code = http_response.status_code
+        if status_code < 200 or status_code >= 300:
+            if self._error_map:
+                map_error(status_code=status_code, response=http_response, error_map=self._error_map)
+            error = HttpResponseError(response=http_response)
+            error.continuation_token = continuation_token
+            raise error
+        if "request_id" not in self._operation_config:
+            self._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]
+        return response
 
-def _make_call(request, paging_method):
-    return paging_method._client._pipeline.run(  # pylint: disable=protected-access
-        request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
-    )
+    def _extract_data_helper(self, pipeline_response):
+        deserialized = self._deserialize_output(pipeline_response)
+        list_of_elem = self._paging_method.get_list_elements(pipeline_response, deserialized, self._item_name)
+        list_of_elem = self._paging_method.mutate_list(pipeline_response, list_of_elem, self._cls)
+        continuation_token = self._paging_method.get_continuation_token(
+            pipeline_response, deserialized, self._continuation_token_location
+        )
+        return continuation_token, list_of_elem
 
-def _get_next(continuation_token, paging_method):
-    if not continuation_token:
-        initial_state = paging_method._initial_state  # pylint: disable=protected-access
-        if isinstance(initial_state, PipelineResponse):
-            response = initial_state
+class _PagingMethodHandler(_PagingMethodHandlerBase):
+
+    def _make_call(self, request):
+        return self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **self._operation_config
+        )
+
+    def _do_initial_call(self):
+        if isinstance(self._initial_state, PipelineResponse):
+            return self._initial_state
+        return self._make_call(self._initial_state)
+
+    def get_next(self, continuation_token):
+        if not continuation_token:
+            response = self._do_initial_call()
         else:
-            response = _make_call(initial_state, paging_method)
-    else:
-        initial_request = paging_method._initial_request  # pylint: disable=protected-access
-        request = paging_method.get_next_request(continuation_token, initial_request)  # pylint: disable=protected-access
-        response = _make_call(request, paging_method)
-    return _handle_response(continuation_token, paging_method, response)
+            request = self._paging_method.get_next_request(continuation_token, self._initial_request, self._client)
+            response = self._make_call(request)
+        return self._handle_response(continuation_token, response)
+
+    def extract_data(self, pipeline_response):
+        return self._extract_data_helper(pipeline_response)
 
 
 @add_metaclass(ABCMeta)
 class PagingMethodABC():
 
-    def initialize(self, client, deserialize_output, initial_state, **kwargs):
-        # type: (PipelineClient, Callable, Any, Any) -> None
-        """Initializes PagingMethod with variables passed through ItemPaged
+    def get_next_request(self, continuation_token, initial_request, client):
+        # type: (Any, HttpRequest, PipelineClient) -> HttpRequest
+        """Return the next request object for paging.
 
-        :param client: The client used to make requests
+        :param any continuation_token: The token used to continue paging
+        :param initial_request: The initial paging request. You can use this as a foundation
+         to build up your next request
+        :type initial_request: ~azure.core.pipeline.transport.HttpRequest
+        :param client: Your client. You can use this client to format your URL, for example.
         :type client: ~azure.core.PipelineClient
-        :param callable deserialize_output: Callback to deserialize response output
-        :param any initial_state: The initial state of paging. Can be an initial request,
-         can be the initial response for paging, if the initial request has already been
-         made. The latter occurs in LRO + paging, as the final resource of the LRO call
-         is the initial paging response.
+        :return: Next request for the pager to make
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_next_request(self, continuation_token, initial_request):
-        # type: (Any, HttpRequest) -> HttpRequest
-        """Return the next request object for paging.
+    # extracting data from response
+
+    def get_list_elements(self, pipeline_response, deserialized, item_name="value"):
+        # type: (HttpResponse, ResponseType, str) -> Iterable[ReturnType]
+        """Extract the list elements from the current page to return to users
+
+        :param pipeline_response: The immediate response returned from the pipeline
+        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
+        :param object deserialized: The deserialized pipeline_response
+        :param optional[str] item_name: The property name on the response that houses
+         the list elements. Default is `value`.
+        :return: The iterable of items extracted out of paging response
+        :rtype: iterable[object]
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def mutate_list(self, pipeline_response, list_of_elem, cls=None):
+        # type: (HttpResponse, Iterable[ReturnType], Optional[Callable]) -> Iterable[ReturnType]
+        """Mutate list of elements in current page, i.e. if users passed in a cls calback
+
+        :param pipeline_response: The immediate response returned from the pipeline
+        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
+        :param list[object] list_of_elem: The iterable of items we will return to users
+         in a page.
+        :param optional[callable] cls: Callback to mutate the list.
+        :return: The final list of iterable items we will return to users
+        :rtype: iterable[object]
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def get_continuation_token(self, pipeline_response, deserialized, continuation_token_location=None):
+        # type: (HttpResponse, ResponseType, Optional[str]) -> Any
+        """Get the continuation token from the current page. This operation returning None signals the end of paging.
+        Continuation token can be mutated here as well.
+
+        :param pipeline_response: The immediate response returned from the pipeline
+        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
+        :param object deserialized: The deserialized pipeline_response
+        :param optional[str] continuation_token_location: Property name on the response object that houses the
+         continuation token. Defaults to `None`, as `None` is an acceptable value for a continuation token location.
+         It means that there's no continuation token on the response object.
+        :return: The continuation token
+        :rtype: any
+        """
+
+        raise NotImplementedError("This method needs to be implemented")
+
+class NextLinkPagingMethod(PagingMethodABC):
+
+    def __init__(self, path_format_arguments=None):
+        """Most common paging method. Uses the continuation token as the URL for the next call.
+        """
+        self._path_format_arguments = path_format_arguments or {}
+
+    def get_next_request(self, continuation_token, initial_request, client):
+        # type: (Any, HttpRequest, PipelineClient) -> HttpRequest
+        """Return the next request object for paging. Uses the continuation token
+        as the URL for the next call.
 
         :param any continuation_token: The token used to continue paging
         :param initial_request: The initial paging request. You can use this as a foundation
@@ -127,12 +215,14 @@ class PagingMethodABC():
         :return: Next request for the pager to make
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        raise NotImplementedError("This method needs to be implemented")
+        request = initial_request
+        next_link = continuation_token
+        next_link = client.format_url(next_link, **self._path_format_arguments)
+        request.url = next_link
+        return request
 
-    # extracting data from response
-
-    def get_list_elements(self, pipeline_response, deserialized):
-        # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
+    def get_list_elements(self, pipeline_response, deserialized, item_name="value"):
+        # type: (HttpResponse, ResponseType, str) -> Iterable[ReturnType]
         """Extract the list elements from the current page to return to users
 
         :param pipeline_response: The immediate response returned from the pipeline
@@ -141,10 +231,14 @@ class PagingMethodABC():
         :return: The iterable of items extracted out of paging response
         :rtype: iterable[object]
         """
-        raise NotImplementedError("This method needs to be implemented")
+        if hasattr(deserialized, item_name):
+            return getattr(deserialized, item_name)
+        raise ValueError(
+            "The response object does not have property '{}' to extract element list from".format(item_name)
+        )
 
-    def mutate_list(self, pipeline_response, list_of_elem):
-        # type: (HttpResponse, Iterable[ReturnType]) -> Iterable[ReturnType]
+    def mutate_list(self, pipeline_response, list_of_elem, cls=None):
+        # type: (HttpResponse, Iterable[ReturnType], Optional[Callable]) -> Iterable[ReturnType]
         """Mutate list of elements in current page, i.e. if users passed in a cls calback
 
         :param pipeline_response: The immediate response returned from the pipeline
@@ -154,12 +248,13 @@ class PagingMethodABC():
         :return: The final list of iterable items we will return to users
         :rtype: iterable[object]
         """
-        raise NotImplementedError("This method needs to be implemented")
+        if cls:
+            list_of_elem = cls(list_of_elem)
+        return iter(list_of_elem)
 
-    def get_continuation_token(self, pipeline_response, deserialized):
-        # type: (HttpResponse, ResponseType) -> Any
+    def get_continuation_token(self, pipeline_response, deserialized, continuation_token_location=None):
+        # type: (HttpResponse, ResponseType, Optional[str]) -> Any
         """Get the continuation token from the current page. This operation returning None signals the end of paging.
-        Continuation token can be mutated here as well.
 
         :param pipeline_response: The immediate response returned from the pipeline
         :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
@@ -167,67 +262,32 @@ class PagingMethodABC():
         :return: The continuation token
         :rtype: any
         """
+        if continuation_token_location:
+            if not hasattr(deserialized, continuation_token_location):
+                raise ValueError(
+                    "The response object does not have property '{}' to extract continuation token from".format(
+                        continuation_token_location
+                    )
+                )
+            return getattr(deserialized, continuation_token_location)
+        return None
 
-        raise NotImplementedError("This method needs to be implemented")
 
-
-class CallbackPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-attributes
-    def __init__(self, next_request_callback, **kwargs):  #  pylint: disable=unused-argument
+class CallbackPagingMethod(NextLinkPagingMethod):  # pylint: disable=too-many-instance-attributes
+    def __init__(self, next_request_callback):
         """Base paging method. Accepts the callback for the next request as an init arg.
 
         :param callable next_request_callback: Takes the continuation token as input and
-         outputs the next  request
+         outputs the next request
         """
+        super(CallbackPagingMethod, self).__init__()
         self._next_request_callback = next_request_callback
-        self._path_format_arguments = None
-        self._client = None
-        self._deserialize_output = None
-        self._item_name = None
-        self._continuation_token_location = None
-        self._cls = None
-        self._error_map = None
-        self._operation_config = None
-        self._initial_state = None
-        self._initial_request = None
 
-    def initialize(self, client, deserialize_output, initial_state, **kwargs):
-        # type: (PipelineClient, Callable, Any, Any) -> None
-        """Initializes BasicPagingMethod with variables passed through ItemPaged
 
-        :param client: The client used to make requests
-        :type client: ~azure.core.PipelineClient
-        :param callable deserialize_output: Callback to deserialize response output
-        :param any initial_state: The initial state of paging. Can be an initial request,
-         can be the initial response for paging, if the initial request has already been
-         made. The latter occurs in LRO + paging, as the final resource of the LRO call
-         is the initial paging response.
-        :keyword str continuation_token_location: Required. Specifies the name of the property that provides
-         the continuation token. Common values include `next_link` and `token`.
-        :keyword str item_name: Specifies the name of the property that provides the collection of pageable
-         items. Defaults to `value`.
-        :keyword callable cls: A custom type or function that will modify each element of the pageable items.
-         Takes a list of iterables as an input.
-        """
-        self._client = client
-        self._deserialize_output = deserialize_output
-        self._initial_state = initial_state
-        self._initial_request = (
-            initial_state.http_response.request if isinstance(initial_state, PipelineResponse) else initial_state
-        )
-        self._item_name = kwargs.pop("item_name", "value")
-        self._cls = kwargs.pop("_cls", None)
-        self._continuation_token_location = kwargs.pop("continuation_token_location", None)
-
-        self._error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        self._error_map.update(kwargs.pop('error_map', {}))
-        self._operation_config = kwargs
-        self._path_format_arguments = kwargs.pop("path_format_arguments", {})
-
-    def get_next_request(self, continuation_token, initial_request):
-        # type: (Any, HttpRequest) -> HttpRequest
-        """Return the next request object for paging.
+    def get_next_request(self, continuation_token, initial_request, client):
+        # type: (Any, HttpRequest, PipelineClient) -> HttpRequest
+        """Return the next request object for paging. Passes the continuation token into
+        the next request callback, and returns the resulting next request
 
         :param any continuation_token: The token used to continue paging
         :param initial_request: The initial paging request. You can use this as a foundation
@@ -238,81 +298,29 @@ class CallbackPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instanc
         """
         return self._next_request_callback(continuation_token)
 
-    def get_list_elements(self, pipeline_response, deserialized):
-        # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
-        """Extract the list elements from the current page to return to users
+class HeaderPagingMethod(NextLinkPagingMethod):
 
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
-        :param object deserialized: The deserialized pipeline_response
-        :return: The iterable of items extracted out of paging response
-        :rtype: iterable[object]
+    def __init__(self, header_name):
+        """Passes continuation token as a header parameter to next call.
         """
-        if not hasattr(deserialized, self._item_name):
-            raise ValueError(
-                "The response object does not have property '{}' to extract element list from".format(self._item_name)
-            )
-        return getattr(deserialized, self._item_name)
-
-    def mutate_list(self, pipeline_response, list_of_elem):
-        # type: (HttpResponse, Iterable[ReturnType]) -> Iterable[ReturnType]
-        """Mutate list of elements in current page, i.e. if users passed in a cls calback
-
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
-        :param list[object] list_of_elem: The iterable of items we will return to users
-         in a page.
-        :return: The final list of iterable items we will return to users
-        :rtype: iterable[object]
-        """
-        if self._cls:
-            list_of_elem = self._cls(list_of_elem)
-        return iter(list_of_elem)
-
-    def get_continuation_token(self, pipeline_response, deserialized):
-        # type: (HttpResponse, ResponseType) -> Any
-        """Get the continuation token from the current page. This operation returning None signals the end of paging.
-
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
-        :param object deserialized: The deserialized pipeline_response
-        :return: The continuation token
-        :rtype: any
-        """
-        if not self._continuation_token_location:
-            return None
-        if not hasattr(deserialized, self._continuation_token_location):
-            raise ValueError(
-                "The response object does not have property '{}' to extract continuation token from".format(
-                    self._continuation_token_location
-                )
-            )
-        return getattr(deserialized, self._continuation_token_location)
-
-class NextLinkPagingMethod(CallbackPagingMethod):
-    """Most common paging method. Uses the continuation token as the URL for the next call.
-    """
-    def __init__(self, **kwargs):
-
-        def _next_link_callback(continuation_token):
-            request = self._initial_request
-            next_link = continuation_token
-            next_link = self._client.format_url(next_link, **self._path_format_arguments)
-            request.url = next_link
-            return request
-        super(NextLinkPagingMethod, self).__init__(next_request_callback=_next_link_callback)
-
-class HeaderPagingMethod(CallbackPagingMethod):
-    """Passes continuation token as a header parameter to next call.
-    """
-    def __init__(self, header_name, **kwargs):
-        def _header_callback(continuation_token):
-            request = self._initial_request
-            request.headers[self._header_name] = continuation_token
-            return request
-
-        super(HeaderPagingMethod, self).__init__(next_request_callback=_header_callback)
+        super(HeaderPagingMethod, self).__init__()
         self._header_name = header_name
+
+    def get_next_request(self, continuation_token, initial_request, client):
+        # type: (Any, HttpRequest, PipelineClient) -> HttpRequest
+        """Return the next request object for paging. Passes the continuation token
+        with header name `header_name`.
+
+        :param any continuation_token: The token used to continue paging
+        :param initial_request: The initial paging request. You can use this as a foundation
+         to build up your next request
+        :type initial_request: ~azure.core.pipeline.transport.HttpRequest
+        :return: Next request for the pager to make
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
+        """
+        request = initial_request
+        request.headers[self._header_name] = continuation_token
+        return request
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
@@ -345,13 +353,9 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
                     "get_next and extract_data. We recommend you just pass in a paging method instead though."
                 )
         self._paging_method = paging_method
-        if self._paging_method:
-            self._paging_method.initialize(**kwargs)
-        self._extract_data = extract_data or functools.partial(_extract_data, paging_method=self._paging_method)
-        self._get_next = get_next or functools.partial(
-            _get_next, paging_method=self._paging_method
-        )
-
+        handler = _PagingMethodHandler(paging_method, **kwargs)
+        self._extract_data = extract_data or handler.extract_data
+        self._get_next = get_next or handler.get_next
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]

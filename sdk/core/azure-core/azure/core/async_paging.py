@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 import collections.abc
 import logging
-import functools
 from typing import (
     Iterable,
     AsyncIterator,
@@ -39,7 +38,7 @@ from .pipeline import PipelineResponse
 from .pipeline._tools_async import await_result as _await_result
 
 from .exceptions import AzureError
-from .paging import PagingMethodABC, _extract_data_helper, _handle_response
+from .paging import PagingMethodABC, _PagingMethodHandlerBase
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -52,27 +51,29 @@ __all__ = [
     "AsyncItemPaged"
 ]
 
-def _extract_data(pipeline_response, paging_method):
-    continuation_token, list_of_elem = _extract_data_helper(pipeline_response, paging_method)
-    return continuation_token, AsyncList(list_of_elem)
+class _AsyncPagingMethodHandler(_PagingMethodHandlerBase):
 
-async def _make_call(request, paging_method):
-    return await paging_method._client._pipeline.run(  # pylint: disable=protected-access
-        request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
-    )
+    async def _make_call(self, request):
+        return await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **self._operation_config
+        )
 
-async def _get_next(continuation_token, paging_method):
-    if not continuation_token:
-        initial_state = paging_method._initial_state  # pylint: disable=protected-access
-        if isinstance(initial_state, PipelineResponse):
-            response = initial_state
+    async def _do_initial_call(self):
+        if isinstance(self._initial_state, PipelineResponse):
+            return self._initial_state
+        return await self._make_call(self._initial_state)
+
+    async def get_next(self, continuation_token):
+        if not continuation_token:
+            response = await self._do_initial_call()
         else:
-            response = await _make_call(initial_state, paging_method)
-    else:
-        initial_request = paging_method._initial_request  # pylint: disable=protected-access
-        request = paging_method.get_next_request(continuation_token, initial_request)  # pylint: disable=protected-access
-        response = await _make_call(request, paging_method)
-    return _handle_response(continuation_token, paging_method, response)
+            request = self._paging_method.get_next_request(continuation_token, self._initial_request, self._client)
+            response = await self._make_call(request)
+        return self._handle_response(continuation_token, response)
+
+    def extract_data(self, pipeline_response):
+        continuation_token, list_of_elem = self._extract_data_helper(pipeline_response)
+        return continuation_token, AsyncList(list_of_elem)
 
 class AsyncList(AsyncIterator[ReturnType]):
     def __init__(self, iterable: Iterable[ReturnType]) -> None:
@@ -129,13 +130,9 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
                     "get_next and extract_data. We recommend you just pass in a paging method instead though."
                 )
         self._paging_method = paging_method
-        if self._paging_method:
-            self._paging_method.initialize(**kwargs)
-
-        self._extract_data = extract_data or functools.partial(_extract_data, paging_method=self._paging_method)
-        self._get_next = get_next or functools.partial(
-            _get_next, paging_method=self._paging_method
-        )
+        handler = _AsyncPagingMethodHandler(paging_method, **kwargs)
+        self._extract_data = extract_data or handler.extract_data
+        self._get_next = get_next or handler.get_next
 
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
