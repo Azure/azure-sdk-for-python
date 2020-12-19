@@ -319,8 +319,10 @@ async def test_app_service_user_assigned_identity():
         * 2,
     )
 
-    with mock.patch(
-        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: endpoint, EnvironmentVariables.MSI_SECRET: secret}
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON,
+        {EnvironmentVariables.MSI_ENDPOINT: endpoint, EnvironmentVariables.MSI_SECRET: secret},
+        clear=True,
     ):
         credential = ManagedIdentityCredential(client_id=client_id, transport=transport)
         token = await credential.get_token(scope)
