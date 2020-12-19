@@ -213,7 +213,7 @@ class BreakingChangesTracker:
                     )
                 elif self.parameter_name not in stable_parameters_node:
                     self.check_positional_parameter_added(
-                        current_parameters_node[param_name]["param_type"]
+                        current_parameters_node[param_name]
                     )
                     break
                 elif diff_type == "default":
@@ -414,20 +414,23 @@ class BreakingChangesTracker:
                             )
                         )
 
-    def check_positional_parameter_added(self, param_type: str) -> None:
-        if param_type == "positional_or_keyword":
+    def check_positional_parameter_added(self, current_parameters_node: Dict) -> None:
+        if current_parameters_node["param_type"] == "positional_or_keyword" and \
+                current_parameters_node["default"] != "none":
             if self.class_name:
                 self.breaking_changes.append(
                     (
                         self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
-                        self.module_name, self.class_name, self.function_name, param_type, self.parameter_name
+                        self.module_name, self.class_name, self.function_name,
+                        current_parameters_node["param_type"], self.parameter_name
                     )
                 )
             else:
                 self.breaking_changes.append(
                     (
                         self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
-                        self.module_name, self.function_name, param_type, self.parameter_name
+                        self.module_name, self.function_name,
+                        current_parameters_node["param_type"], self.parameter_name
                     )
                 )
 
@@ -478,6 +481,7 @@ class BreakingChangesTracker:
                     deleted_props = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"]
 
                 for property in deleted_props:
+                    bc = None
                     if self.class_name.endswith("Client"):
                         bc = (
                             self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
@@ -485,18 +489,21 @@ class BreakingChangesTracker:
                             self.module_name, self.class_name, property
                         )
                     elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
-                        bc = (
-                            self.REMOVED_OR_RENAMED_ENUM_VALUE_MSG,
-                            BreakingChangeType.REMOVED_OR_RENAMED_ENUM_VALUE,
-                            self.module_name, self.class_name, property
-                        )
+                        if property.upper() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"] \
+                            and property.lower() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"]:
+                            bc = (
+                                self.REMOVED_OR_RENAMED_ENUM_VALUE_MSG,
+                                BreakingChangeType.REMOVED_OR_RENAMED_ENUM_VALUE,
+                                self.module_name, self.class_name, property
+                            )
                     else:
                         bc = (
                             self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
                             BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
                             self.module_name, self.class_name, property
                         )
-                    self.breaking_changes.append(bc)
+                    if bc:
+                        self.breaking_changes.append(bc)
 
     def check_class_removed_or_renamed(self, class_components: Dict) -> Union[bool, None]:
         if isinstance(self.class_name, jsondiff.Symbol):

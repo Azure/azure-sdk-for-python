@@ -91,6 +91,8 @@ def get_parameter_default(param: inspect.Parameter) -> None:
             default_value = default_value.__name__
         if inspect.isclass(default_value):
             default_value = default_value.__name__
+        if hasattr(default_value, "value"):
+            default_value = default_value.value
 
     return default_value
 
@@ -121,6 +123,8 @@ def check_base_classes(cls_node: ast.ClassDef) -> bool:
                         if isinstance(node.value.func, ast.Name):
                             if node.value.func.id == "super":
                                 should_look = True
+    else:
+        should_look = True  # not init node so it is using init from base class
     return should_look
 
 
@@ -202,7 +206,7 @@ def create_class_report(cls: Type) -> Dict:
     is_enum = Enum in cls.__mro__
     if is_enum:
         cls_info["type"] = "Enum"
-        cls_info["properties"] = {value: value for value in dir(cls) if not value.startswith("_")}
+        cls_info["properties"] = {str(value): str(value) for value in dir(cls) if not value.startswith("_")}
         return cls_info
 
     cls_info["properties"] = get_properties(cls)
@@ -227,8 +231,8 @@ def resolve_module_name(module_name: str, target_module: str) -> str:
     return module_name
 
 
-def test_build_library_report(target_module: str = "azure.ai.formrecognizer") -> Dict:
-
+def test_build_library_report(target_module: str = "azure.search.documents") -> Dict:
+    _LOGGER.info(f"{target_module} in build library")
     module = importlib.import_module(target_module)
     modules = test_find_modules(module.__path__[0])
 
@@ -265,7 +269,7 @@ def test_compare_reports(pkg_dir: str="C:\\Users\\krpratic\\azure-sdk-for-python
     bc = BreakingChangesTracker(stable, current, diff, package_name)
     bc.run_checks()
 
-    # remove_json_files(pkg_dir)
+    remove_json_files(pkg_dir)
 
     if bc.breaking_changes:
         print(bc)
@@ -320,7 +324,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        # test_compare_reports(pkg_dir, version)
+        test_compare_reports(pkg_dir, version)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
@@ -376,8 +380,10 @@ if __name__ == "__main__":
                      f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
         exit(0)
 
+    # TODO need to parse setup.py here to get the top module/namespace since not always the same.
+    #  e.g. azure-storage-file-share and azure.storage.fileshare
     target_module = package_name.replace("-", ".")
-
+    _LOGGER.info(f"target module is ... {target_module}")
     if not stable_version:
 
         from pypi_tools.pypi import PyPIClient

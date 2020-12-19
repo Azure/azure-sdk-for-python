@@ -4,6 +4,27 @@
       "AccessPolicy": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "permission": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "expiry": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "start": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
           "as_dict": {
             "parameters": {
               "self": {
@@ -88,27 +109,6 @@
               }
             },
             "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "permission": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "expiry": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "start": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
           }
         },
         "properties": {
@@ -120,15 +120,6 @@
       "AccountSasPermissions": {
         "type": null,
         "methods": {
-          "from_string": {
-            "parameters": {
-              "permission": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
           "__init__": {
             "parameters": {
               "self": {
@@ -177,6 +168,15 @@
               }
             },
             "is_async": false
+          },
+          "from_string": {
+            "parameters": {
+              "permission": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
           }
         },
         "properties": {
@@ -196,6 +196,15 @@
       "BinaryBase64DecodePolicy": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
           "configure": {
             "parameters": {
               "self": {
@@ -233,7 +242,17 @@
               }
             },
             "is_async": false
-          },
+          }
+        },
+        "properties": {
+          "require_encryption": "require_encryption",
+          "key_encryption_key": "key_encryption_key",
+          "resolver": "resolver"
+        }
+      },
+      "BinaryBase64EncodePolicy": {
+        "type": null,
+        "methods": {
           "__init__": {
             "parameters": {
               "self": {
@@ -242,13 +261,7 @@
               }
             },
             "is_async": false
-          }
-        },
-        "properties": {}
-      },
-      "BinaryBase64EncodePolicy": {
-        "type": null,
-        "methods": {
+          },
           "configure": {
             "parameters": {
               "self": {
@@ -282,22 +295,38 @@
               }
             },
             "is_async": false
-          },
+          }
+        },
+        "properties": {
+          "require_encryption": "require_encryption",
+          "key_encryption_key": "key_encryption_key",
+          "resolver": "resolver"
+        }
+      },
+      "CorsRule": {
+        "type": null,
+        "methods": {
           "__init__": {
             "parameters": {
               "self": {
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "allowed_origins": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "allowed_methods": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
               }
             },
             "is_async": false
-          }
-        },
-        "properties": {}
-      },
-      "CorsRule": {
-        "type": null,
-        "methods": {
+          },
           "as_dict": {
             "parameters": {
               "self": {
@@ -382,27 +411,6 @@
               }
             },
             "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "allowed_origins": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "allowed_methods": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false
           }
         },
         "properties": {
@@ -416,87 +424,6 @@
       "ExponentialRetry": {
         "type": null,
         "methods": {
-          "configure_retries": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "request": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
-          "get_backoff_time": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "settings": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
-          "increment": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "settings": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "request": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "response": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "error": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
-          "send": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "request": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
-          "sleep": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "settings": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "transport": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
           "__init__": {
             "parameters": {
               "self": {
@@ -529,17 +456,7 @@
               }
             },
             "is_async": false
-          }
-        },
-        "properties": {
-          "initial_backoff": "initial_backoff",
-          "increment_base": "increment_base",
-          "random_jitter_range": "random_jitter_range"
-        }
-      },
-      "LinearRetry": {
-        "type": null,
-        "methods": {
+          },
           "configure_retries": {
             "parameters": {
               "self": {
@@ -620,7 +537,17 @@
               }
             },
             "is_async": false
-          },
+          }
+        },
+        "properties": {
+          "initial_backoff": "initial_backoff",
+          "increment_base": "increment_base",
+          "random_jitter_range": "random_jitter_range"
+        }
+      },
+      "LinearRetry": {
+        "type": null,
+        "methods": {
           "__init__": {
             "parameters": {
               "self": {
@@ -649,6 +576,87 @@
               }
             },
             "is_async": false
+          },
+          "configure_retries": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_backoff_time": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "increment": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "response": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "error": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "send": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "sleep": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "transport": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
           }
         },
         "properties": {
@@ -658,16 +666,17 @@
       },
       "LocationMode": {
         "type": null,
+        "methods": {},
+        "properties": {}
+      },
+      "Metrics": {
+        "type": null,
         "methods": {
           "__init__": {
             "parameters": {
               "self": {
                 "default": null,
-                "param_type": "positional_only"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
+                "param_type": "positional_or_keyword"
               },
               "kwargs": {
                 "default": null,
@@ -675,13 +684,7 @@
               }
             },
             "is_async": false
-          }
-        },
-        "properties": {}
-      },
-      "Metrics": {
-        "type": null,
-        "methods": {
+          },
           "as_dict": {
             "parameters": {
               "self": {
@@ -763,19 +766,6 @@
               "self": {
                 "default": null,
                 "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
               }
             },
             "is_async": false
@@ -791,6 +781,19 @@
       "QueueAnalyticsLogging": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
           "as_dict": {
             "parameters": {
               "self": {
@@ -872,19 +875,6 @@
               "self": {
                 "default": null,
                 "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
               }
             },
             "is_async": false
@@ -901,6 +891,31 @@
       "QueueClient": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "account_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
           "clear_messages": {
             "parameters": {
               "self": {
@@ -1152,31 +1167,6 @@
               }
             },
             "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "account_url": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "queue_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "credential": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false
           }
         },
         "properties": {
@@ -1189,6 +1179,19 @@
       "QueueMessage": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
           "get": {
             "parameters": {
               "self": {
@@ -1258,19 +1261,6 @@
             "parameters": {
               "self": {
                 "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "content": {
-                "default": "none",
                 "param_type": "positional_or_keyword"
               }
             },
@@ -1290,6 +1280,19 @@
       "QueueProperties": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
           "get": {
             "parameters": {
               "self": {
@@ -1363,19 +1366,6 @@
               }
             },
             "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false
           }
         },
         "properties": {
@@ -1387,15 +1377,6 @@
       "QueueSasPermissions": {
         "type": null,
         "methods": {
-          "from_string": {
-            "parameters": {
-              "permission": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
           "__init__": {
             "parameters": {
               "self": {
@@ -1420,6 +1401,15 @@
               }
             },
             "is_async": false
+          },
+          "from_string": {
+            "parameters": {
+              "permission": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
           }
         },
         "properties": {
@@ -1432,6 +1422,27 @@
       "QueueServiceClient": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "account_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
           "close": {
             "parameters": {
               "self": {
@@ -1588,27 +1599,6 @@
               }
             },
             "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "account_url": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "credential": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false
           }
         },
         "properties": {
@@ -1618,15 +1608,6 @@
       "ResourceTypes": {
         "type": null,
         "methods": {
-          "from_string": {
-            "parameters": {
-              "string": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
           "__init__": {
             "parameters": {
               "self": {
@@ -1647,6 +1628,15 @@
               }
             },
             "is_async": false
+          },
+          "from_string": {
+            "parameters": {
+              "string": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
           }
         },
         "properties": {
@@ -1658,6 +1648,23 @@
       "RetentionPolicy": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "enabled": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "days": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
           "as_dict": {
             "parameters": {
               "self": {
@@ -1738,23 +1745,6 @@
             "parameters": {
               "self": {
                 "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "enabled": {
-                "default": false,
-                "param_type": "positional_or_keyword"
-              },
-              "days": {
-                "default": "none",
                 "param_type": "positional_or_keyword"
               }
             },
@@ -1928,6 +1918,15 @@
       "TextBase64DecodePolicy": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
           "configure": {
             "parameters": {
               "self": {
@@ -1965,7 +1964,17 @@
               }
             },
             "is_async": false
-          },
+          }
+        },
+        "properties": {
+          "require_encryption": "require_encryption",
+          "key_encryption_key": "key_encryption_key",
+          "resolver": "resolver"
+        }
+      },
+      "TextBase64EncodePolicy": {
+        "type": null,
+        "methods": {
           "__init__": {
             "parameters": {
               "self": {
@@ -1974,13 +1983,7 @@
               }
             },
             "is_async": false
-          }
-        },
-        "properties": {}
-      },
-      "TextBase64EncodePolicy": {
-        "type": null,
-        "methods": {
+          },
           "configure": {
             "parameters": {
               "self": {
@@ -2014,18 +2017,13 @@
               }
             },
             "is_async": false
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false
           }
         },
-        "properties": {}
+        "properties": {
+          "require_encryption": "require_encryption",
+          "key_encryption_key": "key_encryption_key",
+          "resolver": "resolver"
+        }
       }
     },
     "function_nodes": {
@@ -2114,6 +2112,31 @@
       "QueueClient": {
         "type": null,
         "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "account_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
           "clear_messages": {
             "parameters": {
               "self": {
@@ -2365,7 +2388,15 @@
               }
             },
             "is_async": true
-          },
+          }
+        },
+        "properties": {
+          "version": "version"
+        }
+      },
+      "QueueServiceClient": {
+        "type": null,
+        "methods": {
           "__init__": {
             "parameters": {
               "self": {
@@ -2373,10 +2404,6 @@
                 "param_type": "positional_or_keyword"
               },
               "account_url": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "queue_name": {
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
@@ -2390,15 +2417,7 @@
               }
             },
             "is_async": false
-          }
-        },
-        "properties": {
-          "version": "version"
-        }
-      },
-      "QueueServiceClient": {
-        "type": null,
-        "methods": {
+          },
           "close": {
             "parameters": {
               "self": {
@@ -2555,27 +2574,6 @@
               }
             },
             "is_async": true
-          },
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "account_url": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "credential": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false
           }
         },
         "properties": {
