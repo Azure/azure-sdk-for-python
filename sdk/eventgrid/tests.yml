@@ -5,8 +5,24 @@ jobs:
     parameters:
       ServiceDirectory: eventgrid
       BuildTargetingString: azure-eventgrid*
+      TestSamples: true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        EG_ACCESS_KEY: $(python-sdk-test-eg-access-key)
+        EG_TOPIC_HOSTNAME: $(python-sdk-test-eg-topic-hostname)
+        CLOUD_ACCESS_KEY: $(python-sdk-test-eg-cloud-access-key)
+        CLOUD_TOPIC_HOSTNAME: $(python-sdk-test-eg-cloud-topic-hostname)
+        DOMAIN_ACCESS_KEY: $(python-sdk-test-eg-domain-access-key)
+        DOMAIN_TOPIC_HOSTNAME: $(python-sdk-test-eg-domain-topic-hostname)
+        DOMAIN_NAME: $(python-sdk-test-eg-domain-name)
+        CUSTOM_SCHEMA_ACCESS_KEY: $(python-sdk-test-eg-custom-schema-access-key)
+        CUSTOM_SCHEMA_TOPIC_HOSTNAME: $(python-sdk-test-custom-schema-topic-hostname)
+        EVENT_HUB_CONN_STR: $(python-eh-livetest-event-hub-conn-str)
+        EVENTHUB_NAME: $(python-eh-livetest-event-hub-name)
+        SB_CONN_STR: $(python-storage-blob-connection-string)
+        SERVICE_BUS_QUEUE_NAME: $(python-servicebus-queue-name)
+        STORAGE_QUEUE_CONN_STR: $(python-storage-blob-connection-string)
+        STORAGE_QUEUE_NAME: $(python-storage-queue-name)
