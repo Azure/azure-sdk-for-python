@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class FormulasOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -57,7 +57,7 @@ class FormulasOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.FormulaList"]
+        # type: (...) -> Iterable["_models.FormulaList"]
         """List formulas in a given lab.
 
         :param resource_group_name: The name of the resource group.
@@ -78,7 +78,7 @@ class FormulasOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.FormulaList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FormulaList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FormulaList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -151,7 +151,7 @@ class FormulasOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Formula"
+        # type: (...) -> "_models.Formula"
         """Get formula.
 
         :param resource_group_name: The name of the resource group.
@@ -167,7 +167,7 @@ class FormulasOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Formula
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Formula"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Formula"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -216,11 +216,11 @@ class FormulasOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        formula,  # type: "models.Formula"
+        formula,  # type: "_models.Formula"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Formula"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Formula"]
+        # type: (...) -> "_models.Formula"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Formula"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -276,10 +276,10 @@ class FormulasOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        formula,  # type: "models.Formula"
+        formula,  # type: "_models.Formula"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Formula"]
+        # type: (...) -> LROPoller["_models.Formula"]
         """Create or replace an existing formula. This operation can take a while to complete.
 
         :param resource_group_name: The name of the resource group.
@@ -301,7 +301,7 @@ class FormulasOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Formula"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Formula"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -327,7 +327,14 @@ class FormulasOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -406,10 +413,10 @@ class FormulasOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        formula,  # type: "models.FormulaFragment"
+        formula,  # type: "_models.FormulaFragment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Formula"
+        # type: (...) -> "_models.Formula"
         """Allows modifying tags of formulas. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -425,7 +432,7 @@ class FormulasOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Formula
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Formula"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Formula"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
