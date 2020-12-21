@@ -13,7 +13,6 @@ from azure.storage.queue.aio import (
     QueueServiceClient,
     QueueClient
 )
-from _shared.testcase import GlobalStorageAccountPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
