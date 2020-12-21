@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class IotRecommendationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -55,7 +55,7 @@ class IotRecommendationsOperations(object):
         skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IotRecommendationList"]
+        # type: (...) -> Iterable["_models.IotRecommendationList"]
         """List IoT recommendations.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -76,7 +76,7 @@ class IotRecommendationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.IotRecommendationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotRecommendationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotRecommendationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -148,7 +148,7 @@ class IotRecommendationsOperations(object):
         iot_recommendation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotRecommendation"
+        # type: (...) -> "_models.IotRecommendation"
         """Get IoT recommendation.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -163,7 +163,7 @@ class IotRecommendationsOperations(object):
         :rtype: ~azure.mgmt.security.models.IotRecommendation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotRecommendation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotRecommendation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -204,3 +204,155 @@ class IotRecommendationsOperations(object):
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/iotRecommendations/{iotRecommendationId}'}  # type: ignore
+
+    def list_at_scope(
+        self,
+        scope,  # type: str
+        recommendation_type=None,  # type: Optional[str]
+        device_id=None,  # type: Optional[str]
+        limit=None,  # type: Optional[int]
+        skip_token=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.IotRecommendationListModel"]
+        """List IoT recommendations.
+
+        :param scope: Scope of the query: Subscription (i.e. /subscriptions/{subscriptionId}) or IoT
+         Hub (i.e.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Devices/iotHubs/{iotHubName}).
+        :type scope: str
+        :param recommendation_type: Filter by recommendation type.
+        :type recommendation_type: str
+        :param device_id: Filter by device id.
+        :type device_id: str
+        :param limit: Limit the number of items returned in a single page.
+        :type limit: int
+        :param skip_token: Skip token used for pagination.
+        :type skip_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either IotRecommendationListModel or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.IotRecommendationListModel]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotRecommendationListModel"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_at_scope.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if recommendation_type is not None:
+                    query_parameters['recommendationType'] = self._serialize.query("recommendation_type", recommendation_type, 'str')
+                if device_id is not None:
+                    query_parameters['deviceId'] = self._serialize.query("device_id", device_id, 'str')
+                if limit is not None:
+                    query_parameters['$limit'] = self._serialize.query("limit", limit, 'int')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('IotRecommendationListModel', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotRecommendations'}  # type: ignore
+
+    def get_at_scope(
+        self,
+        scope,  # type: str
+        iot_recommendation_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.IotRecommendationModel"
+        """Get IoT recommendation.
+
+        :param scope: Scope of the query: Subscription (i.e. /subscriptions/{subscriptionId}) or IoT
+         Hub (i.e.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Devices/iotHubs/{iotHubName}).
+        :type scope: str
+        :param iot_recommendation_id: Id of the recommendation.
+        :type iot_recommendation_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IotRecommendationModel, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IotRecommendationModel
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotRecommendationModel"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_at_scope.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'iotRecommendationId': self._serialize.url("iot_recommendation_id", iot_recommendation_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('IotRecommendationModel', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotRecommendations/{iotRecommendationId}'}  # type: ignore

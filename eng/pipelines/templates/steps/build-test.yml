@@ -14,6 +14,7 @@ parameters:
   ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
+  TestSamples: false
 
 steps:
   - pwsh: |
@@ -66,3 +67,14 @@ steps:
   - template: publish-coverage.yml
     parameters:
       RunCoverage: ${{ parameters.RunCoverage }}
+
+  - ${{ if eq(parameters['TestSamples'], true) }}:
+    - task: PythonScript@0
+      displayName: 'Test Samples'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+        arguments: >-
+          "${{ parameters.BuildTargetingString }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="samples"
+      env: ${{ parameters.EnvVars }}

@@ -50,6 +50,7 @@ known_content_issues:
   - ['sdk/synapse/azure-synapse-monitoring/README.md', '#4554']
   - ['sdk/synapse/azure-synapse-managedprivateendpoints/README.md', '#4554']
   - ['sdk/synapse/azure-synapse-nspkg/README.md', '#4554']
+  - ['sdk/security/azure-security-nspkg/README.md', '#4554']
   - ['sdk/anomalydetector/azure-ai-anomalydetector/README.md', '#4554']
   - ['sdk/metricsadvisor/azure-ai-metricsadvisor/README.md', '#4554']
   - ['sdk/applicationinsights/azure-applicationinsights/README.md', '#4554']
@@ -102,6 +103,7 @@ known_content_issues:
   - ['sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/swagger/README.md', '#4554']
   - ['sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/README.md', '#4554']
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
+  - ['sdk/media/azure-media-nspkg/README.md', '#4554']
 
   # nspckg and common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']

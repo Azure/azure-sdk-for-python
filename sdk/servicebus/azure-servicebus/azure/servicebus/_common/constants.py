@@ -126,6 +126,11 @@ PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION = b'DeadLetterErrorDescription'
 DEAD_LETTER_QUEUE_SUFFIX = '/$DeadLetterQueue'
 TRANSFER_DEAD_LETTER_QUEUE_SUFFIX = '/$Transfer' + DEAD_LETTER_QUEUE_SUFFIX
 
+# Headers
+
+SUPPLEMENTARY_AUTHORIZATION_HEADER = 'ServiceBusSupplementaryAuthorization'
+DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER = 'ServiceBusDlqSupplementaryAuthorization'
+
 # Distributed Tracing Constants
 
 TRACE_COMPONENT_PROPERTY = 'component'

@@ -9,7 +9,7 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
-from opentelemetry.sdk import trace
+from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
@@ -143,9 +143,51 @@ class TestAzureTraceExporter(unittest.TestCase):
 
     def test_span_to_envelope_none(self):
         exporter = self._exporter
-        self.assertIsNone(exporter._span_to_envelope(None))
+        test_span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+        )
+        test_span.start()
+        test_span.end()
+
+    def test_span_to_envelope_tags(self):
+        exporter = self._exporter
+        test_span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+        )
+        test_span.start()
+        test_span.end()
+        envelope = exporter._span_to_envelope(test_span)
+
+        self.assertIsNotNone(envelope.tags)
+        self.assertIsNone(envelope.tags.get("ai.cloud.role"))
+        self.assertIsNone(envelope.tags.get("ai.cloud.roleInstance"))
+        self.assertIsNotNone(envelope.tags.get("ai.device.id"))
+        self.assertIsNotNone(envelope.tags.get("ai.device.locale"))
+        self.assertIsNotNone(envelope.tags.get("ai.device.osVersion"))
+        self.assertIsNotNone(envelope.tags.get("ai.device.type"))
+        self.assertIsNotNone(envelope.tags.get("ai.internal.sdkVersion"))
+
+        test_span.resource = resources.Resource(
+            {"service.name": "testServiceName",
+             "service.namespace": "testServiceNamespace",
+             "service.instance.id": "testServiceInstanceId"})
+        envelope = exporter._span_to_envelope(test_span)
+        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(
+            "ai.cloud.roleInstance"), "testServiceInstanceId")
 
     # pylint: disable=too-many-statements
+
     def test_span_to_envelope(self):
         exporter = AzureMonitorTraceExporter(
             connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd",

@@ -1,5 +1,8 @@
 # Release History
 
+## 12.7.0b2 (Unreleased)
+
+
 ## 12.7.0b1 (2020-12-07)
 **New features**
 - Added `upload_blob_from_url` api on `BlobClient`
