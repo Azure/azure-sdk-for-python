@@ -97,7 +97,7 @@ def get_authentication_policy(
             credential, "https://communication.azure.com//.default")
     if isinstance(credential, str):
         from .._shared.policy import HMACCredentialsPolicy
-        return HMACCredentialsPolicy(endpoint, credential, decode_url=not is_async)
+        return HMACCredentialsPolicy(endpoint, credential, decode_url=is_async)
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
