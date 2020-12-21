@@ -31,7 +31,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
     
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    @pytest.mark.skip()
     async def test_create_user_from_managed_identity(self, connection_string):
         endpoint, access_key = parse_connection_str(connection_string)
         from devtools_testutils import is_live
