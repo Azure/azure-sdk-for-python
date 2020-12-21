@@ -8391,6 +8391,9 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :param recovery_point_disk_configuration: Disk configuration
     :type recovery_point_disk_configuration:
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointDiskConfiguration
+    :param zones: Identifies the zone of the VM at the time of backup.
+     Applicable only for zone-pinned Vms
+    :type zones: list[str]
     """
 
     _validation = {
@@ -8417,9 +8420,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'os_type': {'key': 'osType', 'type': 'str'},
         'recovery_point_disk_configuration': {'key': 'recoveryPointDiskConfiguration', 'type': 'RecoveryPointDiskConfiguration'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, recovery_point_disk_configuration=None, **kwargs) -> None:
+    def __init__(self, *, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, recovery_point_disk_configuration=None, zones=None, **kwargs) -> None:
         super(IaasVMRecoveryPoint, self).__init__(**kwargs)
         self.recovery_point_type = None
         self.recovery_point_time = None
@@ -8434,6 +8438,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.original_storage_account_option = original_storage_account_option
         self.os_type = os_type
         self.recovery_point_disk_configuration = recovery_point_disk_configuration
+        self.zones = zones
         self.object_type = 'IaasVMRecoveryPoint'
 
 
@@ -8503,6 +8508,8 @@ class IaasVMRestoreRequest(RestoreRequest):
     :param disk_encryption_set_id: DiskEncryptionSet's ID - needed if the VM
      needs to be encrypted at rest during restore with customer managed key.
     :type disk_encryption_set_id: str
+    :param zones: Target zone where the VM and its disks should be restored.
+    :type zones: list[str]
     """
 
     _validation = {
@@ -8528,9 +8535,10 @@ class IaasVMRestoreRequest(RestoreRequest):
         'restore_disk_lun_list': {'key': 'restoreDiskLunList', 'type': '[int]'},
         'restore_with_managed_disks': {'key': 'restoreWithManagedDisks', 'type': 'bool'},
         'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, **kwargs) -> None:
         super(IaasVMRestoreRequest, self).__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
@@ -8549,6 +8557,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.restore_disk_lun_list = restore_disk_lun_list
         self.restore_with_managed_disks = restore_with_managed_disks
         self.disk_encryption_set_id = disk_encryption_set_id
+        self.zones = zones
         self.object_type = 'IaasVMRestoreRequest'
 
 
