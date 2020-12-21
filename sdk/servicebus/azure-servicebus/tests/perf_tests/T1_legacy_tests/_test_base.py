@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 from azure_devtools.perfstress_tests import PerfStressTest, get_random_bytes
 
-from azure.servicebus import ServiceBusClient, ReceiveSettleMode, BatchMessage
+from azure.servicebus import ServiceBusClient, ReceiveSettleMode, Message
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.control_client import ServiceBusService
 
@@ -48,8 +48,9 @@ class _ServiceTest(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
-        parser.add_argument('--message-size', nargs='?', type=int, help='Maximum size of a single message. Defaults to 1024', default=1024)
+        parser.add_argument('--message-size', nargs='?', type=int, help='Size of a single message. Defaults to 100 bytes', default=100)
         parser.add_argument('--service-client-per-instance', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
+        parser.add_argument('--num-messages', nargs='?', type=int, help='Number of messages to send or receive. Defaults to 100', default=100)
 
 
 class _QueueTest(_ServiceTest):
@@ -80,15 +81,15 @@ class _SendTest(_QueueTest):
         self.sender = self.queue_client.get_sender()
         self.async_sender = self.async_queue_client.get_sender()
 
-    async def global_setup(self):
+    async def setup(self):
         await super().global_setup()
         self.sender.open()
         await self.async_sender.open()
     
-    async def global_cleanup(self):
+    async def close(self):
         self.sender.close()
         await self.async_sender.close()
-        await super().global_cleanup()
+        await super().close()
 
 
 class _ReceiveTest(_QueueTest):
@@ -108,27 +109,25 @@ class _ReceiveTest(_QueueTest):
     async def _preload_queue(self):
         data = get_random_bytes(self.args.message_size)
         async with self.async_queue_client.get_sender() as sender:
-            for i in range(0, self.args.preload, 50):
-                messages = (data for _ in range(i, i + 50))
-                batch = BatchMessage(messages)
-                await sender.send(batch)
+            for i in range(self.args.num_messages * (self.args.parallel + 1)):
+                await sender.send(Message(data))
 
     async def global_setup(self):
         await super().global_setup()
         await self._preload_queue()
+
+    async def setup(self):
+        await super().setup()
         self.receiver.open()
         await self.async_receiver.open()
     
-    async def global_cleanup(self):
+    async def close(self):
         self.receiver.close()
         await self.async_receiver.close()
-        await super().global_cleanup()
+        await super().close()
 
     @staticmethod
     def add_arguments(parser):
         super(_ReceiveTest, _ReceiveTest).add_arguments(parser)
-        parser.add_argument('--preload', nargs='?', type=int, help='Number of messages to pre-load in the queue. Defaults to 5000.', default=5000)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
-        #parser.add_argument('--prefetch', nargs='?', type=int, help='Max number of messages fetched on the connection. Defaults to 0.', default=0)
         parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for messages before closing. Defaults to 0.', default=0)
-        parser.add_argument('--num-messages', nargs='?', type=int, help='Maximum number of messages to receive. Defaults to 100', default=100)
