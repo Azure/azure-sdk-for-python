@@ -86,7 +86,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
             pass
         return queue
     # --------------------------------------------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_messages_encrypted_kek(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -103,7 +104,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(li.content, u'encrypted_message_2')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_messages_encrypted_resolver(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -124,7 +126,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(li.content, u'encrypted_message_2')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages_encrypted_kek(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -139,7 +142,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_3')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages_encrypted_resolver(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -159,7 +163,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         self.assertEqual(li[0].content, u'encrypted_message_4')
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages_encrypted_kek_RSA(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -178,7 +183,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         self.assertEqual(li[0].content, u'encrypted_message_3')
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -203,7 +209,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(u'Updated', list_result2.content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_binary_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -231,7 +238,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         self.assertEqual(binary_message, list_result2.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_raw_text_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -258,7 +266,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         self.assertEqual(raw_text, list_result2.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_json_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -289,7 +298,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(message_dict, loads(list_result2.content))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_value_kek_wrap(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -313,7 +323,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         with self.assertRaises(AttributeError):
             await queue.send_message(u'message')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_missing_attribute_kek_wrap(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -347,7 +358,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         with self.assertRaises(AttributeError):
             await queue.send_message(u'message')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_value_kek_unwrap(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -365,7 +377,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         with self.assertRaises(HttpResponseError):
             await queue.peek_messages()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_missing_attribute_kek_unrwap(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -392,7 +405,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         with self.assertRaises(HttpResponseError):
             await queue.peek_messages()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_validate_encryption(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -452,7 +466,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(decrypted_data, u'message')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_with_strict_mode(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -471,7 +486,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
 
         self.assertEqual(str(e.exception), "Encryption required but no key was provided.")
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_with_strict_mode(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -488,7 +504,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
             _ = messages[0]
         self.assertEqual(str(e.exception), 'Message was not encrypted.')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_encryption_add_encrypted_64k_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -504,7 +521,8 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         with self.assertRaises(HttpResponseError):
             await queue.send_message(message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_encryption_nonmatching_kid(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())

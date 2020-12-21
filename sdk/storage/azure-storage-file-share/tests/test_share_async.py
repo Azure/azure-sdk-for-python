@@ -95,7 +95,8 @@ class StorageShareTest(AsyncStorageTestCase):
         return share_client
 
     # --Test cases for shares -----------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -108,7 +109,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertTrue(created)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -126,7 +128,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_snapshot_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -156,7 +159,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_share_with_snapshots_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -173,7 +177,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_undelete_share(self, resource_group, location, storage_account, storage_account_key):
         # share soft delete should enabled by SRP call or use armclient, so make this test as playback only.
@@ -204,7 +209,8 @@ class StorageShareTest(AsyncStorageTestCase):
                 break
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_share_acquire_and_release(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -215,7 +221,8 @@ class StorageShareTest(AsyncStorageTestCase):
         # Assert
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_acquire_lease_on_sharesnapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -254,7 +261,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_share_renew(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -275,7 +283,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await share_client.delete_share()
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_share_with_duration(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -291,7 +300,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await share_client.acquire_lease()
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_share_twice(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -305,7 +315,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(lease.id, lease2.id)
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_share_with_proposed_lease_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -319,7 +330,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(proposed_lease_id, lease.id)
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_share_change_lease_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -340,7 +352,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(lease_id2, lease_id)
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_metadata_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -357,7 +370,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertDictEqual(md, metadata)
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_share_metadata_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -374,7 +388,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertDictEqual(md, metadata)
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_share_properties_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -395,7 +410,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(props.lease.status, 'locked')
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_share_acl_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -410,7 +426,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNone(acl.get('public_access'))
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_acl_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -431,7 +448,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNone(acl.get('public_access'))
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_share_break_period(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -447,7 +465,8 @@ class StorageShareTest(AsyncStorageTestCase):
             await share_client.delete_share(lease=lease)
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_share_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -467,7 +486,8 @@ class StorageShareTest(AsyncStorageTestCase):
             await share_client.get_share_properties()
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_restore_to_existing_share(self, resource_group, location, storage_account, storage_account_key):
         # share soft delete should enabled by SRP call or use armclient, so make this test as playback only.
@@ -496,7 +516,8 @@ class StorageShareTest(AsyncStorageTestCase):
                     await self.fsc.undelete_share(share.name, share.version)
                 break
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -519,7 +540,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNone(deleted)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -532,7 +554,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertTrue(created)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_with_already_existing_share_fail_on_exist_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -547,7 +570,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertTrue(created)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -563,7 +587,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertDictEqual(props.metadata, metadata)
         await self._delete_shares(client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_with_quota_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -578,7 +603,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(props.quota, 1)
         await self._delete_shares(client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_with_access_tier(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -593,7 +619,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(props.access_tier, "Hot")
         await self._delete_shares(client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_share_exists_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -606,7 +633,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertTrue(exists)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_share_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -619,7 +647,8 @@ class StorageShareTest(AsyncStorageTestCase):
         # Assert
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_share_snapshot_exists_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -634,7 +663,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertTrue(exists)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_share_snapshot_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -649,7 +679,8 @@ class StorageShareTest(AsyncStorageTestCase):
         # Assert
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_create_share_unicode_name_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -664,7 +695,8 @@ class StorageShareTest(AsyncStorageTestCase):
             # Assert
         await self._delete_shares(share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_no_options_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -706,7 +738,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @pytest.mark.skip("Share leases are currently unavailable.")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_leased_share(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -729,7 +762,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares()
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -753,7 +787,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -772,7 +807,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNone(shares[0].metadata)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_include_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -794,7 +830,8 @@ class StorageShareTest(AsyncStorageTestCase):
 
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_num_results_and_marker_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -829,7 +866,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(prefix)
 
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -845,7 +883,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertDictEqual(md, metadata)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_share_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -861,7 +900,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertDictEqual(props.metadata, metadata)
         await self._delete_shares(client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_share_metadata_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -879,7 +919,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertDictEqual(props.metadata, metadata)
         await self._delete_shares(client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_properties_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -909,7 +950,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares()
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_with_protocol(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -929,7 +971,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await share_client.delete_share()
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_properties_with_root_squash(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -952,7 +995,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares()
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_root_squash_and_protocols(
             self, resource_group, location, storage_account, storage_account_key):
@@ -994,7 +1038,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(props.provisioned_egress_mbps)
         self.assertIsNotNone(props.next_allowed_quota_downgrade_time)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_share_with_existing_share_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1008,7 +1053,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNone(deleted)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_share_with_existing_share_fail_not_exist_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1022,7 +1068,8 @@ class StorageShareTest(AsyncStorageTestCase):
             log_as_str = log_captured.getvalue()
         await self._delete_shares(client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_share_with_non_existing_share_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1037,7 +1084,8 @@ class StorageShareTest(AsyncStorageTestCase):
             self.assertTrue('ERROR' not in log_as_str)
         await self._delete_shares(client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_share_with_non_existing_share_fail_not_exist_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1051,7 +1099,8 @@ class StorageShareTest(AsyncStorageTestCase):
             log_as_str = log_captured.getvalue()
         await self._delete_shares(client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_share_stats_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1065,7 +1114,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(share_usage, 0)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_acl_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1080,7 +1130,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(acl)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_acl_with_empty_signed_identifiers_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1096,7 +1147,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_acl_with_signed_identifiers_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1120,7 +1172,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(acl['signed_identifiers'][0].id, 'testid')
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_acl_too_many_ids_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1141,7 +1194,8 @@ class StorageShareTest(AsyncStorageTestCase):
         )
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_directories_and_files_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1168,7 +1222,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'file1')
         await self._delete_shares(share)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_directories_and_files_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1198,7 +1253,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'dir2')
         await self._delete_shares(share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_directories_and_files_with_num_results_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1223,7 +1279,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(results, 'filea1')
         await self._delete_shares(share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_directories_and_files_with_num_results_and_marker_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1258,7 +1315,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(generator2.continuation_token, None)
         await self._delete_shares(share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_directories_and_files_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1285,7 +1343,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'pref_dir3')
         await self._delete_shares(share)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_shared_access_share_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1323,7 +1382,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(data, response.content)
         await self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_permission_for_share(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1343,7 +1403,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(permission_key, permission_key2)
         await self._delete_shares(share_client.share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_transport_closed_only_once_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -1363,7 +1424,8 @@ class StorageShareTest(AsyncStorageTestCase):
             assert transport.session is not None
         await self._delete_shares(share_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_directory_from_share_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)

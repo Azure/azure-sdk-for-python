@@ -58,7 +58,8 @@ class StorageQueueTest(StorageTestCase):
         return queue
 
     # --Test cases for queues ----------------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -68,7 +69,8 @@ class StorageQueueTest(StorageTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_queue_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -80,7 +82,8 @@ class StorageQueueTest(StorageTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_queue_fail_on_exist_different_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
         url = self.account_url(storage_account, "queue")
@@ -93,7 +96,8 @@ class StorageQueueTest(StorageTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_queue_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
         url = self.account_url(storage_account, "queue")
@@ -109,7 +113,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual('test', props.metadata['val1'])
         self.assertEqual('blah', props.metadata['val2'])
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_delete_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -119,7 +124,8 @@ class StorageQueueTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             queue_client.delete_queue()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_delete_existing_queue_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -131,7 +137,8 @@ class StorageQueueTest(StorageTestCase):
         # Asserts
         self.assertIsNone(deleted)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_queues(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -143,7 +150,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(queues)
         assert len(queues) >= 1
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_queues_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         prefix = 'listqueue'
@@ -176,7 +184,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(queues2[0])
         self.assertNotEqual('', queues2[0].name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_queues_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -196,7 +205,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(len(listed_queue.metadata), 2)
         self.assertEqual(listed_queue.metadata['val1'], 'test')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_queue_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -210,7 +220,8 @@ class StorageQueueTest(StorageTestCase):
         # Assert
         self.assertDictEqual(metadata_from_response, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_queue_metadata_message_count(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -224,7 +235,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertTrue(props.approximate_message_count >= 1)
         self.assertEqual(0, len(props.metadata))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_queue_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -237,7 +249,8 @@ class StorageQueueTest(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_queue_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -248,7 +261,8 @@ class StorageQueueTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_put_message(self, resource_group, location, storage_account, storage_account_key):
         # Action.  No exception means pass. No asserts needed.
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -267,7 +281,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(u'message4', message.content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_put_message_large_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -284,7 +299,8 @@ class StorageQueueTest(StorageTestCase):
             messages[0].expires_on,
             messages[0].inserted_on + timedelta(seconds=1024 * 1024 * 1024 - 3600))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_put_message_infinite_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -298,7 +314,8 @@ class StorageQueueTest(StorageTestCase):
         # Assert
         self.assertEqual(messages[0].expires_on.year, date.max.year)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -322,7 +339,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_receive_one_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -354,7 +372,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(u'message3', peeked_message3.content)
         self.assertEqual(0, peeked_message3.dequeue_count)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -381,7 +400,8 @@ class StorageQueueTest(StorageTestCase):
             self.assertNotEqual('', message.expires_on)
             self.assertNotEqual('', message.next_visible_on)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_peek_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -406,7 +426,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertNotEqual('', message.expires_on)
         self.assertIsNone(message.next_visible_on)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_peek_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -431,7 +452,8 @@ class StorageQueueTest(StorageTestCase):
             self.assertNotEqual('', message.expires_on)
             self.assertIsNone(message.next_visible_on)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_clear_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -448,7 +470,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(0, len(result))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_delete_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -468,7 +491,8 @@ class StorageQueueTest(StorageTestCase):
         assert messages is not None
         assert len(messages) == 3
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -502,7 +526,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(message.expires_on)
         self.assertIsNotNone(message.next_visible_on)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_message_content(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -540,7 +565,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(message.next_visible_on)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -575,7 +601,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(u'message1', message.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
         token_credential = self.generate_oauth_token()
 
@@ -596,7 +623,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(queues)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_sas_read(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -630,7 +658,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(u'message1', message.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -658,7 +687,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(u'addedmessage', result.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -694,7 +724,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(u'updatedmessage1', result.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_sas_process(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -724,7 +755,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(u'message1', message.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -765,7 +797,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_queue_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -779,7 +812,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_queue_acl_iter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -795,7 +829,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -807,7 +842,8 @@ class StorageQueueTest(StorageTestCase):
 
             # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_queue_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -822,7 +858,8 @@ class StorageQueueTest(StorageTestCase):
         acl = queue_client.get_queue_access_policy()
         self.assertIsNotNone(acl)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_queue_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -837,7 +874,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_queue_acl_with_empty_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -856,7 +894,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNone(acl['empty'].expiry)
         self.assertIsNone(acl['empty'].start)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_queue_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -878,7 +917,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(len(acl), 1)
         self.assertTrue('testid' in acl)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_queue_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -894,7 +934,8 @@ class StorageQueueTest(StorageTestCase):
         with self.assertRaises(ValueError):
             queue_client.set_queue_access_policy(identifiers)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -906,7 +947,8 @@ class StorageQueueTest(StorageTestCase):
 
             # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_unicode_create_queue_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -919,7 +961,8 @@ class StorageQueueTest(StorageTestCase):
 
             # Asserts
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_unicode_get_messages_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
         pytest.skip("Uncomment after msrest fix")
@@ -939,7 +982,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_unicode_update_message_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
         pytest.skip("Uncomment after msrest fix")
@@ -965,7 +1009,8 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsInstance(message.next_visible_on, datetime)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
         transport = RequestsTransport()
         prefix = TEST_QUEUE_PREFIX

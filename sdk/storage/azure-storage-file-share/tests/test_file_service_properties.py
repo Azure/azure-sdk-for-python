@@ -77,7 +77,8 @@ class FileServicePropertiesTest(StorageTestCase):
 
     # --Test cases per service ---------------------------------------
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
 
@@ -109,7 +110,8 @@ class FileServicePropertiesTest(StorageTestCase):
         self.assertEqual(props['protocol'].smb.multichannel.enabled, True)
 
     # --Test cases per feature ---------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -121,7 +123,8 @@ class FileServicePropertiesTest(StorageTestCase):
         received_props = self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
@@ -134,7 +137,8 @@ class FileServicePropertiesTest(StorageTestCase):
         received_props = self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
@@ -161,7 +165,8 @@ class FileServicePropertiesTest(StorageTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         # Assert
@@ -169,7 +174,8 @@ class FileServicePropertiesTest(StorageTestCase):
                           RetentionPolicy,
                           True, None)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         cors = []

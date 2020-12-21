@@ -59,7 +59,8 @@ class StorageQueueEncodingTest(StorageTestCase):
 
     # --------------------------------------------------------------------------
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_message_text_xml(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -71,7 +72,8 @@ class StorageQueueEncodingTest(StorageTestCase):
         assert isinstance(queue._config.message_decode_policy, NoDecodePolicy)
         self._validate_encoding(queue, message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_message_text_xml_whitespace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -81,7 +83,8 @@ class StorageQueueEncodingTest(StorageTestCase):
         # Asserts
         self._validate_encoding(queue, message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_message_text_xml_invalid_chars(self, resource_group, location, storage_account, storage_account_key):
         # Action.
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -92,7 +95,8 @@ class StorageQueueEncodingTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             queue.send_message(message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_message_text_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -108,7 +112,8 @@ class StorageQueueEncodingTest(StorageTestCase):
         # Asserts
         self._validate_encoding(queue, message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_message_bytes_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -125,7 +130,8 @@ class StorageQueueEncodingTest(StorageTestCase):
         self._validate_encoding(queue, message)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Not applicable on Python 2.7")
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_message_bytes_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -141,7 +147,8 @@ class StorageQueueEncodingTest(StorageTestCase):
             # Asserts
             self.assertTrue(str(e.exception).startswith('Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.'))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_message_text_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
@@ -160,7 +167,8 @@ class StorageQueueEncodingTest(StorageTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_message_base64_decode_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)

@@ -14,6 +14,7 @@ from azure.storage.fileshare import (
     ShareFileClient
 )
 from azure.storage.fileshare._generated import __version__ as version
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
@@ -173,7 +174,8 @@ class StorageClientTest(StorageTestCase):
                 api_version="foo")
         self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_old_api_copy_file_succeeds(self, resource_group, location, storage_account, storage_account_key):
         fsc = ShareServiceClient(
             self.account_url(storage_account, "file"),

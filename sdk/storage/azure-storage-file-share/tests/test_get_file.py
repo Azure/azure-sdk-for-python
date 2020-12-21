@@ -87,13 +87,14 @@ class StorageGetFileTest(StorageTestCase):
 
         def read(self, count):
             return self.wrapped_file.read(count)
-    
+
         def seekable(self):
             return False
 
     # -- Get test cases for files ----------------------------------------------
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_unicode_get_file_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_data = u'hello world啊齄丂狛狜'.encode('utf-8')
@@ -113,7 +114,8 @@ class StorageGetFileTest(StorageTestCase):
         # Assert
         self.assertEqual(file_content, file_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_unicode_get_file_binary_data(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -135,7 +137,8 @@ class StorageGetFileTest(StorageTestCase):
         # Assert
         self.assertEqual(file_content, binary_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_no_content(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_data = b''
@@ -156,7 +159,8 @@ class StorageGetFileTest(StorageTestCase):
         self.assertEqual(file_data, file_output.readall())
         self.assertEqual(0, file_output.properties.size)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -177,7 +181,8 @@ class StorageGetFileTest(StorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -210,7 +215,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_bytes_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = ShareFileClient(
@@ -239,7 +245,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_bytes_small(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_data = self.get_random_bytes(1024)
@@ -271,7 +278,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_with_iter(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -296,7 +304,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_stream(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -322,7 +331,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -360,7 +370,8 @@ class StorageGetFileTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_stream_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = ShareFileClient(
@@ -394,7 +405,8 @@ class StorageGetFileTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_stream_small(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_data = self.get_random_bytes(1024)
@@ -431,7 +443,8 @@ class StorageGetFileTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_stream_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -468,7 +481,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_stream_with_progress_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -517,7 +531,8 @@ class StorageGetFileTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_stream_non_parallel_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         # Create a snapshot of the share and delete the file
@@ -562,7 +577,8 @@ class StorageGetFileTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_stream_small_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_data = self.get_random_bytes(1024)
@@ -611,7 +627,8 @@ class StorageGetFileTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_ranged_get_file_to_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -638,7 +655,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data[1:end_range + 1], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_ranged_get_file_to_path_with_single_byte(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -666,7 +684,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data[0], actual[0])
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_ranged_get_file_to_bytes_with_zero_byte(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_data = b''
@@ -688,7 +707,8 @@ class StorageGetFileTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             file_client.download_file(offset=3, length=5).readall()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_ranged_get_file_to_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -733,7 +753,8 @@ class StorageGetFileTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_ranged_get_file_to_path_small(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = ShareFileClient(
@@ -755,7 +776,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data[1:5], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_ranged_get_file_to_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = ShareFileClient(
@@ -777,7 +799,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data[1:4], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_ranged_get_file_to_path_invalid_range_parallel(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -810,7 +833,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(file_data[start:file_size], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_ranged_get_file_to_path_invalid_range_non_parallel(self, resource_group, location, storage_account, storage_account_key):
 
         self._setup(storage_account, storage_account_key)
@@ -840,7 +864,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(file_data[start:file_size], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_text(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -864,7 +889,8 @@ class StorageGetFileTest(StorageTestCase):
         # Assert
         self.assertEqual(text_data, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_text_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -901,7 +927,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_text_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         text_file = self._get_file_reference()
@@ -934,7 +961,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_text_small(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_data = self.get_random_text_data(1024)
@@ -966,7 +994,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         text = u'hello 啊齄丂狛狜 world'
@@ -987,7 +1016,8 @@ class StorageGetFileTest(StorageTestCase):
         # Assert
         self.assertEqual(text, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_to_text_with_encoding_and_progress(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         text = u'hello 啊齄丂狛狜 world'
@@ -1020,7 +1050,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_non_seekable(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = ShareFileClient(
@@ -1043,7 +1074,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_non_seekable_parallel(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1068,7 +1100,8 @@ class StorageGetFileTest(StorageTestCase):
                 # Assert
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_non_seekable_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         # Create a snapshot of the share and delete the file
@@ -1102,7 +1135,8 @@ class StorageGetFileTest(StorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_non_seekable_parallel_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1136,7 +1170,8 @@ class StorageGetFileTest(StorageTestCase):
                 snapshot_client.download_file(max_concurrency=2).readinto(non_seekable_stream)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_exact_get_size(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -1168,7 +1203,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_exact_chunk_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1204,7 +1240,8 @@ class StorageGetFileTest(StorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1225,7 +1262,8 @@ class StorageGetFileTest(StorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, file_content.readall())
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_range_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1254,7 +1292,8 @@ class StorageGetFileTest(StorageTestCase):
         # Assert
         self.assertEqual(b'MDAwMDAwMDA=', file_content.properties.content_settings.content_md5)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_server_encryption(self, resource_group, location, storage_account, storage_account_key):
 
         self._setup(storage_account, storage_account_key)
@@ -1268,11 +1307,12 @@ class StorageGetFileTest(StorageTestCase):
 
         # Act
         file_content = file_client.download_file(offset=0, length=1024, validate_content=True)
-    
+
         # Assert
         self.assertTrue(file_content.properties.server_encrypted)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_properties_server_encryption(self, resource_group, location, storage_account, storage_account_key):
 
         self._setup(storage_account, storage_account_key)

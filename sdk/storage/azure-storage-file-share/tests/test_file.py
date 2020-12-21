@@ -147,7 +147,8 @@ class StorageFileTest(StorageTestCase):
             return self.wrapped_file.read(count)
 
     # --Test cases for files ----------------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_make_file_url(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
 
@@ -161,7 +162,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(res, 'https://' + storage_account.name
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_make_file_url_no_directory(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         share = self.fsc.get_share_client("vhds")
@@ -174,7 +176,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(res, 'https://' + storage_account.name
                          + '.file.core.windows.net/vhds/my.vhd')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_make_file_url_with_protocol(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         url = self.account_url(storage_account, "file").replace('https', 'http')
@@ -189,7 +192,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(res, 'http://' + storage_account.name
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_make_file_url_with_sas(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
@@ -207,7 +211,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(res, 'https://' + storage_account.name +
                          '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -229,7 +234,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(props.etag, resp['etag'])
         self.assertEqual(props.last_modified, resp['last_modified'])
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
@@ -250,7 +256,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(props.last_modified, resp['last_modified'])
         self.assertDictEqual(props.metadata, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_when_file_permission_is_too_long(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._get_file_client()
@@ -258,7 +265,8 @@ class StorageFileTest(StorageTestCase):
         with self.assertRaises(ValueError):
             file_client.create_file(1024, file_permission=permission)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_with_invalid_file_permission(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_client()
@@ -266,7 +274,8 @@ class StorageFileTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             file_name.create_file(1024, file_permission="abcde")
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_with_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._get_file_client()
@@ -283,7 +292,8 @@ class StorageFileTest(StorageTestCase):
         # There is currently a lease on the file so delete the file with the lease will succeed
         file_client.delete_file(lease=lease)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_with_changed_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._get_file_client()
@@ -302,7 +312,8 @@ class StorageFileTest(StorageTestCase):
 
         self.assertIsNotNone(resp)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_will_set_all_smb_properties(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._get_file_client()
@@ -318,7 +329,8 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(file_properties.file_attributes)
         self.assertIsNotNone(file_properties.last_write_time)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_file_exists(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -329,7 +341,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_file_not_exists(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -345,7 +358,8 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_file_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -365,7 +379,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertTrue(props)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_file_not_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -385,7 +400,8 @@ class StorageFileTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             snapshot_client.get_file_properties()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_resize_file(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -397,7 +413,8 @@ class StorageFileTest(StorageTestCase):
         props = file_client.get_file_properties()
         self.assertEqual(props.size, 5)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_resize_file_with_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -412,7 +429,8 @@ class StorageFileTest(StorageTestCase):
         props = file_client.get_file_properties()
         self.assertEqual(props.size, 5)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_file_properties(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -431,7 +449,8 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(properties.creation_time)
         self.assertIsNotNone(properties.permission_key)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_file_properties_with_file_permission(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -462,7 +481,8 @@ class StorageFileTest(StorageTestCase):
         self.assertIn("Archive", properties.file_attributes)
         self.assertIn("Temporary", properties.file_attributes)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_properties(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -474,7 +494,8 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(properties)
         self.assertEqual(properties.size, len(self.short_byte_data))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_properties_with_invalid_lease_fails(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -490,7 +511,8 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(properties)
         self.assertEqual(properties.size, len(self.short_byte_data))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_properties_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -519,7 +541,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(file_props.size, snapshot_props.size)
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_metadata_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -546,7 +569,8 @@ class StorageFileTest(StorageTestCase):
         self.assertDictEqual(metadata2, file_metadata)
         self.assertDictEqual(metadata, file_snapshot_metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_properties_with_non_existing_file(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -562,7 +586,8 @@ class StorageFileTest(StorageTestCase):
 
             # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_get_file_metadata(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -574,7 +599,8 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(md)
         self.assertEqual(0, len(md))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_file_metadata_with_upper_case(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -591,7 +617,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_break_lease_with_broken_period_fails(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -602,7 +629,8 @@ class StorageFileTest(StorageTestCase):
         with self.assertRaises(TypeError):
             lease.break_lease(lease_break_period=5)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_set_file_metadata_with_broken_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -635,7 +663,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_delete_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -647,7 +676,8 @@ class StorageFileTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             file_client.get_file_properties()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_delete_file_with_non_existing_file(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -663,7 +693,8 @@ class StorageFileTest(StorageTestCase):
 
             # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_range(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -678,7 +709,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_range_with_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -697,7 +729,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_range_with_md5(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -708,7 +741,8 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_file_name = 'testfile1'
@@ -732,7 +766,8 @@ class StorageFileTest(StorageTestCase):
             # when the source file has less bytes than 2050, throw exception
             destination_file_client.upload_range_from_url(source_file_url, offset=0, length=2050, source_offset=0)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_range_from_file_url(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_file_name = 'testfile'
@@ -767,7 +802,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(511, file_ranges[0].get('end'))
         self.assertEqual(data, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_range_from_file_url_with_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_file_name = 'testfile'
@@ -809,7 +845,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(511, file_ranges[0].get('end'))
         self.assertEqual(data, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_big_range_from_file_url(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_file_name = 'testfile1'
@@ -845,7 +882,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(end, file_ranges[0].get('end'))
         self.assertEqual(data, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_clear_range(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -858,7 +896,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(b'\x00' * 512, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_update_file_unicode(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
@@ -876,7 +915,8 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_ranges_none(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -894,7 +934,8 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_ranges_none_with_invalid_lease_fails(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -919,7 +960,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(len(ranges), 0)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -962,7 +1004,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_ranges_2(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -988,7 +1031,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_ranges_none_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -998,7 +1042,7 @@ class StorageFileTest(StorageTestCase):
             file_path=file_name,
             credential=storage_account_key)
         file_client.create_file(1024)
-        
+
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = share_client.create_snapshot()
         snapshot_client = ShareFileClient(
@@ -1017,7 +1061,8 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_list_ranges_2_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -1030,7 +1075,7 @@ class StorageFileTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         resp1 = file_client.upload_range(data, offset=0, length=512)
         resp2 = file_client.upload_range(data, offset=1024, length=512)
-        
+
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = share_client.create_snapshot()
         snapshot_client = ShareFileClient(
@@ -1053,7 +1098,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_copy_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_client = self._create_file()
@@ -1074,7 +1120,8 @@ class StorageFileTest(StorageTestCase):
         copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_copy_existing_file_with_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_client = self._create_file()
@@ -1100,7 +1147,8 @@ class StorageFileTest(StorageTestCase):
         copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_copy_file_with_specifying_acl_copy_behavior_attributes(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_client = self._create_file()
@@ -1140,7 +1188,8 @@ class StorageFileTest(StorageTestCase):
         copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_copy_file_with_specifying_acl_and_attributes_from_source(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_client = self._create_file()
@@ -1170,7 +1219,8 @@ class StorageFileTest(StorageTestCase):
         copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_copy_file_async_private_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key, rmt, rmt_key)
@@ -1190,7 +1240,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_copy_file_async_private_file_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key, rmt, rmt_key)
@@ -1223,7 +1274,8 @@ class StorageFileTest(StorageTestCase):
         actual_data = file_client.download_file().readall()
         self.assertEqual(actual_data, data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_abort_copy_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key, rmt, rmt_key)
@@ -1256,7 +1308,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(target_file.readall(), b'')
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_abort_copy_file_with_synchronous_copy_fails(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_file = self._create_file()
@@ -1276,7 +1329,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertEqual(copy_resp['copy_status'], 'success')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_unicode_get_file_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = '啊齄丂狛狜'
@@ -1293,7 +1347,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_unicode_get_file_unicode_name_with_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = '啊齄丂狛狜'
@@ -1319,7 +1374,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_file_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -1337,7 +1393,8 @@ class StorageFileTest(StorageTestCase):
         content = file_client.download_file().readall()
         self.assertEqual(content, data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_file_unicode_data_and_file_attributes(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_client = self._get_file_client()
@@ -1352,7 +1409,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(content, data)
         self.assertIn('Temporary', properties.file_attributes)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_unicode_get_file_binary_data(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -1372,7 +1430,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertEqual(content, binary_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1404,7 +1463,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertFileEqual(file_client, data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1430,7 +1490,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertFileEqual(file_client, data[1024:])
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1457,13 +1518,14 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertFileEqual(file_client, data[index:index + count])
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)        
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
@@ -1486,13 +1548,14 @@ class StorageFileTest(StorageTestCase):
         self.assertFileEqual(file_client, data)
         self._teardown(INPUT_FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)        
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
@@ -1526,13 +1589,14 @@ class StorageFileTest(StorageTestCase):
             progress, unknown_size=False)
         self._teardown(INPUT_FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_stream(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)       
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
@@ -1556,13 +1620,14 @@ class StorageFileTest(StorageTestCase):
         self.assertFileEqual(file_client, data[:file_size])
         self._teardown(INPUT_FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_stream_non_seekable(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)      
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
@@ -1584,13 +1649,14 @@ class StorageFileTest(StorageTestCase):
         self.assertFileEqual(file_client, data[:file_size])
         self._teardown(INPUT_FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)      
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
@@ -1622,13 +1688,14 @@ class StorageFileTest(StorageTestCase):
             progress, unknown_size=False)
         self._teardown(INPUT_FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_stream_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)       
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
@@ -1649,13 +1716,14 @@ class StorageFileTest(StorageTestCase):
         self.assertFileEqual(file_client, data[:file_size])
         self._teardown(INPUT_FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_stream_with_progress_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)       
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
@@ -1688,7 +1756,8 @@ class StorageFileTest(StorageTestCase):
             progress, unknown_size=False)
         self._teardown(INPUT_FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_text(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -1707,7 +1776,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertFileEqual(file_client, data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -1726,7 +1796,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertFileEqual(file_client, data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1749,7 +1820,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertFileEqual(file_client, encoded_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_with_md5_small(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
@@ -1766,7 +1838,8 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_create_file_with_md5_large(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1788,7 +1861,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
 
     # --Test cases for sas & acl ------------------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_sas_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1816,7 +1890,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertEqual(self.short_byte_data, content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1850,7 +1925,8 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertEqual(self.short_byte_data, content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1879,7 +1955,8 @@ class StorageFileTest(StorageTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_shared_read_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1908,7 +1985,8 @@ class StorageFileTest(StorageTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_shared_read_access_file_with_content_query_params(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1946,7 +2024,8 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(response.headers['content-language'], 'fr')
         self.assertEqual(response.headers['content-type'], 'text')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_shared_write_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1978,7 +2057,8 @@ class StorageFileTest(StorageTestCase):
         file_content = file_client_admin.download_file().readall()
         self.assertEqual(updated_data, file_content[:len(updated_data)])
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     def test_shared_delete_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:

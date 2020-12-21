@@ -56,7 +56,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
                 pass
 
     # --Test cases for directories ----------------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_directories_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -69,7 +70,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(created)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_directories_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -84,7 +86,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         props = await directory.get_directory_properties()
         self.assertDictEqual(props.metadata, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_directories_fail_on_exist_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -99,7 +102,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(created)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_subdirectories_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -115,7 +119,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertEqual(created.directory_path, 'dir1/dir2')
 
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_subdirectories_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -133,7 +138,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         properties = await created.get_directory_properties()
         self.assertEqual(properties.metadata, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_file_in_directory_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -151,7 +157,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         file_content = await file_content.readall()
         self.assertEqual(file_content, file_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_file_in_directory_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -169,7 +176,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await new_file.get_file_properties()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_subdirectories_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -187,7 +195,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await subdir.get_directory_properties()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_directory_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -203,7 +212,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertIsNotNone(props.etag)
         self.assertIsNotNone(props.last_modified)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_directory_properties_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -226,7 +236,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertIsNotNone(props.last_modified)
         self.assertDictEqual(metadata, props.metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_directory_metadata_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -247,7 +258,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertIsNotNone(snapshot_props.metadata)
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_directory_properties_with_non_existing_directory_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -261,7 +273,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
 
             # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_directory_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -275,7 +288,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_directory_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -289,7 +303,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_directory_parent_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -304,7 +319,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.parent_not_found)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_directory_exists_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -322,7 +338,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_directory_not_exists_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -340,7 +357,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_set_directory_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -356,7 +374,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         # Assert
         self.assertDictEqual(props.metadata, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_directory_properties_with_empty_smb_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -378,7 +397,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertEqual(directory_properties_on_creation.permission_key,
                           directory_properties.permission_key)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_directory_properties_with_file_permission_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -405,7 +425,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertEqual(directory_properties.creation_time, new_creation_time)
         self.assertEqual(directory_properties.last_write_time, new_last_write_time)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_subdirectories_and_files_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -437,7 +458,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertEqual(len(list_dir), 6)
         self.assertEqual(list_dir, expected)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_subdirectories_and_files_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -466,7 +488,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertEqual(len(list_dir), 3)
         self.assertEqual(list_dir, expected)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_subdirectories_and_files_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -477,7 +500,7 @@ class StorageDirectoryTest(AsyncStorageTestCase):
             directory.create_subdirectory("subdir1"),
             directory.create_subdirectory("subdir2"),
             directory.upload_file("file1", "data1"))
-        
+
         snapshot = await share_client.create_snapshot()
         await asyncio.gather(
             directory.create_subdirectory("subdir3"),
@@ -501,7 +524,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertEqual(len(list_dir), 3)
         self.assertEqual(list_dir, expected)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_nested_subdirectories_and_files_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -529,7 +553,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertEqual(len(list_dir), 2)
         self.assertEqual(list_dir, expected)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_directory_with_existing_share_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -545,7 +570,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await directory.get_directory_properties()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_directory_with_non_existing_directory_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -559,7 +585,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_directory_properties_server_encryption_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

@@ -22,6 +22,7 @@ from _shared.testcase import (
     GlobalResourceGroupPreparer
 )
 from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test'
@@ -65,7 +66,8 @@ class StorageHandleTest(AsyncStorageTestCase):
         self.assertIsNotNone(handles[0].client_ip)
         self.assertIsNotNone(handles[0].open_time)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_close_single_handle_async(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("investigate later")
@@ -92,7 +94,8 @@ class StorageHandleTest(AsyncStorageTestCase):
         self.assertEqual(1, handles_info['closed_handles_count'])
         self.assertEqual(handles_info['failed_handles_count'], 0)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_close_all_handle_async(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("investigate later")

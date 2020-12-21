@@ -75,7 +75,8 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
         self.assertEqual(message, dequeued.content)
 
     # --------------------------------------------------------------------------
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_xml(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
@@ -86,7 +87,8 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_xml_whitespace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
@@ -97,7 +99,8 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_xml_invalid_chars(self, resource_group, location, storage_account, storage_account_key):
         # Action.
@@ -109,7 +112,8 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
         with self.assertRaises(HttpResponseError):
             await queue.send_message(message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
@@ -127,7 +131,8 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_bytes_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
@@ -145,7 +150,8 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_bytes_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -159,7 +165,8 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
             # Asserts
             self.assertTrue(str(e.exception).startswith('Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.'))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -180,7 +187,8 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_base64_decode_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

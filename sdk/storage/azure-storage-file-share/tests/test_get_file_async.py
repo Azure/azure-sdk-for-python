@@ -100,13 +100,14 @@ class StorageGetFileTest(AsyncStorageTestCase):
 
         def read(self, count):
             return self.wrapped_file.read(count)
-    
+
         def seekable(self):
             return False
 
     # -- Get test cases for files ----------------------------------------------
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_get_file_unicode_data_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -129,7 +130,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(file_content, file_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_get_file_binary_data_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -154,7 +156,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(file_content, binary_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_no_content_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -179,7 +182,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self.assertEqual(file_data, file_content)
         self.assertEqual(0, file_output.properties.size)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_bytes_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -203,7 +207,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_bytes_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -239,7 +244,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_bytes_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -271,7 +277,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_bytes_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -306,7 +313,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -336,7 +344,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_with_iter_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -364,7 +373,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -405,7 +415,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -442,7 +453,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -482,7 +494,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -522,7 +535,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_with_progress_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -574,7 +588,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_non_parallel_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -622,7 +637,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_small_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -674,7 +690,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_file_to_path_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -705,7 +722,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data[start:end_range + 1], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_file_to_path_with_single_byte_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -736,7 +754,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data[0], actual[0])
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_file_to_bytes_with_zero_byte_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -763,7 +782,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             props = await file_client.download_file(offset=3, length=5)
             await props.readall()
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_file_to_path_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -810,7 +830,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_file_to_path_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -835,7 +856,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data[1:5], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_file_to_path_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -860,7 +882,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data[1:4], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_file_to_path_invalid_range_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -894,7 +917,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(file_data[1:file_size], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_file_to_path_invalid_range_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
 
@@ -926,7 +950,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(file_data[start:file_size], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_text_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -953,7 +978,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(text_data, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_text_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -993,7 +1019,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_text_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1029,7 +1056,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_text_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1064,7 +1092,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_text_with_encoding_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1088,7 +1117,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(text, file_content)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_text_with_encoding_and_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1124,7 +1154,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_non_seekable_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1150,7 +1181,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_non_seekable_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1178,7 +1210,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
                 # Assert
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_non_seekable_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1215,7 +1248,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_non_seekable_parallel_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1252,7 +1286,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
                 await data.readinto(non_seekable_stream)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_exact_get_size_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1287,7 +1322,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_exact_chunk_size_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1326,7 +1362,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1350,7 +1387,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, file_bytes)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_range_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1382,7 +1420,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(b'MDAwMDAwMDA=', file_content.properties.content_settings.content_md5)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_server_encryption_async(self, resource_group, location, storage_account, storage_account_key):
 
@@ -1398,11 +1437,12 @@ class StorageGetFileTest(AsyncStorageTestCase):
 
         # Act
         file_content = await file_client.download_file(offset=0, length=1024, validate_content=True)
-    
+
         # Assert
         self.assertTrue(file_content.properties.server_encrypted)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix="storageblob")
+    @StorageAccountPreparer(name_prefix="storageblob")
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_properties_server_encryption_async(self, resource_group, location, storage_account, storage_account_key):
 
