@@ -328,6 +328,25 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 )
         return transaction_result
 
+    def _parameter_filter_substitution(  # pylint: disable = R0201
+            self,
+            parameters,  # type: dict[str,str]
+            filter  # type: str  # pylint: disable = W0622
+    ):
+        """Replace user defined parameter in filter
+        :param parameters: User defined parameters
+        :param filter: Filter for querying
+        """
+        if parameters:
+            filter_strings = filter.split(' ')
+            for idx, f in enumerate(filter_strings):
+                if '@' in f:
+                    val = parameters[f[1:]]
+                    filter_strings[idx] = "'{}'".format(val)
+            return ' '.join(filter_strings)
+
+        return filter  # pylint: disable = W0622
+
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created

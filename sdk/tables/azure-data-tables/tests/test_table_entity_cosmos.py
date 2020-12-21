@@ -327,9 +327,34 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._insert_random_entity()
 
             # Act
-            resp = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
 
-            assert resp is not None
+            assert entities is not None
+            for e in entities:
+                self._assert_default_entity(e)
+
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_query_user_filter_multiple_params(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': 'True',
+                'rk': entity['RowKey']
+            }
+            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)

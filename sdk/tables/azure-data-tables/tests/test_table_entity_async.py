@@ -62,6 +62,7 @@ class StorageTableEntityTest(TableTestCase):
                     await self.ts.delete_table(table_name)
                 except:
                     pass
+        await self.ts.close()
 
     # --Helpers-----------------------------------------------------------------
 
@@ -1320,6 +1321,45 @@ class StorageTableEntityTest(TableTestCase):
             assert entity_count == 6
             assert page_count == 3
 
+        finally:
+            await self._tear_down()
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    async def test_query_user_filter(self, storage_account, storage_account_key):
+        # Arrange
+        await self._set_up(storage_account, storage_account_key)
+        try:
+            entity = await self._insert_random_entity()
+
+            # Act
+            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+
+            assert entities is not None
+            async for e in entities:
+                self._assert_default_entity(e)
+
+        finally:
+            await self._tear_down()
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    async def test_query_user_filter_multiple_params(self, storage_account, storage_account_key):
+        # Arrange
+        await self._set_up(storage_account, storage_account_key)
+        try:
+            entity, _ = await self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': 'True',
+                'rk': entity['RowKey']
+            }
+            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
         finally:
             await self._tear_down()
 

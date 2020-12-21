@@ -1406,6 +1406,45 @@ class StorageTableEntityTest(TableTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    async def test_query_user_filter(self, cosmos_account, cosmos_account_key):
+        # Arrange
+        await self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            entity = await self._insert_random_entity()
+
+            # Act
+            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+
+            assert entities is not None
+            async for e in entities:
+                self._assert_default_entity(e)
+
+        finally:
+            await self._tear_down()
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    async def test_query_user_filter_multiple_params(self, cosmos_account, cosmos_account_key):
+        # Arrange
+        await self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            entity, _ = await self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': 'True',
+                'rk': entity['RowKey']
+            }
+            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
+        finally:
+            await self._tear_down()
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_query_zero_entities(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)

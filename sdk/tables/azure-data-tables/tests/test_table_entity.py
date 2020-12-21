@@ -321,15 +321,15 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._insert_random_entity()
 
             # Act
-            # resp = self.table.create_item(entity)
-            resp = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
 
-            # Assert  --- Does this mean insert returns nothing?
-            assert resp is not None
+            assert entities is not None
+            for e in entities:
+                self._assert_default_entity(e)
+
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/15554")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_user_filter_multiple_params(self, resource_group, location, storage_account, storage_account_key):
@@ -345,7 +345,6 @@ class StorageTableEntityTest(TableTestCase):
             }
             entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
 
-            # Assert  --- Does this mean insert returns nothing?
             assert entities is not None
             for entity in entities:
                 self._assert_default_entity(entity)
@@ -386,7 +385,6 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            # resp = self.table.create_item(entity)
             resp = self.table.create_entity(entity=entity)
 
             # Assert
@@ -562,7 +560,6 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with pytest.raises(ValueError):
-                # resp = self.table.create_item(entity)
                 resp = self.table.create_entity(entity=entity)
             # Assert
         finally:
