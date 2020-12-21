@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from collections import namedtuple
 import os
+import datetime
 import functools
 
 from azure.mgmt.storage import StorageManagementClient
