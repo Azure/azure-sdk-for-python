@@ -258,6 +258,7 @@ class BlobOperations(object):
             response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
             response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
             response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+            response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
             response_headers['Accept-Ranges']=self._deserialize('str', response.headers.get('Accept-Ranges'))
             response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
             response_headers['x-ms-blob-committed-block-count']=self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count'))
