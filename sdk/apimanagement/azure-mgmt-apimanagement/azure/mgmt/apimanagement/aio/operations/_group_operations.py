@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class GroupOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class GroupOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.GroupCollection"]:
+    ) -> AsyncIterable["_models.GroupCollection"]:
         """Lists a collection of groups defined within a service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -72,7 +72,7 @@ class GroupOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.GroupCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GroupCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GroupCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -125,7 +125,7 @@ class GroupOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -189,7 +189,7 @@ class GroupOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -207,7 +207,7 @@ class GroupOperations:
         service_name: str,
         group_id: str,
         **kwargs
-    ) -> "models.GroupContract":
+    ) -> "_models.GroupContract":
         """Gets the details of the group specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -222,7 +222,7 @@ class GroupOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GroupContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GroupContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GroupContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -254,7 +254,7 @@ class GroupOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -272,10 +272,10 @@ class GroupOperations:
         resource_group_name: str,
         service_name: str,
         group_id: str,
-        parameters: "models.GroupCreateParameters",
+        parameters: "_models.GroupCreateParameters",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.GroupContract":
+    ) -> "_models.GroupContract":
         """Creates or Updates a group.
 
         :param resource_group_name: The name of the resource group.
@@ -295,7 +295,7 @@ class GroupOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GroupContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GroupContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GroupContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -334,7 +334,7 @@ class GroupOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -358,9 +358,9 @@ class GroupOperations:
         service_name: str,
         group_id: str,
         if_match: str,
-        parameters: "models.GroupUpdateParameters",
+        parameters: "_models.GroupUpdateParameters",
         **kwargs
-    ) -> "models.GroupContract":
+    ) -> "_models.GroupContract":
         """Updates the details of the group specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -380,7 +380,7 @@ class GroupOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GroupContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GroupContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GroupContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -418,7 +418,7 @@ class GroupOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -489,7 +489,7 @@ class GroupOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
