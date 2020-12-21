@@ -25,25 +25,28 @@ FakeStorageAccount = FakeResource
 # Storage Account Preparer and its shorthand decorator
 
 class StorageAccountPreparer(AzureMgmtPreparer):
-    def __init__(self,
-                 name_prefix='',
-                 sku='Standard_LRS', location='westus', kind='StorageV2',
-                 parameter_name='storage_account',
-                 resource_group_parameter_name=RESOURCE_GROUP_PARAM,
-                 disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None,
-                 random_name_enabled=False,
-                 use_cache=False):
-        super(StorageAccountPreparer, self).__init__(name_prefix, 24,
+    def __init__(self, name_prefix='',
+                    use_cache=False,
+                    random_name_length=75,
+                    parameter_name='storage_account',
+                    parameter_name_for_location='location', location='westus',
+                    disable_recording=True, playback_fake_resource=None,
+                    client_kwargs=None,
+                    random_name_enabled=False,
+                    delete_after_tag_timedelta=datetime.timedelta(days=1),
+                    sku='Standard_LRS',  kind='StorageV2',
+                    resource_group_parameter_name=RESOURCE_GROUP_PARAM):
+        super(StorageAccountPreparer, self).__init__(name_prefix, random_name_length,
                                                      disable_recording=disable_recording,
                                                      playback_fake_resource=playback_fake_resource,
                                                      client_kwargs=client_kwargs,
                                                      random_name_enabled=random_name_enabled)
         self.location = location
+        self.parameter_name = parameter_name
+        self.parameter_name_for_location = parameter_name_for_location
+        self.resource_group_parameter_name = resource_group_parameter_name
         self.sku = sku
         self.kind = kind
-        self.resource_group_parameter_name = resource_group_parameter_name
-        self.parameter_name = parameter_name
         self.storage_key = ''
         self.resource_moniker = self.name_prefix
         self.set_cache(use_cache, sku, location, name_prefix)
