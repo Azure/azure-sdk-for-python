@@ -11,6 +11,7 @@ from azure_devtools.perfstress_tests import PerfStressTest, get_random_bytes
 from azure.servicebus import ServiceBusClient, ReceiveSettleMode, Message
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.control_client import ServiceBusService
+from azure.servicebus.control_client.models import Queue
 
 
 def parse_connection_string(conn_str):
@@ -65,7 +66,8 @@ class _QueueTest(_ServiceTest):
             shared_access_key_name=connection_props['shared_access_key_name'],
             shared_access_key_value=connection_props['shared_access_key']
         )
-        self.mgmt_client.create_queue(self.queue_name)
+        queue = Queue(max_size_in_megabytes=40960)
+        self.mgmt_client.create_queue(self.queue_name, queue=queue)
         self.queue_client = self.service_client.get_queue(self.queue_name)
         self.async_queue_client = self.async_service_client.get_queue(self.queue_name)
 

@@ -49,7 +49,7 @@ class _QueueTest(_ServiceTest):
 
     async def global_setup(self):
         await super().global_setup()
-        await self.async_mgmt_client.create_queue(self.queue_name)
+        await self.async_mgmt_client.create_queue(self.queue_name, max_size_in_megabytes=40960)
 
     async def global_cleanup(self):
         await self.async_mgmt_client.delete_queue(self.queue_name)
