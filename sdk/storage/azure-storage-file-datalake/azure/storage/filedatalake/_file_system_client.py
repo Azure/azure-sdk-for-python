@@ -22,7 +22,7 @@ from ._list_paths_helper import PathPropertiesPaged
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
-from ._generated import DataLakeStorageClient
+from ._generated import AzureDataLakeStorageRESTAPI
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -96,7 +96,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name

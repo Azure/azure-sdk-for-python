@@ -17,7 +17,6 @@ from azure.storage.filedatalake import ContentSettings, generate_account_sas, ge
     ResourceTypes, AccountSasPermissions, FileSasPermissions
 from azure.storage.filedatalake.aio import DataLakeServiceClient, FileSystemClient, DataLakeDirectoryClient, \
     DataLakeFileClient
-from azure.storage.filedatalake._generated.models import StorageErrorException
 from testcase import (
     StorageTestCase,
     record,

@@ -26,7 +26,7 @@ from .exceptions import (
     ServiceBusConnectionError,
     OperationTimeoutError,
     SessionLockLostError,
-    _create_servicebus_exception
+    _create_servicebus_exception,
 )
 from ._common.utils import create_properties, strip_protocol_from_uri
 from ._common.constants import (
@@ -39,7 +39,7 @@ from ._common.constants import (
     TRACE_COMPONENT_PROPERTY,
     TRACE_COMPONENT,
     TRACE_PEER_ADDRESS_PROPERTY,
-    TRACE_BUS_DESTINATION_PROPERTY
+    TRACE_BUS_DESTINATION_PROPERTY,
 )
 
 if TYPE_CHECKING:
@@ -55,7 +55,7 @@ def _parse_conn_str(conn_str):
     shared_access_key = None
     entity_path = None  # type: Optional[str]
     shared_access_signature = None  # type: Optional[str]
-    shared_access_signature_expiry = None # type: Optional[int]
+    shared_access_signature_expiry = None  # type: Optional[int]
     for element in conn_str.strip().split(";"):
         key, _, value = element.partition("=")
         if key.lower() == "endpoint":
@@ -73,12 +73,22 @@ def _parse_conn_str(conn_str):
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
                 # type: ignore
-                shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0])
-            except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
+                shared_access_signature_expiry = int(
+                    shared_access_signature.split("se=")[1].split("&")[0]
+                )
+            except (
+                IndexError,
+                TypeError,
+                ValueError,
+            ):  # Fallback since technically expiry is optional.
                 # An arbitrary, absurdly large number, since you can't renew.
                 shared_access_signature_expiry = int(time.time() * 2)
-    if not (all((endpoint, shared_access_key_name, shared_access_key)) or all((endpoint, shared_access_signature))) \
-        or all((shared_access_key_name, shared_access_signature)): # this latter clause since we don't accept both
+    if not (
+        all((endpoint, shared_access_key_name, shared_access_key))
+        or all((endpoint, shared_access_signature))
+    ) or all(
+        (shared_access_key_name, shared_access_signature)
+    ):  # this latter clause since we don't accept both
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
@@ -87,12 +97,14 @@ def _parse_conn_str(conn_str):
     entity = cast(str, entity_path)
     host = cast(str, strip_protocol_from_uri(cast(str, endpoint)))
 
-    return (host,
-            str(shared_access_key_name) if shared_access_key_name else None,
-            str(shared_access_key) if shared_access_key else None,
-            entity,
-            str(shared_access_signature) if shared_access_signature else None,
-            shared_access_signature_expiry)
+    return (
+        host,
+        str(shared_access_key_name) if shared_access_key_name else None,
+        str(shared_access_key) if shared_access_key else None,
+        entity,
+        str(shared_access_signature) if shared_access_signature else None,
+        shared_access_signature_expiry,
+    )
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
@@ -118,6 +130,7 @@ class ServiceBusSASTokenCredential(object):
     :param str token: The shared access token string
     :param int expiry: The epoch timestamp
     """
+
     def __init__(self, token, expiry):
         # type: (str, int) -> None
         """
@@ -157,20 +170,18 @@ class ServiceBusSharedKeyCredential(object):
 
 
 class BaseHandler:  # pylint:disable=too-many-instance-attributes
-    def __init__(
-        self,
-        fully_qualified_namespace,
-        entity_name,
-        credential,
-        **kwargs
-    ):
+    def __init__(self, fully_qualified_namespace, entity_name, credential, **kwargs):
         # type: (str, str, TokenCredential, Any) -> None
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace = strip_protocol_from_uri(fully_qualified_namespace.strip())
+        self.fully_qualified_namespace = strip_protocol_from_uri(
+            fully_qualified_namespace.strip()
+        )
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")
-        self._entity_path = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else '')
+        self._entity_path = self._entity_name + (
+            ("/Subscriptions/" + subscription_name) if subscription_name else ""
+        )
         self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
         self._credential = credential
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
@@ -184,18 +195,28 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
+        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
+            conn_str
+        )
         queue_name = kwargs.get("queue_name")
         topic_name = kwargs.get("topic_name")
         if not (queue_name or topic_name or entity_in_conn_str):
-            raise ValueError("Entity name is missing. Please specify `queue_name` or `topic_name`"
-                             " or use a connection string including the entity information.")
+            raise ValueError(
+                "Entity name is missing. Please specify `queue_name` or `topic_name`"
+                " or use a connection string including the entity information."
+            )
 
         if queue_name and topic_name:
-            raise ValueError("`queue_name` and `topic_name` can not be specified simultaneously.")
+            raise ValueError(
+                "`queue_name` and `topic_name` can not be specified simultaneously."
+            )
 
         entity_in_kwargs = queue_name or topic_name
-        if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
+        if (
+            entity_in_conn_str
+            and entity_in_kwargs
+            and (entity_in_conn_str != entity_in_kwargs)
+        ):
             raise ValueError(
                 "The queue or topic name provided: {} which does not match the EntityPath in"
                 " the connection string passed to the ServiceBusClient constructor: {}.".format(
@@ -206,22 +227,25 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
         # This has to be defined seperately to support sync vs async credentials.
-        kwargs["credential"] = cls._create_credential_from_connection_string_parameters(token,
-                                                                                         token_expiry,
-                                                                                         policy,
-                                                                                         key)
+        kwargs["credential"] = cls._create_credential_from_connection_string_parameters(
+            token, token_expiry, policy, key
+        )
         return kwargs
 
     @classmethod
-    def _create_credential_from_connection_string_parameters(cls, token, token_expiry, policy, key):
+    def _create_credential_from_connection_string_parameters(
+        cls, token, token_expiry, policy, key
+    ):
         if token and token_expiry:
             return ServiceBusSASTokenCredential(token, token_expiry)
         return ServiceBusSharedKeyCredential(policy, key)
 
     def __enter__(self):
         if self._shutdown.is_set():
-            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
-                             "create a new instance.")
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
 
         self._open_with_retry()
         return self
@@ -257,8 +281,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         """check whether the handler is alive"""
         # pylint: disable=protected-access
         if self._shutdown.is_set():
-            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
-                             "create a new instance.")
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
         # The following client validation is for two purposes in a session receiver:
         # 1. self._session._lock_lost is set when a session receiver encounters a connection error,
         # once there's a connection error, we don't retry on the session entity and simply raise SessionlockLostError.
@@ -270,7 +296,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # Eventually this should be a fix in the uamqp library.
         # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
         try:
-            if self._session and (self._session._lock_lost or self._session._lock_expired):
+            if self._session and (
+                self._session._lock_lost or self._session._lock_expired
+            ):
                 raise SessionLockLostError(error=self._session.auto_renew_error)
         except AttributeError:
             pass
@@ -283,7 +311,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         retried_times = 0
         max_retries = self._config.retry_total
 
-        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
+        abs_timeout_time = (
+            (time.time() + timeout)
+            if (operation_requires_timeout and timeout)
+            else None
+        )
 
         while retried_times <= max_retries:
             try:
@@ -308,15 +340,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
-                    abs_timeout_time=abs_timeout_time
+                    abs_timeout_time=abs_timeout_time,
                 )
 
     def _backoff(
-        self,
-        retried_times,
-        last_exception,
-        abs_timeout_time=None,
-        entity_name=None
+        self, retried_times, last_exception, abs_timeout_time=None, entity_name=None
     ):
         # type: (int, Exception, Optional[float], str) -> None
         entity_name = entity_name or self._container_id
@@ -369,18 +397,18 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
         if keep_alive_associated_link:
             try:
-                application_properties = {ASSOCIATEDLINKPROPERTYNAME:self._handler.message_handler.name}
+                application_properties = {
+                    ASSOCIATEDLINKPROPERTYNAME: self._handler.message_handler.name
+                }
             except AttributeError:
                 pass
 
         mgmt_msg = uamqp.Message(
             body=message,
             properties=MessageProperties(
-                reply_to=self._mgmt_target,
-                encoding=self._config.encoding,
-                **kwargs
+                reply_to=self._mgmt_target, encoding=self._config.encoding, **kwargs
             ),
-            application_properties=application_properties
+            application_properties=application_properties,
         )
         try:
             return self._handler.mgmt_request(
@@ -389,14 +417,16 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=timeout * 1000 if timeout else None,
-                callback=callback
+                callback=callback,
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
                 raise OperationTimeoutError(error=exp)
             raise
 
-    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
+    def _mgmt_request_response_with_retry(
+        self, mgmt_operation, message, callback, timeout=None, **kwargs
+    ):
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
