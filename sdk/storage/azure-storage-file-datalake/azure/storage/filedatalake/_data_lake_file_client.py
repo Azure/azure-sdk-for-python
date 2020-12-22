@@ -12,13 +12,13 @@ except ImportError:
 
 import six
 
+from azure.core.exceptions import HttpResponseError
 from ._quick_query_helper import DataLakeFileQueryReader
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import IterStreamer
 from ._upload_helper import upload_datalake_file
-from ._generated.models import StorageErrorException
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers, \
@@ -445,7 +445,7 @@ class DataLakeFileClient(PathClient):
             **kwargs)
         try:
             return self._client.path.append_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -536,7 +536,7 @@ class DataLakeFileClient(PathClient):
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return self._client.path.flush_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def download_file(self, offset=None, length=None, **kwargs):
