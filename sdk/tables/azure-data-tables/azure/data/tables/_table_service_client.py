@@ -9,7 +9,6 @@ from typing import Any, Union
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import UserAgentPolicy, ProxyPolicy
 
 from ._generated import AzureTable
@@ -18,10 +17,10 @@ from ._models import (
     TablePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
-    TableItem,
-    LocationMode
+    TableItem
 )
-from ._base_client import parse_connection_str, TransportWrapper
+from ._base_client import parse_connection_str
+from ._constants import CONNECTION_TIMEOUT
 from ._error import _process_table_error
 from ._sdk_moniker import SDK_MONIKER
 from ._table_client import TableClient
@@ -79,6 +78,7 @@ class TableServiceClient(TableServiceClientBase):
             retry_policy=kwargs.pop("retry_policy", None) or TablesRetryPolicy(**kwargs),
             logging_policy=StorageLoggingPolicy(**kwargs),
             proxy_policy=ProxyPolicy(**kwargs),
+            connection_timeout=kwargs.pop("connection_timeout", None) or CONNECTION_TIMEOUT,
             **kwargs
         )
 

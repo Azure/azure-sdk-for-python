@@ -11,36 +11,14 @@ from typing import (  # pylint: disable=unused-import
 import logging
 from uuid import uuid4
 
-from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ClientAuthenticationError
 )
-from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
-    AsyncBearerTokenCredentialPolicy,
-    AsyncRedirectPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-    UserAgentPolicy,
-    ProxyPolicy,
-)
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 
-from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .._authentication import SharedKeyCredentialPolicy
-from .._policies import (
-    StorageContentValidation,
-    StorageRequestHook,
-    StorageHosts,
-    StorageHeadersPolicy,
-    StorageLoggingPolicy,
-    TablesRetryPolicy,
-)
-from ._policies_async import AsyncStorageResponseHook
+from .._policies import StorageHeadersPolicy
 from .._models import BatchErrorException, BatchTransactionResult
-from .._generated.aio._configuration import AzureTableConfiguration
-from .._sdk_moniker import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
@@ -101,7 +79,7 @@ class AsyncStorageAccountHostsMixin(object):
             boundary="batch_{}".format(uuid4())
         )
 
-        pipeline_response = await self._client._client._pipeline.run(
+        pipeline_response = await self._client._client._pipeline.run(  # pylint: disable=protected-access
             request, **kwargs
         )
         response = pipeline_response.http_response

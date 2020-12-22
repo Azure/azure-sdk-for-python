@@ -12,12 +12,11 @@ from typing import (
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import UserAgentPolicy, ProxyPolicy
 
-from .. import LocationMode
+from .._constants import CONNECTION_TIMEOUT
 from .._base_client import parse_connection_str
 from .._generated.aio._azure_table import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties
@@ -33,7 +32,7 @@ from .._sdk_moniker import SDK_MONIKER
 
 from ._policies_async import AsyncTablesRetryPolicy
 from ._table_client_async import TableClient
-from ._base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TablePropertiesPaged
 
 class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
@@ -102,6 +101,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             retry_policy=kwargs.pop("retry_policy", None) or AsyncTablesRetryPolicy(**kwargs),
             logging_policy=StorageLoggingPolicy(**kwargs),
             proxy_policy=ProxyPolicy(**kwargs),
+            connection_timeout=kwargs.pop("connection_timeout", None) or CONNECTION_TIMEOUT,
             **kwargs
         )
         self._loop = loop

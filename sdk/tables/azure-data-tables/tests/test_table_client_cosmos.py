@@ -11,6 +11,7 @@ from time import sleep
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
+from azure.data.tables._constants import CONNECTION_TIMEOUT
 from devtools_testutils import (
     ResourceGroupPreparer,
     StorageAccountPreparer
@@ -218,7 +219,7 @@ class StorageTableClientTest(TableTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, tables_cosmos_account_name, tables_primary_cosmos_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
-            assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
+            assert default_service._client._client._pipeline._transport.connection_config.timeout == CONNECTION_TIMEOUT
         if self.is_live:
             sleep(SLEEP_DELAY)
 

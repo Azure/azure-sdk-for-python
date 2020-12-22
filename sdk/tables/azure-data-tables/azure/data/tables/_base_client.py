@@ -17,53 +17,27 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 from uuid import uuid4
-
-
-
+import six
 try:
     from urllib.parse import parse_qs, quote
 except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
-from azure.core.configuration import Configuration
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError
 )
-from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
-    RequestsTransport,
     HttpTransport,
     HttpRequest,
 )
-from azure.core.pipeline.policies import (
-    RedirectPolicy,
-    ContentDecodePolicy,
-    BearerTokenCredentialPolicy,
-    ProxyPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-    UserAgentPolicy
-)
-
 from ._shared_access_signature import QueryStringConstants
-from ._constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from ._constants import SERVICE_HOST_BASE
 from ._models import LocationMode, BatchTransactionResult
 from ._authentication import SharedKeyCredentialPolicy
-from ._policies import (
-    StorageHeadersPolicy,
-    StorageContentValidation,
-    StorageRequestHook,
-    StorageResponseHook,
-    StorageLoggingPolicy,
-    StorageHosts,
-    TablesRetryPolicy,
-)
+from ._policies import StorageHeadersPolicy
 from ._models import BatchErrorException
-from ._sdk_moniker import SDK_MONIKER
-from ._generated._configuration import AzureTableConfiguration
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -256,7 +230,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             boundary="batch_{}".format(uuid4())
         )
 
-        pipeline_response = self._client._client._pipeline.run(
+        pipeline_response = self._client._client._pipeline.run( # pylint: disable=protected-access
             request, **kwargs
         )
         response = pipeline_response.http_response

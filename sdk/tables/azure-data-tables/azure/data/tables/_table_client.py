@@ -28,6 +28,7 @@ from ._generated.models import (
 )
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._base_client import parse_connection_str
+from ._constants import CONNECTION_TIMEOUT
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
@@ -74,6 +75,7 @@ class TableClient(TableClientBase):
             retry_policy=kwargs.pop("retry_policy", None) or TablesRetryPolicy(**kwargs),
             logging_policy=StorageLoggingPolicy(**kwargs),
             proxy_policy=ProxyPolicy(**kwargs),
+            connection_timeout=kwargs.pop("connection_timeout", None) or CONNECTION_TIMEOUT,
             **kwargs
         )
 

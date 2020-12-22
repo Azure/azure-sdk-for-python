@@ -23,6 +23,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import UserAgentPolicy, ProxyPolicy
 
 from .._base_client import parse_connection_str
+from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
@@ -85,6 +86,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             retry_policy=kwargs.pop("retry_policy", None) or AsyncTablesRetryPolicy(**kwargs),
             logging_policy=StorageLoggingPolicy(**kwargs),
             proxy_policy=ProxyPolicy(**kwargs),
+            connection_timeout=kwargs.pop("connection_timeout", None) or CONNECTION_TIMEOUT,
             **kwargs
         )
         self._loop = loop

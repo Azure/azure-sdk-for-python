@@ -9,6 +9,7 @@ import platform
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
+from azure.data.tables._constants import CONNECTION_TIMEOUT
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import (
     TableTestCase
@@ -179,7 +180,7 @@ class StorageTableClientTest(TableTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
-            assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
+            assert default_service._client._client._pipeline._transport.connection_config.timeout == CONNECTION_TIMEOUT
 
     # --Connection String Test Cases --------------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")
