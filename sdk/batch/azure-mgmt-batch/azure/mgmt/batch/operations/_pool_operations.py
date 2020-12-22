@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class PoolOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -56,7 +56,7 @@ class PoolOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListPoolsResult"]
+        # type: (...) -> Iterable["_models.ListPoolsResult"]
         """Lists all of the pools in the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -88,7 +88,7 @@ class PoolOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.batch.models.ListPoolsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListPoolsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListPoolsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -156,13 +156,13 @@ class PoolOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         pool_name,  # type: str
-        parameters,  # type: "models.Pool"
+        parameters,  # type: "_models.Pool"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Pool"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Pool"]
+        # type: (...) -> "_models.Pool"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -220,12 +220,12 @@ class PoolOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         pool_name,  # type: str
-        parameters,  # type: "models.Pool"
+        parameters,  # type: "_models.Pool"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Pool"]
+        # type: (...) -> LROPoller["_models.Pool"]
         """Creates a new pool inside the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -254,7 +254,7 @@ class PoolOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Pool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pool"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -285,7 +285,14 @@ class PoolOperations(object):
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -304,11 +311,11 @@ class PoolOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         pool_name,  # type: str
-        parameters,  # type: "models.Pool"
+        parameters,  # type: "_models.Pool"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Pool"
+        # type: (...) -> "_models.Pool"
         """Updates the properties of an existing pool.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -328,7 +335,7 @@ class PoolOperations(object):
         :rtype: ~azure.mgmt.batch.models.Pool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Pool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -480,7 +487,14 @@ class PoolOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -501,7 +515,7 @@ class PoolOperations(object):
         pool_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Pool"
+        # type: (...) -> "_models.Pool"
         """Gets information about the specified pool.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -515,7 +529,7 @@ class PoolOperations(object):
         :rtype: ~azure.mgmt.batch.models.Pool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Pool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -566,7 +580,7 @@ class PoolOperations(object):
         pool_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Pool"
+        # type: (...) -> "_models.Pool"
         """Disables automatic scaling for a pool.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -580,7 +594,7 @@ class PoolOperations(object):
         :rtype: ~azure.mgmt.batch.models.Pool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Pool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -631,7 +645,7 @@ class PoolOperations(object):
         pool_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Pool"
+        # type: (...) -> "_models.Pool"
         """Stops an ongoing resize operation on the pool.
 
         This does not restore the pool to its previous state before the resize operation: it only stops
@@ -652,7 +666,7 @@ class PoolOperations(object):
         :rtype: ~azure.mgmt.batch.models.Pool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Pool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

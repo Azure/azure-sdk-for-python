@@ -14,13 +14,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2020-09-01
   response:
     body:
       string: '{"error":{"code":"InvalidRequestBody","message":"The specified Request
-        Body is not syntactically valid.\nRequestId:bffc0dfe-8dc2-4dc2-a630-071d321df091\nTime:2020-10-23T07:24:35.8280213Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
+        Body is not syntactically valid.\nRequestId:5da326d1-a8f6-4d67-8885-5c46444a68ec\nTime:2020-12-22T06:47:34.1736662Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
         must be set if poolAllocationMode is specified as ''UserSubscription'' on
         a PUT request"}]}}'
     headers:
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 07:24:37 GMT
+      - Tue, 22 Dec 2020 06:47:35 GMT
       expires:
       - '-1'
       pragma:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1196'
     status:
       code: 400
       message: The specified Request Body is not syntactically valid.
