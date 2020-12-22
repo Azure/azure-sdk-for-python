@@ -13,7 +13,7 @@ interactions:
       "Small"}, "osProfile": {"linuxOperatingSystemProfile": {"username": "sshuser",
       "password": "Password1!"}}}]}, "storageProfile": {"storageaccounts": [{"name":
       "hdipy.blob.core.windows.net", "isDefault": true, "container": "hdisdk-applications-hued29c1382",
-      "key": "8fDAgKmM+4Vp+cY3mGSkUxDy7Hq/W5osrYjVoiyye6OjtX31tZjkTxarsQoKVbtXsKfZCXLDfc/0sbJpIqrozw=="}]}}}'''
+      "key": "Vz0uAs3YIVfO38/QWEgfGjbpu3Gx2oYYx3kkOtiZJ6LVXUmutAwQcsoKsYJCg8uLJhvw46THXtot8U/crnW9Fw=="}]}}}'''
     headers:
       Accept:
       - application/json
@@ -26,8 +26,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -35,7 +35,7 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382","name":"hdisdk-applications-hued29c1382","type":"Microsoft.HDInsight/clusters","location":"North
-        Central US","etag":"5d0198c1-0bcc-4415-86ee-a3c30e127702","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"2.6.5.3026-7","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2009301626.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"097669da55f94f99a3462972aadfe9d0","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a1_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"edgenode1","targetInstanceCount":1,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"Succeeded","clusterState":"Running","createdDate":"2020-10-20T04:38:03.71","quotaInfo":{"coresUsed":24},"connectivityEndpoints":[{"name":"SSH","protocol":"TCP","location":"hdisdk-applications-hued29c1382-ssh.azurehdinsight.net","port":22},{"name":"HTTPS","protocol":"TCP","location":"hdisdk-applications-hued29c1382.azurehdinsight.net","port":443}],"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-applications-hued29c1382","saskey":null,"isDefault":true,"fileshare":null}]},"excludedServicesConfig":{"excludedServicesConfigId":"default","excludedServicesList":""},"computeIsolationProperties":{"enableComputeIsolation":false,"hostSku":null}}}'
+        Central US","etag":"75d619e5-f42f-4c45-980b-1846cfac172f","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"2.6.5.3032-3","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2012080609.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"b893f2fced7747f08d284b21be3fef57","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a1_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"edgenode1","targetInstanceCount":1,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"Succeeded","clusterState":"Running","createdDate":"2020-12-21T13:39:26.06","quotaInfo":{"coresUsed":24},"connectivityEndpoints":[{"name":"SSH","protocol":"TCP","location":"hdisdk-applications-hued29c1382-ssh.azurehdinsight.net","port":22},{"name":"HTTPS","protocol":"TCP","location":"hdisdk-applications-hued29c1382.azurehdinsight.net","port":443}],"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-applications-hued29c1382","saskey":null,"isDefault":true,"fileshare":null}]},"excludedServicesConfig":{"excludedServicesConfigId":"default","excludedServicesList":""},"computeIsolationProperties":{"enableComputeIsolation":false,"hostSku":null}}}'
     headers:
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/create?api-version=2018-06-01-preview
@@ -46,9 +46,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:33:18 GMT
+      - Tue, 22 Dec 2020 01:50:57 GMT
       etag:
-      - '"5d0198c1-0bcc-4415-86ee-a3c30e127702"'
+      - '"75d619e5-f42f-4c45-980b-1846cfac172f"'
       expires:
       - '-1'
       pragma:
@@ -84,8 +84,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -99,7 +99,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:33:50 GMT
+      - Tue, 22 Dec 2020 01:51:29 GMT
       expires:
       - '-1'
       pragma:
@@ -131,14 +131,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382?api-version=2018-06-01-preview
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382","name":"hdisdk-applications-hued29c1382","type":"Microsoft.HDInsight/clusters","location":"North
-        Central US","etag":"5d0198c1-0bcc-4415-86ee-a3c30e127702","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"2.6.5.3026-7","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2009301626.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"097669da55f94f99a3462972aadfe9d0","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a1_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"edgenode1","targetInstanceCount":1,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"Succeeded","clusterState":"Running","createdDate":"2020-10-20T04:38:03.71","quotaInfo":{"coresUsed":24},"connectivityEndpoints":[{"name":"SSH","protocol":"TCP","location":"hdisdk-applications-hued29c1382-ssh.azurehdinsight.net","port":22},{"name":"HTTPS","protocol":"TCP","location":"hdisdk-applications-hued29c1382.azurehdinsight.net","port":443}],"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-applications-hued29c1382","saskey":null,"isDefault":true,"fileshare":null}]},"excludedServicesConfig":{"excludedServicesConfigId":"default","excludedServicesList":""},"computeIsolationProperties":{"enableComputeIsolation":false,"hostSku":null}}}'
+        Central US","etag":"75d619e5-f42f-4c45-980b-1846cfac172f","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"2.6.5.3032-3","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2012080609.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"b893f2fced7747f08d284b21be3fef57","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a1_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"edgenode1","targetInstanceCount":1,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"Succeeded","clusterState":"Running","createdDate":"2020-12-21T13:39:26.06","quotaInfo":{"coresUsed":24},"connectivityEndpoints":[{"name":"SSH","protocol":"TCP","location":"hdisdk-applications-hued29c1382-ssh.azurehdinsight.net","port":22},{"name":"HTTPS","protocol":"TCP","location":"hdisdk-applications-hued29c1382.azurehdinsight.net","port":443}],"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-applications-hued29c1382","saskey":null,"isDefault":true,"fileshare":null}]},"excludedServicesConfig":{"excludedServicesConfigId":"default","excludedServicesList":""},"computeIsolationProperties":{"enableComputeIsolation":false,"hostSku":null}}}'
     headers:
       cache-control:
       - no-cache
@@ -147,7 +147,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:33:51 GMT
+      - Tue, 22 Dec 2020 01:51:29 GMT
       expires:
       - '-1'
       pragma:
@@ -187,16 +187,16 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications/MyApplication?api-version=2018-06-01-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications/MyApplication","name":"MyApplication","type":"Microsoft.HDInsight/clusters/applications","etag":"182B3ED9-A63B-4C63-844D-B35892E15A67","tags":null,"properties":{"computeProfile":{"roles":[{"name":"edgenode","targetInstanceCount":1,"VMGroupName":"edgenode1","hardwareProfile":{"vmSize":"standard_a4_v2"},"encryptDataDisks":false}]},"installScriptActions":[{"name":"InstallHue","uri":"https://hdiconfigactions.blob.core.windows.net/linuxhueconfigactionv02/install-hue-uber-v02.sh","roles":["edgenode"]}],"uninstallScriptActions":[],"httpsEndpoints":[],"sshEndpoints":[{"location":"MyApplication.hdisdk-applications-hued29c1382-ssh.azurehdinsight.net:22","destinationPort":22,"publicPort":22}],"provisioningState":"Failed","applicationState":"Error","errors":[{"code":"FailedToAddApplicationErrorCode","message":"Failed
-        to add an application {ApplicationName: MyApplication, ApplicationId: 277}"}],"createdDate":"2020-10-20T04:51:27.51","applicationType":"CustomApplication"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications/MyApplication","name":"MyApplication","type":"Microsoft.HDInsight/clusters/applications","etag":"CB045C1B-D130-49B7-8FE0-3583EEA5BAD5","tags":null,"properties":{"computeProfile":{"roles":[{"name":"edgenode","targetInstanceCount":1,"VMGroupName":"edgenode1","hardwareProfile":{"vmSize":"standard_a4_v2"},"encryptDataDisks":false}]},"installScriptActions":[{"name":"InstallHue","uri":"https://hdiconfigactions.blob.core.windows.net/linuxhueconfigactionv02/install-hue-uber-v02.sh","roles":["edgenode"]}],"uninstallScriptActions":[],"httpsEndpoints":[],"sshEndpoints":[{"location":"MyApplication.hdisdk-applications-hued29c1382-ssh.azurehdinsight.net:22","destinationPort":22,"publicPort":22}],"provisioningState":"Failed","applicationState":"Error","errors":[{"code":"FailedToAddApplicationErrorCode","message":"Failed
+        to add an application {ApplicationName: MyApplication, ApplicationId: 290}"}],"createdDate":"2020-12-21T13:52:19.76","applicationType":"CustomApplication"}}'
     headers:
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/create?api-version=2018-06-01-preview
@@ -207,9 +207,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:33:51 GMT
+      - Tue, 22 Dec 2020 01:51:30 GMT
       etag:
-      - '"182B3ED9-A63B-4C63-844D-B35892E15A67"'
+      - '"CB045C1B-D130-49B7-8FE0-3583EEA5BAD5"'
       expires:
       - '-1'
       pragma:
@@ -245,8 +245,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -260,7 +260,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:34:23 GMT
+      - Tue, 22 Dec 2020 01:52:02 GMT
       expires:
       - '-1'
       pragma:
@@ -292,14 +292,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications/MyApplication?api-version=2018-06-01-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications/MyApplication","name":"MyApplication","type":"Microsoft.HDInsight/clusters/applications","etag":"182B3ED9-A63B-4C63-844D-B35892E15A67","tags":null,"properties":{"computeProfile":{"roles":[{"name":"edgenode","targetInstanceCount":1,"VMGroupName":"edgenode1","hardwareProfile":{"vmSize":"standard_a4_v2"},"encryptDataDisks":false}]},"installScriptActions":[{"name":"InstallHue","uri":"https://hdiconfigactions.blob.core.windows.net/linuxhueconfigactionv02/install-hue-uber-v02.sh","roles":["edgenode"]}],"uninstallScriptActions":[],"httpsEndpoints":[],"sshEndpoints":[{"location":"MyApplication.hdisdk-applications-hued29c1382-ssh.azurehdinsight.net:22","destinationPort":22,"publicPort":22}],"provisioningState":"Failed","applicationState":"Error","errors":[{"code":"FailedToAddApplicationErrorCode","message":"Failed
-        to add an application {ApplicationName: MyApplication, ApplicationId: 277}"}],"createdDate":"2020-10-20T04:51:27.51","applicationType":"CustomApplication"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications/MyApplication","name":"MyApplication","type":"Microsoft.HDInsight/clusters/applications","etag":"CB045C1B-D130-49B7-8FE0-3583EEA5BAD5","tags":null,"properties":{"computeProfile":{"roles":[{"name":"edgenode","targetInstanceCount":1,"VMGroupName":"edgenode1","hardwareProfile":{"vmSize":"standard_a4_v2"},"encryptDataDisks":false}]},"installScriptActions":[{"name":"InstallHue","uri":"https://hdiconfigactions.blob.core.windows.net/linuxhueconfigactionv02/install-hue-uber-v02.sh","roles":["edgenode"]}],"uninstallScriptActions":[],"httpsEndpoints":[],"sshEndpoints":[{"location":"MyApplication.hdisdk-applications-hued29c1382-ssh.azurehdinsight.net:22","destinationPort":22,"publicPort":22}],"provisioningState":"Failed","applicationState":"Error","errors":[{"code":"FailedToAddApplicationErrorCode","message":"Failed
+        to add an application {ApplicationName: MyApplication, ApplicationId: 290}"}],"createdDate":"2020-12-21T13:52:19.76","applicationType":"CustomApplication"}}'
     headers:
       cache-control:
       - no-cache
@@ -308,7 +308,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:34:23 GMT
+      - Tue, 22 Dec 2020 01:52:03 GMT
       expires:
       - '-1'
       pragma:
@@ -340,16 +340,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications?api-version=2018-06-01-preview
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications/MyApplication","name":"MyApplication","type":"Microsoft.HDInsight/clusters/applications","etag":"182B3ED9-A63B-4C63-844D-B35892E15A67","tags":null,"properties":{"computeProfile":{"roles":[{"name":"edgenode","targetInstanceCount":1,"VMGroupName":"edgenode1","hardwareProfile":{"vmSize":"standard_a4_v2"},"encryptDataDisks":false}]},"installScriptActions":[{"name":"InstallHue","uri":"https://hdiconfigactions.blob.core.windows.net/linuxhueconfigactionv02/install-hue-uber-v02.sh","roles":["edgenode"]}],"uninstallScriptActions":[],"httpsEndpoints":[],"sshEndpoints":[{"location":"MyApplication.hdisdk-applications-hued29c1382-ssh.azurehdinsight.net:22","destinationPort":22,"publicPort":22}],"provisioningState":"Failed","applicationState":"Error","errors":[{"code":"FailedToAddApplicationErrorCode","message":"Failed
-        to add an application {ApplicationName: MyApplication, ApplicationId: 277}"}],"createdDate":"2020-10-20T04:51:27.51","applicationType":"CustomApplication"}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/applications/MyApplication","name":"MyApplication","type":"Microsoft.HDInsight/clusters/applications","etag":"CB045C1B-D130-49B7-8FE0-3583EEA5BAD5","tags":null,"properties":{"computeProfile":{"roles":[{"name":"edgenode","targetInstanceCount":1,"VMGroupName":"edgenode1","hardwareProfile":{"vmSize":"standard_a4_v2"},"encryptDataDisks":false}]},"installScriptActions":[{"name":"InstallHue","uri":"https://hdiconfigactions.blob.core.windows.net/linuxhueconfigactionv02/install-hue-uber-v02.sh","roles":["edgenode"]}],"uninstallScriptActions":[],"httpsEndpoints":[],"sshEndpoints":[{"location":"MyApplication.hdisdk-applications-hued29c1382-ssh.azurehdinsight.net:22","destinationPort":22,"publicPort":22}],"provisioningState":"Failed","applicationState":"Error","errors":[{"code":"FailedToAddApplicationErrorCode","message":"Failed
+        to add an application {ApplicationName: MyApplication, ApplicationId: 290}"}],"createdDate":"2020-12-21T13:52:19.76","applicationType":"CustomApplication"}}]}'
     headers:
       cache-control:
       - no-cache
@@ -358,7 +358,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:34:24 GMT
+      - Tue, 22 Dec 2020 01:52:03 GMT
       expires:
       - '-1'
       pragma:
@@ -392,8 +392,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -403,17 +403,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/70aabd30-4c51-4687-a459-e0cc9bd34e7c-0-r?api-version=2018-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/28945c71-2ea6-4c7a-912f-668f1acca7c0-0-r?api-version=2018-06-01-preview
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 20 Oct 2020 06:36:27 GMT
+      - Tue, 22 Dec 2020 01:54:06 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/operationresults/70aabd30-4c51-4687-a459-e0cc9bd34e7c-0-r?api-version=2018-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/operationresults/28945c71-2ea6-4c7a-912f-668f1acca7c0-0-r?api-version=2018-06-01-preview
       pragma:
       - no-cache
       strict-transport-security:
@@ -441,10 +441,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/70aabd30-4c51-4687-a459-e0cc9bd34e7c-0-r?api-version=2018-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/28945c71-2ea6-4c7a-912f-668f1acca7c0-0-r?api-version=2018-06-01-preview
   response:
     body:
       string: '{"status":"InProgress"}'
@@ -456,7 +456,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:37:28 GMT
+      - Tue, 22 Dec 2020 01:55:07 GMT
       expires:
       - '-1'
       pragma:
@@ -488,10 +488,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/70aabd30-4c51-4687-a459-e0cc9bd34e7c-0-r?api-version=2018-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/28945c71-2ea6-4c7a-912f-668f1acca7c0-0-r?api-version=2018-06-01-preview
   response:
     body:
       string: '{"status":"InProgress"}'
@@ -503,7 +503,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:37:59 GMT
+      - Tue, 22 Dec 2020 01:55:37 GMT
       expires:
       - '-1'
       pragma:
@@ -535,10 +535,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/70aabd30-4c51-4687-a459-e0cc9bd34e7c-0-r?api-version=2018-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-d29c1382/providers/Microsoft.HDInsight/clusters/hdisdk-applications-hued29c1382/azureasyncoperations/28945c71-2ea6-4c7a-912f-668f1acca7c0-0-r?api-version=2018-06-01-preview
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -550,7 +550,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:38:29 GMT
+      - Tue, 22 Dec 2020 01:56:08 GMT
       expires:
       - '-1'
       pragma:
@@ -582,8 +582,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-hdinsight/2.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -599,7 +599,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 06:38:30 GMT
+      - Tue, 22 Dec 2020 01:56:10 GMT
       expires:
       - '-1'
       pragma:
