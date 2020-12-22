@@ -185,7 +185,7 @@ class StorageTableClientTest(TableTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
-            assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
+            assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
 
     # --Connection String Test Cases --------------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")

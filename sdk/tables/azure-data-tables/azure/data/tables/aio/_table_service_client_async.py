@@ -15,6 +15,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline.policies import UserAgentPolicy, ProxyPolicy
 
 from .. import LocationMode
 from .._base_client import parse_connection_str
@@ -24,11 +25,16 @@ from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
 from .._table_service_client_base import TableServiceClientBase
 from .._models import TableItem
-from ._policies_async import ExponentialRetry
+from .._policies import (
+    StorageHeadersPolicy,
+    StorageLoggingPolicy,
+)
+from .._sdk_moniker import SDK_MONIKER
+
+from ._policies_async import AsyncTablesRetryPolicy
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
-
 
 class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     """A client to interact with the Table Service at the account level.
@@ -81,7 +87,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(TableServiceClient, self).__init__(  # type: ignore
             account_url,
@@ -89,7 +94,16 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
+        self._client = AzureTable(
+            self.url,
+            sdk_moniker=SDK_MONIKER,
+            headers_policy=StorageHeadersPolicy(**kwargs),
+            user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            retry_policy=kwargs.pop("retry_policy", None) or AsyncTablesRetryPolicy(**kwargs),
+            logging_policy=StorageLoggingPolicy(**kwargs),
+            proxy_policy=ProxyPolicy(**kwargs),
+            **kwargs
+        )
         self._loop = loop
 
     @classmethod
@@ -134,7 +148,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         try:
             timeout = kwargs.pop('timeout', None)
             stats = await self._client.service.get_statistics(  # type: ignore
-                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+                timeout=timeout, **kwargs)# use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
             _process_table_error(error)
@@ -379,13 +393,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         """
 
-        _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
-        )
-
         return TableClient(
             self.url, table_name=table_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=self._pipeline,
+            key_encryption_key=self.key_encryption_key, api_version=self.api_version,# _pipeline=self._pipeline,
             _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

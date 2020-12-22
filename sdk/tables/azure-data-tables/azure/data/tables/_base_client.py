@@ -117,7 +117,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self.require_encryption = kwargs.get("require_encryption", False)
         self.key_encryption_key = kwargs.get("key_encryption_key")
         self.key_resolver_function = kwargs.get("key_resolver_function")
-        self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
+
+        self._config = kwargs.pop("_config", None)
 
     def __enter__(self):
         self._client.__enter__()
@@ -222,50 +223,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             credential = None
         return query_str.rstrip("?&"), credential
 
-    def _create_pipeline(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None
-        if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
-        elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
-        elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
-
-        config = kwargs.get("_configuration") or AzureTableConfiguration(
-            url=self.url,
-            headers_policy=StorageHeadersPolicy(**kwargs),
-            user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            retry_policy=kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs),
-            logging_policy=StorageLoggingPolicy(**kwargs),
-            proxy_policy=ProxyPolicy(**kwargs)
-        )
-
-        if kwargs.get("_pipeline"):
-            return config, kwargs["_pipeline"]
-        config.transport = kwargs.get("transport")  # type: ignore
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            config.transport = RequestsTransport(**kwargs)
-        policies = [
-            config.headers_policy,
-            config.proxy_policy,
-            config.user_agent_policy,
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
-            ContentDecodePolicy(response_encoding="utf-8"),
-            RedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
-            config.retry_policy,
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs)
-        ]
-        return config, Pipeline(config.transport, policies=policies)
-
     def _batch_send( # pylint: disable=inconsistent-return-statements
         self, entities, # type: List[TableEntity]
         *reqs,  # type: List[HttpRequest]
@@ -299,7 +256,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             boundary="batch_{}".format(uuid4())
         )
 
-        pipeline_response = self._pipeline.run(
+        pipeline_response = self._client._client._pipeline.run(
             request, **kwargs
         )
         response = pipeline_response.http_response

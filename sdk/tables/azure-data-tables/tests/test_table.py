@@ -149,7 +149,8 @@ class StorageTableTest(TableTestCase):
             ts.create_table(table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
-        existing = list(ts.query_tables(filter=name_filter))
+        for table in ts.query_tables(filter=name_filter):
+            assert table.table_name == table_name
 
         # Assert
         assert created is not None

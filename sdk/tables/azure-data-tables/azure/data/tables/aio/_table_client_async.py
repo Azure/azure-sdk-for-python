@@ -20,6 +20,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline.policies import UserAgentPolicy, ProxyPolicy
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
@@ -31,11 +32,17 @@ from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
+from .._policies import (
+    StorageHeadersPolicy,
+    StorageLoggingPolicy,
+)
+
 from .._serialize import _add_entity_properties, _get_match_headers
+from .._sdk_moniker import SDK_MONIKER
 from .._table_client_base import TableClientBase
 from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TableEntityPropertiesPaged
-from ._policies_async import ExponentialRetry
+from ._policies_async import AsyncTablesRetryPolicy
 from ._table_batch_async import TableBatchOperations
 
 
@@ -66,12 +73,20 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :returns: None
         """
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(TableClient, self).__init__(
             account_url, table_name=table_name, credential=credential, loop=loop, **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureTable(
+            self.url,
+            sdk_moniker=SDK_MONIKER,
+            headers_policy=StorageHeadersPolicy(**kwargs),
+            user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            retry_policy=kwargs.pop("retry_policy", None) or AsyncTablesRetryPolicy(**kwargs),
+            logging_policy=StorageLoggingPolicy(**kwargs),
+            proxy_policy=ProxyPolicy(**kwargs),
+            **kwargs
+        )
         self._loop = loop
 
     @classmethod

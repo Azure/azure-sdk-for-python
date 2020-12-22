@@ -10,17 +10,27 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._models import TableItem
+from azure.core.pipeline.policies import UserAgentPolicy, ProxyPolicy
 
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties
-from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
+from ._models import (
+    TablePropertiesPaged,
+    service_stats_deserialize,
+    service_properties_deserialize,
+    TableItem,
+    LocationMode
+)
 from ._base_client import parse_connection_str, TransportWrapper
-from ._models import LocationMode
 from ._error import _process_table_error
+from ._sdk_moniker import SDK_MONIKER
 from ._table_client import TableClient
 from ._table_service_client_base import TableServiceClientBase
-
+from ._policies import (
+    StorageHeadersPolicy,
+    StorageLoggingPolicy,
+    TablesRetryPolicy,
+)
 
 class TableServiceClient(TableServiceClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
@@ -61,7 +71,16 @@ class TableServiceClient(TableServiceClientBase):
         """
 
         super(TableServiceClient, self).__init__(account_url, service='table', credential=credential, **kwargs)
-        self._client = AzureTable(self.url, pipeline=self._pipeline)
+        self._client = AzureTable(
+            self.url,
+            sdk_moniker=SDK_MONIKER,
+            headers_policy=StorageHeadersPolicy(**kwargs),
+            user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            retry_policy=kwargs.pop("retry_policy", None) or TablesRetryPolicy(**kwargs),
+            logging_policy=StorageLoggingPolicy(**kwargs),
+            proxy_policy=ProxyPolicy(**kwargs),
+            **kwargs
+        )
 
     @classmethod
     def from_connection_string(
@@ -103,7 +122,7 @@ class TableServiceClient(TableServiceClientBase):
         try:
             timeout = kwargs.pop('timeout', None)
             stats = self._client.service.get_statistics(  # type: ignore
-                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+                timeout=timeout, **kwargs) #use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
             _process_table_error(error)
@@ -344,13 +363,8 @@ class TableServiceClient(TableServiceClientBase):
 
        """
 
-        _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
-        )
-
         return TableClient(
             self.url, table_name=table_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
+            key_encryption_key=self.key_encryption_key, api_version=self.api_version,
             _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

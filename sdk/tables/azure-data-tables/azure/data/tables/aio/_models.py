@@ -55,8 +55,7 @@ class TablePropertiesPaged(AsyncPageIterator):
             return await self._command(
                 query_options=query_options,
                 next_table_name=continuation_token or None,
-                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
-                use_location=self.location_mode
+                cls=kwargs.pop('cls', None) or _return_context_and_deserialized
             )
         except HttpResponseError as error:
             _process_table_error(error)
@@ -107,8 +106,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
                 next_row_key=next_row_key,
                 next_partition_key=next_partition_key,
                 table=self.table,
-                cls=kwargs.pop("cls", _return_context_and_deserialized),
-                use_location=self.location_mode
+                cls=kwargs.pop("cls", _return_context_and_deserialized)
             )
         except HttpResponseError as error:
             _process_table_error(error)

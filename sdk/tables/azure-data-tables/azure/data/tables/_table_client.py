@@ -16,13 +16,13 @@ except ImportError:
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.policies import UserAgentPolicy, ProxyPolicy
 
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._error import _process_table_error
 from ._generated import AzureTable
 from ._generated.models import (
-    # AccessPolicy,
     SignedIdentifier,
     TableProperties,
 )
@@ -31,11 +31,14 @@ from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
-
 from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
-
-
+from ._sdk_moniker import SDK_MONIKER
+from ._policies import (
+    StorageHeadersPolicy,
+    StorageLoggingPolicy,
+    TablesRetryPolicy,
+)
 class TableClient(TableClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
@@ -63,7 +66,16 @@ class TableClient(TableClientBase):
         :returns: None
         """
         super(TableClient, self).__init__(account_url, table_name, credential=credential, **kwargs)
-        self._client = AzureTable(self.url, pipeline=self._pipeline)
+        self._client = AzureTable(
+            self.url,
+            sdk_moniker=SDK_MONIKER,
+            headers_policy=StorageHeadersPolicy(**kwargs),
+            user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            retry_policy=kwargs.pop("retry_policy", None) or TablesRetryPolicy(**kwargs),
+            logging_policy=StorageLoggingPolicy(**kwargs),
+            proxy_policy=ProxyPolicy(**kwargs),
+            **kwargs
+        )
 
 
     @classmethod
