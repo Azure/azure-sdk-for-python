@@ -11,7 +11,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 10 Dec 2020 22:54:54 GMT
+      - Tue, 22 Dec 2020 18:31:34 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -27,15 +27,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Dec 2020 22:54:54 GMT
+      - Tue, 22 Dec 2020 18:31:32 GMT
       ms-cv:
-      - 4ddtj5VSuUSfygOLzzMjUw.0
+      - OXm+S4D9ak+t0Y4jKA3bFA.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 23ms
+      - 24ms
     status:
       code: 200
       message: OK
@@ -53,7 +53,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 10 Dec 2020 22:54:55 GMT
+      - Tue, 22 Dec 2020 18:31:34 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -62,22 +62,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
   response:
     body:
-      string: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-12-11T22:54:54.5367532+00:00"}'
+      string: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-12-23T18:31:32.3009076+00:00"}'
     headers:
       api-supported-versions:
       - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Dec 2020 22:54:54 GMT
+      - Tue, 22 Dec 2020 18:31:32 GMT
       ms-cv:
-      - /ARVDCNNC0SiBNuTR5/e+w.0
+      - EArcgkwtPkCU38ZbLjwJEQ.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 31ms
+      - 24ms
     status:
       code: 200
       message: OK
