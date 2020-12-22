@@ -259,7 +259,6 @@ class StorageTableClientTest(TableTestCase):
             assert service.scheme ==  'https'
 
     @pytest.mark.skip("Tests fail with non-standard clouds")
-
     @CosmosPreparer()
     def test_create_service_with_connection_string_endpoint_protocol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -420,8 +419,6 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/15614")
-
     @CosmosPreparer()
     def test_user_agent_default(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -440,7 +437,6 @@ class StorageTableClientTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Tests fail with non-standard clouds")
-
     @CosmosPreparer()
     def test_user_agent_custom(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
