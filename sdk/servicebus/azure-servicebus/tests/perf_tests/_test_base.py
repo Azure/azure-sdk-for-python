@@ -93,9 +93,7 @@ class _ReceiveTest(_QueueTest):
         data = get_random_bytes(self.args.message_size)
         async with self.async_service_client.get_queue_sender(self.queue_name) as sender:
             batch = await sender.create_message_batch()
-            msgs = (self.args.num_messages * (self.args.parallel + 1)) * 10
-            print("preloading {} messages".format(msgs))
-            for i in range(msgs):
+            for i in range(self.args.preload):
                 try:
                     batch.add_message(ServiceBusMessage(data))
                 except ValueError:
@@ -119,3 +117,4 @@ class _ReceiveTest(_QueueTest):
         super(_ReceiveTest, _ReceiveTest).add_arguments(parser)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
         parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for messages before closing. Defaults to 0.', default=0)
+        parser.add_argument('--preload', nargs='?', type=int, help='Number of messages to preload. Default is 10000.', default=10000)

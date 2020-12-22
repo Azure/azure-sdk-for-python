@@ -111,8 +111,7 @@ class _ReceiveTest(_QueueTest):
     async def _preload_queue(self):
         data = get_random_bytes(self.args.message_size)
         async with self.async_queue_client.get_sender() as sender:
-            msgs = (self.args.num_messages * (self.args.parallel + 1)) * 10
-            for i in range(msgs):
+            for i in range(self.args.preload):
                 sender.queue_message(Message(data))
             await sender.send_pending_messages()
 
@@ -135,3 +134,4 @@ class _ReceiveTest(_QueueTest):
         super(_ReceiveTest, _ReceiveTest).add_arguments(parser)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
         parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for messages before closing. Defaults to 0.', default=0)
+        parser.add_argument('--preload', nargs='?', type=int, help='Number of messages to preload. Default is 10000.', default=10000)
