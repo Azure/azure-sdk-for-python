@@ -31,8 +31,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
     
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    @pytest.mark.asyncio
-    @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_user_from_managed_identity(self, connection_string):
         endpoint, access_key = parse_connection_str(connection_string)
         from devtools_testutils import is_live
@@ -48,8 +46,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    @pytest.mark.asyncio
-    @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
@@ -59,8 +55,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    @pytest.mark.asyncio
-    @AsyncCommunicationTestCase.await_prepared_test
     async def test_issue_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
@@ -72,8 +66,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    @pytest.mark.asyncio
-    @AsyncCommunicationTestCase.await_prepared_test
     async def test_revoke_tokens(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
@@ -86,8 +78,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    @pytest.mark.asyncio
-    @AsyncCommunicationTestCase.await_prepared_test
     async def test_delete_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
