@@ -113,6 +113,8 @@ class _ReceiveTest(_QueueTest):
         async with self.async_queue_client.get_sender() as sender:
             for i in range(self.args.preload):
                 sender.queue_message(Message(data))
+                if i % 1000 == 0:
+                    await sender.send_pending_messages()
             await sender.send_pending_messages()
 
     async def global_setup(self):
