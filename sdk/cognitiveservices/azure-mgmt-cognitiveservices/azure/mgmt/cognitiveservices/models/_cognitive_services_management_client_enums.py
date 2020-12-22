@@ -114,6 +114,7 @@ class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FREE = "Free"
     STANDARD = "Standard"
     PREMIUM = "Premium"
+    ENTERPRISE = "Enterprise"
 
 class UnitType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The unit of the metric.

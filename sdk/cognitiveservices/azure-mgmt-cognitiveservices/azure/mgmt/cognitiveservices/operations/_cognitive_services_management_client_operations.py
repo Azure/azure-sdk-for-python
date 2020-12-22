@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -32,7 +32,7 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         type,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckSkuAvailabilityResultList"
+        # type: (...) -> "_models.CheckSkuAvailabilityResultList"
         """Check available SKUs.
 
         :param location: Resource location.
@@ -48,13 +48,13 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResultList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckSkuAvailabilityResultList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckSkuAvailabilityResultList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
+        _parameters = _models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
         api_version = "2017-04-18"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -101,7 +101,7 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         type,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckDomainAvailabilityResult"
+        # type: (...) -> "_models.CheckDomainAvailabilityResult"
         """Check whether a domain is available.
 
         :param subdomain_name: The subdomain name to use.
@@ -113,13 +113,13 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.CheckDomainAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckDomainAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckDomainAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = models.CheckDomainAvailabilityParameter(subdomain_name=subdomain_name, type=type)
+        _parameters = _models.CheckDomainAvailabilityParameter(subdomain_name=subdomain_name, type=type)
         api_version = "2017-04-18"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
