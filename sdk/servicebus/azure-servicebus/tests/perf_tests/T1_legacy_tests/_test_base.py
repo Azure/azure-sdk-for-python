@@ -111,8 +111,10 @@ class _ReceiveTest(_QueueTest):
     async def _preload_queue(self):
         data = get_random_bytes(self.args.message_size)
         async with self.async_queue_client.get_sender() as sender:
-            for i in range(self.args.num_messages * (self.args.parallel + 1)):
-                await sender.send(Message(data))
+            msgs = (self.args.num_messages * (self.args.parallel + 1)) * 10
+            for i in range(msgs):
+                sender.queue_message(Message(data))
+            await sender.send_pending_messages()
 
     async def global_setup(self):
         await super().global_setup()

@@ -93,7 +93,9 @@ class _ReceiveTest(_QueueTest):
         data = get_random_bytes(self.args.message_size)
         async with self.async_service_client.get_queue_sender(self.queue_name) as sender:
             batch = await sender.create_message_batch()
-            for i in range(self.args.num_messages * (self.args.parallel + 1)):
+            msgs = (self.args.num_messages * (self.args.parallel + 1)) * 10
+            print("preloading {} messages".format(msgs))
+            for i in range(msgs):
                 try:
                     batch.add_message(ServiceBusMessage(data))
                 except ValueError:
