@@ -79,8 +79,3 @@ class TableServiceStatsTest(TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

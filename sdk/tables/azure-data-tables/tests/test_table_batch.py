@@ -893,7 +893,3 @@ class StorageTableBatchTest(TableTestCase):
 
         finally:
             self._tear_down()
-
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
