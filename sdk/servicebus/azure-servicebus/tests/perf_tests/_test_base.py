@@ -95,12 +95,13 @@ class _ReceiveTest(_QueueTest):
             batch = await sender.create_message_batch()
             for i in range(self.args.num_messages * (self.args.parallel + 1)):
                 try:
-                    message = ServiceBusMessage(data)
-                    batch.add_message(message)
+                    batch.add_message(ServiceBusMessage(data))
                 except ValueError:
                     # Batch full
                     await sender.send_messages(batch)
                     batch = await sender.create_message_batch()
+                    batch.add_message(ServiceBusMessage(data))
+            await sender.send_messages(batch)
 
     async def global_setup(self):
         await super().global_setup()
