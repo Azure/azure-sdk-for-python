@@ -152,7 +152,7 @@ class BlobCheckpointStore(CheckpointStore):
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
         try:
-            blob_prefix = "{}/{}/{}/ownership".format(
+            blob_prefix = "{}/{}/{}/ownership/".format(
                 fully_qualified_namespace, eventhub_name, consumer_group
             )
             blobs = self._container_client.list_blobs(
@@ -252,7 +252,7 @@ class BlobCheckpointStore(CheckpointStore):
     def list_checkpoints(
         self, fully_qualified_namespace, eventhub_name, consumer_group
     ):
-        blob_prefix = "{}/{}/{}/checkpoint".format(
+        blob_prefix = "{}/{}/{}/checkpoint/".format(
             fully_qualified_namespace, eventhub_name, consumer_group
         )
         blobs = self._container_client.list_blobs(
