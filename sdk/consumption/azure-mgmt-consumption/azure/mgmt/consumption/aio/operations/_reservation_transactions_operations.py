@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ReservationTransactionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class ReservationTransactionsOperations:
         billing_account_id: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ReservationTransactionsListResult"]:
+    ) -> AsyncIterable["_models.ReservationTransactionsListResult"]:
         """List of transactions for reserved instances on billing account scope.
 
         :param billing_account_id: BillingAccount ID.
@@ -59,7 +59,7 @@ class ReservationTransactionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.consumption.models.ReservationTransactionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReservationTransactionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReservationTransactionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,7 +106,7 @@ class ReservationTransactionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -123,7 +123,7 @@ class ReservationTransactionsOperations:
         billing_profile_id: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ModernReservationTransactionsListResult"]:
+    ) -> AsyncIterable["_models.ModernReservationTransactionsListResult"]:
         """List of transactions for reserved instances on billing account scope.
 
         :param billing_account_id: BillingAccount ID.
@@ -138,7 +138,7 @@ class ReservationTransactionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.consumption.models.ModernReservationTransactionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ModernReservationTransactionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModernReservationTransactionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -186,7 +186,7 @@ class ReservationTransactionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
