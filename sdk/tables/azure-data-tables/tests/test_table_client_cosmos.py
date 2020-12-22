@@ -589,6 +589,4 @@ class StorageTableClientTest(TableTestCase):
                 account_url=self._account_url(tables_cosmos_account_name),
                 credential=tables_primary_cosmos_account_key,
                 table_name='table')
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+            service.close()
