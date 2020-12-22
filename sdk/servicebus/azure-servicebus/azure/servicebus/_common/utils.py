@@ -39,7 +39,7 @@ from .constants import (
     TRACE_PROPERTY_ENCODING,
     TRACE_ENQUEUED_TIME_PROPERTY,
     SPAN_ENQUEUED_TIME_PROPERTY,
-    SPAN_NAME_RECEIVE
+    SPAN_NAME_RECEIVE,
 )
 
 if TYPE_CHECKING:
@@ -108,18 +108,24 @@ def get_renewable_start_time(renewable):
     try:
         return renewable._session_start  # pylint: disable=protected-access
     except AttributeError:
-        raise TypeError("Registered object is not renewable, renewable must be" +
-                        "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver.")
+        raise TypeError(
+            "Registered object is not renewable, renewable must be"
+            + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."
+        )
 
 
 def get_renewable_lock_duration(renewable):
     # type: (Union[ServiceBusReceivedMessage, BaseSession]) -> datetime.timedelta
     # pylint: disable=protected-access
     try:
-        return max(renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0))
+        return max(
+            renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0)
+        )
     except AttributeError:
-        raise TypeError("Registered object is not renewable, renewable must be" +
-                        "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver.")
+        raise TypeError(
+            "Registered object is not renewable, renewable must be"
+            + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."
+        )
 
 
 def create_authentication(client):
@@ -196,15 +202,13 @@ def strip_protocol_from_uri(uri):
     """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN."""
     left_slash_pos = uri.find("//")
     if left_slash_pos != -1:
-        return uri[left_slash_pos + 2:]
+        return uri[left_slash_pos + 2 :]
     return uri
 
 
 @contextmanager
 def send_trace_context_manager(span_name=SPAN_NAME_SEND):
-    span_impl_type = (
-        settings.tracing_implementation()
-    )  # type: Type[AbstractSpan]
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
         with span_impl_type(name=span_name) as child:
@@ -212,6 +216,7 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
             yield child
     else:
         yield None
+
 
 @contextmanager
 def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RECEIVE):
@@ -232,14 +237,14 @@ def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RE
         with receive_span:
             yield
 
+
 def add_link_to_send(message, send_span):
-    """Add Diagnostic-Id from message to span as link.
-    """
+    """Add Diagnostic-Id from message to span as link."""
     try:
         if send_span and message.message.application_properties:
-            traceparent = message.message.application_properties \
-                .get(TRACE_PARENT_PROPERTY, "") \
-                .decode(TRACE_PROPERTY_ENCODING)
+            traceparent = message.message.application_properties.get(
+                TRACE_PARENT_PROPERTY, ""
+            ).decode(TRACE_PROPERTY_ENCODING)
             if traceparent:
                 send_span.link(traceparent)
     except Exception as exp:  # pylint:disable=broad-except
@@ -265,7 +270,8 @@ def trace_message(message, parent_span=None):
                 if not message.message.application_properties:
                     message.message.application_properties = dict()
                 message.message.application_properties.setdefault(
-                    TRACE_PARENT_PROPERTY, message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING)
+                    TRACE_PARENT_PROPERTY,
+                    message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING),
                 )
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_message had an exception %r", exp)
@@ -276,7 +282,10 @@ def trace_link_message(messages, parent_span=None):
     """Link the current message(s) to current span or provided parent span.
     Will extract DiagnosticId if available.
     """
-    trace_messages = messages if isinstance(messages, Iterable) else (messages,)  # pylint:disable=isinstance-second-argument-not-valid-type
+    trace_messages = (
+        messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
+        else (messages,)
+    )
     try:  # pylint:disable=too-many-nested-blocks
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is not None:
@@ -286,14 +295,17 @@ def trace_link_message(messages, parent_span=None):
             if current_span:
                 for message in trace_messages:  # type: ignore
                     if message.message.application_properties:
-                        traceparent = message.message.application_properties \
-                            .get(TRACE_PARENT_PROPERTY, "") \
-                            .decode(TRACE_PROPERTY_ENCODING)
+                        traceparent = message.message.application_properties.get(
+                            TRACE_PARENT_PROPERTY, ""
+                        ).decode(TRACE_PROPERTY_ENCODING)
                         if traceparent:
                             current_span.link(
                                 traceparent,
-                                attributes={SPAN_ENQUEUED_TIME_PROPERTY: \
-                                    message.message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY)}
+                                attributes={
+                                    SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
+                                        TRACE_ENQUEUED_TIME_PROPERTY
+                                    )
+                                },
                             )
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_link_message had an exception %r", exp)
