@@ -22,20 +22,25 @@ from azure.core.pipeline.policies import (
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    UserAgentPolicy,
+    ProxyPolicy,
 )
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 
 from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .._authentication import SharedKeyCredentialPolicy
-from .._base_client import create_configuration
 from .._policies import (
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
-    StorageHeadersPolicy
+    StorageHeadersPolicy,
+    StorageLoggingPolicy,
+    TablesRetryPolicy,
 )
 from ._policies_async import AsyncStorageResponseHook
 from .._models import BatchErrorException, BatchTransactionResult
+from .._generated.aio._configuration import AzureTableConfiguration
+from .._sdk_moniker import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
@@ -73,7 +78,14 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
-        config = kwargs.get('_configuration') or create_configuration(**kwargs)
+        config = kwargs.get('_configuration') or AzureTableConfiguration(
+            url=self.url,
+            headers_policy=StorageHeadersPolicy(**kwargs),
+            user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            retry_policy=kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs),
+            logging_policy=StorageLoggingPolicy(**kwargs),
+            proxy_policy=ProxyPolicy(**kwargs),
+        )
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
         config.transport = kwargs.get('transport')  # type: ignore
