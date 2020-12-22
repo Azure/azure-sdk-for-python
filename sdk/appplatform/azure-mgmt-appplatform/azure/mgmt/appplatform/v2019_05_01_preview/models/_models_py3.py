@@ -133,7 +133,7 @@ class AppResourceProperties(Model):
     :ivar url: URL of the App
     :vartype url: str
     :ivar provisioning_state: Provisioning state of the App. Possible values
-     include: 'Succeeded', 'Failed', 'Creating', 'Updating'
+     include: 'Succeeded', 'Failed', 'Creating', 'Updating', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.AppResourceProvisioningState
     :param active_deployment_name: Name of the active deployment of the App
@@ -181,6 +181,30 @@ class AppResourceProperties(Model):
         self.created_time = None
         self.temporary_disk = temporary_disk
         self.persistent_disk = persistent_disk
+
+
+class AvailableRuntimeVersions(Model):
+    """AvailableRuntimeVersions.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A list of all supported runtime versions.
+    :vartype value:
+     list[~azure.mgmt.appplatform.v2019_05_01_preview.models.SupportedRuntimeVersion]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SupportedRuntimeVersion]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AvailableRuntimeVersions, self).__init__(**kwargs)
+        self.value = None
 
 
 class BindingResource(ProxyResource):
@@ -725,6 +749,8 @@ class DeploymentInstance(Model):
     :vartype reason: str
     :ivar discovery_status: Discovery status of the deployment instance
     :vartype discovery_status: str
+    :ivar start_time: Start time of the deployment instance
+    :vartype start_time: str
     """
 
     _validation = {
@@ -732,6 +758,7 @@ class DeploymentInstance(Model):
         'status': {'readonly': True},
         'reason': {'readonly': True},
         'discovery_status': {'readonly': True},
+        'start_time': {'readonly': True},
     }
 
     _attribute_map = {
@@ -739,6 +766,7 @@ class DeploymentInstance(Model):
         'status': {'key': 'status', 'type': 'str'},
         'reason': {'key': 'reason', 'type': 'str'},
         'discovery_status': {'key': 'discoveryStatus', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -747,6 +775,7 @@ class DeploymentInstance(Model):
         self.status = None
         self.reason = None
         self.discovery_status = None
+        self.start_time = None
 
 
 class DeploymentResource(ProxyResource):
@@ -764,6 +793,8 @@ class DeploymentResource(ProxyResource):
     :param properties: Properties of the Deployment resource
     :type properties:
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourceProperties
+    :param sku: Sku of the Deployment resource
+    :type sku: ~azure.mgmt.appplatform.v2019_05_01_preview.models.Sku
     """
 
     _validation = {
@@ -777,11 +808,13 @@ class DeploymentResource(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'DeploymentResourceProperties'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, sku=None, **kwargs) -> None:
         super(DeploymentResource, self).__init__(**kwargs)
         self.properties = properties
+        self.sku = sku
 
 
 class DeploymentResourceProperties(Model):
@@ -799,7 +832,7 @@ class DeploymentResourceProperties(Model):
     :type deployment_settings:
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentSettings
     :ivar provisioning_state: Provisioning state of the Deployment. Possible
-     values include: 'Creating', 'Updating', 'Succeeded', 'Failed'
+     values include: 'Creating', 'Updating', 'Succeeded', 'Failed', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourceProvisioningState
     :ivar status: Status of the Deployment. Possible values include:
@@ -859,13 +892,16 @@ class DeploymentSettings(Model):
     :type memory_in_gb: int
     :param jvm_options: JVM parameter
     :type jvm_options: str
+    :param net_core_main_entry_path: The path to the .NET executable relative
+     to zip root
+    :type net_core_main_entry_path: str
     :param instance_count: Instance count, basic tier should be in range (1,
      25), standard tier should be in range (1, 500). Default value: 1 .
     :type instance_count: int
     :param environment_variables: Collection of environment variables
     :type environment_variables: dict[str, str]
     :param runtime_version: Runtime version. Possible values include:
-     'Java_8', 'Java_11'
+     'Java_8', 'Java_11', 'NetCore_31'
     :type runtime_version: str or
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.RuntimeVersion
     """
@@ -874,16 +910,18 @@ class DeploymentSettings(Model):
         'cpu': {'key': 'cpu', 'type': 'int'},
         'memory_in_gb': {'key': 'memoryInGB', 'type': 'int'},
         'jvm_options': {'key': 'jvmOptions', 'type': 'str'},
+        'net_core_main_entry_path': {'key': 'netCoreMainEntryPath', 'type': 'str'},
         'instance_count': {'key': 'instanceCount', 'type': 'int'},
         'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
         'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, cpu: int=1, memory_in_gb: int=1, jvm_options: str=None, instance_count: int=1, environment_variables=None, runtime_version=None, **kwargs) -> None:
+    def __init__(self, *, cpu: int=1, memory_in_gb: int=1, jvm_options: str=None, net_core_main_entry_path: str=None, instance_count: int=1, environment_variables=None, runtime_version=None, **kwargs) -> None:
         super(DeploymentSettings, self).__init__(**kwargs)
         self.cpu = cpu
         self.memory_in_gb = memory_in_gb
         self.jvm_options = jvm_options
+        self.net_core_main_entry_path = net_core_main_entry_path
         self.instance_count = instance_count
         self.environment_variables = environment_variables
         self.runtime_version = runtime_version
@@ -1051,17 +1089,22 @@ class MetricDimension(Model):
     :type name: str
     :param display_name: Localized friendly display name of the dimension
     :type display_name: str
+    :param to_be_exported_for_shoebox: Whether this dimension should be
+     included for the Shoebox export scenario
+    :type to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str=None, display_name: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, display_name: str=None, to_be_exported_for_shoebox: bool=None, **kwargs) -> None:
         super(MetricDimension, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
+        self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
 class MetricSpecification(Model):
@@ -1174,6 +1217,9 @@ class NameAvailabilityParameters(Model):
 class NetworkProfile(Model):
     """Service network profile payload.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param service_runtime_subnet_id: Fully qualified resource Id of the
      subnet to host Azure Spring Cloud Service Runtime
     :type service_runtime_subnet_id: str
@@ -1188,7 +1234,15 @@ class NetworkProfile(Model):
     :param app_network_resource_group: Name of the resource group containing
      network resources of Azure Spring Cloud Apps
     :type app_network_resource_group: str
+    :ivar outbound_ips: Desired outbound IP resources for Azure Spring Cloud
+     instance.
+    :vartype outbound_ips:
+     ~azure.mgmt.appplatform.v2019_05_01_preview.models.NetworkProfileOutboundIPs
     """
+
+    _validation = {
+        'outbound_ips': {'readonly': True},
+    }
 
     _attribute_map = {
         'service_runtime_subnet_id': {'key': 'serviceRuntimeSubnetId', 'type': 'str'},
@@ -1196,6 +1250,7 @@ class NetworkProfile(Model):
         'service_cidr': {'key': 'serviceCidr', 'type': 'str'},
         'service_runtime_network_resource_group': {'key': 'serviceRuntimeNetworkResourceGroup', 'type': 'str'},
         'app_network_resource_group': {'key': 'appNetworkResourceGroup', 'type': 'str'},
+        'outbound_ips': {'key': 'outboundIPs', 'type': 'NetworkProfileOutboundIPs'},
     }
 
     def __init__(self, *, service_runtime_subnet_id: str=None, app_subnet_id: str=None, service_cidr: str=None, service_runtime_network_resource_group: str=None, app_network_resource_group: str=None, **kwargs) -> None:
@@ -1205,6 +1260,30 @@ class NetworkProfile(Model):
         self.service_cidr = service_cidr
         self.service_runtime_network_resource_group = service_runtime_network_resource_group
         self.app_network_resource_group = app_network_resource_group
+        self.outbound_ips = None
+
+
+class NetworkProfileOutboundIPs(Model):
+    """Desired outbound IP resources for Azure Spring Cloud instance.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar public_ips: A list of public IP addresses.
+    :vartype public_ips: list[str]
+    """
+
+    _validation = {
+        'public_ips': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkProfileOutboundIPs, self).__init__(**kwargs)
+        self.public_ips = None
 
 
 class OperationDetail(Model):
@@ -1702,6 +1781,34 @@ class SkuCapacity(Model):
         self.scale_type = scale_type
 
 
+class SupportedRuntimeVersion(Model):
+    """Supported deployment runtime version descriptor.
+
+    :param value: The raw value which could be passed to deployment CRUD
+     operations. Possible values include: 'Java_8', 'Java_11', 'NetCore_31'
+    :type value: str or
+     ~azure.mgmt.appplatform.v2019_05_01_preview.models.SupportedRuntimeValue
+    :param platform: The platform of this runtime version (possible values:
+     "Java" or ".NET"). Possible values include: 'Java', '.NET Core'
+    :type platform: str or
+     ~azure.mgmt.appplatform.v2019_05_01_preview.models.SupportedRuntimePlatform
+    :param version: The detailed version (major.minor) of the platform.
+    :type version: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'platform': {'key': 'platform', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, *, value=None, platform=None, version: str=None, **kwargs) -> None:
+        super(SupportedRuntimeVersion, self).__init__(**kwargs)
+        self.value = value
+        self.platform = platform
+        self.version = version
+
+
 class TemporaryDisk(Model):
     """Temporary disk payload.
 
@@ -1800,7 +1907,7 @@ class UserSourceInfo(Model):
     """Source information for a deployment.
 
     :param type: Type of the source uploaded. Possible values include: 'Jar',
-     'Source'
+     'NetCoreZip', 'Source'
     :type type: str or
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.UserSourceType
     :param relative_path: Relative path of the storage which stores the source

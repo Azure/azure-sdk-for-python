@@ -27,7 +27,7 @@ class DeploymentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-05-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class DeploymentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
@@ -62,7 +62,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentResource or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResource
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -79,7 +79,7 @@ class DeploymentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -129,7 +129,7 @@ class DeploymentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -185,9 +185,9 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: Properties of the Deployment resource
         :type properties:
-         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourceProperties
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResourceProperties
         :param sku: Sku of the Deployment resource
-        :type sku: ~azure.mgmt.appplatform.v2019_05_01_preview.models.Sku
+        :type sku: ~azure.mgmt.appplatform.v2020_11_01_preview.models.Sku
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -196,9 +196,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentResource or
          ClientRawResponse<DeploymentResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -231,29 +231,9 @@ class DeploymentsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}'}
 
-    def delete(
-            self, resource_group_name, service_name, app_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Operation to delete a Deployment.
 
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param service_name: The name of the Service resource.
-        :type service_name: str
-        :param app_name: The name of the App resource.
-        :type app_name: str
-        :param deployment_name: The name of the Deployment resource.
-        :type deployment_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, service_name, app_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -267,7 +247,7 @@ class DeploymentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -282,7 +262,7 @@ class DeploymentsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -290,6 +270,54 @@ class DeploymentsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, service_name, app_name, deployment_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Operation to delete a Deployment.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param service_name: The name of the Service resource.
+        :type service_name: str
+        :param app_name: The name of the App resource.
+        :type app_name: str
+        :param deployment_name: The name of the Deployment resource.
+        :type deployment_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            service_name=service_name,
+            app_name=app_name,
+            deployment_name=deployment_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}'}
 
 
@@ -310,7 +338,7 @@ class DeploymentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -364,9 +392,9 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: Properties of the Deployment resource
         :type properties:
-         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourceProperties
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResourceProperties
         :param sku: Sku of the Deployment resource
-        :type sku: ~azure.mgmt.appplatform.v2019_05_01_preview.models.Sku
+        :type sku: ~azure.mgmt.appplatform.v2020_11_01_preview.models.Sku
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -375,9 +403,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentResource or
          ClientRawResponse<DeploymentResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -431,7 +459,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentResource
         :rtype:
-         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourcePaged[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResourcePaged[~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -448,7 +476,7 @@ class DeploymentsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if version is not None:
                     query_parameters['version'] = self._serialize.query("version", version, '[str]', div=',')
 
@@ -491,7 +519,7 @@ class DeploymentsOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments'}
 
-    def list_cluster_all_deployments(
+    def list_for_cluster(
             self, resource_group_name, service_name, version=None, custom_headers=None, raw=False, **operation_config):
         """List deployments for a certain service.
 
@@ -510,13 +538,13 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentResource
         :rtype:
-         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourcePaged[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResourcePaged[~azure.mgmt.appplatform.v2020_11_01_preview.models.DeploymentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_cluster_all_deployments.metadata['url']
+                url = self.list_for_cluster.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -526,7 +554,7 @@ class DeploymentsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if version is not None:
                     query_parameters['version'] = self._serialize.query("version", version, '[str]', div=',')
 
@@ -567,7 +595,7 @@ class DeploymentsOperations(object):
         deserialized = models.DeploymentResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_cluster_all_deployments.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/deployments'}
+    list_for_cluster.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/deployments'}
 
 
     def _start_initial(
@@ -585,7 +613,7 @@ class DeploymentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -674,7 +702,7 @@ class DeploymentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -763,7 +791,7 @@ class DeploymentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -857,7 +885,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: LogFileUrlResponse or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.appplatform.v2019_05_01_preview.models.LogFileUrlResponse
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.LogFileUrlResponse
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -874,7 +902,7 @@ class DeploymentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
