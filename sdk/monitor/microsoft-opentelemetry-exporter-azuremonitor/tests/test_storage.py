@@ -6,14 +6,14 @@ import shutil
 import unittest
 from unittest import mock
 
-from microsoft.opentelemetry.exporter.azuremonitor.storage import (
+from microsoft.opentelemetry.exporter.azuremonitor._storage import (
     LocalFileBlob,
     LocalFileStorage,
     _now,
     _seconds,
 )
 
-TEST_FOLDER = os.path.abspath(".test")
+TEST_FOLDER = os.path.abspath(".test.storage")
 
 def throw(exc_type, *args, **kwargs):
     def func(*_args, **_kwargs):
@@ -70,6 +70,14 @@ class TestLocalFileBlob(unittest.TestCase):
 
 # pylint: disable=protected-access
 class TestLocalFileStorage(unittest.TestCase):
+    @classmethod
+    def setup_class(cls):
+        os.makedirs(TEST_FOLDER, exist_ok=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEST_FOLDER, True)
+
     def test_get_nothing(self):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test", "a")) as stor:
             pass
@@ -80,7 +88,7 @@ class TestLocalFileStorage(unittest.TestCase):
         now = _now()
         with LocalFileStorage(os.path.join(TEST_FOLDER, "foo")) as stor:
             stor.put((1, 2, 3), lease_period=10)
-            with mock.patch("microsoft.opentelemetry.exporter.azuremonitor.storage._now") as m:
+            with mock.patch("microsoft.opentelemetry.exporter.azuremonitor._storage._now") as m:
                 m.return_value = now - _seconds(30 * 24 * 60 * 60)
                 stor.put((1, 2, 3))
                 stor.put((1, 2, 3), lease_period=10)
@@ -93,15 +101,15 @@ class TestLocalFileStorage(unittest.TestCase):
                     self.assertIsNone(stor.get())
             self.assertIsNone(stor.get())
 
-    # def test_put(self):
-    #     test_input = (1, 2, 3)
-    #     with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
-    #         stor.put(test_input)
-    #         self.assertEqual(stor.get().get(), test_input)
-    #     with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
-    #         self.assertEqual(stor.get().get(), test_input)
-    #         with mock.patch("os.rename", side_effect=throw(Exception)):
-    #             self.assertIsNone(stor.put(test_input))
+    def test_put(self):
+        test_input = (1, 2, 3)
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
+            stor.put(test_input)
+            self.assertEqual(stor.get().get(), test_input)
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
+            self.assertEqual(stor.get().get(), test_input)
+            with mock.patch("os.rename", side_effect=throw(Exception)):
+                self.assertIsNone(stor.put(test_input))
 
     def test_put_max_size(self):
         test_input = (1, 2, 3)

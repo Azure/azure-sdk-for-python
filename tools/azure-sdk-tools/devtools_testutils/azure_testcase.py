@@ -15,6 +15,7 @@ except ImportError:
     from inspect import getargspec as get_arg_spec
 
 import pytest
+from dotenv import load_dotenv, find_dotenv
 
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
@@ -101,6 +102,7 @@ class AzureTestCase(ReplayableTest):
         config_file = config_file or os.path.join(self.working_folder, TEST_SETTING_FILENAME)
         if not os.path.exists(config_file):
             config_file = None
+        load_dotenv(find_dotenv())
         super(AzureTestCase, self).__init__(
             method_name,
             config_file=config_file,
@@ -150,7 +152,7 @@ class AzureTestCase(ReplayableTest):
         key_value = os.environ.get("AZURE_"+key, None)
 
         if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
-            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values".format(key=key))
+            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values".format(key=key))
 
         if not key_value:
             try:
@@ -192,9 +194,9 @@ class AzureTestCase(ReplayableTest):
 
     def get_credential(self, client_class, **kwargs):
 
-        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
-        client_id = os.environ.get("AZURE_CLIENT_ID", None)
-        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+        tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(self._real_settings, "TENANT_ID", None))
+        client_id = os.environ.get("AZURE_CLIENT_ID", getattr(self._real_settings, "CLIENT_ID", None))
+        secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(self._real_settings, "CLIENT_SECRET", None))
         is_async = kwargs.pop("is_async", False)
 
         if tenant_id and client_id and secret and self.is_live:
@@ -295,7 +297,11 @@ class AzureTestCase(ReplayableTest):
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes
-        upstream to AbstractPreparer (which doesn't await the functions it wraps)
+        upstream to AbstractPreparer, which only awaits async tests that use preparers.
+        (Add @AzureTestCase.await_prepared_test decorator to async tests without preparers)
+
+        # Note: this will only be needed so long as we maintain unittest.TestCase in our
+        test-class inheritance chain.
         """
 
         if sys.version_info < (3, 5):

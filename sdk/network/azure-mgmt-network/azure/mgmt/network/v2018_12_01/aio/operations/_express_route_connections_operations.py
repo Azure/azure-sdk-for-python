@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class ExpressRouteConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,10 +47,10 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         connection_name: str,
-        put_express_route_connection_parameters: "models.ExpressRouteConnection",
+        put_express_route_connection_parameters: "_models.ExpressRouteConnection",
         **kwargs
-    ) -> "models.ExpressRouteConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteConnection"]
+    ) -> "_models.ExpressRouteConnection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,9 +106,9 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         connection_name: str,
-        put_express_route_connection_parameters: "models.ExpressRouteConnection",
+        put_express_route_connection_parameters: "_models.ExpressRouteConnection",
         **kwargs
-    ) -> AsyncLROPoller["models.ExpressRouteConnection"]:
+    ) -> AsyncLROPoller["_models.ExpressRouteConnection"]:
         """Creates a connection between an ExpressRoute gateway and an ExpressRoute circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -131,7 +131,7 @@ class ExpressRouteConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -157,7 +157,14 @@ class ExpressRouteConnectionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'expressRouteGatewayName': self._serialize.url("express_route_gateway_name", express_route_gateway_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -177,7 +184,7 @@ class ExpressRouteConnectionsOperations:
         express_route_gateway_name: str,
         connection_name: str,
         **kwargs
-    ) -> "models.ExpressRouteConnection":
+    ) -> "_models.ExpressRouteConnection":
         """Gets the specified ExpressRouteConnection.
 
         :param resource_group_name: The name of the resource group.
@@ -191,7 +198,7 @@ class ExpressRouteConnectionsOperations:
         :rtype: ~azure.mgmt.network.v2018_12_01.models.ExpressRouteConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -325,7 +332,14 @@ class ExpressRouteConnectionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'expressRouteGatewayName': self._serialize.url("express_route_gateway_name", express_route_gateway_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -344,7 +358,7 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         **kwargs
-    ) -> "models.ExpressRouteConnectionList":
+    ) -> "_models.ExpressRouteConnectionList":
         """Lists ExpressRouteConnections.
 
         :param resource_group_name: The name of the resource group.
@@ -356,7 +370,7 @@ class ExpressRouteConnectionsOperations:
         :rtype: ~azure.mgmt.network.v2018_12_01.models.ExpressRouteConnectionList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteConnectionList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteConnectionList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

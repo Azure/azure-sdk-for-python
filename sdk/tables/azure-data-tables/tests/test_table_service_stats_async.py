@@ -24,18 +24,18 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
 class TableServiceStatsTest(TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'live')
-        self.assertIsNotNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] ==  'live'
+        assert stats['geo_replication']['last_sync_time'] is not None
 
     def _assert_stats_unavailable(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'unavailable')
-        self.assertIsNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] ==  'unavailable'
+        assert stats['geo_replication']['last_sync_time'] is None
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):

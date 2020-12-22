@@ -40,11 +40,11 @@ class AutoLockRenewer(object):
     :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
     :param executor: A user-specified thread pool. This cannot be combined with
      setting `max_workers`.
-    :type executor: ~concurrent.futures.ThreadPoolExecutor
+    :type executor: Optional[~concurrent.futures.ThreadPoolExecutor]
     :param max_workers: Specify the maximum workers in the thread pool. If not
      specified the number used will be derived from the core count of the environment.
      This cannot be combined with `executor`.
-    :type max_workers: int
+    :type max_workers: Optional[int]
 
     .. admonition:: Example:
 
@@ -65,7 +65,7 @@ class AutoLockRenewer(object):
     """
 
     def __init__(self, max_lock_renewal_duration=300, on_lock_renew_failure=None, executor=None, max_workers=None):
-        # type: (float, Optional[LockRenewFailureCallback], ThreadPoolExecutor, int) -> None
+        # type: (float, Optional[LockRenewFailureCallback], Optional[ThreadPoolExecutor], Optional[int]) -> None
         """Auto renew locks for messages and sessions using a background thread pool.
 
         :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
@@ -76,11 +76,11 @@ class AutoLockRenewer(object):
         :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
         :param executor: A user-specified thread pool. This cannot be combined with
          setting `max_workers`.
-        :type executor: ~concurrent.futures.ThreadPoolExecutor
+        :type executor: Optional[~concurrent.futures.ThreadPoolExecutor]
         :param max_workers: Specify the maximum workers in the thread pool. If not
          specified the number used will be derived from the core count of the environment.
          This cannot be combined with `executor`.
-        :type max_workers: int
+        :type max_workers: Optional[int]
         """
         self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
         self._shutdown = threading.Event()
@@ -178,9 +178,9 @@ class AutoLockRenewer(object):
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         if renewable.locked_until_utc is None:
-            raise ValueError("Only azure.servicebus.ServiceBusReceivedMessage objects in PeekLock receive mode may"
+            raise ValueError("Only azure.servicebus.ServiceBusReceivedMessage objects in PEEK_LOCK receive mode may"
                             "be lock-renewed.  (E.g. only messages received via receive() or the receiver iterator,"
-                            "not using ReceiveAndDelete receive mode, and not returned from Peek)")
+                            "not using RECEIVE_AND_DELETE receive mode, and not returned from Peek)")
 
         starttime = get_renewable_start_time(renewable)
 

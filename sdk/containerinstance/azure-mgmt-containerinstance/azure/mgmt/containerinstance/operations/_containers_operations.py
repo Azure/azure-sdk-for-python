@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class ContainersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class ContainersOperations(object):
         tail=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Logs"
+        # type: (...) -> "_models.Logs"
         """Get the logs for a specified container instance.
 
         Get the logs for a specified container instance in a specified resource group and container
@@ -72,7 +72,7 @@ class ContainersOperations(object):
         :rtype: ~azure.mgmt.containerinstance.models.Logs
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Logs"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Logs"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,10 +121,10 @@ class ContainersOperations(object):
         resource_group_name,  # type: str
         container_group_name,  # type: str
         container_name,  # type: str
-        container_exec_request,  # type: "models.ContainerExecRequest"
+        container_exec_request,  # type: "_models.ContainerExecRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ContainerExecResponse"
+        # type: (...) -> "_models.ContainerExecResponse"
         """Executes a command in a specific container instance.
 
         Executes a command for a specific container instance in a specified resource group and
@@ -143,7 +143,7 @@ class ContainersOperations(object):
         :rtype: ~azure.mgmt.containerinstance.models.ContainerExecResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerExecResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerExecResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

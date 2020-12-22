@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PacketCapturesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,10 +48,10 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        parameters: "models.PacketCapture",
+        parameters: "_models.PacketCapture",
         **kwargs
-    ) -> "models.PacketCaptureResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PacketCaptureResult"]
+    ) -> "_models.PacketCaptureResult":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCaptureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -103,9 +103,9 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        parameters: "models.PacketCapture",
+        parameters: "_models.PacketCapture",
         **kwargs
-    ) -> AsyncLROPoller["models.PacketCaptureResult"]:
+    ) -> AsyncLROPoller["_models.PacketCaptureResult"]:
         """Create and start a packet capture on the specified VM.
 
         :param resource_group_name: The name of the resource group.
@@ -127,7 +127,7 @@ class PacketCapturesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PacketCaptureResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCaptureResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -153,7 +153,14 @@ class PacketCapturesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'packetCaptureName': self._serialize.url("packet_capture_name", packet_capture_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -173,7 +180,7 @@ class PacketCapturesOperations:
         network_watcher_name: str,
         packet_capture_name: str,
         **kwargs
-    ) -> "models.PacketCaptureResult":
+    ) -> "_models.PacketCaptureResult":
         """Gets a packet capture session by name.
 
         :param resource_group_name: The name of the resource group.
@@ -187,7 +194,7 @@ class PacketCapturesOperations:
         :rtype: ~azure.mgmt.network.v2018_02_01.models.PacketCaptureResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PacketCaptureResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCaptureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -321,7 +328,14 @@ class PacketCapturesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'packetCaptureName': self._serialize.url("packet_capture_name", packet_capture_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -427,7 +441,14 @@ class PacketCapturesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'packetCaptureName': self._serialize.url("packet_capture_name", packet_capture_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -447,8 +468,8 @@ class PacketCapturesOperations:
         network_watcher_name: str,
         packet_capture_name: str,
         **kwargs
-    ) -> "models.PacketCaptureQueryStatusResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PacketCaptureQueryStatusResult"]
+    ) -> "_models.PacketCaptureQueryStatusResult":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCaptureQueryStatusResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -500,7 +521,7 @@ class PacketCapturesOperations:
         network_watcher_name: str,
         packet_capture_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.PacketCaptureQueryStatusResult"]:
+    ) -> AsyncLROPoller["_models.PacketCaptureQueryStatusResult"]:
         """Query the status of a running packet capture session.
 
         :param resource_group_name: The name of the resource group.
@@ -520,7 +541,7 @@ class PacketCapturesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PacketCaptureQueryStatusResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCaptureQueryStatusResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -545,7 +566,14 @@ class PacketCapturesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'packetCaptureName': self._serialize.url("packet_capture_name", packet_capture_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -564,7 +592,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         **kwargs
-    ) -> AsyncIterable["models.PacketCaptureListResult"]:
+    ) -> AsyncIterable["_models.PacketCaptureListResult"]:
         """Lists all packet capture sessions within the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -576,7 +604,7 @@ class PacketCapturesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_02_01.models.PacketCaptureListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PacketCaptureListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCaptureListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

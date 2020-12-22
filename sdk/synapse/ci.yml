@@ -34,6 +34,10 @@ extends:
       safeName: azuresynapsespark
     - name: azure_synapse_artifacts
       safeName: azuresynapseartifacts
+    - name: azure_synapse_monitoring
+      safeName: azuresynapsemonitoring
+    - name: azure_synapse_managedprivateendpoints
+      safeName: azuresynapsemanagedprivateendpoints
     - name: azure_synapse
       safeName: azuresynapse
     - name: azure_synapse_nspkg

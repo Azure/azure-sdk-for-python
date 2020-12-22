@@ -10,8 +10,7 @@ import time
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import CredentialUnavailableError, InteractiveBrowserCredential
-from azure.identity._exceptions import AuthenticationRequiredError
+from azure.identity import AuthenticationRequiredError, CredentialUnavailableError, InteractiveBrowserCredential
 from azure.identity._internal import AuthCodeRedirectServer
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
@@ -96,7 +95,7 @@ def test_authenticate():
                 tenant_id=tenant_id,
                 transport=transport,
             )
-            record = credential._authenticate(scopes=(scope,))
+            record = credential.authenticate(scopes=(scope,))
 
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
@@ -115,7 +114,7 @@ def test_disable_automatic_authentication():
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
     credential = InteractiveBrowserCredential(
-        _disable_automatic_authentication=True, transport=transport, _cache=empty_cache
+        disable_automatic_authentication=True, transport=transport, _cache=empty_cache
     )
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential shouldn't try interactive authentication"))):
@@ -239,7 +238,8 @@ def test_interactive_credential(mock_open, redirect_url):
     assert server_class.call_count == 1
 
     if redirect_url:
-        server_class.assert_called_once_with(redirect_url, timeout=ANY)
+        parsed = urllib_parse.urlparse(redirect_url)
+        server_class.assert_called_once_with(parsed.hostname, parsed.port, timeout=ANY)
 
     # token should be cached, get_token shouldn't prompt again
     token = credential.get_token("scope")
@@ -288,11 +288,11 @@ def test_timeout():
 def test_redirect_server():
     # binding a random port prevents races when running the test in parallel
     server = None
+    hostname = "127.0.0.1"
     for _ in range(4):
         try:
             port = random.randint(1024, 65535)
-            url = "http://127.0.0.1:{}".format(port)
-            server = AuthCodeRedirectServer(url, timeout=10)
+            server = AuthCodeRedirectServer(hostname, port, timeout=10)
             break
         except socket.error:
             continue  # keep looking for an open port
@@ -308,7 +308,8 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    response = urllib.request.urlopen(url + "?{}={}".format(expected_param, expected_value))  # nosec
+    url = "http://{}:{}".format(hostname, port) + "?{}={}".format(expected_param, expected_value)
+    response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]
@@ -324,6 +325,14 @@ def test_no_browser():
         credential.get_token("scope")
 
 
+@pytest.mark.parametrize("redirect_uri", ("http://localhost", "host", "host:42"))
+def test_invalid_redirect_uri(redirect_uri):
+    """The credential should raise ValueError when redirect_uri is invalid or doesn't include a port"""
+
+    with pytest.raises(ValueError):
+        InteractiveBrowserCredential(redirect_uri=redirect_uri)
+
+
 def test_cannot_bind_port():
     """get_token should raise CredentialUnavailableError when the redirect listener can't bind a port"""
 
@@ -335,15 +344,13 @@ def test_cannot_bind_port():
 def test_cannot_bind_redirect_uri():
     """When a user specifies a redirect URI, the credential shouldn't attempt to bind another"""
 
-    expected_uri = "http://localhost:42"
-
     server = Mock(side_effect=socket.error)
-    credential = InteractiveBrowserCredential(redirect_uri=expected_uri, _server_class=server)
+    credential = InteractiveBrowserCredential(redirect_uri="http://localhost:42", _server_class=server)
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
 
-    server.assert_called_once_with(expected_uri, timeout=ANY)
+    server.assert_called_once_with("localhost", 42, timeout=ANY)
 
 
 def _validate_auth_request_url(url):

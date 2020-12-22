@@ -5,25 +5,26 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 27 Oct 2020 19:40:09 GMT
+      - Thu, 10 Dec 2020 23:18:51 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicationgt4kvhqws6u.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2020-07-20-preview2
   response:
-    body: '{"id": "sanitized"}'
+    body:
+      string: '{"id": "sanitized"}'
     headers:
-      api-supported-versions: 2020-07-20-preview1, 2020-07-20-preview2
+      api-supported-versions: 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Oct 2020 19:40:09 GMT
-      ms-cv: GayZ1h1Ytk2AZvH1JIOcSQ.0
+      date: Thu, 10 Dec 2020 23:18:52 GMT
+      ms-cv: anbtmMJFHkaXus/tF2M+Pg.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-processing-time: 23ms
     status:
       code: 200
       message: OK
-    url: https://communicationgt4kvhqws6u.communication.azure.com/identities?api-version=2020-07-20-preview2
+    url: https://communication5qkfmzjimd2.communication.azure.com/identities?api-version=2020-07-20-preview2
 version: 1

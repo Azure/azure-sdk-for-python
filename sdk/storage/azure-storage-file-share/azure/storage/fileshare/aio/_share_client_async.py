@@ -30,7 +30,7 @@ from .._share_client import ShareClient as ShareClientBase
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
 from ..aio._lease_async import ShareLeaseClient
-
+from .._models import ShareProtocols
 
 if TYPE_CHECKING:
     from .._models import ShareProperties, AccessPolicy
@@ -185,6 +185,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword protocols:
+            Protocols to enable on the share. Only one protocol can be enabled on the share.
+        :paramtype protocols: str or ~azure.storage.fileshare.ShareProtocols
+        :keyword root_squash:
+            Root squash to set on the share.
+            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
+        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -201,6 +208,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         quota = kwargs.pop('quota', None)
         access_tier = kwargs.pop('access_tier', None)
         timeout = kwargs.pop('timeout', None)
+        root_squash = kwargs.pop('root_squash', None)
+        protocols = kwargs.pop('protocols', None)
+        if protocols and protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
+            raise ValueError("The enabled protocol must be set to either SMB or NFS.")
+        if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
+            raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
 
@@ -210,6 +223,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 metadata=metadata,
                 quota=quota,
                 access_tier=access_tier,
+                root_squash=root_squash,
+                enabled_protocols=protocols,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -378,6 +393,10 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             Must be greater than 0, and less than or equal to 5TB.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword root_squash:
+            Root squash to set on the share.
+            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'
+        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -393,13 +412,15 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         timeout = kwargs.pop('timeout', None)
         access_tier = kwargs.pop('access_tier', None)
         quota = kwargs.pop('quota', None)
-        if all(parameter is None for parameter in [access_tier, quota]):
+        root_squash = kwargs.pop('root_squash', None)
+        if all(parameter is None for parameter in [access_tier, quota, root_squash]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
             return await self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
                 access_tier=access_tier,
+                root_squash=root_squash,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:

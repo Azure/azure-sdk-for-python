@@ -23,7 +23,8 @@ from ...management._generated.models import QueueDescriptionFeed, TopicDescripti
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent
 
 from ..._base_handler import _parse_conn_str
-from ..._common.constants import JWT_TOKEN_SCOPE
+from ..._common.constants import JWT_TOKEN_SCOPE, SUPPLEMENTARY_AUTHORIZATION_HEADER, \
+    DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
 from ...management._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
 from ...management._generated.aio._service_bus_management_client_async import ServiceBusManagementClient \
@@ -31,14 +32,13 @@ from ...management._generated.aio._service_bus_management_client_async import Se
 from ...management import _constants as constants
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 from ...management._models import QueueRuntimeProperties, QueueProperties, TopicProperties, TopicRuntimeProperties, \
-    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties
+    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties, TrueRuleFilter
 from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from ...management._handle_response_error import _handle_response_error
 from ...management._model_workaround import avoid_timedelta_overflow
 from ._utils import extract_data_template, extract_rule_data_template, get_next_template
 from ...management._utils import deserialize_rule_key_values, serialize_rule_key_values, \
     _validate_entity_name_type, _validate_topic_and_subscription_types, _validate_topic_subscription_and_rule_types
-
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
@@ -131,6 +131,22 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
                     topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
             )
         return element
+
+    async def _create_forward_to_header_tokens(self, entity, kwargs):
+        """forward_to requires providing a bearer token in headers for the referenced entity."""
+        kwargs['headers'] = kwargs.get('headers', {})
+
+        async def _populate_header_within_kwargs(uri, header):
+            token = (await self._credential.get_token(uri)).token.decode()
+            if not isinstance(self._credential, (ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential)):
+                token = "Bearer {}".format(token)
+            kwargs['headers'][header] = token
+
+        if entity.forward_to:
+            await _populate_header_within_kwargs(entity.forward_to, SUPPLEMENTARY_AUTHORIZATION_HEADER)
+        if entity.forward_dead_lettered_messages_to:
+            await _populate_header_within_kwargs(entity.forward_dead_lettered_messages_to, \
+                DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER)
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusAdministrationClient":
@@ -261,6 +277,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        await self._create_forward_to_header_tokens(queue, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -297,6 +314,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        await self._create_forward_to_header_tokens(queue, kwargs)
         with _handle_response_error():
             await self._impl.entity.put(
                 queue.name,  # type: ignore
@@ -657,6 +675,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        await self._create_forward_to_header_tokens(subscription, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -697,6 +716,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        await self._create_forward_to_header_tokens(subscription, kwargs)
         with _handle_response_error():
             await self._impl.subscription.put(
                 topic_name,
@@ -801,7 +821,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
          will own the to-be-created rule.
         :param rule_name: Name of the rule.
         :type rule_name: str
-        :keyword filter: The filter of the rule.
+        :keyword filter: The filter of the rule. The default value is ~azure.servicebus.management.TrueRuleFilter
         :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
@@ -813,7 +833,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
 
         rule = RuleProperties(
             rule_name,
-            filter=kwargs.pop("filter", None),
+            filter=kwargs.pop("filter", TrueRuleFilter()),
             action=kwargs.pop("action", None),
             created_at_utc=None
         )

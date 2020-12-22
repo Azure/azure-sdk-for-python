@@ -1376,11 +1376,11 @@ class CloudPool(Model):
      application licenses. If a license is requested which is not supported,
      Pool creation will fail.
     :type application_licenses: list[str]
-    :param max_tasks_per_node: The maximum number of Tasks that can run
-     concurrently on a single Compute Node in the Pool. The default value is 1.
-     The maximum value is the smaller of 4 times the number of cores of the
-     vmSize of the Pool or 256.
-    :type max_tasks_per_node: int
+    :param task_slots_per_node: The number of task slots that can be used to
+     run concurrent tasks on a single compute node in the pool. The default
+     value is 1. The maximum value is the smaller of 4 times the number of
+     cores of the vmSize of the pool or 256.
+    :type task_slots_per_node: int
     :param task_scheduling_policy: How Tasks are distributed across Compute
      Nodes in a Pool. If not specified, the default is spread.
     :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
@@ -1432,7 +1432,7 @@ class CloudPool(Model):
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
         'application_licenses': {'key': 'applicationLicenses', 'type': '[str]'},
-        'max_tasks_per_node': {'key': 'maxTasksPerNode', 'type': 'int'},
+        'task_slots_per_node': {'key': 'taskSlotsPerNode', 'type': 'int'},
         'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
@@ -1471,7 +1471,7 @@ class CloudPool(Model):
         self.certificate_references = kwargs.get('certificate_references', None)
         self.application_package_references = kwargs.get('application_package_references', None)
         self.application_licenses = kwargs.get('application_licenses', None)
-        self.max_tasks_per_node = kwargs.get('max_tasks_per_node', None)
+        self.task_slots_per_node = kwargs.get('task_slots_per_node', None)
         self.task_scheduling_policy = kwargs.get('task_scheduling_policy', None)
         self.user_accounts = kwargs.get('user_accounts', None)
         self.metadata = kwargs.get('metadata', None)
@@ -1614,6 +1614,11 @@ class CloudTask(Model):
     :type affinity_info: ~azure.batch.models.AffinityInformation
     :param constraints: The execution constraints that apply to this Task.
     :type constraints: ~azure.batch.models.TaskConstraints
+    :param required_slots: The number of scheduling slots that the Task
+     requires to run. The default is 1. A Task can only be scheduled to run on
+     a compute node if the node has enough free scheduling slots available. For
+     multi-instance Tasks, this must be 1.
+    :type required_slots: int
     :param user_identity: The user identity under which the Task runs. If
      omitted, the Task runs as a non-administrative user unique to the Task.
     :type user_identity: ~azure.batch.models.UserIdentity
@@ -1675,6 +1680,7 @@ class CloudTask(Model):
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'affinity_info': {'key': 'affinityInfo', 'type': 'AffinityInformation'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
+        'required_slots': {'key': 'requiredSlots', 'type': 'int'},
         'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'execution_info': {'key': 'executionInfo', 'type': 'TaskExecutionInformation'},
         'node_info': {'key': 'nodeInfo', 'type': 'ComputeNodeInformation'},
@@ -1705,6 +1711,7 @@ class CloudTask(Model):
         self.environment_settings = kwargs.get('environment_settings', None)
         self.affinity_info = kwargs.get('affinity_info', None)
         self.constraints = kwargs.get('constraints', None)
+        self.required_slots = kwargs.get('required_slots', None)
         self.user_identity = kwargs.get('user_identity', None)
         self.execution_info = kwargs.get('execution_info', None)
         self.node_info = kwargs.get('node_info', None)
@@ -1789,6 +1796,11 @@ class ComputeNode(Model):
      Tasks on the Compute Node. This includes Job Manager Tasks and normal
      Tasks, but not Job Preparation, Job Release or Start Tasks.
     :type running_tasks_count: int
+    :param running_task_slots_count: The total number of scheduling slots used
+     by currently running Job Tasks on the Compute Node. This includes Job
+     Manager Tasks and normal Tasks, but not Job Preparation, Job Release or
+     Start Tasks.
+    :type running_task_slots_count: int
     :param total_tasks_succeeded: The total number of Job Tasks which
      completed successfully (with exitCode 0) on the Compute Node. This
      includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job
@@ -1843,6 +1855,7 @@ class ComputeNode(Model):
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'total_tasks_run': {'key': 'totalTasksRun', 'type': 'int'},
         'running_tasks_count': {'key': 'runningTasksCount', 'type': 'int'},
+        'running_task_slots_count': {'key': 'runningTaskSlotsCount', 'type': 'int'},
         'total_tasks_succeeded': {'key': 'totalTasksSucceeded', 'type': 'int'},
         'recent_tasks': {'key': 'recentTasks', 'type': '[TaskInformation]'},
         'start_task': {'key': 'startTask', 'type': 'StartTask'},
@@ -1868,6 +1881,7 @@ class ComputeNode(Model):
         self.vm_size = kwargs.get('vm_size', None)
         self.total_tasks_run = kwargs.get('total_tasks_run', None)
         self.running_tasks_count = kwargs.get('running_tasks_count', None)
+        self.running_task_slots_count = kwargs.get('running_task_slots_count', None)
         self.total_tasks_succeeded = kwargs.get('total_tasks_succeeded', None)
         self.recent_tasks = kwargs.get('recent_tasks', None)
         self.start_task = kwargs.get('start_task', None)
@@ -2557,7 +2571,7 @@ class DataDisk(Model):
 
     :param lun: Required. The logical unit number. The lun is used to uniquely
      identify each data disk. If attaching multiple disks, each should have a
-     distinct lun.
+     distinct lun. The value must be between 0 and 63, inclusive.
     :type lun: int
     :param caching: The type of caching to be enabled for the data disks. The
      default value for caching is readwrite. For information about the caching
@@ -3284,9 +3298,9 @@ class ImageInformation(Model):
 
 
 class ImageReference(Model):
-    """A reference to an Azure Virtual Machines Marketplace Image or a custom
-    Azure Virtual Machine Image. To get the list of all Azure Marketplace Image
-    references verified by Azure Batch, see the 'List supported Images'
+    """A reference to an Azure Virtual Machines Marketplace Image or a Shared
+    Image Gallery Image. To get the list of all Azure Marketplace Image
+    references verified by Azure Batch, see the 'List Supported Images'
     operation.
 
     :param publisher: The publisher of the Azure Virtual Machines Marketplace
@@ -3304,12 +3318,15 @@ class ImageReference(Model):
     :type version: str
     :param virtual_machine_image_id: The ARM resource identifier of the Shared
      Image Gallery Image. Compute Nodes in the Pool will be created using this
-     Image Id. This is of the
-     form/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{versionId}.
-     This property is mutually exclusive with other ImageReference properties.
-     For Virtual Machine Image it must be in the same region and subscription
-     as the Azure Batch account. The Shared Image Gallery Image must have
-     replicas in the same region as the Azure Batch account. For information
+     Image Id. This is of the form
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{VersionId}
+     or
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}
+     for always defaulting to the latest image version. This property is
+     mutually exclusive with other ImageReference properties. The Shared Image
+     Gallery Image must have replicas in the same region and must be in the
+     same subscription as the Azure Batch account. If the image version is not
+     specified in the imageId, the latest version will be used. For information
      about the firewall settings for the Batch Compute Node agent to
      communicate with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
@@ -4289,6 +4306,11 @@ class JobManagerTask(Model):
     :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param constraints: Constraints that apply to the Job Manager Task.
     :type constraints: ~azure.batch.models.TaskConstraints
+    :param required_slots: The number of scheduling slots that the Task
+     requires to run. The default is 1. A Task can only be scheduled to run on
+     a compute node if the node has enough free scheduling slots available. For
+     multi-instance Tasks, this must be 1.
+    :type required_slots: int
     :param kill_job_on_completion: Whether completion of the Job Manager Task
      signifies completion of the entire Job. If true, when the Job Manager Task
      completes, the Batch service marks the Job as complete. If any Tasks are
@@ -4357,6 +4379,7 @@ class JobManagerTask(Model):
         'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
+        'required_slots': {'key': 'requiredSlots', 'type': 'int'},
         'kill_job_on_completion': {'key': 'killJobOnCompletion', 'type': 'bool'},
         'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'run_exclusive': {'key': 'runExclusive', 'type': 'bool'},
@@ -4375,6 +4398,7 @@ class JobManagerTask(Model):
         self.output_files = kwargs.get('output_files', None)
         self.environment_settings = kwargs.get('environment_settings', None)
         self.constraints = kwargs.get('constraints', None)
+        self.required_slots = kwargs.get('required_slots', None)
         self.kill_job_on_completion = kwargs.get('kill_job_on_completion', None)
         self.user_identity = kwargs.get('user_identity', None)
         self.run_exclusive = kwargs.get('run_exclusive', None)
@@ -4829,7 +4853,7 @@ class JobReleaseTask(Model):
     running, the Job Release Task runs again when the Compute Node starts up.
     The Job is not marked as complete until all Job Release Tasks have
     completed. The Job Release Task runs in the background. It does not occupy
-    a scheduling slot; that is, it does not count towards the maxTasksPerNode
+    a scheduling slot; that is, it does not count towards the taskSlotsPerNode
     limit specified on the Pool.
 
     All required parameters must be populated in order to send to Azure.
@@ -6936,6 +6960,10 @@ class OutputFile(Model):
     another location after the Batch service has finished executing the Task
     process.
 
+    On every file uploads, Batch service writes two log files to the compute
+    node, 'fileuploadout.txt' and 'fileuploaderr.txt'. These log files are used
+    to learn more about a specific failure.
+
     All required parameters must be populated in order to send to Azure.
 
     :param file_pattern: Required. A pattern indicating which file(s) to
@@ -7213,11 +7241,11 @@ class PoolAddParameter(Model):
      application licenses. If a license is requested which is not supported,
      Pool creation will fail.
     :type application_licenses: list[str]
-    :param max_tasks_per_node: The maximum number of Tasks that can run
-     concurrently on a single Compute Node in the Pool. The default value is 1.
-     The maximum value is the smaller of 4 times the number of cores of the
-     vmSize of the Pool or 256.
-    :type max_tasks_per_node: int
+    :param task_slots_per_node: The number of task slots that can be used to
+     run concurrent tasks on a single compute node in the pool. The default
+     value is 1. The maximum value is the smaller of 4 times the number of
+     cores of the vmSize of the pool or 256.
+    :type task_slots_per_node: int
     :param task_scheduling_policy: How Tasks are distributed across Compute
      Nodes in a Pool. If not specified, the default is spread.
     :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
@@ -7257,7 +7285,7 @@ class PoolAddParameter(Model):
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
         'application_licenses': {'key': 'applicationLicenses', 'type': '[str]'},
-        'max_tasks_per_node': {'key': 'maxTasksPerNode', 'type': 'int'},
+        'task_slots_per_node': {'key': 'taskSlotsPerNode', 'type': 'int'},
         'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
@@ -7283,7 +7311,7 @@ class PoolAddParameter(Model):
         self.certificate_references = kwargs.get('certificate_references', None)
         self.application_package_references = kwargs.get('application_package_references', None)
         self.application_licenses = kwargs.get('application_licenses', None)
-        self.max_tasks_per_node = kwargs.get('max_tasks_per_node', None)
+        self.task_slots_per_node = kwargs.get('task_slots_per_node', None)
         self.task_scheduling_policy = kwargs.get('task_scheduling_policy', None)
         self.user_accounts = kwargs.get('user_accounts', None)
         self.metadata = kwargs.get('metadata', None)
@@ -7490,7 +7518,8 @@ class PoolEndpointConfiguration(Model):
      be used to address specific ports on an individual Compute Node
      externally. The maximum number of inbound NAT Pools per Batch Pool is 5.
      If the maximum number of inbound NAT Pools is exceeded the request fails
-     with HTTP status code 400.
+     with HTTP status code 400. This cannot be specified if the
+     IPAddressProvisioningType is NoPublicIPAddresses.
     :type inbound_nat_pools: list[~azure.batch.models.InboundNATPool]
     """
 
@@ -8218,11 +8247,11 @@ class PoolSpecification(Model):
      calling the REST API directly, the HTTP status code is 400 (Bad Request).
     :type virtual_machine_configuration:
      ~azure.batch.models.VirtualMachineConfiguration
-    :param max_tasks_per_node: The maximum number of Tasks that can run
-     concurrently on a single Compute Node in the Pool. The default value is 1.
-     The maximum value is the smaller of 4 times the number of cores of the
-     vmSize of the Pool or 256.
-    :type max_tasks_per_node: int
+    :param task_slots_per_node: The number of task slots that can be used to
+     run concurrent tasks on a single compute node in the pool. The default
+     value is 1. The maximum value is the smaller of 4 times the number of
+     cores of the vmSize of the pool or 256.
+    :type task_slots_per_node: int
     :param task_scheduling_policy: How Tasks are distributed across Compute
      Nodes in a Pool. If not specified, the default is spread.
     :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
@@ -8323,7 +8352,7 @@ class PoolSpecification(Model):
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'cloud_service_configuration': {'key': 'cloudServiceConfiguration', 'type': 'CloudServiceConfiguration'},
         'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
-        'max_tasks_per_node': {'key': 'maxTasksPerNode', 'type': 'int'},
+        'task_slots_per_node': {'key': 'taskSlotsPerNode', 'type': 'int'},
         'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
         'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
         'target_dedicated_nodes': {'key': 'targetDedicatedNodes', 'type': 'int'},
@@ -8348,7 +8377,7 @@ class PoolSpecification(Model):
         self.vm_size = kwargs.get('vm_size', None)
         self.cloud_service_configuration = kwargs.get('cloud_service_configuration', None)
         self.virtual_machine_configuration = kwargs.get('virtual_machine_configuration', None)
-        self.max_tasks_per_node = kwargs.get('max_tasks_per_node', None)
+        self.task_slots_per_node = kwargs.get('task_slots_per_node', None)
         self.task_scheduling_policy = kwargs.get('task_scheduling_policy', None)
         self.resize_timeout = kwargs.get('resize_timeout', None)
         self.target_dedicated_nodes = kwargs.get('target_dedicated_nodes', None)
@@ -8633,9 +8662,9 @@ class PublicIPAddressConfiguration(Model):
     :type provision: str or ~azure.batch.models.IPAddressProvisioningType
     :param ip_address_ids: The list of public IPs which the Batch service will
      use when provisioning Compute Nodes. The number of IPs specified here
-     limits the maximum size of the Pool - 50 dedicated nodes or 20
+     limits the maximum size of the Pool - 100 dedicated nodes or 100
      low-priority nodes can be allocated for each public IP. For example, a
-     pool needing 150 dedicated VMs would need at least 3 public IPs specified.
+     pool needing 250 dedicated VMs would need at least 3 public IPs specified.
      Each element of this collection is of the form:
      /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
     :type ip_address_ids: list[str]
@@ -9396,6 +9425,11 @@ class TaskAddParameter(Model):
      maxTaskRetryCount specified for the Job, the maxWallClockTime is infinite,
      and the retentionTime is 7 days.
     :type constraints: ~azure.batch.models.TaskConstraints
+    :param required_slots: The number of scheduling slots that the Task
+     required to run. The default is 1. A Task can only be scheduled to run on
+     a compute node if the node has enough free scheduling slots available. For
+     multi-instance Tasks, this must be 1.
+    :type required_slots: int
     :param user_identity: The user identity under which the Task runs. If
      omitted, the Task runs as a non-administrative user unique to the Task.
     :type user_identity: ~azure.batch.models.UserIdentity
@@ -9449,6 +9483,7 @@ class TaskAddParameter(Model):
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'affinity_info': {'key': 'affinityInfo', 'type': 'AffinityInformation'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
+        'required_slots': {'key': 'requiredSlots', 'type': 'int'},
         'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'multi_instance_settings': {'key': 'multiInstanceSettings', 'type': 'MultiInstanceSettings'},
         'depends_on': {'key': 'dependsOn', 'type': 'TaskDependencies'},
@@ -9468,6 +9503,7 @@ class TaskAddParameter(Model):
         self.environment_settings = kwargs.get('environment_settings', None)
         self.affinity_info = kwargs.get('affinity_info', None)
         self.constraints = kwargs.get('constraints', None)
+        self.required_slots = kwargs.get('required_slots', None)
         self.user_identity = kwargs.get('user_identity', None)
         self.multi_instance_settings = kwargs.get('multi_instance_settings', None)
         self.depends_on = kwargs.get('depends_on', None)
@@ -9676,6 +9712,34 @@ class TaskCounts(Model):
         self.completed = kwargs.get('completed', None)
         self.succeeded = kwargs.get('succeeded', None)
         self.failed = kwargs.get('failed', None)
+
+
+class TaskCountsResult(Model):
+    """The Task and TaskSlot counts for a Job.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param task_counts: Required. The number of Tasks per state.
+    :type task_counts: ~azure.batch.models.TaskCounts
+    :param task_slot_counts: Required. The number of TaskSlots required by
+     Tasks per state.
+    :type task_slot_counts: ~azure.batch.models.TaskSlotCounts
+    """
+
+    _validation = {
+        'task_counts': {'required': True},
+        'task_slot_counts': {'required': True},
+    }
+
+    _attribute_map = {
+        'task_counts': {'key': 'taskCounts', 'type': 'TaskCounts'},
+        'task_slot_counts': {'key': 'taskSlotCounts', 'type': 'TaskSlotCounts'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TaskCountsResult, self).__init__(**kwargs)
+        self.task_counts = kwargs.get('task_counts', None)
+        self.task_slot_counts = kwargs.get('task_slot_counts', None)
 
 
 class TaskDeleteOptions(Model):
@@ -10222,6 +10286,48 @@ class TaskSchedulingPolicy(Model):
     def __init__(self, **kwargs):
         super(TaskSchedulingPolicy, self).__init__(**kwargs)
         self.node_fill_type = kwargs.get('node_fill_type', None)
+
+
+class TaskSlotCounts(Model):
+    """The TaskSlot counts for a Job.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param active: Required. The number of TaskSlots for active Tasks.
+    :type active: int
+    :param running: Required. The number of TaskSlots for running Tasks.
+    :type running: int
+    :param completed: Required. The number of TaskSlots for completed Tasks.
+    :type completed: int
+    :param succeeded: Required. The number of TaskSlots for succeeded Tasks.
+    :type succeeded: int
+    :param failed: Required. The number of TaskSlots for failed Tasks.
+    :type failed: int
+    """
+
+    _validation = {
+        'active': {'required': True},
+        'running': {'required': True},
+        'completed': {'required': True},
+        'succeeded': {'required': True},
+        'failed': {'required': True},
+    }
+
+    _attribute_map = {
+        'active': {'key': 'active', 'type': 'int'},
+        'running': {'key': 'running', 'type': 'int'},
+        'completed': {'key': 'completed', 'type': 'int'},
+        'succeeded': {'key': 'succeeded', 'type': 'int'},
+        'failed': {'key': 'failed', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TaskSlotCounts, self).__init__(**kwargs)
+        self.active = kwargs.get('active', None)
+        self.running = kwargs.get('running', None)
+        self.completed = kwargs.get('completed', None)
+        self.succeeded = kwargs.get('succeeded', None)
+        self.failed = kwargs.get('failed', None)
 
 
 class TaskStatistics(Model):

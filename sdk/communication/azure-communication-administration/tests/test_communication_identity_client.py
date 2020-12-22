@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from azure.communication.administration import CommunicationIdentityClient
+from azure.core.credentials import AccessToken
 from _shared.helper import URIIdentityReplacer
 from _shared.testcase import (
     CommunicationTestCase,
@@ -13,17 +14,38 @@ from _shared.testcase import (
 )
 from devtools_testutils import ResourceGroupPreparer
 from _shared.communication_service_preparer import CommunicationServicePreparer 
+from azure.identity import DefaultAzureCredential
+from azure.communication.administration._shared.utils import parse_connection_str
 
+class FakeTokenCredential(object):
+    def __init__(self):
+        self.token = AccessToken("Fake Token", 0)
+
+    def get_token(self, *args):
+        return self.token
 class CommunicationIdentityClientTest(CommunicationTestCase):
     def setUp(self):
         super(CommunicationIdentityClientTest, self).setUp()
         self.recording_processors.extend([
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
+    
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    def test_create_user_from_managed_identity(self, connection_string):
+        endpoint, access_key = parse_connection_str(connection_string)
+        from devtools_testutils import is_live
+        if not is_live():
+            credential = FakeTokenCredential()
+        else:
+            credential = DefaultAzureCredential()
+        identity_client = CommunicationIdentityClient(endpoint, credential)
+        user = identity_client.create_user()
 
-    @pytest.mark.live_test_only
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @CommunicationServicePreparer(use_cache=True)
+        assert user.identifier is not None
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
     def test_create_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)
@@ -31,9 +53,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         assert user.identifier is not None
 
-    @pytest.mark.live_test_only
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @CommunicationServicePreparer(use_cache=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
     def test_issue_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)
@@ -44,9 +65,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
     
-    @pytest.mark.live_test_only
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @CommunicationServicePreparer(use_cache=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
     def test_revoke_tokens(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)
@@ -58,9 +78,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
     
-    @pytest.mark.live_test_only
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @CommunicationServicePreparer(use_cache=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
     def test_delete_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)

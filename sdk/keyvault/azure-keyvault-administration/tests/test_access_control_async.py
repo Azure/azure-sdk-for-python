@@ -87,16 +87,18 @@ class AccessControlTests(KeyVaultTestCase):
         # new assignment should be in the list of all assignments
         matching_assignments = []
         async for assignment in client.list_role_assignments(scope):
-            if assignment.assignment_id == created.assignment_id:
+            if assignment.role_assignment_id == created.role_assignment_id:
                 matching_assignments.append(assignment)
         assert len(matching_assignments) == 1
 
         # delete the assignment
         deleted = await client.delete_role_assignment(scope, created.name)
         assert deleted.name == created.name
-        assert deleted.assignment_id == created.assignment_id
+        assert deleted.role_assignment_id == created.role_assignment_id
         assert deleted.scope == scope
         assert deleted.role_definition_id == created.role_definition_id
 
         async for assignment in client.list_role_assignments(scope):
-            assert assignment.assignment_id != created.assignment_id, "the role assignment should have been deleted"
+            assert (
+                assignment.role_assignment_id != created.role_assignment_id
+            ), "the role assignment should have been deleted"

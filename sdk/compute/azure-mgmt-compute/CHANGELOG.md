@@ -1,5 +1,34 @@
 # Release History
 
+## 18.0.0 (2020-11-17)
+
+**Features**
+
+  - Model GalleryImageUpdate has a new parameter features
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter manage_actions
+  - Model GalleryImage has a new parameter features
+  - Model Gallery has a new parameter sharing_profile
+  - Model GalleryArtifactVersionSource has a new parameter uri
+  - Model GalleryUpdate has a new parameter sharing_profile
+  - Model UserArtifactSource has a new parameter default_configuration_link
+  - Added operation VirtualMachineRunCommandsOperations.begin_update
+  - Added operation VirtualMachineRunCommandsOperations.begin_create_or_update
+  - Added operation VirtualMachineRunCommandsOperations.begin_delete
+  - Added operation VirtualMachineRunCommandsOperations.get_by_virtual_machine
+  - Added operation VirtualMachineRunCommandsOperations.list_by_virtual_machine
+  - Added operation group SharedGalleriesOperations
+  - Added operation group VirtualMachineScaleSetVMRunCommandsOperations
+  - Added operation group GallerySharingProfileOperations
+  - Added operation group SharedGalleryImageVersionsOperations
+  - Added operation group SharedGalleryImagesOperations
+
+**Breaking changes**
+
+  - Operation GalleriesOperations.get has a new signature
+  - Operation VirtualMachinesOperations.begin_delete has a new signature
+  - Model GalleryApplicationVersionPublishingProfile no longer has parameter content_type
+  - Model UserArtifactSource no longer has parameter file_name
+
 ## 17.0.0 (2020-09-16)
 
 **Features**

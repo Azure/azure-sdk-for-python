@@ -16,45 +16,51 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import ServiceBusManagementClientConfiguration
-from .operations import Operations
 from .operations import NamespacesOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import Operations
 from .operations import DisasterRecoveryConfigsOperations
-from .operations import MigrationConfigsOperations
 from .operations import QueuesOperations
 from .operations import TopicsOperations
+from .operations import EventHubsOperations
+from .operations import MigrationConfigsOperations
+from .operations import PremiumMessagingRegionsOperations
+from .operations import RegionsOperations
 from .operations import SubscriptionsOperations
 from .operations import RulesOperations
-from .operations import RegionsOperations
-from .operations import PremiumMessagingRegionsOperations
-from .operations import EventHubsOperations
 from .. import models
 
 
 class ServiceBusManagementClient(object):
-    """Azure Service Bus client.
+    """Azure Service Bus client for managing Namespace, IPFilter Rules, VirtualNetworkRules and Zone Redundant.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.servicebus.aio.operations.Operations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.servicebus.aio.operations.NamespacesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: azure.mgmt.servicebus.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.servicebus.aio.operations.PrivateLinkResourcesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.servicebus.aio.operations.Operations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigsOperations operations
     :vartype disaster_recovery_configs: azure.mgmt.servicebus.aio.operations.DisasterRecoveryConfigsOperations
-    :ivar migration_configs: MigrationConfigsOperations operations
-    :vartype migration_configs: azure.mgmt.servicebus.aio.operations.MigrationConfigsOperations
     :ivar queues: QueuesOperations operations
     :vartype queues: azure.mgmt.servicebus.aio.operations.QueuesOperations
     :ivar topics: TopicsOperations operations
     :vartype topics: azure.mgmt.servicebus.aio.operations.TopicsOperations
+    :ivar event_hubs: EventHubsOperations operations
+    :vartype event_hubs: azure.mgmt.servicebus.aio.operations.EventHubsOperations
+    :ivar migration_configs: MigrationConfigsOperations operations
+    :vartype migration_configs: azure.mgmt.servicebus.aio.operations.MigrationConfigsOperations
+    :ivar premium_messaging_regions: PremiumMessagingRegionsOperations operations
+    :vartype premium_messaging_regions: azure.mgmt.servicebus.aio.operations.PremiumMessagingRegionsOperations
+    :ivar regions: RegionsOperations operations
+    :vartype regions: azure.mgmt.servicebus.aio.operations.RegionsOperations
     :ivar subscriptions: SubscriptionsOperations operations
     :vartype subscriptions: azure.mgmt.servicebus.aio.operations.SubscriptionsOperations
     :ivar rules: RulesOperations operations
     :vartype rules: azure.mgmt.servicebus.aio.operations.RulesOperations
-    :ivar regions: RegionsOperations operations
-    :vartype regions: azure.mgmt.servicebus.aio.operations.RegionsOperations
-    :ivar premium_messaging_regions: PremiumMessagingRegionsOperations operations
-    :vartype premium_messaging_regions: azure.mgmt.servicebus.aio.operations.PremiumMessagingRegionsOperations
-    :ivar event_hubs: EventHubsOperations operations
-    :vartype event_hubs: azure.mgmt.servicebus.aio.operations.EventHubsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -80,27 +86,31 @@ class ServiceBusManagementClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.migration_configs = MigrationConfigsOperations(
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.topics = TopicsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.subscriptions = SubscriptionsOperations(
+        self.event_hubs = EventHubsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.rules = RulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.regions = RegionsOperations(
+        self.migration_configs = MigrationConfigsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.premium_messaging_regions = PremiumMessagingRegionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.event_hubs = EventHubsOperations(
+        self.regions = RegionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.subscriptions = SubscriptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.rules = RulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:

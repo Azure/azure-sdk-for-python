@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-security-attestation/1.0.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://shareduks.uks.test.attest.azure.net/policies/SgxEnclave?api-version=2020-10-01
+  response:
+    body:
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vc2hhcmVkdWtzLnVrcy50ZXN0LmF0dGVzdC5henVyZS5uZXQvY2VydHMiLCAia2lkIjogIjNvNE91bjB2SEZHZTF1Rms1MDNKK1EwVE1wZ1NGMncrM1dYUlYyM2IvckE9IiwgInR5cCI6ICJKV1QifQ.eyJleHAiOiAxNjA3NjI3NDMzLCAiaWF0IjogMTYwNzYyMzgzMywgImlzcyI6ICJodHRwczovL3NoYXJlZHVrcy51a3MudGVzdC5hdHRlc3QuYXp1cmUubmV0IiwgIm5iZiI6IDE2MDc2MjM4MzMsICJ4LW1zLXBvbGljeSI6ICJleUpoYkdjaU9pSnViMjVsSW4wLmV5SkJkSFJsYzNSaGRHbHZibEJ2YkdsamVTSTZJQ0prYlZaNVl6SnNkbUpxTUdkTlV6UjNUekpHTVdSSGFIWmpiV3cyV1ZoU2NHSXlOWGxrVjNoc1l6TjBhazlzZERCbFdFSnNVRlF3YVVwSGJIcE1WMUpzV1c1V2Jsb3lSbWxpUjFWcFdGTkJPVkJwUW5kYVdFcDBZVmhSYjB0VWREbFBNbXg2WXpOV2FHSnRUbXhqYmxaeldsaE9OMWw2Y0dKa1NHeDNXbFF3T1VscFVuQmplVEZyV2xkS01Wb3laR2haYlhoc1NXd3daMUJVTkdkaFdFNTZaRmRWYjJSSWJIZGFWREJwWVZoTmRGcEhWbWxrVjJSdVdWZEtjMXBUU1hOSlNGcG9Za2hXYkZCWFRYVmtiVVp6WkZkVmNFOHlUVFpYTTFJMVkwZFZPVkJUU1d0ak1tUTBURmN4ZVdNeWJHNWliVlo1U1d3d1oxQlVOR2RoV0U1NlpGZFZiMlJJYkhkYVZEQnBZekprTkV4WE1YbGpNbXh1WW0xV2VVbHBkMmRrYlVaelpGZFZPVmw1TlRKWlYzZ3hXbE5yTjFsNmNHSmtTR3gzV2xRd09VbHBVbnBhTTJkMFlsaEtiR0p0VG5OWldGcHNTV3d3WjFCVU5HZGhXRTU2WkZkVmIyUkliSGRhVkRCcFl6SmtORXhYTVhsYVZ6VnFZa2RHTWxwVFNYTkpTRnBvWWtoV2JGQlhUWFZrYlVaelpGZFZjRTh5VFRaWE0xSTFZMGRWT1ZCVFNXdGpTRXAyV2toV2FtUkRNWEJhUTBwa1NVUXdMVWxIYkhwak0xWnNTMGhTTldOSFZUbEpia0o1WWpKU01Wa3pVWFJoVjFGcFRFTkNNbGxYZURGYVZERnFURzVhYUdKSVZteExWSFJxVDJ4ME1HVllRbXhRVkRCcFNraE9NbUpwU21SSlJEQXRTVWRzZW1NelZteExTRkkxWTBkVk9VbHVUakppYVVselNVaGFhR0pJVm14UVYwMTFaRzFHYzJSWFZYQlBNazAyVnpOU05XTkhWVGxRVTBsclpFZFdiRWxzTUdkUVZEUm5ZVmhPZW1SWFZXOWtTR3gzV2xRd2FXUkhWbXhKYVhkblpHMUdjMlJYVlRsWmVUVXlXVmQ0TVZwVGF6ZG1WSE1pZlEuIn0.XFTJ_DyIKhzqzxQuung3iGV27HHf6DQxBjgiQ5Hh1HA7gz6362iNSo90B6l5T_LMmZ4srS6FgL1471YWSj28-OVy9C_sm5dHeWIXZaLQHi-tRCGXAi0iSOZwRfRuKa_kKZaZiJ4OtVystH2ainqXaVgNGD-E-n0v9qJbHzF56o0"}'
+    headers:
+      content-length:
+      - '1762'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 10 Dec 2020 18:10:33 GMT
+      server:
+      - Kestrel
+      x-ms-maa-service-version:
+      - 1.10.01439.0001
+    status:
+      code: 200
+      message: OK
+version: 1

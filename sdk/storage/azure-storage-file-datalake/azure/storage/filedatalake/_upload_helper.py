@@ -7,13 +7,11 @@
 
 from ._deserialize import (
     process_storage_error)
-from ._generated.models import (
-    StorageErrorException,
-)
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import (
     upload_data_chunks,
     DataLakeFileChunkUploader)
+from ...core.exceptions import HttpResponseError
 
 
 def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
@@ -81,7 +79,8 @@ def upload_datalake_file(  # pylint: disable=unused-argument
         return client.flush_data(position=length,
                                  path_http_headers=path_http_headers,
                                  modified_access_conditions=modified_access_conditions,
+                                 close=True,
                                  cls=return_response_headers,
                                  **kwargs)
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         process_storage_error(error)

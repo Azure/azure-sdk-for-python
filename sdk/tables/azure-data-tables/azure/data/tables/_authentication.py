@@ -10,10 +10,17 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-
-
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+try:
+    from azure.core.pipeline.transport import AsyncHttpTransport
+except ImportError:
+    AsyncHttpTransport = None
+
+try:
+    from yarl import URL
+except ImportError:
+    pass
 
 from ._constants import (
     DEV_ACCOUNT_NAME,
@@ -57,8 +64,16 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         return request.method + '\n'
 
     def _get_canonicalized_resource(self, request):
-        # uri_path = request.path.split('?')[0]
-        uri_path = urlparse(request.url).path
+        uri_path = urlparse(request.http_request.url).path
+        try:
+            if isinstance(request.context.transport, AsyncHttpTransport) or \
+                isinstance(getattr(request.context.transport, "_transport", None), AsyncHttpTransport) or \
+                    isinstance(getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
+                               AsyncHttpTransport):
+                uri_path = URL(uri_path)
+                return '/' + self.account_name + str(uri_path)
+        except TypeError:
+            pass
 
         # for emulator, use the DEV_ACCOUNT_NAME instead of DEV_ACCOUNT_SECONDARY_NAME
         # as this is how the emulator works
@@ -91,18 +106,18 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request):  # type: (PipelineRequest) -> Union[None, Awaitable[None]]
-        self.sign_request(request.http_request)
+        self.sign_request(request)
 
     def sign_request(self, request):
         string_to_sign = \
-            self._get_verb(request) + \
+            self._get_verb(request.http_request) + \
             self._get_headers(
-                request,
+                request.http_request,
                 ['content-md5', 'content-type', 'x-ms-date'],
             ) + \
             self._get_canonicalized_resource(request) + \
-            self._get_canonicalized_resource_query(request)
-        self._add_authorization_header(request, string_to_sign)
+            self._get_canonicalized_resource_query(request.http_request)
+        self._add_authorization_header(request.http_request, string_to_sign)
         logger.debug("String_to_sign=%s", string_to_sign)
 
     def _get_canonicalized_resource_query(self, request):

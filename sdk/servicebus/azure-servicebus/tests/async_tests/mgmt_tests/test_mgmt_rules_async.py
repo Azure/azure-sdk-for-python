@@ -36,6 +36,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
         rule_name_1 = 'test_rule_1'
         rule_name_2 = 'test_rule_2'
         rule_name_3 = 'test_rule_3'
+        rule_name_4 = 'test_rule_4'
 
         correlation_fitler = CorrelationRuleFilter(correlation_id='testcid', properties={
             "key_string": "str1",
@@ -83,10 +84,15 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_3)
             assert type(rule_desc.filter) == TrueRuleFilter
 
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name_4)
+            rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_4)
+            assert type(rule_desc.filter) == TrueRuleFilter
+
         finally:
             await mgmt_service.delete_rule(topic_name, subscription_name, rule_name_1)
             await mgmt_service.delete_rule(topic_name, subscription_name, rule_name_2)
             await mgmt_service.delete_rule(topic_name, subscription_name, rule_name_3)
+            await mgmt_service.delete_rule(topic_name, subscription_name, rule_name_4)
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
 

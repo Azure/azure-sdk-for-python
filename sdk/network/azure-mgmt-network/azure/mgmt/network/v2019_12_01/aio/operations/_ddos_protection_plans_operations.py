@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DdosProtectionPlansOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -131,7 +131,13 @@ class DdosProtectionPlansOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ddosProtectionPlanName': self._serialize.url("ddos_protection_plan_name", ddos_protection_plan_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -150,7 +156,7 @@ class DdosProtectionPlansOperations:
         resource_group_name: str,
         ddos_protection_plan_name: str,
         **kwargs
-    ) -> "models.DdosProtectionPlan":
+    ) -> "_models.DdosProtectionPlan":
         """Gets information about the specified DDoS protection plan.
 
         :param resource_group_name: The name of the resource group.
@@ -162,7 +168,7 @@ class DdosProtectionPlansOperations:
         :rtype: ~azure.mgmt.network.v2019_12_01.models.DdosProtectionPlan
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -207,10 +213,10 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        parameters: "models.DdosProtectionPlan",
+        parameters: "_models.DdosProtectionPlan",
         **kwargs
-    ) -> "models.DdosProtectionPlan":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
+    ) -> "_models.DdosProtectionPlan":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -264,9 +270,9 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        parameters: "models.DdosProtectionPlan",
+        parameters: "_models.DdosProtectionPlan",
         **kwargs
-    ) -> AsyncLROPoller["models.DdosProtectionPlan"]:
+    ) -> AsyncLROPoller["_models.DdosProtectionPlan"]:
         """Creates or updates a DDoS protection plan.
 
         :param resource_group_name: The name of the resource group.
@@ -286,7 +292,7 @@ class DdosProtectionPlansOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlan"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -311,7 +317,13 @@ class DdosProtectionPlansOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ddosProtectionPlanName': self._serialize.url("ddos_protection_plan_name", ddos_protection_plan_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -329,9 +341,9 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.DdosProtectionPlan":
+    ) -> "_models.DdosProtectionPlan":
         """Update a DDoS protection plan tags.
 
         :param resource_group_name: The name of the resource group.
@@ -345,7 +357,7 @@ class DdosProtectionPlansOperations:
         :rtype: ~azure.mgmt.network.v2019_12_01.models.DdosProtectionPlan
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -394,7 +406,7 @@ class DdosProtectionPlansOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.DdosProtectionPlanListResult"]:
+    ) -> AsyncIterable["_models.DdosProtectionPlanListResult"]:
         """Gets all DDoS protection plans in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -402,7 +414,7 @@ class DdosProtectionPlansOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_12_01.models.DdosProtectionPlanListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlanListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlanListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -461,7 +473,7 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DdosProtectionPlanListResult"]:
+    ) -> AsyncIterable["_models.DdosProtectionPlanListResult"]:
         """Gets all the DDoS protection plans in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -471,7 +483,7 @@ class DdosProtectionPlansOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_12_01.models.DdosProtectionPlanListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlanListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlanListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

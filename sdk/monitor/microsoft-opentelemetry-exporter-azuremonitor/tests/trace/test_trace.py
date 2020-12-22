@@ -9,20 +9,16 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
-from opentelemetry.sdk import trace
+from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
-from microsoft.opentelemetry.exporter.azuremonitor.export import ExportResult
-from microsoft.opentelemetry.exporter.azuremonitor.export.trace import (
-    AzureMonitorSpanExporter,
-    indicate_processed_by_metric_extractors,
+from microsoft.opentelemetry.exporter.azuremonitor.export._base import ExportResult
+from microsoft.opentelemetry.exporter.azuremonitor.export.trace._exporter import (
+    AzureMonitorTraceExporter
 )
-from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
-
-TEST_FOLDER = os.path.abspath(".test")
-STORAGE_PATH = os.path.join(TEST_FOLDER)
+from microsoft.opentelemetry.exporter.azuremonitor._options import ExporterOptions
 
 
 def throw(exc_type, *args, **kwargs):
@@ -35,70 +31,38 @@ def throw(exc_type, *args, **kwargs):
 # pylint: disable=import-error
 # pylint: disable=protected-access
 # pylint: disable=too-many-lines
-class TestAzureSpanExporter(unittest.TestCase):
+class TestAzureTraceExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.makedirs(TEST_FOLDER, exist_ok=True)
         os.environ.clear()
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
-        cls._exporter = AzureMonitorSpanExporter(storage_path=STORAGE_PATH)
+        cls._exporter = AzureMonitorTraceExporter()
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(TEST_FOLDER, True)
-
-    def setUp(self):
-        if os.path.exists(STORAGE_PATH):
-            for filename in os.listdir(STORAGE_PATH):
-                file_path = os.path.join(STORAGE_PATH, filename)
-                try:
-                    if os.path.isfile(file_path) or os.path.islink(file_path):
-                        os.unlink(file_path)
-                    elif os.path.isdir(file_path):
-                        shutil.rmtree(file_path, True)
-                except OSError as e:
-                    print("Failed to delete %s. Reason: %s" % (file_path, e))
+        shutil.rmtree(cls._exporter.storage._path, True)
 
     def test_constructor(self):
         """Test the constructor."""
-        exporter = AzureMonitorSpanExporter(
-            instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab",
-            storage_path=os.path.join(TEST_FOLDER, self.id()),
-            storage_max_size=50,
-            storage_maintenance_period=100,
-            storage_retention_period=200,
-            proxies={"asd": "123"},
-            timeout=5.0,
+        exporter = AzureMonitorTraceExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertIsInstance(exporter.options, ExporterOptions)
         self.assertEqual(
-            exporter.options.instrumentation_key,
+            exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
-        )
-        self.assertEqual(
-            exporter.storage.path, os.path.join(TEST_FOLDER, self.id())
-        )
-        self.assertEqual(exporter.storage.max_size, 50)
-        self.assertEqual(exporter.storage.maintenance_period, 100)
-        self.assertEqual(exporter.storage.retention_period, 200)
-        self.assertEqual(exporter.options.proxies, {"asd": "123"})
-        self.assertEqual(exporter.options.timeout, 5.0)
-        self.assertEqual(
-            exporter._telemetry_processors[0],
-            indicate_processed_by_metric_extractors,
         )
 
     def test_export_empty(self):
         exporter = self._exporter
-        exporter.export([])
-        self.assertEqual(len(os.listdir(exporter.storage.path)), 0)
+        result = exporter.export([])
+        self.assertEqual(result, SpanExportResult.SUCCESS)
 
     def test_export_failure(self):
         exporter = self._exporter
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             test_span = trace._Span(
                 name="test",
@@ -112,7 +76,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             test_span.end()
             transmit.return_value = ExportResult.FAILED_RETRYABLE
             exporter.export([test_span])
-        self.assertEqual(len(os.listdir(exporter.storage.path)), 1)
+        self.assertEqual(len(os.listdir(exporter.storage._path)), 1)
         self.assertIsNone(exporter.storage.get())
 
     def test_export_success(self):
@@ -128,20 +92,16 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.SUCCESS
             storage_mock = mock.Mock()
             exporter._transmit_from_storage = storage_mock
-            exporter.export([test_span])
-            self.assertEqual(len(exporter._telemetry_processors), 1)
+            result = exporter.export([test_span])
+            self.assertEqual(result, SpanExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
-            try:
-                self.assertEqual(len(os.listdir(exporter.storage.path)), 0)
-            except FileNotFoundError as ex:
-                pass
 
-    @mock.patch("microsoft.opentelemetry.exporter.azuremonitor.export.trace.logger")
+    @mock.patch("microsoft.opentelemetry.exporter.azuremonitor.export.trace._exporter.logger")
     def test_export_exception(self, logger_mock):
         test_span = trace._Span(
             name="test",
@@ -155,7 +115,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.end()
         exporter = self._exporter
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit",
+            "microsoft.opentelemetry.exporter.azuremonitor.AzureMonitorTraceExporter._transmit",
             throw(Exception),
         ):  # noqa: E501
             result = exporter.export([test_span])
@@ -175,43 +135,63 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
             result = exporter.export([test_span])
             self.assertEqual(result, SpanExportResult.FAILURE)
 
-    def test_indicate_processed_by_metric_extractors(self):
-        envelope = mock.Mock()
-        envelope.data.base_type = "RemoteDependencyData"
-        envelope.data.base_data.properties = {}
-        indicate_processed_by_metric_extractors(envelope)
-        self.assertEqual(
-            envelope.data.base_data.properties[
-                "_MS.ProcessedByMetricExtractors"
-            ],
-            "(Name:'Dependencies',Ver:'1.1')",
-        )
-        envelope.data.base_type = "RequestData"
-        indicate_processed_by_metric_extractors(envelope)
-        self.assertEqual(
-            envelope.data.base_data.properties[
-                "_MS.ProcessedByMetricExtractors"
-            ],
-            "(Name:'Requests',Ver:'1.1')",
-        )
-
     def test_span_to_envelope_none(self):
         exporter = self._exporter
-        self.assertIsNone(exporter._span_to_envelope(None))
+        test_span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+        )
+        test_span.start()
+        test_span.end()
+
+    def test_span_to_envelope_tags(self):
+        exporter = self._exporter
+        test_span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+        )
+        test_span.start()
+        test_span.end()
+        envelope = exporter._span_to_envelope(test_span)
+
+        self.assertIsNotNone(envelope.tags)
+        self.assertIsNone(envelope.tags.get("ai.cloud.role"))
+        self.assertIsNone(envelope.tags.get("ai.cloud.roleInstance"))
+        self.assertIsNotNone(envelope.tags.get("ai.device.id"))
+        self.assertIsNotNone(envelope.tags.get("ai.device.locale"))
+        self.assertIsNotNone(envelope.tags.get("ai.device.osVersion"))
+        self.assertIsNotNone(envelope.tags.get("ai.device.type"))
+        self.assertIsNotNone(envelope.tags.get("ai.internal.sdkVersion"))
+
+        test_span.resource = resources.Resource(
+            {"service.name": "testServiceName",
+             "service.namespace": "testServiceNamespace",
+             "service.instance.id": "testServiceInstanceId"})
+        envelope = exporter._span_to_envelope(test_span)
+        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(
+            "ai.cloud.roleInstance"), "testServiceInstanceId")
 
     # pylint: disable=too-many-statements
-    def test_span_to_envelope(self):
-        exporter = AzureMonitorSpanExporter(
-            instrumentation_key="12345678-1234-5678-abcd-12345678abcd",
-            storage_path=os.path.join(TEST_FOLDER, self.id()),
-        )
 
+    def test_span_to_envelope(self):
+        exporter = AzureMonitorTraceExporter(
+            connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd",
+        )
         parent_span = SpanContext(
             trace_id=36873507687745823477771305566750195431,
             span_id=12030755672171557338,
@@ -234,7 +214,6 @@ class TestAzureSpanExporter(unittest.TestCase):
             trace_config=None,
             resource=None,
             attributes={
-                "component": "http",
                 "http.method": "GET",
                 "http.url": "https://www.wikipedia.org/wiki/Rabbit",
                 "http.status_code": 200,
@@ -250,69 +229,52 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(envelope.instrumentation_key,
                          "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
-            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
-        )
-        self.assertEqual(
             envelope.tags["ai.operation.parentId"], "a6f5d48acb4d31da"
         )
         self.assertEqual(
             envelope.tags["ai.operation.id"],
             "1bbd944a73a05d89eab5d3740a213ee7",
         )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
-        self.assertEqual(envelope.data.base_data.name, "GET//wiki/Rabbit")
-        self.assertEqual(
-            envelope.data.base_data.data,
-            "https://www.wikipedia.org/wiki/Rabbit",
-        )
-        self.assertEqual(envelope.data.base_data.target, "www.wikipedia.org")
-        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
-        self.assertEqual(envelope.data.base_data.result_code, "200")
-        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
-        self.assertEqual(envelope.data.base_data.type, "HTTP")
-        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-
-        # SpanKind.CLIENT unknown type
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={},
-            events=None,
-            links=[],
-            kind=SpanKind.CLIENT,
-        )
-        span.status = Status(status_code=StatusCode.OK)
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key,
-                         "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.parentId"], "a6f5d48acb4d31da"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.id"],
-            "1bbd944a73a05d89eab5d3740a213ee7",
         )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
-        self.assertEqual(envelope.data.base_data.type, None)
-        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.data.base_data.result_code, "200")
+        self.assertTrue(envelope.data.base_data.success)
 
-        # SpanKind.CLIENT missing method
+        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.data.base_data.type, "HTTP")
+        self.assertEqual(envelope.data.base_data.target, "www.wikipedia.org")
+        self.assertEqual(
+            envelope.data.base_data.data,
+            "https://www.wikipedia.org/wiki/Rabbit",
+        )
+        self.assertEqual(envelope.data.base_data.result_code, "200")
+
+        span.attributes = {
+            "component": "http",
+            "http.method": "GET",
+            "net.peer.port": 1234,
+            "net.peer.name": "testhost",
+            "http.status_code": 200,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "testhost:1234")
+
+        span.attributes = {
+            "component": "http",
+            "http.method": "GET",
+            "net.peer.port": 1234,
+            "net.peer.ip": "127.0.0.1",
+            "http.status_code": 200,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "127.0.0.1:1234")
+
+        # SpanKind.CLIENT Database
         span = trace._Span(
             name="test",
             context=SpanContext(
@@ -325,44 +287,24 @@ class TestAzureSpanExporter(unittest.TestCase):
             trace_config=None,
             resource=None,
             attributes={
-                "component": "http",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 200,
+                "db.system": "sql",
+                "db.statement": "Test Query",
+                "db.name": "test db",
             },
             events=None,
             links=[],
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key,
-                         "12345678-1234-5678-abcd-12345678abcd")
-        self.assertEqual(
-            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.parentId"], "a6f5d48acb4d31da"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.id"],
-            "1bbd944a73a05d89eab5d3740a213ee7",
-        )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
-        self.assertEqual(envelope.data.base_data.name, "test")
-        self.assertEqual(
-            envelope.data.base_data.data,
-            "https://www.wikipedia.org/wiki/Rabbit",
-        )
-        self.assertEqual(envelope.data.base_data.target, "www.wikipedia.org")
-        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
-        self.assertEqual(envelope.data.base_data.result_code, "200")
-        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
-        self.assertEqual(envelope.data.base_data.type, "HTTP")
-        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.type, "sql")
+        self.assertEqual(envelope.data.base_data.target, "test db")
+        self.assertEqual(envelope.data.base_data.data, "Test Query")
 
-        # SpanKind.SERVER HTTP - 200 request
+        # SpanKind.CLIENT rpc
         span = trace._Span(
             name="test",
             context=SpanContext(
@@ -375,49 +317,22 @@ class TestAzureSpanExporter(unittest.TestCase):
             trace_config=None,
             resource=None,
             attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.path": "/wiki/Rabbit",
-                "http.route": "/wiki/Rabbit",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 200,
+                "rpc.system": "rpc",
+                "rpc.service": "Test service",
             },
             events=None,
             links=[],
-            kind=SpanKind.SERVER,
+            kind=SpanKind.CLIENT,
         )
-        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key,
-                         "12345678-1234-5678-abcd-12345678abcd")
-        self.assertEqual(
-            envelope.name, "Microsoft.ApplicationInsights.Request"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.parentId"], "a6f5d48acb4d31da"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.id"],
-            "1bbd944a73a05d89eab5d3740a213ee7",
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.name"], "GET /wiki/Rabbit"
-        )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
-        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
-        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
-        self.assertEqual(envelope.data.base_data.response_code, "200")
-        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
-        self.assertEqual(envelope.data.base_data.success, True)
-        self.assertEqual(
-            envelope.data.base_data.url,
-            "https://www.wikipedia.org/wiki/Rabbit",
-        )
-        self.assertEqual(envelope.data.base_type, "RequestData")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.type, "rpc.system")
+        self.assertEqual(envelope.data.base_data.target, "Test service")
 
-        # SpanKind.SERVER HTTP - Failed request
+        # SpanKind.CLIENT messaging
         span = trace._Span(
             name="test",
             context=SpanContext(
@@ -430,92 +345,22 @@ class TestAzureSpanExporter(unittest.TestCase):
             trace_config=None,
             resource=None,
             attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.path": "/wiki/Rabbit",
-                "http.route": "/wiki/Rabbit",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 400,
+                "messaging.system": "messaging",
+                "net.peer.ip": "127.0.0.1",
+                "messaging.destination": "celery",
             },
             events=None,
             links=[],
-            kind=SpanKind.SERVER,
+            kind=SpanKind.CLIENT,
         )
-        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key,
-                         "12345678-1234-5678-abcd-12345678abcd")
-        self.assertEqual(
-            envelope.name, "Microsoft.ApplicationInsights.Request"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.parentId"], "a6f5d48acb4d31da"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.id"],
-            "1bbd944a73a05d89eab5d3740a213ee7",
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.name"], "GET /wiki/Rabbit"
-        )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
-        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
-        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
-        self.assertEqual(envelope.data.base_data.response_code, "400")
-        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
-        self.assertEqual(envelope.data.base_data.success, False)
-        self.assertEqual(
-            envelope.data.base_data.url,
-            "https://www.wikipedia.org/wiki/Rabbit",
-        )
-        self.assertEqual(envelope.data.base_type, "RequestData")
-
-        # SpanKind.SERVER unknown type
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.path": "/wiki/Rabbit",
-                "http.route": "/wiki/Rabbit",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 400,
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
         span.status = Status(status_code=StatusCode.OK)
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key,
-                         "12345678-1234-5678-abcd-12345678abcd")
-        self.assertEqual(
-            envelope.name, "Microsoft.ApplicationInsights.Request"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.parentId"], "a6f5d48acb4d31da"
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.id"],
-            "1bbd944a73a05d89eab5d3740a213ee7",
-        )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
-        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
-        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
-        self.assertEqual(envelope.data.base_type, "RequestData")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.type,
+                         "Queue Message | messaging")
+        self.assertEqual(envelope.data.base_data.target, "127.0.0.1/celery")
 
         # SpanKind.INTERNAL
         span = trace._Span(
@@ -525,39 +370,27 @@ class TestAzureSpanExporter(unittest.TestCase):
                 span_id=12030755672171557337,
                 is_remote=False,
             ),
-            parent=None,
+            parent=parent_span,
             sampler=None,
             trace_config=None,
             resource=None,
-            attributes={"key1": "value1"},
+            attributes={
+                "messaging.system": "messaging",
+                "net.peer.ip": "127.0.0.1",
+                "messaging.destination": "celery",
+            },
             events=None,
             links=[],
             kind=SpanKind.INTERNAL,
         )
-        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key,
-                         "12345678-1234-5678-abcd-12345678abcd")
-        self.assertEqual(
-            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
-        )
-        self.assertRaises(
-            KeyError, lambda: envelope.tags["ai.operation.parentId"]
-        )
-        self.assertEqual(
-            envelope.tags["ai.operation.id"],
-            "1bbd944a73a05d89eab5d3740a213ee7",
-        )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
-        self.assertEqual(envelope.data.base_data.name, "test")
-        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
-        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
+        self.assertTrue(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.type, "InProc")
-        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
 
-        # Attributes
+        # SpanKind.SERVER HTTP
         span = trace._Span(
             name="test",
             context=SpanContext(
@@ -570,11 +403,128 @@ class TestAzureSpanExporter(unittest.TestCase):
             trace_config=None,
             resource=None,
             attributes={
-                "component": "http",
+                "http.method": "GET",
+                "http.path": "/wiki/Rabbit",
+                "http.route": "/wiki/Rabbit",
+                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
+                "http.status_code": 200,
+            },
+            events=None,
+            links=[],
+            kind=SpanKind.SERVER,
+        )
+        span.status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.instrumentation_key,
+                         "12345678-1234-5678-abcd-12345678abcd")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.Request"
+        )
+        self.assertEqual(
+            envelope.tags["ai.operation.parentId"], "a6f5d48acb4d31da"
+        )
+        self.assertEqual(
+            envelope.tags["ai.operation.id"],
+            "1bbd944a73a05d89eab5d3740a213ee7",
+        )
+        self.assertEqual(envelope.data.base_type, "RequestData")
+        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
+        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
+        self.assertEqual(envelope.data.base_data.response_code, "200")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(
+            envelope.tags["ai.operation.name"], "/wiki/Rabbit"
+        )
+        self.assertEqual(
+            envelope.data.base_data.url,
+            "https://www.wikipedia.org/wiki/Rabbit",
+        )
+        self.assertEqual(
+            envelope.data.base_data.properties["request.url"],
+            "https://www.wikipedia.org/wiki/Rabbit",
+        )
+
+        # SpanKind.SERVER messaging
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=parent_span,
+            sampler=None,
+            trace_config=None,
+            resource=None,
+            attributes={
+                "messaging.system": "messaging",
+                "net.peer.name": "test name",
+                "net.peer.ip": "127.0.0.1",
+                "messaging.destination": "celery",
+            },
+            events=None,
+            links=[],
+            kind=SpanKind.SERVER,
+        )
+        span.status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(
+            envelope.data.base_data.properties["source"],
+            "test name/celery",
+        )
+
+        # Status/success error
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=parent_span,
+            sampler=None,
+            trace_config=None,
+            resource=None,
+            attributes={
+                "test": "asd",
                 "http.method": "GET",
                 "http.url": "https://www.wikipedia.org/wiki/Rabbit",
                 "http.status_code": 200,
+            },
+            events=None,
+            links=[],
+            kind=SpanKind.CLIENT,
+        )
+        span.status = Status(status_code=StatusCode.ERROR)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+
+        # Properties
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=parent_span,
+            sampler=None,
+            trace_config=None,
+            resource=None,
+            attributes={
                 "test": "asd",
+                "http.method": "GET",
+                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
+                "http.status_code": 200,
             },
             events=None,
             links=[],
@@ -584,10 +534,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(len(envelope.data.base_data.properties), 2)
-        self.assertEqual(
-            envelope.data.base_data.properties["component"], "http"
-        )
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
 
         # Links
@@ -613,7 +560,6 @@ class TestAzureSpanExporter(unittest.TestCase):
             trace_config=None,
             resource=None,
             attributes={
-                "component": "http",
                 "http.method": "GET",
                 "http.url": "https://www.wikipedia.org/wiki/Rabbit",
                 "http.status_code": 200,
@@ -626,341 +572,8 @@ class TestAzureSpanExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(len(envelope.data.base_data.properties), 2)
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
         json_dict = json.loads(
             envelope.data.base_data.properties["_MS.links"]
         )[0]
         self.assertEqual(json_dict["id"], "a6f5d48acb4d31da")
-
-        # Status
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 500,
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
-        span.status = Status(status_code=StatusCode.OK)
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.response_code, "500")
-        self.assertFalse(envelope.data.base_data.success)
-
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 500,
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.CLIENT,
-        )
-        span.status = Status(status_code=StatusCode.OK)
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.result_code, "500")
-        self.assertFalse(envelope.data.base_data.success)
-
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
-        span.status = Status(status_code=StatusCode.OK)
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.response_code, "0")
-        self.assertTrue(envelope.data.base_data.success)
-
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.CLIENT,
-        )
-        span.status = Status(status_code=StatusCode.OK)
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.result_code, "0")
-        self.assertTrue(envelope.data.base_data.success)
-
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.UNSET)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.response_code, "1")
-        self.assertFalse(envelope.data.base_data.success)
-
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "http",
-                "http.method": "GET",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.CLIENT,
-        )
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.UNSET)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.result_code, "1")
-        self.assertFalse(envelope.data.base_data.success)
-
-        # Server route attribute
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "HTTP",
-                "http.method": "GET",
-                "http.route": "/wiki/Rabbit",
-                "http.path": "/wiki/Rabbitz",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 400,
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(
-            envelope.data.base_data.properties["request.name"],
-            "GET /wiki/Rabbit",
-        )
-        self.assertEqual(
-            envelope.data.base_data.properties["request.url"],
-            "https://www.wikipedia.org/wiki/Rabbit",
-        )
-
-        # Server method attribute missing
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "HTTP",
-                "http.path": "/wiki/Rabbitz",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 400,
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
-        envelope = exporter._span_to_envelope(span)
-        self.assertIsNone(envelope.data.base_data.name)
-
-        # Server route attribute missing
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "HTTP",
-                "http.method": "GET",
-                "http.path": "/wiki/Rabbitz",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 400,
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.name, "GET")
-        self.assertEqual(
-            envelope.data.base_data.properties["request.name"],
-            "GET /wiki/Rabbitz",
-        )
-        self.assertEqual(
-            envelope.data.base_data.properties["request.url"],
-            "https://www.wikipedia.org/wiki/Rabbit",
-        )
-
-        # Server route and path attribute missing
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "HTTP",
-                "http.method": "GET",
-                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-                "http.status_code": 400,
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
-        envelope = exporter._span_to_envelope(span)
-        self.assertIsNone(
-            envelope.data.base_data.properties.get("request.name")
-        )
-        self.assertEqual(
-            envelope.data.base_data.properties["request.url"],
-            "https://www.wikipedia.org/wiki/Rabbit",
-        )
-
-        # Server http.url missing
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557337,
-                is_remote=False,
-            ),
-            parent=parent_span,
-            sampler=None,
-            trace_config=None,
-            resource=None,
-            attributes={
-                "component": "HTTP",
-                "http.method": "GET",
-                "http.route": "/wiki/Rabbit",
-                "http.path": "/wiki/Rabbitz",
-                "http.status_code": 400,
-            },
-            events=None,
-            links=[],
-            kind=SpanKind.SERVER,
-        )
-        span.start(start_time=start_time)
-        span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
-        envelope = exporter._span_to_envelope(span)
-        self.assertIsNone(envelope.data.base_data.url)
-        self.assertIsNone(
-            envelope.data.base_data.properties.get("request.url")
-        )

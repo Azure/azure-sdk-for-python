@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class TagRulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class TagRulesOperations(object):
         monitor_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.MonitoringTagRulesListResponse"]
+        # type: (...) -> Iterable["_models.MonitoringTagRulesListResponse"]
         """List the tag rules for a given monitor resource.
 
         List the tag rules for a given monitor resource.
@@ -66,7 +66,7 @@ class TagRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~microsoft_datadog_client.models.MonitoringTagRulesListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MonitoringTagRulesListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MonitoringTagRulesListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,7 +113,7 @@ class TagRulesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -129,10 +129,10 @@ class TagRulesOperations(object):
         resource_group_name,  # type: str
         monitor_name,  # type: str
         rule_set_name,  # type: str
-        body=None,  # type: Optional["models.MonitoringTagRules"]
+        body=None,  # type: Optional["_models.MonitoringTagRules"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MonitoringTagRules"
+        # type: (...) -> "_models.MonitoringTagRules"
         """Create or update a tag rule set for a given monitor resource.
 
         Create or update a tag rule set for a given monitor resource.
@@ -142,7 +142,7 @@ class TagRulesOperations(object):
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param rule_set_name:
+        :param rule_set_name: Rule set name.
         :type rule_set_name: str
         :param body:
         :type body: ~microsoft_datadog_client.models.MonitoringTagRules
@@ -151,7 +151,7 @@ class TagRulesOperations(object):
         :rtype: ~microsoft_datadog_client.models.MonitoringTagRules
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MonitoringTagRules"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MonitoringTagRules"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -191,7 +191,7 @@ class TagRulesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MonitoringTagRules', pipeline_response)
@@ -209,7 +209,7 @@ class TagRulesOperations(object):
         rule_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MonitoringTagRules"
+        # type: (...) -> "_models.MonitoringTagRules"
         """Get a tag rule set for a given monitor resource.
 
         Get a tag rule set for a given monitor resource.
@@ -219,14 +219,14 @@ class TagRulesOperations(object):
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param rule_set_name:
+        :param rule_set_name: Rule set name.
         :type rule_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MonitoringTagRules, or the result of cls(response)
         :rtype: ~microsoft_datadog_client.models.MonitoringTagRules
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MonitoringTagRules"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MonitoringTagRules"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -258,7 +258,7 @@ class TagRulesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MonitoringTagRules', pipeline_response)
