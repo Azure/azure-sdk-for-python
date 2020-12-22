@@ -6,7 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 import unittest
-import pytest
+import time
 
 import azure.mgmt.communication
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
@@ -29,7 +29,6 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
             azure.mgmt.communication.CommunicationServiceManagementClient
         )
 
-    @pytest.mark.skipif(DISABLE_MGMT_TESTS, reason=DISABLE_REASON)
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_crud(self, resource_group):
         GROUP_NAME = resource_group.name
@@ -39,11 +38,23 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
             location=COMMUNICATION_SERVICE_LOCATION,
             data_location = COMMUNICATION_SERVICE_DATA_LOCATION
         )
-        resource = self.communication_client.communication_service.begin_create_or_update(
-            GROUP_NAME,
-            resource_name,
-            resource
-        ).result()
+        try:
+            resource = self.communication_client.communication_service.begin_create_or_update(
+                GROUP_NAME,
+                resource_name,
+                resource
+            ).result()
+        except Exception as e:
+            self.fail(e)
+
+        # Resource creation might still be in the "Accepted" state after creation, so we need to wait until it can reach the "Succeeded" state
+        while resource.provisioning_state == "Accepted":
+            if self.is_live == True:
+                time.sleep(30)
+                resource = self.communication_client.communication_service.get(
+                    GROUP_NAME,
+                    resource_name
+                )
 
         self.assertEqual(resource.name, resource_name)
         self.assertEqual(resource.provisioning_state, "Succeeded")
