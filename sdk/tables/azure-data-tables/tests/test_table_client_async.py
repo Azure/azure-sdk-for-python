@@ -518,6 +518,3 @@ class StorageTableClientTest(TableTestCase):
             service = client(
                 self.account_url(storage_account, "table"), credential=storage_account_key, table_name='table')
             await service.close()
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

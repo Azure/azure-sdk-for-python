@@ -237,8 +237,3 @@ class TableServicePropertiesTest(TableTestCase):
         pytest.raises(HttpResponseError,
                           tsc.set_service_properties,
                           None, None, minute_metrics)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
