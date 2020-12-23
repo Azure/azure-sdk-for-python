@@ -64,7 +64,6 @@ class ChatThreadClientTest(CommunicationTestCase):
 
     def _create_thread(
             self,
-            multiple_participants=False,  # type: Optional[bool]
             **kwargs
     ):
         # create chat thread, and ChatThreadClient
@@ -79,7 +78,6 @@ class ChatThreadClientTest(CommunicationTestCase):
         self.chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
         self.thread_id = self.chat_thread_client.thread_id
 
-    @pytest.mark.live_test_only
     def _send_message(self):
         # send a message
         priority = ChatMessagePriority.NORMAL
@@ -89,7 +87,8 @@ class ChatThreadClientTest(CommunicationTestCase):
             content,
             priority=priority,
             sender_display_name=sender_display_name)
-        self.message_id = create_message_result_id
+        message_id = create_message_result_id
+        return message_id
 
     @pytest.mark.live_test_only
     def test_update_topic(self):
@@ -115,16 +114,14 @@ class ChatThreadClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_get_message(self):
         self._create_thread()
-        self._send_message()
-        message = self.chat_thread_client.get_message(self.message_id)
-        assert message.id == self.message_id
+        message_id = self._send_message()
+        message = self.chat_thread_client.get_message(message_id)
+        assert message.id == message_id
 
     @pytest.mark.live_test_only
     def test_list_messages(self):
         self._create_thread()
         self._send_message()
-        if self.is_live:
-            time.sleep(2)
 
         chat_messages = self.chat_thread_client.list_messages(results_per_page=1)
 
@@ -135,23 +132,21 @@ class ChatThreadClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_update_message(self):
         self._create_thread()
-        self._send_message()
+        message_id = self._send_message()
 
         content = "updated message content"
-        self.chat_thread_client.update_message(self.message_id, content=content)
+        self.chat_thread_client.update_message(message_id, content=content)
 
     @pytest.mark.live_test_only
     def test_delete_message(self):
         self._create_thread()
-        self._send_message()
+        message_id = self._send_message()
 
-        self.chat_thread_client.delete_message(self.message_id)
+        self.chat_thread_client.delete_message(message_id)
 
     @pytest.mark.live_test_only
     def test_list_participants(self):
         self._create_thread()
-        if self.is_live:
-            time.sleep(2)
 
         # add another participant
         share_history_time = datetime.utcnow()
@@ -229,9 +224,26 @@ class ChatThreadClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_send_read_receipt(self):
         self._create_thread()
-        self._send_message()
+        message_id = self._send_message()
 
-        self.chat_thread_client.send_read_receipt(self.message_id)
+        self.chat_thread_client.send_read_receipt(message_id)
+
+
+    def _wait_on_read_receipts(self, read_receipts_sent):
+        print("Read Receipts Sent: ", read_receipts_sent)
+        for _ in range(10):
+            print("Iteration: ", _)
+            read_receipts_paged = self.chat_thread_client.list_read_receipts(results_per_page=read_receipts_sent)
+            read_receipts = [item for item in read_receipts_paged]
+            if len(read_receipts) == read_receipts_sent:
+                print("All read receipts logged. Exiting...")
+                return
+            else:
+                print("Read Receipts Logged: ", len(read_receipts))
+                print("Sleeping for additional 2 secs")
+                time.sleep(2)
+        raise Exception("Read receipts not updated in 20 seconds. Failing.")
+
 
     @pytest.mark.live_test_only
     def test_list_read_receipts(self):
@@ -239,15 +251,17 @@ class ChatThreadClientTest(CommunicationTestCase):
 
         # send messages and read receipts
         for i in range(2):
-            self._send_message()
-            self.chat_thread_client.send_read_receipt(self.message_id)
+            message_id = self._send_message()
+            print("Message Id: ", message_id)
+            self.chat_thread_client.send_read_receipt(message_id)
+
             if self.is_live:
-                time.sleep(2)
+                self._wait_on_read_receipts(read_receipts_sent=i)
 
         # list read receipts
-        read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=1, skip=1)
+        read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=1, skip=0)
 
         items = []
         for item in read_receipts:
             items.append(item)
-        assert len(items) == 0
+        assert len(items) == 1

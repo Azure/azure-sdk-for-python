@@ -185,7 +185,6 @@ class ChatThreadClient(object):
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
         :keyword int skip: Skips chat message read receipts up to a specified position in response.
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatMessageReadReceipt`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -204,7 +203,7 @@ class ChatThreadClient(object):
 
         return self._client.chat_thread.list_chat_read_receipts(
             self._thread_id,
-            maxpagesize=results_per_page,
+            max_page_size=results_per_page,
             skip=skip,
             cls=lambda objs: [ChatMessageReadReceipt._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
@@ -336,7 +335,7 @@ class ChatThreadClient(object):
 
         return self._client.chat_thread.list_chat_messages(
             self._thread_id,
-            maxpagesize=results_per_page,
+            max_page_size=results_per_page,
             start_time=start_time,
             cls=lambda objs: [ChatMessage._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
@@ -441,7 +440,7 @@ class ChatThreadClient(object):
 
         return self._client.chat_thread.list_chat_participants(
             self._thread_id,
-            maxpagesize=results_per_page,
+            max_page_size=results_per_page,
             skip=skip,
             cls=lambda objs: [ChatThreadParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)

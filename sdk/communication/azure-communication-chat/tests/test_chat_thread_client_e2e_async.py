@@ -82,7 +82,8 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             content,
             priority=priority,
             sender_display_name=sender_display_name)
-        self.message_id = create_message_result_id
+        message_id = create_message_result_id
+        return message_id
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
@@ -143,8 +144,6 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
             async with self.chat_thread_client:
                 await self._send_message()
-                if self.is_live:
-                    await asyncio.sleep(2)
 
                 chat_messages = self.chat_thread_client.list_messages(results_per_page=1)
 
@@ -307,6 +306,26 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
 
+    async def _wait_on_thread(self, read_receipts_sent):
+        print("Read Receipts Sent: ", read_receipts_sent)
+        for _ in range(10):
+            print("Iteration: ", _)
+            read_receipts_paged = self.chat_thread_client.list_read_receipts()
+            read_receipts = []
+            async for page in read_receipts_paged.by_page():
+                async for item in page:
+                    print(item.chat_message_id)
+                    read_receipts.append(item)
+
+            if len(read_receipts) == read_receipts_sent:
+                print("All read receipts logged. Exiting...")
+                return
+            else:
+                print("Read Receipts Logged: ", len(read_receipts))
+                print("Sleeping for additional 2 secs")
+                await asyncio.sleep(5)
+        raise Exception("Read receipts not updated in 20 seconds. Failing.")
+
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_read_receipts(self):
@@ -316,21 +335,23 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             async with self.chat_thread_client:
 
                 for i in range(2):
-                    await self._send_message()
+                    message_id = await self._send_message()
+                    print(f"Message Id: {message_id}")
 
                     # send read receipts first
-                    await self.chat_thread_client.send_read_receipt(self.message_id)
-                    if self.is_live:
-                        await asyncio.sleep(2)
+                    await self.chat_thread_client.send_read_receipt(message_id)
+
+                if self.is_live:
+                    await self._wait_on_thread(read_receipts_sent=2)
 
                 # list read receipts
-                read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=1, skip=0)
+                read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=2, skip=0)
 
                 items = []
-                async for item in read_receipts:
-                    items.append(item)
+                async for page in read_receipts.by_page():
+                    items += [item async for item in page]
 
-                assert len(items) > 0
+                assert len(items) == 0
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)

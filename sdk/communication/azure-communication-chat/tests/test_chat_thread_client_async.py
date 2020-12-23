@@ -316,7 +316,7 @@ async def test_send_read_receipt():
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=201)
+        return mock_response(status_code=200)
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     try:
@@ -378,3 +378,32 @@ async def test_list_read_receipts_with_results_per_page():
         items.append(item)
 
     assert len(items) == 2
+
+@pytest.mark.asyncio
+async def test_list_read_receipts_with_results_per_page_and_skip():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    message_id_1 = "1596823919339"
+    message_id_2 = "1596823919340"
+    raised = False
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=200, json_payload={
+            "value": [
+                {"chatMessageId": message_id_1},
+                {"chatMessageId": message_id_2}
+            ]})
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    read_receipts = None
+    try:
+        read_receipts = chat_thread_client.list_read_receipts(results_per_page=1, skip=1)
+    except:
+        raised = True
+
+    assert raised == False
+
+    items = []
+    async for item in read_receipts:
+        items.append(item)
+
+    assert len(items) == 1

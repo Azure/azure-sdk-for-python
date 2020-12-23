@@ -296,7 +296,7 @@ class TestChatThreadClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=201)
+            return mock_response(status_code=200)
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         try:
