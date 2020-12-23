@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .microsoft_serial_console_client import MicrosoftSerialConsoleClient
-from .version import VERSION
+from ._configuration import MicrosoftSerialConsoleClientConfiguration
+from ._microsoft_serial_console_client import MicrosoftSerialConsoleClient
+__all__ = ['MicrosoftSerialConsoleClient', 'MicrosoftSerialConsoleClientConfiguration']
 
-__all__ = ['MicrosoftSerialConsoleClient']
+from .version import VERSION
 
 __version__ = VERSION
 

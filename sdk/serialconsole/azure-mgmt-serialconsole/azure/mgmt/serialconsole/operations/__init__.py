@@ -9,12 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .list_operations import ListOperations
-from .list_console_operations import ListConsoleOperations
-from .console_operations import ConsoleOperations
+from ._microsoft_serial_console_client_operations import MicrosoftSerialConsoleClientOperationsMixin
 
 __all__ = [
-    'ListOperations',
-    'ListConsoleOperations',
-    'ConsoleOperations',
+    'MicrosoftSerialConsoleClientOperationsMixin',
 ]
