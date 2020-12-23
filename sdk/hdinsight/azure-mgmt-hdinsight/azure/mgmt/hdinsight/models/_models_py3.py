@@ -681,6 +681,9 @@ class ClusterCreateProperties(Model):
     :type min_supported_tls_version: str
     :param network_properties: The network properties.
     :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
+    :param compute_isolation_properties: The compute isolation properties.
+    :type compute_isolation_properties:
+     ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
     """
 
     _attribute_map = {
@@ -696,9 +699,10 @@ class ClusterCreateProperties(Model):
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
         'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
+        'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
     }
 
-    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_properties=None, **kwargs) -> None:
+    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_properties=None, compute_isolation_properties=None, **kwargs) -> None:
         super(ClusterCreateProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -712,6 +716,7 @@ class ClusterCreateProperties(Model):
         self.encryption_in_transit_properties = encryption_in_transit_properties
         self.min_supported_tls_version = min_supported_tls_version
         self.network_properties = network_properties
+        self.compute_isolation_properties = compute_isolation_properties
 
 
 class ClusterDefinition(Model):
@@ -820,6 +825,9 @@ class ClusterGetProperties(Model):
     :type min_supported_tls_version: str
     :param network_properties: The network properties.
     :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
+    :param compute_isolation_properties: The compute isolation properties.
+    :type compute_isolation_properties:
+     ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
     """
 
     _validation = {
@@ -845,9 +853,10 @@ class ClusterGetProperties(Model):
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
         'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
+        'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
     }
 
-    def __init__(self, *, cluster_definition, cluster_version: str=None, os_type=None, tier=None, cluster_id: str=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date: str=None, cluster_state: str=None, quota_info=None, errors=None, connectivity_endpoints=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_properties=None, **kwargs) -> None:
+    def __init__(self, *, cluster_definition, cluster_version: str=None, os_type=None, tier=None, cluster_id: str=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date: str=None, cluster_state: str=None, quota_info=None, errors=None, connectivity_endpoints=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_properties=None, compute_isolation_properties=None, **kwargs) -> None:
         super(ClusterGetProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -867,6 +876,7 @@ class ClusterGetProperties(Model):
         self.encryption_in_transit_properties = encryption_in_transit_properties
         self.min_supported_tls_version = min_supported_tls_version
         self.network_properties = network_properties
+        self.compute_isolation_properties = compute_isolation_properties
 
 
 class ClusterIdentity(Model):
@@ -1070,6 +1080,27 @@ class ClusterResizeParameters(Model):
     def __init__(self, *, target_instance_count: int=None, **kwargs) -> None:
         super(ClusterResizeParameters, self).__init__(**kwargs)
         self.target_instance_count = target_instance_count
+
+
+class ComputeIsolationProperties(Model):
+    """The compute isolation properties.
+
+    :param enable_compute_isolation: The flag indicates whether enable compute
+     isolation or not.
+    :type enable_compute_isolation: bool
+    :param host_sku: The host sku.
+    :type host_sku: str
+    """
+
+    _attribute_map = {
+        'enable_compute_isolation': {'key': 'enableComputeIsolation', 'type': 'bool'},
+        'host_sku': {'key': 'hostSku', 'type': 'str'},
+    }
+
+    def __init__(self, *, enable_compute_isolation: bool=None, host_sku: str=None, **kwargs) -> None:
+        super(ComputeIsolationProperties, self).__init__(**kwargs)
+        self.enable_compute_isolation = enable_compute_isolation
+        self.host_sku = host_sku
 
 
 class ComputeProfile(Model):
@@ -1389,15 +1420,24 @@ class HostInfo(Model):
 
     :param name: The host name
     :type name: str
+    :param fqdn: The Fully Qualified Domain Name of host
+    :type fqdn: str
+    :param effective_disk_encryption_key_url: The effective disk encryption
+     key URL used by the host
+    :type effective_disk_encryption_key_url: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
+        'effective_disk_encryption_key_url': {'key': 'effectiveDiskEncryptionKeyUrl', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, fqdn: str=None, effective_disk_encryption_key_url: str=None, **kwargs) -> None:
         super(HostInfo, self).__init__(**kwargs)
         self.name = name
+        self.fqdn = fqdn
+        self.effective_disk_encryption_key_url = effective_disk_encryption_key_url
 
 
 class KafkaRestProperties(Model):

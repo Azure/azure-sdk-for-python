@@ -1,5 +1,14 @@
 # Release History
 
+## 2.1.0 (2020-12-21)
+
+**Features**
+
+  - Model ClusterGetProperties has a new parameter compute_isolation_properties
+  - Model HostInfo has a new parameter effective_disk_encryption_key_url
+  - Model HostInfo has a new parameter fqdn
+  - Model ClusterCreateProperties has a new parameter compute_isolation_properties
+
 ## 2.0.0 (2020-10-20)
 
 **Features**
