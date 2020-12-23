@@ -19,6 +19,7 @@ SUBNET_NAME = "TestSubnet"
 PRIVATE_ENDPOINT_NAME = "myPrivateEndpoint"
 
 
+@unittest.skip("skip test")
 class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
     def setUp(self):

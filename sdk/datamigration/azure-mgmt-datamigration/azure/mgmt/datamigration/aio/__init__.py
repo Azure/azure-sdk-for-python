@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._data_migration_management_client import DataMigrationManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['DataMigrationManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
