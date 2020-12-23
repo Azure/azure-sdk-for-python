@@ -4,15 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob.aio import BlobClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase
 from .._models import DirectoryProperties, AccessControlChangeResult, AccessControlChangeFailure, \
     AccessControlChangeCounters, AccessControlChanges
-from .._generated.aio import DataLakeStorageClient
+from .._generated.aio import AzureDataLakeStorageRESTAPI
 from ._data_lake_lease_async import DataLakeLeaseClient
-from .._generated.models import StorageErrorException
 from .._deserialize import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 
@@ -45,10 +44,12 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                                        _hosts=self._blob_client._hosts,  # pylint: disable=protected-access
                                        **kwargs)
 
-        self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
-        self._datalake_client_for_blob_operation = DataLakeStorageClient(self._blob_client.url,
-                                                                         file_system_name, path_name,
-                                                                         pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, path=path_name,
+                                                   pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._blob_client.url,
+                                                                               file_system=file_system_name,
+                                                                               path=path_name,
+                                                                               pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):
@@ -126,7 +127,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             **kwargs)
         try:
             return await self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _delete(self, **kwargs):
@@ -162,7 +163,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         options = self._delete_path_options(**kwargs)
         try:
             return await self._client.path.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def set_access_control(self, owner=None,  # type: Optional[str]
@@ -225,7 +226,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
             return await self._client.path.set_access_control(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def get_access_control(self, upn=None,  # type: Optional[bool]
@@ -272,7 +273,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
             return await self._client.path.get_properties(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def set_access_control_recursive(self,
@@ -481,7 +482,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                 failure_count=total_failure_count),
                 continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             error.continuation_token = last_continuation_token
             process_storage_error(error)
         except AzureError as error:
@@ -548,7 +549,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             **kwargs)
         try:
             return await self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _get_path_properties(self, **kwargs):

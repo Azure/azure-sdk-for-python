@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class SubAssessmentsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class SubAssessmentsOperations(object):
         scope,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecuritySubAssessmentList"]
+        # type: (...) -> Iterable["_models.SecuritySubAssessmentList"]
         """Get security sub-assessments on all your scanned resources inside a subscription scope.
 
         :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
@@ -62,7 +62,7 @@ class SubAssessmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecuritySubAssessmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecuritySubAssessmentList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecuritySubAssessmentList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -123,7 +123,7 @@ class SubAssessmentsOperations(object):
         assessment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecuritySubAssessmentList"]
+        # type: (...) -> Iterable["_models.SecuritySubAssessmentList"]
         """Get security sub-assessments on all your scanned resources inside a scope.
 
         :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
@@ -137,7 +137,7 @@ class SubAssessmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecuritySubAssessmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecuritySubAssessmentList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecuritySubAssessmentList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -200,7 +200,7 @@ class SubAssessmentsOperations(object):
         sub_assessment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecuritySubAssessment"
+        # type: (...) -> "_models.SecuritySubAssessment"
         """Get a security sub-assessment on your scanned resource.
 
         :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
@@ -216,7 +216,7 @@ class SubAssessmentsOperations(object):
         :rtype: ~azure.mgmt.security.models.SecuritySubAssessment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecuritySubAssessment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecuritySubAssessment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

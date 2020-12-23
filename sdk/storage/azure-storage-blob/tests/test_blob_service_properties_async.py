@@ -198,7 +198,7 @@ class ServicePropertiesTestAsync(AsyncStorageTestCase):
         # Should not work with 0 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=0)
 
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(HttpResponseError):
             await bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert
