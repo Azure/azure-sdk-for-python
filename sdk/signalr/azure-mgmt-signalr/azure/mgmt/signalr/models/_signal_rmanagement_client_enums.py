@@ -47,11 +47,24 @@ class ServiceKind(str, Enum):
     raw_web_sockets = "RawWebSockets"
 
 
+class ManagedIdentityType(str, Enum):
+
+    none = "None"
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+
+
 class FeatureFlags(str, Enum):
 
     service_mode = "ServiceMode"
     enable_connectivity_logs = "EnableConnectivityLogs"
     enable_messaging_logs = "EnableMessagingLogs"
+
+
+class UpstreamAuthType(str, Enum):
+
+    none = "None"
+    managed_identity = "ManagedIdentity"
 
 
 class ACLAction(str, Enum):
