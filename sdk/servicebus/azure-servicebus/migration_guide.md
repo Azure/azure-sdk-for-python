@@ -1,164 +1,444 @@
-# Guide to migrate from azure-servicebus v0.50 to v7
+# Guide for migrating azure-servicebus to v7 from v0.50
 
-This document is intended for users that are familiar with v0.50 of the Python SDK for Service Bus library (`azure-servicebus 0.50.x`) and wish 
-to migrate their application to v7 of the same library.
+This guide is intended to assist in the migration to `azure-servicebus` v7 from v0.50.
+It will focus on side-by-side comparisons for similar operations between the two packages.
 
-For users new to the Python SDK for Service Bus, please see the [readme file for the azure-servicebus](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/README.md).
+Familiarity with the `azure-servicebus` v0.50 package is assumed.
+For those new to the Service Bus client library for Python, please refer to the [README for `azure-servicebus`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/README.md) rather than this guide.
 
-## General changes
-Version 7 of the azure-servicebus package is the result of our efforts to create a client library that is user-friendly and idiomatic to the Python ecosystem.
-Alongside an API redesign driven by the new [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html#design-principles), 
-the latest version improves on several areas from v0.50.
+## Table of contents
 
-Note: The large version gap is in order to normalize service bus SDK versions across our languages, as they consolidate on structure as well.
+* [Migration benefits](#migration-benefits)
+    - [Cross Service SDK improvements](#cross-service-sdk-improvements)
+* [Important changes](#important-changes)
+    - [Client hierarchy](#client-hierarchy)
+    - [Client constructors](#client-constructors)
+    - [Creating sender and receivers](#creating-sender-and-receivers)
+    - [Sending messages](#sending-messages)
+    - [Receiving messages](#receiving-messages)
+    - [Settling messages](#settling-messages)
+    - [Renewing lock on the received message](#renewing-lock-on-the-received-message)
+    - [Scheduling messages and cancelling scheduled messages](#scheduling-messages-and-cancelling-scheduled-messages)
+    - [Working with sessions](#working-with-sessions)
+    - [Working with UTC time](#working-with-utc-time)
+    - [Working with AutoLockRenewer](#working-with-autolockrenewer)
+    - [Working with Message properties](#working-with-message-properties)
+    - [Working with Administration Client](#working-with-administration-client)
+    - [Migration samples](#migration-samples)
+* [Addition samples](#addition-samples)
 
-### Specific clients for sending and receiving
-In v7 we've simplified the API surface, making two distinct clients, rather than one for each of queue, topic, and subscription:
-* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusSender)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
-* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
+## Migration benefits
 
-As a user this will be largely transparent to you, as initialization will still occur primarily via the top level ServiceBusClient,
-the primary difference will be that rather than creating a queue_client, for instance, and then a sender off of that, you would simply
-create a servicebus queue sender off of your ServiceBusClient instance via the "get_queue_sender" method.
+A natural question to ask when considering whether or not to adopt a new version or library is what
+the benefits of doing so would be. As Azure has matured and been embraced by a more diverse group of developers,
+we have been focused on learning the patterns and practices to best support developer productivity and
+to understand the gaps that the Python client libraries have.
 
-It should also be noted that many of the helper methods that previously existed on the intermediary client (e.g. QueueClient and `peek()`) now
-exist on the receiver (in the case of `peek_messages()`) or sender itself.  This is to better consolidate functionality and align messaging link lifetime
-semantics with the sender or receiver lifetime.
+There were several areas of consistent feedback expressed across the Azure client library ecosystem.
+One of the most important is that the client libraries for different Azure services have not had a
+consistent approach to organization, naming, and API structure. Additionally, many developers have felt
+that the learning curve was difficult, and the APIs did not offer a good, approachable,
+and consistent onboarding story for those learning Azure or exploring a specific Azure service.
+
+To try and improve the development experience across Azure services,
+a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created
+for all languages to drive a consistent experience with established API patterns for all services.
+A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_introduction.html) was also introduced to ensure
+that Python clients have a natural and idiomatic feel with respect to the Python ecosystem.
+Further details are available in the guidelines for those interested.
+
+### Cross Service SDK improvements
+
+The modern Service Bus client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as
+- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library
+to share a single authentication approach between clients
+- a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
+
+## Important changes
+
+### Client hierarchy
+
+In the interest of simplifying the API surface we've made a single top level client called `ServiceBusClient`,
+rather than one for each of queue, topic, and subscription.
+This acts as the single entry point in contrast with multiple entry points from before.
+You can create senders and receivers from this client to the queue/topic/subscription/session of your
+choice and start sending/receiving messages.
+
+#### Approachability
+By having a single entry point, the `ServiceBusClient` helps with the discoverability of the API
+as you can explore all available features through methods from a single client, as opposed to searching
+through documentation or exploring namespace for the types that you can instantiate.
+Whether sending or receiving, using sessions or not, you will start your applications by constructing the same client.
+
+#### Consistency
+We now have methods with similar names, signature and location to create senders and receivers.
+This provides consistency and predictability on the various features of the library.
 
 ### Client constructors
 
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/authenticate_client_connstr.py ) |
-| `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py ) |
-| `QueueClient.from_connection_string(idle_timeout=None)` | `ServiceBusClient.from_connection_string.get_queue_receiver(max_wait_time=None)` | [providing a timeout](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_pool_receive.py) |
+- While we continue to support connection strings when constructing a client, the main difference is when using Azure Active Directory.
+We now use the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library
+to share a single authentication solution between clients of different Azure services.
+- `QueueClient`, `TopicClient` and `SubscriptionClient` have been removed, to create senders and receivers, please check [Creating sender and receivers](#creating-sender-and-receivers)
 
-### Sub-client initialization
 
-In v0.50, to send or receive messages, a `QueueClient` would be created directly or from the `ServiceBusClient.get_queue` method,
-after which user would call `get_sender` or `get_receiver` methods. Alternatively, `azure.servicebus.send_handler.Sender` and `azure.servicebus.receive_handler.Receiver` were used.
+In V0.50:
+```python
+servicebus_client = ServiceBusClient.from_connection_string()
+servicebus_client = ServiceBusClient()
+queue_client = QueueClient.from_connection_string()
+topic_client = QueueClient.from_connection_string()
+subscription_client = QueueClient.from_connection_string()
+```
 
-In v7.0, these are migrated to `ServiceBusSender` and `ServiceBusReceiver`. Note that these are internal sub-clients and should be initialized from the root `ServiceBusClient` as follows.
+In V7:
+```python
+# Authenticate with connection string
+servicebus_client = ServiceBusClient.from_connection_string()
 
+# Authenticate with Active Directory:
+from azure.identity import DefaultAzureCredential
+servicebus_client = ServiceBusClient(fully_qualified_namespace, credential=DefaultAzureCredential())
+```
+
+### Creating sender and receivers
+
+- `QueueClient`, `TopicClient` and `SubscriptionClient` have been replaced with methods to create receivers and senders directly from `ServiceBusClient`.
+- To create a receiver for dead-letter sub queue, `get_deadletter_receiver` has been replaced with `get_<queue/subscritpion>_receiver` which takes an optional parameter `sub_queue` for indication.
+
+In V0.50:
+
+```python
+client = ServiceBusClient.from_connection_string(connstr)
+
+queue_client = client.get_queue(queue_name)
+queue_sender = queue_client.get_sender()
+queue_receiver = queue_client.get_receiver()
+queue_dead_letter_receiver = queue_client.get_deadletter_receiver()
+
+topic_client = client.get_topic(topic_name)
+topic_sender = topic_client.get_sender()
+
+subscription_client = client.get_subscription(topic_name, subscription_name)
+subscription_receiver = subscription_client.get_receiver()
+subscription_dead_letter_receiver = subscription_client.get_deadletter_receiver()
+```
+
+In V7:
 ```Python
 with ServiceBusClient.from_connection_string(connstr) as client:
-    with client.get_queue_sender(queue_name) as sender:
-        # Sending a single message
-        single_message = ServiceBusMessage("Single message")
-        sender.send_messages(single_message)
+    queue_sender = client.get_queue_sender(queue_name)
+    queue_receiver = client.get_queue_receiver(queue_name)
+    queue_dead_letter_receiver = client.get_queue_receiver(queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
 
-with ServiceBusClient.from_connection_string(connstr) as client:
-    with client.get_queue_receiver(queue_name, max_wait_time=30) as receiver:
-        messages = receiver.receive_messages()
+    topic_sender = client.get_topic_sender(topic_name)
+
+    subscription_receiver = client.get_subscription_receiver(topic_name, subscription_name)
+    subscription_dead_letter_receiver = client.get_subscription_receiver(topic_name, subscription_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
+```
+
+### Sending messages
+
+- `send` method is renamed to `send_messages` on `ServiceBusSender` to be consistent in usage of the `messages` suffix in other methods on the receiver and the sender.
+- `BatchMessage` is replaced with `ServiceBusMessageBatch` to send a batch of messages in one call not exceeding the size limit of the sender.
+
+In V0.50:
+```python
+with sender:
+    sender.send(Message("Hello world!"))
+    sender.send(BatchMessage(["data 1", "data 2", ...]))
+```
+
+In V7:
+```python
+with sender:
+    sender.send_messages(ServiceBusMessage("Hello world!"))
+
+    message_batch = sender.create_message_batch()
+    message_batch.add_message(ServiceBusMessage("data"))
+    sender.send_messages(message_batch)
 ```
 
 ### Receiving messages
 
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive_messages()`| [Get a receiver and receive a single batch of messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py) |
-| `QueueClient.from_connection_string().get_receiver().peek()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().peek()`| `ServiceBusClient.from_connection_string().get_queue_receiver().peek_messages()`| [Get a receiver and peek messages](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_peek.py) |
-| `QueueClient.from_connection_string().get_deadletter_receiver()  and ServiceBusClient.from_connection_string().get_queue().get_deadletter_receiver()`| `ServiceBusClient.from_connection_string().get_queue_receiver(sub_queue=ServiceBusSubQueue.DEAD_LETTER)`| [Get a deadletter receiver](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deadlettered_messages.py) |
+- `fetch_next` method is named to `receive_messages` on `ServiceBusReceiver` to be consistent in usage of the `messages` suffix in other methods on the receiver and the sender.
+- `peek` method is renamed to `peek_messages` as the same reason mentioned above.
+
+In V0.50:
+
+```python
+with receiver:
+    received_messages = receiver.fetch_next(max_batch_size=10, timeout=10)
+    peeked_messages = receiver.peek(count=1, start_from=None)
+```
+
+In V7:
+```python
+with receiver:
+    received_messages = receiver.receive_messages(max_message_count=10, max_wait_time=10)
+    peeked_messages = receiver.peek_messages(max_message_count=1, sequence_number=None)
+```
 
 ### Settling messages
 
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `message.complete()`| `receiver.complete_message(message)`| [Complete a message](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py) |
-| `message.abandon()`| `receiver.abandon_message(message)`| [Abandon a message](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/sample_code_servicebus.py) |
-| `message.defer()`| `receiver.defer_message(message)`| [Defer a message](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deferred_message_queue.py) |
-| `message.dead_letter()`| `receiver.dead_letter_message(message)`| [Dead letter a message](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deadlettered_messages.py) |
+- Previously, the methods to settle messages (`complete()`, `abandon()`, `defer()` and `dead_letter()`) were on the messages themselves.
+These have been moved to the receiver in the new version, take the message as input and have the `message` suffix in their name.
+- The idea is to have the message represents just the data and not have the responsibility of any operation on the service side.
+Additionally, since a message cannot be settled if the receiver that was used to receive it is not alive, tying these operations
+to the receiver drives the message home better.
 
-### Sending messages
+In V0.50:
+```python
 
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_sender().send_messages()`| [Get a sender and send a message](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) |
-| `queue_client.send(BatchMessage(["data 1", "data 2", ...]))`| `batch = queue_sender.create_message_batch()  batch.add_message(ServiceBusMessage("data 1"))  queue_sender.send_messages(batch)`| [Create and send a batch of messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) |
+with receiver:
+    received_message.complete()
+    # or
+    # received_message.abandon()
+    # received_message.defer()
+    # received_message.dead_letter()
+```
 
-### Scheduling messages and cancelling scheduled messages 
-
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `queue_client.get_sender().schedule(schedule_time_utc, message1, message2)` | `sb_client.get_queue_sender().schedule_messages([message1, message2], schedule_time_utc)` | [Schedule messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/schedule_messages_and_cancellation.py) |
-| `queue_client.get_sender().cancel_scheduled_messages(sequence_number1, sequence_number2)`| `sb_client.get_queue_sender().cancel_scheduled_messages([sequence_number1, sequence_number2])` | [Cancel scheduled messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/schedule_messages_and_cancellation.py)|
+In V7:
+```python
+with receiver:
+    receiver.complete_message(received_message)
+    # or
+    # receiver.abandon_message(received_message)
+    # receiver.defer_message(received_message)
+    # receiver.dead_letter_message(received_message)
+```
 
 ### Renewing lock on the received message
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `message.renew_lock()` | `receiver.renew_message_lock(message)` | [Renew lock on the message](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/sample_code_servicebus.py) |
+
+- `renew_lock` method was moved from `Message` to `ServiceBusReceiver` and renamed to `renew_message_lock` for the same reason as settlement methods movement.
+
+In V0.50:
+```python
+with receiver:
+    received_message.renew_lock()
+```
+
+In V7:
+```python
+with receiver:
+    receiver.renew_message_lock(received_message)
+```
+
+### Scheduling messages and cancelling scheduled messages
+
+- `schedule` method is renamed to `schedule_messages`on `ServiceBusSender` to be consistent in usage of the `messages` suffix in other methods on the receiver and the sender.
+- `schedule_time` parameter is renamed to `schedule_time_utc` which brings clarity.
+- `schedule_messages` and `cancel_scheduled_messages` now takes an array of messages/sequence numbers instead of argument list.
+
+In V0.50:
+```python
+with sender:
+    sender.schedule(schedule_time=schedule_time_utc, message1, message2)
+    sender.cancel_scheduled_messages(sequence_number1, sequence_number2)
+```
+
+In V7:
+```python
+with sender:
+    sender.schedule_messages(messages=[message1, message2], schedule_time_utc=schedule_time_utc)
+    sender.cancel_scheduled_messages([sequence_number1, sequence_number2])
+```
 
 ### Working with sessions
 
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send_messages(Message('body', session_id='foo'))`| [Send a message to a session](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py) |
-| `receiver.get_session_state()` | `receiver.session.get_state()` | [Set session state](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
-| `receiver.set_session_state()` | `receiver.session.set_state()` | [Get session state](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
-| `receiver.renew_lock()` | `receiver.session.renew_lock()` | [Renew lock on the session](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
+- To send messages to a sessionful entity, previously the `QueueClient.send` method or `Sender.get_sender` method take `session` parameter.
+While in the new version, `session_id` is property on the `ServiceBusMessage`.
+- Previously `SessionReceiver` class is used for receiving messages from sessionful entities and performing session-related operations.
+In the new version, `SessionReceiver` has been collapsed into `ServiceBusReceiver` to improve modularity and reduce public API surface.
+- `ServiceBusSession` class is introduced to perform session-related operations and it can be approached by property `ServiceBusReceiver.session`. For non-sessionful receivers, `ServiceBusReceiver.session` is `None`. 
+
+In V0.50:
+```python
+# Send
+queue_client.send(message, session='foo')
+
+sender = queue_client.get_sender(session='foo')
+with sender:
+    sender.send(message)
+
+# Session-related operation
+with session_receiver:
+    session_receiver.get_session_state()
+    session_receiver.set_session_state("start")
+    session_receiver.renew_lock()
+```
+
+In V7:
+```python
+# Send
+with sender:
+    sender.send_messages(ServiceBusMessage('body', session_id='foo'))
+
+# Session-related operation
+with receiver:
+    session_receiver.session.get_state()
+    session_receiver.session.set_state("start")
+    session_receiver.session.renew_lock()
+```
 
 ### Working with UTC time
-| In v0.50 | Equivalent in v7 | Note |
-|---|---|---|
-| `session.locked_until < datetime.now()`| `session.locked_until_utc < datetime.utcnow()`| All datetimes are now UTC and named as such|
-| `message.scheduled_enqueue_time < datetime.now()`| `message.scheduled_enqueue_time_utc < datetime.utcnow()`| UTC Datetime normalization applies across all objects and datetime fields|
+
+- In V7 all datetimes are now UTC and named with `_utc` suffix. UTC Datetime normalization applies across all objects and datetime fields.
+
+In V0.50:
+```python
+session_receiver.locked_until
+message.enqueued_time
+message.scheduled_enqueue_time
+```
+
+In V7:
+```python
+session_receiver.session.locked_until_utc
+message.enqueued_time_utc
+message.scheduled_enqueue_time_utc
+```
 
 ### Working with AutoLockRenewer
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `azure.servicebus.AutoLockRenew().register(message)` | `azure.servicebus.AutoLockRenewer().register(receiver, message)` | [Auto lock renew a message received from a non-sessonful entity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
-| `azure.servicebus.AutoLockRenew().register(session_receiver)` | `azure.servicebus.AutoLockRenewer().register(session_receiver, session_receiver.session)` | [Auto lock renew a session for sessionful receiver](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
-| `azure.servicebus.AutoLockRenew().shutdown()` | `azure.servicebus.AutoLockRenewer().close()` | [Close an auto-lock-renewer](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
+
+- `AutoLockRenew` class is renamed to `AutoLockRenewer`.
+- `register` method now takes both the receiver and the object to be auto-lock-renewed.
+- `shutdown` method is renamed to `close` to keep consistent with sender and receiver classes.
+
+In V0.50:
+```python
+from azure.servicebus import AutoLockRenew
+auto_lock_renew = AutoLockRenew()
+
+with receiver:
+    auto_lock_renew.register(received_message)
+
+with session_receiver:
+    auto_lock_renew.register(session_receiver)
+
+auto_lock_renew.shutdown()
+```
+
+In V7:
+```python
+from azure.servicebus import AutoLockRenewer
+auto_lock_renewer = AutoLockRenewer()
+
+with receiver:
+    auto_lock_renew.register(receiver, received_message)
+
+with session_receiver:
+    auto_lock_renew.register(session_receiver, session_receiver.session)
+
+auto_lock_renew.close()
+```
 
 ### Working with Message properties
-| In v0.50 | Equivalent in v7 | Sample |
+
+There're properties on `ServiceBusMessage` being added/removed/changed, please check the table follow:
+
+| In v0.50 | Equivalent in v7 | Note |
 |---|---|---|
 | `azure.servicebus.Message.user_properties` | `azure.servicebus.ServiceBusMessage.application_properties` | Some message properties have been renamed, e.g. accessing the application specific properties of a message. |
 
-## Working with Administration Client
+### Working with Administration Client
 
 The management related operations like creating, updating, deleting and listing queues, topics, subscriptions or rules are to be done with the `ServiceBusAdministrationClient` which can be imported from the `azure.servicebus.management`. If one was relying on `control_client` available in v0.50, and cannot migrate to the `azure-mgmt-servicebus` package (or requires SAS based authentication for management), one would utilize this migration segment, otherwise, the aforementioned dedicated mgmt package should be used.
 
-### Managing Queues
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `azure.servicebus.control_client.ServiceBusService.get_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_queue(queue_name)` | [get_queue](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py#L47) |
-| `azure.servicebus.control_client.ServiceBusService.create_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_queue(queue_name)` | [create_queue](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py#L26) |
-| `azure.servicebus.control_client.ServiceBusService.delete_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_queue(queue_name)` | [delete_queue](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py#L33) |
-| `azure.servicebus.control_client.ServiceBusService.list_queues()` | `azure.servicebus.management.ServiceBusAdministrationClient.list_queues()` | [list_queues](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py#L40) |
+#### Managing Queues
 
-### Managing Topics
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `azure.servicebus.control_client.ServiceBusService.get_topic(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_topic(topic_name)` | [get_topic](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L47) |
-| `azure.servicebus.control_client.ServiceBusService.create_topic(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_topic(topic_name)` | [create_topic](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L26) |
-| `azure.servicebus.control_client.ServiceBusService.get_topic(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_topic(topic_name)` | [delete_topic](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L33) |
-| `azure.servicebus.control_client.ServiceBusService.list_topics()` | `azure.servicebus.management.ServiceBusAdministrationClient.list_topics()` | [list_topics](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L40) |
+In V0.50:
+```python
+from azure.servicebus.control_client import ServiceBusService
+service_bus_service = ServiceBusService()
+queue = service_bus_service.get_queue(queue_name)
+service_bus_service.create_queue(queue_name)
+service_bus_service.delete_queue(queue_name)
+queues = service_bus_service.list_queues()
+```
 
-### Managing Subscriptions
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `azure.servicebus.control_client.ServiceBusService.get_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_subscription(topic_name, subscription_name)` |  [get_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L48) |
-| `azure.servicebus.control_client.ServiceBusService.create_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_subscription(topic_name, subscription_name)` |  [create_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L27) |
-| `azure.servicebus.control_client.ServiceBusService.delete_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_subscription(topic_name, subscription_name)` |  [delete_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L34) |
-| `azure.servicebus.control_client.ServiceBusService.list_subscriptions(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.list_subscriptions(topic_name)` |  [list_subscriptions](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L41) |
+In V7:
+```python
+from azure.servicebus.management import ServiceBusAdministrationClient
+service_bus_administration_client = ServiceBusAdministrationClient()
+queue = service_bus_administration_client.get_queue(queue_name)
+service_bus_administration_client.create_queue(queue_name)
+service_bus_administration_client.delete_queue(queue_name)
+queues = service_bus_administration_client.list_queues()
+```
 
-### Managing Rules
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `azure.servicebus.control_client.ServiceBusService.get_rule(topic_name, subscription_name, rule_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_rule(topic_name, subscription_name, rule_name)` | [get_rule](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py#L49) |
-| `azure.servicebus.control_client.ServiceBusService.create_rule(topic_name, subscription_name, rule_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_rule(topic_name, subscription_name, rule_name)` | [create_rule](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py#L28) |
-| `azure.servicebus.control_client.ServiceBusService.delete_rule(topic_name, subscription_name, rule_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_rule(topic_name, subscription_name, rule_name)` | [delete_rule](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py#L35) |
-| `azure.servicebus.control_client.ServiceBusService.list_rules(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.list_rules(topic_name, subscription_name)` | [list_rules](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py#L42) |
+#### Managing Topics
 
-## Migration samples
+In V0.50:
+```python
+from azure.servicebus.control_client import ServiceBusService
+service_bus_service = ServiceBusService()
+topic = service_bus_service.get_topic(topic_name)
+service_bus_service.create_topic(topic_name)
+service_bus_service.delete_topic(topic_name)
+topics = service_bus_service.list_topics()
+```
+
+In V7:
+```python
+from azure.servicebus.management import ServiceBusAdministrationClient
+service_bus_administration_client = ServiceBusAdministrationClient()
+topic = service_bus_administration_client.get_topic(topic_name)
+service_bus_administration_client.create_topic(topic_name)
+service_bus_administration_client.delete_topic(topic_name)
+topics = service_bus_administration_client.list_topics()
+```
+
+#### Managing Subscriptions
+
+In V0.50:
+```python
+from azure.servicebus.control_client import ServiceBusService
+service_bus_service = ServiceBusService()
+subscription = service_bus_service.get_subscription(topic_name, subscription_name)
+service_bus_service.create_subscription(topic_name, subscription_name)
+service_bus_service.delete_subscription(topic_name, subscription_name)
+subscriptions = service_bus_service.list_subscriptions(topic_name)
+```
+
+In V7:
+```python
+from azure.servicebus.management import ServiceBusAdministrationClient
+service_bus_administration_client = ServiceBusAdministrationClient()
+subscription = service_bus_administration_client.get_subscription(topic_name, subscription_name)
+service_bus_administration_client.create_subscription(topic_name, subscription_name)
+service_bus_administration_client.delete_subscription(topic_name, subscription_name)
+subscriptions = service_bus_administration_client.list_subscriptions(topic_name)
+```
+
+#### Managing Rules
+
+In V0.50:
+```python
+from azure.servicebus.control_client import ServiceBusService
+service_bus_service = ServiceBusService()
+rule = service_bus_service.get_rule(topic_name, subscription_name, rule_name)
+service_bus_service.create_rule(topic_name, subscription_name, rule_name)
+service_bus_service.delete_rule(topic_name, subscription_name, rule_name)
+rules = service_bus_service.list_rules(topic_name, subscription_name)
+```
+
+In V7:
+```python
+from azure.servicebus.management import ServiceBusAdministrationClient
+service_bus_administration_client = ServiceBusAdministrationClient()
+rule = service_bus_administration_client.get_rule(topic_name, subscription_name, rule_name)
+service_bus_administration_client.create_rule(topic_name, subscription_name, rule_name)
+service_bus_administration_client.delete_rule(topic_name, subscription_name, rule_name)
+rules = service_bus_administration_client.list_rules(topic_name, subscription_name)
+```
+
+### Migration samples
 
 * [Receiving messages](#migrating-code-from-queueclient-and-receiver-to-servicebusreceiver-for-receiving-messages)
 * [Sending messages](#migrating-code-from-queueclient-and-sender-to-servicebussender-for-sending-messages)
 
-### Migrating code from `QueueClient` and `Receiver` to `ServiceBusReceiver` for receiving messages
+#### Migrating code from `QueueClient` and `Receiver` to `ServiceBusReceiver` for receiving messages
 
 In v0.50, `QueueClient` would be created directly or from the `ServiceBusClient.get_queue` method,
 after which user would call `get_receiver` to obtain a receiver, calling `fetch_next` to receive a single 
@@ -204,8 +484,7 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, receive_mo
             receiver.complete_message(message)
 ```
 
-
-### Migrating code from `QueueClient` and `Sender` to `ServiceBusSender` for sending messages
+#### Migrating code from `QueueClient` and `Sender` to `ServiceBusSender` for sending messages
 
 In v0.50, `QueueClient` would be created directly or from the `ServiceBusClient.get_queue` method,
 after which user would call `get_sender` to obtain a sender, calling `send` to send a single or batch
@@ -248,3 +527,7 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
             batch.add_message(ServiceBusMessage("Batch message no. {}".format(i)))
         sender.send_messages(batch)
 ```
+
+### Addition samples
+
+More examples can be found at [Samples for azure-servicebus](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples)
