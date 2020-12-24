@@ -235,8 +235,8 @@ class AppTemplate(Model):
     :vartype manifest_id: str
     :ivar manifest_version: The version of the template.
     :vartype manifest_version: str
-    :ivar app_template_name: The name of the template.
-    :vartype app_template_name: str
+    :ivar name: The name of the template.
+    :vartype name: str
     :ivar title: The title of the template.
     :vartype title: str
     :ivar order: The order of the template in the templates list.
@@ -248,7 +248,7 @@ class AppTemplate(Model):
     _validation = {
         'manifest_id': {'readonly': True},
         'manifest_version': {'readonly': True},
-        'app_template_name': {'readonly': True},
+        'name': {'readonly': True},
         'title': {'readonly': True},
         'order': {'readonly': True},
         'description': {'readonly': True},
@@ -257,7 +257,7 @@ class AppTemplate(Model):
     _attribute_map = {
         'manifest_id': {'key': 'manifestId', 'type': 'str'},
         'manifest_version': {'key': 'manifestVersion', 'type': 'str'},
-        'app_template_name': {'key': 'appTemplateName', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'title': {'key': 'title', 'type': 'str'},
         'order': {'key': 'order', 'type': 'float'},
         'description': {'key': 'description', 'type': 'str'},
@@ -267,7 +267,7 @@ class AppTemplate(Model):
         super(AppTemplate, self).__init__(**kwargs)
         self.manifest_id = None
         self.manifest_version = None
-        self.app_template_name = None
+        self.name = None
         self.title = None
         self.order = None
         self.description = None
