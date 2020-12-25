@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ScheduledQueryRulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class ScheduledQueryRulesOperations(object):
         self,
         resource_group_name,  # type: str
         rule_name,  # type: str
-        parameters,  # type: "models.LogSearchRuleResource"
+        parameters,  # type: "_models.LogSearchRuleResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LogSearchRuleResource"
+        # type: (...) -> "_models.LogSearchRuleResource"
         """Creates or updates an log search rule.
 
         :param resource_group_name: The name of the resource group.
@@ -66,7 +66,7 @@ class ScheduledQueryRulesOperations(object):
         :rtype: ~$(python-base-namespace).v2018_04_16.models.LogSearchRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogSearchRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogSearchRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,7 +102,7 @@ class ScheduledQueryRulesOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -123,7 +123,7 @@ class ScheduledQueryRulesOperations(object):
         rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LogSearchRuleResource"
+        # type: (...) -> "_models.LogSearchRuleResource"
         """Gets an Log Search rule.
 
         :param resource_group_name: The name of the resource group.
@@ -135,7 +135,7 @@ class ScheduledQueryRulesOperations(object):
         :rtype: ~$(python-base-namespace).v2018_04_16.models.LogSearchRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogSearchRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogSearchRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -166,7 +166,7 @@ class ScheduledQueryRulesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LogSearchRuleResource', pipeline_response)
@@ -181,10 +181,10 @@ class ScheduledQueryRulesOperations(object):
         self,
         resource_group_name,  # type: str
         rule_name,  # type: str
-        parameters,  # type: "models.LogSearchRuleResourcePatch"
+        parameters,  # type: "_models.LogSearchRuleResourcePatch"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LogSearchRuleResource"
+        # type: (...) -> "_models.LogSearchRuleResource"
         """Update log search Rule.
 
         :param resource_group_name: The name of the resource group.
@@ -198,7 +198,7 @@ class ScheduledQueryRulesOperations(object):
         :rtype: ~$(python-base-namespace).v2018_04_16.models.LogSearchRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogSearchRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogSearchRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -234,7 +234,7 @@ class ScheduledQueryRulesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LogSearchRuleResource', pipeline_response)
@@ -294,7 +294,7 @@ class ScheduledQueryRulesOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -307,7 +307,7 @@ class ScheduledQueryRulesOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LogSearchRuleResourceCollection"]
+        # type: (...) -> Iterable["_models.LogSearchRuleResourceCollection"]
         """List the Log Search rules within a subscription group.
 
         :param filter: The filter to apply on the operation. For more information please see
@@ -318,7 +318,7 @@ class ScheduledQueryRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2018_04_16.models.LogSearchRuleResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogSearchRuleResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogSearchRuleResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -365,7 +365,7 @@ class ScheduledQueryRulesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -382,7 +382,7 @@ class ScheduledQueryRulesOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LogSearchRuleResourceCollection"]
+        # type: (...) -> Iterable["_models.LogSearchRuleResourceCollection"]
         """List the Log Search rules within a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -395,7 +395,7 @@ class ScheduledQueryRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2018_04_16.models.LogSearchRuleResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogSearchRuleResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogSearchRuleResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -443,7 +443,7 @@ class ScheduledQueryRulesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
