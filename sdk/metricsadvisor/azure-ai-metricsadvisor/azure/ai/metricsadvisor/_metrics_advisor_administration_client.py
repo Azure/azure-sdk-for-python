@@ -17,6 +17,7 @@ from typing import (
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
     import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._generated.models import (
@@ -52,6 +53,7 @@ from ._generated.models import (
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
 from ._version import SDK_MONIKER
+from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._helpers import (
     convert_to_generated_data_feed_type,
@@ -85,7 +87,6 @@ from .models._models import (
 
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
-    from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from ._generated.models import IngestionStatus as DataFeedIngestionStatus
     from .models._models import (
         MetricAlertConfiguration,
@@ -153,7 +154,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
-        Requires both subscription key and API key.
+        which requires both subscription key and API key. Or an object which can provide an access
+        token for the vault, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
 
     .. admonition:: Example:
@@ -179,12 +181,26 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         self._endpoint = endpoint
 
-        self._client = _Client(
-            endpoint=endpoint,
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-            **kwargs
-        )
+        if isinstance(credential, MetricsAdvisorKeyCredential):
+            self._client = _Client(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
+                **kwargs
+            )
+        else:
+            scope = "https://cognitiveservices.azure.com/.default"
+            if hasattr(credential, "get_token"):
+                credential_policy = BearerTokenCredentialPolicy(credential, scope)
+            else:
+                raise TypeError("Please provide an instance from azure-identity "
+                                "or a class that implement the 'get_token protocol")
+            self._client = _Client(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=credential_policy,
+                **kwargs
+            )
 
     def __repr__(self):
         # type: () -> str

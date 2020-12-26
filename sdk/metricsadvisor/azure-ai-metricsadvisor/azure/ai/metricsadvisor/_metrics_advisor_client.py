@@ -60,7 +60,8 @@ class MetricsAdvisorClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
-        Requires both subscription key and API key.
+        which requires both subscription key and API key. Or an object which can provide an access
+        token for the vault, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
@@ -80,7 +81,7 @@ class MetricsAdvisorClient(object):
 
         self._endpoint = endpoint
 
-        if isinstance(credential, MetricsAdvisorKeyCredentialPolicy):
+        if isinstance(credential, MetricsAdvisorKeyCredential):
             self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
                 endpoint=endpoint,
                 sdk_moniker=SDK_MONIKER,
@@ -88,7 +89,7 @@ class MetricsAdvisorClient(object):
                 **kwargs
             )
         else:
-            scope = endpoint.strip("/") + "/.default"
+            scope = "https://cognitiveservices.azure.com/.default"
             if hasattr(credential, "get_token"):
                 credential_policy = BearerTokenCredentialPolicy(credential, scope)
             else:
