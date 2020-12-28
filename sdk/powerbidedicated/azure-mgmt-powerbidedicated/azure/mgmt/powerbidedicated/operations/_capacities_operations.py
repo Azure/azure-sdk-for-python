@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -60,7 +59,8 @@ class CapacitiesOperations(object):
         :return: DedicatedCapacity or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.powerbidedicated.models.DedicatedCapacity or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_details.metadata['url']
@@ -90,9 +90,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -140,9 +138,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -184,7 +180,8 @@ class CapacitiesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.powerbidedicated.models.DedicatedCapacity]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.powerbidedicated.models.DedicatedCapacity]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -243,9 +240,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -271,7 +266,8 @@ class CapacitiesOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -330,9 +326,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -373,7 +367,8 @@ class CapacitiesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.powerbidedicated.models.DedicatedCapacity]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.powerbidedicated.models.DedicatedCapacity]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
@@ -432,9 +427,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -460,7 +453,8 @@ class CapacitiesOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         raw_result = self._suspend_initial(
             resource_group_name=resource_group_name,
@@ -514,9 +508,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -542,7 +534,8 @@ class CapacitiesOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         raw_result = self._resume_initial(
             resource_group_name=resource_group_name,
@@ -582,7 +575,8 @@ class CapacitiesOperations(object):
         :return: An iterator like instance of DedicatedCapacity
         :rtype:
          ~azure.mgmt.powerbidedicated.models.DedicatedCapacityPaged[~azure.mgmt.powerbidedicated.models.DedicatedCapacity]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -622,9 +616,7 @@ class CapacitiesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -649,7 +641,8 @@ class CapacitiesOperations(object):
         :return: An iterator like instance of DedicatedCapacity
         :rtype:
          ~azure.mgmt.powerbidedicated.models.DedicatedCapacityPaged[~azure.mgmt.powerbidedicated.models.DedicatedCapacity]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -688,9 +681,7 @@ class CapacitiesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -717,7 +708,8 @@ class CapacitiesOperations(object):
         :rtype:
          ~azure.mgmt.powerbidedicated.models.SkuEnumerationForNewResourceResult
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list_skus.metadata['url']
@@ -745,9 +737,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -781,7 +771,8 @@ class CapacitiesOperations(object):
         :rtype:
          ~azure.mgmt.powerbidedicated.models.SkuEnumerationForExistingResourceResult
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list_skus_for_capacity.metadata['url']
@@ -811,9 +802,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -846,7 +835,8 @@ class CapacitiesOperations(object):
         :rtype:
          ~azure.mgmt.powerbidedicated.models.CheckCapacityNameAvailabilityResult
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.powerbidedicated.models.ErrorResponseException>`
         """
         capacity_parameters = models.CheckCapacityNameAvailabilityParameters(name=name, type=type)
 
@@ -881,9 +871,7 @@ class CapacitiesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

@@ -16,6 +16,7 @@ try:
     from ._models_py3 import DedicatedCapacityAdministrators
     from ._models_py3 import DedicatedCapacityUpdateParameters
     from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseError
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Resource
@@ -30,6 +31,7 @@ except (SyntaxError, ImportError):
     from ._models import DedicatedCapacityAdministrators
     from ._models import DedicatedCapacityUpdateParameters
     from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseError
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Resource
@@ -52,6 +54,7 @@ __all__ = [
     'DedicatedCapacityAdministrators',
     'DedicatedCapacityUpdateParameters',
     'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseError',
     'Operation',
     'OperationDisplay',
     'Resource',
