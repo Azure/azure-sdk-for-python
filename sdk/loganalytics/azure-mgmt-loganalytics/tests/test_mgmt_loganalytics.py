@@ -2,10 +2,10 @@ import azure.mgmt.loganalytics
 from devtools_testutils import AzureMgmtTestCase
 
 
-class MgmtLoganalyticsTest(AzureMgmtTestCase):
+class MgmtLogAnalyticsTest(AzureMgmtTestCase):
 
     def setUp(self):
-        super(MgmtLoganalyticsTest, self).setUp()
+        super(MgmtLogAnalyticsTest, self).setUp()
         self.client = self.create_mgmt_client(
             azure.mgmt.loganalytics.LogAnalyticsManagementClient
         )

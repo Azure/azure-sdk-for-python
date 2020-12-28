@@ -4,7 +4,7 @@
 
 **Breaking changes**
 
-  - Client name changed from OperationalInsightsManagementClient to LogAnalyticsManagementClient
+  - Change client name from OperationalInsightsManagementClient to LogAnalyticsManagementClient
 
 ## 7.0.0 (2020-12-17)
 
