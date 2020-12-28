@@ -2,9 +2,15 @@
 
 ## 5.2.1 (Unreleased)
 
-**Note**
+**Bug fixes**
 
-* Updated uAMQP dependency to 1.2.12 adding support for Python 3.9.
+* Updated `azure.eventhub.extension.__init__.py` to be compatible with pkgutil-style namespace (PR #13210, thanks @pjachowi).
+* Updated uAMQP dependency to 1.2.13
+  - Added support for Python 3.9.
+  - Fixed bug in accessing message properties triggering segmentation fault when the underlying C bytes are NULL.
+  - Fixed bug where connection establishment on macOS with Clang 12 triggering unrecognized selector exception.
+  - Fixed bug that macOS was unable to detect network error.
+  - Fixed bug that ReceiveClient and ReceiveClientAsync receive messages during connection establishment.
 
 ## 5.2.0 (2020-09-08)
 
