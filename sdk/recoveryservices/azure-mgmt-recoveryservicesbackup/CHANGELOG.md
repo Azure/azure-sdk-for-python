@@ -1,5 +1,12 @@
 # Release History
 
+## 0.11.0 (2020-12-28)
+
+**Features**
+
+  - Model IaasVMRecoveryPoint has a new parameter zones
+  - Model IaasVMRestoreRequest has a new parameter zones
+
 ## 0.10.0 (2020-12-08)
 
 **Features**

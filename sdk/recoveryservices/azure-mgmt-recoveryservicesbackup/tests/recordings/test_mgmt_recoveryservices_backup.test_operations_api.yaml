@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-recoveryservicesbackup/0.10.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-recoveryservicesbackup/0.11.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -345,11 +345,13 @@ interactions:
         Items","operation":"Track the results of an asynchronous operation on the
         resource Migration Items","description":"Track the results of an asynchronous
         operation on the resource Migration Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationSupportedOperatingSystems/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
-        ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/addDisks/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
+        ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationRecoveryPlans/failoverCancel/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Recovery
+        Plans","operation":"Cancel Failover Recovery Plan","description":"Cancel Failover
+        Recovery Plan"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/addDisks/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
         Items","operation":"Add disks","description":"Add disks"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/removeDisks/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
         Items","operation":"Remove disks","description":"Remove disks"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/ResolveHealthErrors/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
         Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/failoverCancel/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
-        Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationProtectionIntents/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
+        Items","operation":"Failover Cancel","description":"Failover Cancel"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationProtectionIntents/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
         ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationProtectionIntents/write","display":{"provider":"Microsoft.RecoveryServices","operation":"Create
         or Update ","description":"Create or Update any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationVaultSettings/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
         ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationVaultSettings/write","display":{"provider":"Microsoft.RecoveryServices","operation":"Create
@@ -417,11 +419,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '64339'
+      - '64686'
       content-type:
       - application/json
       date:
-      - Tue, 08 Dec 2020 07:31:29 GMT
+      - Mon, 28 Dec 2020 09:03:46 GMT
       expires:
       - '-1'
       pragma:
