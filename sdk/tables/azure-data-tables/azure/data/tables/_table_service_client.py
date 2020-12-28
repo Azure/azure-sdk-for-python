@@ -358,9 +358,9 @@ class TableServiceClient(TableServiceClientBase):
 
         _pipeline = Pipeline(
             transport=TransportWrapper(
-                self._pipeline._transport
-            ),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies,  # pylint: disable = protected-access
+                self._pipeline._transport  # pylint: disable=protected-access
+            ),
+            policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
 
         return TableClient(

@@ -118,10 +118,9 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint:disable=protected-access
                 generated.retention_policy
-            )  # pylint:disable=W0212
-            # pylint: disable=protected-access
+            )
         )
 
 
@@ -138,8 +137,8 @@ class Metrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(
-        self,  # pylint:disable=W0231
+    def __init__(  # pylint:disable=super-init-not-called
+        self,
         **kwargs  # type: Any
     ):
         self.version = kwargs.get("version", u"1.0")
@@ -160,10 +159,9 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            )  # pylint:disable=W0212
-            # pylint: disable=protected-access
+            )
         )
 
 
@@ -309,8 +307,8 @@ class TablePropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [
-            TableItem._from_generated(t, **self._headers) for t in self._response.value
-        ]  # pylint:disable=protected-access
+            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint:disable=protected-access
+        ]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
 
@@ -439,7 +437,7 @@ class TableSasPermissions(object):
         parsed = cls(
             **dict(kwargs, read=p_read, add=p_add, delete=p_delete, update=p_update)
         )
-        parsed._str = permission  # pylint: disable = W0201
+        parsed._str = permission  # pylint: disable=protected-access,attribute-defined-outside-init
         return parsed
 
 
@@ -462,17 +460,16 @@ def service_stats_deserialize(generated):
 def service_properties_deserialize(generated):
     """Deserialize a ServiceProperties objects into a dict."""
     return {
-        "analytics_logging": TableAnalyticsLogging._from_generated(generated.logging),
-        # pylint: disable=protected-access
-        "hour_metrics": Metrics._from_generated(
+        "analytics_logging": TableAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
+        "hour_metrics": Metrics._from_generated(  # pylint: disable=protected-access
             generated.hour_metrics
-        ),  # pylint: disable=protected-access
-        "minute_metrics": Metrics._from_generated(
+        ),
+        "minute_metrics": Metrics._from_generated(  # pylint: disable=protected-access
             generated.minute_metrics
-        ),  # pylint: disable=protected-access
+        ),
         "cors": [
-            CorsRule._from_generated(cors) for cors in generated.cors
-        ],  # pylint: disable=protected-access
+            CorsRule._from_generated(cors) for cors in generated.cors  # pylint: disable=protected-access
+        ],
     }
 
 

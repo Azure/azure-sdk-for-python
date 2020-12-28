@@ -387,8 +387,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
-                self._pipeline._transport
-            ),  # pylint: disable = protected-access
+                self._pipeline._transport  # pylint: disable = protected-access
+            ),
             policies=self._pipeline._impl_policies,  # pylint: disable = protected-access
         )
 

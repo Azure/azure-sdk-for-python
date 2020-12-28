@@ -649,6 +649,6 @@ class TableClient(TableClientBase):
                 :dedent: 8
                 :caption: Using batches to send multiple requests at once
         """
-        return self._batch_send(
-            batch._entities, *batch._requests, **kwargs
-        )  # pylint:disable=protected-access
+        return self._batch_send(  # pylint:disable=protected-access
+            batch._entities, *batch._requests, **kwargs  # pylint:disable=protected-access
+        )

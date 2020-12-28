@@ -184,7 +184,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
     def generate_table(
         self,
         table_name,
-        permission=None,  # pylint: disable = W0613
+        permission=None,
         expiry=None,
         start=None,
         policy_id=None,
@@ -194,7 +194,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
         start_rk=None,
         end_pk=None,
         end_rk=None,
-        **kwargs
+        **kwargs  # pylint: disable=unused-argument
     ):
         """
         Generates a shared access signature for the table.

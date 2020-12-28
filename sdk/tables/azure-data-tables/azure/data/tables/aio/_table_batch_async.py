@@ -138,9 +138,9 @@ class TableBatchOperations(object):
             ),
             "table": self._serialize.url("table", table, "str"),
         }
-        url = self._client._client.format_url(
+        url = self._client._client.format_url(  # pylint:disable=protected-access
             url, **path_format_arguments
-        )  # pylint:disable=protected-access
+        )
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -180,9 +180,9 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.post(
+        request = self._client._client.post(  # pylint:disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
-        )  # pylint:disable=protected-access
+        )
         self._requests.append(request)
 
     _batch_create_entity.metadata = {"url": "/{table}"}  # type: ignore
@@ -307,9 +307,9 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(
+        url = self._client._client.format_url(  # pylint:disable=protected-access
             url, **path_format_arguments
-        )  # pylint:disable=protected-access
+        )
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -349,9 +349,9 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.put(
+        request = self._client._client.put(  # pylint:disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
-        )  # pylint:disable=protected-access
+        )
         self._requests.append(request)
 
     _batch_update_entity.metadata = {
@@ -415,9 +415,9 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(
+        url = self._client._client.format_url(  # pylint:disable=protected-access
             url, **path_format_arguments
-        )  # pylint:disable=protected-access
+        )
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -457,9 +457,9 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.patch(
+        request = self._client._client.patch(  # pylint:disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
-        )  # pylint:disable=protected-access
+        )
         self._requests.append(request)
 
     _batch_merge_entity.metadata = {
@@ -571,9 +571,9 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(
+        url = self._client._client.format_url(  # pylint:disable=protected-access
             url, **path_format_arguments
-        )  # pylint:disable=protected-access
+        )
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -603,9 +603,9 @@ class TableBatchOperations(object):
         )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
-        request = self._client._client.delete(
+        request = self._client._client.delete(  # pylint:disable=protected-access
             url, query_parameters, header_parameters
-        )  # pylint:disable=protected-access
+        )
         self._requests.append(request)
 
     _batch_delete_entity.metadata = {
