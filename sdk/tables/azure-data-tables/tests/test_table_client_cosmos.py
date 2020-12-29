@@ -28,7 +28,12 @@ from devtools_testutils import CachedResourceGroupPreparer, PowerShellPreparer
 CosmosPSPreparer = functools.partial(
     PowerShellPreparer, "tables",
     tables_cosmos_account_name="fake_cosmos_account",
-    tables_primary_cosmos_account_key="fakecosmosaccountkey")
+    tables_primary_cosmos_account_key="fakecosmosaccountkey",
+    preparers=[
+        CachedResourceGroupPreparer(name_prefix="tablestest"),
+        CachedCosmosAccountPreparer(name_prefix="tablestest"),
+    ]
+)
 
 # ------------------------------------------------------------------------------
 SERVICES = {
