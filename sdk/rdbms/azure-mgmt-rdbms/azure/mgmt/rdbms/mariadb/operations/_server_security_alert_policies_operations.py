@@ -31,7 +31,7 @@ class ServerSecurityAlertPoliciesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -61,10 +61,10 @@ class ServerSecurityAlertPoliciesOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param security_alert_policy_name: The name of the security alert policy.
-        :type security_alert_policy_name: str or ~maria_db_management_client.models.SecurityAlertPolicyName
+        :type security_alert_policy_name: str or ~azure.mgmt.rdbms.mariadb.models.SecurityAlertPolicyName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServerSecurityAlertPolicy, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.ServerSecurityAlertPolicy
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.ServerSecurityAlertPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerSecurityAlertPolicy"]
@@ -183,9 +183,9 @@ class ServerSecurityAlertPoliciesOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param security_alert_policy_name: The name of the threat detection policy.
-        :type security_alert_policy_name: str or ~maria_db_management_client.models.SecurityAlertPolicyName
+        :type security_alert_policy_name: str or ~azure.mgmt.rdbms.mariadb.models.SecurityAlertPolicyName
         :param parameters: The server security alert policy.
-        :type parameters: ~maria_db_management_client.models.ServerSecurityAlertPolicy
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.ServerSecurityAlertPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -193,7 +193,7 @@ class ServerSecurityAlertPoliciesOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ServerSecurityAlertPolicy or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~maria_db_management_client.models.ServerSecurityAlertPolicy]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.rdbms.mariadb.models.ServerSecurityAlertPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
