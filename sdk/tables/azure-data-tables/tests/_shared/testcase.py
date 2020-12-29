@@ -6,56 +6,31 @@
 # --------------------------------------------------------------------------
 from __future__ import division
 from contextlib import contextmanager
-import copy
-import inspect
 import os
-import os.path
 import time
 from datetime import datetime, timedelta
 
-try:
-    import unittest.mock as mock
-except ImportError:
-    import mock
-
 import zlib
-import math
 import sys
 import string
 import random
 import re
 import logging
-from devtools_testutils import (
-    AzureTestCase,
-    AzureMgmtPreparer,
-    ResourceGroupPreparer,
-    StorageAccountPreparer,
-    FakeResource,
-)
-from .cosmos_testcase import CosmosAccountPreparer, CachedCosmosAccountPreparer
-from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
+from devtools_testutils import AzureTestCase
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
 try:
-    from cStringIO import StringIO      # Python 2
+    from cStringIO import StringIO
 except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
-from azure.mgmt.storage.models import StorageAccount, Endpoints
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
 from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
-
-try:
-    from devtools_testutils import mgmt_settings_real as settings
-except ImportError:
-    from devtools_testutils import mgmt_settings_fake as settings
 
 import pytest
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
-
-RERUNS_DELAY = 60
 
 SLEEP_DELAY = 30
 
@@ -86,32 +61,6 @@ class XMSRequestIDBody(RecordingProcessor):
         return response
 
 
-class GlobalResourceGroupPreparer(AzureMgmtPreparer):
-    def __init__(self):
-        super(GlobalResourceGroupPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-
-    def create_resource(self, name, **kwargs):
-        rg = TableTestCase._RESOURCE_GROUP
-        if self.is_live:
-            self.test_class_instance.scrubber.register_name_pair(
-                rg.name,
-                "rgname"
-            )
-        else:
-            rg = FakeResource(
-                name="rgname",
-                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
-            )
-
-        return {
-            'location': 'westus',
-            'resource_group': rg,
-        }
-
-
 class TableTestCase(AzureTestCase):
 
     def __init__(self, *args, **kwargs):
@@ -120,7 +69,7 @@ class TableTestCase(AzureTestCase):
         self._RESOURCE_GROUP = None,
 
     def connection_string(self, account, key):
-        return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
+        return "DefaultEndpointsProtocol=https;AccountName=" + account + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
 
     def account_url(self, account, endpoint_type):
         """Return an url of storage account.
@@ -136,7 +85,11 @@ class TableTestCase(AzureTestCase):
             else:
                 raise ValueError("Unknown storage type {}".format(storage_type))
         except AttributeError: # Didn't find "primary_endpoints"
-            return 'https://{}.{}.core.windows.net'.format(account, endpoint_type)
+            if endpoint_type == "table":
+                return 'https://{}.{}.core.windows.net'.format(account, endpoint_type)
+            if endpoint_type == "cosmos":
+                return "https://{}.table.cosmos.azure.com".format(account)
+
 
     def configure_logging(self):
         try:
@@ -242,71 +195,3 @@ class TableTestCase(AzureTestCase):
 
     def generate_fake_token(self):
         return FakeTokenCredential()
-
-
-def not_for_emulator(test):
-    def skip_test_if_targeting_emulator(self):
-        test(self)
-    return skip_test_if_targeting_emulator
-
-
-class RetryCounter(object):
-    def __init__(self):
-        self.count = 0
-
-    def simple_count(self, retry_context):
-        self.count += 1
-
-
-class ResponseCallback(object):
-    def __init__(self, status=None, new_status=None):
-        self.status = status
-        self.new_status = new_status
-        self.first = True
-        self.count = 0
-
-    def override_first_status(self, response):
-        if self.first and response.http_response.status_code == self.status:
-            response.http_response.status_code = self.new_status
-            self.first = False
-        self.count += 1
-
-    def override_status(self, response):
-        if response.http_response.status_code == self.status:
-            response.http_response.status_code = self.new_status
-        self.count += 1
-
-
-class LogCaptured(object):
-    def __init__(self, test_case=None):
-        # accept the test case so that we may reset logging after capturing logs
-        self.test_case = test_case
-
-    def __enter__(self):
-        # enable logging
-        # it is possible that the global logging flag is turned off
-        self.test_case.enable_logging()
-
-        # create a string stream to send the logs to
-        self.log_stream = StringIO()
-
-        # the handler needs to be stored so that we can remove it later
-        self.handler = logging.StreamHandler(self.log_stream)
-        self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-
-        # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.storage')
-        self.logger.level = logging.DEBUG
-        self.logger.addHandler(self.handler)
-
-        # the stream is returned to the user so that the capture logs can be retrieved
-        return self.log_stream
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # stop the handler, and close the stream to exit
-        self.logger.removeHandler(self.handler)
-        self.log_stream.close()
-
-        # reset logging since we messed with the setting
-        self.test_case.configure_logging()
-
