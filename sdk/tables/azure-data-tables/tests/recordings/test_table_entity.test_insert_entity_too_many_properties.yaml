@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 17 Nov 2020 01:08:52 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 17 Nov 2020 01:08:52 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable97d21773"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable97d21773"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 17 Nov 2020 01:08:53 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       location:
-      - https://tablesteststorname.table.core.windows.net/Tables('uttable97d21773')
+      - https://fake_table_account.table.core.windows.net/Tables('uttable97d21773')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -233,27 +233,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 17 Nov 2020 01:08:53 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 17 Nov 2020 01:08:53 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttable97d21773
+    uri: https://fake_table_account.table.core.windows.net/uttable97d21773
   response:
     body:
       string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
         entity contains more properties than allowed. Each entity can include up to
-        252 properties to store data. Each entity also has 3 system properties.\nRequestId:d64ee386-a002-0025-4f7e-bcf0b4000000\nTime:2020-11-17T01:08:54.1819495Z"}}}'
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:794ee173-6002-0068-6f60-d5c589000000\nTime:2020-12-18T17:09:11.2033552Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 17 Nov 2020 01:08:54 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -277,15 +277,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 17 Nov 2020 01:08:53 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 17 Nov 2020 01:08:53 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('uttable97d21773')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable97d21773')
   response:
     body:
       string: ''
@@ -295,7 +295,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 17 Nov 2020 01:08:54 GMT
+      - Fri, 18 Dec 2020 17:09:10 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

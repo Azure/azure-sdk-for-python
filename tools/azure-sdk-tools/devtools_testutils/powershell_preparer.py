@@ -71,7 +71,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
                         raise AzureTestError(template.format(key))
             except KeyError as key_error:
                 if not self._backup_preparers:
-                    raise key_error
+                    raise
 
                 self.real_values = {}
                 create_kwargs = {}
