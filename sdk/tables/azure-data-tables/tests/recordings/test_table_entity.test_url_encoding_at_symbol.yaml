@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttableaafd1293"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttableaafd1293"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       location:
-      - https://tablesteststorname.table.core.windows.net/Tables('uttableaafd1293')
+      - https://fake_table_account.table.core.windows.net/Tables('uttableaafd1293')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -64,29 +64,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A17.1737202Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0","Timestamp":"2020-12-15T20:06:17.1737202Z","Value":100}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A01.413483Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0","Timestamp":"2020-12-18T17:10:01.413483Z","Value":100}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A17.1737202Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A01.413483Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -115,29 +115,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A17.2958074Z''\"","PartitionKey":"PK","RowKey":"table@storage.com01","Timestamp":"2020-12-15T20:06:17.2958074Z","Value":101}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A01.5345703Z''\"","PartitionKey":"PK","RowKey":"table@storage.com01","Timestamp":"2020-12-18T17:10:01.5345703Z","Value":101}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A17.2958074Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A01.5345703Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com01')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com01')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -166,29 +166,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A17.4339052Z''\"","PartitionKey":"PK","RowKey":"table@storage.com012","Timestamp":"2020-12-15T20:06:17.4339052Z","Value":103}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A01.658659Z''\"","PartitionKey":"PK","RowKey":"table@storage.com012","Timestamp":"2020-12-18T17:10:01.658659Z","Value":103}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A17.4339052Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A01.658659Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com012')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com012')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -217,29 +217,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A17.5579938Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0123","Timestamp":"2020-12-15T20:06:17.5579938Z","Value":106}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A01.7857506Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0123","Timestamp":"2020-12-18T17:10:01.7857506Z","Value":106}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:16 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A17.5579938Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A01.7857506Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0123')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0123')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -268,29 +268,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A17.6810811Z''\"","PartitionKey":"PK","RowKey":"table@storage.com01234","Timestamp":"2020-12-15T20:06:17.6810811Z","Value":110}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A01.9088389Z''\"","PartitionKey":"PK","RowKey":"table@storage.com01234","Timestamp":"2020-12-18T17:10:01.9088389Z","Value":110}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A17.6810811Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A01.9088389Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com01234')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com01234')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -319,29 +319,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A17.8121745Z''\"","PartitionKey":"PK","RowKey":"table@storage.com012345","Timestamp":"2020-12-15T20:06:17.8121745Z","Value":115}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A02.0509419Z''\"","PartitionKey":"PK","RowKey":"table@storage.com012345","Timestamp":"2020-12-18T17:10:02.0509419Z","Value":115}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A17.8121745Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A02.0509419Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com012345')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com012345')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -370,29 +370,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A17.9522736Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0123456","Timestamp":"2020-12-15T20:06:17.9522736Z","Value":121}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A02.1710278Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0123456","Timestamp":"2020-12-18T17:10:02.1710278Z","Value":121}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A17.9522736Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A02.1710278Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0123456')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0123456')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -421,29 +421,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A18.0743608Z''\"","PartitionKey":"PK","RowKey":"table@storage.com01234567","Timestamp":"2020-12-15T20:06:18.0743608Z","Value":128}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A02.2951165Z''\"","PartitionKey":"PK","RowKey":"table@storage.com01234567","Timestamp":"2020-12-18T17:10:02.2951165Z","Value":128}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A18.0743608Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A02.2951165Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com01234567')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com01234567')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -472,29 +472,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A18.2154614Z''\"","PartitionKey":"PK","RowKey":"table@storage.com012345678","Timestamp":"2020-12-15T20:06:18.2154614Z","Value":136}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A02.4302139Z''\"","PartitionKey":"PK","RowKey":"table@storage.com012345678","Timestamp":"2020-12-18T17:10:02.4302139Z","Value":136}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A18.2154614Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A02.4302139Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com012345678')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com012345678')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -523,29 +523,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A18.3365468Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0123456789","Timestamp":"2020-12-15T20:06:18.3365468Z","Value":145}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A02.5563045Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0123456789","Timestamp":"2020-12-18T17:10:02.5563045Z","Value":145}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       etag:
-      - W/"datetime'2020-12-15T20%3A06%3A18.3365468Z'"
+      - W/"datetime'2020-12-18T17%3A10%3A02.5563045Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0123456789')
+      - https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0123456789')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -569,25 +569,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293()?$filter=RowKey%20eq%20%27table%40storage.com0123456789%27
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293()?$filter=RowKey%20eq%20%27table%40storage.com0123456789%27
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293","value":[{"odata.etag":"W/\"datetime''2020-12-15T20%3A06%3A18.3365468Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0123456789","Timestamp":"2020-12-15T20:06:18.3365468Z","Value":145}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293","value":[{"odata.etag":"W/\"datetime''2020-12-18T17%3A10%3A02.5563045Z''\"","PartitionKey":"PK","RowKey":"table@storage.com0123456789","Timestamp":"2020-12-18T17:10:02.5563045Z","Value":145}]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:17 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -613,17 +613,17 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0123456789')
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293(PartitionKey='PK',RowKey='table%40storage.com0123456789')
   response:
     body:
       string: ''
@@ -633,7 +633,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -655,25 +655,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/uttableaafd1293()?$filter=RowKey%20eq%20%27table%40storage.com0123456789%27
+    uri: https://fake_table_account.table.core.windows.net/uttableaafd1293()?$filter=RowKey%20eq%20%27table%40storage.com0123456789%27
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableaafd1293","value":[]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableaafd1293","value":[]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -697,15 +697,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('uttableaafd1293')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttableaafd1293')
   response:
     body:
       string: ''
@@ -715,7 +715,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 15 Dec 2020 20:06:18 GMT
+      - Fri, 18 Dec 2020 17:10:02 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
