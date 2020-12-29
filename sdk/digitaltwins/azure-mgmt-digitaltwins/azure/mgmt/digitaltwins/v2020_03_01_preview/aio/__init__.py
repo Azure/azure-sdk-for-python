@@ -8,9 +8,3 @@
 
 from ._azure_digital_twins_management_client import AzureDigitalTwinsManagementClient
 __all__ = ['AzureDigitalTwinsManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass

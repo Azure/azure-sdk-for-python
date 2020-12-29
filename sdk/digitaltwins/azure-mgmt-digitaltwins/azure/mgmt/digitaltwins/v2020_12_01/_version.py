@@ -6,11 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_digital_twins_management_client import AzureDigitalTwinsManagementClient
-__all__ = ['AzureDigitalTwinsManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+VERSION = "1.0.0"
