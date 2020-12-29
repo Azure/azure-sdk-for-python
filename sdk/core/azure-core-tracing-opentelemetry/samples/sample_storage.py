@@ -1,5 +1,12 @@
 """
+Examples to show usage of the azure-core-tracing-opentelemetry
+with the storage SDK.
 
+This example traces calls for creating a container in storage and exports it
+using the ConsoleSpanExporter.
+
+An alternative path to export using AzureMonitor is also mentioned in the sample. Please take
+a look at the commented code.
 """
 
 # Declare OpenTelemetry as enabled tracing plugin for Azure SDKs
