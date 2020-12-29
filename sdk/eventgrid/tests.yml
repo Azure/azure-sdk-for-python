@@ -22,7 +22,7 @@ jobs:
         CUSTOM_SCHEMA_TOPIC_HOSTNAME: $(python-sdk-test-custom-schema-topic-hostname)
         EVENT_HUB_CONN_STR: $(python-eh-livetest-event-hub-conn-str)
         EVENTHUB_NAME: $(python-eh-livetest-event-hub-name)
-        SB_CONN_STR: $(python-servicebus-connection-string)
+        SB_CONN_STR: $(python-sb-livetest-service-connection-str)
         SERVICE_BUS_QUEUE_NAME: $(python-servicebus-queue-name)
         STORAGE_QUEUE_CONN_STR: $(python-storage-blob-connection-string)
         STORAGE_QUEUE_NAME: $(python-storage-queue-name)
