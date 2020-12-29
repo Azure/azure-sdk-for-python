@@ -34,13 +34,13 @@ C:\Users> python -m venv -p <path/to/Python/Python27/python.exe> py27_venv
 
 ### SDK root directory
 
-In the root directory of our SDK, a number of mandatory files have been added. You will not need to edit these files for this tutorial, but you should be aware about the various components and where to find more details on them. When creating your own SDK, these files can be copied from the [`sdk/template`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/template) project, and modified to your needs.
+In the root directory of our SDK, a number of mandatory files have been added. When creating your own SDK, these files can be copied from the [`sdk/template`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/template) project, and modified to your needs.
 
 - README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.docs.microsoft.com/help/contribute-ref/contribute-ref-how-to-document-sdk?branch=master#readme).
 - CHANGELOG.md. This is where you will add the summary of changes for each new release. Please see [the guidance](https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance) for correct formatting.
-- setup.py. This is the 'installer' for your Python SDK. Please see [the guide on Python packaging](https://github.com/Azure/azure-sdk-pr/issues/225) for details on customizing this for a specific package.
-- setup.cfg. This is an artifact used in building the Python package. Please see [the guide on Python packaging](https://github.com/Azure/azure-sdk-pr/issues/225) for details.
-- MANIFEST.in. This is an artifact used in building the Python package. Please see [the guide on Python packaging](https://github.com/Azure/azure-sdk-pr/issues/225) for details.
+- setup.py. This is the 'installer' for your Python SDK. Please see [the guide on Python packaging][packaging] for details on customizing this for a specific package.
+- setup.cfg. This is an artifact used in building the Python package. Please see [the guide on Python packaging][packaging] for details.
+- MANIFEST.in. This is an artifact used in building the Python package. Please see [the guide on Python packaging][packaging] for details.
 - dev_requirements.txt. This is for developers, and lists the packages required for running the tests and samples. See the dependency installation section below.
 - sdk_packaging.toml. This configuration is used by the packaging pipeline and no further modifications should be required.
 
@@ -253,7 +253,7 @@ The test infrastructure heavily leverages the `assert` keyword, which tests if t
 From your terminal run the `pytest` command to run all the tests that you have written so far.
 
 ```cmd
-(env)azure-sdk-for-python\sdk\api-learn\implementation-tutorial> pytest
+(env)azure-sdk-for-python\sdk\my-directory\my-library> pytest
 ```
 
 Your update should run smooth and have green dots representing passing tests. Now if you look at the contents of your `tests` directory there should be a new directory called `recording` with four `.yaml` files. Each `yaml` file is a recording for a single test. To run a test in playback mode change the `testsettings_local.cfg` to `live-mode: false` and rerun the tests with the same command. The test infrastructure will use the automatically created `.yaml` recordings to mock the HTTP traffic and run the tests.
@@ -293,3 +293,4 @@ For more information, refer to the [advanced tests notes][advanced_tests_notes] 
 [azure_devtools]: https://pypi.org/project/azure-devtools/
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
+[packaging]: ./packaging.md
