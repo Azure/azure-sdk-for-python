@@ -43,7 +43,6 @@ include *.md
 include azure/__init__.py
 recursive-include tests *.py
 recursive-include samples *.py *.md
-include *.md
 ```
 In your setup.py:
 
