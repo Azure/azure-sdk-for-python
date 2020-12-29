@@ -20,16 +20,23 @@ USAGE:
 """
 
 import os
-import logging
+from dotenv import find_dotenv, load_dotenv
 
-_LOGGER = logging.getLogger(__name__)
 
 class CreateDeleteTable(object):
-    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-    access_key = os.getenv("AZURE_TABLES_KEY")
-    account_url = os.getenv("AZURE_TABLES_ACCOUNT_URL")
-    account_name = os.getenv("AZURE_TABLES_ACCOUNT_NAME")
-    table_name = "OfficeSupplies"
+
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
+        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name,
+            self.access_key,
+            self.endpoint
+        )
 
 
     def create_table(self):
@@ -39,7 +46,7 @@ class CreateDeleteTable(object):
         # [START create_table_from_tc]
         table_service_client = TableServiceClient.from_connection_string(self.connection_string)
         try:
-            table_item = table_service_client.create_table(table_name=self.table_name)
+            table_item = table_service_client.create_table(table_name="myTable")
             print("Created table {}!".format(table_item.table_name))
         except ResourceExistsError:
             print("Table already exists")
@@ -50,7 +57,7 @@ class CreateDeleteTable(object):
 
         # [START create_table_if_not_exists]
         table_service_client = TableServiceClient.from_connection_string(self.connection_string)
-        table_item = TableServiceClient.create_table_if_not_exists(table_name=self.table_name)
+        table_item = TableServiceClient.create_table_if_not_exists(table_name="myTable")
         print("Table name: {}".format(table_item.table_name))
         # [END create_table_if_not_exists]
 
@@ -61,8 +68,8 @@ class CreateDeleteTable(object):
         # [START delete_table_from_tc]
         table_service_client = TableServiceClient.from_connection_string(self.connection_string)
         try:
-            table_service_client.delete_table(table_name=self.table_name)
-            print("Deleted table {}!".format(self.table_name))
+            table_service_client.delete_table(table_name="myTable")
+            print("Deleted table {}!".format("myTable"))
         except ResourceNotFoundError:
             print("Table could not be found")
         # [END delete_table_from_tc]
@@ -73,7 +80,7 @@ class CreateDeleteTable(object):
         # [START create_table_from_table_client]
         table_client = TableClient.from_connection_string(
             conn_str=self.connection_string,
-            table_name=self.table_name
+            table_name="myTable"
         )
         try:
             table_item = table_client.create_table()
@@ -88,11 +95,11 @@ class CreateDeleteTable(object):
         # [START delete_table_from_table_client]
         table_client = TableClient.from_connection_string(
             conn_str=self.connection_string,
-            table_name=self.table_name
+            table_name="myTable"
         )
         try:
             table_client.delete_table()
-            print("Deleted table {}!".format(self.table_name))
+            print("Deleted table {}!".format("myTable"))
         except ResourceNotFoundError:
             print("Table could not be found")
         # [END delete_table_from_table_client]

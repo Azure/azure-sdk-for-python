@@ -21,11 +21,23 @@ USAGE:
 """
 
 import os
+from dotenv import find_dotenv, load_dotenv
 
 
 class QueryTables(object):
-    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-    table_name = "OfficeSupplies"
+
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name,
+            self.access_key,
+            self.endpoint
+        )
+        self.table_name = "OfficeSupplies"
 
     def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
