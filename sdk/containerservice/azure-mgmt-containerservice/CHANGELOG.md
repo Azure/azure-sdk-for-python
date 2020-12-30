@@ -1,5 +1,28 @@
 # Release History
 
+## 11.0.0 (2020-12-30)
+
+**Features**
+
+  - Model SysctlConfig has a new parameter net_core_wmem_default
+  - Model SysctlConfig has a new parameter net_core_rmem_default
+  - Model AgentPool has a new parameter kubelet_disk_type
+  - Model AgentPool has a new parameter enable_encryption_at_host
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter kubelet_disk_type
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_encryption_at_host
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter max_node_provision_time
+  - Model KubeletConfig has a new parameter pod_max_pids
+  - Model KubeletConfig has a new parameter container_log_max_size_mb
+  - Model KubeletConfig has a new parameter container_log_max_files
+  - Model ManagedClusterAgentPoolProfile has a new parameter kubelet_disk_type
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_encryption_at_host
+  - Added operation group MaintenanceConfigurationsOperations
+
+**Breaking changes**
+
+  - Model SysctlConfig no longer has parameter net_ipv4_tcp_wmem
+  - Model SysctlConfig no longer has parameter net_ipv4_tcp_rmem
+
 ## 10.1.0 (2020-11-17)
 
 **Features**
