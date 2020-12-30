@@ -37,6 +37,6 @@ def batch_delete_blobs_sample(local_path):
     # Delete blobs
     container_client.delete_blobs(*blob_list)
 
-    if __name__ == '__main__':
-        batch_delete_blobs_sample(SOURCE_FOLDER)
+if __name__ == '__main__':
+    batch_delete_blobs_sample(SOURCE_FOLDER)
 
