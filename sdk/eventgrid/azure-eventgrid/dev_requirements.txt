@@ -3,3 +3,6 @@
 -e ../../core/azure-core
 -e ../../identity/azure-identity
 -e ../azure-mgmt-eventgrid
+-e ../../storage/azure-storage-queue
+-e ../../servicebus/azure-servicebus
+-e ../../eventhub/azure-eventhub
