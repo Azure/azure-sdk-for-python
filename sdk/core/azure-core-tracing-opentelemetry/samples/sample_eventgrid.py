@@ -16,7 +16,7 @@ from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 settings.tracing_implementation = OpenTelemetrySpan
 
 # In the below example, we use a simple console exporter, uncomment these lines to use
-# the Azure Monitor Exporter.
+# the Azure Monitor Exporter. It can be installed from https://pypi.org/project/opentelemetry-azure-monitor/
 # Example of Azure Monitor exporter, but you can use anything OpenTelemetry supports
 # from azure_monitor import AzureMonitorSpanExporter
 # exporter = AzureMonitorSpanExporter(
