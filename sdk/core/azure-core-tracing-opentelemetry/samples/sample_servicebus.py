@@ -38,7 +38,7 @@ trace.get_tracer_provider().add_span_processor(
     SimpleExportSpanProcessor(exporter)
 )
 
-# Example with Storage SDKs
+# Example with Servicebus SDKs
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 import os
