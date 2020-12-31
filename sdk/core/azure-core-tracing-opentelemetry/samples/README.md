@@ -16,7 +16,7 @@ These code samples show using the tracing opentelemetry integration with few ser
 * Trace Eventgrid calls to publish an event : [sample_eventgrid.py][python-sample-eventgrid]
 * Trace Servicebus calls to send messages to queue : [sample_servicebus.py][python-sample-servicebus]
 
-It is assumed that the relevant SDKs are installed along with this extension. Below are the relevant packages which can be found in Pypi.
+It is assumed that the relevant SDKs are installed along with this extension. Below are the relevant packages which can be found in PyPI.
 
 - [azure-storage-blob](https://pypi.org/project/azure-storage-blob/) v12 or greater.
 - [azure-servicebus](https://pypi.org/project/azure-servicebus) v7 or greater.
