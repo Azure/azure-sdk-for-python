@@ -33,16 +33,10 @@ with sb_client:
         print("number of messages: {}".format(len(msgs)))
         for msg in msgs:
             # receive single dict message
-            if 'specversion' in msg:
+            if 'specversion' in dict(msg):
                 deserialized_event = consumer.decode_cloud_event(str(msg))
-                dict_event = deserialized_event.to_json()
-                print("event.to_json(): {}\n".format(dict_event))
-                print("model: {}\n".format(deserialized_event.model))
-                print("model.data: {}\n".format(deserialized_event.model.data))
+                print("data: {}\n".format(deserialized_event.data))
             else:
                 deserialized_event = consumer.decode_eventgrid_event(str(msg))
-                dict_event = deserialized_event.to_json()
-                print("event.to_json(): {}\n".format(dict_event))
-                print("model: {}\n".format(deserialized_event.model))
-                print("model.data: {}\n".format(deserialized_event.model.data))
+                print("data: {}\n".format(deserialized_event.data))
             msg.complete()

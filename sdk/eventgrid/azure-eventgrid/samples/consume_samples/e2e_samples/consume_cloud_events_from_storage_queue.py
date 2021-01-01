@@ -28,16 +28,9 @@ consumer = EventGridConsumer()
 msgs = queue_client.receive_messages()
 for msg in msgs:
     # receive single dict message
-    if 'specversion' in msg:
+    if 'specversion' in dict(msg):
         deserialized_event = consumer.decode_cloud_event(b64decode(msg.content))
-        dict_event = deserialized_event.to_json()
-        print("event.type: {}\n".format(dict_event["type"]))
-        print("event.to_json(): {}\n".format(dict_event))
-        print("model: {}\n".format(deserialized_event.model))
-        print("model.data: {}\n".format(deserialized_event.model.data))
+        print("data: {}\n".format(deserialized_event.model.data))
     else:
         deserialized_event = consumer.decode_eventgrid_event(b64decode(msg.content))
-        dict_event = deserialized_event.to_json()
-        print("event.to_json(): {}\n".format(dict_event))
-        print("model: {}\n".format(deserialized_event.model))
-        print("model.data: {}\n".format(deserialized_event.model.data))
+        print("data: {}\n".format(deserialized_event.data))

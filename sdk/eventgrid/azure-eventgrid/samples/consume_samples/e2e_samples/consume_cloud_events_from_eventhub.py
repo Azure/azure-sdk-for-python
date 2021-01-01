@@ -27,16 +27,9 @@ def on_event(partition_context, event):
     dict_event = event.body_as_json()[0]
     deserialized_event = eg_consumer.decode_eventgrid_event(dict_event)
     if deserialized_event.model.__class__ == CloudEvent:
-        dict_event = deserialized_event.to_json()
-        print("event.type: {}\n".format(dict_event["type"]))
-        print("event.to_json(): {}\n".format(dict_event))
-        print("model: {}\n".format(deserialized_event.model))
-        print("model.data: {}\n".format(deserialized_event.model.data))
+        print("data: {}\n".format(deserialized_event.data))
     else:
-        dict_event = deserialized_event.to_json()
-        print("event.to_json(): {}\n".format(dict_event))
-        print("model: {}\n".format(deserialized_event.model))
-        print("model.data: {}\n".format(deserialized_event.model.data))
+        print("data: {}\n".format(deserialized_event.data))
 
 eg_consumer = EventGridConsumer()
 consumer_client = EventHubConsumerClient.from_connection_string(
