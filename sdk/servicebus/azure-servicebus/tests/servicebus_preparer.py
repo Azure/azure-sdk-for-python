@@ -1,6 +1,7 @@
 import functools
 import hashlib
 import os
+import time
 from collections import namedtuple
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
@@ -212,15 +213,25 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             topic = self._get_topic(**kwargs)
-            self.resource = self.client.subscriptions.create_or_update(
-                group.name,
-                namespace.name,
-                topic.name,
-                name,
-                SBSubscription(
-                    requires_session=self.requires_session
-                )
-            )
+
+            retries = 4
+            for i in range(retries):
+                try:
+                    self.resource = self.client.subscriptions.create_or_update(
+                        group.name,
+                        namespace.name,
+                        topic.name,
+                        name,
+                        SBSubscription(
+                            requires_session=self.requires_session
+                        )
+                    )
+                    break
+                except Exception as ex:
+                    error = "The requested resource {} does not exist".format(self.resource)
+                    if error not in str(ex) or i == retries - 1:
+                        raise
+                    time.sleep(3)
 
             self.test_class_instance.scrubber.register_name_pair(
                 name,
