@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class IntegrationAccountSessionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class IntegrationAccountSessionsOperations:
         top: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.IntegrationAccountSessionListResult"]:
+    ) -> AsyncIterable["_models.IntegrationAccountSessionListResult"]:
         """Gets a list of integration account sessions.
 
         :param resource_group_name: The resource group name.
@@ -64,7 +64,7 @@ class IntegrationAccountSessionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.IntegrationAccountSessionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountSessionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountSessionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,7 +115,7 @@ class IntegrationAccountSessionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -132,7 +132,7 @@ class IntegrationAccountSessionsOperations:
         integration_account_name: str,
         session_name: str,
         **kwargs
-    ) -> "models.IntegrationAccountSession":
+    ) -> "_models.IntegrationAccountSession":
         """Gets an integration account session.
 
         :param resource_group_name: The resource group name.
@@ -146,7 +146,7 @@ class IntegrationAccountSessionsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationAccountSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountSession"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountSession"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -178,7 +178,7 @@ class IntegrationAccountSessionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccountSession', pipeline_response)
@@ -194,9 +194,9 @@ class IntegrationAccountSessionsOperations:
         resource_group_name: str,
         integration_account_name: str,
         session_name: str,
-        session: "models.IntegrationAccountSession",
+        session: "_models.IntegrationAccountSession",
         **kwargs
-    ) -> "models.IntegrationAccountSession":
+    ) -> "_models.IntegrationAccountSession":
         """Creates or updates an integration account session.
 
         :param resource_group_name: The resource group name.
@@ -212,7 +212,7 @@ class IntegrationAccountSessionsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationAccountSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountSession"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountSession"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -249,7 +249,7 @@ class IntegrationAccountSessionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -316,7 +316,7 @@ class IntegrationAccountSessionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
