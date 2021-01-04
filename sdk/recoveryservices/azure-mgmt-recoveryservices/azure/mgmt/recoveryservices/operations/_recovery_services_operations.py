@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class RecoveryServicesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,10 +48,10 @@ class RecoveryServicesOperations(object):
         self,
         resource_group_name,  # type: str
         location,  # type: str
-        input,  # type: "models.CheckNameAvailabilityParameters"
+        input,  # type: "_models.CheckNameAvailabilityParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckNameAvailabilityResult"
+        # type: (...) -> "_models.CheckNameAvailabilityResult"
         """API to check for resource name availability.
         A name is available if no other resource exists that has the same SubscriptionId, Resource Name and Type
         or if one or more such resources exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
@@ -74,7 +74,7 @@ class RecoveryServicesOperations(object):
         :rtype: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
