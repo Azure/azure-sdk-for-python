@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class ExtensionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,8 +46,7 @@ class ExtensionsOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        workspace_id: Optional[str] = None,
-        primary_key: Optional[str] = None,
+        parameters: "_models.ClusterMonitoringRequest",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -55,8 +54,6 @@ class ExtensionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.ClusterMonitoringRequest(workspace_id=workspace_id, primary_key=primary_key)
         api_version = "2018-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -80,7 +77,7 @@ class ExtensionsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ClusterMonitoringRequest')
+        body_content = self._serialize.body(parameters, 'ClusterMonitoringRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -88,7 +85,7 @@ class ExtensionsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -100,8 +97,7 @@ class ExtensionsOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        workspace_id: Optional[str] = None,
-        primary_key: Optional[str] = None,
+        parameters: "_models.ClusterMonitoringRequest",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Enables the Operations Management Suite (OMS) on the HDInsight cluster.
@@ -110,10 +106,8 @@ class ExtensionsOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
-        :param workspace_id: The Operations Management Suite (OMS) workspace ID.
-        :type workspace_id: str
-        :param primary_key: The Operations Management Suite (OMS) workspace key.
-        :type primary_key: str
+        :param parameters: The Operations Management Suite (OMS) workspace parameters.
+        :type parameters: ~azure.mgmt.hdinsight.models.ClusterMonitoringRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -135,8 +129,7 @@ class ExtensionsOperations:
             raw_result = await self._enable_monitoring_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
-                workspace_id=workspace_id,
-                primary_key=primary_key,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -148,7 +141,13 @@ class ExtensionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -167,7 +166,7 @@ class ExtensionsOperations:
         resource_group_name: str,
         cluster_name: str,
         **kwargs
-    ) -> "models.ClusterMonitoringResponse":
+    ) -> "_models.ClusterMonitoringResponse":
         """Gets the status of Operations Management Suite (OMS) on the HDInsight cluster.
 
         :param resource_group_name: The name of the resource group.
@@ -179,7 +178,7 @@ class ExtensionsOperations:
         :rtype: ~azure.mgmt.hdinsight.models.ClusterMonitoringResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterMonitoringResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterMonitoringResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,7 +209,7 @@ class ExtensionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ClusterMonitoringResponse', pipeline_response)
@@ -258,7 +257,7 @@ class ExtensionsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -310,7 +309,13 @@ class ExtensionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -329,8 +334,7 @@ class ExtensionsOperations:
         resource_group_name: str,
         cluster_name: str,
         extension_name: str,
-        workspace_id: Optional[str] = None,
-        primary_key: Optional[str] = None,
+        parameters: "_models.Extension",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -338,8 +342,6 @@ class ExtensionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.Extension(workspace_id=workspace_id, primary_key=primary_key)
         api_version = "2018-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -364,7 +366,7 @@ class ExtensionsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'Extension')
+        body_content = self._serialize.body(parameters, 'Extension')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -372,7 +374,7 @@ class ExtensionsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -385,8 +387,7 @@ class ExtensionsOperations:
         resource_group_name: str,
         cluster_name: str,
         extension_name: str,
-        workspace_id: Optional[str] = None,
-        primary_key: Optional[str] = None,
+        parameters: "_models.Extension",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Creates an HDInsight cluster extension.
@@ -397,10 +398,8 @@ class ExtensionsOperations:
         :type cluster_name: str
         :param extension_name: The name of the cluster extension.
         :type extension_name: str
-        :param workspace_id: The workspace ID for the cluster monitoring extension.
-        :type workspace_id: str
-        :param primary_key: The certificate for the cluster monitoring extensions.
-        :type primary_key: str
+        :param parameters: The cluster extensions create request.
+        :type parameters: ~azure.mgmt.hdinsight.models.Extension
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -423,8 +422,7 @@ class ExtensionsOperations:
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 extension_name=extension_name,
-                workspace_id=workspace_id,
-                primary_key=primary_key,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -436,7 +434,14 @@ class ExtensionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -456,7 +461,7 @@ class ExtensionsOperations:
         cluster_name: str,
         extension_name: str,
         **kwargs
-    ) -> "models.Extension":
+    ) -> "_models.Extension":
         """Gets the extension properties for the specified HDInsight cluster extension.
 
         :param resource_group_name: The name of the resource group.
@@ -470,7 +475,7 @@ class ExtensionsOperations:
         :rtype: ~azure.mgmt.hdinsight.models.Extension
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Extension"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Extension"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -502,7 +507,7 @@ class ExtensionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Extension', pipeline_response)
@@ -552,7 +557,7 @@ class ExtensionsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -608,7 +613,14 @@ class ExtensionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

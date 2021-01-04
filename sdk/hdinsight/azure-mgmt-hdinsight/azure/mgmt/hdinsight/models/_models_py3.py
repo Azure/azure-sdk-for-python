@@ -712,17 +712,17 @@ class ClusterConfigurations(msrest.serialization.Model):
 
     :param configurations: The configuration object for the specified configuration for the
      specified cluster.
-    :type configurations: dict[str, object]
+    :type configurations: dict[str, dict[str, str]]
     """
 
     _attribute_map = {
-        'configurations': {'key': 'configurations', 'type': '{object}'},
+        'configurations': {'key': 'configurations', 'type': '{{str}}'},
     }
 
     def __init__(
         self,
         *,
-        configurations: Optional[Dict[str, object]] = None,
+        configurations: Optional[Dict[str, Dict[str, str]]] = None,
         **kwargs
     ):
         super(ClusterConfigurations, self).__init__(**kwargs)
@@ -793,6 +793,8 @@ class ClusterCreateProperties(msrest.serialization.Model):
     :type min_supported_tls_version: str
     :param network_properties: The network properties.
     :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
+    :param compute_isolation_properties: The compute isolation properties.
+    :type compute_isolation_properties: ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
     """
 
     _attribute_map = {
@@ -808,6 +810,7 @@ class ClusterCreateProperties(msrest.serialization.Model):
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
         'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
+        'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
     }
 
     def __init__(
@@ -825,6 +828,7 @@ class ClusterCreateProperties(msrest.serialization.Model):
         encryption_in_transit_properties: Optional["EncryptionInTransitProperties"] = None,
         min_supported_tls_version: Optional[str] = None,
         network_properties: Optional["NetworkProperties"] = None,
+        compute_isolation_properties: Optional["ComputeIsolationProperties"] = None,
         **kwargs
     ):
         super(ClusterCreateProperties, self).__init__(**kwargs)
@@ -840,6 +844,7 @@ class ClusterCreateProperties(msrest.serialization.Model):
         self.encryption_in_transit_properties = encryption_in_transit_properties
         self.min_supported_tls_version = min_supported_tls_version
         self.network_properties = network_properties
+        self.compute_isolation_properties = compute_isolation_properties
 
 
 class ClusterDefinition(msrest.serialization.Model):
@@ -953,6 +958,8 @@ class ClusterGetProperties(msrest.serialization.Model):
     :type min_supported_tls_version: str
     :param network_properties: The network properties.
     :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
+    :param compute_isolation_properties: The compute isolation properties.
+    :type compute_isolation_properties: ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
     """
 
     _validation = {
@@ -978,6 +985,7 @@ class ClusterGetProperties(msrest.serialization.Model):
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
         'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
+        'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
     }
 
     def __init__(
@@ -1001,6 +1009,7 @@ class ClusterGetProperties(msrest.serialization.Model):
         encryption_in_transit_properties: Optional["EncryptionInTransitProperties"] = None,
         min_supported_tls_version: Optional[str] = None,
         network_properties: Optional["NetworkProperties"] = None,
+        compute_isolation_properties: Optional["ComputeIsolationProperties"] = None,
         **kwargs
     ):
         super(ClusterGetProperties, self).__init__(**kwargs)
@@ -1022,6 +1031,7 @@ class ClusterGetProperties(msrest.serialization.Model):
         self.encryption_in_transit_properties = encryption_in_transit_properties
         self.min_supported_tls_version = min_supported_tls_version
         self.network_properties = network_properties
+        self.compute_isolation_properties = compute_isolation_properties
 
 
 class ClusterIdentity(msrest.serialization.Model):
@@ -1318,6 +1328,32 @@ class ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAddi
         super(ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
+
+
+class ComputeIsolationProperties(msrest.serialization.Model):
+    """The compute isolation properties.
+
+    :param enable_compute_isolation: The flag indicates whether enable compute isolation or not.
+    :type enable_compute_isolation: bool
+    :param host_sku: The host sku.
+    :type host_sku: str
+    """
+
+    _attribute_map = {
+        'enable_compute_isolation': {'key': 'enableComputeIsolation', 'type': 'bool'},
+        'host_sku': {'key': 'hostSku', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        enable_compute_isolation: Optional[bool] = None,
+        host_sku: Optional[str] = None,
+        **kwargs
+    ):
+        super(ComputeIsolationProperties, self).__init__(**kwargs)
+        self.enable_compute_isolation = enable_compute_isolation
+        self.host_sku = host_sku
 
 
 class ComputeProfile(msrest.serialization.Model):
@@ -1687,20 +1723,31 @@ class HostInfo(msrest.serialization.Model):
 
     :param name: The host name.
     :type name: str
+    :param fqdn: The Fully Qualified Domain Name of host.
+    :type fqdn: str
+    :param effective_disk_encryption_key_url: The effective disk encryption key URL used by the
+     host.
+    :type effective_disk_encryption_key_url: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
+        'effective_disk_encryption_key_url': {'key': 'effectiveDiskEncryptionKeyUrl', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
+        fqdn: Optional[str] = None,
+        effective_disk_encryption_key_url: Optional[str] = None,
         **kwargs
     ):
         super(HostInfo, self).__init__(**kwargs)
         self.name = name
+        self.fqdn = fqdn
+        self.effective_disk_encryption_key_url = effective_disk_encryption_key_url
 
 
 class KafkaRestProperties(msrest.serialization.Model):
