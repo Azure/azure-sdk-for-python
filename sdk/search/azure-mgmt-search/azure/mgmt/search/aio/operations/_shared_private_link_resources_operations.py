@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class SharedPrivateLinkResourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,11 +48,11 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         shared_private_link_resource_name: str,
-        shared_private_link_resource: "models.SharedPrivateLinkResource",
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        shared_private_link_resource: "_models.SharedPrivateLinkResource",
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> Optional["models.SharedPrivateLinkResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SharedPrivateLinkResource"]]
+    ) -> Optional["_models.SharedPrivateLinkResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SharedPrivateLinkResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,10 +112,10 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         shared_private_link_resource_name: str,
-        shared_private_link_resource: "models.SharedPrivateLinkResource",
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        shared_private_link_resource: "_models.SharedPrivateLinkResource",
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.SharedPrivateLinkResource"]:
+    ) -> AsyncLROPoller["_models.SharedPrivateLinkResource"]:
         """Initiates the creation or update of a shared private link resource managed by the search
         service in the given resource group.
 
@@ -144,7 +144,7 @@ class SharedPrivateLinkResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedPrivateLinkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedPrivateLinkResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -171,7 +171,14 @@ class SharedPrivateLinkResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
+            'sharedPrivateLinkResourceName': self._serialize.url("shared_private_link_resource_name", shared_private_link_resource_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -190,9 +197,9 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         shared_private_link_resource_name: str,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> "models.SharedPrivateLinkResource":
+    ) -> "_models.SharedPrivateLinkResource":
         """Gets the details of the shared private link resource managed by the search service in the given
         resource group.
 
@@ -212,7 +219,7 @@ class SharedPrivateLinkResourcesOperations:
         :rtype: ~azure.mgmt.search.models.SharedPrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedPrivateLinkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedPrivateLinkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -265,7 +272,7 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         shared_private_link_resource_name: str,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -318,7 +325,7 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         shared_private_link_resource_name: str,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Initiates the deletion of the shared private link resource from the search service.
@@ -368,7 +375,14 @@ class SharedPrivateLinkResourcesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
+            'sharedPrivateLinkResourceName': self._serialize.url("shared_private_link_resource_name", shared_private_link_resource_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -386,9 +400,9 @@ class SharedPrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.SharedPrivateLinkResourceListResult"]:
+    ) -> AsyncIterable["_models.SharedPrivateLinkResourceListResult"]:
         """Gets a list of all shared private link resources managed by the given service.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -404,7 +418,7 @@ class SharedPrivateLinkResourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.search.models.SharedPrivateLinkResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedPrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedPrivateLinkResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
