@@ -24,6 +24,25 @@ pip install azure-communication-administration
 
 - Create/revoke scoped user access tokens to access services such as chat, calling, sms. Tokens are issued for a valid Azure Communication identity and can be revoked at any time.
 
+### Initializing Identity Client
+```python
+# You can find your endpoint and access token from your resource in the Azure Portal
+import os
+from azure.communication.administration import CommunicationIdentityClient
+from azure.identity import DefaultAzureCredential
+
+connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
+# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+identity_client_managed_identity = CommunicationIdentityClient.(endpoint, DefaultAzureCredential())
+
+#You can also authenticate using your connection string
+identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
+
+```
+
 ## CommunicationPhoneNumberClient
 ### Initializing Phone Number Client
 ```python
