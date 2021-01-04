@@ -49,11 +49,11 @@ class TableEntitySamples(object):
         table.create_table()
 
         my_entity = {
-            'PartitionKey': 'color',
-            'RowKey': 'crayola',
-            'text': 'Marker',
-            'color': 'Purple',
-            'price': '5'
+            u'PartitionKey': u'color',
+            u'RowKey': u'crayola',
+            u'text': u'Marker',
+            u'color': u'Purple',
+            u'price': u'5'
         }
         try:
             # [START create_entity]
@@ -80,8 +80,8 @@ class TableEntitySamples(object):
         # Create the table
         table.create_table()
 
-        entity = {'PartitionKey': 'color2', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
-        entity1 = {'PartitionKey': 'color2', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
+        entity = {u'PartitionKey': u'color2', u'RowKey': u'sharpie', u'text': u'Marker', u'color': u'Purple', u'price': u'5'}
+        entity1 = {u'PartitionKey': u'color2', u'RowKey': u'crayola', u'text': u'Marker', u'color': u'Red', u'price': u'3'}
 
         try:
             # Create entities
@@ -108,8 +108,8 @@ class TableEntitySamples(object):
         # Create the table and Table Client
         table.create_table()
 
-        entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
-        entity1 = {'PartitionKey': 'color2', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
+        entity = {u'PartitionKey': u'color2', u'RowKey': u'sharpie', u'text': u'Marker', u'color': u'Purple', u'price': u'5'}
+        entity1 = {u'PartitionKey': u'color2', u'RowKey': u'crayola', u'text': u'Marker', u'color': u'Red', u'price': u'3'}
 
         try:
             # Create entities
