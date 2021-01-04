@@ -26,7 +26,7 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Generic, TypeVar, Union, Any, cast
+from typing import Generic, TypeVar, Optional, Any
 
 from azure.core.pipeline import PipelineRequest
 
