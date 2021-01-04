@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class IntegrationAccountsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class IntegrationAccountsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IntegrationAccountListResult"]
+        # type: (...) -> Iterable["_models.IntegrationAccountListResult"]
         """Gets a list of integration accounts by subscription.
 
         :param top: The number of items to be included in the result.
@@ -60,7 +60,7 @@ class IntegrationAccountsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.logic.models.IntegrationAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,7 +107,7 @@ class IntegrationAccountsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -124,7 +124,7 @@ class IntegrationAccountsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IntegrationAccountListResult"]
+        # type: (...) -> Iterable["_models.IntegrationAccountListResult"]
         """Gets a list of integration accounts by resource group.
 
         :param resource_group_name: The resource group name.
@@ -136,7 +136,7 @@ class IntegrationAccountsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.logic.models.IntegrationAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,7 +184,7 @@ class IntegrationAccountsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -201,7 +201,7 @@ class IntegrationAccountsOperations(object):
         integration_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationAccount"
+        # type: (...) -> "_models.IntegrationAccount"
         """Gets an integration account.
 
         :param resource_group_name: The resource group name.
@@ -213,7 +213,7 @@ class IntegrationAccountsOperations(object):
         :rtype: ~azure.mgmt.logic.models.IntegrationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -244,7 +244,7 @@ class IntegrationAccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccount', pipeline_response)
@@ -259,10 +259,10 @@ class IntegrationAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         integration_account_name,  # type: str
-        integration_account,  # type: "models.IntegrationAccount"
+        integration_account,  # type: "_models.IntegrationAccount"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationAccount"
+        # type: (...) -> "_models.IntegrationAccount"
         """Creates or updates an integration account.
 
         :param resource_group_name: The resource group name.
@@ -276,7 +276,7 @@ class IntegrationAccountsOperations(object):
         :rtype: ~azure.mgmt.logic.models.IntegrationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -312,7 +312,7 @@ class IntegrationAccountsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -331,10 +331,10 @@ class IntegrationAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         integration_account_name,  # type: str
-        integration_account,  # type: "models.IntegrationAccount"
+        integration_account,  # type: "_models.IntegrationAccount"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationAccount"
+        # type: (...) -> "_models.IntegrationAccount"
         """Updates an integration account.
 
         :param resource_group_name: The resource group name.
@@ -348,7 +348,7 @@ class IntegrationAccountsOperations(object):
         :rtype: ~azure.mgmt.logic.models.IntegrationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -384,7 +384,7 @@ class IntegrationAccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccount', pipeline_response)
@@ -444,7 +444,7 @@ class IntegrationAccountsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -456,10 +456,10 @@ class IntegrationAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         integration_account_name,  # type: str
-        parameters,  # type: "models.GetCallbackUrlParameters"
+        parameters,  # type: "_models.GetCallbackUrlParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CallbackUrl"
+        # type: (...) -> "_models.CallbackUrl"
         """Gets the integration account callback URL.
 
         :param resource_group_name: The resource group name.
@@ -473,7 +473,7 @@ class IntegrationAccountsOperations(object):
         :rtype: ~azure.mgmt.logic.models.CallbackUrl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CallbackUrl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CallbackUrl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -509,7 +509,7 @@ class IntegrationAccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CallbackUrl', pipeline_response)
@@ -524,10 +524,10 @@ class IntegrationAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         integration_account_name,  # type: str
-        list_key_vault_keys,  # type: "models.ListKeyVaultKeysDefinition"
+        list_key_vault_keys,  # type: "_models.ListKeyVaultKeysDefinition"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.KeyVaultKeyCollection"]
+        # type: (...) -> Iterable["_models.KeyVaultKeyCollection"]
         """Gets the integration account's Key Vault keys.
 
         :param resource_group_name: The resource group name.
@@ -541,7 +541,7 @@ class IntegrationAccountsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.logic.models.KeyVaultKeyCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyVaultKeyCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyVaultKeyCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -596,7 +596,7 @@ class IntegrationAccountsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -611,7 +611,7 @@ class IntegrationAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         integration_account_name,  # type: str
-        log_tracking_events,  # type: "models.TrackingEventsDefinition"
+        log_tracking_events,  # type: "_models.TrackingEventsDefinition"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -664,7 +664,7 @@ class IntegrationAccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -676,10 +676,10 @@ class IntegrationAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         integration_account_name,  # type: str
-        regenerate_access_key,  # type: "models.RegenerateActionParameter"
+        regenerate_access_key,  # type: "_models.RegenerateActionParameter"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationAccount"
+        # type: (...) -> "_models.IntegrationAccount"
         """Regenerates the integration account access key.
 
         :param resource_group_name: The resource group name.
@@ -693,7 +693,7 @@ class IntegrationAccountsOperations(object):
         :rtype: ~azure.mgmt.logic.models.IntegrationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -729,7 +729,7 @@ class IntegrationAccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccount', pipeline_response)

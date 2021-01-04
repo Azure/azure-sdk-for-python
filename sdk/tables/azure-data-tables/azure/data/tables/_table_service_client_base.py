@@ -13,7 +13,7 @@ from ._base_client import parse_query, StorageAccountHostsMixin
 
 
 class TableServiceClientBase(StorageAccountHostsMixin):
-    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)
+    """:ivar str account_name: Name of the storage account (Cosmos or Azure)
     Create TableServiceClientBase class for sync and async code.
 
     :param account_url:
@@ -27,28 +27,34 @@ class TableServiceClientBase(StorageAccountHostsMixin):
     :type credential: str
     :returns: None
     """
+
     def __init__(
-            self, account_url,  # type: Any
-            service, # type: str
-            credential=None,  # type: str
-            **kwargs  # type: Any
+        self,
+        account_url,  # type: Any
+        service,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
 
         try:
-            if not account_url.lower().startswith('http'):
+            if not account_url.lower().startswith("http"):
                 account_url = "https://" + account_url
         except AttributeError:
             raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
+        parsed_url = urlparse(account_url.rstrip("/"))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+            raise ValueError(
+                "You need to provide either a SAS token or an account shared key to authenticate."
+            )
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(TableServiceClientBase, self).__init__(parsed_url, service=service, credential=credential, **kwargs)
+        super(TableServiceClientBase, self).__init__(
+            parsed_url, service=service, credential=credential, **kwargs
+        )
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

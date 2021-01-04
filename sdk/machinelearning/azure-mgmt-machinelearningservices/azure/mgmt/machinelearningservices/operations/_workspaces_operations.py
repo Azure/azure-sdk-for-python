@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class WorkspacesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class WorkspacesOperations(object):
         workspace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Workspace"
+        # type: (...) -> "_models.Workspace"
         """Gets the properties of the specified machine learning workspace.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -65,7 +65,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Workspace
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Workspace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -96,7 +96,7 @@ class WorkspacesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Workspace', pipeline_response)
@@ -111,11 +111,11 @@ class WorkspacesOperations(object):
         self,
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        parameters,  # type: "models.Workspace"
+        parameters,  # type: "_models.Workspace"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Workspace"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Workspace"]]
+        # type: (...) -> Optional["_models.Workspace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Workspace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -151,7 +151,7 @@ class WorkspacesOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -171,10 +171,10 @@ class WorkspacesOperations(object):
         self,
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        parameters,  # type: "models.Workspace"
+        parameters,  # type: "_models.Workspace"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Workspace"]
+        # type: (...) -> LROPoller["_models.Workspace"]
         """Creates or updates a workspace with the specified parameters.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -194,7 +194,7 @@ class WorkspacesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Workspace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -219,7 +219,13 @@ class WorkspacesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -271,7 +277,7 @@ class WorkspacesOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -324,7 +330,13 @@ class WorkspacesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -342,10 +354,10 @@ class WorkspacesOperations(object):
         self,
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        parameters,  # type: "models.WorkspaceUpdateParameters"
+        parameters,  # type: "_models.WorkspaceUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Workspace"
+        # type: (...) -> "_models.Workspace"
         """Updates a machine learning workspace with the specified parameters.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -359,7 +371,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Workspace
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Workspace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -395,7 +407,7 @@ class WorkspacesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Workspace', pipeline_response)
@@ -412,7 +424,7 @@ class WorkspacesOperations(object):
         skiptoken=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WorkspaceListResult"]
+        # type: (...) -> Iterable["_models.WorkspaceListResult"]
         """Lists all the available machine learning workspaces under the specified resource group.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -424,7 +436,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkspaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -472,7 +484,7 @@ class WorkspacesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.MachineLearningServiceError, response)
+                error = self._deserialize(_models.MachineLearningServiceError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -489,7 +501,7 @@ class WorkspacesOperations(object):
         workspace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ListWorkspaceKeysResult"
+        # type: (...) -> "_models.ListWorkspaceKeysResult"
         """Lists all the keys associated with this workspace. This includes keys for the storage account,
         app insights and password for container registry.
 
@@ -502,7 +514,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.ListWorkspaceKeysResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListWorkspaceKeysResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListWorkspaceKeysResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -533,7 +545,7 @@ class WorkspacesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ListWorkspaceKeysResult', pipeline_response)
@@ -594,7 +606,7 @@ class WorkspacesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -607,7 +619,7 @@ class WorkspacesOperations(object):
         skiptoken=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WorkspaceListResult"]
+        # type: (...) -> Iterable["_models.WorkspaceListResult"]
         """Lists all the available machine learning workspaces under the specified subscription.
 
         :param skiptoken: Continuation token for pagination.
@@ -617,7 +629,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkspaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -664,7 +676,7 @@ class WorkspacesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.MachineLearningServiceError, response)
+                error = self._deserialize(_models.MachineLearningServiceError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

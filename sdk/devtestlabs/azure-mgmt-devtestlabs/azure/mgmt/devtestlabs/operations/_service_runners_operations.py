@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class ServiceRunnersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class ServiceRunnersOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceRunner"
+        # type: (...) -> "_models.ServiceRunner"
         """Get service runner.
 
         :param resource_group_name: The name of the resource group.
@@ -65,7 +65,7 @@ class ServiceRunnersOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.ServiceRunner
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceRunner"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceRunner"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,10 +112,10 @@ class ServiceRunnersOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        service_runner,  # type: "models.ServiceRunner"
+        service_runner,  # type: "_models.ServiceRunner"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceRunner"
+        # type: (...) -> "_models.ServiceRunner"
         """Create or replace an existing service runner.
 
         :param resource_group_name: The name of the resource group.
@@ -131,7 +131,7 @@ class ServiceRunnersOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.ServiceRunner
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceRunner"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceRunner"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

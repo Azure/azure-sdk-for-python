@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -25,14 +25,14 @@ class ManagementConfigurationsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~operations_management_client.models
+    :type models: ~azure.mgmt.operationsmanagement.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,17 +43,17 @@ class ManagementConfigurationsOperations:
     async def list_by_subscription(
         self,
         **kwargs
-    ) -> "models.ManagementConfigurationPropertiesList":
+    ) -> "_models.ManagementConfigurationPropertiesList":
         """Retrieves the ManagementConfigurations list for the subscription.
 
         Retrieves the ManagementConfigurations list.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementConfigurationPropertiesList, or the result of cls(response)
-        :rtype: ~operations_management_client.models.ManagementConfigurationPropertiesList
+        :rtype: ~azure.mgmt.operationsmanagement.models.ManagementConfigurationPropertiesList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementConfigurationPropertiesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementConfigurationPropertiesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -82,7 +82,7 @@ class ManagementConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfigurationPropertiesList', pipeline_response)
@@ -97,9 +97,9 @@ class ManagementConfigurationsOperations:
         self,
         resource_group_name: str,
         management_configuration_name: str,
-        parameters: "models.ManagementConfiguration",
+        parameters: "_models.ManagementConfiguration",
         **kwargs
-    ) -> "models.ManagementConfiguration":
+    ) -> "_models.ManagementConfiguration":
         """Create/Update ManagementConfiguration.
 
         Creates or updates the ManagementConfiguration.
@@ -110,13 +110,13 @@ class ManagementConfigurationsOperations:
         :param management_configuration_name: User Management Configuration Name.
         :type management_configuration_name: str
         :param parameters: The parameters required to create OMS Solution.
-        :type parameters: ~operations_management_client.models.ManagementConfiguration
+        :type parameters: ~azure.mgmt.operationsmanagement.models.ManagementConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementConfiguration, or the result of cls(response)
-        :rtype: ~operations_management_client.models.ManagementConfiguration
+        :rtype: ~azure.mgmt.operationsmanagement.models.ManagementConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -152,7 +152,7 @@ class ManagementConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfiguration', pipeline_response)
@@ -214,7 +214,7 @@ class ManagementConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -227,7 +227,7 @@ class ManagementConfigurationsOperations:
         resource_group_name: str,
         management_configuration_name: str,
         **kwargs
-    ) -> "models.ManagementConfiguration":
+    ) -> "_models.ManagementConfiguration":
         """Retrieve ManagementConfiguration.
 
         Retrieves the user ManagementConfiguration.
@@ -239,10 +239,10 @@ class ManagementConfigurationsOperations:
         :type management_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementConfiguration, or the result of cls(response)
-        :rtype: ~operations_management_client.models.ManagementConfiguration
+        :rtype: ~azure.mgmt.operationsmanagement.models.ManagementConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -273,7 +273,7 @@ class ManagementConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfiguration', pipeline_response)

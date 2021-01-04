@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,14 +29,14 @@ class ManagementAssociationsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~operations_management_client.models
+    :type models: ~azure.mgmt.operationsmanagement.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,17 +48,17 @@ class ManagementAssociationsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagementAssociationPropertiesList"
+        # type: (...) -> "_models.ManagementAssociationPropertiesList"
         """Retrieves the ManagementAssociations list for the subscription.
 
         Retrieves the ManagementAssociations list.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementAssociationPropertiesList, or the result of cls(response)
-        :rtype: ~operations_management_client.models.ManagementAssociationPropertiesList
+        :rtype: ~azure.mgmt.operationsmanagement.models.ManagementAssociationPropertiesList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementAssociationPropertiesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementAssociationPropertiesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -87,7 +87,7 @@ class ManagementAssociationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementAssociationPropertiesList', pipeline_response)
@@ -102,10 +102,10 @@ class ManagementAssociationsOperations(object):
         self,
         resource_group_name,  # type: str
         management_association_name,  # type: str
-        parameters,  # type: "models.ManagementAssociation"
+        parameters,  # type: "_models.ManagementAssociation"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagementAssociation"
+        # type: (...) -> "_models.ManagementAssociation"
         """Create/Update ManagementAssociation.
 
         Creates or updates the ManagementAssociation.
@@ -116,13 +116,13 @@ class ManagementAssociationsOperations(object):
         :param management_association_name: User ManagementAssociation Name.
         :type management_association_name: str
         :param parameters: The parameters required to create ManagementAssociation extension.
-        :type parameters: ~operations_management_client.models.ManagementAssociation
+        :type parameters: ~azure.mgmt.operationsmanagement.models.ManagementAssociation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementAssociation, or the result of cls(response)
-        :rtype: ~operations_management_client.models.ManagementAssociation
+        :rtype: ~azure.mgmt.operationsmanagement.models.ManagementAssociation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementAssociation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementAssociation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -161,7 +161,7 @@ class ManagementAssociationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementAssociation', pipeline_response)
@@ -227,7 +227,7 @@ class ManagementAssociationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -241,7 +241,7 @@ class ManagementAssociationsOperations(object):
         management_association_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagementAssociation"
+        # type: (...) -> "_models.ManagementAssociation"
         """Retrieve ManagementAssociation.
 
         Retrieves the user ManagementAssociation.
@@ -253,10 +253,10 @@ class ManagementAssociationsOperations(object):
         :type management_association_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementAssociation, or the result of cls(response)
-        :rtype: ~operations_management_client.models.ManagementAssociation
+        :rtype: ~azure.mgmt.operationsmanagement.models.ManagementAssociation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementAssociation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementAssociation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -290,7 +290,7 @@ class ManagementAssociationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementAssociation', pipeline_response)

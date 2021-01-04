@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class RecommendationMetadataOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class RecommendationMetadataOperations:
         self,
         name: str,
         **kwargs
-    ) -> Union["models.MetadataEntity", "models.ARMErrorResponseBody"]:
+    ) -> Union["_models.MetadataEntity", "_models.ARMErrorResponseBody"]:
         """Gets the metadata entity.
 
         Gets the metadata entity.
@@ -57,7 +57,7 @@ class RecommendationMetadataOperations:
         :rtype: ~azure.mgmt.advisor.models.MetadataEntity or ~azure.mgmt.advisor.models.ARMErrorResponseBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.MetadataEntity", "models.ARMErrorResponseBody"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.MetadataEntity", "_models.ARMErrorResponseBody"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -103,7 +103,7 @@ class RecommendationMetadataOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.MetadataEntityListResult"]:
+    ) -> AsyncIterable["_models.MetadataEntityListResult"]:
         """Gets the list of metadata entities.
 
         Gets the list of metadata entities.
@@ -113,7 +113,7 @@ class RecommendationMetadataOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.advisor.models.MetadataEntityListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetadataEntityListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetadataEntityListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

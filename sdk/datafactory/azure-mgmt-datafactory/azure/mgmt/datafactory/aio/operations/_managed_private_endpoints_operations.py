@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ManagedPrivateEndpointsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class ManagedPrivateEndpointsOperations:
         factory_name: str,
         managed_virtual_network_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ManagedPrivateEndpointListResponse"]:
+    ) -> AsyncIterable["_models.ManagedPrivateEndpointListResponse"]:
         """Lists managed private endpoints.
 
         :param resource_group_name: The resource group name.
@@ -61,7 +61,7 @@ class ManagedPrivateEndpointsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.ManagedPrivateEndpointListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedPrivateEndpointListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpointListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -125,10 +125,10 @@ class ManagedPrivateEndpointsOperations:
         factory_name: str,
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
-        managed_private_endpoint: "models.ManagedPrivateEndpointResource",
+        managed_private_endpoint: "_models.ManagedPrivateEndpointResource",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.ManagedPrivateEndpointResource":
+    ) -> "_models.ManagedPrivateEndpointResource":
         """Creates or updates a managed private endpoint.
 
         :param resource_group_name: The resource group name.
@@ -149,7 +149,7 @@ class ManagedPrivateEndpointsOperations:
         :rtype: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedPrivateEndpointResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpointResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -207,7 +207,7 @@ class ManagedPrivateEndpointsOperations:
         managed_private_endpoint_name: str,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> "models.ManagedPrivateEndpointResource":
+    ) -> "_models.ManagedPrivateEndpointResource":
         """Gets a managed private endpoint.
 
         :param resource_group_name: The resource group name.
@@ -227,7 +227,7 @@ class ManagedPrivateEndpointsOperations:
         :rtype: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedPrivateEndpointResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpointResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

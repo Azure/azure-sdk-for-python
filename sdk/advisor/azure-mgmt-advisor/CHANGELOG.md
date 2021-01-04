@@ -1,5 +1,11 @@
 # Release History
 
+## 9.0.0 (2020-12-22)
+
+**Features**
+
+  - Model SuppressionContract has a new parameter expiration_time_stamp
+
 ## 9.0.0b1 (2020-11-03)
 
 This is beta preview version.

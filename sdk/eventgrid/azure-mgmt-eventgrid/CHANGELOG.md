@@ -1,5 +1,12 @@
 # Release History
 
+## 8.0.0 (2020-12-21)
+
+**Breaking changes**
+
+  - Operation TopicsOperations.regenerate_key has a new signature
+  - Operation DomainsOperations.regenerate_key has a new signature
+
 ## 8.0.0b1 (2020-10-31)
 
 This is beta preview version.

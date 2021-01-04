@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class AdminKeysOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,10 +48,10 @@ class AdminKeysOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AdminKeyResult"
+        # type: (...) -> "_models.AdminKeyResult"
         """Gets the primary and secondary admin API keys for the specified Azure Cognitive Search service.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -67,7 +67,7 @@ class AdminKeysOperations(object):
         :rtype: ~azure.mgmt.search.models.AdminKeyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdminKeyResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdminKeyResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -118,11 +118,11 @@ class AdminKeysOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        key_kind,  # type: Union[str, "models.AdminKeyKind"]
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        key_kind,  # type: Union[str, "_models.AdminKeyKind"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AdminKeyResult"
+        # type: (...) -> "_models.AdminKeyResult"
         """Regenerates either the primary or secondary admin API key. You can only regenerate one key at a
         time.
 
@@ -142,7 +142,7 @@ class AdminKeysOperations(object):
         :rtype: ~azure.mgmt.search.models.AdminKeyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdminKeyResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdminKeyResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

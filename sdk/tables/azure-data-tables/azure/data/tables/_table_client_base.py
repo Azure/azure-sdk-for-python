@@ -33,21 +33,22 @@ class TableClientBase(StorageAccountHostsMixin):
     """
 
     def __init__(
-            self, account_url,  # type: str
-            table_name,  # type: str
-            credential=None,  # type: str
-            **kwargs  # type: Any
+        self,
+        account_url,  # type: str
+        table_name,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
 
         _validate_table_name(table_name)
 
         try:
-            if not account_url.lower().startswith('http'):
+            if not account_url.lower().startswith("http"):
                 account_url = "https://" + account_url
         except AttributeError:
             raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
+        parsed_url = urlparse(account_url.rstrip("/"))
         if not table_name:
             raise ValueError("Please specify a table name.")
         if not parsed_url.netloc:
@@ -55,11 +56,15 @@ class TableClientBase(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+            raise ValueError(
+                "You need to provide either a SAS token or an account shared key to authenticate."
+            )
 
         self.table_name = table_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(TableClientBase, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
+        super(TableClientBase, self).__init__(
+            parsed_url, service="table", credential=credential, **kwargs
+        )
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

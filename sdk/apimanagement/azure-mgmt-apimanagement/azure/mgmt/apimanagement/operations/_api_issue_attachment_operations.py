@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ApiIssueAttachmentOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -56,7 +56,7 @@ class ApiIssueAttachmentOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IssueAttachmentCollection"]
+        # type: (...) -> Iterable["_models.IssueAttachmentCollection"]
         """Lists all attachments for the Issue associated with the specified API.
 
         :param resource_group_name: The name of the resource group.
@@ -82,7 +82,7 @@ class ApiIssueAttachmentOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.IssueAttachmentCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueAttachmentCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueAttachmentCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -137,7 +137,7 @@ class ApiIssueAttachmentOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -212,7 +212,7 @@ class ApiIssueAttachmentOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -233,7 +233,7 @@ class ApiIssueAttachmentOperations(object):
         attachment_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IssueAttachmentContract"
+        # type: (...) -> "_models.IssueAttachmentContract"
         """Gets the details of the issue Attachment for an API specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -253,7 +253,7 @@ class ApiIssueAttachmentOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.IssueAttachmentContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueAttachmentContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueAttachmentContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -287,7 +287,7 @@ class ApiIssueAttachmentOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -307,11 +307,11 @@ class ApiIssueAttachmentOperations(object):
         api_id,  # type: str
         issue_id,  # type: str
         attachment_id,  # type: str
-        parameters,  # type: "models.IssueAttachmentContract"
+        parameters,  # type: "_models.IssueAttachmentContract"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IssueAttachmentContract"
+        # type: (...) -> "_models.IssueAttachmentContract"
         """Creates a new Attachment for the Issue in an API or updates an existing one.
 
         :param resource_group_name: The name of the resource group.
@@ -336,7 +336,7 @@ class ApiIssueAttachmentOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.IssueAttachmentContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueAttachmentContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueAttachmentContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -377,7 +377,7 @@ class ApiIssueAttachmentOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -463,7 +463,7 @@ class ApiIssueAttachmentOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

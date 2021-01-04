@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ConfigurationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class ConfigurationsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ConfigurationListResult"]
+        # type: (...) -> Iterable["_models.ConfigurationListResult"]
         """Retrieve Azure Advisor configurations.
 
         Retrieve Azure Advisor configurations and also retrieve configurations of contained resource
@@ -60,7 +60,7 @@ class ConfigurationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.advisor.models.ConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,7 +105,7 @@ class ConfigurationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ArmErrorResponse, response)
+                error = self._deserialize(_models.ArmErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -118,11 +118,11 @@ class ConfigurationsOperations(object):
 
     def create_in_subscription(
         self,
-        configuration_name,  # type: Union[str, "models.ConfigurationName"]
-        config_contract,  # type: "models.ConfigData"
+        configuration_name,  # type: Union[str, "_models.ConfigurationName"]
+        config_contract,  # type: "_models.ConfigData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConfigData"
+        # type: (...) -> "_models.ConfigData"
         """Create/Overwrite Azure Advisor configuration.
 
         Create/Overwrite Azure Advisor configuration and also delete all configurations of contained
@@ -137,7 +137,7 @@ class ConfigurationsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.ConfigData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigData"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigData"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -172,7 +172,7 @@ class ConfigurationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ArmErrorResponse, response)
+            error = self._deserialize(_models.ArmErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConfigData', pipeline_response)
@@ -188,7 +188,7 @@ class ConfigurationsOperations(object):
         resource_group,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ConfigurationListResult"]
+        # type: (...) -> Iterable["_models.ConfigurationListResult"]
         """Retrieve Azure Advisor configurations.
 
         Retrieve Azure Advisor configurations.
@@ -200,7 +200,7 @@ class ConfigurationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.advisor.models.ConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -246,7 +246,7 @@ class ConfigurationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ArmErrorResponse, response)
+                error = self._deserialize(_models.ArmErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -259,12 +259,12 @@ class ConfigurationsOperations(object):
 
     def create_in_resource_group(
         self,
-        configuration_name,  # type: Union[str, "models.ConfigurationName"]
+        configuration_name,  # type: Union[str, "_models.ConfigurationName"]
         resource_group,  # type: str
-        config_contract,  # type: "models.ConfigData"
+        config_contract,  # type: "_models.ConfigData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConfigData"
+        # type: (...) -> "_models.ConfigData"
         """Create/Overwrite Azure Advisor configuration.
 
         Create/Overwrite Azure Advisor configuration.
@@ -280,7 +280,7 @@ class ConfigurationsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.ConfigData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigData"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigData"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -316,7 +316,7 @@ class ConfigurationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ArmErrorResponse, response)
+            error = self._deserialize(_models.ArmErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConfigData', pipeline_response)
