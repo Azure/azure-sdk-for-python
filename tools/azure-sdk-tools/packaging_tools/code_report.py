@@ -233,7 +233,16 @@ def filter_track2_versions(package_name, versions):
         'azure-mgmt-hybridkubernetes': '1.0.0b1',
         'azure-mgmt-managementgroups': '1.0.0b1',
         'azure-mgmt-resourcemover': '1.0.1b1',
-        'azure-mgmt-synapse': '1.0.0b1'
+        'azure-mgmt-synapse': '1.0.0b1',
+        'azure-mgmt-datamigration': '9.0.0b1',
+        'azure-mgmt-timeseriesinsights': '1.0.0b1',
+        'azure-mgmt-mixedreality': '1.0.0b1',
+        'azure-mgmt-kubernetesconfiguration': '1.0.0b1',
+        'azure-mgmt-reservations': '1.0.0b1',
+        'azure-mgmt-managementpartner': '1.0.0b1',
+        'azure-mgmt-redhatopenshift': '1.0.0b1',
+        'azure-mgmt-serialconsole': '1.0.0b1',
+        'azure-mgmt-portal': '1.0.0b1'
     }
     upbound = track2_versions.get(package_name)
     if not upbound:
