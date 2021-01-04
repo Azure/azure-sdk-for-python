@@ -190,7 +190,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             )
         else:
             if hasattr(credential, "get_token"):
-                credential_policy = BearerTokenCredentialPolicy(credential, *self.credential_scopes)
+                credential_scopes = kwargs.pop('credential_scopes',
+                                               ['https://cognitiveservices.azure.com/.default'])
+                credential_policy = BearerTokenCredentialPolicy(credential, *credential_scopes)
             else:
                 raise TypeError("Please provide an instance from azure-identity "
                                 "or a class that implement the 'get_token protocol")
