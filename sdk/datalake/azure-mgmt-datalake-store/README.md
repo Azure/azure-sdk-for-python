@@ -12,12 +12,8 @@ To learn how to use this package, see the [quickstart guide](https://aka.ms/azsd
 
 
  
-To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
-
-
-
-For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/)
-Code samples for this package can be found at [Advisor Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
+For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/data-lake-store)
+Code samples for this package can be found at [Data Lake Store Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
 Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
 
@@ -25,7 +21,7 @@ Additional code samples for different Azure services are available at [Samples R
 
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project.
+section of the project. 
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-datalake-store%2FREADME.png)
