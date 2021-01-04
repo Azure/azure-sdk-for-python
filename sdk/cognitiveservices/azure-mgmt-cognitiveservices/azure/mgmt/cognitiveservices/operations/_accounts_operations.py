@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class AccountsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class AccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        account,  # type: "models.CognitiveServicesAccount"
+        account,  # type: "_models.CognitiveServicesAccount"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CognitiveServicesAccount"
+        # type: (...) -> "_models.CognitiveServicesAccount"
         """Create Cognitive Services Account. Accounts is a resource group wide resource type. It holds
         the keys for developer to access intelligent APIs. It's also the resource type for billing.
 
@@ -67,7 +67,7 @@ class AccountsOperations(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CognitiveServicesAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -103,7 +103,7 @@ class AccountsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -125,10 +125,10 @@ class AccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        account,  # type: "models.CognitiveServicesAccount"
+        account,  # type: "_models.CognitiveServicesAccount"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CognitiveServicesAccount"
+        # type: (...) -> "_models.CognitiveServicesAccount"
         """Updates a Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -142,7 +142,7 @@ class AccountsOperations(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CognitiveServicesAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -178,7 +178,7 @@ class AccountsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -242,7 +242,7 @@ class AccountsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -256,7 +256,7 @@ class AccountsOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CognitiveServicesAccount"
+        # type: (...) -> "_models.CognitiveServicesAccount"
         """Returns a Cognitive Services account specified by the parameters.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -268,7 +268,7 @@ class AccountsOperations(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CognitiveServicesAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -299,7 +299,7 @@ class AccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CognitiveServicesAccount', pipeline_response)
@@ -315,7 +315,7 @@ class AccountsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CognitiveServicesAccountListResult"]
+        # type: (...) -> Iterable["_models.CognitiveServicesAccountListResult"]
         """Returns all the resources of a particular type belonging to a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -325,7 +325,7 @@ class AccountsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CognitiveServicesAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -371,7 +371,7 @@ class AccountsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -386,7 +386,7 @@ class AccountsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CognitiveServicesAccountListResult"]
+        # type: (...) -> Iterable["_models.CognitiveServicesAccountListResult"]
         """Returns all the resources of a particular type belonging to a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -394,7 +394,7 @@ class AccountsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CognitiveServicesAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -439,7 +439,7 @@ class AccountsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -456,7 +456,7 @@ class AccountsOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CognitiveServicesAccountKeys"
+        # type: (...) -> "_models.CognitiveServicesAccountKeys"
         """Lists the account keys for the specified Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -468,7 +468,7 @@ class AccountsOperations(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CognitiveServicesAccountKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -499,7 +499,7 @@ class AccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CognitiveServicesAccountKeys', pipeline_response)
@@ -514,10 +514,10 @@ class AccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        key_name,  # type: Union[str, "models.KeyName"]
+        key_name,  # type: Union[str, "_models.KeyName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CognitiveServicesAccountKeys"
+        # type: (...) -> "_models.CognitiveServicesAccountKeys"
         """Regenerates the specified account key for the specified Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -531,13 +531,13 @@ class AccountsOperations(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CognitiveServicesAccountKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = models.RegenerateKeyParameters(key_name=key_name)
+        _parameters = _models.RegenerateKeyParameters(key_name=key_name)
         api_version = "2017-04-18"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -569,7 +569,7 @@ class AccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CognitiveServicesAccountKeys', pipeline_response)
@@ -586,7 +586,7 @@ class AccountsOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CognitiveServicesAccountEnumerateSkusResult"
+        # type: (...) -> "_models.CognitiveServicesAccountEnumerateSkusResult"
         """List available SKUs for the requested Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -598,7 +598,7 @@ class AccountsOperations(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountEnumerateSkusResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CognitiveServicesAccountEnumerateSkusResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountEnumerateSkusResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -629,7 +629,7 @@ class AccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CognitiveServicesAccountEnumerateSkusResult', pipeline_response)
@@ -647,7 +647,7 @@ class AccountsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.UsagesResult"
+        # type: (...) -> "_models.UsagesResult"
         """Get usages for the requested Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -662,7 +662,7 @@ class AccountsOperations(object):
         :rtype: ~azure.mgmt.cognitiveservices.models.UsagesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsagesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsagesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -695,7 +695,7 @@ class AccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('UsagesResult', pipeline_response)

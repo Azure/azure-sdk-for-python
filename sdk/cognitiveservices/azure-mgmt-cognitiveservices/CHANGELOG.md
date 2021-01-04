@@ -1,5 +1,11 @@
 # Release History
 
+## 11.0.0 (2020-12-22)
+
+**Features**
+
+  - Model CognitiveServicesAccountProperties has a new parameter date_created
+
 ## 11.0.0b1 (2020-11-03)
 
 This is beta preview version.

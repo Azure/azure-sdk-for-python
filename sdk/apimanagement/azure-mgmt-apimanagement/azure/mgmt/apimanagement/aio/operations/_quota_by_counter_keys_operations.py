@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class QuotaByCounterKeysOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class QuotaByCounterKeysOperations:
         service_name: str,
         quota_counter_key: str,
         **kwargs
-    ) -> "models.QuotaCounterCollection":
+    ) -> "_models.QuotaCounterCollection":
         """Lists a collection of current quota counter periods associated with the counter-key configured
         in the policy on the specified service instance. The api does not support paging yet.
 
@@ -64,7 +64,7 @@ class QuotaByCounterKeysOperations:
         :rtype: ~azure.mgmt.apimanagement.models.QuotaCounterCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QuotaCounterCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QuotaCounterCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -96,7 +96,7 @@ class QuotaByCounterKeysOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuotaCounterCollection', pipeline_response)
@@ -112,10 +112,9 @@ class QuotaByCounterKeysOperations:
         resource_group_name: str,
         service_name: str,
         quota_counter_key: str,
-        calls_count: Optional[int] = None,
-        kb_transferred: Optional[float] = None,
+        parameters: "_models.QuotaCounterValueUpdateContract",
         **kwargs
-    ) -> "models.QuotaCounterCollection":
+    ) -> "_models.QuotaCounterCollection":
         """Updates all the quota counter values specified with the existing quota counter key to a value
         in the specified service instance. This should be used for reset of the quota counter values.
 
@@ -128,22 +127,18 @@ class QuotaByCounterKeysOperations:
          key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined as
          counter-key="@("b"+"a")" then it will be accessible by "ba" key.
         :type quota_counter_key: str
-        :param calls_count: Number of times Counter was called.
-        :type calls_count: int
-        :param kb_transferred: Data Transferred in KiloBytes.
-        :type kb_transferred: float
+        :param parameters: The value of the quota counter to be applied to all quota counter periods.
+        :type parameters: ~azure.mgmt.apimanagement.models.QuotaCounterValueUpdateContract
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QuotaCounterCollection, or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.QuotaCounterCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QuotaCounterCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QuotaCounterCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.QuotaCounterValueUpdateContract(calls_count=calls_count, kb_transferred=kb_transferred)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -168,7 +163,7 @@ class QuotaByCounterKeysOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'QuotaCounterValueUpdateContract')
+        body_content = self._serialize.body(parameters, 'QuotaCounterValueUpdateContract')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -176,7 +171,7 @@ class QuotaByCounterKeysOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuotaCounterCollection', pipeline_response)

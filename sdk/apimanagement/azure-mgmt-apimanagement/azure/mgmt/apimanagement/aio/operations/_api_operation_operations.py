@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ApiOperationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,7 +51,7 @@ class ApiOperationOperations:
         skip: Optional[int] = None,
         tags: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.OperationCollection"]:
+    ) -> AsyncIterable["_models.OperationCollection"]:
         """Lists a collection of the operations for the specified API.
 
         :param resource_group_name: The name of the resource group.
@@ -81,7 +81,7 @@ class ApiOperationOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.OperationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -137,7 +137,7 @@ class ApiOperationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -206,7 +206,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -225,7 +225,7 @@ class ApiOperationOperations:
         api_id: str,
         operation_id: str,
         **kwargs
-    ) -> "models.OperationContract":
+    ) -> "_models.OperationContract":
         """Gets the details of the API Operation specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -243,7 +243,7 @@ class ApiOperationOperations:
         :rtype: ~azure.mgmt.apimanagement.models.OperationContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -276,7 +276,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -295,10 +295,10 @@ class ApiOperationOperations:
         service_name: str,
         api_id: str,
         operation_id: str,
-        parameters: "models.OperationContract",
+        parameters: "_models.OperationContract",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.OperationContract":
+    ) -> "_models.OperationContract":
         """Creates a new operation in the API or updates an existing one.
 
         :param resource_group_name: The name of the resource group.
@@ -321,7 +321,7 @@ class ApiOperationOperations:
         :rtype: ~azure.mgmt.apimanagement.models.OperationContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -361,7 +361,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -386,9 +386,9 @@ class ApiOperationOperations:
         api_id: str,
         operation_id: str,
         if_match: str,
-        parameters: "models.OperationUpdateContract",
+        parameters: "_models.OperationUpdateContract",
         **kwargs
-    ) -> "models.OperationContract":
+    ) -> "_models.OperationContract":
         """Updates the details of the operation in the API specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -411,7 +411,7 @@ class ApiOperationOperations:
         :rtype: ~azure.mgmt.apimanagement.models.OperationContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -450,7 +450,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -526,7 +526,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

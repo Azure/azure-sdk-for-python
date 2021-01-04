@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class AlertsSuppressionRulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class AlertsSuppressionRulesOperations(object):
         alert_type=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AlertsSuppressionRulesList"]
+        # type: (...) -> Iterable["_models.AlertsSuppressionRulesList"]
         """List of all the dismiss rules for the given subscription.
 
         :param alert_type: Type of the alert to get rules for.
@@ -60,7 +60,7 @@ class AlertsSuppressionRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.AlertsSuppressionRulesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AlertsSuppressionRulesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertsSuppressionRulesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class AlertsSuppressionRulesOperations(object):
         alerts_suppression_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AlertsSuppressionRule"
+        # type: (...) -> "_models.AlertsSuppressionRule"
         """Get dismiss rule, with name: {alertsSuppressionRuleName}, for the given subscription.
 
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule.
@@ -132,7 +132,7 @@ class AlertsSuppressionRulesOperations(object):
         :rtype: ~azure.mgmt.security.models.AlertsSuppressionRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AlertsSuppressionRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertsSuppressionRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -175,10 +175,10 @@ class AlertsSuppressionRulesOperations(object):
     def update(
         self,
         alerts_suppression_rule_name,  # type: str
-        alerts_suppression_rule,  # type: "models.AlertsSuppressionRule"
+        alerts_suppression_rule,  # type: "_models.AlertsSuppressionRule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AlertsSuppressionRule"
+        # type: (...) -> "_models.AlertsSuppressionRule"
         """Update existing rule or create new rule if it doesn't exist.
 
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule.
@@ -190,7 +190,7 @@ class AlertsSuppressionRulesOperations(object):
         :rtype: ~azure.mgmt.security.models.AlertsSuppressionRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AlertsSuppressionRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertsSuppressionRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

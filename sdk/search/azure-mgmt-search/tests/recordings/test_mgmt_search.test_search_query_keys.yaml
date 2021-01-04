@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy?api-version=2020-08-01
   response:
@@ -29,17 +29,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:40:56 GMT
+      - Tue, 22 Dec 2020 06:24:00 GMT
       elapsed-time:
-      - '2998'
+      - '3446'
       etag:
-      - W/"datetime'2020-10-27T09%3A40%3A55.0590301Z'"
+      - W/"datetime'2020-12-22T06%3A24%3A00.1606928Z'"
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 7c76eaf8-1838-11eb-9153-0242ac110007
+      - 41df17aa-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -61,12 +61,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy/createQueryKey/testkey?api-version=2020-08-01
   response:
     body:
-      string: '{"name":"testkey","key":"2E46BA4FC84B8DCC2039F4BA329B4B73"}'
+      string: '{"name":"testkey","key":"4EE634BA36F8649289B5F1AB1C86DF60"}'
     headers:
       cache-control:
       - no-cache
@@ -75,15 +75,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:40:57 GMT
+      - Tue, 22 Dec 2020 06:24:01 GMT
       elapsed-time:
-      - '173'
+      - '178'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 8341630e-1838-11eb-9153-0242ac110007
+      - 48070264-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -109,12 +109,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy/listQueryKeys?api-version=2020-08-01
   response:
     body:
-      string: '{"value":[{"name":null,"key":"69684B14BE2E6358027B2B0FC97B2158"},{"name":"testkey","key":"2E46BA4FC84B8DCC2039F4BA329B4B73"}],"nextLink":null}'
+      string: '{"value":[{"name":null,"key":"B0D50B6A9FDA68E9E6B7DC3B39DE101F"},{"name":"testkey","key":"4EE634BA36F8649289B5F1AB1C86DF60"}],"nextLink":null}'
     headers:
       cache-control:
       - no-cache
@@ -123,15 +123,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:40:57 GMT
+      - Tue, 22 Dec 2020 06:24:01 GMT
       elapsed-time:
-      - '185'
+      - '133'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 838a7bf2-1838-11eb-9153-0242ac110007
+      - 4852846e-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -157,13 +157,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy/deleteQueryKey/testkey?api-version=2020-08-01
   response:
     body:
       string: '{"error":{"code":"Unknown","message":"This API key does not exist for
-        service ''ptvstestquerykeysxxy''. RequestId: 83d510ae-1838-11eb-9153-0242ac110007","target":null,"details":null}}'
+        service ''ptvstestquerykeysxxy''. RequestId: 4899863e-441e-11eb-b05a-0242ac110003","target":null,"details":null}}'
     headers:
       cache-control:
       - no-cache
@@ -174,15 +174,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:40:58 GMT
+      - Tue, 22 Dec 2020 06:24:02 GMT
       elapsed-time:
-      - '177'
+      - '135'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 83d510ae-1838-11eb-9153-0242ac110007
+      - 4899863e-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:

@@ -23,6 +23,7 @@ try:
     from ._models_py3 import AmazonS3Location
     from ._models_py3 import AmazonS3ReadSettings
     from ._models_py3 import AppendVariableActivity
+    from ._models_py3 import ArtifactRenameRequest
     from ._models_py3 import AutoPauseProperties
     from ._models_py3 import AutoScaleProperties
     from ._models_py3 import AvroDataset
@@ -142,6 +143,7 @@ try:
     from ._models_py3 import CustomDataSourceLinkedService
     from ._models_py3 import CustomDataset
     from ._models_py3 import CustomSetupBase
+    from ._models_py3 import CustomerManagedKeyDetails
     from ._models_py3 import DWCopyCommandDefaultValue
     from ._models_py3 import DWCopyCommandSettings
     from ._models_py3 import DataFlow
@@ -215,6 +217,7 @@ try:
     from ._models_py3 import EloquaLinkedService
     from ._models_py3 import EloquaObjectDataset
     from ._models_py3 import EloquaSource
+    from ._models_py3 import EncryptionDetails
     from ._models_py3 import EntityReference
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorContract
@@ -243,6 +246,8 @@ try:
     from ._models_py3 import FtpServerLocation
     from ._models_py3 import GetMetadataActivity
     from ._models_py3 import GetSsisObjectMetadataRequest
+    from ._models_py3 import GitHubAccessTokenRequest
+    from ._models_py3 import GitHubAccessTokenResponse
     from ._models_py3 import GoogleAdWordsLinkedService
     from ._models_py3 import GoogleAdWordsObjectDataset
     from ._models_py3 import GoogleAdWordsSource
@@ -322,6 +327,7 @@ try:
     from ._models_py3 import MagentoSource
     from ._models_py3 import ManagedIdentity
     from ._models_py3 import ManagedIntegrationRuntime
+    from ._models_py3 import ManagedVirtualNetworkSettings
     from ._models_py3 import MappingDataFlow
     from ._models_py3 import MariaDBLinkedService
     from ._models_py3 import MariaDBSource
@@ -408,6 +414,7 @@ try:
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
+    from ._models_py3 import PurviewConfiguration
     from ._models_py3 import QueryDataFlowDebugSessionsResponse
     from ._models_py3 import QuickBooksLinkedService
     from ._models_py3 import QuickBooksObjectDataset
@@ -588,6 +595,8 @@ try:
     from ._models_py3 import WebTableDataset
     from ._models_py3 import Workspace
     from ._models_py3 import WorkspaceIdentity
+    from ._models_py3 import WorkspaceKeyDetails
+    from ._models_py3 import WorkspaceRepositoryConfiguration
     from ._models_py3 import WorkspaceUpdateParameters
     from ._models_py3 import XeroLinkedService
     from ._models_py3 import XeroObjectDataset
@@ -612,6 +621,7 @@ except (SyntaxError, ImportError):
     from ._models import AmazonS3Location  # type: ignore
     from ._models import AmazonS3ReadSettings  # type: ignore
     from ._models import AppendVariableActivity  # type: ignore
+    from ._models import ArtifactRenameRequest  # type: ignore
     from ._models import AutoPauseProperties  # type: ignore
     from ._models import AutoScaleProperties  # type: ignore
     from ._models import AvroDataset  # type: ignore
@@ -731,6 +741,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomDataSourceLinkedService  # type: ignore
     from ._models import CustomDataset  # type: ignore
     from ._models import CustomSetupBase  # type: ignore
+    from ._models import CustomerManagedKeyDetails  # type: ignore
     from ._models import DWCopyCommandDefaultValue  # type: ignore
     from ._models import DWCopyCommandSettings  # type: ignore
     from ._models import DataFlow  # type: ignore
@@ -804,6 +815,7 @@ except (SyntaxError, ImportError):
     from ._models import EloquaLinkedService  # type: ignore
     from ._models import EloquaObjectDataset  # type: ignore
     from ._models import EloquaSource  # type: ignore
+    from ._models import EncryptionDetails  # type: ignore
     from ._models import EntityReference  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorContract  # type: ignore
@@ -832,6 +844,8 @@ except (SyntaxError, ImportError):
     from ._models import FtpServerLocation  # type: ignore
     from ._models import GetMetadataActivity  # type: ignore
     from ._models import GetSsisObjectMetadataRequest  # type: ignore
+    from ._models import GitHubAccessTokenRequest  # type: ignore
+    from ._models import GitHubAccessTokenResponse  # type: ignore
     from ._models import GoogleAdWordsLinkedService  # type: ignore
     from ._models import GoogleAdWordsObjectDataset  # type: ignore
     from ._models import GoogleAdWordsSource  # type: ignore
@@ -911,6 +925,7 @@ except (SyntaxError, ImportError):
     from ._models import MagentoSource  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
     from ._models import ManagedIntegrationRuntime  # type: ignore
+    from ._models import ManagedVirtualNetworkSettings  # type: ignore
     from ._models import MappingDataFlow  # type: ignore
     from ._models import MariaDBLinkedService  # type: ignore
     from ._models import MariaDBSource  # type: ignore
@@ -997,6 +1012,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import ProxyResource  # type: ignore
+    from ._models import PurviewConfiguration  # type: ignore
     from ._models import QueryDataFlowDebugSessionsResponse  # type: ignore
     from ._models import QuickBooksLinkedService  # type: ignore
     from ._models import QuickBooksObjectDataset  # type: ignore
@@ -1177,6 +1193,8 @@ except (SyntaxError, ImportError):
     from ._models import WebTableDataset  # type: ignore
     from ._models import Workspace  # type: ignore
     from ._models import WorkspaceIdentity  # type: ignore
+    from ._models import WorkspaceKeyDetails  # type: ignore
+    from ._models import WorkspaceRepositoryConfiguration  # type: ignore
     from ._models import WorkspaceUpdateParameters  # type: ignore
     from ._models import XeroLinkedService  # type: ignore
     from ._models import XeroObjectDataset  # type: ignore
@@ -1190,7 +1208,7 @@ from ._artifacts_client_enums import (
     AzureFunctionActivityMethod,
     AzureSearchIndexWriteBehaviorType,
     BigDataPoolReferenceType,
-    BlobEventTypes,
+    BlobEventType,
     CassandraSourceReadConsistencyLevels,
     CellOutputType,
     CopyBehaviorType,
@@ -1244,7 +1262,6 @@ from ._artifacts_client_enums import (
     PluginCurrentState,
     PolybaseSettingsRejectType,
     PrestoAuthenticationType,
-    PrivateLinkServiceConnectionStateStatus,
     RecurrenceFrequency,
     ResourceIdentityType,
     RestServiceAuthenticationType,
@@ -1305,6 +1322,7 @@ __all__ = [
     'AmazonS3Location',
     'AmazonS3ReadSettings',
     'AppendVariableActivity',
+    'ArtifactRenameRequest',
     'AutoPauseProperties',
     'AutoScaleProperties',
     'AvroDataset',
@@ -1424,6 +1442,7 @@ __all__ = [
     'CustomDataSourceLinkedService',
     'CustomDataset',
     'CustomSetupBase',
+    'CustomerManagedKeyDetails',
     'DWCopyCommandDefaultValue',
     'DWCopyCommandSettings',
     'DataFlow',
@@ -1497,6 +1516,7 @@ __all__ = [
     'EloquaLinkedService',
     'EloquaObjectDataset',
     'EloquaSource',
+    'EncryptionDetails',
     'EntityReference',
     'ErrorAdditionalInfo',
     'ErrorContract',
@@ -1525,6 +1545,8 @@ __all__ = [
     'FtpServerLocation',
     'GetMetadataActivity',
     'GetSsisObjectMetadataRequest',
+    'GitHubAccessTokenRequest',
+    'GitHubAccessTokenResponse',
     'GoogleAdWordsLinkedService',
     'GoogleAdWordsObjectDataset',
     'GoogleAdWordsSource',
@@ -1604,6 +1626,7 @@ __all__ = [
     'MagentoSource',
     'ManagedIdentity',
     'ManagedIntegrationRuntime',
+    'ManagedVirtualNetworkSettings',
     'MappingDataFlow',
     'MariaDBLinkedService',
     'MariaDBSource',
@@ -1690,6 +1713,7 @@ __all__ = [
     'PrivateEndpointConnection',
     'PrivateLinkServiceConnectionState',
     'ProxyResource',
+    'PurviewConfiguration',
     'QueryDataFlowDebugSessionsResponse',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
@@ -1870,6 +1894,8 @@ __all__ = [
     'WebTableDataset',
     'Workspace',
     'WorkspaceIdentity',
+    'WorkspaceKeyDetails',
+    'WorkspaceRepositoryConfiguration',
     'WorkspaceUpdateParameters',
     'XeroLinkedService',
     'XeroObjectDataset',
@@ -1881,7 +1907,7 @@ __all__ = [
     'AzureFunctionActivityMethod',
     'AzureSearchIndexWriteBehaviorType',
     'BigDataPoolReferenceType',
-    'BlobEventTypes',
+    'BlobEventType',
     'CassandraSourceReadConsistencyLevels',
     'CellOutputType',
     'CopyBehaviorType',
@@ -1935,7 +1961,6 @@ __all__ = [
     'PluginCurrentState',
     'PolybaseSettingsRejectType',
     'PrestoAuthenticationType',
-    'PrivateLinkServiceConnectionStateStatus',
     'RecurrenceFrequency',
     'ResourceIdentityType',
     'RestServiceAuthenticationType',

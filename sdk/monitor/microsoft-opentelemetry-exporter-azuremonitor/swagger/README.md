@@ -1,4 +1,4 @@
-# Opentelemtry Exporter for Azure Monitor Client for Python
+# OpenTelemetry Exporter for Azure Monitor Client for Python
 
 > see https://aka.ms/autorest
 
@@ -15,10 +15,11 @@ autorest ./swagger/README.md --python --v3
 
 ```yaml
 title: AzureMonitorClient
-description: Opentelemetry Exporter for Azure Monitor
+description: OpenTelemetry Exporter for Azure Monitor
 generated-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION
 no-namespace-folders: true
+trace: false
 output-folder: ../microsoft/opentelemetry/exporter/azuremonitor/_generated
 source-code-folder-path: ./microsoft/opentelemetry/exporter/azuremonitor/_generated
 input-file: 
@@ -26,5 +27,5 @@ input-file:
 
 python: true
 v3: true
-use: "@autorest/python@5.1.0-preview.7"
+use: "@autorest/python@5.5.0"
 ```

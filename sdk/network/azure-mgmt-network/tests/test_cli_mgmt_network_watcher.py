@@ -335,6 +335,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
 
+    @unittest.skip("NsgsNotAppliedOnNic")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_ip_flow(self, resource_group):
         

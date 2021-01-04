@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class SubscriptionOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class SubscriptionOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SubscriptionCollection"]
+        # type: (...) -> Iterable["_models.SubscriptionCollection"]
         """Lists all subscriptions of the API Management service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -82,7 +82,7 @@ class SubscriptionOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.SubscriptionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubscriptionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -135,7 +135,7 @@ class SubscriptionOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -201,7 +201,7 @@ class SubscriptionOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -220,7 +220,7 @@ class SubscriptionOperations(object):
         sid,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SubscriptionContract"
+        # type: (...) -> "_models.SubscriptionContract"
         """Gets the specified Subscription entity.
 
         :param resource_group_name: The name of the resource group.
@@ -235,7 +235,7 @@ class SubscriptionOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.SubscriptionContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubscriptionContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,7 +267,7 @@ class SubscriptionOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -285,13 +285,13 @@ class SubscriptionOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         sid,  # type: str
-        parameters,  # type: "models.SubscriptionCreateParameters"
+        parameters,  # type: "_models.SubscriptionCreateParameters"
         notify=None,  # type: Optional[bool]
         if_match=None,  # type: Optional[str]
-        app_type=None,  # type: Optional[Union[str, "models.AppType"]]
+        app_type=None,  # type: Optional[Union[str, "_models.AppType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SubscriptionContract"
+        # type: (...) -> "_models.SubscriptionContract"
         """Creates or updates the subscription of specified user to the specified product.
 
         :param resource_group_name: The name of the resource group.
@@ -320,7 +320,7 @@ class SubscriptionOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.SubscriptionContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubscriptionContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -363,7 +363,7 @@ class SubscriptionOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -387,12 +387,12 @@ class SubscriptionOperations(object):
         service_name,  # type: str
         sid,  # type: str
         if_match,  # type: str
-        parameters,  # type: "models.SubscriptionUpdateParameters"
+        parameters,  # type: "_models.SubscriptionUpdateParameters"
         notify=None,  # type: Optional[bool]
-        app_type=None,  # type: Optional[Union[str, "models.AppType"]]
+        app_type=None,  # type: Optional[Union[str, "_models.AppType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SubscriptionContract"
+        # type: (...) -> "_models.SubscriptionContract"
         """Updates the details of a subscription specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -421,7 +421,7 @@ class SubscriptionOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.SubscriptionContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubscriptionContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -463,7 +463,7 @@ class SubscriptionOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -535,7 +535,7 @@ class SubscriptionOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -597,7 +597,7 @@ class SubscriptionOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -659,7 +659,7 @@ class SubscriptionOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -674,7 +674,7 @@ class SubscriptionOperations(object):
         sid,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SubscriptionKeysContract"
+        # type: (...) -> "_models.SubscriptionKeysContract"
         """Gets the specified Subscription keys.
 
         :param resource_group_name: The name of the resource group.
@@ -689,7 +689,7 @@ class SubscriptionOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.SubscriptionKeysContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubscriptionKeysContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionKeysContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -721,7 +721,7 @@ class SubscriptionOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

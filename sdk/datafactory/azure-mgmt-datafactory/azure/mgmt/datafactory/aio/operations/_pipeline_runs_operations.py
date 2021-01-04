@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class PipelineRunsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,9 +44,9 @@ class PipelineRunsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: "models.RunFilterParameters",
+        filter_parameters: "_models.RunFilterParameters",
         **kwargs
-    ) -> "models.PipelineRunsQueryResponse":
+    ) -> "_models.PipelineRunsQueryResponse":
         """Query pipeline runs in the factory based on input filter conditions.
 
         :param resource_group_name: The resource group name.
@@ -60,7 +60,7 @@ class PipelineRunsOperations:
         :rtype: ~azure.mgmt.datafactory.models.PipelineRunsQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRunsQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineRunsQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,7 +112,7 @@ class PipelineRunsOperations:
         factory_name: str,
         run_id: str,
         **kwargs
-    ) -> "models.PipelineRun":
+    ) -> "_models.PipelineRun":
         """Get a pipeline run by its run ID.
 
         :param resource_group_name: The resource group name.
@@ -126,7 +126,7 @@ class PipelineRunsOperations:
         :rtype: ~azure.mgmt.datafactory.models.PipelineRun
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRun"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineRun"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

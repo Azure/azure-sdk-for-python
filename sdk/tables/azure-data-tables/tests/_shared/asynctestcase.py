@@ -5,11 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
-import functools
-
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-
 from azure.core.credentials import AccessToken
 
 from .testcase import TableTestCase

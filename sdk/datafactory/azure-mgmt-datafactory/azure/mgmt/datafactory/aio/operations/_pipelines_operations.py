@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class PipelinesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class PipelinesOperations:
         resource_group_name: str,
         factory_name: str,
         **kwargs
-    ) -> AsyncIterable["models.PipelineListResponse"]:
+    ) -> AsyncIterable["_models.PipelineListResponse"]:
         """Lists pipelines.
 
         :param resource_group_name: The resource group name.
@@ -58,7 +58,7 @@ class PipelinesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.PipelineListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,10 +120,10 @@ class PipelinesOperations:
         resource_group_name: str,
         factory_name: str,
         pipeline_name: str,
-        pipeline: "models.PipelineResource",
+        pipeline: "_models.PipelineResource",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.PipelineResource":
+    ) -> "_models.PipelineResource":
         """Creates or updates a pipeline.
 
         :param resource_group_name: The resource group name.
@@ -142,7 +142,7 @@ class PipelinesOperations:
         :rtype: ~azure.mgmt.datafactory.models.PipelineResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -198,7 +198,7 @@ class PipelinesOperations:
         pipeline_name: str,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.PipelineResource"]:
+    ) -> Optional["_models.PipelineResource"]:
         """Gets a pipeline.
 
         :param resource_group_name: The resource group name.
@@ -215,7 +215,7 @@ class PipelinesOperations:
         :rtype: ~azure.mgmt.datafactory.models.PipelineResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PipelineResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PipelineResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -331,7 +331,7 @@ class PipelinesOperations:
         start_from_failure: Optional[bool] = None,
         parameters: Optional[Dict[str, object]] = None,
         **kwargs
-    ) -> "models.CreateRunResponse":
+    ) -> "_models.CreateRunResponse":
         """Creates a run of a pipeline.
 
         :param resource_group_name: The resource group name.
@@ -360,7 +360,7 @@ class PipelinesOperations:
         :rtype: ~azure.mgmt.datafactory.models.CreateRunResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CreateRunResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CreateRunResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

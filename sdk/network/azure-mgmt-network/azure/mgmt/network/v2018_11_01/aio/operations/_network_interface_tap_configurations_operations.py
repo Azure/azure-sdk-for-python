@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NetworkInterfaceTapConfigurationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -135,7 +135,14 @@ class NetworkInterfaceTapConfigurationsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+            'tapConfigurationName': self._serialize.url("tap_configuration_name", tap_configuration_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -155,7 +162,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         network_interface_name: str,
         tap_configuration_name: str,
         **kwargs
-    ) -> "models.NetworkInterfaceTapConfiguration":
+    ) -> "_models.NetworkInterfaceTapConfiguration":
         """Get the specified tap configuration on a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -169,7 +176,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         :rtype: ~azure.mgmt.network.v2018_11_01.models.NetworkInterfaceTapConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceTapConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceTapConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -216,10 +223,10 @@ class NetworkInterfaceTapConfigurationsOperations:
         resource_group_name: str,
         network_interface_name: str,
         tap_configuration_name: str,
-        tap_configuration_parameters: "models.NetworkInterfaceTapConfiguration",
+        tap_configuration_parameters: "_models.NetworkInterfaceTapConfiguration",
         **kwargs
-    ) -> "models.NetworkInterfaceTapConfiguration":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceTapConfiguration"]
+    ) -> "_models.NetworkInterfaceTapConfiguration":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceTapConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,9 +282,9 @@ class NetworkInterfaceTapConfigurationsOperations:
         resource_group_name: str,
         network_interface_name: str,
         tap_configuration_name: str,
-        tap_configuration_parameters: "models.NetworkInterfaceTapConfiguration",
+        tap_configuration_parameters: "_models.NetworkInterfaceTapConfiguration",
         **kwargs
-    ) -> AsyncLROPoller["models.NetworkInterfaceTapConfiguration"]:
+    ) -> AsyncLROPoller["_models.NetworkInterfaceTapConfiguration"]:
         """Creates or updates a Tap configuration in the specified NetworkInterface.
 
         :param resource_group_name: The name of the resource group.
@@ -300,7 +307,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceTapConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceTapConfiguration"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -326,7 +333,14 @@ class NetworkInterfaceTapConfigurationsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+            'tapConfigurationName': self._serialize.url("tap_configuration_name", tap_configuration_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -345,7 +359,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         resource_group_name: str,
         network_interface_name: str,
         **kwargs
-    ) -> AsyncIterable["models.NetworkInterfaceTapConfigurationListResult"]:
+    ) -> AsyncIterable["_models.NetworkInterfaceTapConfigurationListResult"]:
         """Get all Tap configurations in a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -357,7 +371,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_11_01.models.NetworkInterfaceTapConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceTapConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceTapConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

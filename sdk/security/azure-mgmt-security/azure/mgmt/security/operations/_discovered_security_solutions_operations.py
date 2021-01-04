@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DiscoveredSecuritySolutionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class DiscoveredSecuritySolutionsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiscoveredSecuritySolutionList"]
+        # type: (...) -> Iterable["_models.DiscoveredSecuritySolutionList"]
         """Gets a list of discovered Security Solutions for the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class DiscoveredSecuritySolutionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.DiscoveredSecuritySolutionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiscoveredSecuritySolutionList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiscoveredSecuritySolutionList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,7 +116,7 @@ class DiscoveredSecuritySolutionsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiscoveredSecuritySolutionList"]
+        # type: (...) -> Iterable["_models.DiscoveredSecuritySolutionList"]
         """Gets a list of discovered Security Solutions for the subscription and location.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -124,7 +124,7 @@ class DiscoveredSecuritySolutionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.DiscoveredSecuritySolutionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiscoveredSecuritySolutionList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiscoveredSecuritySolutionList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -186,7 +186,7 @@ class DiscoveredSecuritySolutionsOperations(object):
         discovered_security_solution_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiscoveredSecuritySolution"
+        # type: (...) -> "_models.DiscoveredSecuritySolution"
         """Gets a specific discovered Security Solution.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -199,7 +199,7 @@ class DiscoveredSecuritySolutionsOperations(object):
         :rtype: ~azure.mgmt.security.models.DiscoveredSecuritySolution
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiscoveredSecuritySolution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiscoveredSecuritySolution"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

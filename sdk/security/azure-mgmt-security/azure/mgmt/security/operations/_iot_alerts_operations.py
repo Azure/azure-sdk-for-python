@@ -14,11 +14,11 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -37,7 +37,7 @@ class IotAlertsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -57,7 +57,7 @@ class IotAlertsOperations(object):
         skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IotAlertList"]
+        # type: (...) -> Iterable["_models.IotAlertList"]
         """List IoT alerts.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -82,7 +82,7 @@ class IotAlertsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.IotAlertList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotAlertList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotAlertList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -158,7 +158,7 @@ class IotAlertsOperations(object):
         iot_alert_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotAlert"
+        # type: (...) -> "_models.IotAlert"
         """Get IoT alert.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -173,7 +173,7 @@ class IotAlertsOperations(object):
         :rtype: ~azure.mgmt.security.models.IotAlert
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotAlert"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotAlert"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -214,3 +214,170 @@ class IotAlertsOperations(object):
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/iotAlerts/{iotAlertId}'}  # type: ignore
+
+    def list_at_scope(
+        self,
+        scope,  # type: str
+        min_start_time_utc=None,  # type: Optional[str]
+        max_start_time_utc=None,  # type: Optional[str]
+        alert_type=None,  # type: Optional[str]
+        device_management_type=None,  # type: Optional[Union[str, "_models.ManagementState"]]
+        compromised_entity=None,  # type: Optional[str]
+        limit=None,  # type: Optional[int]
+        skip_token=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.IotAlertListModel"]
+        """List IoT alerts.
+
+        :param scope: Scope of the query: Subscription (i.e. /subscriptions/{subscriptionId}) or IoT
+         Hub (i.e.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Devices/iotHubs/{iotHubName}).
+        :type scope: str
+        :param min_start_time_utc: Filter by minimum startTimeUtc (ISO 8601 format).
+        :type min_start_time_utc: str
+        :param max_start_time_utc: Filter by maximum startTimeUtc (ISO 8601 format).
+        :type max_start_time_utc: str
+        :param alert_type: Filter by alert type.
+        :type alert_type: str
+        :param device_management_type: Get devices only from specific type, Managed or Unmanaged.
+        :type device_management_type: str or ~azure.mgmt.security.models.ManagementState
+        :param compromised_entity: Filter by compromised device.
+        :type compromised_entity: str
+        :param limit: Limit the number of items returned in a single page.
+        :type limit: int
+        :param skip_token: Skip token used for pagination.
+        :type skip_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either IotAlertListModel or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.IotAlertListModel]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotAlertListModel"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_at_scope.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if min_start_time_utc is not None:
+                    query_parameters['startTimeUtc>'] = self._serialize.query("min_start_time_utc", min_start_time_utc, 'str')
+                if max_start_time_utc is not None:
+                    query_parameters['startTimeUtc<'] = self._serialize.query("max_start_time_utc", max_start_time_utc, 'str')
+                if alert_type is not None:
+                    query_parameters['alertType'] = self._serialize.query("alert_type", alert_type, 'str')
+                if device_management_type is not None:
+                    query_parameters['deviceManagementType'] = self._serialize.query("device_management_type", device_management_type, 'str')
+                if compromised_entity is not None:
+                    query_parameters['compromisedEntity'] = self._serialize.query("compromised_entity", compromised_entity, 'str')
+                if limit is not None:
+                    query_parameters['$limit'] = self._serialize.query("limit", limit, 'int')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('IotAlertListModel', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotAlerts'}  # type: ignore
+
+    def get_at_scope(
+        self,
+        scope,  # type: str
+        iot_alert_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.IotAlertModel"
+        """Get IoT alert.
+
+        :param scope: Scope of the query: Subscription (i.e. /subscriptions/{subscriptionId}) or IoT
+         Hub (i.e.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Devices/iotHubs/{iotHubName}).
+        :type scope: str
+        :param iot_alert_id: Id of the alert.
+        :type iot_alert_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IotAlertModel, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IotAlertModel
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotAlertModel"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_at_scope.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'iotAlertId': self._serialize.url("iot_alert_id", iot_alert_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('IotAlertModel', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotAlerts/{iotAlertId}'}  # type: ignore

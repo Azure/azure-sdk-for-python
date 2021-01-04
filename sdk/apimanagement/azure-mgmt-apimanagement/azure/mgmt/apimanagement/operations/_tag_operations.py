@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class TagOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -56,7 +56,7 @@ class TagOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TagCollection"]
+        # type: (...) -> Iterable["_models.TagCollection"]
         """Lists all Tags associated with the Operation.
 
         :param resource_group_name: The name of the resource group.
@@ -83,7 +83,7 @@ class TagOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.TagCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -138,7 +138,7 @@ class TagOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -212,7 +212,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -233,7 +233,7 @@ class TagOperations(object):
         tag_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Get tag associated with the Operation.
 
         :param resource_group_name: The name of the resource group.
@@ -253,7 +253,7 @@ class TagOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -287,7 +287,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -309,7 +309,7 @@ class TagOperations(object):
         tag_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Assign tag to the Operation.
 
         :param resource_group_name: The name of the resource group.
@@ -329,7 +329,7 @@ class TagOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -363,7 +363,7 @@ class TagOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -441,7 +441,7 @@ class TagOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -459,7 +459,7 @@ class TagOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TagCollection"]
+        # type: (...) -> Iterable["_models.TagCollection"]
         """Lists all Tags associated with the API.
 
         :param resource_group_name: The name of the resource group.
@@ -483,7 +483,7 @@ class TagOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.TagCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -537,7 +537,7 @@ class TagOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -606,7 +606,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -626,7 +626,7 @@ class TagOperations(object):
         tag_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Get tag associated with the API.
 
         :param resource_group_name: The name of the resource group.
@@ -643,7 +643,7 @@ class TagOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -676,7 +676,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -697,7 +697,7 @@ class TagOperations(object):
         tag_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Assign tag to the Api.
 
         :param resource_group_name: The name of the resource group.
@@ -714,7 +714,7 @@ class TagOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -747,7 +747,7 @@ class TagOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -823,7 +823,7 @@ class TagOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -841,7 +841,7 @@ class TagOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TagCollection"]
+        # type: (...) -> Iterable["_models.TagCollection"]
         """Lists all Tags associated with the Product.
 
         :param resource_group_name: The name of the resource group.
@@ -865,7 +865,7 @@ class TagOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.TagCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -919,7 +919,7 @@ class TagOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -988,7 +988,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1008,7 +1008,7 @@ class TagOperations(object):
         tag_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Get tag associated with the Product.
 
         :param resource_group_name: The name of the resource group.
@@ -1025,7 +1025,7 @@ class TagOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1058,7 +1058,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1079,7 +1079,7 @@ class TagOperations(object):
         tag_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Assign tag to the Product.
 
         :param resource_group_name: The name of the resource group.
@@ -1096,7 +1096,7 @@ class TagOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1129,7 +1129,7 @@ class TagOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1202,7 +1202,7 @@ class TagOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1220,7 +1220,7 @@ class TagOperations(object):
         scope=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TagCollection"]
+        # type: (...) -> Iterable["_models.TagCollection"]
         """Lists a collection of tags defined within a service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -1244,7 +1244,7 @@ class TagOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.TagCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1299,7 +1299,7 @@ class TagOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1363,7 +1363,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1382,7 +1382,7 @@ class TagOperations(object):
         tag_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Gets the details of the tag specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -1396,7 +1396,7 @@ class TagOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1428,7 +1428,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1446,11 +1446,11 @@ class TagOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         tag_id,  # type: str
+        parameters,  # type: "_models.TagCreateUpdateParameters"
         if_match=None,  # type: Optional[str]
-        display_name=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Creates a tag.
 
         :param resource_group_name: The name of the resource group.
@@ -1459,23 +1459,21 @@ class TagOperations(object):
         :type service_name: str
         :param tag_id: Tag identifier. Must be unique in the current API Management service instance.
         :type tag_id: str
+        :param parameters: Create parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters
         :param if_match: ETag of the Entity. Not required when creating an entity, but required when
          updating an entity.
         :type if_match: str
-        :param display_name: Tag name.
-        :type display_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TagContract, or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.TagCreateUpdateParameters(display_name=display_name)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -1502,7 +1500,7 @@ class TagOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagCreateUpdateParameters')
+        body_content = self._serialize.body(parameters, 'TagCreateUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1510,7 +1508,7 @@ class TagOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1534,10 +1532,10 @@ class TagOperations(object):
         service_name,  # type: str
         tag_id,  # type: str
         if_match,  # type: str
-        display_name=None,  # type: Optional[str]
+        parameters,  # type: "_models.TagCreateUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagContract"
+        # type: (...) -> "_models.TagContract"
         """Updates the details of the tag specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -1549,20 +1547,18 @@ class TagOperations(object):
         :param if_match: ETag of the Entity. ETag should match the current entity state from the header
          response of the GET request or it should be * for unconditional update.
         :type if_match: str
-        :param display_name: Tag name.
-        :type display_name: str
+        :param parameters: Update parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TagContract, or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.TagContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.TagCreateUpdateParameters(display_name=display_name)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -1588,7 +1584,7 @@ class TagOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagCreateUpdateParameters')
+        body_content = self._serialize.body(parameters, 'TagCreateUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1596,7 +1592,7 @@ class TagOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1667,7 +1663,7 @@ class TagOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

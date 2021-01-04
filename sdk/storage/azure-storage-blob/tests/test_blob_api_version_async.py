@@ -10,12 +10,12 @@ from datetime import datetime, timedelta
 
 from azure.core.exceptions import AzureError, ResourceExistsError
 from azure.storage.blob import generate_blob_sas, BlobSasPermissions
+from azure.storage.blob._generated import AzureBlobStorage
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
 )
-from azure.storage.blob._generated.version import VERSION
 from _shared.testcase import GlobalStorageAccountPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 
@@ -27,7 +27,7 @@ class StorageClientTest(AsyncStorageTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
-        self.api_version_2 = VERSION
+        self.api_version_2 = AzureBlobStorage(url="get_api_version")._config.version # pylint: disable=protected-access
         self.container_name = self.get_resource_name('utcontainer')
 
     # --Helpers-----------------------------------------------------------------

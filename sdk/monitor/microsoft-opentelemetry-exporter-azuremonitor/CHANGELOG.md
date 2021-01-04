@@ -6,6 +6,9 @@
   - Rename Azure Trace exporter class, only allow connection string configuration
     ([#15349](https://github.com/Azure/azure-sdk-for-python/pull/15349))
 
+- OpenTelemetry Exporter use Resources API to retrieve cloud role props
+  ([#15816](https://github.com/Azure/azure-sdk-for-python/pull/15816))
+
 - Change span to envelope conversion to adhere to common schema and other languages
   ([#15344](https://github.com/Azure/azure-sdk-for-python/pull/15344))
 

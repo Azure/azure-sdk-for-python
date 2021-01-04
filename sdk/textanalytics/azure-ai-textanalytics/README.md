@@ -471,7 +471,9 @@ This sample demonstrates the usage for [long-running operations](#long-running-o
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import (
+    TextAnalyticsClient, EntitiesRecognitionTask, PiiEntitiesRecognitionTask, KeyPhraseExtractionTask
+)
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -493,7 +495,7 @@ result = poller.result()
 for page in result:
     for task in page.entities_recognition_results:
         print("Results of Entities Recognition task:")
-        
+
         docs = [doc for doc in task.results if not doc.is_error]
         for idx, doc in enumerate(docs):
             print("\nDocument text: {}".format(documents[idx]))

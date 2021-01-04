@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class HubVirtualNetworkConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class HubVirtualNetworkConnectionsOperations:
         virtual_hub_name: str,
         connection_name: str,
         **kwargs
-    ) -> "models.HubVirtualNetworkConnection":
+    ) -> "_models.HubVirtualNetworkConnection":
         """Retrieves the details of a HubVirtualNetworkConnection.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -61,7 +61,7 @@ class HubVirtualNetworkConnectionsOperations:
         :rtype: ~azure.mgmt.network.v2019_08_01.models.HubVirtualNetworkConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubVirtualNetworkConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubVirtualNetworkConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,7 +108,7 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListHubVirtualNetworkConnectionsResult"]:
+    ) -> AsyncIterable["_models.ListHubVirtualNetworkConnectionsResult"]:
         """Retrieves the details of all HubVirtualNetworkConnections.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -120,7 +120,7 @@ class HubVirtualNetworkConnectionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_08_01.models.ListHubVirtualNetworkConnectionsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListHubVirtualNetworkConnectionsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListHubVirtualNetworkConnectionsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

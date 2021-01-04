@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 02 Nov 2020 22:12:24 GMT
+      - Fri, 18 Dec 2020 17:29:44 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:12:24 GMT
+      - Fri, 18 Dec 2020 17:29:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesyncd1eb182e"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesyncd1eb182e"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 02 Nov 2020 22:12:24 GMT
+      - Fri, 18 Dec 2020 17:29:44 GMT
       location:
-      - https://tablesteststorname.table.core.windows.net/Tables('pytablesyncd1eb182e')
+      - https://fake_table_account.table.core.windows.net/Tables('pytablesyncd1eb182e')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -61,15 +61,15 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Mon, 02 Nov 2020 22:12:25 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:12:25 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://tablesteststorname.table.core.windows.net/pytablesyncd1eb182e?comp=acl
+    uri: https://fake_table_account.table.core.windows.net/pytablesyncd1eb182e?comp=acl
   response:
     body:
       string: ''
@@ -77,7 +77,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 02 Nov 2020 22:12:24 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -95,15 +95,15 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 02 Nov 2020 22:12:25 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:12:25 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/pytablesyncd1eb182e?comp=acl
+    uri: https://fake_table_account.table.core.windows.net/pytablesyncd1eb182e?comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers\
@@ -112,7 +112,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Mon, 02 Nov 2020 22:12:24 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -134,15 +134,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 02 Nov 2020 22:12:25 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:12:25 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('pytablesyncd1eb182e')
+    uri: https://fake_table_account.table.core.windows.net/Tables('pytablesyncd1eb182e')
   response:
     body:
       string: ''
@@ -152,7 +152,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 02 Nov 2020 22:12:24 GMT
+      - Fri, 18 Dec 2020 17:29:45 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"properties": {"category": "Cost", "amount": 100.0, "timeGrain": "Monthly",
-      "timePeriod": {"startDate": "2020-10-01T00:00:00.000Z", "endDate": "2021-10-31T00:00:00.000Z"}}}'
+      "timePeriod": {"startDate": "2021-01-01T00:00:00.000Z", "endDate": "2021-10-31T00:00:00.000Z"}}}'
     headers:
       Accept:
       - application/json
@@ -14,12 +14,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-consumption/8.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-consumption/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49","name":"budget85c60a49","type":"Microsoft.Consumption/budgets","eTag":"\"1d6acfa6f0a7cf1\"","properties":{"timePeriod":{"startDate":"2020-10-01T00:00:00Z","endDate":"2021-10-31T00:00:00Z"},"timeGrain":"Monthly","amount":100.0,"currentSpend":null,"category":"Cost","notifications":{},"filter":{},"currencySetting":"None"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49","name":"budget85c60a49","type":"Microsoft.Consumption/budgets","eTag":"\"1d6d808ae67d950\"","properties":{"timePeriod":{"startDate":"2021-01-01T00:00:00Z","endDate":"2021-10-31T00:00:00Z"},"timeGrain":"Monthly","amount":100.0,"currentSpend":null,"category":"Cost","notifications":{},"filter":{},"currencySetting":"None"}}'
     headers:
       cache-control:
       - no-cache
@@ -28,28 +28,26 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 07:17:45 GMT
+      - Tue, 22 Dec 2020 02:18:04 GMT
       expires:
       - '-1'
+      location:
+      - https://costmanagement.trafficmanager.net/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2019-10-01
       pragma:
       - no-cache
       session-id:
-      - abd61b51-746c-49b7-8764-f2a277a40e03
+      - e5bb9096-eb68-481e-9708-f2dfcfd54488
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1199'
       x-powered-by:
       - ASP.NET
     status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -60,12 +58,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-consumption/8.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-consumption/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49","name":"budget85c60a49","type":"Microsoft.Consumption/budgets","eTag":"\"1d6acfa6f0a7cf1\"","properties":{"timePeriod":{"startDate":"2020-10-01T00:00:00Z","endDate":"2021-10-31T00:00:00Z"},"timeGrain":"Monthly","amount":100.0,"currentSpend":{"amount":0.0,"unit":null},"category":"Cost","notifications":{},"filter":{},"currencySetting":"None"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49","name":"budget85c60a49","type":"Microsoft.Consumption/budgets","eTag":"\"1d6d808ae67d950\"","properties":{"timePeriod":{"startDate":"2021-01-01T00:00:00Z","endDate":"2021-10-31T00:00:00Z"},"timeGrain":"Monthly","amount":100.0,"currentSpend":{"amount":0.0,"unit":null},"category":"Cost","notifications":{},"filter":{},"currencySetting":"None"}}'
     headers:
       cache-control:
       - no-cache
@@ -74,13 +72,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 07:17:49 GMT
+      - Tue, 22 Dec 2020 02:18:05 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       session-id:
-      - d23ea974-50c7-43ee-8f6e-93c4eb92de7c
+      - 21854e3d-35e6-464e-8d08-66cc2bc618ea
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -106,7 +104,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-consumption/8.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-consumption/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2019-10-01
   response:
@@ -118,19 +116,19 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Oct 2020 07:17:50 GMT
+      - Tue, 22 Dec 2020 02:18:06 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       session-id:
-      - 9760f79a-af33-48fc-b2d3-e40480b6ff94
+      - 2d17ef1a-1057-444b-8381-38725cbc6d8f
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14999'
       x-powered-by:
       - ASP.NET
     status:

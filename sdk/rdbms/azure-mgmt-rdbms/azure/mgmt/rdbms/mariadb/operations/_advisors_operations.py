@@ -30,7 +30,7 @@ class AdvisorsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -63,7 +63,7 @@ class AdvisorsOperations(object):
         :type advisor_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Advisor, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.Advisor
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.Advisor
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Advisor"]
@@ -123,7 +123,7 @@ class AdvisorsOperations(object):
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AdvisorsResultList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~maria_db_management_client.models.AdvisorsResultList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.mariadb.models.AdvisorsResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdvisorsResultList"]
