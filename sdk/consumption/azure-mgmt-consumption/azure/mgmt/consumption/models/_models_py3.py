@@ -1348,7 +1348,47 @@ class LegacyReservationRecommendation(ReservationRecommendation):
         self.sku_properties = None
 
 
-class ReservationTransaction(Resource):
+class ReservationTransactionResource(msrest.serialization.Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ReservationTransactionResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = None
+
+
+class ReservationTransaction(ReservationTransactionResource):
     """Reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1360,7 +1400,7 @@ class ReservationTransaction(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
-    :vartype tags: dict[str, str]
+    :vartype tags: list[str]
     :ivar event_date: The date of the transaction.
     :vartype event_date: ~datetime.datetime
     :ivar reservation_order_id: The reservation order ID is the identifier for a reservation
@@ -1439,7 +1479,7 @@ class ReservationTransaction(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '[str]'},
         'event_date': {'key': 'properties.eventDate', 'type': 'iso-8601'},
         'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -1501,7 +1541,7 @@ class LegacyReservationTransaction(ReservationTransaction):
     :ivar type: Resource type.
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
-    :vartype tags: dict[str, str]
+    :vartype tags: list[str]
     :ivar event_date: The date of the transaction.
     :vartype event_date: ~datetime.datetime
     :ivar reservation_order_id: The reservation order ID is the identifier for a reservation
@@ -1580,7 +1620,7 @@ class LegacyReservationTransaction(ReservationTransaction):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '[str]'},
         'event_date': {'key': 'properties.eventDate', 'type': 'iso-8601'},
         'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -2648,7 +2688,7 @@ class ModernReservationRecommendation(ReservationRecommendation):
         self.sku_properties = None
 
 
-class ModernReservationTransaction(Resource):
+class ModernReservationTransaction(ReservationTransactionResource):
     """Modern Reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2660,7 +2700,7 @@ class ModernReservationTransaction(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
-    :vartype tags: dict[str, str]
+    :vartype tags: list[str]
     :ivar amount: The charge of the transaction.
     :vartype amount: float
     :ivar arm_sku_name: This is the ARM Sku name. It can be used to join with the serviceType field
@@ -2738,7 +2778,7 @@ class ModernReservationTransaction(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '[str]'},
         'amount': {'key': 'properties.amount', 'type': 'float'},
         'arm_sku_name': {'key': 'properties.armSkuName', 'type': 'str'},
         'billing_frequency': {'key': 'properties.billingFrequency', 'type': 'str'},
@@ -3654,6 +3694,9 @@ class ReservationRecommendationDetailsCalculatedSavingsProperties(msrest.seriali
     :vartype reservation_cost: float
     :ivar total_reservation_cost: The cost of the suggested quantity.
     :vartype total_reservation_cost: float
+    :param reserved_unit_count: The number of reserved units used to calculate savings. Always 1
+     for virtual machines.
+    :type reserved_unit_count: float
     :ivar savings: The amount saved by purchasing the recommended quantity of reservation.
     :vartype savings: float
     """
@@ -3673,11 +3716,14 @@ class ReservationRecommendationDetailsCalculatedSavingsProperties(msrest.seriali
         'quantity': {'key': 'quantity', 'type': 'float'},
         'reservation_cost': {'key': 'reservationCost', 'type': 'float'},
         'total_reservation_cost': {'key': 'totalReservationCost', 'type': 'float'},
+        'reserved_unit_count': {'key': 'reservedUnitCount', 'type': 'float'},
         'savings': {'key': 'savings', 'type': 'float'},
     }
 
     def __init__(
         self,
+        *,
+        reserved_unit_count: Optional[float] = None,
         **kwargs
     ):
         super(ReservationRecommendationDetailsCalculatedSavingsProperties, self).__init__(**kwargs)
@@ -3686,6 +3732,7 @@ class ReservationRecommendationDetailsCalculatedSavingsProperties(msrest.seriali
         self.quantity = None
         self.reservation_cost = None
         self.total_reservation_cost = None
+        self.reserved_unit_count = reserved_unit_count
         self.savings = None
 
 
@@ -3702,6 +3749,10 @@ class ReservationRecommendationDetailsModel(Resource):
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :param location: Resource Location.
+    :type location: str
+    :param sku: Resource sku.
+    :type sku: str
     :ivar currency: An ISO 4217 currency code identifier for the costs and savings.
     :vartype currency: str
     :ivar resource: Resource specific properties.
@@ -3736,6 +3787,8 @@ class ReservationRecommendationDetailsModel(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
         'currency': {'key': 'properties.currency', 'type': 'str'},
         'resource': {'key': 'properties.resource', 'type': 'ReservationRecommendationDetailsResourceProperties'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
@@ -3746,9 +3799,14 @@ class ReservationRecommendationDetailsModel(Resource):
 
     def __init__(
         self,
+        *,
+        location: Optional[str] = None,
+        sku: Optional[str] = None,
         **kwargs
     ):
         super(ReservationRecommendationDetailsModel, self).__init__(**kwargs)
+        self.location = location
+        self.sku = sku
         self.currency = None
         self.resource = None
         self.resource_group = None
