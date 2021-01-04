@@ -228,7 +228,7 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                     )
                     break
                 except Exception as ex:
-                    error = "The requested resource {} does not exist".format(self.resource)
+                    error = "The requested resource {} does not exist".format(namespace)
                     if error not in str(ex) or i == retries - 1:
                         raise
                     time.sleep(3)
