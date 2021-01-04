@@ -55,6 +55,9 @@ try:
             'AioHttpTransportResponse',
         ])
 
+        def __dir__():
+            return __all__
+
         def __getattr__(name):
             if name == 'AioHttpTransport':
                 try:
