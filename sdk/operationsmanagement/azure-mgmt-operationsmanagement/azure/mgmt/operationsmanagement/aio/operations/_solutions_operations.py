@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -27,14 +27,14 @@ class SolutionsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~operations_management_client.models
+    :type models: ~azure.mgmt.operationsmanagement.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,10 +46,10 @@ class SolutionsOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        parameters: "models.Solution",
+        parameters: "_models.Solution",
         **kwargs
-    ) -> "models.Solution":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Solution"]
+    ) -> "_models.Solution":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Solution"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -85,7 +85,7 @@ class SolutionsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Solution', pipeline_response)
@@ -100,9 +100,9 @@ class SolutionsOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        parameters: "models.Solution",
+        parameters: "_models.Solution",
         **kwargs
-    ) -> AsyncLROPoller["models.Solution"]:
+    ) -> AsyncLROPoller["_models.Solution"]:
         """Create/Update Solution.
 
         Creates or updates the Solution.
@@ -113,7 +113,7 @@ class SolutionsOperations:
         :param solution_name: User Solution Name.
         :type solution_name: str
         :param parameters: The parameters required to create OMS Solution.
-        :type parameters: ~operations_management_client.models.Solution
+        :type parameters: ~azure.mgmt.operationsmanagement.models.Solution
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -121,11 +121,11 @@ class SolutionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Solution or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~operations_management_client.models.Solution]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.operationsmanagement.models.Solution]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Solution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Solution"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -150,7 +150,13 @@ class SolutionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'solutionName': self._serialize.url("solution_name", solution_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -168,10 +174,10 @@ class SolutionsOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        parameters: "models.SolutionPatch",
+        parameters: "_models.SolutionPatch",
         **kwargs
-    ) -> "models.Solution":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Solution"]
+    ) -> "_models.Solution":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Solution"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -207,7 +213,7 @@ class SolutionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Solution', pipeline_response)
@@ -222,9 +228,9 @@ class SolutionsOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        parameters: "models.SolutionPatch",
+        parameters: "_models.SolutionPatch",
         **kwargs
-    ) -> AsyncLROPoller["models.Solution"]:
+    ) -> AsyncLROPoller["_models.Solution"]:
         """Patch a Solution.
 
         Patch a Solution. Only updating tags supported.
@@ -235,7 +241,7 @@ class SolutionsOperations:
         :param solution_name: User Solution Name.
         :type solution_name: str
         :param parameters: The parameters required to patch a Solution.
-        :type parameters: ~operations_management_client.models.SolutionPatch
+        :type parameters: ~azure.mgmt.operationsmanagement.models.SolutionPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -243,11 +249,11 @@ class SolutionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Solution or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~operations_management_client.models.Solution]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.operationsmanagement.models.Solution]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Solution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Solution"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -272,7 +278,13 @@ class SolutionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'solutionName': self._serialize.url("solution_name", solution_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -323,7 +335,7 @@ class SolutionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -378,7 +390,13 @@ class SolutionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'solutionName': self._serialize.url("solution_name", solution_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -397,7 +415,7 @@ class SolutionsOperations:
         resource_group_name: str,
         solution_name: str,
         **kwargs
-    ) -> "models.Solution":
+    ) -> "_models.Solution":
         """Retrieve solution.
 
         Retrieves the user solution.
@@ -409,10 +427,10 @@ class SolutionsOperations:
         :type solution_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Solution, or the result of cls(response)
-        :rtype: ~operations_management_client.models.Solution
+        :rtype: ~azure.mgmt.operationsmanagement.models.Solution
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Solution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Solution"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -443,7 +461,7 @@ class SolutionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Solution', pipeline_response)
@@ -458,7 +476,7 @@ class SolutionsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> "models.SolutionPropertiesList":
+    ) -> "_models.SolutionPropertiesList":
         """Retrieves the solution list for the subscription.
 
         Retrieves the solution list. It will retrieve both first party and third party solutions.
@@ -468,10 +486,10 @@ class SolutionsOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SolutionPropertiesList, or the result of cls(response)
-        :rtype: ~operations_management_client.models.SolutionPropertiesList
+        :rtype: ~azure.mgmt.operationsmanagement.models.SolutionPropertiesList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SolutionPropertiesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SolutionPropertiesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -501,7 +519,7 @@ class SolutionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SolutionPropertiesList', pipeline_response)
@@ -515,17 +533,17 @@ class SolutionsOperations:
     async def list_by_subscription(
         self,
         **kwargs
-    ) -> "models.SolutionPropertiesList":
+    ) -> "_models.SolutionPropertiesList":
         """Retrieves the solution list for the subscription.
 
         Retrieves the solution list. It will retrieve both first party and third party solutions.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SolutionPropertiesList, or the result of cls(response)
-        :rtype: ~operations_management_client.models.SolutionPropertiesList
+        :rtype: ~azure.mgmt.operationsmanagement.models.SolutionPropertiesList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SolutionPropertiesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SolutionPropertiesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -554,7 +572,7 @@ class SolutionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CodeMessageError, response)
+            error = self._deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SolutionPropertiesList', pipeline_response)
