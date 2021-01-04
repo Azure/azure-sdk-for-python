@@ -19,13 +19,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_paas_pool?api-version=2020-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_paas_pool","name":"test_paas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8772FF5801521\"","properties":{"displayName":"test_pool","lastModified":"2020-10-23T08:45:13.8905377Z","creationTime":"2020-10-23T08:45:13.8905377Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T08:45:13.8905377Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-10-23T08:45:13.8905377Z","vmSize":"Small","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"cloudServiceConfiguration":{"osFamily":"5","osVersion":"*"}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"startTask":{"commandLine":"cmd.exe
-        /c \"echo hello world\"","resourceFiles":[{"filePath":"filename.txt","httpUrl":"https://blobsource.com"}],"environmentSettings":[{"name":"ENV_VAR","value":"env_value"}],"userIdentity":{"autoUser":{"scope":"Pool","elevationLevel":"Admin"}},"maxTaskRetryCount":0,"waitForSuccess":true},"userAccounts":[{"name":"UserName","elevationLevel":"NonAdmin","windowsUserConfiguration":{"loginMode":"Interactive"}}],"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-10-23T08:45:13.8905377Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_paas_pool","name":"test_paas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8A6469ACA5413\"","properties":{"displayName":"test_pool","lastModified":"2020-12-22T06:55:44.7797779Z","creationTime":"2020-12-22T06:55:44.7797779Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-12-22T06:55:44.7797779Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-12-22T06:55:44.7797779Z","vmSize":"Small","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"cloudServiceConfiguration":{"osFamily":"5","osVersion":"*"}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"startTask":{"commandLine":"cmd.exe
+        /c \"echo hello world\"","resourceFiles":[{"filePath":"filename.txt","httpUrl":"https://blobsource.com"}],"environmentSettings":[{"name":"ENV_VAR","value":"env_value"}],"userIdentity":{"autoUser":{"scope":"Pool","elevationLevel":"Admin"}},"maxTaskRetryCount":0,"waitForSuccess":true},"userAccounts":[{"name":"UserName","elevationLevel":"NonAdmin","windowsUserConfiguration":{"loginMode":"Interactive"}}],"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-12-22T06:55:44.7797779Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}'
     headers:
       cache-control:
       - no-cache
@@ -34,13 +34,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 08:45:13 GMT
+      - Tue, 22 Dec 2020 06:55:44 GMT
       etag:
-      - W/"0x8D8772FF5801521"
+      - W/"0x8D8A6469ACA5413"
       expires:
       - '-1'
       last-modified:
-      - Fri, 23 Oct 2020 08:45:13 GMT
+      - Tue, 22 Dec 2020 06:55:44 GMT
       pragma:
       - no-cache
       server:
@@ -54,7 +54,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -77,13 +77,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool?api-version=2020-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8772FF5FCE6F4\"","properties":{"displayName":"test_pool","lastModified":"2020-10-23T08:45:14.7085556Z","creationTime":"2020-10-23T08:45:14.7085556Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T08:45:14.7085556Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-10-23T08:45:14.7085556Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
-        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-10-23T08:45:14.7085556Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8A6469B1E68D4\"","properties":{"displayName":"test_pool","lastModified":"2020-12-22T06:55:45.3308116Z","creationTime":"2020-12-22T06:55:45.3308116Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-12-22T06:55:45.3308116Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-12-22T06:55:45.3308116Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-12-22T06:55:45.3308116Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}'
     headers:
       cache-control:
       - no-cache
@@ -92,13 +92,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 08:45:14 GMT
+      - Tue, 22 Dec 2020 06:55:44 GMT
       etag:
-      - W/"0x8D8772FF5FCE6F4"
+      - W/"0x8D8A6469B1E68D4"
       expires:
       - '-1'
       last-modified:
-      - Fri, 23 Oct 2020 08:45:14 GMT
+      - Tue, 22 Dec 2020 06:55:45 GMT
       pragma:
       - no-cache
       server:
@@ -112,7 +112,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -126,14 +126,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools?api-version=2020-09-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8772FF5FCE6F4\"","properties":{"displayName":"test_pool","lastModified":"2020-10-23T08:45:14.7085556Z","creationTime":"2020-10-23T08:45:14.7085556Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T08:45:14.7085556Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-10-23T08:45:14.7085556Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
-        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-10-23T08:45:14.7085556Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_paas_pool","name":"test_paas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8772FF5801521\"","properties":{"displayName":"test_pool","lastModified":"2020-10-23T08:45:13.8905377Z","creationTime":"2020-10-23T08:45:13.8905377Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T08:45:13.8905377Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-10-23T08:45:13.8905377Z","vmSize":"Small","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"cloudServiceConfiguration":{"osFamily":"5","osVersion":"*"}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"startTask":{"commandLine":"cmd.exe
-        /c \"echo hello world\"","resourceFiles":[{"filePath":"filename.txt","httpUrl":"https://blobsource.com"}],"environmentSettings":[{"name":"ENV_VAR","value":"env_value"}],"userIdentity":{"autoUser":{"scope":"Pool","elevationLevel":"Admin"}},"maxTaskRetryCount":0,"waitForSuccess":true},"userAccounts":[{"name":"UserName","elevationLevel":"NonAdmin","windowsUserConfiguration":{"loginMode":"Interactive"}}],"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-10-23T08:45:13.8905377Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8A6469B1E68D4\"","properties":{"displayName":"test_pool","lastModified":"2020-12-22T06:55:45.3308116Z","creationTime":"2020-12-22T06:55:45.3308116Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-12-22T06:55:45.3308116Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-12-22T06:55:45.3308116Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-12-22T06:55:45.3308116Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_paas_pool","name":"test_paas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8A6469ACA5413\"","properties":{"displayName":"test_pool","lastModified":"2020-12-22T06:55:44.7797779Z","creationTime":"2020-12-22T06:55:44.7797779Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-12-22T06:55:44.7797779Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-12-22T06:55:44.7797779Z","vmSize":"Small","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"cloudServiceConfiguration":{"osFamily":"5","osVersion":"*"}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"startTask":{"commandLine":"cmd.exe
+        /c \"echo hello world\"","resourceFiles":[{"filePath":"filename.txt","httpUrl":"https://blobsource.com"}],"environmentSettings":[{"name":"ENV_VAR","value":"env_value"}],"userIdentity":{"autoUser":{"scope":"Pool","elevationLevel":"Admin"}},"maxTaskRetryCount":0,"waitForSuccess":true},"userAccounts":[{"name":"UserName","elevationLevel":"NonAdmin","windowsUserConfiguration":{"loginMode":"Interactive"}}],"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-12-22T06:55:44.7797779Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}]}'
     headers:
       cache-control:
       - no-cache
@@ -142,7 +142,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 08:45:14 GMT
+      - Tue, 22 Dec 2020 06:55:45 GMT
       expires:
       - '-1'
       pragma:
@@ -174,13 +174,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool?api-version=2020-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D877300021F736\"","properties":{"displayName":"test_pool","lastModified":"2020-10-23T08:45:31.728671Z","creationTime":"2020-10-23T08:45:14.7085556Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T08:45:14.7085556Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-10-23T08:45:31.728671Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
-        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"autoScale":{"formula":"$TargetDedicatedNodes=0","evaluationInterval":"PT15M"}},"currentDedicatedNodes":0,"currentLowPriorityNodes":0,"autoScaleRun":{"evaluationTime":"2020-10-23T08:45:31.728671Z","results":"$TargetDedicatedNodes=0;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8A646A52DB022\"","properties":{"displayName":"test_pool","lastModified":"2020-12-22T06:56:02.208157Z","creationTime":"2020-12-22T06:55:45.3308116Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-12-22T06:55:45.3308116Z","allocationState":"Resizing","allocationStateTransitionTime":"2020-12-22T06:56:02.208157Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"autoScale":{"formula":"$TargetDedicatedNodes=0","evaluationInterval":"PT15M"}},"currentDedicatedNodes":0,"currentLowPriorityNodes":0,"autoScaleRun":{"evaluationTime":"2020-12-22T06:56:02.208157Z","results":"$TargetDedicatedNodes=0;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"}}}'
     headers:
       cache-control:
       - no-cache
@@ -189,13 +189,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 08:45:31 GMT
+      - Tue, 22 Dec 2020 06:56:01 GMT
       etag:
-      - W/"0x8D877300021F736"
+      - W/"0x8D8A646A52DB022"
       expires:
       - '-1'
       last-modified:
-      - Fri, 23 Oct 2020 08:45:31 GMT
+      - Tue, 22 Dec 2020 06:56:02 GMT
       pragma:
       - no-cache
       server:
@@ -209,7 +209,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -223,13 +223,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool?api-version=2020-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D877300021F736\"","properties":{"displayName":"test_pool","lastModified":"2020-10-23T08:45:31.728671Z","creationTime":"2020-10-23T08:45:14.7085556Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T08:45:14.7085556Z","allocationState":"Steady","allocationStateTransitionTime":"2020-10-23T08:45:31.9076711Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
-        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"autoScale":{"formula":"$TargetDedicatedNodes=0","evaluationInterval":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-10-23T08:45:14.7085556Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0,"autoScaleRun":{"evaluationTime":"2020-10-23T08:45:31.728671Z","results":"$TargetDedicatedNodes=0;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D8A646A52DB022\"","properties":{"displayName":"test_pool","lastModified":"2020-12-22T06:56:02.208157Z","creationTime":"2020-12-22T06:55:45.3308116Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-12-22T06:55:45.3308116Z","allocationState":"Steady","allocationStateTransitionTime":"2020-12-22T06:56:02.3111635Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","taskSlotsPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"autoScale":{"formula":"$TargetDedicatedNodes=0","evaluationInterval":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2020-12-22T06:55:45.3308116Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0,"autoScaleRun":{"evaluationTime":"2020-12-22T06:56:02.208157Z","results":"$TargetDedicatedNodes=0;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"}}}'
     headers:
       cache-control:
       - no-cache
@@ -238,13 +238,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 08:45:31 GMT
+      - Tue, 22 Dec 2020 06:56:01 GMT
       etag:
-      - W/"0x8D877300021F736"
+      - W/"0x8D8A646A52DB022"
       expires:
       - '-1'
       last-modified:
-      - Fri, 23 Oct 2020 08:45:31 GMT
+      - Tue, 22 Dec 2020 06:56:02 GMT
       pragma:
       - no-cache
       server:
@@ -272,7 +272,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool?api-version=2020-09-01
   response:
@@ -284,7 +284,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Oct 2020 08:45:32 GMT
+      - Tue, 22 Dec 2020 06:56:02 GMT
       expires:
       - '-1'
       location:
@@ -298,7 +298,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14999'
     status:
       code: 202
       message: Accepted
@@ -312,7 +312,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2020-09-01
   response:
@@ -324,7 +324,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Oct 2020 08:45:47 GMT
+      - Tue, 22 Dec 2020 06:56:18 GMT
       expires:
       - '-1'
       pragma:
