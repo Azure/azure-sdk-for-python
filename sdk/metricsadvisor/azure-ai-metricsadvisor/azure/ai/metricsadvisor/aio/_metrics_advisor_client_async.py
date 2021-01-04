@@ -89,9 +89,8 @@ class MetricsAdvisorClient(object):
                 **kwargs
             )
         else:
-            scope = "https://cognitiveservices.azure.com/.default"
             if hasattr(credential, "get_token"):
-                credential_policy = AsyncBearerTokenCredentialPolicy(credential, scope)
+                credential_policy = AsyncBearerTokenCredentialPolicy(credential, *self.credential_scopes)
             else:
                 raise TypeError("Please provide an instance from azure-identity "
                                 "or a class that implement the 'get_token protocol")

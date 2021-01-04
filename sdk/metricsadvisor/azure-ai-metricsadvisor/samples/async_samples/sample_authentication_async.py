@@ -79,6 +79,8 @@ async def authentication_administration_client_with_aad_async():
 async def main():
     await authentication_client_with_metrics_advisor_credential_async()
     await authentication_administration_client_with_metrics_advisor_credential_async()
+    await authentication_client_with_aad_async()
+    await authentication_administration_client_with_aad_async()
 
 
 if __name__ == '__main__':

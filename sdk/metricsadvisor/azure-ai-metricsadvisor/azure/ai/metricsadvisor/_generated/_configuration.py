@@ -38,6 +38,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(Configura
         super(AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://cognitiveservices.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'ai-metricsadvisor/{}'.format(VERSION))
         self._configure(**kwargs)
 
