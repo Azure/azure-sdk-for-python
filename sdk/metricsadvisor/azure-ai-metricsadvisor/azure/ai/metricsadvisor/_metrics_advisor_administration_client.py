@@ -155,7 +155,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
         which requires both subscription key and API key. Or an object which can provide an access
-        token for the vault, such as a credential from :mod:`azure.identity`
+        token for the Metrics Advisor service, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
 
     .. admonition:: Example:
