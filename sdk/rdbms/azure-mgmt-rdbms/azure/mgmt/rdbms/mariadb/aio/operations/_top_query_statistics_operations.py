@@ -26,7 +26,7 @@ class TopQueryStatisticsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,7 +58,7 @@ class TopQueryStatisticsOperations:
         :type query_statistic_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryStatistic, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.QueryStatistic
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.QueryStatistic
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryStatistic"]
@@ -117,10 +117,10 @@ class TopQueryStatisticsOperations:
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The required parameters for retrieving top query statistics.
-        :type parameters: ~maria_db_management_client.models.TopQueryStatisticsInput
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.TopQueryStatisticsInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TopQueryStatisticsResultList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.TopQueryStatisticsResultList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.TopQueryStatisticsResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopQueryStatisticsResultList"]

@@ -26,7 +26,7 @@ class LogFilesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -55,7 +55,7 @@ class LogFilesOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LogFileListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.LogFileListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.LogFileListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogFileListResult"]
