@@ -38,7 +38,7 @@ class SampleTablesQuery(object):
             self.access_key,
             self.endpoint
         )
-        self.table_name = "OfficeSupplies"
+        self.table_name = "SampleQueryTable"
 
 
     def _insert_random_entities(self):

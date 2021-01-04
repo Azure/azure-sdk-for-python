@@ -22,6 +22,7 @@ USAGE:
 import os
 import copy
 import random
+from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -92,7 +93,9 @@ class SampleTablesQuery(object):
 
 async def main():
     stq = SampleTablesQuery()
+    sleep(10)
     await stq.sample_query_entities()
+    sleep(10)
 
 
 if __name__ == '__main__':

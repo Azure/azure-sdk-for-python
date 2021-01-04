@@ -20,8 +20,9 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-import os
 import asyncio
+import os
+from time import sleep
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -82,9 +83,13 @@ class QueryTables(object):
 
 
 async def main():
+    # sleep to avoid conflicts on deletes
     sample = QueryTables()
+    sleep(10)
     await sample.delete_tables()
+    sleep(10)
     await sample.tables_in_account()
+    sleep(10)
 
 
 if __name__ == '__main__':

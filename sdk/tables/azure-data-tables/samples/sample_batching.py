@@ -40,6 +40,7 @@ class CreateClients(object):
             self.access_key,
             self.endpoint
         )
+        self.table_name = "sampleBatching"
 
     def sample_batching(self):
         # Instantiate a TableServiceClient using a connection string
@@ -75,33 +76,39 @@ class CreateClients(object):
         # [START batching]
         from azure.data.tables import TableClient, UpdateMode, BatchErrorException
         from azure.core.exceptions import ResourceExistsError
-        table_client = TableClient.from_connection_string(conn_str=self.connection_string, table_name="tableName")
+        self.table_client = TableClient.from_connection_string(
+            conn_str=self.connection_string, table_name=self.table_name)
 
         try:
-            table_client.create_table()
+            self.table_client.create_table()
             print("Created table")
         except ResourceExistsError:
             print("Table already exists")
 
-        table_client.create_entity(entity2)
-        table_client.create_entity(entity3)
-        table_client.create_entity(entity4)
+        self.table_client.create_entity(entity2)
+        self.table_client.create_entity(entity3)
+        self.table_client.create_entity(entity4)
 
-        batch = table_client.create_batch()
+        batch = self.table_client.create_batch()
         batch.create_entity(entity1)
         batch.delete_entity(entity2['PartitionKey'], entity2['RowKey'])
         batch.upsert_entity(entity3)
         batch.update_entity(entity4, mode=UpdateMode.REPLACE)
 
         try:
-            table_client.send_batch(batch)
+            self.table_client.send_batch(batch)
         except BatchErrorException as e:
             print("There was an error with the batch operation")
             print("Error: {}".format(e))
         # [END batching]
 
+    def clean_up(self):
+        self.table_client.delete_table()
 
 
 if __name__ == '__main__':
     sample = CreateClients()
-    sample.sample_batching()
+    try:
+        sample.sample_batching()
+    finally:
+        sample.clean_up()

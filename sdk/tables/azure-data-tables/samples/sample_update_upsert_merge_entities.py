@@ -38,7 +38,7 @@ class TableEntitySamples(object):
             self.access_key,
             self.endpoint
         )
-        self.table_name = "OfficeSupplies"
+        self.table_name = "SampleUpdateUpsertMerge"
 
     def create_and_get_entities(self):
         # Instantiate a table service client

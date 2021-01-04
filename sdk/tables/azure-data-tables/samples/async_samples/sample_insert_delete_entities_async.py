@@ -21,6 +21,7 @@ USAGE:
 """
 
 import os
+from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -96,8 +97,11 @@ class InsertDeleteEntity(object):
 
 async def main():
     ide = InsertDeleteEntity()
+    sleep(10)
     await ide.create_entity()
+    sleep(10)
     await ide.delete_entity()
+    sleep(10)
 
 
 if __name__ == '__main__':

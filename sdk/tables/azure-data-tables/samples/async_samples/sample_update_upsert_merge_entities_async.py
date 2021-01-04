@@ -20,9 +20,10 @@ USAGE:
 """
 
 from datetime import datetime, timedelta
+import os
+from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
-import os
 
 
 class TableEntitySamples(object):
@@ -152,12 +153,15 @@ class TableEntitySamples(object):
 
 async def main():
     sample = TableEntitySamples()
+    sleep(10)
     await sample.create_and_get_entities()
+    sleep(10)
     await sample.list_all_entities()
+    sleep(10)
     await sample.update_entities()
+    sleep(10)
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-    

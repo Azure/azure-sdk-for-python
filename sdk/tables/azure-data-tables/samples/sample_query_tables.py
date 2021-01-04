@@ -37,7 +37,7 @@ class QueryTables(object):
             self.access_key,
             self.endpoint
         )
-        self.table_name = "OfficeSupplies"
+        self.table_name = "SampleQueryTables"
 
     def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
