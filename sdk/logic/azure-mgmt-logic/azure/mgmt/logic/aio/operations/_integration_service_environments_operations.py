@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class IntegrationServiceEnvironmentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class IntegrationServiceEnvironmentsOperations:
         self,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.IntegrationServiceEnvironmentListResult"]:
+    ) -> AsyncIterable["_models.IntegrationServiceEnvironmentListResult"]:
         """Gets a list of integration service environments by subscription.
 
         :param top: The number of items to be included in the result.
@@ -57,7 +57,7 @@ class IntegrationServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.IntegrationServiceEnvironmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationServiceEnvironmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationServiceEnvironmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,7 +104,7 @@ class IntegrationServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -120,7 +120,7 @@ class IntegrationServiceEnvironmentsOperations:
         resource_group: str,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.IntegrationServiceEnvironmentListResult"]:
+    ) -> AsyncIterable["_models.IntegrationServiceEnvironmentListResult"]:
         """Gets a list of integration service environments by resource group.
 
         :param resource_group: The resource group.
@@ -132,7 +132,7 @@ class IntegrationServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.IntegrationServiceEnvironmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationServiceEnvironmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationServiceEnvironmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -180,7 +180,7 @@ class IntegrationServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -196,7 +196,7 @@ class IntegrationServiceEnvironmentsOperations:
         resource_group: str,
         integration_service_environment_name: str,
         **kwargs
-    ) -> "models.IntegrationServiceEnvironment":
+    ) -> "_models.IntegrationServiceEnvironment":
         """Gets an integration service environment.
 
         :param resource_group: The resource group.
@@ -208,7 +208,7 @@ class IntegrationServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationServiceEnvironment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationServiceEnvironment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationServiceEnvironment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -239,7 +239,7 @@ class IntegrationServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationServiceEnvironment', pipeline_response)
@@ -254,10 +254,10 @@ class IntegrationServiceEnvironmentsOperations:
         self,
         resource_group: str,
         integration_service_environment_name: str,
-        integration_service_environment: "models.IntegrationServiceEnvironment",
+        integration_service_environment: "_models.IntegrationServiceEnvironment",
         **kwargs
-    ) -> "models.IntegrationServiceEnvironment":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationServiceEnvironment"]
+    ) -> "_models.IntegrationServiceEnvironment":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationServiceEnvironment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -293,7 +293,7 @@ class IntegrationServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -312,9 +312,9 @@ class IntegrationServiceEnvironmentsOperations:
         self,
         resource_group: str,
         integration_service_environment_name: str,
-        integration_service_environment: "models.IntegrationServiceEnvironment",
+        integration_service_environment: "_models.IntegrationServiceEnvironment",
         **kwargs
-    ) -> AsyncLROPoller["models.IntegrationServiceEnvironment"]:
+    ) -> AsyncLROPoller["_models.IntegrationServiceEnvironment"]:
         """Creates or updates an integration service environment.
 
         :param resource_group: The resource group.
@@ -334,7 +334,7 @@ class IntegrationServiceEnvironmentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationServiceEnvironment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationServiceEnvironment"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -359,7 +359,13 @@ class IntegrationServiceEnvironmentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'integrationServiceEnvironmentName': self._serialize.url("integration_service_environment_name", integration_service_environment_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -377,10 +383,10 @@ class IntegrationServiceEnvironmentsOperations:
         self,
         resource_group: str,
         integration_service_environment_name: str,
-        integration_service_environment: "models.IntegrationServiceEnvironment",
+        integration_service_environment: "_models.IntegrationServiceEnvironment",
         **kwargs
-    ) -> "models.IntegrationServiceEnvironment":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationServiceEnvironment"]
+    ) -> "_models.IntegrationServiceEnvironment":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationServiceEnvironment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -416,7 +422,7 @@ class IntegrationServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationServiceEnvironment', pipeline_response)
@@ -431,9 +437,9 @@ class IntegrationServiceEnvironmentsOperations:
         self,
         resource_group: str,
         integration_service_environment_name: str,
-        integration_service_environment: "models.IntegrationServiceEnvironment",
+        integration_service_environment: "_models.IntegrationServiceEnvironment",
         **kwargs
-    ) -> AsyncLROPoller["models.IntegrationServiceEnvironment"]:
+    ) -> AsyncLROPoller["_models.IntegrationServiceEnvironment"]:
         """Updates an integration service environment.
 
         :param resource_group: The resource group.
@@ -453,7 +459,7 @@ class IntegrationServiceEnvironmentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationServiceEnvironment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationServiceEnvironment"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -478,7 +484,13 @@ class IntegrationServiceEnvironmentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'integrationServiceEnvironmentName': self._serialize.url("integration_service_environment_name", integration_service_environment_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -540,7 +552,7 @@ class IntegrationServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -596,7 +608,7 @@ class IntegrationServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
