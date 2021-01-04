@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ServicesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,11 +47,11 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: "models.SearchService",
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        service: "_models.SearchService",
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> "models.SearchService":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchService"]
+    ) -> "_models.SearchService":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,10 +111,10 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: "models.SearchService",
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        service: "_models.SearchService",
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.SearchService"]:
+    ) -> AsyncLROPoller["_models.SearchService"]:
         """Creates or updates a search service in the given resource group. If the search service already
         exists, all properties will be updated with the given values.
 
@@ -143,7 +143,7 @@ class ServicesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchService"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -169,7 +169,13 @@ class ServicesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -187,10 +193,10 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: "models.SearchServiceUpdate",
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        service: "_models.SearchServiceUpdate",
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> "models.SearchService":
+    ) -> "_models.SearchService":
         """Updates an existing search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -207,7 +213,7 @@ class ServicesOperations:
         :rtype: ~azure.mgmt.search.models.SearchService
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -263,9 +269,9 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> "models.SearchService":
+    ) -> "_models.SearchService":
         """Gets the search service with the given name in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -281,7 +287,7 @@ class ServicesOperations:
         :rtype: ~azure.mgmt.search.models.SearchService
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -332,7 +338,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
     ) -> None:
         """Deletes a search service in the given resource group, along with its associated resources.
@@ -397,9 +403,9 @@ class ServicesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.SearchServiceListResult"]:
+    ) -> AsyncIterable["_models.SearchServiceListResult"]:
         """Gets a list of all search services in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -412,7 +418,7 @@ class ServicesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.search.models.SearchServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchServiceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchServiceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -476,9 +482,9 @@ class ServicesOperations:
 
     def list_by_subscription(
         self,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.SearchServiceListResult"]:
+    ) -> AsyncIterable["_models.SearchServiceListResult"]:
         """Gets a list of all search services in the given subscription.
 
         :param search_management_request_options: Parameter group.
@@ -488,7 +494,7 @@ class ServicesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.search.models.SearchServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchServiceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchServiceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -552,9 +558,9 @@ class ServicesOperations:
     async def check_name_availability(
         self,
         name: str,
-        search_management_request_options: Optional["models.SearchManagementRequestOptions"] = None,
+        search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
         **kwargs
-    ) -> "models.CheckNameAvailabilityOutput":
+    ) -> "_models.CheckNameAvailabilityOutput":
         """Checks whether or not the given search service name is available for use. Search service names
         must be globally unique since they are part of the service URI
         (https://:code:`<name>`.search.windows.net).
@@ -570,7 +576,7 @@ class ServicesOperations:
         :rtype: ~azure.mgmt.search.models.CheckNameAvailabilityOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityOutput"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityOutput"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -580,7 +586,7 @@ class ServicesOperations:
         if search_management_request_options is not None:
             _client_request_id = search_management_request_options.client_request_id
 
-        _check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
+        _check_name_availability_input = _models.CheckNameAvailabilityInput(name=name)
         api_version = "2020-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
