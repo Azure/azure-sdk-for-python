@@ -48,44 +48,35 @@ try:
     ])
 
     if sys.version_info >= (3, 7):
+        __all__.extend([
+            'TrioRequestsTransport',
+            'TrioRequestsTransportResponse',
+            'AioHttpTransport',
+            'AioHttpTransportResponse',
+        ])
+
         def __getattr__(name):
             if name == 'AioHttpTransport':
                 try:
                     from ._aiohttp import AioHttpTransport
-                    if 'AioHttpTransport' not in __all__:
-                        __all__.extend([
-                            'AioHttpTransport',
-                        ])
                     return AioHttpTransport
                 except ImportError:
                     raise ImportError("aiohttp package is not installed")
             if name == 'AioHttpTransportResponse':
                 try:
                     from ._aiohttp import AioHttpTransportResponse
-                    if 'AioHttpTransport' not in __all__:
-                        __all__.extend([
-                            'AioHttpTransport',
-                        ])
                     return AioHttpTransportResponse
                 except ImportError:
                     raise ImportError("aiohttp package is not installed")
             if name == 'TrioRequestsTransport':
                 try:
                     from ._requests_trio import TrioRequestsTransport
-                    if 'TrioRequestsTransport' not in __all__:
-                        __all__.extend([
-                            'TrioRequestsTransport',
-                        ])
                     return TrioRequestsTransport
                 except ImportError:
                     raise ImportError("trio package is not installed")
             if name == 'TrioRequestsTransportResponse':
                 try:
                     from ._requests_trio import TrioRequestsTransportResponse
-                    if 'TrioRequestsTransportResponse' not in __all__:
-                        __all__.extend([
-                            'TrioRequestsTransportResponse'
-                        ])
                     return TrioRequestsTransportResponse
                 except ImportError:
                     raise ImportError("trio package is not installed")
