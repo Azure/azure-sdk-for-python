@@ -14,7 +14,7 @@ interactions:
       "targetInstanceCount": 3, "hardwareProfile": {"vmSize": "Small"}, "osProfile":
       {"linuxOperatingSystemProfile": {"username": "sshuser", "password": "Password1!"}}}]},
       "storageProfile": {"storageaccounts": [{"name": "hdipy.blob.core.windows.net",
-      "isDefault": true, "container": "hdisdk-configs868c11cd", "key": "QsLv8rg+HH8eb7JPXYeeeOwDw2+jNk3dfHyFN6qr9yP6fIGQQw2AN58LrKHthAeSG+YHT4m0EZOomu8J7+NvwQ=="}]}}}'
+      "isDefault": true, "container": "hdisdk-configs868c11cd", "key": "jQfwJYMLy7ISOlio9YQUSbXOuoCZzTV2CPLewcsgGkVxTW7WPQRb6ejcIoHWfMWoNzwjrxnzH43WiWzRN8W1qw=="}]}}}'
     headers:
       Accept:
       - application/json
@@ -27,13 +27,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd?api-version=2018-06-01-preview
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd","name":"hdisdk-configs868c11cd","type":"Microsoft.HDInsight/clusters","location":"North
-        Central US","etag":"186d2ce4-4514-4a8d-a171-292ca095449e","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2009301626.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"1f3132130ab543aba3f36cb24474086e","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a1_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"InProgress","clusterState":"Accepted","createdDate":"2020-10-28T05:51:32.203","quotaInfo":{"coresUsed":20},"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-configs868c11cd","saskey":null,"isDefault":true,"fileshare":null}]},"excludedServicesConfig":{"excludedServicesConfigId":"default","excludedServicesList":""},"computeIsolationProperties":{"enableComputeIsolation":false,"hostSku":null}}}'
+        Central US","etag":"7bad080f-d5ec-4fda-8c73-efdf7f32934a","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2012080609.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"5f09e52eefe8475b9455f54ba9be5b96","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a1_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"InProgress","clusterState":"Accepted","createdDate":"2020-12-18T08:14:37.273","quotaInfo":{"coresUsed":20},"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-configs868c11cd","saskey":null,"isDefault":true,"fileshare":null}]},"excludedServicesConfig":{"excludedServicesConfigId":"default","excludedServicesList":""},"computeIsolationProperties":{"enableComputeIsolation":false,"hostSku":null}}}'
     headers:
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
@@ -44,9 +44,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:51:34 GMT
+      - Fri, 18 Dec 2020 08:14:39 GMT
       etag:
-      - '"186d2ce4-4514-4a8d-a171-292ca095449e"'
+      - '"7bad080f-d5ec-4fda-8c73-efdf7f32934a"'
       expires:
       - '-1'
       pragma:
@@ -60,7 +60,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-hdi-clusteruri:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd?api-version=2018-06-01-preview
+      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd?api-version=2018-06-01-preview
       x-ms-hdi-matched-rule:
       - ClusterResourcesAndSubResources
       x-ms-hdi-routed-to:
@@ -68,7 +68,7 @@ interactions:
       x-ms-hdi-served-by:
       - northcentralus
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -82,7 +82,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -96,7 +96,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:52:04 GMT
+      - Fri, 18 Dec 2020 08:15:09 GMT
       expires:
       - '-1'
       pragma:
@@ -128,7 +128,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -142,7 +142,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:52:35 GMT
+      - Fri, 18 Dec 2020 08:15:41 GMT
       expires:
       - '-1'
       pragma:
@@ -174,7 +174,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -188,7 +188,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:53:05 GMT
+      - Fri, 18 Dec 2020 08:16:11 GMT
       expires:
       - '-1'
       pragma:
@@ -220,7 +220,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -234,7 +234,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:53:35 GMT
+      - Fri, 18 Dec 2020 08:16:42 GMT
       expires:
       - '-1'
       pragma:
@@ -266,7 +266,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -280,7 +280,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:54:06 GMT
+      - Fri, 18 Dec 2020 08:17:12 GMT
       expires:
       - '-1'
       pragma:
@@ -312,7 +312,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -326,7 +326,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:54:37 GMT
+      - Fri, 18 Dec 2020 08:17:43 GMT
       expires:
       - '-1'
       pragma:
@@ -358,7 +358,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -372,7 +372,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:55:08 GMT
+      - Fri, 18 Dec 2020 08:18:13 GMT
       expires:
       - '-1'
       pragma:
@@ -404,7 +404,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -418,7 +418,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:55:38 GMT
+      - Fri, 18 Dec 2020 08:18:43 GMT
       expires:
       - '-1'
       pragma:
@@ -450,7 +450,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -464,7 +464,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:56:09 GMT
+      - Fri, 18 Dec 2020 08:19:15 GMT
       expires:
       - '-1'
       pragma:
@@ -496,7 +496,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -510,7 +510,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:56:39 GMT
+      - Fri, 18 Dec 2020 08:19:46 GMT
       expires:
       - '-1'
       pragma:
@@ -542,7 +542,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -556,7 +556,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:57:09 GMT
+      - Fri, 18 Dec 2020 08:20:17 GMT
       expires:
       - '-1'
       pragma:
@@ -588,7 +588,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -602,7 +602,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:57:40 GMT
+      - Fri, 18 Dec 2020 08:20:47 GMT
       expires:
       - '-1'
       pragma:
@@ -634,7 +634,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -648,7 +648,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:58:12 GMT
+      - Fri, 18 Dec 2020 08:21:18 GMT
       expires:
       - '-1'
       pragma:
@@ -680,7 +680,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -694,7 +694,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:58:43 GMT
+      - Fri, 18 Dec 2020 08:21:48 GMT
       expires:
       - '-1'
       pragma:
@@ -726,7 +726,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -740,7 +740,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:59:13 GMT
+      - Fri, 18 Dec 2020 08:22:19 GMT
       expires:
       - '-1'
       pragma:
@@ -772,7 +772,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -786,7 +786,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 05:59:43 GMT
+      - Fri, 18 Dec 2020 08:22:50 GMT
       expires:
       - '-1'
       pragma:
@@ -818,7 +818,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -832,7 +832,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:00:14 GMT
+      - Fri, 18 Dec 2020 08:23:20 GMT
       expires:
       - '-1'
       pragma:
@@ -864,7 +864,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -878,7 +878,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:00:45 GMT
+      - Fri, 18 Dec 2020 08:23:50 GMT
       expires:
       - '-1'
       pragma:
@@ -910,7 +910,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -924,7 +924,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:01:16 GMT
+      - Fri, 18 Dec 2020 08:24:21 GMT
       expires:
       - '-1'
       pragma:
@@ -956,7 +956,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -970,7 +970,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:01:46 GMT
+      - Fri, 18 Dec 2020 08:24:54 GMT
       expires:
       - '-1'
       pragma:
@@ -1002,7 +1002,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -1016,7 +1016,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:02:16 GMT
+      - Fri, 18 Dec 2020 08:25:24 GMT
       expires:
       - '-1'
       pragma:
@@ -1048,7 +1048,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -1062,7 +1062,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:02:47 GMT
+      - Fri, 18 Dec 2020 08:25:54 GMT
       expires:
       - '-1'
       pragma:
@@ -1094,7 +1094,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -1108,7 +1108,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:03:17 GMT
+      - Fri, 18 Dec 2020 08:26:25 GMT
       expires:
       - '-1'
       pragma:
@@ -1140,7 +1140,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -1154,7 +1154,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:03:48 GMT
+      - Fri, 18 Dec 2020 08:26:55 GMT
       expires:
       - '-1'
       pragma:
@@ -1186,7 +1186,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -1200,7 +1200,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:04:19 GMT
+      - Fri, 18 Dec 2020 08:27:26 GMT
       expires:
       - '-1'
       pragma:
@@ -1232,53 +1232,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
-  response:
-    body:
-      string: '{"status":"InProgress"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '23'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 28 Oct 2020 06:04:50 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-hdi-matched-rule:
-      - ClusterResourcesAndSubResources
-      x-ms-hdi-routed-to:
-      - RegionalRp
-      x-ms-hdi-served-by:
-      - northcentralus
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -1292,7 +1246,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:05:21 GMT
+      - Fri, 18 Dec 2020 08:27:57 GMT
       expires:
       - '-1'
       pragma:
@@ -1324,13 +1278,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd?api-version=2018-06-01-preview
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd","name":"hdisdk-configs868c11cd","type":"Microsoft.HDInsight/clusters","location":"North
-        Central US","etag":"186d2ce4-4514-4a8d-a171-292ca095449e","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"2.6.5.3026-7","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2009301626.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"1f3132130ab543aba3f36cb24474086e","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a1_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"Succeeded","clusterState":"Running","createdDate":"2020-10-28T05:51:32.203","quotaInfo":{"coresUsed":20},"connectivityEndpoints":[{"name":"SSH","protocol":"TCP","location":"hdisdk-configs868c11cd-ssh.azurehdinsight.net","port":22},{"name":"HTTPS","protocol":"TCP","location":"hdisdk-configs868c11cd.azurehdinsight.net","port":443}],"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-configs868c11cd","saskey":null,"isDefault":true,"fileshare":null}]},"excludedServicesConfig":{"excludedServicesConfigId":"default","excludedServicesList":""},"computeIsolationProperties":{"enableComputeIsolation":false,"hostSku":null}}}'
+        Central US","etag":"7bad080f-d5ec-4fda-8c73-efdf7f32934a","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"2.6.5.3032-3","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2012080609.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"5f09e52eefe8475b9455f54ba9be5b96","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a1_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"Succeeded","clusterState":"Running","createdDate":"2020-12-18T08:14:37.273","quotaInfo":{"coresUsed":20},"connectivityEndpoints":[{"name":"SSH","protocol":"TCP","location":"hdisdk-configs868c11cd-ssh.azurehdinsight.net","port":22},{"name":"HTTPS","protocol":"TCP","location":"hdisdk-configs868c11cd.azurehdinsight.net","port":443}],"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-configs868c11cd","saskey":null,"isDefault":true,"fileshare":null}]},"excludedServicesConfig":{"excludedServicesConfigId":"default","excludedServicesList":""},"computeIsolationProperties":{"enableComputeIsolation":false,"hostSku":null}}}'
     headers:
       cache-control:
       - no-cache
@@ -1339,7 +1293,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Oct 2020 06:05:22 GMT
+      - Fri, 18 Dec 2020 08:27:58 GMT
       expires:
       - '-1'
       pragma:
@@ -1371,7 +1325,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/configurations/hive-site?api-version=2018-06-01-preview
   response:
@@ -1385,7 +1339,7 @@ interactions:
       content-type:
       - application/json; charset=Windows-1252
       date:
-      - Wed, 28 Oct 2020 06:05:22 GMT
+      - Fri, 18 Dec 2020 08:27:58 GMT
       expires:
       - '-1'
       pragma:
@@ -1417,7 +1371,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/configurations/mapred-site?api-version=2018-06-01-preview
   response:
@@ -1431,7 +1385,7 @@ interactions:
       content-type:
       - application/json; charset=Windows-1252
       date:
-      - Wed, 28 Oct 2020 06:05:23 GMT
+      - Fri, 18 Dec 2020 08:27:59 GMT
       expires:
       - '-1'
       pragma:
@@ -1463,7 +1417,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/configurations/yarn-site?api-version=2018-06-01-preview
   response:
@@ -1477,7 +1431,7 @@ interactions:
       content-type:
       - application/json; charset=Windows-1252
       date:
-      - Wed, 28 Oct 2020 06:05:23 GMT
+      - Fri, 18 Dec 2020 08:27:59 GMT
       expires:
       - '-1'
       pragma:
@@ -1509,7 +1463,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/configurations/gateway?api-version=2018-06-01-preview
   response:
@@ -1523,7 +1477,7 @@ interactions:
       content-type:
       - application/json; charset=Windows-1252
       date:
-      - Wed, 28 Oct 2020 06:05:23 GMT
+      - Fri, 18 Dec 2020 08:28:00 GMT
       expires:
       - '-1'
       pragma:
@@ -1555,7 +1509,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-hdinsight/7.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-hdinsight/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-868c11cd/providers/Microsoft.HDInsight/clusters/hdisdk-configs868c11cd/configurations/core-site?api-version=2018-06-01-preview
   response:
@@ -1569,7 +1523,7 @@ interactions:
       content-type:
       - application/json; charset=Windows-1252
       date:
-      - Wed, 28 Oct 2020 06:05:24 GMT
+      - Fri, 18 Dec 2020 08:28:00 GMT
       expires:
       - '-1'
       pragma:
