@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NamespacesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class NamespacesOperations:
 
     async def check_name_availability(
         self,
-        parameters: "models.CheckNameAvailability",
+        parameters: "_models.CheckNameAvailability",
         **kwargs
-    ) -> "models.CheckNameAvailabilityResult":
+    ) -> "_models.CheckNameAvailabilityResult":
         """Check the specified namespace name availability.
 
         :param parameters: Parameters to check availability of the specified namespace name.
@@ -57,7 +57,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.relay.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -91,7 +91,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityResult', pipeline_response)
@@ -105,7 +105,7 @@ class NamespacesOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.RelayNamespaceListResult"]:
+    ) -> AsyncIterable["_models.RelayNamespaceListResult"]:
         """Lists all the available namespaces within the subscription regardless of the resourceGroups.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -113,7 +113,7 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.relay.models.RelayNamespaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayNamespaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayNamespaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -158,7 +158,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -173,7 +173,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.RelayNamespaceListResult"]:
+    ) -> AsyncIterable["_models.RelayNamespaceListResult"]:
         """Lists all the available namespaces within the ResourceGroup.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -183,7 +183,7 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.relay.models.RelayNamespaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayNamespaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayNamespaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -229,7 +229,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -244,10 +244,10 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.RelayNamespace",
+        parameters: "_models.RelayNamespace",
         **kwargs
-    ) -> "models.RelayNamespace":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayNamespace"]
+    ) -> "_models.RelayNamespace":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayNamespace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -283,7 +283,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -302,9 +302,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.RelayNamespace",
+        parameters: "_models.RelayNamespace",
         **kwargs
-    ) -> AsyncLROPoller["models.RelayNamespace"]:
+    ) -> AsyncLROPoller["_models.RelayNamespace"]:
         """Create Azure Relay namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -324,7 +324,7 @@ class NamespacesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayNamespace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayNamespace"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -349,7 +349,13 @@ class NamespacesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -400,7 +406,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -453,7 +459,13 @@ class NamespacesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -472,7 +484,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         **kwargs
-    ) -> "models.RelayNamespace":
+    ) -> "_models.RelayNamespace":
         """Returns the description for the specified namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -484,7 +496,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.relay.models.RelayNamespace
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayNamespace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayNamespace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -515,7 +527,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayNamespace', pipeline_response)
@@ -530,9 +542,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.RelayUpdateParameters",
+        parameters: "_models.RelayUpdateParameters",
         **kwargs
-    ) -> "models.RelayNamespace":
+    ) -> "_models.RelayNamespace":
         """Creates or updates a namespace. Once created, this namespace's resource manifest is immutable.
         This operation is idempotent.
 
@@ -547,7 +559,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.relay.models.RelayNamespace
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayNamespace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayNamespace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -583,7 +595,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -603,7 +615,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AuthorizationRuleListResult"]:
+    ) -> AsyncIterable["_models.AuthorizationRuleListResult"]:
         """Authorization rules for a namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -615,7 +627,7 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.relay.models.AuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -662,7 +674,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -678,9 +690,9 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        parameters: "models.AuthorizationRule",
+        parameters: "_models.AuthorizationRule",
         **kwargs
-    ) -> "models.AuthorizationRule":
+    ) -> "_models.AuthorizationRule":
         """Creates or updates an authorization rule for a namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -696,7 +708,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.relay.models.AuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -733,7 +745,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -796,7 +808,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -810,7 +822,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.AuthorizationRule":
+    ) -> "_models.AuthorizationRule":
         """Authorization rule for a namespace by name.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -824,7 +836,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.relay.models.AuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -856,7 +868,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -873,7 +885,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.AccessKeys":
+    ) -> "_models.AccessKeys":
         """Primary and secondary connection strings to the namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -887,7 +899,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.relay.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -919,7 +931,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -935,9 +947,9 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        parameters: "models.RegenerateAccessKeyParameters",
+        parameters: "_models.RegenerateAccessKeyParameters",
         **kwargs
-    ) -> "models.AccessKeys":
+    ) -> "_models.AccessKeys":
         """Regenerates the primary or secondary connection strings to the namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -953,7 +965,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.relay.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -990,7 +1002,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
