@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class WCFRelaysOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class WCFRelaysOperations(object):
         namespace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WcfRelaysListResult"]
+        # type: (...) -> Iterable["_models.WcfRelaysListResult"]
         """Lists the WCF relays within the namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -63,7 +63,7 @@ class WCFRelaysOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.relay.models.WcfRelaysListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WcfRelaysListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WcfRelaysListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,7 +110,7 @@ class WCFRelaysOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -126,10 +126,10 @@ class WCFRelaysOperations(object):
         resource_group_name,  # type: str
         namespace_name,  # type: str
         relay_name,  # type: str
-        parameters,  # type: "models.WcfRelay"
+        parameters,  # type: "_models.WcfRelay"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WcfRelay"
+        # type: (...) -> "_models.WcfRelay"
         """Creates or updates a WCF relay. This operation is idempotent.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -145,7 +145,7 @@ class WCFRelaysOperations(object):
         :rtype: ~azure.mgmt.relay.models.WcfRelay
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WcfRelay"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WcfRelay"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -182,7 +182,7 @@ class WCFRelaysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WcfRelay', pipeline_response)
@@ -246,7 +246,7 @@ class WCFRelaysOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -261,7 +261,7 @@ class WCFRelaysOperations(object):
         relay_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.WcfRelay"]
+        # type: (...) -> Optional["_models.WcfRelay"]
         """Returns the description for the specified WCF relay.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -275,7 +275,7 @@ class WCFRelaysOperations(object):
         :rtype: ~azure.mgmt.relay.models.WcfRelay or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WcfRelay"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WcfRelay"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -307,7 +307,7 @@ class WCFRelaysOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -327,7 +327,7 @@ class WCFRelaysOperations(object):
         relay_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AuthorizationRuleListResult"]
+        # type: (...) -> Iterable["_models.AuthorizationRuleListResult"]
         """Authorization rules for a WCF relay.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -341,7 +341,7 @@ class WCFRelaysOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.relay.models.AuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -405,10 +405,10 @@ class WCFRelaysOperations(object):
         namespace_name,  # type: str
         relay_name,  # type: str
         authorization_rule_name,  # type: str
-        parameters,  # type: "models.AuthorizationRule"
+        parameters,  # type: "_models.AuthorizationRule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AuthorizationRule"
+        # type: (...) -> "_models.AuthorizationRule"
         """Creates or updates an authorization rule for a WCF relay.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -426,7 +426,7 @@ class WCFRelaysOperations(object):
         :rtype: ~azure.mgmt.relay.models.AuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -464,7 +464,7 @@ class WCFRelaysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -532,7 +532,7 @@ class WCFRelaysOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -548,7 +548,7 @@ class WCFRelaysOperations(object):
         authorization_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AuthorizationRule"
+        # type: (...) -> "_models.AuthorizationRule"
         """Get authorizationRule for a WCF relay by name.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -564,7 +564,7 @@ class WCFRelaysOperations(object):
         :rtype: ~azure.mgmt.relay.models.AuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -597,7 +597,7 @@ class WCFRelaysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -616,7 +616,7 @@ class WCFRelaysOperations(object):
         authorization_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AccessKeys"
+        # type: (...) -> "_models.AccessKeys"
         """Primary and secondary connection strings to the WCF relay.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -632,7 +632,7 @@ class WCFRelaysOperations(object):
         :rtype: ~azure.mgmt.relay.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -665,7 +665,7 @@ class WCFRelaysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -682,10 +682,10 @@ class WCFRelaysOperations(object):
         namespace_name,  # type: str
         relay_name,  # type: str
         authorization_rule_name,  # type: str
-        parameters,  # type: "models.RegenerateAccessKeyParameters"
+        parameters,  # type: "_models.RegenerateAccessKeyParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AccessKeys"
+        # type: (...) -> "_models.AccessKeys"
         """Regenerates the primary or secondary connection strings to the WCF relay.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -703,7 +703,7 @@ class WCFRelaysOperations(object):
         :rtype: ~azure.mgmt.relay.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -741,7 +741,7 @@ class WCFRelaysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
