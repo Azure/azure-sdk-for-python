@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PoliciesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -56,7 +56,7 @@ class PoliciesOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicyList"]
+        # type: (...) -> Iterable["_models.PolicyList"]
         """List policies in a given policy set.
 
         :param resource_group_name: The name of the resource group.
@@ -79,7 +79,7 @@ class PoliciesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.PolicyList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -154,7 +154,7 @@ class PoliciesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Policy"
+        # type: (...) -> "_models.Policy"
         """Get policy.
 
         :param resource_group_name: The name of the resource group.
@@ -172,7 +172,7 @@ class PoliciesOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Policy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Policy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Policy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -223,10 +223,10 @@ class PoliciesOperations(object):
         lab_name,  # type: str
         policy_set_name,  # type: str
         name,  # type: str
-        policy,  # type: "models.Policy"
+        policy,  # type: "_models.Policy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Policy"
+        # type: (...) -> "_models.Policy"
         """Create or replace an existing policy.
 
         :param resource_group_name: The name of the resource group.
@@ -244,7 +244,7 @@ class PoliciesOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Policy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Policy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Policy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -366,10 +366,10 @@ class PoliciesOperations(object):
         lab_name,  # type: str
         policy_set_name,  # type: str
         name,  # type: str
-        policy,  # type: "models.PolicyFragment"
+        policy,  # type: "_models.PolicyFragment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Policy"
+        # type: (...) -> "_models.Policy"
         """Allows modifying tags of policies. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -387,7 +387,7 @@ class PoliciesOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Policy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Policy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Policy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
