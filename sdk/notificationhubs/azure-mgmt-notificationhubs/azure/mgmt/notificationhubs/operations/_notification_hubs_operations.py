@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class NotificationHubsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class NotificationHubsOperations(object):
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
-        parameters,  # type: "models.CheckAvailabilityParameters"
+        parameters,  # type: "_models.CheckAvailabilityParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckAvailabilityResult"
+        # type: (...) -> "_models.CheckAvailabilityResult"
         """Checks the availability of the given notificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -66,7 +66,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.CheckAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,10 +117,10 @@ class NotificationHubsOperations(object):
         resource_group_name,  # type: str
         namespace_name,  # type: str
         notification_hub_name,  # type: str
-        parameters,  # type: "models.NotificationHubCreateOrUpdateParameters"
+        parameters,  # type: "_models.NotificationHubCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NotificationHubResource"
+        # type: (...) -> "_models.NotificationHubResource"
         """Creates/Update a NotificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -136,7 +136,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.NotificationHubResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationHubResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationHubResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -192,10 +192,10 @@ class NotificationHubsOperations(object):
         resource_group_name,  # type: str
         namespace_name,  # type: str
         notification_hub_name,  # type: str
-        parameters=None,  # type: Optional["models.NotificationHubPatchParameters"]
+        parameters=None,  # type: Optional["_models.NotificationHubPatchParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NotificationHubResource"
+        # type: (...) -> "_models.NotificationHubResource"
         """Patch a NotificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -211,7 +211,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.NotificationHubResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationHubResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationHubResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -326,7 +326,7 @@ class NotificationHubsOperations(object):
         notification_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NotificationHubResource"
+        # type: (...) -> "_models.NotificationHubResource"
         """Lists the notification hubs associated with a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -340,7 +340,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.NotificationHubResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationHubResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationHubResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -390,7 +390,7 @@ class NotificationHubsOperations(object):
         parameters=None,  # type: Optional[object]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DebugSendResponse"
+        # type: (...) -> "_models.DebugSendResponse"
         """test send a push notification.
 
         :param resource_group_name: The name of the resource group.
@@ -406,7 +406,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.DebugSendResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DebugSendResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DebugSendResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -462,10 +462,10 @@ class NotificationHubsOperations(object):
         namespace_name,  # type: str
         notification_hub_name,  # type: str
         authorization_rule_name,  # type: str
-        parameters,  # type: "models.SharedAccessAuthorizationRuleCreateOrUpdateParameters"
+        parameters,  # type: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SharedAccessAuthorizationRuleResource"
+        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
         """Creates/Updates an authorization rule for a NotificationHub.
 
         :param resource_group_name: The name of the resource group.
@@ -483,7 +483,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -601,7 +601,7 @@ class NotificationHubsOperations(object):
         authorization_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SharedAccessAuthorizationRuleResource"
+        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
         """Gets an authorization rule for a NotificationHub by name.
 
         :param resource_group_name: The name of the resource group.
@@ -617,7 +617,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -666,7 +666,7 @@ class NotificationHubsOperations(object):
         namespace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NotificationHubListResult"]
+        # type: (...) -> Iterable["_models.NotificationHubListResult"]
         """Lists the notification hubs associated with a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -678,7 +678,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.notificationhubs.models.NotificationHubListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationHubListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationHubListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -742,7 +742,7 @@ class NotificationHubsOperations(object):
         notification_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SharedAccessAuthorizationRuleListResult"]
+        # type: (...) -> Iterable["_models.SharedAccessAuthorizationRuleListResult"]
         """Gets the authorization rules for a NotificationHub.
 
         :param resource_group_name: The name of the resource group.
@@ -756,7 +756,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -822,7 +822,7 @@ class NotificationHubsOperations(object):
         authorization_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceListKeys"
+        # type: (...) -> "_models.ResourceListKeys"
         """Gets the Primary and Secondary ConnectionStrings to the NotificationHub.
 
         :param resource_group_name: The name of the resource group.
@@ -839,7 +839,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.ResourceListKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -888,10 +888,10 @@ class NotificationHubsOperations(object):
         namespace_name,  # type: str
         notification_hub_name,  # type: str
         authorization_rule_name,  # type: str
-        parameters,  # type: "models.PolicykeyResource"
+        parameters,  # type: "_models.PolicykeyResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceListKeys"
+        # type: (...) -> "_models.ResourceListKeys"
         """Regenerates the Primary/Secondary Keys to the NotificationHub Authorization Rule.
 
         :param resource_group_name: The name of the resource group.
@@ -911,7 +911,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.ResourceListKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -966,7 +966,7 @@ class NotificationHubsOperations(object):
         notification_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PnsCredentialsResource"
+        # type: (...) -> "_models.PnsCredentialsResource"
         """Lists the PNS Credentials associated with a notification hub .
 
         :param resource_group_name: The name of the resource group.
@@ -980,7 +980,7 @@ class NotificationHubsOperations(object):
         :rtype: ~azure.mgmt.notificationhubs.models.PnsCredentialsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PnsCredentialsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PnsCredentialsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
