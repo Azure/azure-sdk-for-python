@@ -43,8 +43,7 @@ class Operations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Lists all of the available RP operations.
 
-        Lists all of the available RP operations.  The operation returns the RP
-        operations.
+        The operation returns the RP operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
