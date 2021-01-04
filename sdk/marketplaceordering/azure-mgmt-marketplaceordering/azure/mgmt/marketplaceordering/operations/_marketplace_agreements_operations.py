@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class MarketplaceAgreementsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -46,13 +46,13 @@ class MarketplaceAgreementsOperations(object):
 
     def get(
         self,
-        offer_type,  # type: Union[str, "models.OfferType"]
+        offer_type,  # type: Union[str, "_models.OfferType"]
         publisher_id,  # type: str
         offer_id,  # type: str
         plan_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgreementTerms"
+        # type: (...) -> "_models.AgreementTerms"
         """Get marketplace terms.
 
         :param offer_type: Offer Type, currently only virtualmachine type is supported.
@@ -68,7 +68,7 @@ class MarketplaceAgreementsOperations(object):
         :rtype: ~azure.mgmt.marketplaceordering.models.AgreementTerms
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgreementTerms"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgreementTerms"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -101,7 +101,7 @@ class MarketplaceAgreementsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AgreementTerms', pipeline_response)
@@ -114,14 +114,14 @@ class MarketplaceAgreementsOperations(object):
 
     def create(
         self,
-        offer_type,  # type: Union[str, "models.OfferType"]
+        offer_type,  # type: Union[str, "_models.OfferType"]
         publisher_id,  # type: str
         offer_id,  # type: str
         plan_id,  # type: str
-        parameters,  # type: "models.AgreementTerms"
+        parameters,  # type: "_models.AgreementTerms"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgreementTerms"
+        # type: (...) -> "_models.AgreementTerms"
         """Save marketplace terms.
 
         :param offer_type: Offer Type, currently only virtualmachine type is supported.
@@ -139,7 +139,7 @@ class MarketplaceAgreementsOperations(object):
         :rtype: ~azure.mgmt.marketplaceordering.models.AgreementTerms
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgreementTerms"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgreementTerms"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -177,7 +177,7 @@ class MarketplaceAgreementsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AgreementTerms', pipeline_response)
@@ -195,7 +195,7 @@ class MarketplaceAgreementsOperations(object):
         plan_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgreementTerms"
+        # type: (...) -> "_models.AgreementTerms"
         """Sign marketplace terms.
 
         :param publisher_id: Publisher identifier string of image being deployed.
@@ -209,7 +209,7 @@ class MarketplaceAgreementsOperations(object):
         :rtype: ~azure.mgmt.marketplaceordering.models.AgreementTerms
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgreementTerms"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgreementTerms"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -241,7 +241,7 @@ class MarketplaceAgreementsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AgreementTerms', pipeline_response)
@@ -259,7 +259,7 @@ class MarketplaceAgreementsOperations(object):
         plan_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgreementTerms"
+        # type: (...) -> "_models.AgreementTerms"
         """Cancel marketplace terms.
 
         :param publisher_id: Publisher identifier string of image being deployed.
@@ -273,7 +273,7 @@ class MarketplaceAgreementsOperations(object):
         :rtype: ~azure.mgmt.marketplaceordering.models.AgreementTerms
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgreementTerms"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgreementTerms"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -305,7 +305,7 @@ class MarketplaceAgreementsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AgreementTerms', pipeline_response)
@@ -323,7 +323,7 @@ class MarketplaceAgreementsOperations(object):
         plan_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgreementTerms"
+        # type: (...) -> "_models.AgreementTerms"
         """Get marketplace agreement.
 
         :param publisher_id: Publisher identifier string of image being deployed.
@@ -337,7 +337,7 @@ class MarketplaceAgreementsOperations(object):
         :rtype: ~azure.mgmt.marketplaceordering.models.AgreementTerms
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgreementTerms"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgreementTerms"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -369,7 +369,7 @@ class MarketplaceAgreementsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AgreementTerms', pipeline_response)
@@ -384,7 +384,7 @@ class MarketplaceAgreementsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.AgreementTerms"]
+        # type: (...) -> List["_models.AgreementTerms"]
         """List marketplace agreements in the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -392,7 +392,7 @@ class MarketplaceAgreementsOperations(object):
         :rtype: list[~azure.mgmt.marketplaceordering.models.AgreementTerms]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.AgreementTerms"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.AgreementTerms"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -421,7 +421,7 @@ class MarketplaceAgreementsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[AgreementTerms]', pipeline_response)
