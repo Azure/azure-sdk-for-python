@@ -32,7 +32,7 @@ class InsertDeleteEntity(object):
         self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
         self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+        self.connection_string = u"DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
             self.endpoint
@@ -40,11 +40,11 @@ class InsertDeleteEntity(object):
         self.table_name = "SampleInsertDelete"
 
         self.entity = {
-            'PartitionKey': 'color',
-            'RowKey': 'brand',
-            'text': 'Marker',
-            'color': 'Purple',
-            'price': '5'
+            u'PartitionKey': u'color',
+            u'RowKey': u'brand',
+            u'text': u'Marker',
+            u'color': u'Purple',
+            u'price': u'5'
         }
 
     def create_entity(self):

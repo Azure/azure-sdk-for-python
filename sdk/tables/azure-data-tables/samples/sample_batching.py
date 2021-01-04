@@ -23,6 +23,7 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
+import sys
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -107,8 +108,9 @@ class CreateClients(object):
 
 
 if __name__ == '__main__':
-    sample = CreateClients()
-    try:
-        sample.sample_batching()
-    finally:
-        sample.clean_up()
+    if sys.version_info > (3, 5):
+        sample = CreateClients()
+        try:
+            sample.sample_batching()
+        finally:
+            sample.clean_up()

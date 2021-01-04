@@ -22,7 +22,6 @@ USAGE:
 
 import asyncio
 import os
-from time import sleep
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -39,7 +38,6 @@ class QueryTables(object):
             self.access_key,
             self.endpoint
         )
-        self.table_name = "OfficeSupplies"
 
     async def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
@@ -47,8 +45,8 @@ class QueryTables(object):
         table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
         async with table_service:
-            await table_service.create_table("mytable1")
-            await table_service.create_table("mytable2")
+            await table_service.create_table("mytableasync1")
+            await table_service.create_table("mytableasync2")
 
             try:
                 # [START tsc_list_tables]
@@ -60,7 +58,7 @@ class QueryTables(object):
 
                 # [START tsc_query_tables]
                 # Query for "table1" in the tables created
-                table_name = "mytable1"
+                table_name = "mytableasync1"
                 name_filter = "TableName eq '{}'".format(table_name)
                 print("Queried_tables")
                 async for table in table_service.query_tables(filter=name_filter):
@@ -74,22 +72,29 @@ class QueryTables(object):
         from azure.data.tables.aio import TableServiceClient
         ts = TableServiceClient.from_connection_string(conn_str=self.connection_string)
         async with ts:
-            tables = ["mytable1", "mytable2"]
+            tables = ["mytableasync1", "mytableasync2"]
             for table in tables:
                 try:
                     await ts.delete_table(table_name=table)
                 except:
                     pass
 
+    async def clean_up(self):
+        from azure.data.tables.aio import TableServiceClient
+        tsc = TableServiceClient.from_connection_string(self.connection_string)
+        async with tsc:
+            async for table in tsc.list_tables():
+                await tsc.delete_table(table.table_name)
+
+            print("Cleaned up")
+
 
 async def main():
     # sleep to avoid conflicts on deletes
     sample = QueryTables()
-    sleep(10)
     await sample.delete_tables()
-    sleep(10)
     await sample.tables_in_account()
-    sleep(10)
+    await sample.clean_up()
 
 
 if __name__ == '__main__':

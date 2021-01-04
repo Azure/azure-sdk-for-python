@@ -40,10 +40,13 @@ class TableEntitySamples(object):
             self.endpoint
         )
 
+        self.table_base = "UpdateUpsertMergeAsync"
+
     async def create_and_get_entities(self):
         # Instantiate a table service client
         from azure.data.tables.aio import TableClient
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable3")
+        table = TableClient.from_connection_string(
+            self.connection_string, table_name=self.table_base + "create")
 
         async with table:
             await table.create_table()
@@ -72,7 +75,8 @@ class TableEntitySamples(object):
     async def list_all_entities(self):
         # Instantiate a table service client
         from azure.data.tables.aio import TableClient
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable4")
+        table = TableClient.from_connection_string(
+            self.connection_string, table_name=self.table_base + "list")
 
         # Create the table
         async with table:
@@ -102,7 +106,8 @@ class TableEntitySamples(object):
         # Instantiate a table service client
         from azure.data.tables.aio import TableClient
         from azure.data.tables import UpdateMode
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable6")
+        table = TableClient.from_connection_string(
+            self.connection_string, table_name=self.table_base + "update")
 
         # Create the table and Table Client
         async with table:
@@ -150,16 +155,27 @@ class TableEntitySamples(object):
             finally:
                 await table.delete_table()
 
+    async def clean_up(self):
+        from azure.data.tables.aio import TableServiceClient
+        tsc = TableServiceClient.from_connection_string(self.connection_string)
+
+        async with tsc:
+            async for table in tsc.list_tables():
+                await tsc.delete_table(table.table_name)
+
+        print("Cleaned up")
+
 
 async def main():
     sample = TableEntitySamples()
-    sleep(10)
+    # sleep(10)
     await sample.create_and_get_entities()
-    sleep(10)
+    # sleep(10)
     await sample.list_all_entities()
-    sleep(10)
+    # sleep(10)
     await sample.update_entities()
-    sleep(10)
+    # sleep(10)
+    await sample.clean_up()
 
 
 if __name__ == '__main__':

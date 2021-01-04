@@ -39,7 +39,7 @@ class InsertDeleteEntity(object):
             self.access_key,
             self.endpoint
         )
-        self.table_name = "OfficeSupplies"
+        self.table_name = "InsertDeleteAsync"
 
         self.entity = {
             'PartitionKey': 'color',
@@ -94,14 +94,21 @@ class InsertDeleteEntity(object):
                 print("Entity does not exists")
         # [END delete_entity]
 
+    async def clean_up(self):
+        from azure.data.tables.aio import TableServiceClient
+        tsc = TableServiceClient.from_connection_string(self.connection_string)
+        async with tsc:
+            async for table in tsc.list_tables():
+                await tsc.delete_table(table.table_name)
+
+            print("Cleaned up")
+
 
 async def main():
     ide = InsertDeleteEntity()
-    sleep(10)
     await ide.create_entity()
-    sleep(10)
     await ide.delete_entity()
-    sleep(10)
+    await ide.clean_up()
 
 
 if __name__ == '__main__':

@@ -44,26 +44,29 @@ class SampleTablesQuery(object):
     def _insert_random_entities(self):
         from azure.data.tables import TableClient
         from azure.core.exceptions import ResourceExistsError
-        brands = ["Crayola", "Sharpie", "Chameleon"]
-        colors = ["red", "blue", "orange", "yellow"]
-        names = ["marker", "pencil", "pen"]
+        brands = [u"Crayola", u"Sharpie", u"Chameleon"]
+        colors = [u"red", u"blue", u"orange", u"yellow"]
+        names = [u"marker", u"pencil", u"pen"]
         entity_template = {
-            "PartitionKey": "pk",
-            "RowKey": "row",
+            u"PartitionKey": u"pk",
+            u"RowKey": u"row",
         }
 
         table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
         try:
             table_client.create_table()
         except ResourceExistsError:
-            print("Table already exists")
+            print(u"Table already exists")
 
         for i in range(10):
             e = copy.deepcopy(entity_template)
-            e["RowKey"] += str(i)
-            e["Name"] = random.choice(names)
-            e["Brand"] = random.choice(brands)
-            e["Color"] = random.choice(colors)
+            try:
+                e[u"RowKey"] += unicode(i)
+            except NameError:
+                e[u"RowKey"] += str(i)
+            e[u"Name"] = random.choice(names)
+            e[u"Brand"] = random.choice(brands)
+            e[u"Color"] = random.choice(colors)
             table_client.create_entity(entity=e)
 
 
@@ -75,9 +78,9 @@ class SampleTablesQuery(object):
         table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
         # [START query_entities]
         try:
-            entity_name = "marker"
-            name_filter = "Name eq '{}'".format(entity_name)
-            queried_entities = table_client.query_entities(filter=name_filter, select=["Brand","Color"])
+            entity_name = u"marker"
+            name_filter = u"Name eq '{}'".format(entity_name)
+            queried_entities = table_client.query_entities(filter=name_filter, select=[u"Brand",u"Color"])
 
             for entity_chosen in queried_entities:
                 print(entity_chosen)
