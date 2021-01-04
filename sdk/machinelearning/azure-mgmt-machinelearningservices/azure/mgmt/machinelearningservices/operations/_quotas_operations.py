@@ -14,11 +14,11 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -37,7 +37,7 @@ class QuotasOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,28 +48,26 @@ class QuotasOperations(object):
     def update(
         self,
         location,  # type: str
-        value=None,  # type: Optional[List["models.QuotaBaseProperties"]]
+        parameters,  # type: "_models.QuotaUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.UpdateWorkspaceQuotasResult"
+        # type: (...) -> "_models.UpdateWorkspaceQuotasResult"
         """Update quota for each VM family in workspace.
 
         :param location: The location for update quota is queried.
         :type location: str
-        :param value: The list for update quota.
-        :type value: list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
+        :param parameters: Quota update parameters.
+        :type parameters: ~azure.mgmt.machinelearningservices.models.QuotaUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: UpdateWorkspaceQuotasResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UpdateWorkspaceQuotasResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UpdateWorkspaceQuotasResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.QuotaUpdateParameters(value=value)
         api_version = "2020-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -92,7 +90,7 @@ class QuotasOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'QuotaUpdateParameters')
+        body_content = self._serialize.body(parameters, 'QuotaUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -100,7 +98,7 @@ class QuotasOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('UpdateWorkspaceQuotasResult', pipeline_response)
@@ -116,7 +114,7 @@ class QuotasOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListWorkspaceQuotas"]
+        # type: (...) -> Iterable["_models.ListWorkspaceQuotas"]
         """Gets the currently assigned Workspace Quotas based on VMFamily.
 
         :param location: The location for which resource usage is queried.
@@ -126,7 +124,7 @@ class QuotasOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ListWorkspaceQuotas]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListWorkspaceQuotas"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListWorkspaceQuotas"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
