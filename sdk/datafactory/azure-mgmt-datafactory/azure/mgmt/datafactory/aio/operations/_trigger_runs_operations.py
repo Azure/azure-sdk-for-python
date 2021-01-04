@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class TriggerRunsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -170,9 +170,9 @@ class TriggerRunsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: "models.RunFilterParameters",
+        filter_parameters: "_models.RunFilterParameters",
         **kwargs
-    ) -> "models.TriggerRunsQueryResponse":
+    ) -> "_models.TriggerRunsQueryResponse":
         """Query trigger runs.
 
         :param resource_group_name: The resource group name.
@@ -186,7 +186,7 @@ class TriggerRunsOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerRunsQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerRunsQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerRunsQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
