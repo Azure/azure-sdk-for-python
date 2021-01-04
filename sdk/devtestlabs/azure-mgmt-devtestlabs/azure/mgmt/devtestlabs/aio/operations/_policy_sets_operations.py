@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class PolicySetsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class PolicySetsOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        policies: Optional[List["models.EvaluatePoliciesProperties"]] = None,
+        policies: Optional[List["_models.EvaluatePoliciesProperties"]] = None,
         **kwargs
-    ) -> "models.EvaluatePoliciesResponse":
+    ) -> "_models.EvaluatePoliciesResponse":
         """Evaluates lab policy.
 
         :param resource_group_name: The name of the resource group.
@@ -63,13 +63,13 @@ class PolicySetsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.EvaluatePoliciesResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EvaluatePoliciesResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EvaluatePoliciesResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _evaluate_policies_request = models.EvaluatePoliciesRequest(policies=policies)
+        _evaluate_policies_request = _models.EvaluatePoliciesRequest(policies=policies)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
