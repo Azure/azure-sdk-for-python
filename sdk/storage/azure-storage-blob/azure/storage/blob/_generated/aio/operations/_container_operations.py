@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Generic, IO, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -698,6 +698,94 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)
 
     restore.metadata = {'url': '/{containerName}'}  # type: ignore
+
+    async def submit_batch(
+        self,
+        content_length: int,
+        multipart_content_type: str,
+        body: IO,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs
+    ) -> IO:
+        """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
+
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param multipart_content_type: Required. The value of this header must be multipart/mixed with
+         a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
+        :type multipart_content_type: str
+        :param body: Initial data.
+        :type body: IO
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
+         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        restype = "container"
+        comp = "batch"
+        content_type = kwargs.pop("content_type", "application/xml")
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.submit_batch.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
+        header_parameters['Content-Type'] = self._serialize.header("multipart_content_type", multipart_content_type, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(body, 'IO', is_xml=True)
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        deserialized = response.stream_download(self._client._pipeline)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    submit_batch.metadata = {'url': '/{containerName}'}  # type: ignore
 
     async def acquire_lease(
         self,

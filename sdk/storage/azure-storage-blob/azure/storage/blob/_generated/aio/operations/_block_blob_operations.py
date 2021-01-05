@@ -255,7 +255,6 @@ class BlockBlobOperations:
         encryption_algorithm: Optional[str] = "AES256",
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
-        source_content_md5: Optional[bytearray] = None,
         blob_tags_string: Optional[str] = None,
         copy_source_blob_properties: Optional[bool] = None,
         blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
@@ -303,9 +302,6 @@ class BlockBlobOperations:
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
-        :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
-         from the copy source.
-        :type source_content_md5: bytearray
         :param blob_tags_string: Optional.  Used to set blob tags in various blob operations.
         :type blob_tags_string: str
         :param copy_source_blob_properties: Optional, default is true.  Indicates if properties from
@@ -450,8 +446,6 @@ class BlockBlobOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        if source_content_md5 is not None:
-            header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
         if blob_tags_string is not None:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
         header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
