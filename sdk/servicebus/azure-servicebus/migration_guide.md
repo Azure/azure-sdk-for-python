@@ -18,12 +18,10 @@ For those new to the Service Bus client library for Python, please refer to the 
     - [Sending messages](#sending-messages)
     - [Receiving messages](#receiving-messages)
     - [Settling messages](#settling-messages)
-    - [Renewing lock on the received message](#renewing-lock-on-the-received-message)
     - [Scheduling messages and cancelling scheduled messages](#scheduling-messages-and-cancelling-scheduled-messages)
     - [Working with sessions](#working-with-sessions)
-    - [Working with UTC time](#working-with-utc-time)
-    - [Working with AutoLockRenewer](#working-with-autolockrenewer)
-    - [Working with Message properties](#working-with-message-properties)
+    - [Lock renewal](#lock-renewal)
+    - [Message format changes](#message-format-changes)
     - [Working with Administration Client](#working-with-administration-client)
     - [Migration samples](#migration-samples)
 * [Additional samples](#additional-samples)
@@ -494,6 +492,6 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
         sender.send_messages(batch)
 ```
 
-### Additional samples
+## Additional samples
 
 More examples can be found at [Samples for azure-servicebus](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples)
