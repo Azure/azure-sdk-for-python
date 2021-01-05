@@ -90,7 +90,6 @@ class QueryTables(object):
 
 
 async def main():
-    # sleep to avoid conflicts on deletes
     sample = QueryTables()
     await sample.delete_tables()
     await sample.tables_in_account()

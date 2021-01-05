@@ -51,20 +51,20 @@ class InsertDeleteEntity(object):
         from azure.data.tables import TableClient
         from azure.core.exceptions import ResourceExistsError, HttpResponseError
 
-        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
 
-        # Create a table in case it does not already exist
-        try:
-            table_client.create_table()
-        except HttpResponseError:
-            print("Table already exists")
+            # Create a table in case it does not already exist
+            try:
+                table_client.create_table()
+            except HttpResponseError:
+                print("Table already exists")
 
-        # [START create_entity]
-        try:
-            entity = table_client.create_entity(entity=self.entity)
-            print(entity)
-        except ResourceExistsError:
-            print("Entity already exists")
+            # [START create_entity]
+            try:
+                entity = table_client.create_entity(entity=self.entity)
+                print(entity)
+            except ResourceExistsError:
+                print("Entity already exists")
         # [END create_entity]
 
     def delete_entity(self):
@@ -72,24 +72,24 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
         from azure.core import MatchConditions
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
+        with TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name) as table_client:
 
-        # Create entity to delete (to showcase etag)
-        try:
-            resp = table_client.create_entity(entity=self.entity)
-        except ResourceExistsError:
-            print("Entity already exists!")
+            # Create entity to delete (to showcase etag)
+            try:
+                resp = table_client.create_entity(entity=self.entity)
+            except ResourceExistsError:
+                print("Entity already exists!")
 
-        # [START delete_entity]
-        try:
-            table_client.delete_entity(
-                row_key=self.entity["RowKey"],
-                partition_key=self.entity["PartitionKey"]
-            )
-            print("Successfully deleted!")
-        except ResourceNotFoundError:
-            print("Entity does not exists")
-        # [END delete_entity]
+            # [START delete_entity]
+            try:
+                table_client.delete_entity(
+                    row_key=self.entity["RowKey"],
+                    partition_key=self.entity["PartitionKey"]
+                )
+                print("Successfully deleted!")
+            except ResourceNotFoundError:
+                print("Entity does not exists")
+            # [END delete_entity]
 
 
 if __name__ == '__main__':

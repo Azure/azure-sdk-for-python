@@ -168,13 +168,9 @@ class TableEntitySamples(object):
 
 async def main():
     sample = TableEntitySamples()
-    # sleep(10)
     await sample.create_and_get_entities()
-    # sleep(10)
     await sample.list_all_entities()
-    # sleep(10)
     await sample.update_entities()
-    # sleep(10)
     await sample.clean_up()
 
 

@@ -51,18 +51,18 @@ class TableAuthSamples(object):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.data.tables import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-        properties = table_service.get_service_properties()
-        print("Connection String: {}".format(properties))
+        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
+            properties = table_service.get_service_properties()
+            print("Connection String: {}".format(properties))
         # [END auth_from_connection_string]
 
     def authentication_by_shared_key(self):
         # Instantiate a TableServiceClient using a shared access key
         # [START auth_from_shared_key]
         from azure.data.tables import TableServiceClient
-        table_service = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        properties = table_service.get_service_properties()
-        print("Shared Key: {}".format(properties))
+        with TableServiceClient(account_url=self.account_url, credential=self.access_key) as table_service:
+            properties = table_service.get_service_properties()
+            print("Shared Key: {}".format(properties))
         # [END auth_from_shared_key]
 
     def authentication_by_shared_access_signature(self):
@@ -82,10 +82,9 @@ class TableAuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        token_auth_table_service = TableServiceClient(account_url=self.account_url, credential=sas_token)
-
-        properties = token_auth_table_service.get_service_properties()
-        print("Shared Access Signature: {}".format(properties))
+        with TableServiceClient(account_url=self.account_url, credential=sas_token) as token_auth_table_service:
+            properties = token_auth_table_service.get_service_properties()
+            print("Shared Access Signature: {}".format(properties))
         # [END auth_from_sas]
 
 if __name__ == '__main__':

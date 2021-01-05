@@ -117,15 +117,13 @@ class CreateClients(object):
 
     async def clean_up(self):
         await self.table_client.delete_table()
+        await self.table_client.__aexit__()
 
 
 async def main():
     sample = CreateClients()
-    # sleep(10)
     await sample.sample_batching()
-    # sleep(10)
     await sample.clean_up()
-    # sleep(10)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

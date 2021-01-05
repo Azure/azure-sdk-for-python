@@ -52,22 +52,22 @@ class SampleTablesQuery(object):
             u"RowKey": u"row",
         }
 
-        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
-        try:
-            table_client.create_table()
-        except ResourceExistsError:
-            print(u"Table already exists")
-
-        for i in range(10):
-            e = copy.deepcopy(entity_template)
+        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             try:
-                e[u"RowKey"] += unicode(i)
-            except NameError:
-                e[u"RowKey"] += str(i)
-            e[u"Name"] = random.choice(names)
-            e[u"Brand"] = random.choice(brands)
-            e[u"Color"] = random.choice(colors)
-            table_client.create_entity(entity=e)
+                table_client.create_table()
+            except ResourceExistsError:
+                print(u"Table already exists")
+
+            for i in range(10):
+                e = copy.deepcopy(entity_template)
+                try:
+                    e[u"RowKey"] += unicode(i)
+                except NameError:
+                    e[u"RowKey"] += str(i)
+                e[u"Name"] = random.choice(names)
+                e[u"Brand"] = random.choice(brands)
+                e[u"Color"] = random.choice(colors)
+                table_client.create_entity(entity=e)
 
 
     def sample_query_entities(self):
@@ -75,22 +75,22 @@ class SampleTablesQuery(object):
         from azure.data.tables import TableClient
         from azure.core.exceptions import HttpResponseError
 
-        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
         # [START query_entities]
-        try:
-            entity_name = u"marker"
-            name_filter = u"Name eq '{}'".format(entity_name)
-            queried_entities = table_client.query_entities(filter=name_filter, select=[u"Brand",u"Color"])
+        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+            try:
+                entity_name = u"marker"
+                name_filter = u"Name eq '{}'".format(entity_name)
+                queried_entities = table_client.query_entities(filter=name_filter, select=[u"Brand",u"Color"])
 
-            for entity_chosen in queried_entities:
-                print(entity_chosen)
+                for entity_chosen in queried_entities:
+                    print(entity_chosen)
 
-        except HttpResponseError as e:
-            print(e.message)
+            except HttpResponseError as e:
+                print(e.message)
         # [END query_entities]
 
-        finally:
-            table_client.delete_table()
+            finally:
+                table_client.delete_table()
 
 if __name__ == '__main__':
     stq = SampleTablesQuery()

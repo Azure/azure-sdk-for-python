@@ -46,20 +46,17 @@ class CreateClients(object):
         # Instantiate a TableServiceClient using a connection string
         # [START create_table_client]
         from azure.data.tables import TableClient
-        table_client = TableClient.from_connection_string(
-            conn_str=self.connection_string,
-            table_name="tableName"
-        )
-        print("Table name: {}".format(table_client.table_name))
+        with TableClient.from_connection_string(conn_str=self.connection_string, table_name="tableName") as table_client:
+            print("Table name: {}".format(table_client.table_name))
         # [END create_table_client]
 
     def create_table_service_client(self):
         # Instantiate a TableServiceClient using a shared access key
         # [START create_table_service_client]
         from azure.data.tables import TableServiceClient
-        table_service = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        properties = table_service.get_service_properties()
-        print("Properties: {}".format(properties))
+        with TableServiceClient(account_url=self.account_url, credential=self.access_key) as table_service:
+            properties = table_service.get_service_properties()
+            print("Properties: {}".format(properties))
         # [END create_table_service_client]
 
 

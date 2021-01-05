@@ -105,6 +105,7 @@ class CreateClients(object):
 
     def clean_up(self):
         self.table_client.delete_table()
+        self.table_client.__exit__()
 
 
 if __name__ == '__main__':
