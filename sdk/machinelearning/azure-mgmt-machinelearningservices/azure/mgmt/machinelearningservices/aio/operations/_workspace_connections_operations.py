@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class WorkspaceConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class WorkspaceConnectionsOperations:
         target: Optional[str] = None,
         category: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.PaginatedWorkspaceConnectionsList"]:
+    ) -> AsyncIterable["_models.PaginatedWorkspaceConnectionsList"]:
         """List all connections under a AML workspace.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -64,7 +64,7 @@ class WorkspaceConnectionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedWorkspaceConnectionsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PaginatedWorkspaceConnectionsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedWorkspaceConnectionsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,7 +115,7 @@ class WorkspaceConnectionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.MachineLearningServiceError, response)
+                error = self._deserialize(_models.MachineLearningServiceError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -131,9 +131,9 @@ class WorkspaceConnectionsOperations:
         resource_group_name: str,
         workspace_name: str,
         connection_name: str,
-        parameters: "models.WorkspaceConnectionDto",
+        parameters: "_models.WorkspaceConnectionDto",
         **kwargs
-    ) -> "models.WorkspaceConnection":
+    ) -> "_models.WorkspaceConnection":
         """Add a new workspace connection.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -149,7 +149,7 @@ class WorkspaceConnectionsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.WorkspaceConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkspaceConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -186,7 +186,7 @@ class WorkspaceConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkspaceConnection', pipeline_response)
@@ -203,7 +203,7 @@ class WorkspaceConnectionsOperations:
         workspace_name: str,
         connection_name: str,
         **kwargs
-    ) -> "models.WorkspaceConnection":
+    ) -> "_models.WorkspaceConnection":
         """Get the detail of a workspace connection.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -217,7 +217,7 @@ class WorkspaceConnectionsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.WorkspaceConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkspaceConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -249,7 +249,7 @@ class WorkspaceConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkspaceConnection', pipeline_response)
@@ -312,7 +312,7 @@ class WorkspaceConnectionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

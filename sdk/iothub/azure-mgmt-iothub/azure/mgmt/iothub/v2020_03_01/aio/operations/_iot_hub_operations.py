@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -27,14 +27,14 @@ class IotHubOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.iothub.v2020_03_01.models
+    :type models: ~azure.mgmt.iothub.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class IotHubOperations:
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        failover_input: "models.FailoverInput",
+        failover_input: "_models.FailoverInput",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -85,7 +85,7 @@ class IotHubOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -97,7 +97,7 @@ class IotHubOperations:
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        failover_input: "models.FailoverInput",
+        failover_input: "_models.FailoverInput",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Manually initiate a failover for the IoT Hub to its secondary region.
@@ -112,7 +112,7 @@ class IotHubOperations:
         :param failover_input: Region to failover to. Must be the Azure paired region. Get the value
          from the secondary location in the locations property. To learn more, see
          https://aka.ms/manualfailover/region.
-        :type failover_input: ~azure.mgmt.iothub.v2020_03_01.models.FailoverInput
+        :type failover_input: ~azure.mgmt.iothub.models.FailoverInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a

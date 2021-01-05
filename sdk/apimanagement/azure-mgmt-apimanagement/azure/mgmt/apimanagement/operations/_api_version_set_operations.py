@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ApiVersionSetOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class ApiVersionSetOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ApiVersionSetCollection"]
+        # type: (...) -> Iterable["_models.ApiVersionSetCollection"]
         """Lists a collection of API Version Sets in the specified service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -73,7 +73,7 @@ class ApiVersionSetOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ApiVersionSetCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiVersionSetCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiVersionSetCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -126,7 +126,7 @@ class ApiVersionSetOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -191,7 +191,7 @@ class ApiVersionSetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -210,7 +210,7 @@ class ApiVersionSetOperations(object):
         version_set_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApiVersionSetContract"
+        # type: (...) -> "_models.ApiVersionSetContract"
         """Gets the details of the Api Version Set specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -225,7 +225,7 @@ class ApiVersionSetOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.ApiVersionSetContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiVersionSetContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiVersionSetContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -257,7 +257,7 @@ class ApiVersionSetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -275,11 +275,11 @@ class ApiVersionSetOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         version_set_id,  # type: str
-        parameters,  # type: "models.ApiVersionSetContract"
+        parameters,  # type: "_models.ApiVersionSetContract"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApiVersionSetContract"
+        # type: (...) -> "_models.ApiVersionSetContract"
         """Creates or Updates a Api Version Set.
 
         :param resource_group_name: The name of the resource group.
@@ -299,7 +299,7 @@ class ApiVersionSetOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.ApiVersionSetContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiVersionSetContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiVersionSetContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -338,7 +338,7 @@ class ApiVersionSetOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -362,10 +362,10 @@ class ApiVersionSetOperations(object):
         service_name,  # type: str
         version_set_id,  # type: str
         if_match,  # type: str
-        parameters,  # type: "models.ApiVersionSetUpdateParameters"
+        parameters,  # type: "_models.ApiVersionSetUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApiVersionSetContract"
+        # type: (...) -> "_models.ApiVersionSetContract"
         """Updates the details of the Api VersionSet specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -385,7 +385,7 @@ class ApiVersionSetOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.ApiVersionSetContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiVersionSetContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiVersionSetContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -423,7 +423,7 @@ class ApiVersionSetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -495,7 +495,7 @@ class ApiVersionSetOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DisksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -53,7 +53,7 @@ class DisksOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DiskList"]:
+    ) -> AsyncIterable["_models.DiskList"]:
         """List disks in a given user profile.
 
         :param resource_group_name: The name of the resource group.
@@ -76,7 +76,7 @@ class DisksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.DiskList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -150,7 +150,7 @@ class DisksOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.Disk":
+    ) -> "_models.Disk":
         """Get disk.
 
         :param resource_group_name: The name of the resource group.
@@ -168,7 +168,7 @@ class DisksOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Disk
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Disk"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Disk"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,10 +219,10 @@ class DisksOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        disk: "models.Disk",
+        disk: "_models.Disk",
         **kwargs
-    ) -> "models.Disk":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Disk"]
+    ) -> "_models.Disk":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Disk"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -280,9 +280,9 @@ class DisksOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        disk: "models.Disk",
+        disk: "_models.Disk",
         **kwargs
-    ) -> AsyncLROPoller["models.Disk"]:
+    ) -> AsyncLROPoller["_models.Disk"]:
         """Create or replace an existing disk. This operation can take a while to complete.
 
         :param resource_group_name: The name of the resource group.
@@ -306,7 +306,7 @@ class DisksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Disk"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Disk"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -333,7 +333,15 @@ class DisksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -447,7 +455,15 @@ class DisksOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -467,9 +483,9 @@ class DisksOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        disk: "models.DiskFragment",
+        disk: "_models.DiskFragment",
         **kwargs
-    ) -> "models.Disk":
+    ) -> "_models.Disk":
         """Allows modifying tags of disks. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -487,7 +503,7 @@ class DisksOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Disk
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Disk"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Disk"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -550,7 +566,7 @@ class DisksOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _attach_disk_properties = models.AttachDiskProperties(leased_by_lab_vm_id=leased_by_lab_vm_id)
+        _attach_disk_properties = _models.AttachDiskProperties(leased_by_lab_vm_id=leased_by_lab_vm_id)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -649,7 +665,15 @@ class DisksOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -678,7 +702,7 @@ class DisksOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _detach_disk_properties = models.DetachDiskProperties(leased_by_lab_vm_id=leased_by_lab_vm_id)
+        _detach_disk_properties = _models.DetachDiskProperties(leased_by_lab_vm_id=leased_by_lab_vm_id)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -776,7 +800,15 @@ class DisksOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

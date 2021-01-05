@@ -77,6 +77,20 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
         tags=dict(_utils.azure_monitor_context),
         time=ns_to_iso_str(span.start_time),
     )
+    if span.resource and span.resource.attributes:
+        # TODO: Get Resource attributes from OpenTelemetry SDK when available
+        service_name = span.resource.attributes.get("service.name")
+        service_namespace = span.resource.attributes.get("service.namespace")
+        service_instance_id = span.resource.attributes.get("service.instance.id")
+        if service_name:
+            if service_namespace:
+                envelope.tags["ai.cloud.role"] = service_namespace + \
+                    "." + service_name
+            else:
+                envelope.tags["ai.cloud.role"] = service_name
+        if service_instance_id:
+            envelope.tags["ai.cloud.roleInstance"] = service_instance_id
+
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
     parent = span.parent
     if parent:

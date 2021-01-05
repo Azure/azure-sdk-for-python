@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class RunbookDraftOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -149,7 +149,7 @@ class RunbookDraftOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -248,7 +248,7 @@ class RunbookDraftOperations:
         automation_account_name: str,
         runbook_name: str,
         **kwargs
-    ) -> "models.RunbookDraft":
+    ) -> "_models.RunbookDraft":
         """Retrieve the runbook draft identified by runbook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -262,7 +262,7 @@ class RunbookDraftOperations:
         :rtype: ~azure.mgmt.automation.models.RunbookDraft
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunbookDraft"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunbookDraft"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -294,7 +294,7 @@ class RunbookDraftOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RunbookDraft', pipeline_response)
@@ -311,7 +311,7 @@ class RunbookDraftOperations:
         automation_account_name: str,
         runbook_name: str,
         **kwargs
-    ) -> "models.RunbookDraftUndoEditResult":
+    ) -> "_models.RunbookDraftUndoEditResult":
         """Undo draft edit to last known published state identified by runbook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -325,7 +325,7 @@ class RunbookDraftOperations:
         :rtype: ~azure.mgmt.automation.models.RunbookDraftUndoEditResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunbookDraftUndoEditResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunbookDraftUndoEditResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -357,7 +357,7 @@ class RunbookDraftOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RunbookDraftUndoEditResult', pipeline_response)

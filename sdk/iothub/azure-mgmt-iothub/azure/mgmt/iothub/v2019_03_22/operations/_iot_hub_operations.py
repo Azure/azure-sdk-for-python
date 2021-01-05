@@ -15,7 +15,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class IotHubOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class IotHubOperations(object):
         self,
         iot_hub_name,  # type: str
         resource_group_name,  # type: str
-        failover_input,  # type: "models.FailoverInput"
+        failover_input,  # type: "_models.FailoverInput"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -90,7 +90,7 @@ class IotHubOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -102,7 +102,7 @@ class IotHubOperations(object):
         self,
         iot_hub_name,  # type: str
         resource_group_name,  # type: str
-        failover_input,  # type: "models.FailoverInput"
+        failover_input,  # type: "_models.FailoverInput"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]

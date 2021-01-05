@@ -138,7 +138,7 @@ class AuthenticationProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, s
 
     VALID = "Valid"  #: Valid connector.
     INVALID = "Invalid"  #: Invalid connector.
-    EXPIRED = "Expired"  #: the connection is expired.
+    EXPIRED = "Expired"  #: the connection has expired.
     INCORRECT_POLICY = "IncorrectPolicy"  #: Incorrect policy of the connector.
 
 class AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -255,16 +255,6 @@ class Enum3(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MCAS = "MCAS"
     WDATP = "WDATP"
 
-class Enum37(with_metaclass(_CaseInsensitiveEnumMeta, bool, Enum)):
-
-    FALSE = False
-    TRUE = True
-
-class Enum38(with_metaclass(_CaseInsensitiveEnumMeta, bool, Enum)):
-
-    FALSE = False
-    TRUE = True
-
 class EventSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """A valid event source type.
     """
@@ -272,6 +262,8 @@ class EventSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ASSESSMENTS = "Assessments"
     SUB_ASSESSMENTS = "SubAssessments"
     ALERTS = "Alerts"
+    SECURE_SCORES = "SecureScores"
+    SECURE_SCORE_CONTROLS = "SecureScoreControls"
 
 class ExpandControlsEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -530,6 +522,16 @@ class ResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OFF_BY_POLICY = "OffByPolicy"  #: This assessment is turned off by policy on this subscription.
     NOT_HEALTHY = "NotHealthy"  #: This assessment on the resource is not healthy.
 
+class RuleSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The rule severity.
+    """
+
+    HIGH = "High"  #: High.
+    MEDIUM = "Medium"  #: Medium.
+    LOW = "Low"  #: Low.
+    INFORMATIONAL = "Informational"  #: Informational.
+    OBSOLETE = "Obsolete"  #: Obsolete.
+
 class RuleState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Possible states of the rule
     """
@@ -538,12 +540,45 @@ class RuleState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
     EXPIRED = "Expired"
 
+class RuleStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The rule result status.
+    """
+
+    NON_FINDING = "NonFinding"  #: NonFinding.
+    FINDING = "Finding"  #: Finding.
+    INTERNAL_ERROR = "InternalError"  #: InternalError.
+
+class RuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The rule type.
+    """
+
+    BINARY = "Binary"  #: Binary.
+    BASELINE_EXPECTED = "BaselineExpected"  #: BaselineExpected.
+    POSITIVE_LIST = "PositiveList"  #: PositiveList.
+    NEGATIVE_LIST = "NegativeList"  #: NegativeList.
+
 class ScanningFunctionality(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the device is a scanner
     """
 
     SCANNER_DEVICE = "ScannerDevice"
     NOT_SCANNER_DEVICE = "NotScannerDevice"
+
+class ScanState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The scan status.
+    """
+
+    FAILED = "Failed"  #: Failed.
+    FAILED_TO_RUN = "FailedToRun"  #: FailedToRun.
+    IN_PROGRESS = "InProgress"  #: InProgress.
+    PASSED = "Passed"  #: Passed.
+
+class ScanTriggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The scan trigger type.
+    """
+
+    ON_DEMAND = "OnDemand"  #: OnDemand.
+    RECURRING = "Recurring"  #: Recurring.
 
 class SecurityFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The security family of the discovered solution
@@ -560,6 +595,14 @@ class SecuritySolutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class SensorStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of the IoT sensor
+    """
+
+    OK = "Ok"
+    DISCONNECTED = "Disconnected"
+    UNAVAILABLE = "Unavailable"
 
 class ServerVulnerabilityAssessmentPropertiesProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioningState of the vulnerability assessment capability on the VM
@@ -648,6 +691,15 @@ class Threats(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     THREAT_RESISTANCE = "threatResistance"
     MISSING_COVERAGE = "missingCoverage"
     DENIAL_OF_SERVICE = "denialOfService"
+
+class TiStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """TI Status of the IoT sensor
+    """
+
+    OK = "Ok"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
+    UPDATE_AVAILABLE = "UpdateAvailable"
 
 class TransportProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

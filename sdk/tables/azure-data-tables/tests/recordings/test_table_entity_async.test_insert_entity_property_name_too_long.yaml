@@ -11,23 +11,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:38:09 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:09 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable7d0b1b23"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable7d0b1b23"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:38:10 GMT
-      location: https://tablesteststorname.table.core.windows.net/Tables('uttable7d0b1b23')
+      date: Fri, 18 Dec 2020 17:10:18 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('uttable7d0b1b23')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,12 +35,12 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
-    body: '{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa":
-      "badval", "PartitionKey": "pk7d0b1b23", "RowKey@odata.type": "Edm.String", "RowKey":
-      "rk7d0b1b23", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@odata.type":
-      "Edm.String", "PartitionKey@odata.type": "Edm.String"}'
+    body: '{"PartitionKey": "pk7d0b1b23", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk7d0b1b23", "RowKey@odata.type": "Edm.String", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa":
+      "badval", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@odata.type":
+      "Edm.String"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -51,23 +51,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:38:09 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:09 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttable7d0b1b23
+    uri: https://fake_table_account.table.core.windows.net/uttable7d0b1b23
   response:
     body:
       string: '{"odata.error":{"code":"PropertyNameTooLong","message":{"lang":"en-US","value":"The
-        property name exceeds the maximum allowed length (255).\nRequestId:f55964b8-5002-0070-06a6-b4826b000000\nTime:2020-11-07T01:38:10.1973426Z"}}}'
+        property name exceeds the maximum allowed length (255).\nRequestId:b474760a-9002-0053-4a60-d5802d000000\nTime:2020-12-18T17:10:19.1080416Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:38:10 GMT
+      date: Fri, 18 Dec 2020 17:10:18 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -75,34 +75,34 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable7d0b1b23
+    url: https://seankaneprim.table.core.windows.net/uttable7d0b1b23
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Sat, 07 Nov 2020 01:38:09 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:09 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('uttable7d0b1b23')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable7d0b1b23')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Sat, 07 Nov 2020 01:38:10 GMT
+      date: Fri, 18 Dec 2020 17:10:18 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/Tables('uttable7d0b1b23')
+    url: https://seankaneprim.table.core.windows.net/Tables('uttable7d0b1b23')
 version: 1

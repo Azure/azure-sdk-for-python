@@ -32,7 +32,7 @@ class MgmtConsumptionTest(AzureMgmtTestCase):
             "amount": '100',
             "timeGrain": "Monthly",
             "timePeriod": {
-                "startDate": "2020-10-01T00:00:00Z",
+                "startDate": "2021-01-01T00:00:00Z",
                 "endDate": "2021-10-31T00:00:00Z"
             }
         }

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DataFlowsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,11 +50,11 @@ class DataFlowsOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         data_flow_name,  # type: str
-        data_flow,  # type: "models.DataFlowResource"
+        data_flow,  # type: "_models.DataFlowResource"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DataFlowResource"
+        # type: (...) -> "_models.DataFlowResource"
         """Creates or updates a data flow.
 
         :param resource_group_name: The resource group name.
@@ -73,7 +73,7 @@ class DataFlowsOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.DataFlowResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -130,7 +130,7 @@ class DataFlowsOperations(object):
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DataFlowResource"
+        # type: (...) -> "_models.DataFlowResource"
         """Gets a data flow.
 
         :param resource_group_name: The resource group name.
@@ -147,7 +147,7 @@ class DataFlowsOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.DataFlowResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -257,7 +257,7 @@ class DataFlowsOperations(object):
         factory_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DataFlowListResponse"]
+        # type: (...) -> Iterable["_models.DataFlowListResponse"]
         """Lists data flows.
 
         :param resource_group_name: The resource group name.
@@ -269,7 +269,7 @@ class DataFlowsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.DataFlowListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

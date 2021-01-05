@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class ReservationRecommendationDetailsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,13 +43,13 @@ class ReservationRecommendationDetailsOperations:
     async def get(
         self,
         billing_scope: str,
-        scope: Union[str, "models.Scope"],
+        scope: Union[str, "_models.Scope"],
         region: str,
-        term: Union[str, "models.Term"],
-        look_back_period: Union[str, "models.LookBackPeriod"],
+        term: Union[str, "_models.Term"],
+        look_back_period: Union[str, "_models.LookBackPeriod"],
         product: str,
         **kwargs
-    ) -> Optional["models.ReservationRecommendationDetailsModel"]:
+    ) -> Optional["_models.ReservationRecommendationDetailsModel"]:
         """Details of a reservation recommendation for what-if analysis of reserved instances.
 
         :param billing_scope: The scope associated with reservation recommendation details operations.
@@ -76,7 +76,7 @@ class ReservationRecommendationDetailsOperations:
         :rtype: ~azure.mgmt.consumption.models.ReservationRecommendationDetailsModel or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ReservationRecommendationDetailsModel"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ReservationRecommendationDetailsModel"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,7 +110,7 @@ class ReservationRecommendationDetailsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None

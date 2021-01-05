@@ -197,7 +197,7 @@ with client:
 
 ### Publish events to an Event Hub asynchronously
 
-Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
+Use the `create_batch` method on `EventHubProducer` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 ```python
 import asyncio

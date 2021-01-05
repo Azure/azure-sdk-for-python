@@ -28,6 +28,10 @@ _LOGGER = logging.getLogger(__name__)
 class CryptographyClient(KeyVaultClientBase):
     """Performs cryptographic operations using Azure Key Vault keys.
 
+    This client will perform operations locally when it's intialized with the necessary key material or is able to get
+    that material from Key Vault. When the required key material is unavailable, cryptographic operations are performed
+    by the Key Vault service.
+
     :param key:
         Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
         :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string.

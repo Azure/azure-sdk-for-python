@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PolicyTrackedResourcesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,10 +48,10 @@ class PolicyTrackedResourcesOperations(object):
     def list_query_results_for_management_group(
         self,
         management_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicyTrackedResourcesQueryResults"]
+        # type: (...) -> Iterable["_models.PolicyTrackedResourcesQueryResults"]
         """Queries policy tracked resources under the management group.
 
         :param management_group_name: Management group name.
@@ -63,7 +63,7 @@ class PolicyTrackedResourcesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyTrackedResourcesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyTrackedResourcesQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyTrackedResourcesQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class PolicyTrackedResourcesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -135,10 +135,10 @@ class PolicyTrackedResourcesOperations(object):
 
     def list_query_results_for_subscription(
         self,
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicyTrackedResourcesQueryResults"]
+        # type: (...) -> Iterable["_models.PolicyTrackedResourcesQueryResults"]
         """Queries policy tracked resources under the subscription.
 
         :param query_options: Parameter group.
@@ -148,7 +148,7 @@ class PolicyTrackedResourcesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyTrackedResourcesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyTrackedResourcesQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyTrackedResourcesQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -205,7 +205,7 @@ class PolicyTrackedResourcesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -219,10 +219,10 @@ class PolicyTrackedResourcesOperations(object):
     def list_query_results_for_resource_group(
         self,
         resource_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicyTrackedResourcesQueryResults"]
+        # type: (...) -> Iterable["_models.PolicyTrackedResourcesQueryResults"]
         """Queries policy tracked resources under the resource group.
 
         :param resource_group_name: Resource group name.
@@ -234,7 +234,7 @@ class PolicyTrackedResourcesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyTrackedResourcesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyTrackedResourcesQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyTrackedResourcesQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -292,7 +292,7 @@ class PolicyTrackedResourcesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -306,10 +306,10 @@ class PolicyTrackedResourcesOperations(object):
     def list_query_results_for_resource(
         self,
         resource_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicyTrackedResourcesQueryResults"]
+        # type: (...) -> Iterable["_models.PolicyTrackedResourcesQueryResults"]
         """Queries policy tracked resources under the resource.
 
         :param resource_id: Resource ID.
@@ -321,7 +321,7 @@ class PolicyTrackedResourcesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyTrackedResourcesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyTrackedResourcesQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyTrackedResourcesQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -378,7 +378,7 @@ class PolicyTrackedResourcesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

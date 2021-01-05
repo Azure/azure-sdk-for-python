@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class OnPremiseIotSensorsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,7 +43,7 @@ class OnPremiseIotSensorsOperations:
     async def list(
         self,
         **kwargs
-    ) -> "models.OnPremiseIotSensorsList":
+    ) -> "_models.OnPremiseIotSensorsList":
         """List on-premise IoT sensors.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -51,7 +51,7 @@ class OnPremiseIotSensorsOperations:
         :rtype: ~azure.mgmt.security.models.OnPremiseIotSensorsList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OnPremiseIotSensorsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnPremiseIotSensorsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -94,7 +94,7 @@ class OnPremiseIotSensorsOperations:
         self,
         on_premise_iot_sensor_name: str,
         **kwargs
-    ) -> "models.OnPremiseIotSensor":
+    ) -> "_models.OnPremiseIotSensor":
         """Get on-premise IoT sensor.
 
         :param on_premise_iot_sensor_name: Name of the on-premise IoT sensor.
@@ -104,7 +104,7 @@ class OnPremiseIotSensorsOperations:
         :rtype: ~azure.mgmt.security.models.OnPremiseIotSensor
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OnPremiseIotSensor"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnPremiseIotSensor"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -148,7 +148,7 @@ class OnPremiseIotSensorsOperations:
         self,
         on_premise_iot_sensor_name: str,
         **kwargs
-    ) -> "models.OnPremiseIotSensor":
+    ) -> "_models.OnPremiseIotSensor":
         """Create or update on-premise IoT sensor.
 
         :param on_premise_iot_sensor_name: Name of the on-premise IoT sensor.
@@ -158,7 +158,7 @@ class OnPremiseIotSensorsOperations:
         :rtype: ~azure.mgmt.security.models.OnPremiseIotSensor
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OnPremiseIotSensor"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnPremiseIotSensor"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -306,3 +306,65 @@ class OnPremiseIotSensorsOperations:
 
         return deserialized
     download_activation.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/onPremiseIotSensors/{onPremiseIotSensorName}/downloadActivation'}  # type: ignore
+
+    async def download_reset_password(
+        self,
+        on_premise_iot_sensor_name: str,
+        body: "_models.ResetPasswordInput",
+        **kwargs
+    ) -> IO:
+        """Download file for reset password of the sensor.
+
+        :param on_premise_iot_sensor_name: Name of the on-premise IoT sensor.
+        :type on_premise_iot_sensor_name: str
+        :param body: Input for reset password.
+        :type body: ~azure.mgmt.security.models.ResetPasswordInput
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/zip"
+
+        # Construct URL
+        url = self.download_reset_password.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'onPremiseIotSensorName': self._serialize.url("on_premise_iot_sensor_name", on_premise_iot_sensor_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(body, 'ResetPasswordInput')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = response.stream_download(self._client._pipeline)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    download_reset_password.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/onPremiseIotSensors/{onPremiseIotSensorName}/downloadResetPassword'}  # type: ignore
