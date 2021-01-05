@@ -3,7 +3,7 @@ from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 import azure.mgmt.netapp.models
 from azure.mgmt.netapp.models import NetAppAccount, NetAppAccountPatch
-from tests.setup import *
+from setup import *
 
 
 def create_account(client, rg, acc_name, location=LOCATION, tags=None, active_directories=None):

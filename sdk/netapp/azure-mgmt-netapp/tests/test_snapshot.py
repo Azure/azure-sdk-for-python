@@ -2,10 +2,10 @@ import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import Volume
-from tests.test_volume import create_volume, wait_for_volume, delete_volume
-from tests.test_pool import delete_pool
-from tests.test_account import delete_account
-from tests.setup import *
+from test_volume import create_volume, wait_for_volume, delete_volume
+from test_pool import delete_pool
+from test_account import delete_account
+from setup import *
 import azure.mgmt.netapp.models
 
 TEST_SNAPSHOT_1 = 'sdk-py-tests-snapshot-1'

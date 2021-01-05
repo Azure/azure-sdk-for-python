@@ -2,8 +2,8 @@ import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import BackupPolicy
-from tests.test_account import create_account, delete_account
-from tests.setup import *
+from test_account import create_account, delete_account
+from setup import *
 import azure.mgmt.netapp.models
 
 TEST_BACKUP_POLICY_1='sdk-py-tests-backup-policy-1'

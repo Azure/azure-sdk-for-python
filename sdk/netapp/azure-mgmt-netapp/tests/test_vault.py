@@ -1,6 +1,6 @@
 from devtools_testutils import AzureMgmtTestCase
-from tests.test_volume import create_volume
-from tests.setup import *
+from test_volume import create_volume
+from setup import *
 import azure.mgmt.netapp.models
 
 CBS_LOCATION = 'eastus2euap'

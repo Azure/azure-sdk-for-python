@@ -2,9 +2,9 @@ import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import Backup, VolumePatch
-from tests.test_account import delete_account
-from tests.test_volume import create_volume, wait_for_volume, delete_volume, delete_pool
-from tests.setup import *
+from test_account import delete_account
+from test_volume import create_volume, wait_for_volume, delete_volume, delete_pool
+from setup import *
 import azure.mgmt.netapp.models
 import unittest
 
