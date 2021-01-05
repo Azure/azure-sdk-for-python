@@ -38,7 +38,7 @@ class MgmtIoTCentralTest(AzureMgmtTestCase):
                 'subdomain': account_name,
                 'display_name': account_name,
                 'sku': {
-                  'name': 'S1'
+                  'name': 'ST1'
                 }
             }
         )

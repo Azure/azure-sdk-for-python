@@ -1,5 +1,15 @@
 # Release History
 
+## 4.0.0 (2021-01-05)
+
+**Features**
+
+  - Model AppTemplate has a new parameter name
+
+**Breaking changes**
+
+  - Model AppTemplate no longer has parameter app_template_name
+
 ## 3.1.0 (2020-06-30)
 
 **Features**
