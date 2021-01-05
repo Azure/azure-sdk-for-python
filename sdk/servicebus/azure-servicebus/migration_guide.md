@@ -85,28 +85,18 @@ This provides consistency and predictability on the various features of the libr
 
 ### Client constructors
 
-- While we continue to support connection strings when constructing a client, the main difference is when using Azure Active Directory.
-We now use the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library
-to share a single authentication solution between clients of different Azure services.
-
-In V0.50:
+- Constructing the client using the connection string remains the same in both versions.
 ```python
-# Authenticate with connection string
+# Authenticate with connection string in V0.50 and V7
 servicebus_client = ServiceBusClient.from_connection_string(conn_str)
-
-# Authenticate with SAS key name and value:
-servicebus_client = ServiceBusClient(service_namespace=service_namespace, shared_access_key_name=key_name, shared_access_key_value=key_value)
 ```
-
-In V7:
+- Additionally, you can now use Azure Active Directory for authentication via the [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library in V7.
 ```python
-# Authenticate with connection string
-servicebus_client = ServiceBusClient.from_connection_string(conn_str)
-
-# Authenticate with Active Directory:
+# Authenticate with Azure Active Directory in V7
 from azure.identity import DefaultAzureCredential
 servicebus_client = ServiceBusClient(fully_qualified_namespace, credential=DefaultAzureCredential())
 ```
+- The option to construct the client using SAS key name and value is not available in the new version, but will be added in the near future.
 
 ### Creating sender and receivers
 
@@ -179,6 +169,7 @@ with sender:
 
     # safely send multiple messages by using a batch object
     message_batch = sender.create_message_batch()
+    # add_message will throw MessageSizeExceededError if added size results in the batch exceeding the maximum batch size
     message_batch.add_message(ServiceBusMessage("data"))
     sender.send_messages(message_batch)
 ```
@@ -374,8 +365,6 @@ In V7 of this library, we simplified this as below:
 In v0.50, you could create/get/update/delete/list Service Bus queues/topics/subscriptions/rules using the `control_client`.
 In v7, this is replaced by the `ServiceBusAdministrationClient`.
 The following code snippets show how to manage queues, similar methods are provided on the `ServiceBusAdministrationClient` to manage topics, subscriptions and rules.
-
-#### Managing Queues
 
 In V0.50:
 ```python
