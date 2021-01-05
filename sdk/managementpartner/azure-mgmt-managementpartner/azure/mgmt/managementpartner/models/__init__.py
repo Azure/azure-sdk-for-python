@@ -10,24 +10,24 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .partner_response_py3 import PartnerResponse
-    from .extended_error_info_py3 import ExtendedErrorInfo
-    from .error_py3 import Error, ErrorException
-    from .operation_display_py3 import OperationDisplay
-    from .operation_response_py3 import OperationResponse
+    from ._models_py3 import Error, ErrorException
+    from ._models_py3 import ExtendedErrorInfo
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationResponse
+    from ._models_py3 import PartnerResponse
 except (SyntaxError, ImportError):
-    from .partner_response import PartnerResponse
-    from .extended_error_info import ExtendedErrorInfo
-    from .error import Error, ErrorException
-    from .operation_display import OperationDisplay
-    from .operation_response import OperationResponse
-from .operation_response_paged import OperationResponsePaged
+    from ._models import Error, ErrorException
+    from ._models import ExtendedErrorInfo
+    from ._models import OperationDisplay
+    from ._models import OperationResponse
+    from ._models import PartnerResponse
+from ._paged_models import OperationResponsePaged
 
 __all__ = [
-    'PartnerResponse',
-    'ExtendedErrorInfo',
     'Error', 'ErrorException',
+    'ExtendedErrorInfo',
     'OperationDisplay',
     'OperationResponse',
+    'PartnerResponse',
     'OperationResponsePaged',
 ]

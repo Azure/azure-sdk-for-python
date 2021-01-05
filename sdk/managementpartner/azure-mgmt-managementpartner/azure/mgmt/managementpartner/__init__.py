@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .ace_provisioning_management_partner_api import ACEProvisioningManagementPartnerAPI
-from .version import VERSION
+from ._configuration import ACEProvisioningManagementPartnerAPIConfiguration
+from ._ace_provisioning_management_partner_api import ACEProvisioningManagementPartnerAPI
+__all__ = ['ACEProvisioningManagementPartnerAPI', 'ACEProvisioningManagementPartnerAPIConfiguration']
 
-__all__ = ['ACEProvisioningManagementPartnerAPI']
+from .version import VERSION
 
 __version__ = VERSION
 
