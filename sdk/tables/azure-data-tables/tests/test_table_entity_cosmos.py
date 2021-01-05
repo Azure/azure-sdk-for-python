@@ -1468,7 +1468,10 @@ class StorageTableEntityTest(TableTestCase):
                     base_entity['PartitionKey'] += str(i)
                 base_entity['RowKey'] += str(i)
                 base_entity['value'] = i
-                self.table.create_entity(base_entity)
+                try:
+                    self.table.create_entity(base_entity)
+                except ResourceExistsError:
+                    pass
 
             query_filter = u"PartitionKey eq 'pk'"
 
