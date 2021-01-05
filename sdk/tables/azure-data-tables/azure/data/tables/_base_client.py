@@ -16,8 +16,9 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 import logging
-from uuid import uuid4
-
+from uuid import uuid4, UUID
+from datetime import datetime
+import six
 
 try:
     from urllib.parse import parse_qs, quote
@@ -44,6 +45,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
+from ._common_conversion import _to_utc_datetime
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     STORAGE_OAUTH_SCOPE,
@@ -348,10 +350,19 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         if parameters:
             filter_strings = filter.split(' ')
-            for idx, f in enumerate(filter_strings):
-                if '@' in f:
-                    val = parameters[f[1:]]
-                    filter_strings[idx] = "'{}'".format(val)
+            for index, word in enumerate(filter_strings):
+                if word[0] == u'@':
+                    val = parameters[word[1:]]
+                    if val in [True, False]:
+                        filter_strings[index] = str(val).lower()
+                    elif isinstance(val, float) or isinstance(val, six.integer_types):
+                        filter_strings[index] = str(val)
+                    elif isinstance(val, datetime):
+                        filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
+                    elif isinstance(val, UUID):
+                        filter_strings[index] = "guid'{}'".format(str(val))
+                    else:
+                        filter_strings[index] = "'{}'".format(val)
             return ' '.join(filter_strings)
 
         return filter  # pylint: disable = W0622

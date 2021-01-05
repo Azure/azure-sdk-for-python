@@ -317,19 +317,24 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = self._insert_random_entity()
+            entity, _ = self._insert_random_entity()
 
             # Act
-            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+            entities = self.table.query_entities(
+                filter="married eq @my_param",
+                parameters={'my_param': entity['married']}
+            )
 
             assert entities is not None
+            length = 0
             for e in entities:
                 self._assert_default_entity(e)
+                length += 1
 
+            assert length == 1
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/15554")
     @TablesPreparer()
     def test_query_user_filter_multiple_params(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -339,14 +344,111 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             parameters = {
-                'my_param': 'True',
+                'my_param': True,
                 'rk': entity['RowKey']
             }
             entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
 
+            length = 0
             assert entities is not None
             for entity in entities:
                 self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_integers(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': 40,
+            }
+            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_floats(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': 1.0,
+            }
+            entities = self.table.query_entities(filter="ratio gt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @pytest.mark.xfail
+    @TablesPreparer()
+    def test_query_user_filter_datetimes(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': datetime(1970, 10, 4, tzinfo=tzutc()),
+            }
+            entities = self.table.query_entities(filter="birthday gt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_guids(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': entity['clsid']
+            }
+            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
         finally:
             self._tear_down()
 
