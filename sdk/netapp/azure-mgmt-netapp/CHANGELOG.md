@@ -1,5 +1,13 @@
 # Release History
 
+## 0.15.0 (2021-01-05)
+
+**Features**
+
+  - Model Volume has a new parameter smb_encryption
+  - Model Volume has a new parameter smb_continuously_available
+  - Model ActiveDirectory has a new parameter security_operators
+
 
 ## 0.14.0 (2020-11-16)
 
