@@ -152,4 +152,4 @@ class BaselinesOperations(object):
         deserialized = models.SingleMetricBaselinePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricBaselines'}
+    list.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/metricBaselines'}
