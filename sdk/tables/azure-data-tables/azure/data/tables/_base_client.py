@@ -26,7 +26,6 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
@@ -355,7 +354,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     val = parameters[word[1:]]
                     if val in [True, False]:
                         filter_strings[index] = str(val).lower()
-                    elif isinstance(val, float) or isinstance(val, six.integer_types):
+                    elif isinstance(val, (float, six.integer_types)):
                         filter_strings[index] = str(val)
                     elif isinstance(val, datetime):
                         filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
