@@ -509,6 +509,7 @@ class ServiceOperations(object):
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
         response_headers['x-ms-sku-name']=self._deserialize('str', response.headers.get('x-ms-sku-name'))
         response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
+        response_headers['x-ms-is-hns-enabled']=self._deserialize('bool', response.headers.get('x-ms-is-hns-enabled'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
