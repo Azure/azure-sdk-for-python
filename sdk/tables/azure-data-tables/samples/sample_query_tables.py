@@ -42,7 +42,7 @@ class QueryTables(object):
     def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
         from azure.data.tables import TableServiceClient
-        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as ts:
+        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
 
             # [START tsc_create_table]
             table_service.create_table("mytable1")
