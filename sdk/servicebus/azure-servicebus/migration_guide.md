@@ -26,7 +26,7 @@ For those new to the Service Bus client library for Python, please refer to the 
     - [Working with Message properties](#working-with-message-properties)
     - [Working with Administration Client](#working-with-administration-client)
     - [Migration samples](#migration-samples)
-* [Addition samples](#addition-samples)
+* [Additional samples](#additional-samples)
 
 ## Migration benefits
 
@@ -494,6 +494,6 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
         sender.send_messages(batch)
 ```
 
-### Addition samples
+### Additional samples
 
 More examples can be found at [Samples for azure-servicebus](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples)
