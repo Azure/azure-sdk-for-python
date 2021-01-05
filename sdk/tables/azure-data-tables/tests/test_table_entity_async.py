@@ -1327,7 +1327,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.xfail
     @TablesPreparer()
     async def test_query_user_filter_datetimes(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -1337,9 +1336,9 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             parameters = {
-                'my_param': datetime(1970, 10, 4, tzinfo=tzutc()),
+                'my_param': entity['birthday'],
             }
-            entities = self.table.query_entities(filter="birthday gt @my_param", parameters=parameters)
+            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
