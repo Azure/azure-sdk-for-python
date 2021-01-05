@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .partner_operations import PartnerOperations
-from .operation_operations import OperationOperations
-from .partners_operations import PartnersOperations
+from ._partner_operations import PartnerOperations
+from ._operation_operations import OperationOperations
+from ._partners_operations import PartnersOperations
 
 __all__ = [
     'PartnerOperations',
