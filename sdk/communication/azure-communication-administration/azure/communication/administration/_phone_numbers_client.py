@@ -10,8 +10,7 @@ from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from ._polling import ReleasePhoneNumberPolling, ReservePhoneNumberPolling, PurchaseReservationPolling
 
-from ._phonenumber._generated._phone_number_administration_service\
-    import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
+from ._phonenumber._generated._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
 
 from ._phonenumber._generated.models import (
     AcquiredPhoneNumbers,
@@ -35,7 +34,7 @@ from ._shared.utils import parse_connection_str
 from ._shared.policy import HMACCredentialsPolicy
 from ._version import SDK_MONIKER
 
-class PhoneNumberAdministrationClient(object):
+class PhoneNumbersClient(object):
     """Azure Communication Services Phone Number Management client.
 
     :param str endpoint:
@@ -62,7 +61,7 @@ class PhoneNumberAdministrationClient(object):
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
-        self._phone_number_administration_client = PhoneNumberAdministrationClientGen(
+        self._phone_number_administration_client = PhoneNumbersClientGen(
             self._endpoint,
             authentication_policy=HMACCredentialsPolicy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
