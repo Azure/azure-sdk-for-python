@@ -414,6 +414,55 @@ class PhoneNumbersClient(object):
         )
 
     @distributed_trace
+    def begin_search_available_phone_numbers(
+        self,
+        country_code,  # type: str
+        phone_number_type,  # type: Union[str, "_models.PhoneNumberType"]
+        assignment_type,  # type: Union[str, "_models.PhoneNumberAssignmentType"]
+        capabilities,  # type: "_models.PhoneNumberCapabilitiesRequest"
+        area_code=None,  # type: Optional[str]
+        quantity=1,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Search for available phone numbers to purchase.
+
+        Search for available phone numbers to purchase.
+
+        :param country_code: The ISO 3166-2 country code.
+        :type country_code: str
+        :param phone_number_type: The phone number type.
+        :type phone_number_type: str or ~azure.communication.administration.models.PhoneNumberType
+        :param assignment_type: The phone number's assignment type.
+        :type assignment_type: str or ~azure.communication.administration.models.PhoneNumberAssignmentType
+        :param capabilities: The phone number's capabilities.
+        :type capabilities: ~azure.communication.administration.models.PhoneNumberCapabilitiesRequest
+        :param area_code: The desired area code.
+        :type area_code: str
+        :param quantity: The desired quantity of phone numbers.
+        :type quantity: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        return self._phone_numbers_client.phone_numbers.begin_search_available_phone_numbers(
+            country_code,
+            phone_number_type,
+            assignment_type,
+            capabilities,
+            area_code=area_code,
+            quantity=quantity,
+            **kwargs
+        )
+
+    @distributed_trace
     def begin_purchase_phone_numbers(
         self,
         search_id=None, # type: string
