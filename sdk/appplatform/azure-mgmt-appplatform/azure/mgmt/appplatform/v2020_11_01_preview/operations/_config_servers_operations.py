@@ -27,7 +27,7 @@ class ConfigServersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2020-07-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ConfigServersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-07-01"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
@@ -58,8 +58,8 @@ class ConfigServersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ConfigServerResource or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerResource or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -73,7 +73,7 @@ class ConfigServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -121,7 +121,7 @@ class ConfigServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -171,7 +171,7 @@ class ConfigServersOperations(object):
         :type service_name: str
         :param properties: Properties of the Config Server resource
         :type properties:
-         ~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerProperties
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -180,9 +180,9 @@ class ConfigServersOperations(object):
         :return: An instance of LROPoller that returns ConfigServerResource or
          ClientRawResponse<ConfigServerResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_put_initial(
@@ -228,7 +228,7 @@ class ConfigServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -278,7 +278,7 @@ class ConfigServersOperations(object):
         :type service_name: str
         :param properties: Properties of the Config Server resource
         :type properties:
-         ~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerProperties
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -287,9 +287,9 @@ class ConfigServersOperations(object):
         :return: An instance of LROPoller that returns ConfigServerResource or
          ClientRawResponse<ConfigServerResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_patch_initial(
@@ -335,7 +335,7 @@ class ConfigServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -385,7 +385,7 @@ class ConfigServersOperations(object):
         :type service_name: str
         :param git_property: Property of git environment.
         :type git_property:
-         ~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerGitProperty
+         ~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerGitProperty
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -395,9 +395,9 @@ class ConfigServersOperations(object):
          ConfigServerSettingsValidateResult or
          ClientRawResponse<ConfigServerSettingsValidateResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerSettingsValidateResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerSettingsValidateResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2020_07_01.models.ConfigServerSettingsValidateResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerSettingsValidateResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._validate_initial(

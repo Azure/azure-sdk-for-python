@@ -25,6 +25,12 @@ class ProvisioningState(str, Enum):
     move_failed = "MoveFailed"
 
 
+class TrafficDirection(str, Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
 class ManagedIdentityType(str, Enum):
 
     none = "None"

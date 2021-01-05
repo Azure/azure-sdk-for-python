@@ -22,6 +22,7 @@ from .operations import CertificatesOperations
 from .operations import CustomDomainsOperations
 from .operations import DeploymentsOperations
 from .operations import Operations
+from .operations import RuntimeVersionsOperations
 from .operations import SkusOperations
 from . import models
 
@@ -50,6 +51,8 @@ class AppPlatformManagementClient(SDKClient):
     :vartype deployments: azure.mgmt.appplatform.v2020_07_01.operations.DeploymentsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.appplatform.v2020_07_01.operations.Operations
+    :ivar runtime_versions: RuntimeVersions operations
+    :vartype runtime_versions: azure.mgmt.appplatform.v2020_07_01.operations.RuntimeVersionsOperations
     :ivar skus: Skus operations
     :vartype skus: azure.mgmt.appplatform.v2020_07_01.operations.SkusOperations
 
@@ -91,6 +94,8 @@ class AppPlatformManagementClient(SDKClient):
         self.deployments = DeploymentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.runtime_versions = RuntimeVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.skus = SkusOperations(
             self._client, self.config, self._serialize, self._deserialize)

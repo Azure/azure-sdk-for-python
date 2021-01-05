@@ -14,6 +14,8 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import AppPlatformManagementClientConfiguration
 from .operations import ServicesOperations
+from .operations import ConfigServersOperations
+from .operations import MonitoringSettingsOperations
 from .operations import AppsOperations
 from .operations import BindingsOperations
 from .operations import CertificatesOperations
@@ -21,7 +23,7 @@ from .operations import CustomDomainsOperations
 from .operations import DeploymentsOperations
 from .operations import Operations
 from .operations import RuntimeVersionsOperations
-from .operations import SkuOperations
+from .operations import SkusOperations
 from . import models
 
 
@@ -32,23 +34,27 @@ class AppPlatformManagementClient(SDKClient):
     :vartype config: AppPlatformManagementClientConfiguration
 
     :ivar services: Services operations
-    :vartype services: azure.mgmt.appplatform.v2019_05_01_preview.operations.ServicesOperations
+    :vartype services: azure.mgmt.appplatform.v2020_11_01_preview.operations.ServicesOperations
+    :ivar config_servers: ConfigServers operations
+    :vartype config_servers: azure.mgmt.appplatform.v2020_11_01_preview.operations.ConfigServersOperations
+    :ivar monitoring_settings: MonitoringSettings operations
+    :vartype monitoring_settings: azure.mgmt.appplatform.v2020_11_01_preview.operations.MonitoringSettingsOperations
     :ivar apps: Apps operations
-    :vartype apps: azure.mgmt.appplatform.v2019_05_01_preview.operations.AppsOperations
+    :vartype apps: azure.mgmt.appplatform.v2020_11_01_preview.operations.AppsOperations
     :ivar bindings: Bindings operations
-    :vartype bindings: azure.mgmt.appplatform.v2019_05_01_preview.operations.BindingsOperations
+    :vartype bindings: azure.mgmt.appplatform.v2020_11_01_preview.operations.BindingsOperations
     :ivar certificates: Certificates operations
-    :vartype certificates: azure.mgmt.appplatform.v2019_05_01_preview.operations.CertificatesOperations
+    :vartype certificates: azure.mgmt.appplatform.v2020_11_01_preview.operations.CertificatesOperations
     :ivar custom_domains: CustomDomains operations
-    :vartype custom_domains: azure.mgmt.appplatform.v2019_05_01_preview.operations.CustomDomainsOperations
+    :vartype custom_domains: azure.mgmt.appplatform.v2020_11_01_preview.operations.CustomDomainsOperations
     :ivar deployments: Deployments operations
-    :vartype deployments: azure.mgmt.appplatform.v2019_05_01_preview.operations.DeploymentsOperations
+    :vartype deployments: azure.mgmt.appplatform.v2020_11_01_preview.operations.DeploymentsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.appplatform.v2019_05_01_preview.operations.Operations
+    :vartype operations: azure.mgmt.appplatform.v2020_11_01_preview.operations.Operations
     :ivar runtime_versions: RuntimeVersions operations
-    :vartype runtime_versions: azure.mgmt.appplatform.v2019_05_01_preview.operations.RuntimeVersionsOperations
-    :ivar sku: Sku operations
-    :vartype sku: azure.mgmt.appplatform.v2019_05_01_preview.operations.SkuOperations
+    :vartype runtime_versions: azure.mgmt.appplatform.v2020_11_01_preview.operations.RuntimeVersionsOperations
+    :ivar skus: Skus operations
+    :vartype skus: azure.mgmt.appplatform.v2020_11_01_preview.operations.SkusOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -67,11 +73,15 @@ class AppPlatformManagementClient(SDKClient):
         super(AppPlatformManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-05-01-preview'
+        self.api_version = '2020-11-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.services = ServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.config_servers = ConfigServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.monitoring_settings = MonitoringSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.apps = AppsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -87,5 +97,5 @@ class AppPlatformManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.runtime_versions = RuntimeVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.sku = SkuOperations(
+        self.skus = SkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
