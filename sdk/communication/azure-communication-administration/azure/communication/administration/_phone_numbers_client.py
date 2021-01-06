@@ -162,86 +162,111 @@ class PhoneNumbersClient(object):
         )
 
     @distributed_trace
-    def list_all_reservations(
-            self,
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[PhoneNumberEntities]
-        """Gets a list of all reservations.
-
-        :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
-        The default is 0.
-        :keyword int take: An optional parameter for how many entries to return, for pagination purposes.
-        The default is 100.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.PhoneNumberEntities]
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_all_searches(
-            **kwargs
-        )
-
-    @distributed_trace
-    def cancel_reservation(
+    def begin_update_phone_number_capabilities(
         self,
-        reservation_id,  # type: str
+        phone_number,  # type: str
+        sms="none",  # type: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]]
+        calling="none",  # type: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        """Cancels the reservation. This means existing numbers in the reservation will be made available.
+        # type: (...) -> LROPoller["_models.AcquiredPhoneNumber"]
+        """Begin update capabilities of an acquired phone number.
 
-        :param reservation_id: The reservation id to be canceled.
-        :type reservation_id: str
-        :rtype: None
-        """
-        return self._phone_number_administration_client.phone_number_administration.cancel_search(
-            search_id=reservation_id,
-            **kwargs
-        )
-
-    @distributed_trace
-    def begin_purchase_reservation(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[PhoneNumberReservation]
-        """Begins purchase the reserved phone numbers of a phone number search.
-        Caller must provide either reservation_id, or continuation_token keywords to use the method.
-        If both reservation_id and continuation_token are specified, only continuation_token will be used to
-        restart a poller from a saved state, and keyword reservation_id will be ignored.
-        :keyword str reservation_id: The reservation id to be purchased.
+        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
+         encoded as %2B.
+        :type phone_number: str
+        :param sms: Available Sms capabilities.
+        :type sms: str or ~azure.communication.administration.models.PhoneNumberCapabilityValue
+        :param calling: Available Calling capabilities.
+        :type calling: str or ~azure.communication.administration.models.PhoneNumberCapabilityValue
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberReservation]
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either AcquiredPhoneNumber or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.models.AcquiredPhoneNumber]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-
-        reservation_polling = PurchaseReservationPolling(
-            is_terminated=lambda status: status in [
-                SearchStatus.Success,
-                SearchStatus.Expired,
-                SearchStatus.Cancelled,
-                SearchStatus.Error
-            ]
-        )
-
-        if cont_token is not None:
-            return LROPoller.from_continuation_token(
-                polling_method=reservation_polling,
-                continuation_token=cont_token,
-                client=self._phone_number_administration_client.phone_number_administration
-            )
-
-        if "reservation_id" not in kwargs:
-            raise ValueError("Either kwarg 'reservation_id' or 'continuation_token' needs to be specified")
-
-        reservation_id = kwargs.pop('reservation_id')  # type: str
-
-        self._phone_number_administration_client.phone_number_administration.purchase_search(
-            search_id=reservation_id,
+        self._phone_numbers_client.phone_numbers.begin_update_phone_number_capabilities(
+            phone_number,
+            sms=sms,
+            calling=callable,
             **kwargs
         )
-        initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id=reservation_id
+
+
+    @distributed_trace
+    def get_phone_number(
+        self,
+        phone_number,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AcquiredPhoneNumber"
+        """Gets information about an acquired phone number.
+
+        Gets information about an acquired phone number.
+
+        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
+         encoded as %2B.
+        :type phone_number: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AcquiredPhoneNumber, or the result of cls(response)
+        :rtype: ~azure.communication.administration.models.AcquiredPhoneNumber
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._phone_numbers_client.phone_numbers.get_phone_number(
+            phone_number,
+            **kwargs
         )
-        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
-                         initial_response=initial_state,
-                         deserialization_callback=None,
-                         polling_method=reservation_polling)
+
+    @distributed_trace
+    def list_phone_numbers(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.AcquiredPhoneNumbers"]
+        """Lists acquired phone numbers.
+
+        Lists acquired phone numbers.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either AcquiredPhoneNumbers or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.models.AcquiredPhoneNumbers]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._phone_numbers_client.phone_numbers.list_phone_numbers(
+            **kwargs
+        )
+
+    @distributed_trace
+    def update_phone_number(
+        self,
+        phone_number,  # type: str
+        callback_uri=None,  # type: Optional[str]
+        application_id=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AcquiredPhoneNumber"
+        """Update an acquired phone number.
+
+        Update an acquired phone number.
+
+        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
+         encoded as %2B.
+        :type phone_number: str
+        :param callback_uri: The webhook for receiving incoming events.
+        :type callback_uri: str
+        :param application_id: The application id the number has been assigned to.
+        :type application_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AcquiredPhoneNumber, or the result of cls(response)
+        :rtype: ~azure.communication.administration.models.AcquiredPhoneNumber
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._phone_numbers_client.phone_numbers.update_phone_number(
+            phone_number,
+            callback_uri=callback_uri,
+            application_id=application_id,
+            **kwargs
+        )
