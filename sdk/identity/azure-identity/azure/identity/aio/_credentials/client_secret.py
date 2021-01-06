@@ -79,6 +79,3 @@ class ClientSecretCredential(AsyncContextManager):
             except Exception:  # pylint: disable=broad-except
                 pass
         return token
-
-    def _get_auth_client(self, tenant_id, client_id, **kwargs):
-        return AadClient(tenant_id, client_id, **kwargs)
