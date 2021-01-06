@@ -142,7 +142,7 @@ class StorageTableBatchTest(TableTestCase):
         assert entity['binary'].value ==  b'binary'
         assert entity['other'] ==  20
         assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert '_metadata' in entity
+        assert '_metadata' not in entity
 
     def _assert_updated_entity(self, entity):
         '''
@@ -161,7 +161,7 @@ class StorageTableBatchTest(TableTestCase):
         assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
         assert not hasattr(entity, "other")
         assert not hasattr(entity, "clsid")
-        assert entity['_metadata']['etag'] is not None
+        assert entity._metadata['etag'] is not None
 
     def _assert_valid_batch_transaction(self, transaction, length):
         assert isinstance(transaction,  BatchTransactionResult)

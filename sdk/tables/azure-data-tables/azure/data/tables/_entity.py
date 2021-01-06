@@ -22,22 +22,26 @@ class TableEntity(dict):
 
     """
 
+    _metadata = {}
+
+
     def _set_metadata(self):
         if "Timestamp" in self.keys():
-            self._metadata = {  # pylint:disable=W0201
+            TableEntity._metadata = {  # pylint:disable=W0201
                 "etag": self.pop("etag"),
                 "timestamp": self.pop("Timestamp"),
             }
         else:
-            self._metadata = {"etag": self.pop("etag")}  # pylint:disable=W0201
+            TableEntity._metadata = {"etag": self.pop("etag")}  # pylint:disable=W0201
 
-    def metadata(self, **kwargs):  # pylint: disable = W0613
+    @classmethod
+    def metadata(cls, **kwargs):  # pylint: disable = W0613
         # type: (...) -> Dict[str,Any]
         """Resets metadata to be a part of the entity
         :return Dict of entity metadata
         :rtype Dict[str, Any]
         """
-        return self._metadata
+        return cls._metadata
 
     def __getattr__(self, name):
         """

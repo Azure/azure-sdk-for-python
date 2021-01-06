@@ -810,6 +810,26 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
 
     @TablesPreparer()
+    def test_entity_metadata_class_attrib(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+            # Act
+            received_entity = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            with pytest.raises(KeyError):
+                received_entity['_metadata']
+            assert isinstance(received_entity._metadata, dict)
+            assert '_metadata' not in received_entity.keys()
+            metadata = received_entity.metadata()
+            assert 'etag' in metadata
+
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
     def test_update_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
