@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from ._communication_identity_client import CommunicationIdentityClient
-from ._phone_number_administration_client import PhoneNumberAdministrationClient
+from ._phone_numbers_client import PhoneNumbersClient
 from ._polling import ReservePhoneNumberPolling, PurchaseReservationPolling, ReleasePhoneNumberPolling
 
 from ._identity._generated.models import (
@@ -16,23 +16,21 @@ from ._identity._generated.models import (
 from ._phonenumber._generated.models import (
     AcquiredPhoneNumber,
     AcquiredPhoneNumbers,
-    AreaCodes,
-    CreateSearchOptions,
-    CreateSearchResponse,
-    LocationOptionsQuery,
-    LocationOptionsResponse,
-    NumberConfigurationResponse,
-    NumberUpdateCapabilities,
-    PhoneNumberCountries,
-    PhoneNumberEntities,
-    PhoneNumberRelease,
-    PhoneNumberReservation,
-    PhonePlanGroups,
-    PhonePlansResponse,
-    PstnConfiguration,
-    ReleaseResponse,
-    UpdateNumberCapabilitiesResponse,
-    UpdatePhoneNumberCapabilitiesResponse
+    AcquiredPhoneNumberUpdate,
+    PhoneNumberAssignmentType,
+    CommunicationError,
+    CommunicationErrorResponse,
+    OperationKind,
+    PhoneNumberAssignmentType,
+    PhoneNumberCapabilitiesRequest,
+    PhoneNumberCapabilityValue,
+    PhoneNumberCost,
+    PhoneNumberOperation,
+    PhoneNumberOperationStatusCodes,
+    PhoneNumberPurchaseRequest,
+    PhoneNumberSearchRequest,
+    PhoneNumberSearchResult,
+    PhoneNumberType
 )
 
 from ._shared.models import (
@@ -43,7 +41,7 @@ from ._shared.models import (
 
 __all__ = [
     'CommunicationIdentityClient',
-    'PhoneNumberAdministrationClient',
+    'PhoneNumbersClient',
     'ReservePhoneNumberPolling',
     'PurchaseReservationPolling',
     'ReleasePhoneNumberPolling',
@@ -55,23 +53,21 @@ __all__ = [
     # from _phonenumber
     'AcquiredPhoneNumber',
     'AcquiredPhoneNumbers',
-    'AreaCodes',
-    'CreateSearchOptions',
-    'CreateSearchResponse',
-    'LocationOptionsQuery',
-    'LocationOptionsResponse',
-    'NumberConfigurationResponse',
-    'NumberUpdateCapabilities',
-    'PhoneNumberCountries',
-    'PhoneNumberEntities',
-    'PhoneNumberRelease',
-    'PhoneNumberReservation',
-    'PhonePlanGroups',
-    'PhonePlansResponse',
-    'PstnConfiguration',
-    'ReleaseResponse',
-    'UpdateNumberCapabilitiesResponse',
-    'UpdatePhoneNumberCapabilitiesResponse',
+    'AcquiredPhoneNumberUpdate',
+    'PhoneNumberAssignmentType',
+    'CommunicationError',
+    'CommunicationErrorResponse',
+    'OperationKind',
+    'PhoneNumberAssignmentType',
+    'PhoneNumberCapabilitiesRequest',
+    'PhoneNumberCapabilityValue',
+    'PhoneNumberCost',
+    'PhoneNumberOperation',
+    'PhoneNumberOperationStatusCodes',
+    'PhoneNumberPurchaseRequest',
+    'PhoneNumberSearchRequest',
+    'PhoneNumberSearchResult',
+    'PhoneNumberType',
 
     # from _shared
     'CommunicationUser',
