@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
@@ -24,11 +25,8 @@ from .._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import (
-    StorageErrorException,
-    SignedIdentifier)
+from .._generated.models import SignedIdentifier
 from .._deserialize import deserialize_container_properties
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
@@ -117,7 +115,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
@@ -165,7 +164,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -221,7 +220,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -293,7 +292,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         try:
             return await self._client.container.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -329,7 +328,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 lease_access_conditions=access_conditions,
                 cls=deserialize_container_properties,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         response.name = self.container_name
         return response # type: ignore
@@ -386,7 +385,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -422,7 +421,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 lease_access_conditions=access_conditions,
                 cls=return_headers_and_deserialized,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return {
             'public_access': response.get('blob_public_access'),
@@ -501,7 +500,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -659,7 +658,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -782,7 +781,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -847,7 +846,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -936,7 +935,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             the resource has not been modified since the specified date/time.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -1014,7 +1013,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             Indicates the priority with which to rehydrate an archived blob
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 

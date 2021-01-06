@@ -11,12 +11,9 @@ interactions:
       Content-Length:
       - '33'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/default?api-version=2020-01-01
   response:
@@ -30,7 +27,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 18:34:32 GMT
+      - Tue, 22 Dec 2020 02:49:36 GMT
       expires:
       - '-1'
       pragma:
@@ -46,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '197'
+      - '199'
     status:
       code: 200
       message: OK
@@ -60,10 +57,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations?api-version=2020-01-01
   response:
@@ -77,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 18:34:33 GMT
+      - Tue, 22 Dec 2020 02:49:37 GMT
       expires:
       - '-1'
       pragma:
@@ -93,7 +87,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '597'
+      - '599'
     status:
       code: 200
       message: OK
@@ -109,12 +103,9 @@ interactions:
       Content-Length:
       - '34'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/default?api-version=2020-01-01
   response:
@@ -128,7 +119,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 18:34:33 GMT
+      - Tue, 22 Dec 2020 02:49:37 GMT
       expires:
       - '-1'
       pragma:
@@ -144,7 +135,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '196'
+      - '198'
     status:
       code: 200
       message: OK
@@ -158,10 +149,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations?api-version=2020-01-01
   response:
@@ -175,7 +163,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 18:34:33 GMT
+      - Tue, 22 Dec 2020 02:49:37 GMT
       expires:
       - '-1'
       pragma:
@@ -191,7 +179,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '596'
+      - '598'
     status:
       code: 200
       message: OK

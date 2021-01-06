@@ -1,0 +1,366 @@
+interactions:
+- request:
+    body: '{"TableName": "myasynctable0"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '30'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:34:10 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:10 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"myasynctable0","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 17:34:12 GMT
+      etag: W/"datetime'2020-12-18T17%3A34%3A11.9974920Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable0')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: '{"TableName": "myasynctable1"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '30'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:34:12 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:12 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"myasynctable1","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 17:34:13 GMT
+      etag: W/"datetime'2020-12-18T17%3A34%3A12.8273416Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable1')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: '{"TableName": "myasynctable2"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '30'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:34:13 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:13 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"myasynctable2","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 17:34:13 GMT
+      etag: W/"datetime'2020-12-18T17%3A34%3A13.6082440Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable2')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: '{"TableName": "myasynctable3"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '30'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:34:13 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:13 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"myasynctable3","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 17:34:14 GMT
+      etag: W/"datetime'2020-12-18T17%3A34%3A14.3679496Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable3')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: '{"TableName": "myasynctable4"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '30'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:34:14 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:14 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"myasynctable4","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 17:34:15 GMT
+      etag: W/"datetime'2020-12-18T17%3A34%3A15.0791176Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable4')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:34:15 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables?$top=2&$filter=TableName%20eq%20'myasynctable0'%20or%20TableName%20eq%20'myasynctable1'%20or%20TableName%20eq%20'myasynctable2'
+  response:
+    body:
+      string: '{"value":[{"TableName":"myasynctable1"},{"TableName":"myasynctable2"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 17:34:15 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-continuation-nexttablename: +RID:~VGAIAJUZUHQ=#RT:1#TRC:2
+    status:
+      code: 200
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables?$top=2&$filter=TableName%20eq%20'myasynctable0'%20or%20TableName%20eq%20'myasynctable1'%20or%20TableName%20eq%20'myasynctable2'
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:34:15 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables?$top=2&$filter=TableName%20eq%20'myasynctable0'%20or%20TableName%20eq%20'myasynctable1'%20or%20TableName%20eq%20'myasynctable2'&NextTableName=%2BRID:~VGAIAJUZUHQ%3D%23RT:1%23TRC:2
+  response:
+    body:
+      string: '{"value":[{"TableName":"myasynctable0"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 17:34:15 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables?$top=2&$filter=TableName%20eq%20'myasynctable0'%20or%20TableName%20eq%20'myasynctable1'%20or%20TableName%20eq%20'myasynctable2'&NextTableName=%2BRID:~VGAIAJUZUHQ%3D%23RT:1%23TRC:2
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:34:15 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable0')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:34:15 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('myasynctable0')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:34:15 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable1')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:34:15 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('myasynctable1')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:34:16 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable2')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:34:16 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('myasynctable2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:34:16 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable3')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:34:16 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('myasynctable3')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:34:16 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:34:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('myasynctable4')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:34:16 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('myasynctable4')
+version: 1

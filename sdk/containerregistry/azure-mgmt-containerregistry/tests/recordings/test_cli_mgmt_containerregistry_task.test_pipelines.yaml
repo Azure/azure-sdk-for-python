@@ -1,0 +1,357 @@
+interactions:
+- request:
+    body: '{"location": "eastus", "tags": {"key": "value"}, "sku": {"name": "Premium"},
+      "properties": {"adminUserEnabled": false}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '119'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry","name":"myRegistry","location":"eastus","tags":{"key":"value"},"properties":{"loginServer":"myRegistry.azurecr.io","creationDate":"2020-08-11T07:04:36.878936Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2020-08-11T07:04:37.9883161+00:00","status":"disabled"}},"encryption":{"status":"disabled"},"dataEndpointEnabled":false,"dataEndpointHostNames":[],"privateEndpointConnections":[],"publicNetworkAccess":"Enabled"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '975'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:04:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus", "identity": {"type": "SystemAssigned"}, "properties":
+      {"source": {"type": "AzureStorageBlobContainer", "uri": "https://accountname.blob.core.windows.net/containername",
+      "keyVaultUri": "https://myvault.vault.azure.net/secrets/acrimportsas"}, "options":
+      ["OverwriteTags", "DeleteSourceBlobOnSuccess", "ContinueOnErrors"]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '343'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/importPipelines/myImportPipeline?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/importPipelines","location":"EASTUS","identity":{"principalId":"c9598b3f-e477-43ef-9160-859d1634ec35","tenantId":"00000000-0000-0000-0000-000000000000","type":"systemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/importPipelines/myImportPipeline","name":"myImportPipeline","properties":{"source":{"type":"AzureStorageBlobContainer","uri":"https://accountname.blob.core.windows.net/containername","keyVaultUri":"https://myvault.vault.azure.net/secrets/acrimportsas"},"trigger":{"sourceTrigger":{"status":"Enabled"}},"options":["OverwriteTags","DeleteSourceBlobOnSuccess","ContinueOnErrors"],"provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '848'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:04:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus", "identity": {"type": "SystemAssigned"}, "properties":
+      {"target": {"type": "AzureStorageBlobContainer", "uri": "https://accountname.blob.core.windows.net/containername",
+      "keyVaultUri": "https://myvault.vault.azure.net/secrets/acrexportsas"}, "options":
+      ["OverwriteBlobs"]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '295'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/exportPipelines/myExportPipeline?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/exportPipelines","location":"EASTUS","identity":{"principalId":"f2f0fae9-7763-4485-93cc-5181072d972d","tenantId":"00000000-0000-0000-0000-000000000000","type":"systemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/exportPipelines/myExportPipeline","name":"myExportPipeline","properties":{"target":{"type":"AzureStorageBlobContainer","uri":"https://accountname.blob.core.windows.net/containername","keyVaultUri":"https://myvault.vault.azure.net/secrets/acrexportsas"},"options":["OverwriteBlobs"],"provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '753'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:04:44 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/importPipelines/myImportPipeline?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/importPipelines","location":"EASTUS","identity":{"principalId":"c9598b3f-e477-43ef-9160-859d1634ec35","tenantId":"00000000-0000-0000-0000-000000000000","type":"systemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/importPipelines/myImportPipeline","name":"myImportPipeline","properties":{"source":{"type":"AzureStorageBlobContainer","uri":"https://accountname.blob.core.windows.net/containername","keyVaultUri":"https://myvault.vault.azure.net/secrets/acrimportsas"},"trigger":{"sourceTrigger":{"status":"Enabled"}},"options":["OverwriteTags","DeleteSourceBlobOnSuccess","ContinueOnErrors"],"provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '848'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:04:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/exportPipelines/myExportPipeline?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/exportPipelines","location":"EASTUS","identity":{"principalId":"f2f0fae9-7763-4485-93cc-5181072d972d","tenantId":"00000000-0000-0000-0000-000000000000","type":"systemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/exportPipelines/myExportPipeline","name":"myExportPipeline","properties":{"target":{"type":"AzureStorageBlobContainer","uri":"https://accountname.blob.core.windows.net/containername","keyVaultUri":"https://myvault.vault.azure.net/secrets/acrexportsas"},"options":["OverwriteBlobs"],"provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '753'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:04:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/importPipelines/myImportPipeline?api-version=2019-12-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 11 Aug 2020 07:04:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/exportPipelines/myExportPipeline?api-version=2019-12-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 11 Aug 2020 07:04:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry?api-version=2019-12-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 11 Aug 2020 07:04:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14997'
+    status:
+      code: 200
+      message: OK
+version: 1

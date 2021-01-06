@@ -9,7 +9,7 @@ from io import SEEK_SET, UnsupportedOperation
 from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disable=unused-import
 
 import six
-from azure.core.exceptions import ResourceModifiedError
+from azure.core.exceptions import ResourceModifiedError, HttpResponseError
 
 from .._shared.response_handlers import (
     process_storage_error,
@@ -22,7 +22,6 @@ from .._shared.uploads_async import (
     AppendBlobChunkUploader)
 from .._shared.encryption import generate_blob_encryption_data, encrypt_blob
 from .._generated.models import (
-    StorageErrorException,
     BlockLookupList,
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
@@ -68,7 +67,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 encryption_data, data = encrypt_blob(data, encryption_options['key'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
             return await client.upload(
-                data,
+                body=data,
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
                 headers=headers,
@@ -101,6 +100,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 stream=stream,
                 validate_content=validate_content,
                 encryption_options=encryption_options,
+                headers=headers,
                 **kwargs
             )
         else:
@@ -112,6 +112,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
+                headers=headers,
                 **kwargs
             )
 
@@ -126,7 +127,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             tier=tier.value if tier else None,
             blob_tags_string=blob_tags_string,
             **kwargs)
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         try:
             process_storage_error(error)
         except ResourceModifiedError as mod_error:
@@ -186,9 +187,10 @@ async def upload_page_blob(
             max_concurrency=max_concurrency,
             validate_content=validate_content,
             encryption_options=encryption_options,
+            headers=headers,
             **kwargs)
 
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         try:
             process_storage_error(error)
         except ResourceModifiedError as mod_error:
@@ -234,8 +236,9 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
+                headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             if error.response.status_code != 404:
                 raise
             # rewind the request body if it is a stream
@@ -261,6 +264,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
+                headers=headers,
                 **kwargs)
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         process_storage_error(error)

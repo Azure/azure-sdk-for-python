@@ -12,6 +12,11 @@ FILE: sample_recognize_content.py
 DESCRIPTION:
     This sample demonstrates how to extract text, selection marks, and content information from a document
     given through a file.
+
+    Note that selection marks returned from begin_recognize_content() do not return the text associated with
+    the checkbox. For the API to return this information, train a custom model to recognize the checkbox and its text.
+    See sample_train_model_with_labels.py for more information.
+
 USAGE:
     python sample_recognize_content.py
 
@@ -33,7 +38,7 @@ class RecognizeContentSample(object):
 
     def recognize_content(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "./sample_forms/forms/selection_mark_form.pdf"))
+                                                            "..", "./sample_forms/forms/form_selection_mark.png"))
         # [START recognize_content]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -55,6 +60,7 @@ class RecognizeContentSample(object):
             ))
             for table_idx, table in enumerate(content.tables):
                 print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
+                print("Table # {} location on page: {}".format(table_idx, format_bounding_box(table.bounding_box)))
                 for cell in table.cells:
                     print("...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
                         cell.row_index,

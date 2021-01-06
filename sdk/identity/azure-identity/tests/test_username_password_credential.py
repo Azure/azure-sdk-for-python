@@ -22,6 +22,19 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        UsernamePasswordCredential("client-id", "username", "password", tenant_id=tenant)
+
+    invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            UsernamePasswordCredential("client-id", "username", "password", tenant_id=tenant)
+
+
 def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
 

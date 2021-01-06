@@ -38,6 +38,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :keyword int auto_flush_interval: how many max seconds if between 2 flushes. This only takes effect
         when auto_flush is on. Default to 60 seconds. If a non-positive number is set, it will be default
         to 86400s (1 day)
+    :keyword int initial_batch_action_count: The initial number of actions to group into a batch when
+        tuning the behavior of the sender. The default value is 512.
+    :keyword int max_retries: The number of times to retry a failed document. The default value is 3.
     :keyword callable on_new: If it is set, the client will call corresponding methods when there
         is a new IndexAction added.
     :keyword callable on_progress: If it is set, the client will call corresponding methods when there
@@ -165,12 +168,12 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """ Every time when a new action is queued, this method
             will be triggered. It checks the actions already queued and flushes them if:
             1. Auto_flush is on
-            2. There are self._batch_size actions queued
+            2. There are self._batch_action_count actions queued
         """
         if not self._auto_flush:
             return
 
-        if len(self._index_documents_batch.actions) < self._batch_size:
+        if len(self._index_documents_batch.actions) < self._batch_action_count:
             return
 
         await self._process(raise_error=False)
@@ -304,7 +307,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             # first time that fails
             self._retry_counter[key] = 1
             await self._index_documents_batch.enqueue_action(action)
-        elif counter < self._max_retry_count - 1:
+        elif counter < self._max_retries - 1:
             # not reach retry limit yet
             self._retry_counter[key] = counter + 1
             await self._index_documents_batch.enqueue_action(action)

@@ -32,6 +32,7 @@ class MgmtServiceFabricTest(AzureMgmtTestCase):
             azure.mgmt.servicefabric.ServiceFabricManagementClient
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_servicefabric(self, resource_group):
 

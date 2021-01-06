@@ -62,7 +62,7 @@ class TestTraining(FormRecognizerTest):
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        # self.assertEqual(model.model_name, "my unlabeled model")  # bug in service
+        # self.assertEqual(model.model_name, "my unlabeled model")  # FIXME: bug in service
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
@@ -253,7 +253,7 @@ class TestTraining(FormRecognizerTest):
 
         initial_poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
         cont_token = initial_poller.continuation_token()
-        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, continuation_token=cont_token)
+        poller = client.begin_training(None, None, continuation_token=cont_token)
         result = poller.result()
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

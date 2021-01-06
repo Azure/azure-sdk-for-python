@@ -5,25 +5,25 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
-
 from azure.ai.metricsadvisor.models import (
-    EmailHook,
-    WebHook,
+    EmailNotificationHook,
+    WebNotificationHook,
 )
 from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
 
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_email_hook(self):
         email_hook_name = self.create_random_name("testemailhookasync")
         async with self.admin_client:
             try:
                 email_hook = await self.admin_client.create_hook(
-                    name=email_hook_name,
-                    hook=EmailHook(
+                    hook=EmailNotificationHook(
+                        name=email_hook_name,
                         emails_to_alert=["yournamehere@microsoft.com"],
                         description="my email hook",
                         external_link="external link"
@@ -31,7 +31,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 self.assertIsNotNone(email_hook.id)
                 self.assertIsNotNone(email_hook.name)
-                self.assertIsNotNone(email_hook.admins)
+                self.assertIsNotNone(email_hook.admin_emails)
                 self.assertEqual(email_hook.emails_to_alert, ["yournamehere@microsoft.com"])
                 self.assertEqual(email_hook.description, "my email hook")
                 self.assertEqual(email_hook.external_link, "external link")
@@ -42,14 +42,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 with self.assertRaises(ResourceNotFoundError):
                     await self.admin_client.get_hook(email_hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_web_hook(self):
         web_hook_name = self.create_random_name("testwebhookasync")
         async with self.admin_client:
             try:
                 web_hook = await self.admin_client.create_hook(
-                    name=web_hook_name,
-                    hook=WebHook(
+                    hook=WebNotificationHook(
+                        name=web_hook_name,
                         endpoint="https://httpbin.org/post",
                         description="my web hook",
                         external_link="external link"
@@ -57,7 +57,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 self.assertIsNotNone(web_hook.id)
                 self.assertIsNotNone(web_hook.name)
-                self.assertIsNotNone(web_hook.admins)
+                self.assertIsNotNone(web_hook.admin_emails)
                 self.assertEqual(web_hook.endpoint, "https://httpbin.org/post")
                 self.assertEqual(web_hook.description, "my web hook")
                 self.assertEqual(web_hook.external_link, "external link")
@@ -68,7 +68,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 with self.assertRaises(ResourceNotFoundError):
                     await self.admin_client.get_hook(web_hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_hooks(self):
         async with self.admin_client:
             hooks = self.admin_client.list_hooks()
@@ -77,7 +77,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 hooks_list.append(hook)
             assert len(hooks_list) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_email_hook_with_model(self):
         name = self.create_random_name("testwebhook")
         async with self.admin_client:
@@ -98,7 +98,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_hook(hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_email_hook_with_kwargs(self):
         name = self.create_random_name("testhook")
         async with self.admin_client:
@@ -121,7 +121,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_hook(hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_email_hook_with_model_and_kwargs(self):
         name = self.create_random_name("testhook")
         async with self.admin_client:
@@ -148,7 +148,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_hook(hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_email_hook_by_resetting_properties(self):
         name = self.create_random_name("testhook")
         async with self.admin_client:
@@ -171,7 +171,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_hook(hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_web_hook_with_model(self):
         name = self.create_random_name("testwebhook")
         async with self.admin_client:
@@ -194,7 +194,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_hook(hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_web_hook_with_kwargs(self):
         name = self.create_random_name("testwebhook")
         async with self.admin_client:
@@ -220,7 +220,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_hook(hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_web_hook_with_model_and_kwargs(self):
         name = self.create_random_name("testwebhook")
         async with self.admin_client:
@@ -251,7 +251,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_hook(hook.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_web_hook_by_resetting_properties(self):
         name = self.create_random_name("testhook")
         async with self.admin_client:

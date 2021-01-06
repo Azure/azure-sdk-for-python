@@ -1,0 +1,844 @@
+interactions:
+- request:
+    body: '{"location": "eastus", "properties": {"administratorLogin": "dummylogin",
+      "administratorLoginPassword": "Un53cuRE!"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '117'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"operation":"UpsertLogicalServer","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '74'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:44:18 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1188'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:44:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:44:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:44:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:44:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:44:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:45:06 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:45:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:45:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:45:57 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"InProgress","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:46:13 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/d528c6fe-df93-48d8-a141-9e4725335ee5?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"d528c6fe-df93-48d8-a141-9e4725335ee5","status":"Succeeded","startTime":"2020-11-24T08:44:18.543Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:46:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"kind":"v12.0","properties":{"administratorLogin":"dummylogin","version":"12.0","state":"Ready","fullyQualifiedDomainName":"myserverxpxy.database.windows.net","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy","name":"myserverxpxy","type":"Microsoft.Sql/servers"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '493'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:46:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives?api-version=2014-04-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/26e021db-f1f9-4c98-84c6-92af8ef433d7","name":"26e021db-f1f9-4c98-84c6-92af8ef433d7","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/29dd7459-4a7c-4e56-be22-f0adda49440d","name":"29dd7459-4a7c-4e56-be22-f0adda49440d","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System0","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/c99ac918-dbea-463f-a475-16ec020fdc12","name":"c99ac918-dbea-463f-a475-16ec020fdc12","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System1","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/620323bf-2879-4807-b30d-c2e6d7b3b3aa","name":"620323bf-2879-4807-b30d-c2e6d7b3b3aa","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System2","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/33d0db1f-6893-4210-99f9-463fb9b496a4","name":"33d0db1f-6893-4210-99f9-463fb9b496a4","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System3","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/da24338c-a6c9-46c2-a4bf-4ac95b496ae4","name":"da24338c-a6c9-46c2-a4bf-4ac95b496ae4","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System4","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/53f7fa1b-b0d0-43d6-bc29-c5f059fb36e9","name":"53f7fa1b-b0d0-43d6-bc29-c5f059fb36e9","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System2L","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/e79cd55c-689f-48d9-bffa-0dd12c772248","name":"e79cd55c-689f-48d9-bffa-0dd12c772248","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System3L","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/4b37bb6d-e004-47ac-8f7a-be56ac9fb490","name":"4b37bb6d-e004-47ac-8f7a-be56ac9fb490","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System4L","isDefault":false,"isSystem":true,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/6aa3bb3e-7f50-40d6-95ef-5497c30d99d8","name":"6aa3bb3e-7f50-40d6-95ef-5497c30d99d8","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"Free","isDefault":true,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/dd6d99bb-f193-4ec1-86f2-43d3bccbc49c","name":"dd6d99bb-f193-4ec1-86f2-43d3bccbc49c","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"Basic","isDefault":true,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/f1173c43-91bd-4aaa-973c-54e79e15235b","name":"f1173c43-91bd-4aaa-973c-54e79e15235b","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S0","isDefault":true,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/1b1ebd4d-d903-4baa-97f9-4ea675f5e928","name":"1b1ebd4d-d903-4baa-97f9-4ea675f5e928","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S1","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/455330e1-00cd-488b-b5fa-177c226f28b7","name":"455330e1-00cd-488b-b5fa-177c226f28b7","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S2","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/789681b8-ca10-4eb0-bdf2-e0b050601b40","name":"789681b8-ca10-4eb0-bdf2-e0b050601b40","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S3","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/3cf14e1a-0a5d-408c-bbc7-f63c5282f735","name":"3cf14e1a-0a5d-408c-bbc7-f63c5282f735","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S4","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/ab69b4e3-d7cc-4aa5-87a6-f8b50615a03c","name":"ab69b4e3-d7cc-4aa5-87a6-f8b50615a03c","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S6","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/b6ca0894-d2f0-4e40-99f5-0f8a93cc2437","name":"b6ca0894-d2f0-4e40-99f5-0f8a93cc2437","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S7","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/0efa88e9-99ff-4e36-a148-8c4b20c0826c","name":"0efa88e9-99ff-4e36-a148-8c4b20c0826c","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S9","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/98100e8b-2f8a-4a81-9eb5-4d1e675c5a29","name":"98100e8b-2f8a-4a81-9eb5-4d1e675c5a29","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"S12","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/7203483a-c4fb-4304-9e9f-17c71c904f5d","name":"7203483a-c4fb-4304-9e9f-17c71c904f5d","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"P1","isDefault":true,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/a7d1b92d-c987-4375-b54d-2b1d0e0f5bb0","name":"a7d1b92d-c987-4375-b54d-2b1d0e0f5bb0","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"P2","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/afe1eee1-1f12-4e5f-9ad6-2de9c12cb4dc","name":"afe1eee1-1f12-4e5f-9ad6-2de9c12cb4dc","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"P4","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/43940481-9191-475a-9dba-6b505615b9aa","name":"43940481-9191-475a-9dba-6b505615b9aa","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"P6","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/dd00d544-bbc0-4f61-ba60-cdce0c410288","name":"dd00d544-bbc0-4f61-ba60-cdce0c410288","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"P11","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/5bc86cca-9a96-4a94-90ef-bbdfcfbf2d71","name":"5bc86cca-9a96-4a94-90ef-bbdfcfbf2d71","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"P15","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/4e63cb0e-91b9-46fd-b05c-51fdd2367618","name":"4e63cb0e-91b9-46fd-b05c-51fdd2367618","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW100","isDefault":true,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/9f848803-41b2-4a6d-9501-bb0e0ab31d2e","name":"9f848803-41b2-4a6d-9501-bb0e0ab31d2e","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW100c","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/99e78a92-d724-4e1b-857b-2be661f3d153","name":"99e78a92-d724-4e1b-857b-2be661f3d153","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW200","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/bd2edbf5-11a2-4a87-b371-4b78eb82280e","name":"bd2edbf5-11a2-4a87-b371-4b78eb82280e","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW200c","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/284f1aff-fee7-4d3b-a211-5b8ebdd28fea","name":"284f1aff-fee7-4d3b-a211-5b8ebdd28fea","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW300","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/f1e305d4-5a13-4fd1-9deb-033d86ad8ea3","name":"f1e305d4-5a13-4fd1-9deb-033d86ad8ea3","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW300c","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/3bdaeefe-8a9d-41d3-91c4-46ef896b19af","name":"3bdaeefe-8a9d-41d3-91c4-46ef896b19af","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW400","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/9e6d0543-d417-4aee-a7aa-b588e0aa9722","name":"9e6d0543-d417-4aee-a7aa-b588e0aa9722","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW400c","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/5f759b78-8ec0-4dfb-97cc-c1455a3b5b4d","name":"5f759b78-8ec0-4dfb-97cc-c1455a3b5b4d","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW500","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/efd65c5b-af7b-4389-9109-f6a69d6a3885","name":"efd65c5b-af7b-4389-9109-f6a69d6a3885","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW600","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/16d01b30-3ecd-4b97-aeaf-a3d52f46fcbe","name":"16d01b30-3ecd-4b97-aeaf-a3d52f46fcbe","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW500c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/b89b9c6a-4ec2-4eb8-99db-6d2807e6aabb","name":"b89b9c6a-4ec2-4eb8-99db-6d2807e6aabb","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW1000","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/9a7a374e-b95c-4fd5-a68e-131d60796c47","name":"9a7a374e-b95c-4fd5-a68e-131d60796c47","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW1200","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/6b6d6207-2c78-48e2-8549-ae2cdc62f634","name":"6b6d6207-2c78-48e2-8549-ae2cdc62f634","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW1000c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/b930f58e-86b5-43e0-a2da-d8bf8769c557","name":"b930f58e-86b5-43e0-a2da-d8bf8769c557","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW1500","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/64dec603-ff44-4497-b77f-d4dcbc013e20","name":"64dec603-ff44-4497-b77f-d4dcbc013e20","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW1500c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/99165ede-a5ab-4b52-b317-e391d92ec370","name":"99165ede-a5ab-4b52-b317-e391d92ec370","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW2000","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/32084fd6-8bc7-4d72-9aeb-9e5954f28779","name":"32084fd6-8bc7-4d72-9aeb-9e5954f28779","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW2000c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/8e28c923-5cf2-43cb-bd25-28c8c69b30ff","name":"8e28c923-5cf2-43cb-bd25-28c8c69b30ff","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW3000","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/ea58fa6b-4504-4a59-8a8b-278a60f04fd3","name":"ea58fa6b-4504-4a59-8a8b-278a60f04fd3","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW2500c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/15e8ff68-3583-42da-9c2e-a29d08bba253","name":"15e8ff68-3583-42da-9c2e-a29d08bba253","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW3000c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/ee1df062-4f3c-42ad-91bf-58b2a7c351e4","name":"ee1df062-4f3c-42ad-91bf-58b2a7c351e4","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW6000","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/bcf5eb94-46c3-40c3-b701-c5c189300a79","name":"bcf5eb94-46c3-40c3-b701-c5c189300a79","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW5000c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/8bf62e3f-72a3-4d03-9838-8cc5e2115a07","name":"8bf62e3f-72a3-4d03-9838-8cc5e2115a07","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW6000c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/c3e07aba-7c88-4fdb-a9ee-ccc6705e2002","name":"c3e07aba-7c88-4fdb-a9ee-ccc6705e2002","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW7500c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/36ec908d-7322-4ba6-91c2-f2012eb4f32e","name":"36ec908d-7322-4ba6-91c2-f2012eb4f32e","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW10000c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/5199131b-d29a-49fd-91e6-a8bdd789659f","name":"5199131b-d29a-49fd-91e6-a8bdd789659f","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW15000c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/df4771c8-dd92-4795-b9eb-01cbb35a8cdc","name":"df4771c8-dd92-4795-b9eb-01cbb35a8cdc","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DW30000c","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/9cfc850f-d57f-4760-b5a6-bb640d268bf0","name":"9cfc850f-d57f-4760-b5a6-bb640d268bf0","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS100","isDefault":true,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/053407ef-f01c-46f4-b829-96e01a14f449","name":"053407ef-f01c-46f4-b829-96e01a14f449","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS200","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/013a9e10-cafc-45a8-8fcf-93095655d2ce","name":"013a9e10-cafc-45a8-8fcf-93095655d2ce","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS300","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/79f61db4-8c10-46ba-a93a-d7d02dddd61c","name":"79f61db4-8c10-46ba-a93a-d7d02dddd61c","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS400","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/44eaac33-df00-4ef4-a2bb-f7ff87899eea","name":"44eaac33-df00-4ef4-a2bb-f7ff87899eea","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS500","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/f8e0f3a6-888b-459c-a9dd-d74d8b2b0e72","name":"f8e0f3a6-888b-459c-a9dd-d74d8b2b0e72","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS600","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/b9ed8f51-a414-42dc-8348-e4a1de25e12b","name":"b9ed8f51-a414-42dc-8348-e4a1de25e12b","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS1000","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/07479569-6d70-47a5-8db6-0af55d34f2c1","name":"07479569-6d70-47a5-8db6-0af55d34f2c1","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS1200","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/2d79baec-2879-46d5-9f5d-fb70eb004c4e","name":"2d79baec-2879-46d5-9f5d-fb70eb004c4e","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS1500","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/7fb5389f-6d15-4e0b-9540-fe5ecdfdbeee","name":"7fb5389f-6d15-4e0b-9540-fe5ecdfdbeee","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"DS2000","isDefault":false,"isSystem":false,"description":null,"enabled":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/3e11a90a-03c3-49ff-a2ed-993b3a6a7b2f","name":"3e11a90a-03c3-49ff-a2ed-993b3a6a7b2f","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPS_1","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/73bf96d1-69a6-404a-ac1b-bf335bb58376","name":"73bf96d1-69a6-404a-ac1b-bf335bb58376","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSSmall_Gen4_1","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/9380cd0e-b025-4e9d-829c-c1918c1614bb","name":"9380cd0e-b025-4e9d-829c-c1918c1614bb","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen4_1","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/4190396a-0b47-4ba8-8c9e-0c7b6ee06c80","name":"4190396a-0b47-4ba8-8c9e-0c7b6ee06c80","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSMini_Gen4_1","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/d1be008c-675e-4a27-a71f-0396354bee6d","name":"d1be008c-675e-4a27-a71f-0396354bee6d","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPS_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/7d283821-b37e-44b9-b3e4-08f5b0fe19b4","name":"7d283821-b37e-44b9-b3e4-08f5b0fe19b4","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSSmall_Gen4_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/64f451d8-2888-40e8-99cc-21ede5117802","name":"64f451d8-2888-40e8-99cc-21ede5117802","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSSmall_Gen5_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/3ba66545-cfb8-40c6-b787-b9897a72bae1","name":"3ba66545-cfb8-40c6-b787-b9897a72bae1","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSSmallMF_Gen5_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/e771bac1-510d-4a41-8d3e-33fd304c9031","name":"e771bac1-510d-4a41-8d3e-33fd304c9031","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPS_Gen5_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/dab5f182-75e5-4062-8cb5-48e21b265db8","name":"dab5f182-75e5-4062-8cb5-48e21b265db8","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"MIPS2G5","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/a24981da-e0e1-4aa9-8182-1e96e5a6dddf","name":"a24981da-e0e1-4aa9-8182-1e96e5a6dddf","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/8cb732b1-e2b0-454b-9ecb-a4b3c28b86a6","name":"8cb732b1-e2b0-454b-9ecb-a4b3c28b86a6","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"MIXL4G5","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/34497c3f-24b9-4cee-968d-6e5e854670fe","name":"34497c3f-24b9-4cee-968d-6e5e854670fe","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen4_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/a420d2b2-ca32-4152-b1c6-dd8d4d9fd734","name":"a420d2b2-ca32-4152-b1c6-dd8d4d9fd734","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/9c0ea496-e988-4035-bc4e-abbf5c48475c","name":"9c0ea496-e988-4035-bc4e-abbf5c48475c","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSMini_Gen4_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/8e3fc35a-a43d-40bc-9ae0-8bafe7c7ae60","name":"8e3fc35a-a43d-40bc-9ae0-8bafe7c7ae60","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSMini_Gen5_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/b93372af-2684-4e1b-a166-f15a5a947f8e","name":"b93372af-2684-4e1b-a166-f15a5a947f8e","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSMiniMF_Gen5_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/cf71b9da-de39-45f7-ad6b-978d2795d46b","name":"cf71b9da-de39-45f7-ad6b-978d2795d46b","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/3bb0c247-8645-422d-a3ec-123801f15a4e","name":"3bb0c247-8645-422d-a3ec-123801f15a4e","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSLR_Gen5_2","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/c89ca9d3-90c1-44ef-85ff-243386b6f5e5","name":"c89ca9d3-90c1-44ef-85ff-243386b6f5e5","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSSmall_Gen5_4","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/7f478b4d-a073-4062-a191-b279a5f77760","name":"7f478b4d-a073-4062-a191-b279a5f77760","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPS_Gen5_4","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/6c3ed92f-9cb9-421d-8760-0420bf753ea3","name":"6c3ed92f-9cb9-421d-8760-0420bf753ea3","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"MIPS4G5","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/dd075eff-8481-43df-b435-cca3a37bd4ab","name":"dd075eff-8481-43df-b435-cca3a37bd4ab","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_4","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/2b13a411-f0fa-4967-8882-931807214787","name":"2b13a411-f0fa-4967-8882-931807214787","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"MIXL8G5","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/d060b874-21f3-47b0-a9bd-a1a737cfcc6e","name":"d060b874-21f3-47b0-a9bd-a1a737cfcc6e","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen4_4","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/60dba88b-2dfa-4123-be57-bd0dbfd92a72","name":"60dba88b-2dfa-4123-be57-bd0dbfd92a72","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_4","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/b6b00293-51ed-460e-9bae-8df7da8edfe5","name":"b6b00293-51ed-460e-9bae-8df7da8edfe5","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPSMini_Gen5_4","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/4a831233-118b-497f-b36c-3805d45ad6e0","name":"4a831233-118b-497f-b36c-3805d45ad6e0","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_4","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/6967f331-f7ac-4db9-bb36-ffc6d8b55b4d","name":"6967f331-f7ac-4db9-bb36-ffc6d8b55b4d","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSLR_Gen5_4","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/a9de4373-1541-4f66-ae8b-552d51b76279","name":"a9de4373-1541-4f66-ae8b-552d51b76279","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPS_Gen5_8","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/66dbe572-1a87-4961-b934-9b3cdf58aefc","name":"66dbe572-1a87-4961-b934-9b3cdf58aefc","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_8","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/694bf389-7cb2-4461-8fa2-0b06d8438315","name":"694bf389-7cb2-4461-8fa2-0b06d8438315","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen4_8","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/efdfac5f-3f8e-4500-95b1-684c07349860","name":"efdfac5f-3f8e-4500-95b1-684c07349860","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_8","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/553318ee-22d8-48ad-a970-2ab3422d0659","name":"553318ee-22d8-48ad-a970-2ab3422d0659","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_8","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/0afeffb3-da85-4318-8f59-fb7a5fd3682c","name":"0afeffb3-da85-4318-8f59-fb7a5fd3682c","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSLR_Gen5_8","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/9d654138-b40e-4ab1-9338-796c9eec33fd","name":"9d654138-b40e-4ab1-9338-796c9eec33fd","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSPS_Gen5_16","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/a6f02906-88ee-4de3-931a-993c76a5bd2b","name":"a6f02906-88ee-4de3-931a-993c76a5bd2b","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"MIPS16G5","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/cce0deaf-fca3-4627-b382-8447fc6d7144","name":"cce0deaf-fca3-4627-b382-8447fc6d7144","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_16","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/7fc1f700-a45d-499e-901f-2a00645c54db","name":"7fc1f700-a45d-499e-901f-2a00645c54db","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen4_16","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/6b56f70b-52e5-44ba-8cd5-4f63d224b206","name":"6b56f70b-52e5-44ba-8cd5-4f63d224b206","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_16","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/71d2ccfe-8fa8-45d9-8aea-67a0d2455eba","name":"71d2ccfe-8fa8-45d9-8aea-67a0d2455eba","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_16","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/7a5756c2-19fe-469f-844b-49406832162a","name":"7a5756c2-19fe-469f-844b-49406832162a","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSLR_Gen5_16","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/f1b2a082-f622-4fb8-bbef-e74deac3ec89","name":"f1b2a082-f622-4fb8-bbef-e74deac3ec89","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_20","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/18219541-ece9-444b-b979-87d6686adf2a","name":"18219541-ece9-444b-b979-87d6686adf2a","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_20","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/f016d419-a031-4b93-ab62-7f3d2a789376","name":"f016d419-a031-4b93-ab62-7f3d2a789376","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen4_24","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/222bc0ee-e195-4bbc-be05-3b849c3a8195","name":"222bc0ee-e195-4bbc-be05-3b849c3a8195","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_24","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/727355b0-0b8e-4049-b8ba-a99fb28d04a2","name":"727355b0-0b8e-4049-b8ba-a99fb28d04a2","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_24","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/05366cca-cc70-486e-a697-bb3fab877f75","name":"05366cca-cc70-486e-a697-bb3fab877f75","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_32","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/a504becb-5fda-471c-9a16-2436187c3080","name":"a504becb-5fda-471c-9a16-2436187c3080","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_32","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/32542ef7-124d-4e66-8b41-9c6c0ab963c2","name":"32542ef7-124d-4e66-8b41-9c6c0ab963c2","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_40","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/483895e1-9c27-4e8e-9a00-9e58b3697b0e","name":"483895e1-9c27-4e8e-9a00-9e58b3697b0e","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_40","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/672a3179-09ea-4795-929e-40be1f52cf33","name":"672a3179-09ea-4795-929e-40be1f52cf33","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_48","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/bebdd6cc-e2a9-4908-b3b8-b6724000ffc6","name":"bebdd6cc-e2a9-4908-b3b8-b6724000ffc6","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_48","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/6509db45-febe-44dd-a079-35f11d477984","name":"6509db45-febe-44dd-a079-35f11d477984","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HS_Gen5_80","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/0cd2cb00-42bb-4724-8dc2-a795b84f0650","name":"0cd2cb00-42bb-4724-8dc2-a795b84f0650","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"SQLDB_HSXLOG_Gen5_80","isDefault":false,"isSystem":false,"description":null,"enabled":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/d1737d22-a8ea-4de7-9bd0-33395d2a7419","name":"d1737d22-a8ea-4de7-9bd0-33395d2a7419","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"ElasticPool","isDefault":false,"isSystem":false,"description":null,"enabled":true}}]}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '58692'
+      content-type:
+      - application/json; odata=minimalmetadata; streaming=true; charset=utf-8
+      dataserviceversion:
+      - 3.0;
+      date:
+      - Tue, 24 Nov 2020 08:46:29 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/26e021db-f1f9-4c98-84c6-92af8ef433d7?api-version=2014-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/serviceObjectives/26e021db-f1f9-4c98-84c6-92af8ef433d7","name":"26e021db-f1f9-4c98-84c6-92af8ef433d7","type":"Microsoft.Sql/servers/serviceObjectives","location":"East
+        US","properties":{"serviceObjectiveName":"System","isDefault":false,"isSystem":true,"description":null,"enabled":false}}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '483'
+      content-type:
+      - application/json; odata=minimalmetadata; streaming=true; charset=utf-8
+      dataserviceversion:
+      - 3.0;
+      date:
+      - Tue, 24 Nov 2020 08:46:30 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"operation":"DropLogicalServer","startTime":"2020-11-24T08:46:31.42Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/a1df2eac-ccfb-40a0-9586-2f71ed4360d7?api-version=2019-06-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '71'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:46:30 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/a1df2eac-ccfb-40a0-9586-2f71ed4360d7?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14994'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/a1df2eac-ccfb-40a0-9586-2f71ed4360d7?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"name":"a1df2eac-ccfb-40a0-9586-2f71ed4360d7","status":"Succeeded","startTime":"2020-11-24T08:46:31.42Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 24 Nov 2020 08:46:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -54,7 +54,6 @@ from .policies import (
     ExponentialRetry,
 )
 from .._version import VERSION
-from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -236,16 +235,16 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
-            config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
+            config.headers_policy,
+            StorageRequestHook(**kwargs),
+            self._credential_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
@@ -298,7 +297,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     raise error
                 return iter(parts)
             return parts
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
 class TransportWrapper(HttpTransport):

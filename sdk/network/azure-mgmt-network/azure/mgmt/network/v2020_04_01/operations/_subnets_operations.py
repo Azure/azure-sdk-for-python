@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class SubnetsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -143,7 +143,14 @@ class SubnetsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'subnetName': self._serialize.url("subnet_name", subnet_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -165,7 +172,7 @@ class SubnetsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Subnet"
+        # type: (...) -> "_models.Subnet"
         """Gets the specified subnet by virtual network and resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -181,7 +188,7 @@ class SubnetsOperations(object):
         :rtype: ~azure.mgmt.network.v2020_04_01.models.Subnet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Subnet"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Subnet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -230,11 +237,11 @@ class SubnetsOperations(object):
         resource_group_name,  # type: str
         virtual_network_name,  # type: str
         subnet_name,  # type: str
-        subnet_parameters,  # type: "models.Subnet"
+        subnet_parameters,  # type: "_models.Subnet"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Subnet"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Subnet"]
+        # type: (...) -> "_models.Subnet"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Subnet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -290,10 +297,10 @@ class SubnetsOperations(object):
         resource_group_name,  # type: str
         virtual_network_name,  # type: str
         subnet_name,  # type: str
-        subnet_parameters,  # type: "models.Subnet"
+        subnet_parameters,  # type: "_models.Subnet"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Subnet"]
+        # type: (...) -> LROPoller["_models.Subnet"]
         """Creates or updates a subnet in the specified virtual network.
 
         :param resource_group_name: The name of the resource group.
@@ -315,7 +322,7 @@ class SubnetsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Subnet"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Subnet"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -341,7 +348,14 @@ class SubnetsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'subnetName': self._serialize.url("subnet_name", subnet_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -360,7 +374,7 @@ class SubnetsOperations(object):
         resource_group_name,  # type: str
         virtual_network_name,  # type: str
         subnet_name,  # type: str
-        prepare_network_policies_request_parameters,  # type: "models.PrepareNetworkPoliciesRequest"
+        prepare_network_policies_request_parameters,  # type: "_models.PrepareNetworkPoliciesRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -413,7 +427,7 @@ class SubnetsOperations(object):
         resource_group_name,  # type: str
         virtual_network_name,  # type: str
         subnet_name,  # type: str
-        prepare_network_policies_request_parameters,  # type: "models.PrepareNetworkPoliciesRequest"
+        prepare_network_policies_request_parameters,  # type: "_models.PrepareNetworkPoliciesRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -462,7 +476,14 @@ class SubnetsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'subnetName': self._serialize.url("subnet_name", subnet_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -481,7 +502,7 @@ class SubnetsOperations(object):
         resource_group_name,  # type: str
         virtual_network_name,  # type: str
         subnet_name,  # type: str
-        unprepare_network_policies_request_parameters,  # type: "models.UnprepareNetworkPoliciesRequest"
+        unprepare_network_policies_request_parameters,  # type: "_models.UnprepareNetworkPoliciesRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -534,7 +555,7 @@ class SubnetsOperations(object):
         resource_group_name,  # type: str
         virtual_network_name,  # type: str
         subnet_name,  # type: str
-        unprepare_network_policies_request_parameters,  # type: "models.UnprepareNetworkPoliciesRequest"
+        unprepare_network_policies_request_parameters,  # type: "_models.UnprepareNetworkPoliciesRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -583,7 +604,14 @@ class SubnetsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'subnetName': self._serialize.url("subnet_name", subnet_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -603,7 +631,7 @@ class SubnetsOperations(object):
         virtual_network_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SubnetListResult"]
+        # type: (...) -> Iterable["_models.SubnetListResult"]
         """Gets all subnets in a virtual network.
 
         :param resource_group_name: The name of the resource group.
@@ -615,7 +643,7 @@ class SubnetsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_04_01.models.SubnetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubnetListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubnetListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

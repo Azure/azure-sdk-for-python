@@ -1,0 +1,463 @@
+interactions:
+- request:
+    body: '{"location": "eastus", "tags": {"key": "value"}, "sku": {"name": "Standard"},
+      "properties": {"adminUserEnabled": true}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '119'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"sku":{"name":"Standard","tier":"Standard"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry","name":"myRegistry","location":"eastus","tags":{"key":"value"},"properties":{"loginServer":"myRegistry.azurecr.io","creationDate":"2020-08-11T07:58:18.5078342Z","provisioningState":"Succeeded","adminUserEnabled":true,"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2020-08-11T07:58:19.5252024+00:00","status":"disabled"}},"encryption":{"status":"disabled"},"dataEndpointEnabled":false,"dataEndpointHostNames":[],"privateEndpointConnections":[],"publicNetworkAccess":"Enabled"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '896'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/listUsages?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"value":[{"name":"Size","limit":107374182400,"currentValue":0,"unit":"Bytes"},{"name":"Webhooks","limit":10,"currentValue":0,"unit":"Count"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '143'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"sku":{"name":"Standard","tier":"Standard"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry","name":"myRegistry","location":"eastus","tags":{"key":"value"},"properties":{"loginServer":"myRegistry.azurecr.io","creationDate":"2020-08-11T07:58:18.5078342Z","provisioningState":"Succeeded","adminUserEnabled":true,"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2020-08-11T07:58:19.5252024+00:00","status":"disabled"}},"encryption":{"status":"disabled"},"dataEndpointEnabled":false,"dataEndpointHostNames":[],"privateEndpointConnections":[],"publicNetworkAccess":"Enabled"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '896'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/listBuildSourceUploadUrl?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"uploadUrl":"https://eusmanaged9.blob.core.windows.net/4d9a66f874d34ca0af83c7bcb0506222-mwvtnqb2pz/source/202008110000/ce1aa398-b778-4e0a-9cd8-e3c23d84a116.tar.gz?sv=2018-03-28&sr=b&sig=tNUpqPWrC81unn3uIBgNtrHf1VH1%2FJ2suQA7UoLQE84%3D&se=2020-08-11T08%3A58%3A23Z&sp=cw","relativePath":"source/202008110000/ce1aa398-b778-4e0a-9cd8-e3c23d84a116.tar.gz"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '352'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "password"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '20'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/regenerateCredential?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"username":"myRegistry","passwords":[{"name":"password","value":"5mmnJVHy1APC0n9LOSnHZDoWwpv0W+MO"},{"name":"password2","value":"ZiUVVZqLHJXCCXP9f4TIJmN3jiTRre+V"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '170'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/listCredentials?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"username":"myRegistry","passwords":[{"name":"password","value":"5mmnJVHy1APC0n9LOSnHZDoWwpv0W+MO"},{"name":"password2","value":"ZiUVVZqLHJXCCXP9f4TIJmN3jiTRre+V"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '170'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"type": "EncodedTaskRunRequest", "encodedTaskContent": "c3RlcHM6Cnt7IGlmIFZhbHVlcy5lbnZpcm9ubWVudCA9PSAncHJvZCcgfX0KICAtIHJ1bjogcHJvZCBzZXR1cAp7eyBlbHNlIGlmIFZhbHVlcy5lbnZpcm9ubWVudCA9PSAnc3RhZ2luZycgfX0KICAtIHJ1bjogc3RhZ2luZyBzZXR1cAp7eyBlbHNlIH19CiAgLSBydW46IGRlZmF1bHQgc2V0dXAKe3sgZW5kIH19CgogIC0gcnVuOiBidWlsZCAtdCBGYW5jeVRoaW5nOnt7LlZhbHVlcy5lbnZpcm9ubWVudH19LXt7LlZhbHVlcy52ZXJzaW9ufX0gLgoKcHVzaDogWydGYW5jeVRoaW5nOnt7LlZhbHVlcy5lbnZpcm9ubWVudH19LXt7LlZhbHVlcy52ZXJzaW9ufX0nXQ==",
+      "encodedValuesContent": "ZW52aXJvbm1lbnQ6IHByb2QKdmVyc2lvbjogMQ==", "values":
+      [{"name": "mytestargument", "value": "mytestvalue", "isSecret": false}, {"name":
+      "mysecrettestargument", "value": "mysecrettestvalue", "isSecret": true}], "platform":
+      {"os": "Linux"}, "agentConfiguration": {"cpu": 2}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '783'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/scheduleRun?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/runs","properties":{"runId":"ca1","status":"Queued","lastUpdatedTime":"2020-08-11T07:58:24+00:00","provisioningState":"Succeeded","isArchiveEnabled":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/runs/ca1","name":"ca1"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '440'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"key": "value"}, "sku": {"name": "Standard"}, "properties": {"adminUserEnabled":
+      true}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '97'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"sku":{"name":"Standard","tier":"Standard"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry","name":"myRegistry","location":"eastus","tags":{"key":"value"},"properties":{"loginServer":"myRegistry.azurecr.io","creationDate":"2020-08-11T07:58:18.5078342Z","provisioningState":"Succeeded","adminUserEnabled":true,"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2020-08-11T07:58:19.5252024+00:00","status":"disabled"}},"encryption":{"status":"disabled"},"dataEndpointEnabled":false,"dataEndpointHostNames":[],"privateEndpointConnections":[],"publicNetworkAccess":"Enabled"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '896'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "myRegistry", "type": "Microsoft.ContainerRegistry/registries"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '72'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/checkNameAvailability?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"The registry
+        myRegistry is already in use."}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '103'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:58:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry?api-version=2019-12-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 11 Aug 2020 07:58:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+version: 1

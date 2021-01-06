@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: 'b''b\''{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query":
-      "project id, tags, properties | limit 2"}\'''''
+    body: '{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query": "project
+      id, tags, properties | limit 2"}'
     headers:
       Accept:
       - application/json
@@ -12,26 +12,23 @@ interactions:
       Content-Length:
       - '110'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resourcegraph/2.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
   response:
     body:
-      string: '{"totalRecords":2,"count":2,"data":{"columns":[{"name":"id","type":"string"},{"name":"tags","type":"object"},{"name":"properties","type":"object"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.KeyVault/vaults/bimkv-nr-test2",{},{"provisioningState":"Succeeded","sku":{"name":"standard","family":"A"},"networkAcls":{"virtualNetworkRules":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/bim_pl_test_rg/providers/microsoft.network/virtualnetworks/bimplvnet/subnets/bimsubnet"}],"defaultAction":"Allow","ipRules":[{"value":"1.2.3.4/32"},{"value":"3.4.5.0/24"}],"bypass":"AzureServices"},"tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","enabledForDeployment":false,"accessPolicies":[{"tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","permissions":{"secrets":["get","list","set","delete","backup","restore","recover"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover"],"keys":["get","create","delete","list","update","import","backup","restore","recover"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"]},"objectId":"9ac02ab3-5061-4ec6-a3d8-2cdaa5f29efa"}],"vaultUri":"https://bimkv-nr-test2.vault.azure.net/","enableSoftDelete":true,"enableRbacAuthorization":false,"softDeleteRetentionInDays":90}],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Network/virtualNetworks/bimplvnet",{},{"provisioningState":"Succeeded","resourceGuid":"54867026-fd16-4992-b987-a23d8f1a2ee5","virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false,"subnets":[{"properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.0.0/24","ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Network/networkInterfaces/bimpe.nic.89900ad0-7e6e-40b6-897b-29e7e4146280/ipConfigurations/vault-default.privateEndpoint"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Network/networkInterfaces/bim547/ipConfigurations/ipconfig1"}],"privateLinkServiceNetworkPolicies":"Enabled","privateEndpointNetworkPolicies":"Disabled","delegations":[],"serviceEndpoints":[{"provisioningState":"Succeeded","locations":["*"],"service":"Microsoft.KeyVault"}],"privateEndpoints":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Network/privateEndpoints/bimpe"}],"purpose":"PrivateEndpoints"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Network/virtualNetworks/bimplvnet/subnets/bimsubnet","name":"bimsubnet","type":"Microsoft.Network/virtualNetworks/subnets","etag":"W/\"e31a8634-16d2-4592-8ede-860e7be9b8b8\""},{"properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.1.0/24","privateLinkServiceNetworkPolicies":"Enabled","privateEndpointNetworkPolicies":"Enabled","delegations":[],"serviceEndpoints":[]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Network/virtualNetworks/bimplvnet/subnets/AzureBastionSubnet_pltest","name":"AzureBastionSubnet_pltest","type":"Microsoft.Network/virtualNetworks/subnets","etag":"W/\"e31a8634-16d2-4592-8ede-860e7be9b8b8\""}],"addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"dhcpOptions":{"dnsServers":[]}}]]},"facets":[],"resultTruncated":"false"}'
+      string: '{"totalRecords":2,"count":2,"data":{"columns":[{"name":"id","type":"string"},{"name":"tags","type":"object"},{"name":"properties","type":"object"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/move_resource_name/providers/Microsoft.Migrate/moveCollections/move-collection-test6",{},{"provisioningState":"Succeeded","targetRegion":"eastus","sourceRegion":"eastus2","errors":null}],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX",null,{"provisioningState":"Succeeded","primary":true,"resourceGuid":"94219f98-9158-4ef7-ad73-93bc7df3acad","enableAcceleratedNetworking":false,"ipConfigurations":[{"properties":{"provisioningState":"Succeeded","privateIPAddressVersion":"IPv4","privateIPAllocationMethod":"Dynamic","privateIPAddress":"10.1.0.4","subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464/subnets/default"},"primary":true},"type":"Microsoft.Network/networkInterfaces/ipConfigurations","name":"ipconfig1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX/ipConfigurations/ipconfig1","etag":"W/\"5a0cb003-a7fe-4d87-bcf4-cded6e155953\""}],"enableIPForwarding":false,"tapConfigurations":[],"hostedWorkloads":["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"],"dnsSettings":{"internalDomainNameSuffix":"m0jm1iggslrejebzfdjidfxjxe.bx.internal.cloudapp.net","appliedDnsServers":[],"dnsServers":[]},"macAddress":"","nicType":"Standard","linkedResourceType":"Microsoft.Netapp/volumes"}]]},"facets":[],"resultTruncated":"false"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '3621'
+      - '1967'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 19:28:31 GMT
+      - Tue, 15 Dec 2020 09:46:53 GMT
       expires:
       - '-1'
       pragma:

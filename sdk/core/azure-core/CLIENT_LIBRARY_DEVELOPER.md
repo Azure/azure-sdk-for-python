@@ -88,6 +88,15 @@ client = FooServiceClient(
 response = client.get_foo_properties()
 ```
 
+### Pipeline client configurations
+
+| Parameters | Description |
+| --- | --- |
+| `pipeline` | While `PipelineClient` will create a default pipeline, users can opt to use their own pipeline by passing in a `Pipeline` object. If passed in, the other configurations will be ignored.  |
+| `config` | While `PipelineClient` will create a default `Configuration`, users can opt to use their own configuration by passing in a `Configuration` object. If passed in, it will be used to create a `Pipeline` object. |
+| `transport` | While `PipelineClient` will create a default `RequestsTransport`, users can opt to use their own transport by passing in a `RequestsTransport` object. If it is omitted, `PipelineClient` will honor the other described [transport customizations](#transport). |
+
+
 ### Transport
 
 Various combinations of sync/async HTTP libraries as well as alternative event loop implementations are available. Therefore to support the widest range of customer scenarios, we must allow a customer to easily swap out the HTTP transport layer to one of those supported.
@@ -141,19 +150,6 @@ transport = AioHttpTransport(
         connection_data_block_size=4096
 )
 ```
-
-#### Transport configurations
-
-| Parameters | Description |
-| --- | --- |
-| connection_timeout | A single float in seconds for the connection timeout. Defaults to 300 seconds. |
-| read_timeout | A single float in seconds for the read timeout. Defaults to 300 seconds. |
-| connection_verify | SSL certificate verification. Enabled by default. Set to False to disable, alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs. |
-| connection_cert | Client-side certificates. You can specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths. |
-| proxies | Dictionary mapping protocol or protocol and hostname to the URL of the proxy. |
-| cookies | Dict or CookieJar object to send with the `Request`. |
-| stream | whether to immediately download the response content. Defaults to ``False``. |
-| connection_data_block_size | The block size of data sent over the connection. Defaults to 4096 bytes. |
 
 ### Proxy Settings
 

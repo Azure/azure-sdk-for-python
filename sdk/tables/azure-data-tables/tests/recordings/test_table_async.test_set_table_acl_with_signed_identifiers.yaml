@@ -11,23 +11,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 21:51:25 GMT
+      - Fri, 18 Dec 2020 17:30:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:25 GMT
+      - Fri, 18 Dec 2020 17:30:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytableasyncd261181d"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytableasyncd261181d"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 16 Sep 2020 21:51:25 GMT
-      location: https://storagename.table.core.windows.net/Tables('pytableasyncd261181d')
+      date: Fri, 18 Dec 2020 17:30:00 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('pytableasyncd261181d')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,11 +35,11 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-09-16T21:46:26Z</Start><Expiry>2020-09-16T22:51:26Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-12-18T17:25:00Z</Start><Expiry>2020-12-18T18:30:00Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
     headers:
       Accept:
       - application/xml
@@ -48,82 +48,82 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Wed, 16 Sep 2020 21:51:26 GMT
+      - Fri, 18 Dec 2020 17:30:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:26 GMT
+      - Fri, 18 Dec 2020 17:30:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.table.core.windows.net/pytableasyncd261181d?comp=acl
+    uri: https://fake_table_account.table.core.windows.net/pytableasyncd261181d?comp=acl
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Sep 2020 21:51:25 GMT
+      date: Fri, 18 Dec 2020 17:30:00 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/pytableasyncd261181d?comp=acl
+    url: https://seankaneprim.table.core.windows.net/pytableasyncd261181d?comp=acl
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       Date:
-      - Wed, 16 Sep 2020 21:51:26 GMT
+      - Fri, 18 Dec 2020 17:30:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:26 GMT
+      - Fri, 18 Dec 2020 17:30:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/pytableasyncd261181d?comp=acl
+    uri: https://fake_table_account.table.core.windows.net/pytableasyncd261181d?comp=acl
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-09-16T21:46:26.0000000Z</Start><Expiry>2020-09-16T22:51:26.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-12-18T17:25:00.0000000Z</Start><Expiry>2020-12-18T18:30:00.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
     headers:
       content-type: application/xml
-      date: Wed, 16 Sep 2020 21:51:25 GMT
+      date: Fri, 18 Dec 2020 17:30:00 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/pytableasyncd261181d?comp=acl
+    url: https://seankaneprim.table.core.windows.net/pytableasyncd261181d?comp=acl
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Wed, 16 Sep 2020 21:51:26 GMT
+      - Fri, 18 Dec 2020 17:30:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:26 GMT
+      - Fri, 18 Dec 2020 17:30:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('pytableasyncd261181d')
+    uri: https://fake_table_account.table.core.windows.net/Tables('pytableasyncd261181d')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 16 Sep 2020 21:51:25 GMT
+      date: Fri, 18 Dec 2020 17:30:01 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/Tables('pytableasyncd261181d')
+    url: https://seankaneprim.table.core.windows.net/Tables('pytableasyncd261181d')
 version: 1

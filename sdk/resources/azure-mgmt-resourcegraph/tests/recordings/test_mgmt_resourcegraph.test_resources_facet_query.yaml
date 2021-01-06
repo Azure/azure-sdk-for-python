@@ -1,9 +1,9 @@
 interactions:
 - request:
-    body: 'b''b\''{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query":
-      "project id, location | limit 10", "facets": [{"expression": "location", "options":
-      {"sortOrder": "desc", "$top": 4}}, {"expression": "nonExistingColumn", "options":
-      {"sortOrder": "desc", "$top": 4}}]}\'''''
+    body: '{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query": "project
+      id, location | limit 10", "facets": [{"expression": "location", "options": {"sortOrder":
+      "desc", "$top": 1}}, {"expression": "nonExistingColumn", "options": {"sortOrder":
+      "desc", "$top": 1}}]}'
     headers:
       Accept:
       - application/json
@@ -14,28 +14,25 @@ interactions:
       Content-Length:
       - '270'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resourcegraph/2.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
   response:
     body:
-      string: '{"totalRecords":10,"count":10,"data":{"columns":[{"name":"id","type":"string"},{"name":"location","type":"string"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxgkhum4fgqffqfxfk2rxguyav7ee36zsnxb3hziamsre5gkdlyz56ani4l23/providers/Microsoft.DataBox/jobs/joblmlobzq6gap36m4h2suwq","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxfatz7bwdvcwrgcw2s4nsrtqd5ekrtasz7ku5i7nfauwkmrc77zvqzofjqfj/providers/Microsoft.DataBox/jobs/job5kora4cnpnjusyrkcnwe2","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Networking/providers/Microsoft.ClassicNetwork/virtualNetworks/CliGtTestVnet6623","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxtxiwrvbtjgrx2npfru76uyoc6b6isd5hdsfn6ktdumkor4a27iy7xdzticf/providers/Microsoft.DataBox/jobs/jobtztsdrfw6z6wivsqbc5nc","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Web/sites/lc-web-4","eastasia"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Web/serverFarms/lc-plan-4","eastasia"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.KeyVault/vaults/bimkv-nr-test","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.KeyVault/vaults/bimkv-nr-test3","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_mixed_realitygv2l3elh76a7brm66drgektfyzfsijxog6smmqzg6dnn2r7ofuf6c/providers/Microsoft.MixedReality/spatialAnchorsAccounts/MyAccount","eastus2euap"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zhoxing-test/providers/Microsoft.Network/networkSecurityGroups/azure-cli-deploy-test-nsg1","westus"]]},"facets":[{"expression":"location","totalRecords":4,"count":4,"data":{"columns":[{"name":"location","type":"string"},{"name":"count","type":"integer"}],"rows":[["westus",5],["eastasia",2],["eastus",2],["eastus2euap",1]]},"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
+      string: '{"totalRecords":8,"count":8,"data":{"columns":[{"name":"id","type":"string"},{"name":"location","type":"string"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/move_resource_name/providers/Microsoft.Migrate/moveCollections/move-collection-test6","eastus2"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lianwrs/providers/Microsoft.RecoveryServices/vaults/lianwvault0727","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/iyljd2wtoqh43dern43sawzmqxkeari3bcqiadgfste4outj7cdmmslvr4yfw2vmrsqeiogmitj/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzsecond","southcentralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/iyljd2wtoqh43dern43sawzmqxkeari3bcqiadgfste4outj7cdmmslvr4yfw2vmrsqeiogmitj/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyz","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest/providers/Microsoft.RecoveryServices/vaults/vault886","eastus"]]},"facets":[{"expression":"location","totalRecords":3,"count":1,"data":{"columns":[{"name":"location","type":"string"},{"name":"count","type":"integer"}],"rows":[["eastus",6]]},"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
         valid columns in facet expression."},{"code":"InvalidColumnNames","message":"Invalid
         column names: [nonExistingColumn]."}],"resultType":"FacetError"}],"resultTruncated":"false"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2404'
+      - '2003'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 19:28:34 GMT
+      - Tue, 15 Dec 2020 09:46:56 GMT
       expires:
       - '-1'
       pragma:

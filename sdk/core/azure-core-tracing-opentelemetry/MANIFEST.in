@@ -4,5 +4,5 @@ include azure/__init__.py
 include azure/core/__init__.py
 include azure/core/tracing/__init__.py
 include azure/core/tracing/ext/__init__.py
-recursive-include examples *.py
+recursive-include samples *.py
 

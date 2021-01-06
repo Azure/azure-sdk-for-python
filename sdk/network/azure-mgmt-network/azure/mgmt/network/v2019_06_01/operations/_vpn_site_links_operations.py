@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class VpnSiteLinksOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class VpnSiteLinksOperations(object):
         vpn_site_link_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnSiteLink"
+        # type: (...) -> "_models.VpnSiteLink"
         """Retrieves the details of a VPN site link.
 
         :param resource_group_name: The resource group name of the VpnSite.
@@ -66,7 +66,7 @@ class VpnSiteLinksOperations(object):
         :rtype: ~azure.mgmt.network.v2019_06_01.models.VpnSiteLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSiteLink"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnSiteLink"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -98,7 +98,7 @@ class VpnSiteLinksOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VpnSiteLink', pipeline_response)
@@ -115,7 +115,7 @@ class VpnSiteLinksOperations(object):
         vpn_site_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListVpnSiteLinksResult"]
+        # type: (...) -> Iterable["_models.ListVpnSiteLinksResult"]
         """Lists all the vpnSiteLinks in a resource group for a vpn site.
 
         :param resource_group_name: The resource group name of the VpnSite.
@@ -127,7 +127,7 @@ class VpnSiteLinksOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_06_01.models.ListVpnSiteLinksResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnSiteLinksResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnSiteLinksResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -174,7 +174,7 @@ class VpnSiteLinksOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

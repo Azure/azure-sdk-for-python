@@ -22,7 +22,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
-from ._constants import AZURE_CLI_CLIENT_ID, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from ._constants import DEVELOPER_SIGN_ON_CLIENT_ID, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from ._internal import get_default_authority, normalize_authority
 from ._internal.user_agent import USER_AGENT
 
@@ -39,10 +39,12 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from time import struct_time
-    from typing import Any, Dict, Iterable, Mapping, Optional, Union
+    from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+
+    PolicyListType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 class AuthnClientBase(ABC):
@@ -99,7 +101,7 @@ class AuthnClientBase(ABC):
             "grant_type": "refresh_token",
             "refresh_token": refresh_token["secret"],
             "scope": " ".join(scopes),
-            "client_id": AZURE_CLI_CLIENT_ID,  # TODO: first-party app for SDK?
+            "client_id": DEVELOPER_SIGN_ON_CLIENT_ID,
         }
         return self._prepare_request(form_data=data)
 
@@ -166,10 +168,9 @@ class AuthnClientBase(ABC):
 
         raise ValueError("'{}' doesn't match the expected format".format(expires_on))
 
-    # TODO: public, factor out of request_token
     def _prepare_request(
         self,
-        method="POST",  # type: Optional[str]
+        method="POST",  # type: str
         headers=None,  # type: Optional[Mapping[str, str]]
         form_data=None,  # type: Optional[Mapping[str, str]]
         params=None,  # type: Optional[Dict[str, str]]
@@ -200,7 +201,7 @@ class AuthnClient(AuthnClientBase):
     def __init__(
         self,
         config=None,  # type: Optional[Configuration]
-        policies=None,  # type: Optional[Iterable[HTTPPolicy]]
+        policies=None,  # type: Optional[PolicyListType]
         transport=None,  # type: Optional[HttpTransport]
         **kwargs  # type: Any
     ):
@@ -217,13 +218,13 @@ class AuthnClient(AuthnClientBase):
         ]
         if not transport:
             transport = RequestsTransport(**kwargs)
-        self._pipeline = Pipeline(transport=transport, policies=policies)
+        self._pipeline = Pipeline(transport=transport, policies=policies)  # type: Pipeline
         super(AuthnClient, self).__init__(**kwargs)
 
     def request_token(
         self,
         scopes,  # type: Iterable[str]
-        method="POST",  # type: Optional[str]
+        method="POST",  # type: str
         headers=None,  # type: Optional[Mapping[str, str]]
         form_data=None,  # type: Optional[Mapping[str, str]]
         params=None,  # type: Optional[Dict[str, str]]

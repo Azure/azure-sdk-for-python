@@ -36,6 +36,19 @@ except ImportError:  # python < 3.3
 WEBBROWSER_OPEN = InteractiveBrowserCredential.__module__ + ".webbrowser.open"
 
 
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        InteractiveBrowserCredential(tenant_id=tenant)
+
+    invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            InteractiveBrowserCredential(tenant_id=tenant)
+
+
 def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
 
@@ -170,7 +183,7 @@ def test_interactive_credential(mock_open, redirect_url):
     expected_token = "access-token"
     expires_in = 3600
     authority = "authority"
-    tenant_id = "tenant_id"
+    tenant_id = "tenant-id"
     endpoint = "https://{}/{}".format(authority, tenant_id)
 
     transport = msal_validating_transport(
@@ -225,7 +238,8 @@ def test_interactive_credential(mock_open, redirect_url):
     assert server_class.call_count == 1
 
     if redirect_url:
-        server_class.assert_called_once_with(redirect_url, timeout=ANY)
+        parsed = urllib_parse.urlparse(redirect_url)
+        server_class.assert_called_once_with(parsed.hostname, parsed.port, timeout=ANY)
 
     # token should be cached, get_token shouldn't prompt again
     token = credential.get_token("scope")
@@ -244,8 +258,16 @@ def test_interactive_credential(mock_open, redirect_url):
     assert transport.send.call_count == 4
 
 
-@patch("azure.identity._credentials.browser.webbrowser.open", lambda _: True)
-def test_interactive_credential_timeout():
+def test_timeout():
+    """get_token should raise ClientAuthenticationError when the server times out without receiving a redirect"""
+
+    timeout = 0.01
+
+    class GuaranteedTimeout(AuthCodeRedirectServer, object):
+        def handle_request(self):
+            time.sleep(timeout + 0.01)
+            super(GuaranteedTimeout, self).handle_request()
+
     # mock transport handles MSAL's tenant discovery
     transport = Mock(
         send=lambda _, **__: mock_response(
@@ -253,33 +275,24 @@ def test_interactive_credential_timeout():
         )
     )
 
-    # mock local server blocks long enough to exceed the timeout
-    timeout = 0.01
-    server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 0.01))
-    server_class = Mock(return_value=server_instance)
-
     credential = InteractiveBrowserCredential(
-        client_id="guid",
-        _server_class=server_class,
-        timeout=timeout,
-        transport=transport,
-        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
-        _cache=TokenCache(),
+        timeout=timeout, transport=transport, _cache=TokenCache(), _server_class=GuaranteedTimeout
     )
 
-    with pytest.raises(ClientAuthenticationError) as ex:
-        credential.get_token("scope")
+    with patch(WEBBROWSER_OPEN, lambda _: True):
+        with pytest.raises(ClientAuthenticationError) as ex:
+            credential.get_token("scope")
     assert "timed out" in ex.value.message.lower()
 
 
 def test_redirect_server():
     # binding a random port prevents races when running the test in parallel
     server = None
+    hostname = "127.0.0.1"
     for _ in range(4):
         try:
             port = random.randint(1024, 65535)
-            url = "http://127.0.0.1:{}".format(port)
-            server = AuthCodeRedirectServer(url, timeout=10)
+            server = AuthCodeRedirectServer(hostname, port, timeout=10)
             break
         except socket.error:
             continue  # keep looking for an open port
@@ -295,7 +308,8 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    response = urllib.request.urlopen(url + "?{}={}".format(expected_param, expected_value))  # nosec
+    url = "http://{}:{}".format(hostname, port) + "?{}={}".format(expected_param, expected_value)
+    response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]
@@ -311,6 +325,14 @@ def test_no_browser():
         credential.get_token("scope")
 
 
+@pytest.mark.parametrize("redirect_uri", ("http://localhost", "host", "host:42"))
+def test_invalid_redirect_uri(redirect_uri):
+    """The credential should raise ValueError when redirect_uri is invalid or doesn't include a port"""
+
+    with pytest.raises(ValueError):
+        InteractiveBrowserCredential(redirect_uri=redirect_uri)
+
+
 def test_cannot_bind_port():
     """get_token should raise CredentialUnavailableError when the redirect listener can't bind a port"""
 
@@ -322,15 +344,13 @@ def test_cannot_bind_port():
 def test_cannot_bind_redirect_uri():
     """When a user specifies a redirect URI, the credential shouldn't attempt to bind another"""
 
-    expected_uri = "http://localhost:42"
-
     server = Mock(side_effect=socket.error)
-    credential = InteractiveBrowserCredential(redirect_uri=expected_uri, _server_class=server)
+    credential = InteractiveBrowserCredential(redirect_uri="http://localhost:42", _server_class=server)
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
 
-    server.assert_called_once_with(expected_uri, timeout=ANY)
+    server.assert_called_once_with("localhost", 42, timeout=ANY)
 
 
 def _validate_auth_request_url(url):

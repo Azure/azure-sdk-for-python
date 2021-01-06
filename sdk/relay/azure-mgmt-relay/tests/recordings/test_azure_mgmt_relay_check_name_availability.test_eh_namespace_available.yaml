@@ -2,30 +2,52 @@ interactions:
 - request:
     body: '{"name": "Testingehnamespaceavailabilityforpython"}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['51']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
-          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '51'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Relay/checkNameAvailability?api-version=2017-04-01
   response:
-    body: {string: '{"nameAvailable":true,"reason":"None","message":null}'}
+    body:
+      string: '{"nameAvailable":true,"reason":"None","message":null}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['53']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Feb 2018 10:32:55 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '53'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Dec 2020 03:35:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
 version: 1

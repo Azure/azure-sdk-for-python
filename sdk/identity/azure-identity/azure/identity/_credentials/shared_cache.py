@@ -10,8 +10,8 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._constants import AZURE_CLI_CLIENT_ID
-from .._internal import AadClient
+from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
+from .._internal import AadClient, validate_tenant_id
 from .._internal.decorators import log_get_token, wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
@@ -53,6 +53,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         if self._auth_record:
             # authenticate in the tenant that produced the record unless "tenant_id" specifies another
             self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
+            validate_tenant_id(self._tenant_id)
             self._cache = kwargs.pop("_cache", None)
             self._app = None
             self._client_kwargs = kwargs
@@ -103,7 +104,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase
-        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)
 
     def _initialize(self):
         if self._initialized:
@@ -128,6 +129,11 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
     def _acquire_token_silent(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Silently acquire a token from MSAL. Requires an AuthenticationRecord."""
+
+        # self._auth_record and ._app will not be None when this method is called by get_token
+        # but should either be None anyway (and to satisfy mypy) we raise
+        if self._app is None or self._auth_record is None:
+            raise CredentialUnavailableError("Initialization failed")
 
         result = None
 

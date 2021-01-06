@@ -29,6 +29,19 @@ def get_default_authority():
     return normalize_authority(authority)
 
 
+VALID_TENANT_ID_CHARACTERS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" + "0123456789" + "-.")
+
+
+def validate_tenant_id(tenant_id):
+    # type: (str) -> None
+    """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant id"""
+    if not tenant_id or any(c not in VALID_TENANT_ID_CHARACTERS for c in tenant_id):
+        raise ValueError(
+            "Invalid tenant id provided. You can locate your tenant id by following the instructions here: "
+            + "https://docs.microsoft.com/partner-center/find-ids-and-domain-names"
+        )
+
+
 # pylint:disable=wrong-import-position
 from .aad_client import AadClient
 from .aad_client_base import AadClientBase

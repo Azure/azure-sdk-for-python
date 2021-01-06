@@ -1,5 +1,153 @@
 interactions:
 - request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:29:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:29:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable0a9041284"},{"TableName":"listtable1a9041284"},{"TableName":"listtable2a9041284"},{"TableName":"listtable3a9041284"}]}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Fri, 18 Dec 2020 17:29:53 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: https://seankaneprim.table.core.windows.net/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:29:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:29:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('listtable0a9041284')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:29:53 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.core.windows.net/Tables('listtable0a9041284')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:29:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:29:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('listtable1a9041284')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:29:54 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.core.windows.net/Tables('listtable1a9041284')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:29:54 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:29:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('listtable2a9041284')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:29:54 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.core.windows.net/Tables('listtable2a9041284')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 17:29:54 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:29:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('listtable3a9041284')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Fri, 18 Dec 2020 17:29:54 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.core.windows.net/Tables('listtable3a9041284')
+- request:
     body: '{"TableName": "listtable0cac14c3"}'
     headers:
       Accept:
@@ -11,23 +159,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable0cac14c3"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable0cac14c3"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 16 Sep 2020 22:00:53 GMT
-      location: https://storagename.table.core.windows.net/Tables('listtable0cac14c3')
+      date: Fri, 18 Dec 2020 17:29:54 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('listtable0cac14c3')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,7 +183,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstorage37t7u2p4jlzj.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
     body: '{"TableName": "listtable1cac14c3"}'
     headers:
@@ -48,23 +196,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable1cac14c3"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable1cac14c3"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 16 Sep 2020 22:00:53 GMT
-      location: https://storagename.table.core.windows.net/Tables('listtable1cac14c3')
+      date: Fri, 18 Dec 2020 17:29:54 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('listtable1cac14c3')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -72,7 +220,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstorage37t7u2p4jlzj.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
     body: '{"TableName": "listtable2cac14c3"}'
     headers:
@@ -85,23 +233,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable2cac14c3"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable2cac14c3"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 16 Sep 2020 22:00:53 GMT
-      location: https://storagename.table.core.windows.net/Tables('listtable2cac14c3')
+      date: Fri, 18 Dec 2020 17:29:54 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('listtable2cac14c3')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -109,7 +257,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstorage37t7u2p4jlzj.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
     body: '{"TableName": "listtable3cac14c3"}'
     headers:
@@ -122,23 +270,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable3cac14c3"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable3cac14c3"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 16 Sep 2020 22:00:53 GMT
-      location: https://storagename.table.core.windows.net/Tables('listtable3cac14c3')
+      date: Fri, 18 Dec 2020 17:29:54 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('listtable3cac14c3')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -146,7 +294,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstorage37t7u2p4jlzj.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
     body: null
     headers:
@@ -155,22 +303,22 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable0cac14c3"},{"TableName":"listtable1cac14c3"},{"TableName":"listtable2cac14c3"},{"TableName":"listtable3cac14c3"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable0cac14c3"},{"TableName":"listtable1cac14c3"},{"TableName":"listtable2cac14c3"},{"TableName":"listtable3cac14c3"}]}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 16 Sep 2020 22:00:53 GMT
+      date: Fri, 18 Dec 2020 17:29:55 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -178,7 +326,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://pyacrstorage37t7u2p4jlzj.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
     body: null
     headers:
@@ -187,31 +335,31 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/Tables?$top=3
+    uri: https://fake_table_account.table.core.windows.net/Tables?$top=3
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable0cac14c3"},{"TableName":"listtable1cac14c3"},{"TableName":"listtable2cac14c3"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable0cac14c3"},{"TableName":"listtable1cac14c3"},{"TableName":"listtable2cac14c3"}]}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 16 Sep 2020 22:00:53 GMT
+      date: Fri, 18 Dec 2020 17:29:55 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-continuation-nexttablename: 1!48!bGlzdHRhYmxlM2NhYzE0YzMBMDFkNjhjNzRkOGU2ZWFiNQ--
+      x-ms-continuation-nexttablename: 1!48!bGlzdHRhYmxlM2E5MDQxMjg0ATAxZDZkNTYzNjU2M2FjOTM-
       x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstorage37t7u2p4jlzj.table.core.windows.net/Tables?$top=3
+    url: https://seankaneprim.table.core.windows.net/Tables?$top=3
 - request:
     body: null
     headers:
@@ -220,22 +368,22 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:55 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 22:00:53 GMT
+      - Fri, 18 Dec 2020 17:29:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/Tables?$top=3&NextTableName=1!48!bGlzdHRhYmxlM2NhYzE0YzMBMDFkNjhjNzRkOGU2ZWFiNQ--
+    uri: https://fake_table_account.table.core.windows.net/Tables?$top=3&NextTableName=1!48!bGlzdHRhYmxlM2E5MDQxMjg0ATAxZDZkNTYzNjU2M2FjOTM-
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable3cac14c3"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable3cac14c3"}]}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 16 Sep 2020 22:00:53 GMT
+      date: Fri, 18 Dec 2020 17:29:55 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -243,5 +391,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://pyacrstorage37t7u2p4jlzj.table.core.windows.net/Tables?$top=3&NextTableName=1!48!bGlzdHRhYmxlM2NhYzE0YzMBMDFkNjhjNzRkOGU2ZWFiNQ--
+    url: https://seankaneprim.table.core.windows.net/Tables?$top=3&NextTableName=1!48!bGlzdHRhYmxlM2E5MDQxMjg0ATAxZDZkNTYzNjU2M2FjOTM-
 version: 1

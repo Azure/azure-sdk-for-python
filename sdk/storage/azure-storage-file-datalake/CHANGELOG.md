@@ -1,6 +1,18 @@
 # Release History
-## 12.2.0b2 (Unreleased)
+## 12.2.1 (Unreleased)
 
+
+## 12.2.0 (2020-11-10)
+**Stable release of preview features**
+- Preview feature set/update/remove access control recursively.
+- Preview feature `set_file_expiry` on DataLakeFileClient.
+- Preview feature generating directory level sas.
+
+**Fixes**
+- Fixed session closure of filesystem (#14497)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0
 
 ## 12.2.0b1 (2020-10-02)
 **New Features**

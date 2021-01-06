@@ -1,0 +1,2558 @@
+interactions:
+- request:
+    body: '{"location": "eastus", "tags": {"key": "value"}, "sku": {"name": "Premium"},
+      "properties": {"adminUserEnabled": false}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '119'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry?api-version=2019-12-01-preview
+  response:
+    body:
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry","name":"myRegistry","location":"eastus","tags":{"key":"value"},"properties":{"loginServer":"myRegistry.azurecr.io","creationDate":"2020-08-11T07:36:03.4129721Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2020-08-11T07:36:04.4653907+00:00","status":"disabled"}},"encryption":{"status":"disabled"},"dataEndpointEnabled":false,"dataEndpointHostNames":[],"privateEndpointConnections":[],"publicNetworkAccess":"Enabled"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '976'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:36:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus", "tags": {"key": "value"}, "properties": {"count":
+      1, "tier": "S1", "os": "Linux"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '105'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/agentPools","properties":{"count":1,"tier":"S1","os":"Linux","provisioningState":"Creating"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool","name":"myagentpool","location":"eastus"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '419'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:36:10 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1194'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:36:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:36:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:37:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:37:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:38:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:38:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:39:22 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:39:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:40:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:40:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:41:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:41:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:42:25 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:42:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:43:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:43:57 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Creating"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:44:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/818d146e-e6b6-447b-9530-8cdd74103ab9?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:44:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/agentPools","properties":{"count":1,"tier":"S1","os":"Linux","provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool","name":"myagentpool","location":"eastus"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '420'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:44:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/agentPools","properties":{"count":1,"tier":"S1","os":"Linux","provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool","name":"myagentpool","location":"eastus"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '420'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:44:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/listQueueStatus?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"count":0}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '11'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:44:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"count": 1}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '28'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/agentPools","properties":{"count":1,"tier":"S1","os":"Linux","provisioningState":"Updating"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool","name":"myagentpool","location":"eastus"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/2c9f1d38-a09b-43d0-9688-f62deb639900?api-version=2019-06-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '419'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:45:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1193'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationStatuses/2c9f1d38-a09b-43d0-9688-f62deb639900?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:45:10 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/agentPools","properties":{"count":1,"tier":"S1","os":"Linux","provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool","name":"myagentpool","location":"eastus"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '420'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:45:11 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.ContainerRegistry/registries/agentPools","properties":{"count":1,"tier":"S1","os":"Linux","provisioningState":"Deleting"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool","name":"myagentpool","location":"eastus"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '419'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:45:12 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14995'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:45:23 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:45:33 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:45:43 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:45:54 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:46:04 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:46:14 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:46:26 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:46:37 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:46:47 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:46:57 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:47:07 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:47:18 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:47:28 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:47:38 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:47:49 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:47:59 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:48:10 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:48:20 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:48:31 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:48:41 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:48:51 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:49:01 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:49:12 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:49:22 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:49:32 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:49:44 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:49:54 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:50:04 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:50:14 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:50:24 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:50:35 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:50:46 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"status":"Deleting"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:50:56 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.15.10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool/operationResults/e6eaa5fc-1f31-413e-8e1a-c1343e9467a0?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.ContainerRegistry/registries/myRegistry/agentPools/myagentpool''
+        under resource group ''rgname'' was not found. For more details please go
+        to https://aka.ms/ARMResourceNotFoundFix"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '323'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 11 Aug 2020 07:51:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/3.0.0rc13 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerRegistry/registries/myRegistry?api-version=2019-12-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 11 Aug 2020 07:51:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14994'
+    status:
+      code: 200
+      message: OK
+version: 1

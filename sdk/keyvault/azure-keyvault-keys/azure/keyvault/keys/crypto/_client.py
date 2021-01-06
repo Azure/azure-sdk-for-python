@@ -14,7 +14,7 @@ from ._key_validity import raise_if_time_invalid
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
 from .._models import KeyVaultKey
-from .._shared import KeyVaultClientBase, parse_vault_id
+from .._shared import KeyVaultClientBase, parse_key_vault_id
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -27,6 +27,10 @@ _LOGGER = logging.getLogger(__name__)
 
 class CryptographyClient(KeyVaultClientBase):
     """Performs cryptographic operations using Azure Key Vault keys.
+
+    This client will perform operations locally when it's intialized with the necessary key material or is able to get
+    that material from Key Vault. When the required key material is unavailable, cryptographic operations are performed
+    by the Key Vault service.
 
     :param key:
         Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
@@ -53,10 +57,10 @@ class CryptographyClient(KeyVaultClientBase):
 
         if isinstance(key, KeyVaultKey):
             self._key = key
-            self._key_id = parse_vault_id(key.id)
+            self._key_id = parse_key_vault_id(key.id)
         elif isinstance(key, six.string_types):
             self._key = None
-            self._key_id = parse_vault_id(key)
+            self._key_id = parse_key_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
@@ -76,7 +80,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         :rtype: str
         """
-        return "/".join(self._key_id)
+        return self._key_id.source_id
 
     @distributed_trace
     def _initialize(self, **kwargs):
@@ -87,9 +91,10 @@ class CryptographyClient(KeyVaultClientBase):
         # try to get the key material, if we don't have it and aren't forbidden to do so
         if not (self._key or self._keys_get_forbidden):
             try:
-                self._key = self._client.get_key(
+                key_bundle = self._client.get_key(
                     self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
+                self._key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)
@@ -242,7 +247,7 @@ class CryptographyClient(KeyVaultClientBase):
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
             **kwargs
         )
-        return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=operation_result.result)
+        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace
     def sign(self, algorithm, digest, **kwargs):

@@ -31,6 +31,7 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
             azure.mgmt.healthcareapis.HealthcareApisManagementClient
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_healthcareapis(self, resource_group):
 

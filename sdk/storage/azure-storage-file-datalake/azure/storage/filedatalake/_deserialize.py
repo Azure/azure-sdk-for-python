@@ -70,12 +70,11 @@ def normalize_headers(headers):
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+    try:
+        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
+    except AttributeError:
+        raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
-
-
-def return_headers_and_deserialized_path_list(response, deserialized, response_headers):  # pylint: disable=unused-argument
-    return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
 
 
 def process_storage_error(storage_error):
@@ -140,7 +139,8 @@ def process_storage_error(storage_error):
     for name, info in additional_data.items():
         error_message += "\n{}:{}".format(name, info)
 
-    error = raise_error(message=error_message, response=storage_error.response)
+    error = raise_error(message=error_message, response=storage_error.response,
+                        continuation_token=storage_error.continuation_token)
     error.error_code = error_code
     error.additional_info = additional_data
     raise error

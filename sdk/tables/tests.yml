@@ -5,7 +5,9 @@ jobs:
     parameters:
       BuildTargetingString: azure-data-tables
       ServiceDirectory: tables
-      AllocateResourceGroup: 'false'
+      AllocateResourceGroup: false
+      DeployArmTemplate: true
+      TestSamples: true
       EnvVars:
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)

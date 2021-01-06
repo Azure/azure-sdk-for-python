@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:03:44 GMT
+      - Fri, 18 Dec 2020 17:40:07 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:03:44 GMT
+      - Fri, 18 Dec 2020 17:40:07 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"pytablesyncd2361378","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"pytablesyncd2361378","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 01 Oct 2020 01:03:46 GMT
+      - Fri, 18 Dec 2020 17:40:09 GMT
       etag:
-      - W/"datetime'2020-10-01T01%3A03%3A45.6963591Z'"
+      - W/"datetime'2020-12-18T17%3A40%3A08.9122824Z'"
       location:
-      - https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytablesyncd2361378')
+      - https://fake_cosmos_account.table.cosmos.azure.com/Tables('pytablesyncd2361378')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -55,23 +55,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:03:45 GMT
+      - Fri, 18 Dec 2020 17:40:09 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:03:45 GMT
+      - Fri, 18 Dec 2020 17:40:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables?$filter=TableName%20eq%20%27pytablesyncd2361378%27
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables?$filter=TableName%20eq%20%27pytablesyncd2361378%27
   response:
     body:
-      string: '{"value":[{"TableName":"pytablesyncd2361378"}],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[{"TableName":"pytablesyncd2361378"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 01 Oct 2020 01:03:46 GMT
+      - Fri, 18 Dec 2020 17:40:09 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -91,15 +91,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Oct 2020 01:03:45 GMT
+      - Fri, 18 Dec 2020 17:40:09 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:03:45 GMT
+      - Fri, 18 Dec 2020 17:40:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytablesyncd2361378')
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('pytablesyncd2361378')
   response:
     body:
       string: ''
@@ -107,10 +107,46 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 01 Oct 2020 01:03:46 GMT
+      - Fri, 18 Dec 2020 17:40:09 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 17:40:09 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 17:40:09 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 18 Dec 2020 17:40:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
 version: 1

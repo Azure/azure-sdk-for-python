@@ -31,6 +31,7 @@ class MgmtMapsManagementClientTest(AzureMgmtTestCase):
             azure.mgmt.maps.MapsManagementClient
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_maps(self, resource_group):
 

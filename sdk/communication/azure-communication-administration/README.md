@@ -24,6 +24,25 @@ pip install azure-communication-administration
 
 - Create/revoke scoped user access tokens to access services such as chat, calling, sms. Tokens are issued for a valid Azure Communication identity and can be revoked at any time.
 
+### Initializing Identity Client
+```python
+# You can find your endpoint and access token from your resource in the Azure Portal
+import os
+from azure.communication.administration import CommunicationIdentityClient
+from azure.identity import DefaultAzureCredential
+
+connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
+# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+identity_client_managed_identity = CommunicationIdentityClient.(endpoint, DefaultAzureCredential())
+
+#You can also authenticate using your connection string
+identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
+
+```
+
 ## CommunicationPhoneNumberClient
 ### Initializing Phone Number Client
 ```python
@@ -40,9 +59,9 @@ Phone plans come in two types; Geographic and Toll-Free. Geographic phone plans 
 
 All geographic phone plans within the same country are grouped into a phone plan group with a Geographic phone number type. All Toll-Free phone plans within the same country are grouped into a phone plan group.
 
-### Searching and Acquiring numbers
+### Reserving and Acquiring numbers
 
-Phone numbers search can be search through the search creation API by providing a phone plan id, an area code and quantity of phone numbers. The provided quantity of phone numbers will be reserved for ten minutes. This search of phone numbers can either be cancelled or purchased. If the search is cancelled, then the phone numbers will become available to others. If the search is purchased, then the phone numbers are acquired for the Azure resources.
+Phone numbers can be reserved through the begin_reserve_phone_numbers API by providing a phone plan id, an area code and quantity of phone numbers. The provided quantity of phone numbers will be reserved for ten minutes. This reservation of phone numbers can either be cancelled or purchased. If the reservation is cancelled, then the phone numbers will become available to others. If the reservation is purchased, then the phone numbers are acquired for the Azure resources.
 
 ### Configuring / Assigning numbers
 
@@ -125,42 +144,37 @@ all_area_codes = phone_number_administration_client.get_all_area_codes(
 print(all_area_codes)
 ```
 
-### Create Search
+### Create Reservation
 
 ```python
-from azure.communication.administration import CreateSearchOptions
 phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-searchOptions = CreateSearchOptions(
+poller = phone_number_administration_client.begin_reserve_phone_numbers(
     area_code='<area code>',
-    description="testsearch20200014",
-    display_name="testsearch20200014",
+    description="testreservation20200014",
+    display_name="testreservation20200014",
     phone_plan_ids=['<phone plan id>'],
     quantity=1
 )
-search_response = phone_number_administration_client.create_search(
-    body=searchOptions
-)
-print(search_response)
 ```
 
-### Get search by id
+### Get Reservation By Id
 ```python
 phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-phone_number_search_response = phone_number_administration_client.get_search_by_id(
-    search_id='<search id>'
+phone_number_reservation_response = phone_number_administration_client.get_reservation_by_id(
+    reservation_id='<reservation id>'
 )
-print(phone_number_search_response)
+print(reservation_id)
 ```
 
-### Purchase Search
+### Purchase Reservation
 
 ```python
 phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-phone_number_administration_client.purchase_search(
-    search_id='<search id to purchase>'
+poller = phone_number_administration_client.begin_purchase_reservation(
+    reservation_id='<reservation id to purchase>'
 )
 ```
 

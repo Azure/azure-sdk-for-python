@@ -1,0 +1,262 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable3741440"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable3741440"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      location:
+      - https://fake_table_account.table.core.windows.net/Tables('uttable3741440')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"PartitionKey": "pk3741440", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk3741440", "RowKey@odata.type": "Edm.String", "age": 39, "sex":
+      "male", "sex@odata.type": "Edm.String", "married": true, "deceased": false,
+      "ratio": 3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other":
+      20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '575'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/uttable3741440
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable3741440/@Element","odata.etag":"W/\"datetime''2020-12-18T15%3A42%3A28.362153Z''\"","PartitionKey":"pk3741440","RowKey":"rk3741440","Timestamp":"2020-12-18T15:42:28.362153Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      etag:
+      - W/"datetime'2020-12-18T15%3A42%3A28.362153Z'"
+      location:
+      - https://fake_table_account.table.core.windows.net/uttable3741440(PartitionKey='pk3741440',RowKey='rk3741440')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: "--batch_b7c472a5-d5d2-4925-97f6-36b6aa6f4f55\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_2d392439-b86f-43af-ae2a-9d3441222f60\r\n\r\n--changeset_2d392439-b86f-43af-ae2a-9d3441222f60\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nPATCH https://seankaneprim.table.core.windows.net/uttable3741440(PartitionKey='pk3741440',RowKey='rk3741440')\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:\
+      \ W/\"datetime'2012-06-15T22%3A51%3A44.9662825Z'\"\r\nContent-Type: application/json\r\
+      \nAccept: application/json\r\nContent-Length: 351\r\nx-ms-date: Fri, 18 Dec\
+      \ 2020 15:42:28 GMT\r\nDate: Fri, 18 Dec 2020 15:42:28 GMT\r\nx-ms-client-request-id:\
+      \ a1f6ec71-4147-11eb-a45b-58961df361d1\r\n\r\n{\"PartitionKey\": \"pk3741440\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"RowKey\": \"rk3741440\", \"\
+      RowKey@odata.type\": \"Edm.String\", \"age\": \"abc\", \"age@odata.type\": \"\
+      Edm.String\", \"sex\": \"female\", \"sex@odata.type\": \"Edm.String\", \"sign\"\
+      : \"aquarius\", \"sign@odata.type\": \"Edm.String\", \"birthday\": \"1991-10-04T00:00:00Z\"\
+      , \"birthday@odata.type\": \"Edm.DateTime\"}\r\n--changeset_2d392439-b86f-43af-ae2a-9d3441222f60--\r\
+      \n\r\n--batch_b7c472a5-d5d2-4925-97f6-36b6aa6f4f55--\r\n"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1176'
+      Content-Type:
+      - multipart/mixed; boundary=batch_b7c472a5-d5d2-4925-97f6-36b6aa6f4f55
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 15:42:28 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 15:42:28 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/$batch
+  response:
+    body:
+      string: "--batchresponse_758a1fd6-f045-4577-b871-9fbb359ec360\r\nContent-Type:\
+        \ multipart/mixed; boundary=changesetresponse_0325741b-c73c-498c-8ce1-ef47e5c829a6\r\
+        \n\r\n--changesetresponse_0325741b-c73c-498c-8ce1-ef47e5c829a6\r\nContent-Type:\
+        \ application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 412\
+        \ Precondition Failed\r\nX-Content-Type-Options: nosniff\r\nCache-Control:\
+        \ no-cache\r\nDataServiceVersion: 3.0;\r\nContent-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8\r\
+        \n\r\n{\"odata.error\":{\"code\":\"UpdateConditionNotSatisfied\",\"message\"\
+        :{\"lang\":\"en-US\",\"value\":\"The update condition specified in the request\
+        \ was not satisfied.\\nRequestId:a7a38f89-2002-008d-6e54-d594cb000000\\nTime:2020-12-18T15:42:28.4962467Z\"\
+        }}}\r\n--changesetresponse_0325741b-c73c-498c-8ce1-ef47e5c829a6--\r\n--batchresponse_758a1fd6-f045-4577-b871-9fbb359ec360--\r\
+        \n"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - multipart/mixed; boundary=batchresponse_758a1fd6-f045-4577-b871-9fbb359ec360
+      date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 15:42:28 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 15:42:28 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/uttable3741440(PartitionKey='pk3741440',RowKey='rk3741440')
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable3741440/@Element","odata.etag":"W/\"datetime''2020-12-18T15%3A42%3A28.362153Z''\"","PartitionKey":"pk3741440","RowKey":"rk3741440","Timestamp":"2020-12-18T15:42:28.362153Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      etag:
+      - W/"datetime'2020-12-18T15%3A42%3A28.362153Z'"
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 18 Dec 2020 15:42:28 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 15:42:28 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable3741440')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 18 Dec 2020 15:42:27 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+version: 1

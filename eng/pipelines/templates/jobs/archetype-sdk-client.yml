@@ -1,5 +1,7 @@
 parameters:
   ServiceDirectory: ''
+  Artifacts: []
+  TestPipeline: false
   BeforePublishSteps: []
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
@@ -41,7 +43,7 @@ parameters:
       RunForPR: false
     Linux_Python39:
       OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.9.0'
+      PythonVersion: '3.9'
       CoverageArg: ''
       RunForPR: true
   AdditionalTestMatrix: []
@@ -62,6 +64,11 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+
+    - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+      parameters:
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
@@ -75,12 +82,14 @@ jobs:
       vmImage: 'ubuntu-18.04'
 
     steps:
-    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-      - template: /eng/common/pipelines/templates/steps/verify-links.yml
-        parameters:
+    - template: /eng/common/pipelines/templates/steps/verify-links.yml
+      parameters:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
           Directory: ''
-          Urls: (git diff origin/${env:SYSTEM_PULLREQUEST_TARGETBRANCH} HEAD --name-only -- '*.md')
-          CheckLinkGuidance: $true
+          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: sdk/${{ parameters.ServiceDirectory }}
+        CheckLinkGuidance: $true
 
     - template: ../steps/analyze.yml
       parameters: 
@@ -88,6 +97,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
@@ -119,23 +129,28 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-    - task: PowerShell@2
-      displayName: Prep template pipeline for release
-      condition: and(succeeded(),eq(variables['TestPipeline'],'true'))
-      inputs:
-        pwsh: true
-        workingDirectory: $(Build.SourcesDirectory)
-        filePath: eng/scripts/SetTestPipelineVersion.ps1
+    - ${{if eq(parameters.TestPipeline, 'true')}}:
+      - task: PowerShell@2
+        displayName: Prep template pipeline for release
+        condition: succeeded()
+        inputs:
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          filePath: eng/scripts/SetTestPipelineVersion.ps1
+          arguments: '-BuildID $(Build.BuildId)'
 
     - pwsh: |
         $toxenvvar = "whl,sdist"
-        if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
+        if ('$(System.TeamProject)' -eq 'internal') {
           $toxenvvar = "whl,sdist,depends,latestdependency,mindependency"
         }
 
-        if ('$(Run.DependencyTest)' -eq 'true') {
-          $toxenvvar = "whl,sdist,depends,latestdependency,mindependency"
+        # ensure that the variable is unset. if it isn't, use the value discovered there
+        if ('$(Run.ToxCustomEnvs)' -ne ('$' + '(Run.ToxCustomEnvs)'))
+        {
+          $toxenvvar = '$(Run.ToxCustomEnvs)'
         }
+        
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"
 
@@ -165,7 +180,7 @@ jobs:
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
     displayName: 'Run Regression'
-    timeoutInMinutes: 90
+    timeoutInMinutes: 120
     variables:
     - template: ../variables/globals.yml
 
