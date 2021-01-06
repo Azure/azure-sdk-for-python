@@ -116,7 +116,7 @@ class StorageChangeFeedTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_change_feed_does_not_fail_on_empty_event_stream(self, resource_group, location, storage_account, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
-        start_time = datetime(2021, 8, 19)
+        start_time = datetime(2300, 8, 19)
         change_feed = cf_client.list_changes(start_time=start_time)
 
         events = list(change_feed)
@@ -124,12 +124,15 @@ class StorageChangeFeedTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_read_change_feed_tail_where_3_shards_have_data(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("working on it")
         cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
 
         # to read until the end
         start_time = datetime(2020, 8, 19, 23)
-        change_feed = cf_client.list_changes(start_time=start_time).by_page()
+
+        # this end_time is to avoid breaking change caused by a new year, it was 2020/08/19 when we recorded the test
+        end_time = datetime(2020, 8, 28, 1)
+
+        change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time).by_page()
 
         events = list()
         for page in change_feed:
@@ -179,12 +182,15 @@ class StorageChangeFeedTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_read_change_feed_tail_where_only_1_shard_has_data(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("working on it")
         cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
 
         # to read until the end
         start_time = datetime(2020, 8, 20, 1)
-        change_feed = cf_client.list_changes(start_time=start_time, results_per_page=3).by_page()
+
+        # this end_time is to avoid breaking change caused by a new year, it was 2020/08/20 when we recorded the test
+        end_time = datetime(2020, 8, 28, 8)
+
+        change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=3).by_page()
 
         page = next(change_feed)
         events_on_first_page = list()
