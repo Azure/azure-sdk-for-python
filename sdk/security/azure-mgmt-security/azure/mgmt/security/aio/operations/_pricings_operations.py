@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class PricingsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,7 +43,7 @@ class PricingsOperations:
     async def list(
         self,
         **kwargs
-    ) -> "models.PricingList":
+    ) -> "_models.PricingList":
         """Lists Security Center pricing configurations in the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -51,7 +51,7 @@ class PricingsOperations:
         :rtype: ~azure.mgmt.security.models.PricingList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PricingList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PricingList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -94,7 +94,7 @@ class PricingsOperations:
         self,
         pricing_name: str,
         **kwargs
-    ) -> "models.Pricing":
+    ) -> "_models.Pricing":
         """Gets a provided Security Center pricing configuration in the subscription.
 
         :param pricing_name: name of the pricing configuration.
@@ -104,7 +104,7 @@ class PricingsOperations:
         :rtype: ~azure.mgmt.security.models.Pricing
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Pricing"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pricing"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -147,9 +147,9 @@ class PricingsOperations:
     async def update(
         self,
         pricing_name: str,
-        pricing: "models.Pricing",
+        pricing: "_models.Pricing",
         **kwargs
-    ) -> "models.Pricing":
+    ) -> "_models.Pricing":
         """Updates a provided Security Center pricing configuration in the subscription.
 
         :param pricing_name: name of the pricing configuration.
@@ -161,7 +161,7 @@ class PricingsOperations:
         :rtype: ~azure.mgmt.security.models.Pricing
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Pricing"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pricing"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

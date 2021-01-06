@@ -179,3 +179,36 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
 
   Set-Content -Path $pkgJsonLoc -Value $jsonContent
 }
+
+# function is used to auto generate API View
+function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
+{
+  # Find wheel file in given artifact directory
+  # Make sure to pick only package with given artifact name
+  # Skip auto API review creation for management packages
+  if ($artifactName -match "mgmt")
+  {
+    Write-Host "Skipping automatic API review for management artifact $($artifactName)"
+    return $null
+  }
+
+  $packageName = $artifactName + "-"
+  Write-Host "Searching for $($packageName) wheel in artifact path $($artifactDir)"
+  $files = Get-ChildItem "${artifactDir}" | Where-Object -FilterScript {$_.Name.StartsWith($packageName) -and $_.Name.EndsWith(".whl")}
+  if (!$files)
+  {
+    Write-Host "$($artifactDir) does not have wheel package for $($packageName)"
+    return $null
+  }
+  elseif($files.Count -ne 1)
+  {
+    Write-Host "$($artifactDir) should contain only one published wheel package for $($packageName)"
+    Write-Host "No of Packages $($files.Count)"
+    return $null
+  }
+
+  $packages = @{
+    $files[0].Name = $files[0].FullName
+  }
+  return $packages
+}

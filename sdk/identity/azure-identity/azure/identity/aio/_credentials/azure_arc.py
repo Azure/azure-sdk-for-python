@@ -27,9 +27,9 @@ if TYPE_CHECKING:
     from typing import Any, List, Optional, Union
     from azure.core.configuration import Configuration
     from azure.core.credentials import AccessToken
-    from azure.core.pipeline import PipelineRequest
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
     from azure.core.pipeline.policies import SansIOHTTPPolicy
-    from azure.core.pipeline.transport import AsyncHttpResponse
+    from azure.core.pipeline.transport import AsyncHttpResponse, AsyncHttpTransport
 
     PolicyType = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
@@ -39,25 +39,23 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
         super().__init__()
 
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-        if not url:
-            # Azure Arc managed identity isn't available in this environment
-            self._client = None
-            return
-        identity_config = kwargs.pop("_identity_config", None) or {}
-        config = _get_configuration()
-        client_args = dict(
-            kwargs,
-            _identity_config=identity_config,
-            policies=_get_policies(config),
-            request_factory=functools.partial(_get_request, url),
-        )
+        imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
+        self._available = url and imds
+        if self._available:
+            identity_config = kwargs.pop("_identity_config", None) or {}
+            config = _get_configuration()
 
-        self._client = AsyncManagedIdentityClient(**client_args)
+            self._client = AsyncManagedIdentityClient(
+                _identity_config=identity_config,
+                policies=_get_policies(config),
+                request_factory=functools.partial(_get_request, url),
+                **kwargs
+            )
 
     async def get_token(  # pylint:disable=invalid-overridden-method
         self, *scopes: str, **kwargs: "Any"
     ) -> "AccessToken":
-        if not self._client:
+        if not self._available:
             raise CredentialUnavailableError(
                 message="Service Fabric managed identity configuration not found in environment"
             )
@@ -89,7 +87,12 @@ def _get_policies(config: "Configuration", **kwargs: "Any") -> "List[PolicyType]
 class ArcChallengeAuthPolicy(AsyncHTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
 
-    async def send(self, request: "PipelineRequest") -> "AsyncHttpResponse":
+    def __init__(self):
+        # workaround for https://github.com/Azure/azure-sdk-for-python/issues/5797
+        super().__init__()
+        self.next = None  # type: Union[AsyncHTTPPolicy, AsyncHttpTransport]
+
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
         request.http_request.headers["Metadata"] = "true"
         response = await self.next.send(request)
 
