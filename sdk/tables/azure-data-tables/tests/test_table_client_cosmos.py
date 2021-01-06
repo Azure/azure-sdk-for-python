@@ -419,7 +419,7 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.xfail
+    @pytest.mark.skipif(sys.version_info < (3, 0))
     @CosmosPreparer()
     def test_user_agent_default(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
