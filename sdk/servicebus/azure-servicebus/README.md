@@ -27,7 +27,7 @@ Use the Service Bus client library for Python to communicate between application
 Install the Azure Service Bus client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-servicebus --pre
+pip install azure-servicebus
 ```
 
 ### Prerequisites: 
