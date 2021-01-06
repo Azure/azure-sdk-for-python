@@ -66,6 +66,10 @@ class ActiveDirectory(Model):
     :param ldap_signing: Specifies whether or not the LDAP traffic needs to be
      signed.
     :type ldap_signing: bool
+    :param security_operators: Domain Users in the Active directory to be
+     given SeSecurityPrivilege privilege (Needed for SMB Continuously available
+     shares for SQL). A list of unique usernames without domain specifier
+    :type security_operators: list[str]
     """
 
     _validation = {
@@ -94,9 +98,10 @@ class ActiveDirectory(Model):
         'server_root_ca_certificate': {'key': 'serverRootCACertificate', 'type': 'str'},
         'aes_encryption': {'key': 'aesEncryption', 'type': 'bool'},
         'ldap_signing': {'key': 'ldapSigning', 'type': 'bool'},
+        'security_operators': {'key': 'securityOperators', 'type': '[str]'},
     }
 
-    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, dns: str=None, smb_server_name: str=None, organizational_unit: str=None, site: str=None, backup_operators=None, kdc_ip: str=None, ad_name: str=None, server_root_ca_certificate: str=None, aes_encryption: bool=None, ldap_signing: bool=None, **kwargs) -> None:
+    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, dns: str=None, smb_server_name: str=None, organizational_unit: str=None, site: str=None, backup_operators=None, kdc_ip: str=None, ad_name: str=None, server_root_ca_certificate: str=None, aes_encryption: bool=None, ldap_signing: bool=None, security_operators=None, **kwargs) -> None:
         super(ActiveDirectory, self).__init__(**kwargs)
         self.active_directory_id = active_directory_id
         self.username = username
@@ -114,6 +119,7 @@ class ActiveDirectory(Model):
         self.server_root_ca_certificate = server_root_ca_certificate
         self.aes_encryption = aes_encryption
         self.ldap_signing = ldap_signing
+        self.security_operators = security_operators
 
 
 class AuthorizeRequest(Model):
@@ -1803,6 +1809,14 @@ class Volume(Model):
     :param security_style: The security style of volume. Possible values
      include: 'ntfs', 'unix'
     :type security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
+    :param smb_encryption: Enables encryption for in-flight smb3 data. Only
+     applicable for SMB/DualProtocol volume. To be used with swagger version
+     2020-08-01 or later. Default value: False .
+    :type smb_encryption: bool
+    :param smb_continuously_available: Enables continuously available share
+     property for smb volume. Only applicable for SMB volume. Default value:
+     False .
+    :type smb_continuously_available: bool
     :param throughput_mibps: Maximum throughput in Mibps that can be achieved
      by this volume.
     :type throughput_mibps: float
@@ -1848,10 +1862,12 @@ class Volume(Model):
         'snapshot_directory_visible': {'key': 'properties.snapshotDirectoryVisible', 'type': 'bool'},
         'kerberos_enabled': {'key': 'properties.kerberosEnabled', 'type': 'bool'},
         'security_style': {'key': 'properties.securityStyle', 'type': 'str'},
+        'smb_encryption': {'key': 'properties.smbEncryption', 'type': 'bool'},
+        'smb_continuously_available': {'key': 'properties.smbContinuouslyAvailable', 'type': 'bool'},
         'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
     }
 
-    def __init__(self, *, location: str, creation_token: str, subnet_id: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, protocol_types=None, snapshot_id: str=None, backup_id: str=None, mount_targets=None, volume_type: str=None, data_protection=None, is_restoring: bool=None, snapshot_directory_visible: bool=None, kerberos_enabled: bool=False, security_style=None, throughput_mibps: float=None, **kwargs) -> None:
+    def __init__(self, *, location: str, creation_token: str, subnet_id: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, protocol_types=None, snapshot_id: str=None, backup_id: str=None, mount_targets=None, volume_type: str=None, data_protection=None, is_restoring: bool=None, snapshot_directory_visible: bool=None, kerberos_enabled: bool=False, security_style=None, smb_encryption: bool=False, smb_continuously_available: bool=False, throughput_mibps: float=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -1876,6 +1892,8 @@ class Volume(Model):
         self.snapshot_directory_visible = snapshot_directory_visible
         self.kerberos_enabled = kerberos_enabled
         self.security_style = security_style
+        self.smb_encryption = smb_encryption
+        self.smb_continuously_available = smb_continuously_available
         self.throughput_mibps = throughput_mibps
 
 

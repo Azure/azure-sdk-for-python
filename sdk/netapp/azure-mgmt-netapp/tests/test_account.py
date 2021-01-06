@@ -1,4 +1,3 @@
-import json
 import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
@@ -6,7 +5,6 @@ import azure.mgmt.netapp.models
 from azure.mgmt.netapp.models import NetAppAccount, NetAppAccountPatch
 from setup import *
 
-accounts = [TEST_ACC_1, TEST_ACC_2]
 
 def create_account(client, rg, acc_name, location=LOCATION, tags=None, active_directories=None):
     account_body = NetAppAccount(location=location, tags=tags, active_directories=active_directories)
@@ -19,10 +17,11 @@ def create_account(client, rg, acc_name, location=LOCATION, tags=None, active_di
 
     return account
 
+
 def wait_for_no_account(client, rg, acc_name, live=False):
     # a workaround for the async nature of certain ARM processes
-    co=0
-    while co<5:
+    co = 0
+    while co < 5:
         co += 1
         if live:
             time.sleep(2)
@@ -32,6 +31,7 @@ def wait_for_no_account(client, rg, acc_name, live=False):
             # not found is an exception case (status code 200 expected)
             # and is actually what we are waiting for
             break
+
 
 def delete_account(client, rg, acc_name, live=False):
     client.accounts.delete(rg, acc_name).wait()
@@ -55,8 +55,9 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.assertEqual(len(list(account_list)), 0)
 
     def test_list_accounts(self):
-        account = create_account(self.client, TEST_RG, TEST_ACC_1)
-        account = create_account(self.client, TEST_RG, TEST_ACC_2)
+        create_account(self.client, TEST_RG, TEST_ACC_1)
+        create_account(self.client, TEST_RG, TEST_ACC_2)
+        accounts = [TEST_ACC_1, TEST_ACC_2]
 
         account_list = self.client.accounts.list(TEST_RG)
         self.assertEqual(len(list(account_list)), 2)
@@ -86,4 +87,3 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.assertTrue(account.tags['Tag1'] == 'Value2')
 
         delete_account(self.client, TEST_RG, TEST_ACC_1)
-

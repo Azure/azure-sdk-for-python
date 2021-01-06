@@ -6,7 +6,8 @@ from test_account import create_account, delete_account
 from setup import *
 import azure.mgmt.netapp.models
 
-snapshot_policies = [TEST_SNAPSHOT_POLICY_1, TEST_SNAPSHOT_POLICY_2]
+TEST_SNAPSHOT_POLICY_1 = 'sdk-py-tests-snapshot-policy-1'
+TEST_SNAPSHOT_POLICY_2 = 'sdk-py-tests-snapshot-policy-2'
 
 
 def create_snapshot_policy(client, snapshot_policy_name, rg=TEST_RG, account_name=TEST_ACC_1, location=LOCATION, snapshot_policy_only=False):
@@ -21,7 +22,7 @@ def create_snapshot_policy(client, snapshot_policy_name, rg=TEST_RG, account_nam
         monthly_schedule={},
         enabled=False
     )
-        
+
     snapshot_policy = client.snapshot_policies.create(snapshot_policy_body, rg, account_name, snapshot_policy_name).result()
     return snapshot_policy
 
@@ -33,13 +34,13 @@ def delete_snapshot_policy(client, snapshot_policy_name, rg=TEST_RG, account_nam
 
 def wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name, live=False):
     # a workaround for the async nature of certain ARM processes
-    co=0
-    while co<5:
+    co = 0
+    while co < 10:
         co += 1
         if live:
-            time.sleep(2)
+            time.sleep(5)
         try:
-            snapshot_policy = client.snapshot_policies.get(rg, account_name, snapshot_policy_name)
+            client.snapshot_policies.get(rg, account_name, snapshot_policy_name)
         except:
             # not found is an exception case (status code 200 expected)
             # and is actually what we are waiting for
@@ -70,11 +71,13 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
         snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, TEST_ACC_1)
         self.assertEqual(len(list(snapshot_policies_list)), 2)
+        snapshot_policies = [TEST_SNAPSHOT_POLICY_1, TEST_SNAPSHOT_POLICY_2]
+
         idx = 0
         for snapshot_policy in snapshot_policies_list:
             self.assertEqual(snapshot_policy.name, snapshot_policies[idx])
             idx += 1
-        
+
         delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, live=self.is_live)
         delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_2, live=self.is_live)
 
