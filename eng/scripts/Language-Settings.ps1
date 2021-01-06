@@ -3,7 +3,6 @@ $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
-$PACKAGE_INSTALL_NOTES_REGEX = "pip\sinstall\s(?<PackageName>.*)==(?<Version>.*)"
 
 function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
 {
@@ -211,20 +210,6 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   return $packages
 }
 
-function GetExistingPackageVersions ($PackageName, $GroupId=$null)
-{
-  try
-  {
-    $existingVersion = Invoke-RestMethod -Method GET -Uri "https://pypi.python.org/pypi/${PackageName}/json"
-    return ($existingVersion.releases | Get-Member -MemberType NoteProperty).Name
-  }
-  catch
-  {
-    LogError "Failed to retrieve package versions. `n$_"
-    return $null
-  }
-}
-
 function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $BuildType=$null, $GroupId=$null)
 {
   if($null -eq $ReleaseDate)
@@ -233,9 +218,4 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
   python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
-}
-
-function GetPackageInstallNote ($PackageName, $Version, $GroupId=$null)
-{
-  return "pip install ${PackageName}==${Version}"
 }
