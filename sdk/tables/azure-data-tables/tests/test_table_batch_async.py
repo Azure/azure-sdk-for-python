@@ -142,6 +142,7 @@ class StorageTableBatchTest(TableTestCase):
         assert entity['other'] ==  20
         assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         assert '_metadata' not in entity
+        assert entity.metadata()
 
     def _assert_updated_entity(self, entity):
         '''

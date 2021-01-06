@@ -819,6 +819,21 @@ class StorageTableEntityTest(TableTestCase):
             received_entity = self.table.get_entity(partition_key=entity['PartitionKey'],
                                          row_key=entity['RowKey'])
 
+            entity2 = {
+                u'PartitionKey': entity[u'PartitionKey'],
+                u'RowKey': entity[u'RowKey'] + u'1',
+                u'Value': 5
+            }
+            self.table.create_entity(entity2)
+            received_entity2 = self.table.get_entity(partition_key=entity2['PartitionKey'],
+                                         row_key=entity2['RowKey'])
+
+            print(received_entity)
+            print(received_entity2)
+            self.sleep(2)
+            print(received_entity.metadata())
+            print(received_entity2.metadata())
+
             with pytest.raises(KeyError):
                 received_entity['_metadata']
             assert isinstance(received_entity._metadata, dict)
