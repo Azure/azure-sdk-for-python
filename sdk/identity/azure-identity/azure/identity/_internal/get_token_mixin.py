@@ -26,7 +26,9 @@ class GetTokenMixin(ABC):
     def __init__(self, *args, **kwargs):
         # type: (*Any, **Any) -> None
         self._last_request_time = 0
-        super(GetTokenMixin, self).__init__(*args, **kwargs)
+
+        # https://github.com/python/mypy/issues/5887
+        super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
     def _acquire_token_silently(self, *scopes):
