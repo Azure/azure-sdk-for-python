@@ -33,6 +33,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Type
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ class ManagedIdentityCredential(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._credential = None
+        self._credential = None  # type: Optional[TokenCredential]
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
                 _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
