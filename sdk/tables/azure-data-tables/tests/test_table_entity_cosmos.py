@@ -114,6 +114,32 @@ class StorageTableEntityTest(TableTestCase):
             rk = rk if rk is not None else self.get_resource_name('rk')
         return pk, rk
 
+    def _insert_two_opposite_entities(self, pk=None, rk=None):
+        entity1 = self._create_random_entity_dict()
+        resp = self.table.create_entity(entity1)
+
+        partition, row = self._create_pk_rk(pk, rk)
+        properties = {
+            'PartitionKey': partition + u'1',
+            'RowKey': row + u'1',
+            'age': 49,
+            'sex': u'female',
+            'married': False,
+            'deceased': True,
+            'optional': None,
+            'ratio': 5.2,
+            'evenratio': 6.0,
+            'large': 39999011,
+            'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
+            'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
+            'binary': b'binary-binary',
+            'other': EntityProperty(value=40, type=EdmType.INT32),
+            'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
+        }
+        entity = TableEntity(**properties)
+        self.table.create_entity(entity)
+        return entity1, resp
+
     def _create_random_entity_dict(self, pk=None, rk=None):
         """
         Creates a dictionary-based entity with fixed values, using all
@@ -372,7 +398,7 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            entity, _ = self._insert_random_entity()
+            entity, _ = self._insert_two_opposite_entities()
 
             # Act
             parameters = {
@@ -396,13 +422,13 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            entity, _ = self._insert_random_entity()
+            entity, _ = self._insert_two_opposite_entities()
 
             # Act
             parameters = {
-                'my_param': 1.0,
+                'my_param': entity['ratio'] + 1.0,
             }
-            entities = self.table.query_entities(filter="ratio gt @my_param", parameters=parameters)
+            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -420,7 +446,7 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            entity, _ = self._insert_random_entity()
+            entity, _ = self._insert_two_opposite_entities()
 
             # Act
             parameters = {
@@ -444,7 +470,7 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            entity, _ = self._insert_random_entity()
+            entity, _ = self._insert_two_opposite_entities()
 
             # Act
             parameters = {
