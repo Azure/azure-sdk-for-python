@@ -1,7 +1,11 @@
 
 # Release History
 
-## 1.9.1 (Unreleased)
+## 1.10.0 (Unreleased)
+
+### Features
+
+- Added `AzureSasCredential` and its respective policy. #15946
 
 
 ## 1.9.0 (2020-11-09)
