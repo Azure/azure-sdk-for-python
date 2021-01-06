@@ -99,6 +99,7 @@ class _ReceiveTest(_QueueTest):
                 except ValueError:
                     # Batch full
                     await sender.send_messages(batch)
+                    print("Loaded {} messages".format(i))
                     batch = await sender.create_message_batch()
                     batch.add_message(ServiceBusMessage(data))
             await sender.send_messages(batch)
