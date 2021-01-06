@@ -21,7 +21,7 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 IGNORED_SAMPLES = {
-    "azure-eventgrid": []
+    "azure-eventgrid": ["__init__.py"]
 }
 
 
