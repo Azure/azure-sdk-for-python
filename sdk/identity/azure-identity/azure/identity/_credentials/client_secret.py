@@ -21,10 +21,10 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
-          False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-          is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
+    :keyword token_cache: token cache the credential should use. Defaults to an in memory
+          cache not shared with other credential instances. To enable persistent caching, provide a
+          :class:`~azure.identity.PersistentTokenCache` instance.
+    :paramtype token_cache: ~azure.identity.PersistentTokenCache
     """
 
     def __init__(self, tenant_id, client_id, client_secret, **kwargs):
