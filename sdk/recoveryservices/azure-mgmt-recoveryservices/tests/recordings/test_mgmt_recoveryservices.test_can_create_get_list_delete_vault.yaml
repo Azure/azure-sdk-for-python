@@ -13,12 +13,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-recoveryservices/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-recoveryservices/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource?api-version=2016-06-01
   response:
     body:
-      string: '{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2020-11-10T06%3A26%3A08.5009638Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'
+      string: '{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2020-12-17T09%3A42%3A28.5847926Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'
     headers:
       cache-control:
       - no-cache
@@ -27,7 +27,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 10 Nov 2020 06:26:09 GMT
+      - Thu, 17 Dec 2020 09:42:29 GMT
       expires:
       - '-1'
       pragma:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '204'
+      - '209'
     status:
       code: 201
       message: Created
@@ -53,12 +53,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-recoveryservices/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-recoveryservices/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource?api-version=2016-06-01
   response:
     body:
-      string: '{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2020-11-10T06%3A26%3A08.5009638Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'
+      string: '{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2020-12-17T09%3A42%3A28.5847926Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'
     headers:
       cache-control:
       - no-cache
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 10 Nov 2020 06:26:09 GMT
+      - Thu, 17 Dec 2020 09:42:29 GMT
       expires:
       - '-1'
       pragma:
@@ -99,12 +99,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-recoveryservices/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-recoveryservices/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2?api-version=2016-06-01
   response:
     body:
-      string: '{"location":"westus","name":"PythonSDKVault2","etag":"W/\"datetime''2020-11-10T06%3A26%3A13.0722539Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'
+      string: '{"location":"westus","name":"PythonSDKVault2","etag":"W/\"datetime''2020-12-17T09%3A42%3A33.1451091Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'
     headers:
       cache-control:
       - no-cache
@@ -113,7 +113,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 10 Nov 2020 06:26:13 GMT
+      - Thu, 17 Dec 2020 09:42:34 GMT
       expires:
       - '-1'
       pragma:
@@ -125,7 +125,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '203'
+      - '208'
     status:
       code: 201
       message: Created
@@ -139,12 +139,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-recoveryservices/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-recoveryservices/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults?api-version=2016-06-01
   response:
     body:
-      string: '{"value":[{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2020-11-10T06%3A26%3A08.5009638Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}},{"location":"westus","name":"PythonSDKVault2","etag":"W/\"datetime''2020-11-10T06%3A26%3A13.0722539Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}]}'
+      string: '{"value":[{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2020-12-17T09%3A42%3A28.5847926Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}},{"location":"westus","name":"PythonSDKVault2","etag":"W/\"datetime''2020-12-17T09%3A42%3A33.1451091Z''\"","properties":{"provisioningState":"Succeeded","privateEndpointStateForBackup":"None","privateEndpointStateForSiteRecovery":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}]}'
     headers:
       cache-control:
       - no-cache
@@ -153,7 +153,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 10 Nov 2020 06:26:14 GMT
+      - Thu, 17 Dec 2020 09:42:34 GMT
       expires:
       - '-1'
       pragma:
@@ -183,7 +183,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-recoveryservices/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-recoveryservices/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2?api-version=2016-06-01
   response:
@@ -195,7 +195,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 10 Nov 2020 06:26:17 GMT
+      - Thu, 17 Dec 2020 09:42:37 GMT
       expires:
       - '-1'
       pragma:

@@ -7,11 +7,12 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from azure.core.async_paging import AsyncPageIterator
+from azure.core.exceptions import HttpResponseError
+from .._deserialize import parse_tags
 
 from .._models import ContainerProperties, FilteredBlob
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
-from .._generated.models import StorageErrorException
 from .._generated.models import FilterBlobItem
 
 
@@ -55,7 +56,7 @@ class ContainerPropertiesPaged(AsyncPageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
@@ -122,7 +123,7 @@ class FilteredBlobPaged(AsyncPageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
@@ -136,6 +137,7 @@ class FilteredBlobPaged(AsyncPageIterator):
     @staticmethod
     def _build_item(item):
         if isinstance(item, FilterBlobItem):
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
+            tags = parse_tags(item.tags)
+            blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=tags)
             return blob
         return item

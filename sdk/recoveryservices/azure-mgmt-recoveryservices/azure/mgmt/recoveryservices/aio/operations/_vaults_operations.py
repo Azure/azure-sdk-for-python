@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class VaultsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class VaultsOperations:
     def list_by_subscription_id(
         self,
         **kwargs
-    ) -> AsyncIterable["models.VaultList"]:
+    ) -> AsyncIterable["_models.VaultList"]:
         """Fetches all the resources of the specified type in the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,7 +52,7 @@ class VaultsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservices.models.VaultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VaultList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VaultList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,7 +111,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.VaultList"]:
+    ) -> AsyncIterable["_models.VaultList"]:
         """Retrieve a list of Vaults.
 
         :param resource_group_name: The name of the resource group where the recovery services vault is
@@ -122,7 +122,7 @@ class VaultsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservices.models.VaultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VaultList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VaultList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -183,7 +183,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         **kwargs
-    ) -> "models.Vault":
+    ) -> "_models.Vault":
         """Get the Vault details.
 
         :param resource_group_name: The name of the resource group where the recovery services vault is
@@ -196,7 +196,7 @@ class VaultsOperations:
         :rtype: ~azure.mgmt.recoveryservices.models.Vault
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Vault"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vault"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -241,9 +241,9 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        vault: "models.Vault",
+        vault: "_models.Vault",
         **kwargs
-    ) -> "models.Vault":
+    ) -> "_models.Vault":
         """Creates or updates a Recovery Services vault.
 
         :param resource_group_name: The name of the resource group where the recovery services vault is
@@ -258,7 +258,7 @@ class VaultsOperations:
         :rtype: ~azure.mgmt.recoveryservices.models.Vault
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Vault"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vault"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -366,9 +366,9 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        vault: "models.PatchVault",
+        vault: "_models.PatchVault",
         **kwargs
-    ) -> "models.Vault":
+    ) -> "_models.Vault":
         """Updates the vault.
 
         :param resource_group_name: The name of the resource group where the recovery services vault is
@@ -383,7 +383,7 @@ class VaultsOperations:
         :rtype: ~azure.mgmt.recoveryservices.models.Vault
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Vault"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vault"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

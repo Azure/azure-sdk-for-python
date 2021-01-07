@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NamedValueOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,7 +51,7 @@ class NamedValueOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.NamedValueCollection"]:
+    ) -> AsyncIterable["_models.NamedValueCollection"]:
         """Lists a collection of named values defined within a service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -73,7 +73,7 @@ class NamedValueOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.NamedValueCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamedValueCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamedValueCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -126,7 +126,7 @@ class NamedValueOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -189,7 +189,7 @@ class NamedValueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -207,7 +207,7 @@ class NamedValueOperations:
         service_name: str,
         named_value_id: str,
         **kwargs
-    ) -> "models.NamedValueContract":
+    ) -> "_models.NamedValueContract":
         """Gets the details of the named value specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -221,7 +221,7 @@ class NamedValueOperations:
         :rtype: ~azure.mgmt.apimanagement.models.NamedValueContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamedValueContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamedValueContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -253,7 +253,7 @@ class NamedValueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -271,11 +271,11 @@ class NamedValueOperations:
         resource_group_name: str,
         service_name: str,
         named_value_id: str,
-        parameters: "models.NamedValueCreateContract",
+        parameters: "_models.NamedValueCreateContract",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.NamedValueContract"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NamedValueContract"]]
+    ) -> Optional["_models.NamedValueContract"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NamedValueContract"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -314,7 +314,7 @@ class NamedValueOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -338,10 +338,10 @@ class NamedValueOperations:
         resource_group_name: str,
         service_name: str,
         named_value_id: str,
-        parameters: "models.NamedValueCreateContract",
+        parameters: "_models.NamedValueCreateContract",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.NamedValueContract"]:
+    ) -> AsyncLROPoller["_models.NamedValueContract"]:
         """Creates or updates named value.
 
         :param resource_group_name: The name of the resource group.
@@ -366,7 +366,7 @@ class NamedValueOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamedValueContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamedValueContract"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -396,7 +396,14 @@ class NamedValueOperations:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'namedValueId': self._serialize.url("named_value_id", named_value_id, 'str', max_length=256, min_length=0, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -416,10 +423,10 @@ class NamedValueOperations:
         service_name: str,
         named_value_id: str,
         if_match: str,
-        parameters: "models.NamedValueUpdateParameters",
+        parameters: "_models.NamedValueUpdateParameters",
         **kwargs
-    ) -> Optional["models.NamedValueContract"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NamedValueContract"]]
+    ) -> Optional["_models.NamedValueContract"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NamedValueContract"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -457,7 +464,7 @@ class NamedValueOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -478,9 +485,9 @@ class NamedValueOperations:
         service_name: str,
         named_value_id: str,
         if_match: str,
-        parameters: "models.NamedValueUpdateParameters",
+        parameters: "_models.NamedValueUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.NamedValueContract"]:
+    ) -> AsyncLROPoller["_models.NamedValueContract"]:
         """Updates the specific named value.
 
         :param resource_group_name: The name of the resource group.
@@ -505,7 +512,7 @@ class NamedValueOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamedValueContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamedValueContract"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -535,7 +542,14 @@ class NamedValueOperations:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'namedValueId': self._serialize.url("named_value_id", named_value_id, 'str', max_length=256, min_length=0, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -606,7 +620,7 @@ class NamedValueOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -620,7 +634,7 @@ class NamedValueOperations:
         service_name: str,
         named_value_id: str,
         **kwargs
-    ) -> "models.NamedValueSecretContract":
+    ) -> "_models.NamedValueSecretContract":
         """Gets the secret of the named value specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -634,7 +648,7 @@ class NamedValueOperations:
         :rtype: ~azure.mgmt.apimanagement.models.NamedValueSecretContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamedValueSecretContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamedValueSecretContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -666,7 +680,7 @@ class NamedValueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

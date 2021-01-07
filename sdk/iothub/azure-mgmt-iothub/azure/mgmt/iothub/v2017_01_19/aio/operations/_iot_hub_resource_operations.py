@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class IotHubResourceOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> "models.IotHubDescription":
+    ) -> "_models.IotHubDescription":
         """Get the non-security related metadata of an IoT hub.
 
         Get the non-security related metadata of an IoT hub.
@@ -62,7 +62,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.IotHubDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -93,7 +93,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IotHubDescription', pipeline_response)
@@ -108,10 +108,10 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_description: "models.IotHubDescription",
+        iot_hub_description: "_models.IotHubDescription",
         **kwargs
-    ) -> "models.IotHubDescription":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescription"]
+    ) -> "_models.IotHubDescription":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -147,7 +147,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -166,9 +166,9 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_description: "models.IotHubDescription",
+        iot_hub_description: "_models.IotHubDescription",
         **kwargs
-    ) -> AsyncLROPoller["models.IotHubDescription"]:
+    ) -> AsyncLROPoller["_models.IotHubDescription"]:
         """Create or update the metadata of an IoT hub.
 
         Create or update the metadata of an Iot hub. The usual pattern to modify a property is to
@@ -192,7 +192,7 @@ class IotHubResourceOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -242,12 +242,12 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> Optional["models.IotHubDescription"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.IotHubDescription"]]
+    ) -> Optional["_models.IotHubDescription"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.IotHubDescription"]]
         error_map = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(models.ErrorDetails, response), error_format=ARMErrorFormat),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorDetails, response), error_format=ARMErrorFormat),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-01-19"
@@ -276,7 +276,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -297,7 +297,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.IotHubDescription"]:
+    ) -> AsyncLROPoller["_models.IotHubDescription"]:
         """Delete an IoT hub.
 
         Delete an IoT hub.
@@ -317,7 +317,7 @@ class IotHubResourceOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -364,7 +364,7 @@ class IotHubResourceOperations:
     def list_by_subscription(
         self,
         **kwargs
-    ) -> AsyncIterable["models.IotHubDescriptionListResult"]:
+    ) -> AsyncIterable["_models.IotHubDescriptionListResult"]:
         """Get all the IoT hubs in a subscription.
 
         Get all the IoT hubs in a subscription.
@@ -374,7 +374,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.iothub.models.IotHubDescriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -419,7 +419,7 @@ class IotHubResourceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -434,7 +434,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.IotHubDescriptionListResult"]:
+    ) -> AsyncIterable["_models.IotHubDescriptionListResult"]:
         """Get all the IoT hubs in a resource group.
 
         Get all the IoT hubs in a resource group.
@@ -446,7 +446,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.iothub.models.IotHubDescriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -492,7 +492,7 @@ class IotHubResourceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -508,7 +508,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> "models.RegistryStatistics":
+    ) -> "_models.RegistryStatistics":
         """Get the statistics from an IoT hub.
 
         Get the statistics from an IoT hub.
@@ -522,7 +522,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.RegistryStatistics
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryStatistics"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryStatistics"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -553,7 +553,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RegistryStatistics', pipeline_response)
@@ -569,7 +569,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> AsyncIterable["models.IotHubSkuDescriptionListResult"]:
+    ) -> AsyncIterable["_models.IotHubSkuDescriptionListResult"]:
         """Get the list of valid SKUs for an IoT hub.
 
         Get the list of valid SKUs for an IoT hub.
@@ -583,7 +583,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.iothub.models.IotHubSkuDescriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubSkuDescriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubSkuDescriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -630,7 +630,7 @@ class IotHubResourceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -647,7 +647,7 @@ class IotHubResourceOperations:
         resource_name: str,
         event_hub_endpoint_name: str,
         **kwargs
-    ) -> AsyncIterable["models.EventHubConsumerGroupsListResult"]:
+    ) -> AsyncIterable["_models.EventHubConsumerGroupsListResult"]:
         """Get a list of the consumer groups in the Event Hub-compatible device-to-cloud endpoint in an IoT hub.
 
         Get a list of the consumer groups in the Event Hub-compatible device-to-cloud endpoint in an
@@ -664,7 +664,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.iothub.models.EventHubConsumerGroupsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubConsumerGroupsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubConsumerGroupsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -712,7 +712,7 @@ class IotHubResourceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -730,7 +730,7 @@ class IotHubResourceOperations:
         event_hub_endpoint_name: str,
         name: str,
         **kwargs
-    ) -> "models.EventHubConsumerGroupInfo":
+    ) -> "_models.EventHubConsumerGroupInfo":
         """Get a consumer group from the Event Hub-compatible device-to-cloud endpoint for an IoT hub.
 
         Get a consumer group from the Event Hub-compatible device-to-cloud endpoint for an IoT hub.
@@ -748,7 +748,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.EventHubConsumerGroupInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubConsumerGroupInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubConsumerGroupInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -781,7 +781,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EventHubConsumerGroupInfo', pipeline_response)
@@ -799,7 +799,7 @@ class IotHubResourceOperations:
         event_hub_endpoint_name: str,
         name: str,
         **kwargs
-    ) -> "models.EventHubConsumerGroupInfo":
+    ) -> "_models.EventHubConsumerGroupInfo":
         """Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
 
         Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
@@ -817,7 +817,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.EventHubConsumerGroupInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubConsumerGroupInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubConsumerGroupInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -850,7 +850,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EventHubConsumerGroupInfo', pipeline_response)
@@ -919,7 +919,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -932,7 +932,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> AsyncIterable["models.JobResponseListResult"]:
+    ) -> AsyncIterable["_models.JobResponseListResult"]:
         """Get a list of all the jobs in an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
         Get a list of all the jobs in an IoT hub. For more information, see:
@@ -947,7 +947,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.iothub.models.JobResponseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobResponseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResponseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -994,7 +994,7 @@ class IotHubResourceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1011,7 +1011,7 @@ class IotHubResourceOperations:
         resource_name: str,
         job_id: str,
         **kwargs
-    ) -> "models.JobResponse":
+    ) -> "_models.JobResponse":
         """Get the details of a job from an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
         Get the details of a job from an IoT hub. For more information, see:
@@ -1028,7 +1028,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.JobResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1060,7 +1060,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobResponse', pipeline_response)
@@ -1076,7 +1076,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> AsyncIterable["models.IotHubQuotaMetricInfoListResult"]:
+    ) -> AsyncIterable["_models.IotHubQuotaMetricInfoListResult"]:
         """Get the quota metrics for an IoT hub.
 
         Get the quota metrics for an IoT hub.
@@ -1090,7 +1090,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.iothub.models.IotHubQuotaMetricInfoListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubQuotaMetricInfoListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubQuotaMetricInfoListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1137,7 +1137,7 @@ class IotHubResourceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1150,9 +1150,9 @@ class IotHubResourceOperations:
 
     async def check_name_availability(
         self,
-        operation_inputs: "models.OperationInputs",
+        operation_inputs: "_models.OperationInputs",
         **kwargs
-    ) -> "models.IotHubNameAvailabilityInfo":
+    ) -> "_models.IotHubNameAvailabilityInfo":
         """Check if an IoT hub name is available.
 
         Check if an IoT hub name is available.
@@ -1165,7 +1165,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.IotHubNameAvailabilityInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubNameAvailabilityInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubNameAvailabilityInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1199,7 +1199,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IotHubNameAvailabilityInfo', pipeline_response)
@@ -1215,7 +1215,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> AsyncIterable["models.SharedAccessSignatureAuthorizationRuleListResult"]:
+    ) -> AsyncIterable["_models.SharedAccessSignatureAuthorizationRuleListResult"]:
         """Get the security metadata for an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
         Get the security metadata for an IoT hub. For more information, see:
@@ -1230,7 +1230,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessSignatureAuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessSignatureAuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1277,7 +1277,7 @@ class IotHubResourceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1294,7 +1294,7 @@ class IotHubResourceOperations:
         resource_name: str,
         key_name: str,
         **kwargs
-    ) -> "models.SharedAccessSignatureAuthorizationRule":
+    ) -> "_models.SharedAccessSignatureAuthorizationRule":
         """Get a shared access policy by name from an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
         Get a shared access policy by name from an IoT hub. For more information, see:
@@ -1311,7 +1311,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessSignatureAuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessSignatureAuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1343,7 +1343,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SharedAccessSignatureAuthorizationRule', pipeline_response)
@@ -1358,9 +1358,9 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        export_devices_parameters: "models.ExportDevicesRequest",
+        export_devices_parameters: "_models.ExportDevicesRequest",
         **kwargs
-    ) -> "models.JobResponse":
+    ) -> "_models.JobResponse":
         """Exports all the device identities in the IoT hub identity registry to an Azure Storage blob container. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
         Exports all the device identities in the IoT hub identity registry to an Azure Storage blob
@@ -1378,7 +1378,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.JobResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1414,7 +1414,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobResponse', pipeline_response)
@@ -1429,9 +1429,9 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        import_devices_parameters: "models.ImportDevicesRequest",
+        import_devices_parameters: "_models.ImportDevicesRequest",
         **kwargs
-    ) -> "models.JobResponse":
+    ) -> "_models.JobResponse":
         """Import, update, or delete device identities in the IoT hub identity registry from a blob. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
         Import, update, or delete device identities in the IoT hub identity registry from a blob. For
@@ -1449,7 +1449,7 @@ class IotHubResourceOperations:
         :rtype: ~azure.mgmt.iothub.models.JobResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1485,7 +1485,7 @@ class IotHubResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobResponse', pipeline_response)

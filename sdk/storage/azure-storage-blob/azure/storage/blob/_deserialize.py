@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 def deserialize_blob_properties(response, obj, headers):
     blob_properties = BlobProperties(
         metadata=deserialize_metadata(response, obj, headers),
-        object_replication_source_properties=deserialize_ors_policies(response.headers),
+        object_replication_source_properties=deserialize_ors_policies(response.http_response.headers),
         **headers
     )
     if 'Content-Range' in headers:
@@ -64,7 +64,7 @@ def deserialize_ors_policies(policy_dictionary):
 def deserialize_blob_stream(response, obj, headers):
     blob_properties = deserialize_blob_properties(response, obj, headers)
     obj.properties = blob_properties
-    return response.location_mode, obj
+    return response.http_response.location_mode, obj
 
 
 def deserialize_container_properties(response, obj, headers):

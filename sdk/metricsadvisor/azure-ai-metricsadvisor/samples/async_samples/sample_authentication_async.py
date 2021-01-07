@@ -40,7 +40,7 @@ async def authentication_client_with_metrics_advisor_credential_async():
     # [END authentication_client_with_metrics_advisor_credential_async]
 
 
-def authentication_administration_client_with_metrics_advisor_credential_async():
+async def authentication_administration_client_with_metrics_advisor_credential_async():
     # [START administration_client_with_metrics_advisor_credential_async]
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
     from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient

@@ -21,16 +21,32 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
+from time import sleep
 import asyncio
+from dotenv import find_dotenv, load_dotenv
 
 
 class TableEntitySamples(object):
-    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
+
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name,
+            self.access_key,
+            self.endpoint
+        )
+
+        self.table_base = "UpdateUpsertMergeAsync"
 
     async def create_and_get_entities(self):
         # Instantiate a table service client
         from azure.data.tables.aio import TableClient
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable3")
+        table = TableClient.from_connection_string(
+            self.connection_string, table_name=self.table_base + "create")
 
         async with table:
             await table.create_table()
@@ -59,7 +75,8 @@ class TableEntitySamples(object):
     async def list_all_entities(self):
         # Instantiate a table service client
         from azure.data.tables.aio import TableClient
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable4")
+        table = TableClient.from_connection_string(
+            self.connection_string, table_name=self.table_base + "list")
 
         # Create the table
         async with table:
@@ -89,7 +106,8 @@ class TableEntitySamples(object):
         # Instantiate a table service client
         from azure.data.tables.aio import TableClient
         from azure.data.tables import UpdateMode
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable6")
+        table = TableClient.from_connection_string(
+            self.connection_string, table_name=self.table_base + "update")
 
         # Create the table and Table Client
         async with table:
@@ -137,13 +155,25 @@ class TableEntitySamples(object):
             finally:
                 await table.delete_table()
 
+    async def clean_up(self):
+        from azure.data.tables.aio import TableServiceClient
+        tsc = TableServiceClient.from_connection_string(self.connection_string)
+
+        async with tsc:
+            async for table in tsc.list_tables():
+                await tsc.delete_table(table.table_name)
+
+        print("Cleaned up")
+
 
 async def main():
     sample = TableEntitySamples()
     await sample.create_and_get_entities()
     await sample.list_all_entities()
     await sample.update_entities()
+    await sample.clean_up()
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

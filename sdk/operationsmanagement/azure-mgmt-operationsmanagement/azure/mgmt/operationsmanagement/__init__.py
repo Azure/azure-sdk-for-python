@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._operations_management_client import OperationsManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['OperationsManagementClient']
 
 try:

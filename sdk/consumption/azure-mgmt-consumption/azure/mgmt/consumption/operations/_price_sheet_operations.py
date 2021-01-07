@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class PriceSheetOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class PriceSheetOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PriceSheetResult"
+        # type: (...) -> "_models.PriceSheetResult"
         """Gets the price sheet for a scope by subscriptionId. Price sheet is available via this API only
         for May 1, 2014 or later.
 
@@ -69,7 +69,7 @@ class PriceSheetOperations(object):
         :rtype: ~azure.mgmt.consumption.models.PriceSheetResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PriceSheetResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PriceSheetResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,7 +104,7 @@ class PriceSheetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PriceSheetResult', pipeline_response)
@@ -123,7 +123,7 @@ class PriceSheetOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PriceSheetResult"
+        # type: (...) -> "_models.PriceSheetResult"
         """Get the price sheet for a scope by subscriptionId and billing period. Price sheet is available
         via this API only for May 1, 2014 or later.
 
@@ -143,7 +143,7 @@ class PriceSheetOperations(object):
         :rtype: ~azure.mgmt.consumption.models.PriceSheetResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PriceSheetResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PriceSheetResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class PriceSheetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PriceSheetResult', pipeline_response)

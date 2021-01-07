@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class ReportsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,7 +51,7 @@ class ReportsOperations:
         skip: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ReportCollection"]:
+    ) -> AsyncIterable["_models.ReportCollection"]:
         """Lists report records by API.
 
         :param resource_group_name: The name of the resource group.
@@ -71,7 +71,7 @@ class ReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReportCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -144,7 +144,7 @@ class ReportsOperations:
         skip: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ReportCollection"]:
+    ) -> AsyncIterable["_models.ReportCollection"]:
         """Lists report records by User.
 
         :param resource_group_name: The name of the resource group.
@@ -176,7 +176,7 @@ class ReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReportCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -249,7 +249,7 @@ class ReportsOperations:
         skip: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ReportCollection"]:
+    ) -> AsyncIterable["_models.ReportCollection"]:
         """Lists report records by API Operations.
 
         :param resource_group_name: The name of the resource group.
@@ -281,7 +281,7 @@ class ReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReportCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -354,7 +354,7 @@ class ReportsOperations:
         skip: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ReportCollection"]:
+    ) -> AsyncIterable["_models.ReportCollection"]:
         """Lists report records by Product.
 
         :param resource_group_name: The name of the resource group.
@@ -385,7 +385,7 @@ class ReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReportCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -457,7 +457,7 @@ class ReportsOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ReportCollection"]:
+    ) -> AsyncIterable["_models.ReportCollection"]:
         """Lists report records by geography.
 
         :param resource_group_name: The name of the resource group.
@@ -487,7 +487,7 @@ class ReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReportCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -558,7 +558,7 @@ class ReportsOperations:
         skip: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ReportCollection"]:
+    ) -> AsyncIterable["_models.ReportCollection"]:
         """Lists report records by subscription.
 
         :param resource_group_name: The name of the resource group.
@@ -589,7 +589,7 @@ class ReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReportCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -663,7 +663,7 @@ class ReportsOperations:
         skip: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ReportCollection"]:
+    ) -> AsyncIterable["_models.ReportCollection"]:
         """Lists report records by Time.
 
         :param resource_group_name: The name of the resource group.
@@ -699,7 +699,7 @@ class ReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReportCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -772,7 +772,7 @@ class ReportsOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.RequestReportCollection"]:
+    ) -> AsyncIterable["_models.RequestReportCollection"]:
         """Lists report records by Request.
 
         :param resource_group_name: The name of the resource group.
@@ -794,7 +794,7 @@ class ReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.RequestReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RequestReportCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RequestReportCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

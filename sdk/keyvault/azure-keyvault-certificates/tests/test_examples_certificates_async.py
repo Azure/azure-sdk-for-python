@@ -206,7 +206,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         await certificate_client.purge_deleted_certificate(certificate_name=cert_name)
 
         if self.is_live:
-            await asyncio.sleep(15)
+            await asyncio.sleep(60)
 
         # [START restore_certificate]
         # restores a certificate backup

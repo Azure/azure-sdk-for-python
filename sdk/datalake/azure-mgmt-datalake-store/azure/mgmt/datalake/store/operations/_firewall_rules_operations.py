@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class FirewallRulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class FirewallRulesOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.FirewallRuleListResult"]
+        # type: (...) -> Iterable["_models.FirewallRuleListResult"]
         """Lists the Data Lake Store firewall rules within the specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -63,7 +63,7 @@ class FirewallRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datalake.store.models.FirewallRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -125,11 +125,10 @@ class FirewallRulesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         firewall_rule_name,  # type: str
-        start_ip_address,  # type: str
-        end_ip_address,  # type: str
+        parameters,  # type: "_models.CreateOrUpdateFirewallRuleParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FirewallRule"
+        # type: (...) -> "_models.FirewallRule"
         """Creates or updates the specified firewall rule. During update, the firewall rule with the
         specified name will be replaced with this new firewall rule.
 
@@ -139,24 +138,18 @@ class FirewallRulesOperations(object):
         :type account_name: str
         :param firewall_rule_name: The name of the firewall rule to create or update.
         :type firewall_rule_name: str
-        :param start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
-         ipv6. Start and End should be in the same protocol.
-        :type start_ip_address: str
-        :param end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
-         ipv6. Start and End should be in the same protocol.
-        :type end_ip_address: str
+        :param parameters: Parameters supplied to create or update the firewall rule.
+        :type parameters: ~azure.mgmt.datalake.store.models.CreateOrUpdateFirewallRuleParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallRule, or the result of cls(response)
         :rtype: ~azure.mgmt.datalake.store.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.CreateOrUpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
         api_version = "2016-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -181,7 +174,7 @@ class FirewallRulesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CreateOrUpdateFirewallRuleParameters')
+        body_content = self._serialize.body(parameters, 'CreateOrUpdateFirewallRuleParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -206,7 +199,7 @@ class FirewallRulesOperations(object):
         firewall_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FirewallRule"
+        # type: (...) -> "_models.FirewallRule"
         """Gets the specified Data Lake Store firewall rule.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -220,7 +213,7 @@ class FirewallRulesOperations(object):
         :rtype: ~azure.mgmt.datalake.store.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,11 +260,10 @@ class FirewallRulesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         firewall_rule_name,  # type: str
-        start_ip_address=None,  # type: Optional[str]
-        end_ip_address=None,  # type: Optional[str]
+        parameters=None,  # type: Optional["_models.UpdateFirewallRuleParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FirewallRule"
+        # type: (...) -> "_models.FirewallRule"
         """Updates the specified firewall rule.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -280,24 +272,18 @@ class FirewallRulesOperations(object):
         :type account_name: str
         :param firewall_rule_name: The name of the firewall rule to update.
         :type firewall_rule_name: str
-        :param start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
-         ipv6. Start and End should be in the same protocol.
-        :type start_ip_address: str
-        :param end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
-         ipv6. Start and End should be in the same protocol.
-        :type end_ip_address: str
+        :param parameters: Parameters supplied to update the firewall rule.
+        :type parameters: ~azure.mgmt.datalake.store.models.UpdateFirewallRuleParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallRule, or the result of cls(response)
         :rtype: ~azure.mgmt.datalake.store.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.UpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
         api_version = "2016-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -322,8 +308,8 @@ class FirewallRulesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if _parameters is not None:
-            body_content = self._serialize.body(_parameters, 'UpdateFirewallRuleParameters')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'UpdateFirewallRuleParameters')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

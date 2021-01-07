@@ -69,7 +69,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
      (identified by source).
     :type subject: str
     :param id: Optional. An identifier for the event. The combination of id and source must be
-     unique for each distinct event.
+     unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
     """
     def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
@@ -149,8 +149,7 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :vartype metadata_version: str
     :param data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
     :type data_version: str
-    :param id: Optional. An identifier for the event. The combination of id and source must be
-     unique for each distinct event.
+    :param id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
     :type id: Optional[str]
     :param event_time: Optional.The time (in UTC) of the event. If not provided,
      it will be the time (in UTC) the event was generated.

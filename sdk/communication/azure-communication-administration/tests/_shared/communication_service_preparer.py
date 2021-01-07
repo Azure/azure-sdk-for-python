@@ -71,6 +71,8 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             CommunicationServiceResource(location="global", data_location="UnitedStates")
         ).result()
 
+        self.service_name = self.resource.name
+
         primary_connection_string = self.client.communication_service.list_keys(
             group_name,
             self.resource.name).primary_connection_string

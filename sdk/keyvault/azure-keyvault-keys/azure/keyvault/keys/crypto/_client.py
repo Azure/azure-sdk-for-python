@@ -28,6 +28,10 @@ _LOGGER = logging.getLogger(__name__)
 class CryptographyClient(KeyVaultClientBase):
     """Performs cryptographic operations using Azure Key Vault keys.
 
+    This client will perform operations locally when it's intialized with the necessary key material or is able to get
+    that material from Key Vault. When the required key material is unavailable, cryptographic operations are performed
+    by the Key Vault service.
+
     :param key:
         Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
         :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string.
@@ -87,9 +91,10 @@ class CryptographyClient(KeyVaultClientBase):
         # try to get the key material, if we don't have it and aren't forbidden to do so
         if not (self._key or self._keys_get_forbidden):
             try:
-                self._key = self._client.get_key(
+                key_bundle = self._client.get_key(
                     self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
+                self._key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)

@@ -1,5 +1,9 @@
 # Release History
 
+## 7.0.0 (2020-12-15)
+
+- GA Release
+
 ## 7.0.0b1 (2020-10-20)
 
 This is beta preview version.

@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0 (2020-12-22)
+
+**Features**
+
+  - Model ExpressionEvaluationDetails has a new parameter expression_kind
+  - Added operation group PolicyRestrictionsOperations
+
 ## 1.0.0b1 (2020-10-26)
 
 This is beta preview version.

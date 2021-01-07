@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class AssessmentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class AssessmentsOperations:
         self,
         scope: str,
         **kwargs
-    ) -> AsyncIterable["models.SecurityAssessmentList"]:
+    ) -> AsyncIterable["_models.SecurityAssessmentList"]:
         """Get security assessments on all your scanned resources inside a scope.
 
         :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
@@ -57,7 +57,7 @@ class AssessmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.SecurityAssessmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,9 +116,9 @@ class AssessmentsOperations:
         self,
         resource_id: str,
         assessment_name: str,
-        expand: Optional[Union[str, "models.ExpandEnum"]] = None,
+        expand: Optional[Union[str, "_models.ExpandEnum"]] = None,
         **kwargs
-    ) -> "models.SecurityAssessment":
+    ) -> "_models.SecurityAssessment":
         """Get a security assessment on your scanned resource.
 
         :param resource_id: The identifier of the resource.
@@ -132,7 +132,7 @@ class AssessmentsOperations:
         :rtype: ~azure.mgmt.security.models.SecurityAssessment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -178,9 +178,9 @@ class AssessmentsOperations:
         self,
         resource_id: str,
         assessment_name: str,
-        assessment: "models.SecurityAssessment",
+        assessment: "_models.SecurityAssessment",
         **kwargs
-    ) -> "models.SecurityAssessment":
+    ) -> "_models.SecurityAssessment":
         """Create a security assessment on your resource. An assessment metadata that describes this
         assessment must be predefined with the same name before inserting the assessment result.
 
@@ -195,7 +195,7 @@ class AssessmentsOperations:
         :rtype: ~azure.mgmt.security.models.SecurityAssessment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

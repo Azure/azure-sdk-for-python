@@ -4,9 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core.paging import PageIterator
-from ._generated.models import StorageErrorException
+from azure.core.exceptions import HttpResponseError
 from ._models import PathProperties
-from ._deserialize import return_headers_and_deserialized_path_list
 from ._generated.models import Path
 from ._shared.response_handlers import process_storage_error
 
@@ -52,16 +51,16 @@ class PathPropertiesPaged(PageIterator):
                 continuation=continuation_token or None,
                 path=self.path,
                 max_results=self.results_per_page,
-                upn=self.upn,
-                cls=return_headers_and_deserialized_path_list)
-        except StorageErrorException as error:
+                upn=self.upn)
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.path_list, self._response = get_next_return
+        get_next_return = list(get_next_return)
+        self.path_list = get_next_return
         self.current_page = [self._build_item(item) for item in self.path_list]
 
-        return self._response['continuation'] or None, self.current_page
+        return None, self.current_page
 
     @staticmethod
     def _build_item(item):

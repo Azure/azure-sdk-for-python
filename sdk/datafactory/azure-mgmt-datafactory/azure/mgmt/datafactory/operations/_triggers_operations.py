@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class TriggersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class TriggersOperations(object):
         factory_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TriggerListResponse"]
+        # type: (...) -> Iterable["_models.TriggerListResponse"]
         """Lists triggers.
 
         :param resource_group_name: The resource group name.
@@ -65,7 +65,7 @@ class TriggersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.TriggerListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -126,10 +126,10 @@ class TriggersOperations(object):
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        filter_parameters,  # type: "models.TriggerFilterParameters"
+        filter_parameters,  # type: "_models.TriggerFilterParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TriggerQueryResponse"
+        # type: (...) -> "_models.TriggerQueryResponse"
         """Query triggers.
 
         :param resource_group_name: The resource group name.
@@ -143,7 +143,7 @@ class TriggersOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.TriggerQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -194,11 +194,11 @@ class TriggersOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         trigger_name,  # type: str
-        trigger,  # type: "models.TriggerResource"
+        trigger,  # type: "_models.TriggerResource"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TriggerResource"
+        # type: (...) -> "_models.TriggerResource"
         """Creates or updates a trigger.
 
         :param resource_group_name: The resource group name.
@@ -217,7 +217,7 @@ class TriggersOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.TriggerResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -274,7 +274,7 @@ class TriggersOperations(object):
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.TriggerResource"]
+        # type: (...) -> Optional["_models.TriggerResource"]
         """Gets a trigger.
 
         :param resource_group_name: The resource group name.
@@ -291,7 +291,7 @@ class TriggersOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.TriggerResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -404,8 +404,8 @@ class TriggersOperations(object):
         trigger_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.TriggerSubscriptionOperationStatus"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerSubscriptionOperationStatus"]]
+        # type: (...) -> Optional["_models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -456,7 +456,7 @@ class TriggersOperations(object):
         trigger_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.TriggerSubscriptionOperationStatus"]
+        # type: (...) -> LROPoller["_models.TriggerSubscriptionOperationStatus"]
         """Subscribe event trigger to events.
 
         :param resource_group_name: The resource group name.
@@ -476,7 +476,7 @@ class TriggersOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -529,7 +529,7 @@ class TriggersOperations(object):
         trigger_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TriggerSubscriptionOperationStatus"
+        # type: (...) -> "_models.TriggerSubscriptionOperationStatus"
         """Get a trigger's event subscription status.
 
         :param resource_group_name: The resource group name.
@@ -543,7 +543,7 @@ class TriggersOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.TriggerSubscriptionOperationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -592,8 +592,8 @@ class TriggersOperations(object):
         trigger_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.TriggerSubscriptionOperationStatus"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerSubscriptionOperationStatus"]]
+        # type: (...) -> Optional["_models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -644,7 +644,7 @@ class TriggersOperations(object):
         trigger_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.TriggerSubscriptionOperationStatus"]
+        # type: (...) -> LROPoller["_models.TriggerSubscriptionOperationStatus"]
         """Unsubscribe event trigger from events.
 
         :param resource_group_name: The resource group name.
@@ -664,7 +664,7 @@ class TriggersOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval

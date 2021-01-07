@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DscCompilationJobOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,10 +48,10 @@ class DscCompilationJobOperations:
         resource_group_name: str,
         automation_account_name: str,
         compilation_job_name: str,
-        parameters: "models.DscCompilationJobCreateParameters",
+        parameters: "_models.DscCompilationJobCreateParameters",
         **kwargs
-    ) -> "models.DscCompilationJob":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscCompilationJob"]
+    ) -> "_models.DscCompilationJob":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscCompilationJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -88,7 +88,7 @@ class DscCompilationJobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DscCompilationJob', pipeline_response)
@@ -104,9 +104,9 @@ class DscCompilationJobOperations:
         resource_group_name: str,
         automation_account_name: str,
         compilation_job_name: str,
-        parameters: "models.DscCompilationJobCreateParameters",
+        parameters: "_models.DscCompilationJobCreateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.DscCompilationJob"]:
+    ) -> AsyncLROPoller["_models.DscCompilationJob"]:
         """Creates the Dsc compilation job of the configuration.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -128,7 +128,7 @@ class DscCompilationJobOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscCompilationJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscCompilationJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -181,7 +181,7 @@ class DscCompilationJobOperations:
         automation_account_name: str,
         compilation_job_name: str,
         **kwargs
-    ) -> "models.DscCompilationJob":
+    ) -> "_models.DscCompilationJob":
         """Retrieve the Dsc configuration compilation job identified by job id.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -195,7 +195,7 @@ class DscCompilationJobOperations:
         :rtype: ~azure.mgmt.automation.models.DscCompilationJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscCompilationJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscCompilationJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -227,7 +227,7 @@ class DscCompilationJobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DscCompilationJob', pipeline_response)
@@ -244,7 +244,7 @@ class DscCompilationJobOperations:
         automation_account_name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DscCompilationJobListResult"]:
+    ) -> AsyncIterable["_models.DscCompilationJobListResult"]:
         """Retrieve a list of dsc compilation jobs.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -258,7 +258,7 @@ class DscCompilationJobOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.DscCompilationJobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscCompilationJobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscCompilationJobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -307,7 +307,7 @@ class DscCompilationJobOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -325,7 +325,7 @@ class DscCompilationJobOperations:
         job_id: str,
         job_stream_id: str,
         **kwargs
-    ) -> "models.JobStream":
+    ) -> "_models.JobStream":
         """Retrieve the job stream identified by job stream id.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -341,7 +341,7 @@ class DscCompilationJobOperations:
         :rtype: ~azure.mgmt.automation.models.JobStream
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobStream"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobStream"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -374,7 +374,7 @@ class DscCompilationJobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobStream', pipeline_response)

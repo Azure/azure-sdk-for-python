@@ -15,7 +15,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,8 +53,8 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         integration_runtime_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.SsisObjectMetadataStatusResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SsisObjectMetadataStatusResponse"]]
+        # type: (...) -> Optional["_models.SsisObjectMetadataStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SsisObjectMetadataStatusResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,7 +105,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         integration_runtime_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SsisObjectMetadataStatusResponse"]
+        # type: (...) -> LROPoller["_models.SsisObjectMetadataStatusResponse"]
         """Refresh a SSIS integration runtime object metadata.
 
         :param resource_group_name: The resource group name.
@@ -125,7 +125,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SsisObjectMetadataStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SsisObjectMetadataStatusResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -176,10 +176,10 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         integration_runtime_name,  # type: str
-        get_metadata_request=None,  # type: Optional["models.GetSsisObjectMetadataRequest"]
+        get_metadata_request=None,  # type: Optional["_models.GetSsisObjectMetadataRequest"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SsisObjectMetadataListResponse"
+        # type: (...) -> "_models.SsisObjectMetadataListResponse"
         """Get a SSIS integration runtime object metadata by specified path. The return is pageable
         metadata list.
 
@@ -196,7 +196,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.SsisObjectMetadataListResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SsisObjectMetadataListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SsisObjectMetadataListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -3708,6 +3708,53 @@ class IntegrationAccountSku(msrest.serialization.Model):
         self.name = kwargs['name']
 
 
+class IntegrationServiceEnvironmenEncryptionConfiguration(msrest.serialization.Model):
+    """The encryption configuration for the integration service environment.
+
+    :param encryption_key_reference: The encryption key reference.
+    :type encryption_key_reference:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmenEncryptionKeyReference
+    """
+
+    _attribute_map = {
+        'encryption_key_reference': {'key': 'encryptionKeyReference', 'type': 'IntegrationServiceEnvironmenEncryptionKeyReference'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationServiceEnvironmenEncryptionConfiguration, self).__init__(**kwargs)
+        self.encryption_key_reference = kwargs.get('encryption_key_reference', None)
+
+
+class IntegrationServiceEnvironmenEncryptionKeyReference(msrest.serialization.Model):
+    """The encryption key details for the integration service environment.
+
+    :param key_vault: The key vault reference.
+    :type key_vault: ~azure.mgmt.logic.models.ResourceReference
+    :param key_name: Gets the key name in the Key Vault.
+    :type key_name: str
+    :param key_version: Gets the version of the key specified in the keyName property.
+    :type key_version: str
+    """
+
+    _attribute_map = {
+        'key_vault': {'key': 'keyVault', 'type': 'ResourceReference'},
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationServiceEnvironmenEncryptionKeyReference, self).__init__(**kwargs)
+        self.key_vault = kwargs.get('key_vault', None)
+        self.key_name = kwargs.get('key_name', None)
+        self.key_version = kwargs.get('key_version', None)
+
+
 class IntegrationServiceEnvironment(Resource):
     """The integration service environment.
 
@@ -3899,6 +3946,9 @@ class IntegrationServiceEnvironmentProperties(msrest.serialization.Model):
     :type endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
     :param network_configuration: The network configuration.
     :type network_configuration: ~azure.mgmt.logic.models.NetworkConfiguration
+    :param encryption_configuration: The encryption configuration.
+    :type encryption_configuration:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmenEncryptionConfiguration
     """
 
     _attribute_map = {
@@ -3907,6 +3957,7 @@ class IntegrationServiceEnvironmentProperties(msrest.serialization.Model):
         'integration_service_environment_id': {'key': 'integrationServiceEnvironmentId', 'type': 'str'},
         'endpoints_configuration': {'key': 'endpointsConfiguration', 'type': 'FlowEndpointsConfiguration'},
         'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
+        'encryption_configuration': {'key': 'encryptionConfiguration', 'type': 'IntegrationServiceEnvironmenEncryptionConfiguration'},
     }
 
     def __init__(
@@ -3919,6 +3970,7 @@ class IntegrationServiceEnvironmentProperties(msrest.serialization.Model):
         self.integration_service_environment_id = kwargs.get('integration_service_environment_id', None)
         self.endpoints_configuration = kwargs.get('endpoints_configuration', None)
         self.network_configuration = kwargs.get('network_configuration', None)
+        self.encryption_configuration = kwargs.get('encryption_configuration', None)
 
 
 class IntegrationServiceEnvironmentSku(msrest.serialization.Model):

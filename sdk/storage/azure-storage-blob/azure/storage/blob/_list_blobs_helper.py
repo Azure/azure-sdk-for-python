@@ -6,9 +6,10 @@
 # --------------------------------------------------------------------------
 
 from azure.core.paging import PageIterator, ItemPaged
-from azure.storage.blob._deserialize import get_blob_properties_from_generated_code
-from ._generated.models import StorageErrorException, BlobItemInternal, BlobPrefix as GenBlobPrefix
-from ._models import BlobProperties
+from azure.core.exceptions import HttpResponseError
+from ._deserialize import get_blob_properties_from_generated_code, parse_tags
+from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
+from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
@@ -74,7 +75,7 @@ class BlobPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -164,3 +165,72 @@ class BlobPrefix(ItemPaged, DictMixin):
         self.container = kwargs.get('container')
         self.delimiter = kwargs.get('delimiter')
         self.location_mode = kwargs.get('location_mode')
+
+
+class FilteredBlobPaged(PageIterator):
+    """An Iterable of Blob properties.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A blob name prefix being used to filter the list.
+    :ivar str marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.blob.FilteredBlob)
+    :ivar str container: The container that the blobs are listed from.
+
+    :param callable command: Function to retrieve the next page of items.
+    :param str container: The name of the container.
+    :param int results_per_page: The maximum number of blobs to retrieve per
+        call.
+    :param str continuation_token: An opaque continuation token.
+    :param location_mode: Specifies the location the request should be sent to.
+        This mode only applies for RA-GRS accounts which allow secondary read access.
+        Options include 'primary' or 'secondary'.
+    """
+    def __init__(
+            self, command,
+            container=None,
+            results_per_page=None,
+            continuation_token=None,
+            location_mode=None):
+        super(FilteredBlobPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
+        self.service_endpoint = None
+        self.marker = continuation_token
+        self.results_per_page = results_per_page
+        self.container = container
+        self.current_page = None
+        self.location_mode = location_mode
+
+    def _get_next_cb(self, continuation_token):
+        try:
+            return self._command(
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
+        self.service_endpoint = self._response.service_endpoint
+        self.marker = self._response.next_marker
+        self.current_page = [self._build_item(item) for item in self._response.blobs]
+
+        return self._response.next_marker or None, self.current_page
+
+    @staticmethod
+    def _build_item(item):
+        if isinstance(item, FilterBlobItem):
+            tags = parse_tags(item.tags)
+            blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=tags)
+            return blob
+        return item
