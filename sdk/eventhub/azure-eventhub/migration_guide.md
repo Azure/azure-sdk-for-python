@@ -62,9 +62,11 @@ This provides consistency and predictability on the various features of the libr
 
 ### Client constructors
 
-- While we continue to support connection strings when constructing a client, the main difference is when using Azure Active Directory.
-We now use the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library
+While we continue to support connection strings when constructing a client, below are the differences in the two versions:
+- In v5, we now support the use of Azure Active Directory for authentication. 
+The new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library allows us 
 to share a single authentication solution between clients of different Azure services.
+- The option to construct a client using an address of the form `amqps://<SAS-policy-name>:<SAS-key>@<fully-qualified-namespace>/<eventhub-name>` is no longer supported in v5. This address is not readily available in the Azure portal or in any tooling and so was subject to human error. We instead recommend using the connection string if you want to use a SAS policy.
 
 In v1:
 ```python
