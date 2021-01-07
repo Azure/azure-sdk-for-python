@@ -62,7 +62,7 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
         # next will be set once in the pipeline
         from ..transport._base_async import AsyncHttpTransport
         self.next = cast(Union[AsyncHTTPPolicy,
-                               AsyncHttpTransport], None) # type: Union[AsyncHTTPPolicy, AsyncHttpTransport]
+                               AsyncHttpTransport], None)
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest):
