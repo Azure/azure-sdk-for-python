@@ -5,6 +5,7 @@
 **New Features**
 
 - `azure.eventhub.exceptions.EventHubError` now inherits from `azure.core.exceptions.AzureError`.
+- `azure.eventhub.exceptions.OwnershipLostError` now inherits from `azure.eventhub.exceptions.EventHubError`.
 
 **Note**
 

@@ -5,9 +5,8 @@
 import logging
 import six
 
-from azure.core.exceptions import AzureError
-
 from uamqp import errors, compat
+from azure.core.exceptions import AzureError
 
 from ._constants import NO_RETRY_ERRORS
 
@@ -72,9 +71,9 @@ class EventHubError(AzureError):
             except:  # pylint: disable=bare-except
                 self.message += "\n{}".format(details)
         if details and isinstance(details, Exception):
-             super(EventHubError, self).__init__(self.message, error=details)
+            super(EventHubError, self).__init__(self.message, error=details)
         else:
-             super(EventHubError, self).__init__(self.message)
+            super(EventHubError, self).__init__(self.message)
 
     def _parse_error(self, error_list):
         details = []
@@ -128,8 +127,12 @@ class OperationTimeoutError(EventHubError):
     """Operation timed out."""
 
 
-class OwnershipLostError(AzureError):
+class OwnershipLostError(EventHubError):
     """Raised when `update_checkpoint` detects the ownership to a partition has been lost."""
+
+    def __init__(self, message=None, details=None):
+        message = message or 'The ownership to a partition has been lost.'
+        super(OwnershipLostError, self).__init__(message=message, details=details)
 
 
 def _create_eventhub_exception(exception):

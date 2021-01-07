@@ -193,7 +193,7 @@ class BlobCheckpointStore(CheckpointStore):
         try:
             self._upload_ownership(ownership, metadata)
             return ownership
-        except (ResourceModifiedError, ResourceExistsError):
+        except (ResourceModifiedError, ResourceExistsError) as error:
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
                 "lost ownership to partition %r",
@@ -203,7 +203,7 @@ class BlobCheckpointStore(CheckpointStore):
                 consumer_group,
                 partition_id,
             )
-            raise OwnershipLostError()
+            raise OwnershipLostError(message=str(error), details=error)
         except Exception as error:  # pylint:disable=broad-except
             logger.warning(
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
