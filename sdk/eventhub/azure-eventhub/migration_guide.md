@@ -68,45 +68,33 @@ to share a single authentication solution between clients of different Azure ser
 
 In v1:
 ```python
-# Authenticate with address (full URI string - optionally includes URL-encoded access policy and key). For example:
-# "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<namespace>.servicebus.windows.net/<eventhub-name>"
+# Authenticate with address
 eventhub_client = EventHubClient(address)
 
 # Authenticate with connection string
 eventhub_client = EventHubClient.from_connection_string(conn_str) 
 
-# Authenticate with EventProcessorHost
-from azure.eventprocessorhost import (
-    AbstractEventProcessor,
-    EventHubConfig,
-    AzureStorageCheckpointLeaseManager,
-    EventProcessorHost)
-
-class EventProcessor(AbstractEventProcessor):
-    # Methods for opening connection, processing events, closing connection
-    ...
-
+# Authenticate the EventProcessorHost and StorageCheckpointLeaseManager
 eh_config = EventHubConfig(eh_namespace, eventhub_name, user, key, consumer_group="$default")
 storage_manager = AzureStorageCheckpointLeaseManager(storage_account_name, storage_key, lease_container_name)
-host = EventProcessorHost(EventProcessor, eh_config, storage_manager)
-
+host = EventProcessorHost(EventProcessor, eventhub_config, storage_manager)
 ```
 In v5:
 ```python
+# Address is no longer used for authentication.
+
 # Authenticate with connection string
 producer_client = EventHubProducerClient.from_connection_string(conn_str) 
 consumer_client = EventHubConsumerClient.from_connection_string(conn_str) 
+checkpoint_store = BlobCheckpointStore.from_connection_string(storage_conn_str, container_name)
+consumer_client_with_checkpoint_store = EventHubConsumerClient.from_connection_string(conn_str, consumer_group='$Default', checkpoint_store=checkpoint_store)
 
 # Authenticate with Active Directory
 from azure.identity import EnvironmentCredential
 producer_client = EventHubProducerClient(fully_qualified_namespace, eventhub_name, credential=EnvironmentCredential())
 consumer_client = EventHubConsumerClient(fully_qualified_namespace, eventhub_name, consumer_group='$Default', credential=EnvironmentCredential())
-
-# Authenticate consumer with connection string and checkpoint
-from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
-checkpoint_store = BlobCheckpointStore.from_connection_string(storage_conn_str, container_name)
-consumer_client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group='$Default', checkpoint_store=checkpoint_store)
-
+checkpoint_store = BlobCheckpointStore(blob_account_url, container_name, credential=EnvironmentCredential())
+consumer_client_with_checkpoint_store = EventHubConsumerClient(fully_qualified_namespace, eventhub_name, consumer_group='$Default', credential=EnvironmentCredential(), checkpoint_store=checkpoint_store)
 ```
 ### Sending events
 
@@ -129,13 +117,14 @@ In v5:
 ```python
 producer_client = EventHubProducerClient.from_connection_string(conn_str, eventhub_name)
 
-# Send EventDataBatch
-event_data_batch = producer.create_batch()
-event_data_batch.add(EventData('Single message'))
+# Send list of EventData. This can fail if the list exceeds size limit.
+event_data_batch = [EventData('Single message')]
 producer.send_batch(event_data_batch)
 
-# Send list of EventData
-event_data_batch = [EventData('Single message')]
+# Send EventDataBatch. Multiple messages will safely be sent by using `create_batch` to create a batch object.
+# `add` will throw a ValueError if added size results in the batch exceeding the maximum batch size.
+event_data_batch = producer.create_batch()
+event_data_batch.add(EventData('Single message'))
 producer.send_batch(event_data_batch)
 ```
 
@@ -143,9 +132,9 @@ producer.send_batch(event_data_batch)
 
 - The `run` and `stop` methods were previously used since the single `EventHubClient` controlled the lifecycle for all senders and receivers. In v5, the `run` and `stop` methods are deprecated since the `EventHubConsumerClient` controls its own lifecycle.
 - The `add_receiver` method is no longer used to create receiver clients. Instead, the `EventHubConsumerClient` is used for receiving events.
-- The old `receive` method returned a list of `EventData`.
-- The new `receive` calls the user callback `on_event` to process single events for easier and more clear interaction with event data when dealing with multiple partitions. 
-- The new `receive_batch` calls the user callback `on_event_batch` to process batches of events for easier and more clear interaction with event data when dealing with multiple partitions.
+- In v1, the `receive` method returned a list of `EventData`. You would call this method repeatedly every time you want receive a set of events. In v5, the new `receive` method takes user callback to process events and any resulting errors. This way, you call the method once and it continues to process incoming events until you stop it.
+- Additionally, we have a method `receive_batch` which behaves the same as `receive`, but calls the user callback with a batch of events instead of single events. 
+- The same methods can be used whether you want to receive from a single partition or from all partitions.
 
 In v1:
 ```python
