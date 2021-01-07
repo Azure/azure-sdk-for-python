@@ -279,7 +279,7 @@ class BlobItemInternal(msrest.serialization.Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags'},
-        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}'},
+        'object_replication_metadata': {'key': 'ObjectReplicationMetadata', 'type': '{str}'},
     }
     _xml_map = {
         'name': 'Blob'
