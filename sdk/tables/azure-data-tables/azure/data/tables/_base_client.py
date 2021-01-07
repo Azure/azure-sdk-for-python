@@ -16,8 +16,9 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 import logging
-from uuid import uuid4
-
+from uuid import uuid4, UUID
+from datetime import datetime
+import six
 
 try:
     from urllib.parse import parse_qs, quote
@@ -25,7 +26,6 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
@@ -44,6 +44,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
+from ._common_conversion import _to_utc_datetime
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     STORAGE_OAUTH_SCOPE,
@@ -336,6 +337,34 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     parts=parts,
                 )
         return transaction_result
+
+    def _parameter_filter_substitution(  # pylint: disable = R0201
+            self,
+            parameters,  # type: dict[str,str]
+            filter  # type: str  # pylint: disable = W0622
+    ):
+        """Replace user defined parameter in filter
+        :param parameters: User defined parameters
+        :param filter: Filter for querying
+        """
+        if parameters:
+            filter_strings = filter.split(' ')
+            for index, word in enumerate(filter_strings):
+                if word[0] == u'@':
+                    val = parameters[word[1:]]
+                    if val in [True, False]:
+                        filter_strings[index] = str(val).lower()
+                    elif isinstance(val, (float, six.integer_types)):
+                        filter_strings[index] = str(val)
+                    elif isinstance(val, datetime):
+                        filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
+                    elif isinstance(val, UUID):
+                        filter_strings[index] = "guid'{}'".format(str(val))
+                    else:
+                        filter_strings[index] = "'{}'".format(val)
+            return ' '.join(filter_strings)
+
+        return filter  # pylint: disable = W0622
 
 
 class TransportWrapper(HttpTransport):
