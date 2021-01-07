@@ -49,26 +49,23 @@ try:
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
-_FINISHED = frozenset(["succeeded", "canceled", "failed"])
-_FAILED = frozenset(["canceled", "failed"])
-_SUCCEEDED = frozenset(["succeeded"])
 
-def _finished(status):
+def _finished(operation_state, status):
     if hasattr(status, "value"):
         status = status.value
-    return str(status).lower() in _FINISHED
+    return str(status).lower() in operation_state.finished
 
 
-def _failed(status):
+def _failed(operation_state, status):
     if hasattr(status, "value"):
         status = status.value
-    return str(status).lower() in _FAILED
+    return str(status).lower() in operation_state.failed
 
 
-def _succeeded(status):
+def _succeeded(operation_state, status):
     if hasattr(status, "value"):
         status = status.value
-    return str(status).lower() in _SUCCEEDED
+    return str(status).lower() in operation_state.succeeded
 
 
 class OperationState(ABC):
@@ -87,39 +84,19 @@ class OperationState(ABC):
         # type: () -> list(str)
         raise NotImplementedError()
 
-    def has_finished(self, status):
-        if hasattr(status, "value"):
-            status = status.value
-        return str(status).lower() in self.finished
-
-    def has_failed(self, status):
-        if hasattr(status, "value"):
-            status = status.value
-        return str(status).lower() in self.failed
-
-    def has_succeeded(self, status):
-        if hasattr(status, "value"):
-            status = status.value
-        return str(status).lower() in self.succeeded
-
 
 class DefaultOperationState(OperationState):
-    def __init__(self):
-        self._finished = frozenset(["succeeded", "canceled", "failed"])
-        self._failed = frozenset(["canceled", "failed"])
-        self._succeeded = frozenset(["succeeded"])
-
     @property
     def finished(self):
-        return self._finished
+        return frozenset(["succeeded", "canceled", "failed"])
 
     @property
     def failed(self):
-        return self._failed
-    
+        return frozenset(["canceled", "failed"])
+
     @property
     def succeeded(self):
-        return self._succeeded
+        return frozenset(["succeeded"])
 
 
 class BadStatus(Exception):
@@ -428,7 +405,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         lro_algorithms=None,
         lro_options=None,
         path_format_arguments=None,
-        operation_state=None,
+        operation_state=DefaultOperationState(),
         **operation_config
     ):
         self._lro_algorithms = lro_algorithms or [
@@ -447,7 +424,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         self._lro_options = lro_options
         self._path_format_arguments = path_format_arguments
         self._status = None
-        self._operation_state = DefaultOperationState() if not operation_state else operation_state
+        self._operation_state = operation_state
 
     def status(self):
         """Return the current status as a string.
@@ -463,7 +440,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         """Is this polling finished?
         :rtype: bool
         """
-        return self._operation_state.has_finished(self.status())
+        return _finished(self._operation_state, self.status())
 
     def resource(self):
         """Return the built resource.
@@ -570,7 +547,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             self._delay()
             self.update_status()
 
-        if self._operation_state.has_failed(self.status()):
+        if _failed(self._operation_state, self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
