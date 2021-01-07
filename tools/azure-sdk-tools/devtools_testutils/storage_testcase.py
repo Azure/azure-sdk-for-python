@@ -114,7 +114,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                         "An error occurred while trying to delete storage account {}. Waiting \
                             ten seconds and retrying the delete.".format(self.resource.name)
                     )
-                    if 'StorageAccountOperationInProgress' not in str(e.value):
+                    if 'StorageAccountOperationInProgress' not in str(e.response):
                         raise e
                     sleep(10)
 
