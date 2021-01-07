@@ -69,7 +69,9 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
-        'samples'
+        'samples',
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
     ]),
     python_requires=">=3.5.0",
     install_requires=[
