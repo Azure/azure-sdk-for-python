@@ -178,7 +178,6 @@ jobs:
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'RunRegression'
-    condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
     displayName: 'Run Regression'
     timeoutInMinutes: 120
     variables:
