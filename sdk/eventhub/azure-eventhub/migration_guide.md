@@ -8,6 +8,7 @@ Familiarity with the `azure-eventhub` v1 package is assumed. For those new to th
 
 * [Migration benefits](#migration-benefits)
     - [Cross Service SDK improvements](#cross-service-sdk-improvements)
+    - [New features](#new-features)
 * [Important changes](#important-changes)
     - [Client hierarchy](#client-hierarchy)
     - [Client constructors](#client-constructors)
@@ -26,17 +27,25 @@ To try and improve the development experience across Azure services, a set of un
 
 ### Cross Service SDK improvements
 
-The modern Event Hubs client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as 
+The modern Event Hubs client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as:
 - using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients
 - a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
+
+### New features
+
+We have a variety of new features in version 5 of the Event Hubs library.
+
+- Ability to create a batch of messages with the `EventHubProducer.create_batch()` and `EventDataBatch.add()` APIs. This will help you manage events to be sent in the most optimal way.
+- Ability to configure the retry policy used by operations on the clients.
+- Authentication with AAD credentials using [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md).
+
+Refer to the [changelog](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/CHANGELOG.md) for more new features, changes and bug fixes.
 
 ## Important changes
 
 ### Client hierarchy
-In the interest of simplifying the API surface, we've made two distinct clients, rather than having a single `EventHubClient`:
-* `EventHubProducerClient` for sending events. 
-* `EventHubConsumerClient` for receiving events. 
 
+In the interest of simplifying the API surface, we've made two distinct clients: the `EventHubProducerClient` for sending events and the `EventHubConsumerClient` for receiving events. This is in contrast to the single `EventHubClient` that was used to create senders and receivers.
 We've also merged the functionality from `EventProcessorHost` into `EventHubConsumerClient`. 
 
 #### Approachability
@@ -59,11 +68,28 @@ to share a single authentication solution between clients of different Azure ser
 
 In v1:
 ```python
-    # Authenticate with address
+    # Authenticate with address (full URI string - optionally includes URL-encoded access policy and key). For example:
+    # "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<namespace>.servicebus.windows.net/<eventhub-name>"
     eventhub_client = EventHubClient(address)
 
     # Authenticate with connection string
     eventhub_client = EventHubClient.from_connection_string(conn_str) 
+
+    # Authenticate with EventProcessorHost
+    from azure.eventprocessorhost import (
+        AbstractEventProcessor,
+        EventHubConfig,
+        AzureStorageCheckpointLeaseManager,
+        EventProcessorHost)
+
+    class EventProcessor(AbstractEventProcessor):
+        # Methods for opening connection, processing events, closing connection
+        ...
+
+    eh_config = EventHubConfig(eh_namespace, eventhub_name, user, key, consumer_group="$default")
+    storage_manager = AzureStorageCheckpointLeaseManager(storage_account_name, storage_key, lease_container_name)
+    host = EventProcessorHost(EventProcessor, eh_config, storage_manager)
+
 ```
 In v5:
 ```python
@@ -80,11 +106,15 @@ In v5:
     from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
     checkpoint_store = BlobCheckpointStore.from_connection_string(storage_conn_str, container_name)
     consumer_client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group='$Default', checkpoint_store=checkpoint_store)
+
 ```
 ### Sending events
-* `add_sender`, `run`, and `stop` methods are replaced by `from_connection_string` method on `EventGridProducerClient` to more approachably open a connection ready for sending.
-* `send` method is replaced by `send_batch` method on `EventGridProducerClient` to clarify that, instead of single `EventData`, either an `EventDataBatch` or list of `EventData` are sent in one call not exceeding the event hub frame size limit.
-* `EventDataBatch` is created using the `create_batch` method and `EventData` messages are added to the batch using the `add` method, until the size limit is reached.
+
+- The `run` and `stop` methods were previously used since the single `EventHubClient` controlled the lifecycle for all senders and receivers. In v5, the `run` and `stop` methods are deprecated since the `EventHubProducerClient` controls its own lifecycle.
+- The `add_sender` method is no longer used to create sender clients. Instead, the `EventHubProducerClient` is used for sending events.
+- The `send` method that allowed sending single events in each call is removed in favor of the `send_batch` to encourage sending events in batches for better throughput.
+- The new `send_batch` method takes a list of `EventData` objects that is batched into a single message by the client before sending.
+- The above approach fails if the list of events increase the size limit of the message. To safely send within size limits, use the `EventDataBatch` object to which you can add `EventData` objects until the size limit is reached after which you can send it using the same `send_batch` method.
 
 In v1:
 ```python
@@ -110,9 +140,12 @@ In v5:
 ```
 
 ### Receiving events 
-* `add_receiver`, `run`, and `stop` methods are replaced by `from_connection_string` method on `EventGridConsumerClient` to more approachably open a connection ready for receiving.
-* `receive` method is renamed `receive_batch` on `EventGridConsumerClient` to be more consistent in the usage of `batch` suffix in other methods on the producer and consumer when receiving or sending batches.
-* `receive` method on `EventGridConsumerClient` now receives only a single event as opposed to previously receiving a batch of events to more clearly reflect the naming, in which `batch` is not used as a suffix.
+
+- The `run` and `stop` methods were previously used since the single `EventHubClient` controlled the lifecycle for all senders and receivers. In v5, the `run` and `stop` methods are deprecated since the `EventHubConsumerClient` controls its own lifecycle.
+- The `add_receiver` method is no longer used to create receiver clients. Instead, the `EventHubConsumerClient` is used for receiving events.
+- The old `receive` method returned a list of `EventData`.
+- The new `receive` calls the user callback `on_event` to process single events for easier and more clear interaction with event data when dealing with multiple partitions. 
+- The new `receive_batch` calls the user callback `on_event_batch` to process batches of events for easier and more clear interaction with event data when dealing with multiple partitions.
 
 In v1:
 ```python
@@ -141,36 +174,125 @@ In v5:
     with consumer_client:
         consumer_client.receive_batch(on_event_batch=on_event_batch)
 ```
+### Migrating code from `EventProcessorHost` to `EventHubConsumerClient` for receiving events
 
-### Receiving with checkpoints
-Consuming events and saving checkpoints using a checkpoint store was not available in v1.
+In V1, `EventProcessorHost` allowed you to balance the load between multiple instances of 
+your program when receiving events.
 
-In v5:
+In V5, `EventHubConsumerClient` allows you to do the same with the `receive()` method if you
+pass a `CheckpointStore` to the constructor.
+
+> **Note:** V1 checkpoints are not compatible with V5 checkpoints.
+If pointed at the same blob, consumption will begin at the first message.
+V1 checkpoint json in the respective blobs can be manually converted (per-partition) if needed.
+In V1 checkpoints (sequence_number and offset) are stored in the format of json along with ownership information
+as the content of the blob, while in V5, checkpoints are kept in the metadata of a blob and the metadata is composed of name-value pairs.
+Please check [update_checkpoint](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_blobstoragecs.py#L231-L250) in V5 for implementation detail.
+
+So in V1:
 ```python
-    # Receive with checkpoint
-    from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+    import logging
+    import asyncio
+    import os
+    from azure.eventprocessorhost import (
+        AbstractEventProcessor,
+        AzureStorageCheckpointLeaseManager,
+        EventHubConfig,
+        EventProcessorHost,
+        EPHOptions)
+    logger = logging.getLogger("azure.eventhub")
+    class EventProcessor(AbstractEventProcessor):
+        def __init__(self, params=None):
+            super().__init__(params)
+            self._msg_counter = 0
+        async def open_async(self, context):
+            logger.info("Connection established {}".format(context.partition_id))
+        async def close_async(self, context, reason):
+            logger.info("Connection closed (reason {}, id {})".format(
+                reason,
+                context.partition_id))
+        async def process_events_async(self, context, messages):
+            self._msg_counter += len(messages)
+            logger.info("Partition id {}, Events processed {}".format(context.partition_id, self._msg_counter))
+            await context.checkpoint_async()
+        async def process_error_async(self, context, error):
+            logger.error("Event Processor Error {!r}".format(error))
+    # Storage Account Credentials
+    STORAGE_ACCOUNT_NAME = os.environ.get('AZURE_STORAGE_ACCOUNT')
+    STORAGE_KEY = os.environ.get('AZURE_STORAGE_ACCESS_KEY')
+    LEASE_CONTAINER_NAME = "leases"
+    NAMESPACE = os.environ.get('EVENT_HUB_NAMESPACE')
+    EVENTHUB = os.environ.get('EVENT_HUB_NAME')
+    USER = os.environ.get('EVENT_HUB_SAS_POLICY')
+    KEY = os.environ.get('EVENT_HUB_SAS_KEY')
+    # Eventhub config and storage manager
+    eh_config = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$Default")
+    eh_options = EPHOptions()
+    eh_options.debug_trace = False
+    storage_manager = AzureStorageCheckpointLeaseManager(
+        STORAGE_ACCOUNT_NAME, STORAGE_KEY, LEASE_CONTAINER_NAME)
+    # Event loop and host
+    loop = asyncio.get_event_loop()
+    host = EventProcessorHost(
+        EventProcessor,
+        eh_config,
+        storage_manager,
+        ep_params=["param1","param2"],
+        eph_options=eh_options,
+        loop=loop)
+    try:
+        loop.run_until_complete(host.open_async())
+    finally:
+        await host.close_async()
+        loop.stop()
+```
 
-    def on_event(partition_context, event):
-        print("Received event from partition: {}.".format(partition_context.partition_id))
-        partition_context.update_checkpoint(event)
-    
-    checkpoint_store = BlobCheckpointStore.from_connection_string(storage_conn_str, container_name)
-    consumer_client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group, checkpoint_store=checkpoint_store)
-    with consumer_client:
-        consumer_client.receive(on_event=on_event)
-
-    # Receive batch with checkpoint
-    from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
-
-    def on_event_batch(partition_context, event_batch):
-        print("Partition {}, Received count: {}".format(partition_context.partition_id, len(event_batch)))
-        # TODO: find out whether anything should be passed in, and if so, pass it in
-        partition_context.update_checkpoint()
-        
-    checkpoint_store = BlobCheckpointStore.from_connection_string(storage_conn_str, container_name)
-    consumer_client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group, checkpoint_store=checkpoint_store)
-    with consumer_client:
-        consumer_client.receive_batch(on_event_batch=on_event_batch)
+And in V5:
+```python
+    import asyncio
+    import os
+    import logging
+    from collections import defaultdict
+    from azure.eventhub.aio import EventHubConsumerClient
+    from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
+    logging.basicConfig(level=logging.INFO)
+    CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+    STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+    BLOB_CONTAINER_NAME = "your-blob-container-name"
+    logger = logging.getLogger("azure.eventhub")
+    events_processed = defaultdict(int)
+    async def on_event(partition_context, event):
+        partition_id = partition_context.partition_id
+        events_processed[partition_id] += 1
+        logger.info("Partition id {}, Events processed {}".format(partition_id, events_processed[partition_id]))
+        await partition_context.update_checkpoint(event)
+    async def on_partition_initialize(context):
+        logger.info("Partition {} initialized".format(context.partition_id))
+    async def on_partition_close(context, reason):
+        logger.info("Partition {} has closed, reason {})".format(context.partition_id, reason))
+    async def on_error(context, error):
+        if context:
+            logger.error("Partition {} has a partition related error {!r}.".format(context.partition_id, error))
+        else:
+            logger.error("Receiving event has a non-partition error {!r}".format(error))
+    async def main():
+        checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
+        client = EventHubConsumerClient.from_connection_string(
+            CONNECTION_STR,
+            consumer_group="$Default",
+            checkpoint_store=checkpoint_store,
+        )
+        async with client:
+            await client.receive(
+                on_event,
+                on_error=on_error,  # optional
+                on_partition_initialize=on_partition_initialize,  # optional
+                on_partition_close=on_partition_close,  # optional
+                starting_position="-1",  # "-1" is from the beginning of the partition.
+            )
+    if __name__ == '__main__':
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
 ```
 
 ## Additional samples
