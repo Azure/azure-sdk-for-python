@@ -7,7 +7,7 @@
 from azure.core.tracing.decorator import distributed_trace
 
 from ._phonenumber._generated._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
-
+from ._phonenumber._generated.models._models import PhoneNumberSearchResult
 from ._shared.utils import parse_connection_str
 from ._shared.policy import HMACCredentialsPolicy
 from ._version import SDK_MONIKER
@@ -98,7 +98,7 @@ class PhoneNumbersClient(object):
         quantity=1,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> LROPoller[PhoneNumberSearchResult]
         """Search for available phone numbers to purchase.
 
         Search for available phone numbers to purchase.
@@ -126,7 +126,7 @@ class PhoneNumbersClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return self._phone_numbers_client.phone_numbers.begin_search_available_phone_numbers(
+        self._phone_numbers_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
             phone_number_type,
             assignment_type,
@@ -135,6 +135,8 @@ class PhoneNumbersClient(object):
             quantity=quantity,
             **kwargs
         )
+
+        return PhoneNumberSearchResult()
 
     @distributed_trace
     def begin_purchase_phone_numbers(
