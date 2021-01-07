@@ -1,0 +1,9 @@
+trigger:
+  none
+
+jobs:
+ - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+   parameters:
+     ServiceDirectory: attestation
+     Location: westus
+     DeployArmTemplate: true
