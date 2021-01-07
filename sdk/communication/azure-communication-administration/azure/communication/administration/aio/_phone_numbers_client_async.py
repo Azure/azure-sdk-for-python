@@ -50,12 +50,12 @@ class PhoneNumbersClient(object):
     def from_connection_string(
             cls, conn_str: str,
             **kwargs
-    ) -> PhoneNumbersClient:
-        """Create PhoneNumberAdministrationClient from a Connection String.
+    ) -> "PhoneNumbersClient":
+        """Create PhoneNumbersClient from a Connection String.
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :returns: Instance of PhoneNumberAdministrationClient.
-        :rtype: ~azure.communication.PhoneNumberAdministrationClient
+        :returns: Instance of PhoneNumbersClient.
+        :rtype: ~azure.communication.aio.PhoneNumbersClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -266,8 +266,8 @@ class PhoneNumbersClient(object):
         )
 
 
-    async def __aenter__(self) -> "PhoneNumberAdministrationClient":
-        await self._phone_number_administration_client.__aenter__()
+    async def __aenter__(self) -> "PhoneNumbersClient":
+        await self._phone_numbers_client.__aenter__()
         return self
 
     async def __aexit__(self, *args: "Any") -> None:
@@ -275,6 +275,6 @@ class PhoneNumbersClient(object):
 
     async def close(self) -> None:
         """Close the :class:
-        `~azure.communication.administration.aio.PhoneNumberAdministrationClient` session.
+        `~azure.communication.administration.aio.PhoneNumbersClient` session.
         """
-        await self._phone_number_administration_client.__aexit__()
+        await self._phone_numbers_client.__aexit__()

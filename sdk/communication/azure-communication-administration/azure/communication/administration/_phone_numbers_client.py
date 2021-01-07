@@ -50,12 +50,12 @@ class PhoneNumbersClient(object):
             cls, conn_str,  # type: str
             **kwargs  # type: Any
     ):
-        # type: (...) -> PhoneNumberAdministrationClient
-        """Create PhoneNumberAdministrationClient from a Connection String.
+        # type: (...) -> PhoneNumbersClient
+        """Create PhoneNumbersClient from a Connection String.
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :returns: Instance of PhoneNumberAdministrationClient.
-        :rtype: ~azure.communication.PhoneNumberAdministrationClient
+        :returns: Instance of PhoneNumbersClient.
+        :rtype: ~azure.communication.PhoneNumbersClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
