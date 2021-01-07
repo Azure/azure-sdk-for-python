@@ -14,7 +14,6 @@ Familiarity with the `azure-eventhub` v1 package is assumed. For those new to th
     - [Client constructors](#client-constructors)
     - [Sending](#sending-events)
     - [Receiving](#receiving-events)
-    - [Receiving with checkpoints](#receiving-with-checkpoints)
     - [Migrating code from EventProcessorHost to EventHubConsumerClient for receiving events](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
 * [Additional samples](#additional-samples)
 
