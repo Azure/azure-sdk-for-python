@@ -24,9 +24,18 @@ pip install azure-communication-administration
 # You can find your endpoint and access token from your resource in the Azure Portal
 import os
 from azure.communication.administration import PhoneNumberAdministrationClient
+from azure.identity import DefaultAzureCredential
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
+# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+phone_number_administration_client = PhoneNumberAdministrationClient(endpoint, DefaultAzureCredential())
+
+# You can also authenticate using your connection string
 phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+
 ```
 ### Phone plans overview
 

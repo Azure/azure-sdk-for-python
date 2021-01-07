@@ -5,7 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+from azure.core.credentials import AccessToken
 from azure.communication.administration.aio import PhoneNumberAdministrationClient
+from azure.communication.administration._shared.utils import parse_connection_str
 from azure.communication.administration import (
     PstnConfiguration,
     NumberUpdateCapabilities,
@@ -14,11 +16,18 @@ from azure.communication.administration import (
 from phone_number_helper import PhoneNumberUriReplacer
 from phone_number_testcase_async import AsyncPhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
+from azure.identity import DefaultAzureCredential
 import os
 
 SKIP_PHONE_NUMBER_TESTS = True
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
+class FakeTokenCredential(object):
+    def __init__(self):
+        self.token = AccessToken("Fake Token", 0)
+
+    def get_token(self, *args):
+        return self.token
 class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
 
     def setUp(self):
@@ -126,6 +135,22 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
             self.capabilities_id = "capabilities_id"
             self.release_id = "release_id"
 
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    async def test_create_user_from_managed_identity(self, connection_string):
+        endpoint, access_key = parse_connection_str(connection_string)
+        from devtools_testutils import is_live
+        if not is_live():
+            credential = FakeTokenCredential()
+        else:
+            credential = DefaultAzureCredential()
+        identity_client = CommunicationIdentityClient(endpoint, credential)
+        async with identity_client:
+            user = await identity_client.create_user()
+
+        assert user.identifier is not None
+        
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
