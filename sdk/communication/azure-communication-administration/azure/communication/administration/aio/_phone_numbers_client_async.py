@@ -6,6 +6,7 @@
 # ------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar, Union
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 
 from .._phonenumber._generated.aio._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
 from .._phonenumber._generated.models._models import PhoneNumberSearchResult
@@ -24,11 +25,10 @@ class PhoneNumbersClient(object):
     """
     def __init__(
             self,
-            endpoint, # type: str
-            credential, # type: str
-            **kwargs # type: Any
-    ):
-        # type: (...) -> None
+            endpoint: str,
+            credential: str,
+            **kwargs
+    ) -> None:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -48,10 +48,9 @@ class PhoneNumbersClient(object):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> PhoneNumberAdministrationClient
+            cls, conn_str: str,
+            **kwargs
+    ) -> PhoneNumbersClient:
         """Create PhoneNumberAdministrationClient from a Connection String.
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
@@ -65,10 +64,9 @@ class PhoneNumbersClient(object):
     @distributed_trace
     async def begin_release_phone_number(
             self,
-            phone_number,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+            phone_number: str,
+            **kwargs
+    ) -> AsyncLROPoller[None]:
         """Begin releasing an acquired phone number.
 
         :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
@@ -91,15 +89,14 @@ class PhoneNumbersClient(object):
     @distributed_trace
     async def begin_search_available_phone_numbers(
         self,
-        country_code,  # type: str
-        phone_number_type,  # type: Union[str, "_models.PhoneNumberType"]
-        assignment_type,  # type: Union[str, "_models.PhoneNumberAssignmentType"]
-        capabilities,  # type: "_models.PhoneNumberCapabilitiesRequest"
-        area_code=None,  # type: Optional[str]
-        quantity=1,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[PhoneNumberSearchResult]
+        country_code: str,
+        phone_number_type: Union[str, "_models.PhoneNumberType"],
+        assignment_type: Union[str, "_models.PhoneNumberAssignmentType"],
+        capabilities: "_models.PhoneNumberCapabilitiesRequest",
+        area_code: Optional[str]=None,
+        quantity: Optional[int]=1,
+        **kwargs
+    ) -> AsyncLROPoller[PhoneNumberSearchResult]:
         """Search for available phone numbers to purchase.
 
         Search for available phone numbers to purchase.
@@ -142,10 +139,9 @@ class PhoneNumbersClient(object):
     @distributed_trace
     async def begin_purchase_phone_numbers(
         self,
-        search_id=None, # type: string
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        search_id: Optional[str] = None,
+        **kwargs 
+    ) -> AsyncLROPoller[None]:
         """Begins purchasing phone numbers.
         :param search_id: The id of the search result to purchase.
         :type search_id: str
@@ -167,12 +163,11 @@ class PhoneNumbersClient(object):
     @distributed_trace
     async def begin_update_phone_number_capabilities(
         self,
-        phone_number,  # type: str
-        sms="none",  # type: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]]
-        calling="none",  # type: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.AcquiredPhoneNumber"]
+        phone_number: str,
+        sms: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]] = "none",
+        calling: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]] = "none",
+        **kwargs
+    ) -> AsyncLROPoller["_models.AcquiredPhoneNumber"]:
         """Begin update capabilities of an acquired phone number.
 
         :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
@@ -202,10 +197,9 @@ class PhoneNumbersClient(object):
     @distributed_trace
     async def get_phone_number(
         self,
-        phone_number,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AcquiredPhoneNumber"
+        phone_number: str,
+        **kwargs
+    ) -> "_models.AcquiredPhoneNumber":
         """Gets information about an acquired phone number.
 
         Gets information about an acquired phone number.
@@ -243,12 +237,11 @@ class PhoneNumbersClient(object):
     @distributed_trace
     def update_phone_number(
         self,
-        phone_number,  # type: str
-        callback_uri=None,  # type: Optional[str]
-        application_id=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AcquiredPhoneNumber"
+        phone_number: str,
+        callback_uri: Optional[str] = None,
+        application_id: Optional[str] = None,
+        **kwargs
+    ) -> "_models.AcquiredPhoneNumber":
         """Update an acquired phone number.
 
         Update an acquired phone number.
