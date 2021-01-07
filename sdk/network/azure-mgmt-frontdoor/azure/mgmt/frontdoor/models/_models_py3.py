@@ -45,8 +45,29 @@ class AzureAsyncOperationResult(Model):
 class Backend(Model):
     """Backend address of a frontDoor load balancer.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param address: Location of the backend (IP address or FQDN)
     :type address: str
+    :param private_link_alias: The Alias of the Private Link resource.
+     Populating this optional field indicates that this backend is 'Private'
+    :type private_link_alias: str
+    :param private_link_resource_id: The Resource Id of the Private Link
+     resource. Populating this optional field indicates that this backend is
+     'Private'
+    :type private_link_resource_id: str
+    :param private_link_location: The location of the Private Link resource.
+     Required only if 'privateLinkResourceId' is populated
+    :type private_link_location: str
+    :ivar private_endpoint_status: The Approval status for the connection to
+     the Private Link. Possible values include: 'Pending', 'Approved',
+     'Rejected', 'Disconnected', 'Timeout'
+    :vartype private_endpoint_status: str or
+     ~azure.mgmt.frontdoor.models.PrivateEndpointStatus
+    :param private_link_approval_message: A custom message to be included in
+     the approval request to connect to the Private Link
+    :type private_link_approval_message: str
     :param http_port: The HTTP TCP port number. Must be between 1 and 65535.
     :type http_port: int
     :param https_port: The HTTPS TCP port number. Must be between 1 and 65535.
@@ -68,6 +89,7 @@ class Backend(Model):
     """
 
     _validation = {
+        'private_endpoint_status': {'readonly': True},
         'http_port': {'maximum': 65535, 'minimum': 1},
         'https_port': {'maximum': 65535, 'minimum': 1},
         'priority': {'maximum': 5, 'minimum': 1},
@@ -76,6 +98,11 @@ class Backend(Model):
 
     _attribute_map = {
         'address': {'key': 'address', 'type': 'str'},
+        'private_link_alias': {'key': 'privateLinkAlias', 'type': 'str'},
+        'private_link_resource_id': {'key': 'privateLinkResourceId', 'type': 'str'},
+        'private_link_location': {'key': 'privateLinkLocation', 'type': 'str'},
+        'private_endpoint_status': {'key': 'privateEndpointStatus', 'type': 'str'},
+        'private_link_approval_message': {'key': 'privateLinkApprovalMessage', 'type': 'str'},
         'http_port': {'key': 'httpPort', 'type': 'int'},
         'https_port': {'key': 'httpsPort', 'type': 'int'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
@@ -84,9 +111,14 @@ class Backend(Model):
         'backend_host_header': {'key': 'backendHostHeader', 'type': 'str'},
     }
 
-    def __init__(self, *, address: str=None, http_port: int=None, https_port: int=None, enabled_state=None, priority: int=None, weight: int=None, backend_host_header: str=None, **kwargs) -> None:
+    def __init__(self, *, address: str=None, private_link_alias: str=None, private_link_resource_id: str=None, private_link_location: str=None, private_link_approval_message: str=None, http_port: int=None, https_port: int=None, enabled_state=None, priority: int=None, weight: int=None, backend_host_header: str=None, **kwargs) -> None:
         super(Backend, self).__init__(**kwargs)
         self.address = address
+        self.private_link_alias = private_link_alias
+        self.private_link_resource_id = private_link_resource_id
+        self.private_link_location = private_link_location
+        self.private_endpoint_status = None
+        self.private_link_approval_message = private_link_approval_message
         self.http_port = http_port
         self.https_port = https_port
         self.enabled_state = enabled_state
@@ -247,24 +279,37 @@ class CacheConfiguration(Model):
     provide a cacheConfiguration object.
 
     :param query_parameter_strip_directive: Treatment of URL query terms when
-     forming the cache key. Possible values include: 'StripNone', 'StripAll'
+     forming the cache key. Possible values include: 'StripNone', 'StripAll',
+     'StripOnly', 'StripAllExcept'
     :type query_parameter_strip_directive: str or
      ~azure.mgmt.frontdoor.models.FrontDoorQuery
+    :param query_parameters: query parameters to include or exclude (comma
+     separated).
+    :type query_parameters: str
     :param dynamic_compression: Whether to use dynamic compression for cached
      content. Possible values include: 'Enabled', 'Disabled'
     :type dynamic_compression: str or
      ~azure.mgmt.frontdoor.models.DynamicCompressionEnabled
+    :param cache_duration: The duration for which the content needs to be
+     cached. Allowed format is in ISO 8601 format
+     (http://en.wikipedia.org/wiki/ISO_8601#Durations). HTTP requires the value
+     to be no more than a year
+    :type cache_duration: timedelta
     """
 
     _attribute_map = {
         'query_parameter_strip_directive': {'key': 'queryParameterStripDirective', 'type': 'str'},
+        'query_parameters': {'key': 'queryParameters', 'type': 'str'},
         'dynamic_compression': {'key': 'dynamicCompression', 'type': 'str'},
+        'cache_duration': {'key': 'cacheDuration', 'type': 'duration'},
     }
 
-    def __init__(self, *, query_parameter_strip_directive=None, dynamic_compression=None, **kwargs) -> None:
+    def __init__(self, *, query_parameter_strip_directive=None, query_parameters: str=None, dynamic_compression=None, cache_duration=None, **kwargs) -> None:
         super(CacheConfiguration, self).__init__(**kwargs)
         self.query_parameter_strip_directive = query_parameter_strip_directive
+        self.query_parameters = query_parameters
         self.dynamic_compression = dynamic_compression
+        self.cache_duration = cache_duration
 
 
 class CheckNameAvailabilityInput(Model):
@@ -862,6 +907,11 @@ class FrontDoor(Resource):
     :vartype provisioning_state: str
     :ivar cname: The host that each frontendEndpoint must CNAME to.
     :vartype cname: str
+    :ivar frontdoor_id: The Id of the frontdoor.
+    :vartype frontdoor_id: str
+    :ivar rules_engines: Rules Engine Configurations available to routing
+     rules.
+    :vartype rules_engines: list[~azure.mgmt.frontdoor.models.RulesEngine]
     """
 
     _validation = {
@@ -870,6 +920,8 @@ class FrontDoor(Resource):
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'cname': {'readonly': True},
+        'frontdoor_id': {'readonly': True},
+        'rules_engines': {'readonly': True},
     }
 
     _attribute_map = {
@@ -889,6 +941,8 @@ class FrontDoor(Resource):
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'cname': {'key': 'properties.cname', 'type': 'str'},
+        'frontdoor_id': {'key': 'properties.frontdoorId', 'type': 'str'},
+        'rules_engines': {'key': 'properties.rulesEngines', 'type': '[RulesEngine]'},
     }
 
     def __init__(self, *, location: str=None, tags=None, friendly_name: str=None, routing_rules=None, load_balancing_settings=None, health_probe_settings=None, backend_pools=None, frontend_endpoints=None, backend_pools_settings=None, enabled_state=None, resource_state=None, **kwargs) -> None:
@@ -904,6 +958,8 @@ class FrontDoor(Resource):
         self.resource_state = resource_state
         self.provisioning_state = None
         self.cname = None
+        self.frontdoor_id = None
+        self.rules_engines = None
 
 
 class FrontDoorUpdateParameters(Model):
@@ -1112,6 +1168,41 @@ class FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink(Model):
     def __init__(self, *, id: str=None, **kwargs) -> None:
         super(FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink, self).__init__(**kwargs)
         self.id = id
+
+
+class HeaderAction(Model):
+    """An action that can manipulate an http header.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param header_action_type: Required. Which type of manipulation to apply
+     to the header. Possible values include: 'Append', 'Delete', 'Overwrite'
+    :type header_action_type: str or
+     ~azure.mgmt.frontdoor.models.HeaderActionType
+    :param header_name: Required. The name of the header this action will
+     apply to.
+    :type header_name: str
+    :param value: The value to update the given header name with. This value
+     is not used if the actionType is Delete.
+    :type value: str
+    """
+
+    _validation = {
+        'header_action_type': {'required': True},
+        'header_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'header_action_type': {'key': 'headerActionType', 'type': 'str'},
+        'header_name': {'key': 'headerName', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, *, header_action_type, header_name: str, value: str=None, **kwargs) -> None:
+        super(HeaderAction, self).__init__(**kwargs)
+        self.header_action_type = header_action_type
+        self.header_name = header_name
+        self.value = value
 
 
 class HealthProbeSettingsListResult(Model):
@@ -1724,6 +1815,10 @@ class ManagedRuleSet(Model):
     :param rule_set_version: Required. Defines the version of the rule set to
      use.
     :type rule_set_version: str
+    :param rule_set_action: Possible values include: 'Block', 'Log',
+     'Redirect'
+    :type rule_set_action: str or
+     ~azure.mgmt.frontdoor.models.ManagedRuleSetActionType
     :param exclusions: Describes the exclusions that are applied to all rules
      in the set.
     :type exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
@@ -1741,14 +1836,16 @@ class ManagedRuleSet(Model):
     _attribute_map = {
         'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
         'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
+        'rule_set_action': {'key': 'ruleSetAction', 'type': 'str'},
         'exclusions': {'key': 'exclusions', 'type': '[ManagedRuleExclusion]'},
         'rule_group_overrides': {'key': 'ruleGroupOverrides', 'type': '[ManagedRuleGroupOverride]'},
     }
 
-    def __init__(self, *, rule_set_type: str, rule_set_version: str, exclusions=None, rule_group_overrides=None, **kwargs) -> None:
+    def __init__(self, *, rule_set_type: str, rule_set_version: str, rule_set_action=None, exclusions=None, rule_group_overrides=None, **kwargs) -> None:
         super(ManagedRuleSet, self).__init__(**kwargs)
         self.rule_set_type = rule_set_type
         self.rule_set_version = rule_set_version
+        self.rule_set_action = rule_set_action
         self.exclusions = exclusions
         self.rule_group_overrides = rule_group_overrides
 
@@ -1771,6 +1868,8 @@ class ManagedRuleSetDefinition(Resource):
     :type tags: dict[str, str]
     :ivar provisioning_state: Provisioning state of the managed rule set.
     :vartype provisioning_state: str
+    :ivar rule_set_id: Id of the managed rule set.
+    :vartype rule_set_id: str
     :ivar rule_set_type: Type of the managed rule set.
     :vartype rule_set_type: str
     :ivar rule_set_version: Version of the managed rule set type.
@@ -1785,6 +1884,7 @@ class ManagedRuleSetDefinition(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'rule_set_id': {'readonly': True},
         'rule_set_type': {'readonly': True},
         'rule_set_version': {'readonly': True},
         'rule_groups': {'readonly': True},
@@ -1797,6 +1897,7 @@ class ManagedRuleSetDefinition(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'rule_set_id': {'key': 'properties.ruleSetId', 'type': 'str'},
         'rule_set_type': {'key': 'properties.ruleSetType', 'type': 'str'},
         'rule_set_version': {'key': 'properties.ruleSetVersion', 'type': 'str'},
         'rule_groups': {'key': 'properties.ruleGroups', 'type': '[ManagedRuleGroupDefinition]'},
@@ -1805,6 +1906,7 @@ class ManagedRuleSetDefinition(Resource):
     def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
         super(ManagedRuleSetDefinition, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
+        self.rule_set_id = None
         self.rule_set_type = None
         self.rule_set_version = None
         self.rule_groups = None
@@ -1899,6 +2001,10 @@ class PolicySettings(Model):
      can override the response body. The body must be specified in base64
      encoding.
     :type custom_block_response_body: str
+    :param request_body_check: Describes if policy managed rules will inspect
+     the request body content. Possible values include: 'Disabled', 'Enabled'
+    :type request_body_check: str or
+     ~azure.mgmt.frontdoor.models.PolicyRequestBodyCheck
     """
 
     _validation = {
@@ -1911,15 +2017,17 @@ class PolicySettings(Model):
         'redirect_url': {'key': 'redirectUrl', 'type': 'str'},
         'custom_block_response_status_code': {'key': 'customBlockResponseStatusCode', 'type': 'int'},
         'custom_block_response_body': {'key': 'customBlockResponseBody', 'type': 'str'},
+        'request_body_check': {'key': 'requestBodyCheck', 'type': 'str'},
     }
 
-    def __init__(self, *, enabled_state=None, mode=None, redirect_url: str=None, custom_block_response_status_code: int=None, custom_block_response_body: str=None, **kwargs) -> None:
+    def __init__(self, *, enabled_state=None, mode=None, redirect_url: str=None, custom_block_response_status_code: int=None, custom_block_response_body: str=None, request_body_check=None, **kwargs) -> None:
         super(PolicySettings, self).__init__(**kwargs)
         self.enabled_state = enabled_state
         self.mode = mode
         self.redirect_url = redirect_url
         self.custom_block_response_status_code = custom_block_response_status_code
         self.custom_block_response_body = custom_block_response_body
+        self.request_body_check = request_body_check
 
 
 class PreconfiguredEndpoint(Resource):
@@ -2155,6 +2263,13 @@ class RoutingRule(SubResource):
      ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
     :param route_configuration: A reference to the routing configuration.
     :type route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
+    :param rules_engine: A reference to a specific Rules Engine Configuration
+     to apply to this route.
+    :type rules_engine: ~azure.mgmt.frontdoor.models.SubResource
+    :param web_application_firewall_policy_link: Defines the Web Application
+     Firewall policy for each routing rule (if applicable)
+    :type web_application_firewall_policy_link:
+     ~azure.mgmt.frontdoor.models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink
     :param resource_state: Resource status. Possible values include:
      'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
     :type resource_state: str or
@@ -2176,21 +2291,41 @@ class RoutingRule(SubResource):
         'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
         'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
         'route_configuration': {'key': 'properties.routeConfiguration', 'type': 'RouteConfiguration'},
+        'rules_engine': {'key': 'properties.rulesEngine', 'type': 'SubResource'},
+        'web_application_firewall_policy_link': {'key': 'properties.webApplicationFirewallPolicyLink', 'type': 'RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, enabled_state=None, route_configuration=None, resource_state=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, enabled_state=None, route_configuration=None, rules_engine=None, web_application_firewall_policy_link=None, resource_state=None, name: str=None, **kwargs) -> None:
         super(RoutingRule, self).__init__(id=id, **kwargs)
         self.frontend_endpoints = frontend_endpoints
         self.accepted_protocols = accepted_protocols
         self.patterns_to_match = patterns_to_match
         self.enabled_state = enabled_state
         self.route_configuration = route_configuration
+        self.rules_engine = rules_engine
+        self.web_application_firewall_policy_link = web_application_firewall_policy_link
         self.resource_state = resource_state
         self.name = name
         self.type = None
+
+
+class RoutingRuleLink(Model):
+    """Defines the Resource ID for a Routing Rule.
+
+    :param id: Resource ID.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(RoutingRuleLink, self).__init__(**kwargs)
+        self.id = id
 
 
 class RoutingRuleListResult(Model):
@@ -2239,6 +2374,13 @@ class RoutingRuleUpdateParameters(Model):
      ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
     :param route_configuration: A reference to the routing configuration.
     :type route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
+    :param rules_engine: A reference to a specific Rules Engine Configuration
+     to apply to this route.
+    :type rules_engine: ~azure.mgmt.frontdoor.models.SubResource
+    :param web_application_firewall_policy_link: Defines the Web Application
+     Firewall policy for each routing rule (if applicable)
+    :type web_application_firewall_policy_link:
+     ~azure.mgmt.frontdoor.models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink
     """
 
     _attribute_map = {
@@ -2247,15 +2389,253 @@ class RoutingRuleUpdateParameters(Model):
         'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
         'route_configuration': {'key': 'routeConfiguration', 'type': 'RouteConfiguration'},
+        'rules_engine': {'key': 'rulesEngine', 'type': 'SubResource'},
+        'web_application_firewall_policy_link': {'key': 'webApplicationFirewallPolicyLink', 'type': 'RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink'},
     }
 
-    def __init__(self, *, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, enabled_state=None, route_configuration=None, **kwargs) -> None:
+    def __init__(self, *, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, enabled_state=None, route_configuration=None, rules_engine=None, web_application_firewall_policy_link=None, **kwargs) -> None:
         super(RoutingRuleUpdateParameters, self).__init__(**kwargs)
         self.frontend_endpoints = frontend_endpoints
         self.accepted_protocols = accepted_protocols
         self.patterns_to_match = patterns_to_match
         self.enabled_state = enabled_state
         self.route_configuration = route_configuration
+        self.rules_engine = rules_engine
+        self.web_application_firewall_policy_link = web_application_firewall_policy_link
+
+
+class RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink(Model):
+    """Defines the Web Application Firewall policy for each routing rule (if
+    applicable).
+
+    :param id: Resource ID.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink, self).__init__(**kwargs)
+        self.id = id
+
+
+class RulesEngine(Model):
+    """A rules engine configuration containing a list of rules that will run to
+    modify the runtime behavior of the request and response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param rules: A list of rules that define a particular Rules Engine
+     Configuration.
+    :type rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
+    :param resource_state: Resource status. Possible values include:
+     'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
+    :type resource_state: str or
+     ~azure.mgmt.frontdoor.models.FrontDoorResourceState
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar id: Resource ID.
+    :vartype id: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'rules': {'key': 'properties.rules', 'type': '[RulesEngineRule]'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, rules=None, resource_state=None, **kwargs) -> None:
+        super(RulesEngine, self).__init__(**kwargs)
+        self.rules = rules
+        self.resource_state = resource_state
+        self.name = None
+        self.type = None
+        self.id = None
+
+
+class RulesEngineAction(Model):
+    """One or more actions that will execute, modifying the request and/or
+    response.
+
+    :param request_header_actions: A list of header actions to apply from the
+     request from AFD to the origin.
+    :type request_header_actions:
+     list[~azure.mgmt.frontdoor.models.HeaderAction]
+    :param response_header_actions: A list of header actions to apply from the
+     response from AFD to the client.
+    :type response_header_actions:
+     list[~azure.mgmt.frontdoor.models.HeaderAction]
+    :param route_configuration_override: Override the route configuration.
+    :type route_configuration_override:
+     ~azure.mgmt.frontdoor.models.RouteConfiguration
+    """
+
+    _attribute_map = {
+        'request_header_actions': {'key': 'requestHeaderActions', 'type': '[HeaderAction]'},
+        'response_header_actions': {'key': 'responseHeaderActions', 'type': '[HeaderAction]'},
+        'route_configuration_override': {'key': 'routeConfigurationOverride', 'type': 'RouteConfiguration'},
+    }
+
+    def __init__(self, *, request_header_actions=None, response_header_actions=None, route_configuration_override=None, **kwargs) -> None:
+        super(RulesEngineAction, self).__init__(**kwargs)
+        self.request_header_actions = request_header_actions
+        self.response_header_actions = response_header_actions
+        self.route_configuration_override = route_configuration_override
+
+
+class RulesEngineMatchCondition(Model):
+    """Define a match condition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param rules_engine_match_variable: Required. Match Variable. Possible
+     values include: 'IsMobile', 'RemoteAddr', 'RequestMethod', 'QueryString',
+     'PostArgs', 'RequestUri', 'RequestPath', 'RequestFilename',
+     'RequestFilenameExtension', 'RequestHeader', 'RequestBody',
+     'RequestScheme'
+    :type rules_engine_match_variable: str or
+     ~azure.mgmt.frontdoor.models.RulesEngineMatchVariable
+    :param selector: Name of selector in RequestHeader or RequestBody to be
+     matched
+    :type selector: str
+    :param rules_engine_operator: Required. Describes operator to apply to the
+     match condition. Possible values include: 'Any', 'IPMatch', 'GeoMatch',
+     'Equal', 'Contains', 'LessThan', 'GreaterThan', 'LessThanOrEqual',
+     'GreaterThanOrEqual', 'BeginsWith', 'EndsWith'
+    :type rules_engine_operator: str or
+     ~azure.mgmt.frontdoor.models.RulesEngineOperator
+    :param negate_condition: Describes if this is negate condition or not
+    :type negate_condition: bool
+    :param rules_engine_match_value: Required. Match values to match against.
+     The operator will apply to each value in here with OR semantics. If any of
+     them match the variable with the given operator this match condition is
+     considered a match.
+    :type rules_engine_match_value: list[str]
+    :param transforms: List of transforms
+    :type transforms: list[str or ~azure.mgmt.frontdoor.models.Transform]
+    """
+
+    _validation = {
+        'rules_engine_match_variable': {'required': True},
+        'rules_engine_operator': {'required': True},
+        'rules_engine_match_value': {'required': True},
+    }
+
+    _attribute_map = {
+        'rules_engine_match_variable': {'key': 'rulesEngineMatchVariable', 'type': 'str'},
+        'selector': {'key': 'selector', 'type': 'str'},
+        'rules_engine_operator': {'key': 'rulesEngineOperator', 'type': 'str'},
+        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
+        'rules_engine_match_value': {'key': 'rulesEngineMatchValue', 'type': '[str]'},
+        'transforms': {'key': 'transforms', 'type': '[str]'},
+    }
+
+    def __init__(self, *, rules_engine_match_variable, rules_engine_operator, rules_engine_match_value, selector: str=None, negate_condition: bool=None, transforms=None, **kwargs) -> None:
+        super(RulesEngineMatchCondition, self).__init__(**kwargs)
+        self.rules_engine_match_variable = rules_engine_match_variable
+        self.selector = selector
+        self.rules_engine_operator = rules_engine_operator
+        self.negate_condition = negate_condition
+        self.rules_engine_match_value = rules_engine_match_value
+        self.transforms = transforms
+
+
+class RulesEngineRule(Model):
+    """Contains a list of match conditions, and an action on how to modify the
+    request/response. If multiple rules match, the actions from one rule that
+    conflict with a previous rule overwrite for a singular action, or append in
+    the case of headers manipulation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. A name to refer to this specific rule.
+    :type name: str
+    :param priority: Required. A priority assigned to this rule.
+    :type priority: int
+    :param action: Required. Actions to perform on the request and response if
+     all of the match conditions are met.
+    :type action: ~azure.mgmt.frontdoor.models.RulesEngineAction
+    :param match_conditions: A list of match conditions that must meet in
+     order for the actions of this rule to run. Having no match conditions
+     means the actions will always run.
+    :type match_conditions:
+     list[~azure.mgmt.frontdoor.models.RulesEngineMatchCondition]
+    :param match_processing_behavior: If this rule is a match should the rules
+     engine continue running the remaining rules or stop. If not present,
+     defaults to Continue. Possible values include: 'Continue', 'Stop'
+    :type match_processing_behavior: str or
+     ~azure.mgmt.frontdoor.models.MatchProcessingBehavior
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'priority': {'required': True},
+        'action': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'priority': {'key': 'priority', 'type': 'int'},
+        'action': {'key': 'action', 'type': 'RulesEngineAction'},
+        'match_conditions': {'key': 'matchConditions', 'type': '[RulesEngineMatchCondition]'},
+        'match_processing_behavior': {'key': 'matchProcessingBehavior', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, priority: int, action, match_conditions=None, match_processing_behavior=None, **kwargs) -> None:
+        super(RulesEngineRule, self).__init__(**kwargs)
+        self.name = name
+        self.priority = priority
+        self.action = action
+        self.match_conditions = match_conditions
+        self.match_processing_behavior = match_processing_behavior
+
+
+class RulesEngineUpdateParameters(Model):
+    """Rules Engine Configuration to apply to a Routing Rule.
+
+    :param rules: A list of rules that define a particular Rules Engine
+     Configuration.
+    :type rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
+    """
+
+    _attribute_map = {
+        'rules': {'key': 'rules', 'type': '[RulesEngineRule]'},
+    }
+
+    def __init__(self, *, rules=None, **kwargs) -> None:
+        super(RulesEngineUpdateParameters, self).__init__(**kwargs)
+        self.rules = rules
+
+
+class Sku(Model):
+    """The pricing tier of the web application firewall policy.
+
+    :param name: Name of the pricing tier. Possible values include:
+     'Classic_AzureFrontDoor', 'Standard_AzureFrontDoor',
+     'Premium_AzureFrontDoor'
+    :type name: str or ~azure.mgmt.frontdoor.models.SkuName
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, name=None, **kwargs) -> None:
+        super(Sku, self).__init__(**kwargs)
+        self.name = name
 
 
 class TagsObject(Model):
@@ -2448,6 +2828,10 @@ class WebApplicationFirewallPolicy(Resource):
      with this Web Application Firewall policy.
     :vartype frontend_endpoint_links:
      list[~azure.mgmt.frontdoor.models.FrontendEndpointLink]
+    :ivar routing_rule_links: Describes Routing Rules associated with this Web
+     Application Firewall policy.
+    :vartype routing_rule_links:
+     list[~azure.mgmt.frontdoor.models.RoutingRuleLink]
     :ivar provisioning_state: Provisioning state of the policy.
     :vartype provisioning_state: str
     :ivar resource_state: Resource status of the policy. Possible values
@@ -2458,6 +2842,9 @@ class WebApplicationFirewallPolicy(Resource):
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
+    :param sku: The pricing tier of web application firewall policy. Defaults
+     to Classic_AzureFrontDoor if not specified.
+    :type sku: ~azure.mgmt.frontdoor.models.Sku
     """
 
     _validation = {
@@ -2465,6 +2852,7 @@ class WebApplicationFirewallPolicy(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'frontend_endpoint_links': {'readonly': True},
+        'routing_rule_links': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
     }
@@ -2479,17 +2867,21 @@ class WebApplicationFirewallPolicy(Resource):
         'custom_rules': {'key': 'properties.customRules', 'type': 'CustomRuleList'},
         'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRuleSetList'},
         'frontend_endpoint_links': {'key': 'properties.frontendEndpointLinks', 'type': '[FrontendEndpointLink]'},
+        'routing_rule_links': {'key': 'properties.routingRuleLinks', 'type': '[RoutingRuleLink]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, policy_settings=None, custom_rules=None, managed_rules=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, policy_settings=None, custom_rules=None, managed_rules=None, etag: str=None, sku=None, **kwargs) -> None:
         super(WebApplicationFirewallPolicy, self).__init__(location=location, tags=tags, **kwargs)
         self.policy_settings = policy_settings
         self.custom_rules = custom_rules
         self.managed_rules = managed_rules
         self.frontend_endpoint_links = None
+        self.routing_rule_links = None
         self.provisioning_state = None
         self.resource_state = None
         self.etag = etag
+        self.sku = sku
