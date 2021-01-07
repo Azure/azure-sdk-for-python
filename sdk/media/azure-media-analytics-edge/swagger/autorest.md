@@ -10,7 +10,7 @@ autorest --v3 --python
 ## Settings
 
 ```yaml
-require: https://github.com/Azure/azure-rest-api-specs/blob/7b34c62199a8d84f7252dcb8b08c1b593ae65124/specification/mediaservices/data-plane/readme.md
+require: https://github.com/Azure/azure-rest-api-specs/blob/297b7526f051e08f3a430b50daadd356ba74c6e2/specification/mediaservices/data-plane/readme.md
 output-folder: ../azure/media/analyticsedge/_generated
 namespace: azure.media.analyticsedge
 no-namespace-folders: true
