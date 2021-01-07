@@ -9,7 +9,8 @@ if __name__ == '__main__':
     
     parser.add_argument('--package-name', required=True, help='name of package (accetps both formats: azure-service-package and azure_service_pacage)')
     parser.add_argument('--new-version', required=True, help='new package version')
-    parser.add_argument('--service', help='name of the service for which to set the dev build id (e.g. keyvault)')
+    parser.add_argument('--service', required=True, help='name of the service for which to set the dev build id (e.g. keyvault)')
+    parser.add_argument('--release-date', help='date in the format "yyyy-MM-dd"')
     parser.add_argument(
         dest="glob_string",
         nargs="?",
@@ -37,4 +38,4 @@ if __name__ == '__main__':
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
-    update_change_log(target_package[0], new_version, False, True)
+    update_change_log(target_package[0], new_version, args.service, args.package_name, False, True, args.release_date)
