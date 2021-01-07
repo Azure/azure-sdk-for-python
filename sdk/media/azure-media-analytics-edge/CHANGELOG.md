@@ -3,6 +3,8 @@
 
 -------------------
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b
 
 Initial release
+
+## 1.0.0b2 (Unreleased)
