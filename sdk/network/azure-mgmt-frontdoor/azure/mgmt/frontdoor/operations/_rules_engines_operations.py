@@ -11,15 +11,14 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class PoliciesOperations(object):
-    """PoliciesOperations operations.
+class RulesEnginesOperations(object):
+    """RulesEnginesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -27,7 +26,7 @@ class PoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2020-11-01".
+    :ivar api_version: Client API version. Constant value: "2020-05-01".
     """
 
     models = models
@@ -37,35 +36,39 @@ class PoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-11-01"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
-    def list(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the protection policies within a resource group.
+    def list_by_front_door(
+            self, resource_group_name, front_door_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the Rules Engine Configurations within a Front Door.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
+        :param front_door_name: Name of the Front Door which is globally
+         unique.
+        :type front_door_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of WebApplicationFirewallPolicy
+        :return: An iterator like instance of RulesEngine
         :rtype:
-         ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicyPaged[~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy]
+         ~azure.mgmt.frontdoor.models.RulesEnginePaged[~azure.mgmt.frontdoor.models.RulesEngine]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_front_door.metadata['url']
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -105,27 +108,32 @@ class PoliciesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.WebApplicationFirewallPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.RulesEnginePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoorWebApplicationFirewallPolicies'}
+    list_by_front_door.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines'}
 
     def get(
-            self, resource_group_name, policy_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve protection policy with specified name within a resource group.
+            self, resource_group_name, front_door_name, rules_engine_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a Rules Engine Configuration with the specified name within the
+        specified Front Door.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
-        :param policy_name: The name of the Web Application Firewall Policy.
-        :type policy_name: str
+        :param front_door_name: Name of the Front Door which is globally
+         unique.
+        :type front_door_name: str
+        :param rules_engine_name: Name of the Rules Engine which is unique
+         within the Front Door.
+        :type rules_engine_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WebApplicationFirewallPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy or
+        :return: RulesEngine or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.frontdoor.models.RulesEngine or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
@@ -133,9 +141,10 @@ class PoliciesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -162,24 +171,27 @@ class PoliciesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', response)
+            deserialized = self._deserialize('RulesEngine', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, policy_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, front_door_name, rules_engine_name, rules=None, resource_state=None, custom_headers=None, raw=False, **operation_config):
+        rules_engine_parameters = models.RulesEngine(rules=rules, resource_state=resource_state)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -199,7 +211,7 @@ class PoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'WebApplicationFirewallPolicy')
+        body_content = self._serialize.body(rules_engine_parameters, 'RulesEngine')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -211,11 +223,11 @@ class PoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', response)
+            deserialized = self._deserialize('RulesEngine', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', response)
+            deserialized = self._deserialize('RulesEngine', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', response)
+            deserialized = self._deserialize('RulesEngine', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -224,44 +236,53 @@ class PoliciesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, policy_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update policy with specified rule set name within a resource
-        group.
+            self, resource_group_name, front_door_name, rules_engine_name, rules=None, resource_state=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a new Rules Engine Configuration with the specified name within
+        the specified Front Door.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
-        :param policy_name: The name of the Web Application Firewall Policy.
-        :type policy_name: str
-        :param parameters: Policy to be created.
-        :type parameters:
-         ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy
+        :param front_door_name: Name of the Front Door which is globally
+         unique.
+        :type front_door_name: str
+        :param rules_engine_name: Name of the Rules Engine which is unique
+         within the Front Door.
+        :type rules_engine_name: str
+        :param rules: A list of rules that define a particular Rules Engine
+         Configuration.
+        :type rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
+        :param resource_state: Resource status. Possible values include:
+         'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
+        :type resource_state: str or
+         ~azure.mgmt.frontdoor.models.FrontDoorResourceState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         WebApplicationFirewallPolicy or
-         ClientRawResponse<WebApplicationFirewallPolicy> if raw==True
+        :return: An instance of LROPoller that returns RulesEngine or
+         ClientRawResponse<RulesEngine> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.frontdoor.models.RulesEngine]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.frontdoor.models.RulesEngine]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
-            policy_name=policy_name,
-            parameters=parameters,
+            front_door_name=front_door_name,
+            rules_engine_name=rules_engine_name,
+            rules=rules,
+            resource_state=resource_state,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', response)
+            deserialized = self._deserialize('RulesEngine', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -276,17 +297,18 @@ class PoliciesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, policy_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, front_door_name, rules_engine_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -307,24 +329,27 @@ class PoliciesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [202, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def delete(
-            self, resource_group_name, policy_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes Policy.
+            self, resource_group_name, front_door_name, rules_engine_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Rules Engine Configuration with the specified
+        parameters.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
-        :param policy_name: The name of the Web Application Firewall Policy.
-        :type policy_name: str
+        :param front_door_name: Name of the Front Door which is globally
+         unique.
+        :type front_door_name: str
+        :param rules_engine_name: Name of the Rules Engine which is unique
+         within the Front Door.
+        :type rules_engine_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -334,11 +359,13 @@ class PoliciesOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            policy_name=policy_name,
+            front_door_name=front_door_name,
+            rules_engine_name=rules_engine_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -356,4 +383,4 @@ class PoliciesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}

@@ -13,22 +13,26 @@ from ._network_experiment_profiles_operations import NetworkExperimentProfilesOp
 from ._preconfigured_endpoints_operations import PreconfiguredEndpointsOperations
 from ._experiments_operations import ExperimentsOperations
 from ._reports_operations import ReportsOperations
+from ._front_door_name_availability_operations import FrontDoorNameAvailabilityOperations
+from ._front_door_name_availability_with_subscription_operations import FrontDoorNameAvailabilityWithSubscriptionOperations
 from ._front_doors_operations import FrontDoorsOperations
 from ._frontend_endpoints_operations import FrontendEndpointsOperations
 from ._endpoints_operations import EndpointsOperations
+from ._rules_engines_operations import RulesEnginesOperations
 from ._policies_operations import PoliciesOperations
 from ._managed_rule_sets_operations import ManagedRuleSetsOperations
-from ._front_door_management_client_operations import FrontDoorManagementClientOperationsMixin
 
 __all__ = [
     'NetworkExperimentProfilesOperations',
     'PreconfiguredEndpointsOperations',
     'ExperimentsOperations',
     'ReportsOperations',
+    'FrontDoorNameAvailabilityOperations',
+    'FrontDoorNameAvailabilityWithSubscriptionOperations',
     'FrontDoorsOperations',
     'FrontendEndpointsOperations',
     'EndpointsOperations',
+    'RulesEnginesOperations',
     'PoliciesOperations',
     'ManagedRuleSetsOperations',
-    'FrontDoorManagementClientOperationsMixin',
 ]
