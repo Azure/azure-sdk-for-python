@@ -12,8 +12,8 @@ Familiarity with the `azure-eventhub` v1 package is assumed. For those new to th
 * [Important changes](#important-changes)
     - [Client hierarchy](#client-hierarchy)
     - [Client constructors](#client-constructors)
-    - [Sending](#sending-events)
-    - [Receiving](#receiving-events)
+    - [Sending events](#sending-events)
+    - [Receiving events](#receiving-events)
     - [Migrating code from EventProcessorHost to EventHubConsumerClient for receiving events](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
 * [Additional samples](#additional-samples)
 
@@ -155,7 +155,7 @@ def on_event(partition_context, event):
 
 consumer_client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group, eventhub_name=eh_name)
 with consumer_client:
-    consumer_client.receive(on_event=on_event)
+    consumer_client.receive(on_event=on_even, partition_id=partition_id)
 
 # Receive batch
 def on_event_batch(partition_context, event_batch):
@@ -163,7 +163,7 @@ def on_event_batch(partition_context, event_batch):
     
 consumer_client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group, eventhub_name=eh_name)
 with consumer_client:
-    consumer_client.receive_batch(on_event_batch=on_event_batch)
+    consumer_client.receive_batch(on_event_batch=on_event_batch, partition_id=partition_id)
 ```
 ### Migrating code from `EventProcessorHost` to `EventHubConsumerClient` for receiving events
 
