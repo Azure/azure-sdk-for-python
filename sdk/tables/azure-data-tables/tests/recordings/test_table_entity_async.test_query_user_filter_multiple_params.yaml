@@ -1,0 +1,189 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable2c6a19d5"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:14:58 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:14:58 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable2c6a19d5"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 06 Jan 2021 19:14:56 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('uttable2c6a19d5')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: https://seankaneprim.table.core.windows.net/Tables
+- request:
+    body: '{"PartitionKey": "pk2c6a19d5", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk2c6a19d5", "RowKey@odata.type": "Edm.String", "age": 39, "sex":
+      "male", "sex@odata.type": "Edm.String", "married": true, "deceased": false,
+      "ratio": 3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other":
+      20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '577'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:14:58 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:14:58 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/uttable2c6a19d5
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable2c6a19d5/@Element","odata.etag":"W/\"datetime''2021-01-06T19%3A14%3A56.9094398Z''\"","PartitionKey":"pk2c6a19d5","RowKey":"rk2c6a19d5","Timestamp":"2021-01-06T19:14:56.9094398Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 06 Jan 2021 19:14:56 GMT
+      etag: W/"datetime'2021-01-06T19%3A14%3A56.9094398Z'"
+      location: https://fake_table_account.table.core.windows.net/uttable2c6a19d5(PartitionKey='pk2c6a19d5',RowKey='rk2c6a19d5')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: https://seankaneprim.table.core.windows.net/uttable2c6a19d5
+- request:
+    body: '{"PartitionKey": "pk2c6a19d51", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk2c6a19d51", "RowKey@odata.type": "Edm.String", "age": 49, "sex":
+      "female", "sex@odata.type": "Edm.String", "married": false, "deceased": true,
+      "ratio": 5.2, "evenratio": 6.0, "large": 39999011, "Birthday": "1993-04-01T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1990-04-01T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5LWJpbmFyeQ==", "binary@odata.type": "Edm.Binary",
+      "other": 40, "clsid": "c8da6455-213e-42d9-9b79-3f9149a57833", "clsid@odata.type":
+      "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '592'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:14:59 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:14:59 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/uttable2c6a19d5
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable2c6a19d5/@Element","odata.etag":"W/\"datetime''2021-01-06T19%3A14%3A57.035531Z''\"","PartitionKey":"pk2c6a19d51","RowKey":"rk2c6a19d51","Timestamp":"2021-01-06T19:14:57.035531Z","age":49,"sex":"female","married":false,"deceased":true,"ratio":5.2,"evenratio":6.0,"large":39999011,"Birthday@odata.type":"Edm.DateTime","Birthday":"1993-04-01T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1990-04-01T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5LWJpbmFyeQ==","other":40,"clsid@odata.type":"Edm.Guid","clsid":"c8da6455-213e-42d9-9b79-3f9149a57833"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 06 Jan 2021 19:14:56 GMT
+      etag: W/"datetime'2021-01-06T19%3A14%3A57.035531Z'"
+      location: https://fake_table_account.table.core.windows.net/uttable2c6a19d5(PartitionKey='pk2c6a19d51',RowKey='rk2c6a19d51')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: https://seankaneprim.table.core.windows.net/uttable2c6a19d5
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:14:59 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:14:59 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/uttable2c6a19d5()?$filter=married%20eq%20true%20and%20RowKey%20eq%20'rk2c6a19d5'
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable2c6a19d5","value":[{"odata.etag":"W/\"datetime''2021-01-06T19%3A14%3A56.9094398Z''\"","PartitionKey":"pk2c6a19d5","RowKey":"rk2c6a19d5","Timestamp":"2021-01-06T19:14:56.9094398Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}]}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 06 Jan 2021 19:14:57 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: https://seankaneprim.table.core.windows.net/uttable2c6a19d5()?$filter=married%20eq%20true%20and%20RowKey%20eq%20'rk2c6a19d5'
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Wed, 06 Jan 2021 19:14:59 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:14:59 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable2c6a19d5')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Wed, 06 Jan 2021 19:14:57 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.core.windows.net/Tables('uttable2c6a19d5')
+version: 1

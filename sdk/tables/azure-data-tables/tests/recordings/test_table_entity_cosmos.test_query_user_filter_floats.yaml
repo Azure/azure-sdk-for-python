@@ -1,0 +1,253 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable6a5a1685"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:18:34 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:18:34 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable6a5a1685","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 06 Jan 2021 19:18:33 GMT
+      etag:
+      - W/"datetime'2021-01-06T19%3A18%3A33.0864648Z'"
+      location:
+      - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable6a5a1685')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: '{"PartitionKey": "pk6a5a1685", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk6a5a1685", "RowKey@odata.type": "Edm.String", "age": 39, "sex":
+      "male", "sex@odata.type": "Edm.String", "married": true, "deceased": false,
+      "ratio": 3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other":
+      20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '577'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:18:35 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:18:35 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable6a5a1685
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable6a5a1685/$metadata#uttable6a5a1685/@Element","odata.etag":"W/\"datetime''2021-01-06T19%3A18%3A33.6465928Z''\"","PartitionKey":"pk6a5a1685","RowKey":"rk6a5a1685","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2021-01-06T19:18:33.6465928Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 06 Jan 2021 19:18:33 GMT
+      etag:
+      - W/"datetime'2021-01-06T19%3A18%3A33.6465928Z'"
+      location:
+      - https://fake_cosmos_account.table.cosmos.azure.com/uttable6a5a1685(PartitionKey='pk6a5a1685',RowKey='rk6a5a1685')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"PartitionKey": "pk6a5a16851", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk6a5a16851", "RowKey@odata.type": "Edm.String", "age": 49, "sex":
+      "female", "sex@odata.type": "Edm.String", "married": false, "deceased": true,
+      "ratio": 5.2, "evenratio": 6.0, "large": 39999011, "Birthday": "1993-04-01T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1990-04-01T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5LWJpbmFyeQ==", "binary@odata.type": "Edm.Binary",
+      "other": 40, "clsid": "c8da6455-213e-42d9-9b79-3f9149a57833", "clsid@odata.type":
+      "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '592'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:18:35 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:18:35 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable6a5a1685
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable6a5a1685/$metadata#uttable6a5a1685/@Element","odata.etag":"W/\"datetime''2021-01-06T19%3A18%3A33.7593352Z''\"","PartitionKey":"pk6a5a16851","RowKey":"rk6a5a16851","age":49,"sex":"female","married":false,"deceased":true,"ratio":5.2,"evenratio":6.0,"large":39999011,"Birthday@odata.type":"Edm.DateTime","Birthday":"1993-04-01T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1990-04-01T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5LWJpbmFyeQ==","other":40,"clsid@odata.type":"Edm.Guid","clsid":"c8da6455-213e-42d9-9b79-3f9149a57833","Timestamp":"2021-01-06T19:18:33.7593352Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 06 Jan 2021 19:18:33 GMT
+      etag:
+      - W/"datetime'2021-01-06T19%3A18%3A33.7593352Z'"
+      location:
+      - https://fake_cosmos_account.table.cosmos.azure.com/uttable6a5a1685(PartitionKey='pk6a5a16851',RowKey='rk6a5a16851')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:18:35 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:18:35 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable6a5a1685()?$filter=ratio%20lt%204.1
+  response:
+    body:
+      string: '{"value":[{"odata.etag":"W/\"datetime''2021-01-06T19%3A18%3A33.6465928Z''\"","PartitionKey":"pk6a5a1685","RowKey":"rk6a5a1685","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2021-01-06T19:18:33.6465928Z"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#uttable6a5a1685"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 06 Jan 2021 19:18:33 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 06 Jan 2021 19:18:35 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:18:35 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable6a5a1685')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 06 Jan 2021 19:18:33 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:18:36 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:18:36 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 06 Jan 2021 19:18:33 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+version: 1
