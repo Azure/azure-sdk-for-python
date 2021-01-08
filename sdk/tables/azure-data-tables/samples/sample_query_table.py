@@ -93,9 +93,6 @@ class SampleTablesQuery(object):
                 print(e.message)
         # [END query_entities]
 
-            # finally:
-            #     table_client.delete_table()
-
     def sample_query_entities_multiple_params(self):
         from azure.data.tables import TableClient
         from azure.core.exceptions import HttpResponseError
@@ -119,8 +116,6 @@ class SampleTablesQuery(object):
                 print(e.message)
         # [END query_entities]
 
-            # finally:
-            #     table_client.delete_table()
 
     def sample_query_entities_values(self):
         from azure.data.tables import TableClient
