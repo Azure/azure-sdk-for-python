@@ -18,7 +18,7 @@ These code samples show common champion scenario operations with the AzureMonito
 ## Installation
 
 ```sh
-$ pip install azure-opentelemetry-exporter-azuremonitor
+$ pip install azure-opentelemetry-exporter-azuremonitor --pre
 ```
 
 ## Run the Applications
