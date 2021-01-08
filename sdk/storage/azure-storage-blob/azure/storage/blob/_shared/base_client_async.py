@@ -19,7 +19,8 @@ from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy, AzureSasCredentialPolicy,
+    HttpLoggingPolicy,
+    AzureSasCredentialPolicy,
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 

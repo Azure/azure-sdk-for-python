@@ -10,6 +10,8 @@ from collections import namedtuple
 import unittest
 import pytest
 import sys
+
+from azure.core.credentials import AzureSasCredential
 from dateutil.tz import tzutc
 from datetime import (
     datetime,
@@ -559,20 +561,21 @@ class StorageQueueTest(StorageTestCase):
         )
 
         # Act
-        service = QueueServiceClient(
-            account_url=qsc.url,
-            credential=token,
-        )
-        new_queue_client = service.get_queue_client(queue_client.queue_name)
-        result = new_queue_client.peek_messages()
+        for credential in [token, AzureSasCredential(token)]:
+            service = QueueServiceClient(
+                account_url=qsc.url,
+                credential=credential,
+            )
+            new_queue_client = service.get_queue_client(queue_client.queue_name)
+            result = new_queue_client.peek_messages()
 
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertEqual(1, len(result))
-        message = result[0]
-        self.assertIsNotNone(message)
-        self.assertNotEqual('', message.id)
-        self.assertEqual(u'message1', message.content)
+            # Assert
+            self.assertIsNotNone(result)
+            self.assertEqual(1, len(result))
+            message = result[0]
+            self.assertIsNotNone(message)
+            self.assertNotEqual('', message.id)
+            self.assertEqual(u'message1', message.content)
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

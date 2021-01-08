@@ -17,6 +17,8 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 
+from azure.core.credentials import AzureSasCredential
+
 try:
     from urllib.parse import parse_qs, quote
 except ImportError:
@@ -36,7 +38,8 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
+    AzureSasCredentialPolicy
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
@@ -223,6 +226,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
