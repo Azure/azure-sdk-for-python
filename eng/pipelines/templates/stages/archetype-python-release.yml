@@ -244,6 +244,7 @@ stages:
         - template: /eng/pipelines/templates/jobs/smoke-test.yml
           parameters:
             Nightly: false
+            ArtifactName: ${{ parameters.ArtifactName }}
             Artifacts: ${{ parameters.Artifacts }}
 
   - stage: Integration

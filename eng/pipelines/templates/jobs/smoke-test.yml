@@ -4,6 +4,9 @@ parameters:
   - name: Artifacts
     type: object
     default: []
+  - name: ArtifactName
+    type: string
+    default: "not-specified"
 
 jobs:
   - ${{ if eq(parameters.Nightly, false) }}:
@@ -130,12 +133,44 @@ jobs:
         displayName: pip --version
 
       - ${{ if eq(parameters.Nightly, true) }}:
+        - download: current
+          artifact: ${{ parameters.ArtifactName }}
+          timeoutInMinutes: 5
+
+        - pwsh: |
+            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*.zip"
+            $artifacts = $packages | ForEach-Object {
+              if ($_.Name -match "([a-zA-Z\-]+)\-(.*).zip") {
+                return @{ "name" = $matches[1]; "version" = $matches[2] }
+              }
+            }
+            Write-Host "Found artifacts: $artifacts"
+            $dependencies = Get-Content $env:REQUIREMENTS | ForEach-Object {
+              $line = $_
+              if ($line -match "([a-zA-Z\-]+)(\W+)(.*)") {
+                  $override = ($artifacts | Where-Object { $_.Name -eq $matches[1] }).Version
+                  if ($override) {
+                      $line = $line -replace '([a-zA-Z\-]+)(\W+)(.*)', ('${1}${2}' + $override)
+                      Write-Host "Overriding dependency with to: $line"
+                  }
+              }
+              return $line
+            }
+
+            $dependencies | Out-File $env:REQUIREMENTS
+
+          displayName: Override requirements with pipeline build artifact versions
+          env:
+            REQUIREMENTS: $(requirements)
+
         - pwsh: |
             pip install -r "$env:REQUIREMENTS" --pre --no-deps --upgrade `
               --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
+
           displayName: Install requirements from dev feed without dependencies
           env:
             REQUIREMENTS: $(requirements)
+
       - ${{ if eq(parameters.Nightly, false) }}:
         - pwsh: pip install -r "$env:REQUIREMENTS" --no-deps --upgrade
           displayName: Install requirements from without dependencies
