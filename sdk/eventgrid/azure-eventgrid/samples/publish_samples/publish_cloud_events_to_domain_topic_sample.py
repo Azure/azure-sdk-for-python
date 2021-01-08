@@ -35,7 +35,7 @@ client = EventGridPublisherClient(domain_topic_hostname, credential)
 
 def publish_event():
     # publish events
-    for _ in range(10):
+    for _ in range(3):
 
         event_list = []     # list of events to publish
         team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
