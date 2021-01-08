@@ -6,10 +6,10 @@
 import pytest
 import platform
 from time import sleep
+import sys
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
-from azure.core.exceptions import HttpResponseError
 
 from _shared.testcase import (
     TableTestCase,
