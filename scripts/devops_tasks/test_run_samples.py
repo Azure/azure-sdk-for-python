@@ -21,11 +21,7 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 IGNORED_SAMPLES = {
-    "azure-eventgrid": [
-        "__init__.py",
-        "consume_cloud_events_from_eventhub.py",
-        "consume_cloud_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py"]
+    "azure-eventgrid": ["__init__.py"]
 }
 
 
