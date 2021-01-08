@@ -67,10 +67,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def _create_blob(self, tags=None, data=b'', **kwargs):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        try:
-            blob.upload_blob(data, tags=tags, **kwargs)
-        except:
-            blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
+        blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
