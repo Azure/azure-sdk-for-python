@@ -24,7 +24,8 @@ EXCLUDED_PACKAGE_VERSIONS = {
     'azure-servicebus': '0.50.3',
     'azure-eventgrid': '1.3.0',
     'azure-schemaregistry-avroserializer': '1.0.0b1',
-    'azure-storage-blob-changefeed' : '12.0.0b2'
+    'azure-storage-blob-changefeed' : '12.0.0b2',
+    'azure-storage-file-datalake': '12.2.0b1'
 }
 
 # This method identifies release tag for latest or oldest released version of a given package
