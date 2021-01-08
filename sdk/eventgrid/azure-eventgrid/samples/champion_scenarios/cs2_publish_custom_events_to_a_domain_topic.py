@@ -20,6 +20,7 @@ from azure.core.credentials import AzureKeyCredential
 
 domain_key = os.environ["EG_ACCESS_KEY"]
 domain_hostname = os.environ["EG_TOPIC_HOSTNAME"]
+print(domain_hostname)
 
 credential = AzureKeyCredential(domain_key)
 client = EventGridPublisherClient(domain_hostname, credential)

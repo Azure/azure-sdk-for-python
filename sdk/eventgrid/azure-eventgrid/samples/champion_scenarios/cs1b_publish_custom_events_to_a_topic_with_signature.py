@@ -21,6 +21,7 @@ from datetime import datetime, timedelta
 
 topic_key = os.environ["EG_ACCESS_KEY"]
 topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
+print(topic_hostname)
 expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
 
 signature = generate_shared_access_signature(topic_hostname, topic_key, expiration_date_utc)
