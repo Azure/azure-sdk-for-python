@@ -28,8 +28,7 @@ PKGS_TXT_FILE = "packages.txt"
 logging.getLogger().setLevel(logging.INFO)
 
 MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
-    'azure-common': '1.1.10',
-    'azure-storage-file-datalake': ' 12.2.0'
+    'azure-common': '1.1.10'
 }
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
