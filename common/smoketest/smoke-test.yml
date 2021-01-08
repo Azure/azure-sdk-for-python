@@ -1,4 +1,4 @@
 jobs:
   - template: /eng/pipelines/templates/jobs/smoke-test.yml
     parameters:
-      Nightly: true
+      Daily: true
