@@ -6,9 +6,10 @@ import tempfile
 import typing
 from enum import Enum
 
+from opentelemetry.sdk.trace.export import SpanExportResult
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RequestIdPolicy
-from opentelemetry.sdk.trace.export import SpanExportResult
 from azure.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
 from azure.opentelemetry.exporter.azuremonitor._generated._configuration import AzureMonitorClientConfiguration
 from azure.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
