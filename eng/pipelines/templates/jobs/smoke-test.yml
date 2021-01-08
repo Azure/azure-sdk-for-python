@@ -1,5 +1,5 @@
 parameters:
-  - name: Nightly
+  - name: Daily
     default: true
   - name: Artifacts
     type: object
@@ -9,7 +9,7 @@ parameters:
     default: "not-specified"
 
 jobs:
-  - ${{ if eq(parameters.Nightly, false) }}:
+  - ${{ if eq(parameters.Daily, false) }}:
     - job: smoke_test_eligibility
       displayName: Check Smoke Test Eligibility
       steps:
@@ -32,7 +32,7 @@ jobs:
             RunSmokeTests: $(RunSmokeTests)
 
   - job:
-    ${{ if eq(parameters.Nightly, false) }}:
+    ${{ if eq(parameters.Daily, false) }}:
       dependsOn: smoke_test_eligibility
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
     strategy:
@@ -116,9 +116,9 @@ jobs:
       - name: azureChinaCloudArmParameters
         value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
       - name: requirements
-        ${{ if eq(parameters.Nightly, true) }}:
+        ${{ if eq(parameters.Daily, true) }}:
           value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
-        ${{ if eq(parameters.Nightly, false) }}:
+        ${{ if eq(parameters.Daily, false) }}:
           value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
 
     steps:
@@ -132,26 +132,27 @@ jobs:
           pip --version
         displayName: pip --version
 
-      - ${{ if eq(parameters.Nightly, true) }}:
+      - ${{ if eq(parameters.Daily, false) }}:
         - download: current
           artifact: ${{ parameters.ArtifactName }}
           timeoutInMinutes: 5
 
         - pwsh: |
             $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*.zip"
+            Write-Host "Artifacts found:"
             $artifacts = $packages | ForEach-Object {
               if ($_.Name -match "([a-zA-Z\-]+)\-(.*).zip") {
+                Write-Host "$($matches[1]): $($matches[2])"
                 return @{ "name" = $matches[1]; "version" = $matches[2] }
               }
             }
-            Write-Host "Found artifacts: $artifacts"
             $dependencies = Get-Content $env:REQUIREMENTS | ForEach-Object {
               $line = $_
               if ($line -match "([a-zA-Z\-]+)(\W+)(.*)") {
                   $override = ($artifacts | Where-Object { $_.Name -eq $matches[1] }).Version
                   if ($override) {
                       $line = $line -replace '([a-zA-Z\-]+)(\W+)(.*)', ('${1}${2}' + $override)
-                      Write-Host "Overriding dependency with to: $line"
+                      Write-Host "Overriding dependency to: $line"
                   }
               }
               return $line
@@ -163,17 +164,17 @@ jobs:
           env:
             REQUIREMENTS: $(requirements)
 
+        - pwsh: pip install -r "$env:REQUIREMENTS" --no-deps --upgrade
+          displayName: Install requirements without dependencies
+          env:
+            REQUIREMENTS: $(requirements)
+
+      - ${{ if eq(parameters.Daily, true) }}:
         - pwsh: |
             pip install -r "$env:REQUIREMENTS" --pre --no-deps --upgrade `
               --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
 
           displayName: Install requirements from dev feed without dependencies
-          env:
-            REQUIREMENTS: $(requirements)
-
-      - ${{ if eq(parameters.Nightly, false) }}:
-        - pwsh: pip install -r "$env:REQUIREMENTS" --no-deps --upgrade
-          displayName: Install requirements from without dependencies
           env:
             REQUIREMENTS: $(requirements)
 
