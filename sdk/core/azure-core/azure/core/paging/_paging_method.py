@@ -23,113 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import itertools
-import logging
 from abc import ABCMeta
-from typing import TYPE_CHECKING, Iterator, TypeVar
+from typing import TYPE_CHECKING
 from six import add_metaclass
-
-from .exceptions import (
-    map_error,
-    AzureError,
-    HttpResponseError,
-    ClientAuthenticationError,
-    ResourceExistsError,
-    ResourceNotFoundError
-)
-
-from .pipeline import PipelineResponse
 
 if TYPE_CHECKING:
     from typing import (
         Any,
         Callable,
-        Dict,
-        Optional,
         Iterable,
-        Tuple,
+        Optional,
     )
-    from .pipeline.transport import HttpRequest, HttpResponse
-    from ._pipeline_client import PipelineClient
-
-_LOGGER = logging.getLogger(__name__)
-
-ReturnType = TypeVar("ReturnType")
-ResponseType = TypeVar("ResponseType")
-
-class _PagingMethodHandlerBase:
-    def __init__(
-        self,
-        paging_method,
-        deserialize_output,
-        client,
-        initial_state,
-        **kwargs
-    ):
-        self._paging_method = paging_method
-        self._deserialize_output = deserialize_output
-        self._client = client
-        self._initial_state = initial_state
-        self._cls = kwargs.pop("_cls", None)
-        self._error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        self._error_map.update(kwargs.pop('error_map', {}))
-        self._item_name = kwargs.pop("item_name", "value")
-        self._continuation_token_location = kwargs.pop("continuation_token_location", None)
-        self._operation_config = kwargs
-
-    @property
-    def _initial_request(self):
-        if isinstance(self._initial_state, PipelineResponse):
-            return self._initial_state.http_response.request
-        return self._initial_state
-
-    def _handle_response(self, continuation_token, response):
-        http_response = response.http_response
-        status_code = http_response.status_code
-        if status_code < 200 or status_code >= 300:
-            if self._error_map:
-                map_error(status_code=status_code, response=http_response, error_map=self._error_map)
-            error = HttpResponseError(response=http_response)
-            error.continuation_token = continuation_token
-            raise error
-        if "request_id" not in self._operation_config:
-            self._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]
-        return response
-
-    def _extract_data_helper(self, pipeline_response):
-        deserialized = self._deserialize_output(pipeline_response)
-        list_of_elem = self._paging_method.get_list_elements(pipeline_response, deserialized, self._item_name)
-        list_of_elem = self._paging_method.mutate_list(pipeline_response, list_of_elem, self._cls)
-        continuation_token = self._paging_method.get_continuation_token(
-            pipeline_response, deserialized, self._continuation_token_location
-        )
-        return continuation_token, list_of_elem
-
-class _PagingMethodHandler(_PagingMethodHandlerBase):
-
-    def _make_call(self, request):
-        return self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **self._operation_config
-        )
-
-    def _do_initial_call(self):
-        if isinstance(self._initial_state, PipelineResponse):
-            return self._initial_state
-        return self._make_call(self._initial_state)
-
-    def get_next(self, continuation_token):
-        if not continuation_token:
-            response = self._do_initial_call()
-        else:
-            request = self._paging_method.get_next_request(continuation_token, self._initial_request, self._client)
-            response = self._make_call(request)
-        return self._handle_response(continuation_token, response)
-
-    def extract_data(self, pipeline_response):
-        return self._extract_data_helper(pipeline_response)
-
+    from ._utils import ReturnType, ResponseType
+    from ..pipeline.transport import HttpResponse, HttpRequest
+    from .._pipeline_client import PipelineClient
 
 @add_metaclass(ABCMeta)
 class PagingMethodABC():
@@ -198,7 +105,7 @@ class PagingMethodABC():
 
 class NextLinkPagingMethod(PagingMethodABC):
 
-    def __init__(self, path_format_arguments=None, **kwargs):
+    def __init__(self, path_format_arguments=None, **kwargs):  # pylint: disable=unused-argument
         """Most common paging method. Uses the continuation token as the URL for the next call.
         """
         self._path_format_arguments = path_format_arguments or {}
@@ -321,108 +228,3 @@ class HeaderPagingMethod(NextLinkPagingMethod):
         request = initial_request
         request.headers[self._header_name] = continuation_token
         return request
-
-class PageIterator(Iterator[Iterator[ReturnType]]):
-    def __init__(
-        self,
-        get_next=None,  # type: Callable[[Optional[str]], ResponseType]
-        extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
-        continuation_token=None,  # type: Optional[str]
-        paging_method=None,  # type: PagingMethodABC
-        **kwargs
-    ):
-        """Return an iterator of pages.
-        :param get_next: Callable that take the continuation token and return a HTTP response
-        :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
-         list of ReturnType
-        :param str continuation_token: The continuation token needed by get_next
-        :param paging_method: Preferred way of paging. Pass in a sansio paging method, to tell the iterator
-         how to make requests, and deserialize responses. When passing in paging_method, do not pass in
-         callables for get_next and extract_data.
-        :type paging_method: ~azure.core.paging_method.PagingMethodABC
-        """
-        if get_next or extract_data:
-            if paging_method:
-                raise ValueError(
-                    "You can't pass in both a paging method and a callback for get_next or extract_data. "
-                    "We recommend you only pass in a paging method, since passing in callbacks is legacy."
-                )
-            if not get_next and extract_data:
-                raise ValueError(
-                    "If you are passing in callbacks (this is legacy), you have to pass in callbacks for both "
-                    "get_next and extract_data. We recommend you just pass in a paging method instead though."
-                )
-        self._paging_method = paging_method
-        handler = _PagingMethodHandler(paging_method, **kwargs)
-        self._extract_data = extract_data or handler.extract_data
-        self._get_next = get_next or handler.get_next
-        self.continuation_token = continuation_token
-        self._response = None  # type: Optional[ResponseType]
-        self._current_page = None  # type: Optional[Iterable[ReturnType]]
-        self._did_a_call_already = False
-        self._operation_config = kwargs
-
-    def __iter__(self):
-        """Return 'self'."""
-        return self
-
-    def __next__(self):
-        # type: () -> Iterator[ReturnType]
-        if self._did_a_call_already and not self.continuation_token:
-            raise StopIteration("End of paging")
-        try:
-            self._response = self._get_next(self.continuation_token)
-        except AzureError as error:
-            if not error.continuation_token:
-                error.continuation_token = self.continuation_token
-            raise
-        self._did_a_call_already = True
-        self.continuation_token, self._current_page = self._extract_data(self._response)
-        return iter(self._current_page)
-
-    next = __next__  # Python 2 compatibility.
-
-
-class ItemPaged(Iterator[ReturnType]):
-    def __init__(self, *args, **kwargs):
-        """Return an iterator of items.
-
-        args and kwargs will be passed to the PageIterator constructor directly,
-        except page_iterator_class
-        """
-        # with the newest version, I want to take in the client, initial request,
-        # cb to extract data, and cb to format next link
-        self._args = args
-        self._kwargs = kwargs
-        self._page_iterator = None
-        self._page_iterator_class = self._kwargs.pop(
-            "page_iterator_class", PageIterator
-        )
-
-    def by_page(self, continuation_token=None):
-        # type: (Optional[str]) -> Iterator[Iterator[ReturnType]]
-        """Get an iterator of pages of objects, instead of an iterator of objects.
-
-        :param str continuation_token:
-            An opaque continuation token. This value can be retrieved from the
-            continuation_token field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
-        :returns: An iterator of pages (themselves iterator of objects)
-        """
-        return self._page_iterator_class(
-            continuation_token=continuation_token, *self._args, **self._kwargs
-        )
-
-    def __repr__(self):
-        return "<iterator object azure.core.paging.ItemPaged at {}>".format(hex(id(self)))
-
-    def __iter__(self):
-        """Return 'self'."""
-        return self
-
-    def __next__(self):
-        if self._page_iterator is None:
-            self._page_iterator = itertools.chain.from_iterable(self.by_page())
-        return next(self._page_iterator)
-
-    next = __next__  # Python 2 compatibility.
