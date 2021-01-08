@@ -35,4 +35,5 @@ pip install azure-identity azure-keyvault-secrets
 |-------------|-------------|
 | control_interactive_prompts.py | demonstrates controlling when interactive credentials prompt for user interaction |
 | custom_credentials.py | demonstrates custom credential implementation |
+| token_cache_persistence.py | demonstrates configuring and customizing token cache persistence
 | user_authentication.py | demonstrates user authentication API for applications |
