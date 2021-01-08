@@ -489,7 +489,7 @@ class ContainerProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        request_options["enableAutomaticIdGeneration"] = kwargs.pop('enable_automatic_id_generation', False)
+        request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
         if populate_query_metrics:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
