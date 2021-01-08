@@ -72,6 +72,8 @@ setup(
         'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
+        'azure.opentelemetry',
+        'azure.opentelemetry.exporter'
     ]),
     python_requires=">=3.5.0",
     install_requires=[
