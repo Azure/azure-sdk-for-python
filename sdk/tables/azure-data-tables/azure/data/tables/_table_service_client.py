@@ -69,7 +69,12 @@ class TableServiceClient(TableServiceClientBase):
         super(TableServiceClient, self).__init__(
             account_url, service="table", credential=credential, **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline)
+        # want to pass in transport and policies as kwargs
+        self._client = AzureTable(
+            self.url,
+            transport=self._config.transport,
+            policies=self._policies
+        )#pipeline=self._pipeline)
 
     @classmethod
     def from_connection_string(
@@ -358,9 +363,9 @@ class TableServiceClient(TableServiceClientBase):
 
         _pipeline = Pipeline(
             transport=TransportWrapper(
-                self._pipeline._transport  # pylint: disable=protected-access
+                self._config.transport  # pylint: disable=protected-access
             ),
-            policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
+            policies=self._policies,  # pylint: disable=protected-access
         )
 
         return TableClient(
@@ -371,7 +376,9 @@ class TableServiceClient(TableServiceClientBase):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            _pipeline=_pipeline,
+            transport=self._config.transport,
+            policies=self._policies,
+            # _pipeline=_pipeline,
             _configuration=self._config,
             _location_mode=self._location_mode,
             _hosts=self._hosts,
