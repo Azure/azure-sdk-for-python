@@ -42,7 +42,7 @@ def publish_event():
     }
 
     # publish events
-    for _  in range(10):
+    for _  in range(3):
 
         event_list = []     # list of events to publish
         # create events and append to list
