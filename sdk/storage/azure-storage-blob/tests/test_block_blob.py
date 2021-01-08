@@ -67,7 +67,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def _create_blob(self, tags=None, data=b'', **kwargs):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(data, tags=tags, **kwargs)
+        blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -266,6 +266,7 @@ class StorageBlockBlobTest(StorageTestCase):
                                       include_source_blob_properties=True,
                                       tags=new_blob_tags,
                                       content_settings=new_blob_content_settings,
+                                      overwrite=True,
                                       cpk=new_blob_cpk)
         new_blob_props = new_blob.get_blob_properties(cpk=new_blob_cpk)
 
