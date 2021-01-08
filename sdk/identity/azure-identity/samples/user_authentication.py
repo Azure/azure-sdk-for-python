@@ -6,7 +6,7 @@
 
 import os
 import sys
-from azure.identity import AuthenticationRecord, InteractiveBrowserCredential
+from azure.identity import AuthenticationRecord, InteractiveBrowserCredential, PersistentTokenCache
 from azure.keyvault.secrets import SecretClient
 
 
@@ -18,7 +18,10 @@ if not VAULT_URL:
 
 
 # Persistent caching is optional. By default, interactive credentials cache in memory only.
-credential = InteractiveBrowserCredential(enable_persistent_cache=True)
+# To enable persistent caching, create the credential with a PersistentTokenCache instance
+# (see the token_cache_persistence.py sample for more details about PersistentTokenCache)
+cache = PersistentTokenCache()
+credential = InteractiveBrowserCredential(token_cache=cache)
 
 # The 'authenticate' method begins interactive authentication. Call it whenever it's convenient
 # for your application to authenticate a user. It returns a record of the authentication.
@@ -32,11 +35,11 @@ record_json = record.serialize()
 client = SecretClient(VAULT_URL, credential)
 secret_names = [s.name for s in client.list_properties_of_secrets()]
 
-# With persistent caching enabled, an authentication record stored by your application enables
-# credentials to access data from past authentications. If the cache contains sufficient data,
-# this eliminates the need for your application to prompt for authentication every time it runs.
+# An authentication record stored by your application enables other credentials to access data from
+# past authentications. If the cache contains sufficient data, this eliminates the need for your
+# application to prompt for authentication every time it runs.
 deserialized_record = AuthenticationRecord.deserialize(record_json)
-new_credential = InteractiveBrowserCredential(enable_persistent_cache=True, authentication_record=deserialized_record)
+new_credential = InteractiveBrowserCredential(token_cache=cache, authentication_record=deserialized_record)
 
 # This request should also succeed without prompting for authentication.
 client = SecretClient(VAULT_URL, new_credential)
