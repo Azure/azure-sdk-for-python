@@ -55,7 +55,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
      :type file_system_name: str
      :param credential:
          The credentials with which to authenticate. This is optional if the
-         account URL already has a SAS token. The value can be a SAS token string, and account
+         account URL already has a SAS token. The value can be a SAS token string,
+         an instance of a AzureSasCredential from azure.core.credentials, an account
          shared access key, or an instance of a TokenCredentials class from azure.identity.
          If the URL already has a SAS token, specifying an explicit credential will take priority.
 

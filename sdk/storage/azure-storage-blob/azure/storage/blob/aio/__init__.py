@@ -32,7 +32,8 @@ async def upload_blob_to_url(
     :type data: bytes or str or Iterable
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        blob URL already has a SAS token. The value can be a SAS token string, an account
+        blob URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     :keyword bool overwrite:
@@ -87,6 +88,7 @@ async def download_blob_from_url(
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials,
         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     :keyword bool overwrite:
