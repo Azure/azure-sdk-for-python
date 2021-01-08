@@ -7,6 +7,7 @@ import unittest
 import pytest
 import platform
 
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import AzureError
 from azure.storage.blob import (
     VERSION,
@@ -99,6 +100,40 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
+
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_sas_credential(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        sas_credential = AzureSasCredential(self.sas_token)
+
+        for service_type in SERVICES:
+            # Act
+            service = service_type(
+                self.account_url(storage_account, "blob"), credential=sas_credential, container_name='foo', blob_name='bar')
+
+            # Assert
+            self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
+            self.assertFalse(service.url.endswith(self.sas_token))
+            self.assertEqual(service.credential, sas_credential)
+
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_sas_credential_url_takes_precedence_over_uri(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        sas_credential = AzureSasCredential(self.sas_token)
+
+        for service_type in SERVICES:
+            # Act
+            service = service_type(
+                self.account_url(storage_account, "blob") + self.sas_token, credential=sas_credential, container_name='foo', blob_name='bar')
+
+            # Assert
+            self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
+            self.assertFalse(service.url.endswith(self.sas_token))
+            self.assertEqual(service.credential, sas_credential)
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_token(self, resource_group, location, storage_account, storage_account_key):
