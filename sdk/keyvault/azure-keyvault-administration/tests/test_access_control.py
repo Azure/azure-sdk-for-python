@@ -5,22 +5,36 @@
 import functools
 import os
 import uuid
+import time
 
+from azure.core.credentials import AccessToken
+from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
-from devtools_testutils import KeyVaultPreparer, ResourceGroupPreparer
+from devtools_testutils import CachedResourceGroupPreparer
 import pytest
+from six.moves.urllib_parse import urlparse
 
+from _shared.helpers import mock
 from _shared.test_case import KeyVaultTestCase
-from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
-
-AccessControlClientPreparer = functools.partial(_KeyVaultClientPreparer, KeyVaultAccessControlClient)
 
 
+@pytest.mark.usefixtures("managed_hsm")
 class AccessControlTests(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super(AccessControlTests, self).__init__(*args, **kwargs)
+
+    def setUp(self, *args, **kwargs):
         if self.is_live:
-            pytest.skip("test infrastructure can't yet create a Key Vault supporting the RBAC API")
+            real = urlparse(self.managed_hsm["url"])
+            playback = urlparse(self.managed_hsm["playback_url"])
+            self.scrubber.register_name_pair(real.netloc, playback.netloc)
+        super(AccessControlTests, self).setUp(*args, **kwargs)
+
+    @property
+    def credential(self):
+        if self.is_live:
+            return DefaultAzureCredential()
+        return mock.Mock(get_token=lambda *_, **__: AccessToken("secret", time.time() + 3600))
 
     def get_replayable_uuid(self, replay_value):
         if self.is_live:
@@ -37,10 +51,16 @@ class AccessControlTests(KeyVaultTestCase):
             return value
         return replay_value
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @AccessControlClientPreparer()
-    def test_list_role_definitions(self, client):
+    def test_a_rest_api(self):
+        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
+
+        properties = None
+        definition = client.set_role_definition(role_scope="/", role_definition_properties=properties)
+        print(definition)
+
+    def test_list_role_definitions(self):
+        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
+
         definitions = [d for d in client.list_role_definitions(KeyVaultRoleScope.global_value)]
         assert len(definitions)
 
@@ -54,10 +74,9 @@ class AccessControlTests(KeyVaultTestCase):
             assert definition.role_type is not None
             assert definition.type is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @AccessControlClientPreparer()
-    def test_role_assignment(self, client):
+    def test_role_assignment(self):
+        client = KeyVaultAccessControlClient("https://mcpatinotesthsm.azure.net", self.credential)
+
         scope = KeyVaultRoleScope.global_value
         definitions = [d for d in client.list_role_definitions(scope)]
 
