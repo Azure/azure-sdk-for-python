@@ -8,13 +8,13 @@ import pytest
 from _shared.asynctestcase import AsyncStorageTestCase
 from _shared.testcase import GlobalStorageAccountPreparer
 from azure.core.exceptions import ResourceExistsError
+from azure.storage.fileshare._shared.constants import X_MS_VERSION
 from azure.storage.fileshare.aio import (
     ShareServiceClient,
     ShareClient,
     ShareDirectoryClient,
     ShareFileClient
 )
-from azure.storage.fileshare._generated import __version__ as version
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
@@ -24,7 +24,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
     def setUp(self):
         super(AsyncStorageTestCase, self).setUp()
         self.api_version_1 = "2019-02-02"
-        self.api_version_2 = version
+        self.api_version_2 = X_MS_VERSION
         self.short_byte_data = self.get_random_bytes(1024)
 
     # --Helpers-----------------------------------------------------------------
