@@ -77,13 +77,6 @@ class _FileTest(_ShareTest):
         except ResourceNotFoundError:
             pass
 
-    async def global_cleanup(self):
-        try:
-            self.sharefile_client.delete_file()
-        except ResourceNotFoundError:
-            pass
-        await super().global_cleanup()
-
     async def close(self):
         await self.async_sharefile_client.close()
         await super().close()
