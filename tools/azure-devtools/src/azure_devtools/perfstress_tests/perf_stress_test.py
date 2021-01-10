@@ -14,6 +14,7 @@ class PerfStressTest:
     - setup and cleanup are run once per test instance (where each instance runs in its own thread/process), regardless of #iterations.
     - close is run once per test instance, after cleanup and global_cleanup.
     - run_sync/run_async are run once per iteration.
+    - reset is run once per iteration (after run_sync/run_async), and are not included in the iteration timer
     '''
     args = {}
 
@@ -27,6 +28,9 @@ class PerfStressTest:
         return
 
     async def setup(self):
+        return
+
+    def reset(self):
         return
 
     async def cleanup(self):

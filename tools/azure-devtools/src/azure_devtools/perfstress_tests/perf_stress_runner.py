@@ -170,23 +170,25 @@ class PerfStressRunner:
 
 
     def _run_sync_loop(self, test, duration, id):
-        start = time.time()
         runtime = 0
         while runtime < duration:
+            start = time.time()
             test.run_sync()
-            runtime = time.time() - start
+            runtime += time.time() - start
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
+            test.reset()
 
 
     async def _run_async_loop(self, test, duration, id):
-        start = time.time()
         runtime = 0
         while runtime < duration:
+            start = time.time()
             await test.run_async()
-            runtime = time.time() - start
+            runtime += time.time() - start
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
+            test.reset()
 
 
     def _print_status(self, title):
