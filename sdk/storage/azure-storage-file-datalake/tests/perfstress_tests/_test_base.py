@@ -66,20 +66,6 @@ class _FileTest(_FileSystemTest):
         self.file_client = self.fs_client.get_file_client(file_name)
         self.async_file_client = self.async_fs_client.get_file_client(file_name)
 
-    async def global_setup(self):
-        await super().global_setup()
-        try:
-            await self.async_file_client.delete_file()
-        except ResourceNotFoundError:
-            pass
-
-    async def global_cleanup(self):
-        try:
-            await self.async_file_client.delete_file()
-        except ResourceNotFoundError:
-            pass
-        await super().global_cleanup()
-
     async def close(self):
         await self.async_file_client.close()
         await super().close()
