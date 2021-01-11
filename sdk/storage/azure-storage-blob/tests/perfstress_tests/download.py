@@ -20,20 +20,16 @@ class DownloadTest(_ContainerTest):
         await super().global_setup()
         data = get_random_bytes(self.args.size)
         await self.async_blob_client.upload_blob(data)
-    
-    def reset_sync(self):
-        self.download_stream = WriteStream()
-
-    async def reset_async(self):
-        self.download_stream = WriteStream()
 
     def run_sync(self):
         stream = self.blob_client.download_blob(max_concurrency=self.args.max_concurrency)
         stream.readinto(self.download_stream)
+        self.download_stream.reset()
 
     async def run_async(self):
         stream = await self.async_blob_client.download_blob(max_concurrency=self.args.max_concurrency)
         await stream.readinto(self.download_stream)
+        self.download_stream.reset()
 
     async def close(self):
         await self.async_blob_client.close()

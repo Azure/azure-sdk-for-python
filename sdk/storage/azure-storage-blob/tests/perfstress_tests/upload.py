@@ -23,18 +23,13 @@ class UploadTest(_BlobTest):
         data = get_random_bytes(self.args.size)
         await self.async_blob_client.upload_blob(data)
     
-    def reset_sync(self):
-        self.upload_stream = RandomStream(self.args.size)
-
-    async def reset_async(self):
-        self.upload_stream_async = AsyncRandomStream(self.args.size)
-
     def run_sync(self):
         self.blob_client.upload_blob(
             self.upload_stream,
             length=self.args.size,
             overwrite=True,
             max_concurrency=self.args.max_concurrency)
+        self.upload_stream.reset()
 
     async def run_async(self):
         await self.async_blob_client.upload_blob(
@@ -42,3 +37,4 @@ class UploadTest(_BlobTest):
             length=self.args.size,
             overwrite=True,
             max_concurrency=self.args.max_concurrency)
+        self.upload_stream_async.reset()

@@ -14,7 +14,6 @@ class PerfStressTest:
     - setup and cleanup are run once per test instance (where each instance runs in its own thread/process), regardless of #iterations.
     - close is run once per test instance, after cleanup and global_cleanup.
     - run_sync/run_async are run once per iteration.
-    - reset_sync/reset_async are run once per iteration (after run_sync/run_async), and are not included in the iteration timer.
     '''
     args = {}
 
@@ -45,14 +44,8 @@ class PerfStressTest:
     def run_sync(self):
         raise Exception('run_sync must be implemented for {}'.format(self.__class__.__name__))
 
-    def reset_sync(self):
-        return
-
     async def run_async(self):
         raise Exception('run_async must be implemented for {}'.format(self.__class__.__name__))
-
-    async def reset_async(self):
-        return
 
     @staticmethod
     def add_arguments(parser):

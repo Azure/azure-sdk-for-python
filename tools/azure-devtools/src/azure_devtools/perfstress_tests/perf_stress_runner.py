@@ -33,7 +33,6 @@ class PerfStressRunner:
         self._discover_tests(test_folder_path)
         self._parse_args()
 
-
     def _parse_args(self):
         # First, detect which test we're running.
         arg_parser = argparse.ArgumentParser(
@@ -74,7 +73,6 @@ class PerfStressRunner:
         self.logger.info(self.per_test_args)
         self.logger.info("")
 
-
     def _discover_tests(self, test_folder_path):
         self._test_classes = {}
 
@@ -92,7 +90,6 @@ class PerfStressRunner:
                 if inspect.isclass(value) and issubclass(value, PerfStressTest) and value != PerfStressTest:
                     self.logger.info("Loaded test class: {}".format(name))
                     self._test_classes[name] = value
-
 
     async def start(self):      
         self.logger.info("=== Setup ===")
@@ -133,7 +130,6 @@ class PerfStressRunner:
         finally:
             await asyncio.gather(*[test.close() for test in tests])
 
-
     async def _run_tests(self, tests, duration, title):
         self._completed_operations = [0] * len(tests)
         self._last_completion_times = [0] * len(tests)
@@ -168,28 +164,23 @@ class PerfStressRunner:
             total_operations, weighted_average_seconds, operations_per_second, seconds_per_operation))
         self.logger.info("")
 
-
     def _run_sync_loop(self, test, duration, id):
+        start = time.time()
         runtime = 0
         while runtime < duration:
-            start = time.time()
             test.run_sync()
-            runtime += time.time() - start
+            runtime = time.time() - start
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
-            test.reset_sync()
-
 
     async def _run_async_loop(self, test, duration, id):
+        start = time.time()
         runtime = 0
         while runtime < duration:
-            start = time.time()
             await test.run_async()
-            runtime += time.time() - start
+            runtime = time.time() - start
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
-            await test.reset_async()
-
 
     def _print_status(self, title):
         if self._last_total_operations == -1:
