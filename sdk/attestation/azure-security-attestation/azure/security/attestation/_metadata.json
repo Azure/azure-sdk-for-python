@@ -1,0 +1,52 @@
+{
+    "chosen_version": "2018-09-01-preview",
+    "total_api_version_list": ["2018-09-01-preview"],
+    "client": {
+        "name": "AttestationClient",
+        "filename": "_attestation_client",
+        "description": "Describes the interface for the per-tenant enclave service.",
+        "base_url": null,
+        "custom_base_url": "\u0027{tenantBaseUrl}\u0027",
+        "azure_arm": false,
+        "has_lro_operations": false,
+        "client_side_validation": true
+    },
+    "global_parameters": {
+        "sync": {
+            "tenant_base_url": {
+                "signature": "tenant_base_url,  # type: str",
+                "description": "The tenant name, for example https://mytenant.attest.azure.net.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "tenant_base_url": {
+                "signature": "tenant_base_url,  # type: str",
+                "description": "The tenant name, for example https://mytenant.attest.azure.net.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "tenant_base_url"
+    },
+    "config": {
+        "credential": false,
+        "credential_scopes": null,
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
+    },
+    "operation_groups": {
+        "policy": "PolicyOperations",
+        "policy_certificates": "PolicyCertificatesOperations",
+        "signing_certificates": "SigningCertificatesOperations",
+        "metadata_configuration": "MetadataConfigurationOperations"
+    },
+    "operation_mixins": {
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
+}
