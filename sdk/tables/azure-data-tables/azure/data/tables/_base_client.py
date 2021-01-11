@@ -136,9 +136,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             proxy_policy=ProxyPolicy(**kwargs)
         )
 
+        print(kwargs)
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        self._config.transport = kwargs.get("transport") or RequestsTransport(**kwargs)
+        print(kwargs)
 
         self._policies = [
             self._config.headers_policy,
@@ -462,39 +463,6 @@ def parse_connection_str(conn_str, credential, service, keyword_args):
         keyword_args["secondary_hostname"] = secondary
 
     return primary, credential
-
-
-# def create_configuration(**kwargs):
-#     # type: (**Any) -> Configuration
-#     config = Configuration(**kwargs)
-#     config.headers_policy = StorageHeadersPolicy(**kwargs)
-#     config.user_agent_policy = UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs)
-#     # sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
-#     config.retry_policy = kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs)
-#     config.logging_policy = StorageLoggingPolicy(**kwargs)
-#     config.proxy_policy = ProxyPolicy(**kwargs)
-
-#     # Storage settings
-#     config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
-#     config.copy_polling_interval = 15
-
-#     # Block blob uploads
-#     config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
-#     config.min_large_block_upload_threshold = kwargs.get(
-#         "min_large_block_upload_threshold", 4 * 1024 * 1024 + 1
-#     )
-#     config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
-
-#     # Page blob uploads
-#     config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
-
-#     # Blob downloads
-#     config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
-#     config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
-
-#     # File uploads
-#     config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
-#     return config
 
 
 def parse_query(query_str):

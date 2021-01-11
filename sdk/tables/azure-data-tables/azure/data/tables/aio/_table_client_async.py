@@ -22,6 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
+from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
@@ -77,12 +78,13 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             loop=loop,
             **kwargs
         )
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
         self._configure_policies(**kwargs)
         self._client = AzureTable(
             self.url,
-            transport=self._config.transport,
-            policies=self._policies,
-            loop=loop
+            policies=kwargs.pop('policies', None) or self._policies,
+            loop=loop,
+            **kwargs
         )
         self._loop = loop
 

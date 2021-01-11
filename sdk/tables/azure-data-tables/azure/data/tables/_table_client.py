@@ -17,12 +17,12 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
+from ._constants import CONNECTION_TIMEOUT
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._error import _process_table_error
 from ._generated import AzureTable
 from ._generated.models import (
-    # AccessPolicy,
     SignedIdentifier,
     TableProperties,
 )
@@ -31,7 +31,6 @@ from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
-
 from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
@@ -66,10 +65,11 @@ class TableClient(TableClientBase):
         super(TableClient, self).__init__(
             account_url, table_name, credential=credential, **kwargs
         )
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
         self._client = AzureTable(
             self.url,
-            transport=self._config.transport,
-            policies=self._policies
+            policies=kwargs.pop('policies', None) or self._policies,
+            **kwargs
         )
 
     @classmethod

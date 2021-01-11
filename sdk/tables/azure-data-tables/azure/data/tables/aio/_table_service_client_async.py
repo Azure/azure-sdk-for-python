@@ -17,6 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import LocationMode
+from .._constants import CONNECTION_TIMEOUT
 from .._base_client import parse_connection_str
 from .._generated.aio._azure_table import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties
@@ -89,11 +90,12 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         super(TableServiceClient, self).__init__(  # type: ignore
             account_url, service="table", credential=credential, loop=loop, **kwargs
         )
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
         self._configure_policies(**kwargs)
         self._client = AzureTable(
             self.url,
-            transport=self._config.transport,
-            policies=self._policies
+            policies=kwargs.pop('policies', None) or self._policies,
+            **kwargs
         )
         self._loop = loop
 
@@ -389,11 +391,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :rtype: ~azure.data.tables.TableClient
 
         """
-
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(
-                self._config.transport  # pylint: disable = protected-access
-            ),
+            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
             policies=self._policies,  # pylint: disable = protected-access
         )
 
@@ -405,7 +404,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            transport=self._config.transport,
+            transport=self._client._client._pipeline._transport,
             policies=self._policies,
             _configuration=self._config,
             _location_mode=self._location_mode,

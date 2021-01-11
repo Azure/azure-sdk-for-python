@@ -10,14 +10,15 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._models import TableItem
 
+from ._constants import CONNECTION_TIMEOUT
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties
 from ._models import (
     TablePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
+    TableItem
 )
 from ._base_client import parse_connection_str, TransportWrapper
 from ._models import LocationMode
@@ -65,14 +66,14 @@ class TableServiceClient(TableServiceClientBase):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a Shared Account Key
         """
-
         super(TableServiceClient, self).__init__(
             account_url, service="table", credential=credential, **kwargs
         )
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
         self._client = AzureTable(
             self.url,
-            transport=self._config.transport,
-            policies=self._policies
+            policies=kwargs.pop('policies', None) or self._policies,
+            **kwargs
         )
 
     @classmethod
@@ -361,9 +362,7 @@ class TableServiceClient(TableServiceClientBase):
         """
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(
-                self._config.transport  # pylint: disable=protected-access
-            ),
+            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
             policies=self._policies,  # pylint: disable=protected-access
         )
 
@@ -375,7 +374,7 @@ class TableServiceClient(TableServiceClientBase):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            transport=self._config.transport,
+            transport=self._client._client._pipeline._transport,
             policies=self._policies,
             _configuration=self._config,
             _location_mode=self._location_mode,

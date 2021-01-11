@@ -102,6 +102,8 @@ class AsyncStorageAccountHostsMixin(object):
 
         try:
             from azure.core.pipeline.transport import AioHttpTransport
+            if not kwargs.get("transport"):
+                kwargs.setdefault("transport", AioHttpTransport(**kwargs))
         except ImportError:
             raise ImportError(
                 "Unable to create async transport. Please check aiohttp is installed."
@@ -109,7 +111,7 @@ class AsyncStorageAccountHostsMixin(object):
 
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        self._config.transport = kwargs.get("transport") or AioHttpTransport(**kwargs)
+        # self._config.transport = kwargs.get("transport") or AioHttpTransport(**kwargs)
 
         self._policies = [
             self._config.headers_policy,
