@@ -1,36 +1,36 @@
 {
-    "chosen_version": "2018-09-01-preview",
-    "total_api_version_list": ["2018-09-01-preview"],
+    "chosen_version": "2020-10-01",
+    "total_api_version_list": ["2020-10-01"],
     "client": {
         "name": "AttestationClient",
         "filename": "_attestation_client",
         "description": "Describes the interface for the per-tenant enclave service.",
         "base_url": null,
-        "custom_base_url": "\u0027{tenantBaseUrl}\u0027",
+        "custom_base_url": "\u0027{instanceUrl}\u0027",
         "azure_arm": false,
         "has_lro_operations": false,
         "client_side_validation": true
     },
     "global_parameters": {
         "sync": {
-            "tenant_base_url": {
-                "signature": "tenant_base_url,  # type: str",
-                "description": "The tenant name, for example https://mytenant.attest.azure.net.",
+            "instance_url": {
+                "signature": "instance_url,  # type: str",
+                "description": "The attestation instance base URI, for example https://mytenant.attest.azure.net.",
                 "docstring_type": "str",
                 "required": true
             }
         },
         "async": {
-            "tenant_base_url": {
-                "signature": "tenant_base_url,  # type: str",
-                "description": "The tenant name, for example https://mytenant.attest.azure.net.",
+            "instance_url": {
+                "signature": "instance_url,  # type: str",
+                "description": "The attestation instance base URI, for example https://mytenant.attest.azure.net.",
                 "docstring_type": "str",
                 "required": true
             }
         },
         "constant": {
         },
-        "call": "tenant_base_url"
+        "call": "instance_url"
     },
     "config": {
         "credential": false,
@@ -42,6 +42,7 @@
     "operation_groups": {
         "policy": "PolicyOperations",
         "policy_certificates": "PolicyCertificatesOperations",
+        "attestation": "AttestationOperations",
         "signing_certificates": "SigningCertificatesOperations",
         "metadata_configuration": "MetadataConfigurationOperations"
     },

@@ -14,7 +14,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -45,17 +45,17 @@ class MetadataConfigurationOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union[object, "_models.CloudError"]
+        # type: (...) -> object
         """Retrieves the OpenID Configuration data for the Azure Attestation Service.
 
         Retrieves metadata about the attestation signing keys in use by the attestation service.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object or CloudError, or the result of cls(response)
-        :rtype: object or ~attestation_client.models.CloudError
+        :return: object, or the result of cls(response)
+        :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union[object, "_models.CloudError"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -65,7 +65,7 @@ class MetadataConfigurationOperations(object):
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'tenantBaseUrl': self._serialize.url("self._config.tenant_base_url", self._config.tenant_base_url, 'str', skip_quote=True),
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -80,16 +80,12 @@ class MetadataConfigurationOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('CloudError', pipeline_response)
+        deserialized = self._deserialize('object', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

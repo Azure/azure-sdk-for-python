@@ -24,9 +24,30 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class TeeKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AttestationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     SGX_ENCLAVE = "SgxEnclave"  #: Intel Software Guard eXtensions.
     OPEN_ENCLAVE = "OpenEnclave"  #: OpenEnclave extensions to SGX.
-    CY_RES_COMPONENT = "CyResComponent"  #: IoT Edge validation.
-    VSM_ENCLAVE = "VSMEnclave"  #: VSM Enclave Attestation.
+    TPM = "Tpm"  #: Edge TPM Virtualization Based Security.
+
+class CertificateModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The result of the operation
+    """
+
+    IS_PRESENT = "IsPresent"  #: After the operation was performed, the certificate is in the set of certificates.
+    IS_ABSENT = "IsAbsent"  #: After the operation was performed, the certificate is no longer present in the set of certificates.
+
+class DataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the type of the data encoded contained within the "data" field of a "RuntimeData" or
+    "InitTimeData" object
+    """
+
+    BINARY = "Binary"  #: The contents of the field should be treated as binary and not interpreted by MAA.
+    JSON = "JSON"  #: The contents of the field should be treated as a JSON object and may be further interpreted by MAA.
+
+class PolicyModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The result of the operation
+    """
+
+    UPDATED = "Updated"  #: The specified policy object was updated.
+    REMOVED = "Removed"  #: The specified policy object was removed.

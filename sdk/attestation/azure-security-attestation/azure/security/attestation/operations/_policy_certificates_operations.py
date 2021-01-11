@@ -14,7 +14,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -45,28 +45,28 @@ class PolicyCertificatesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union[str, "_models.CloudError"]
+        # type: (...) -> "_models.PolicyCertificatesResponse"
         """Retrieves the set of certificates used to express policy for the current tenant.
 
         Retrieves the set of certificates used to express policy for the current tenant.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: str or CloudError, or the result of cls(response)
-        :rtype: str or ~attestation_client.models.CloudError
+        :return: PolicyCertificatesResponse, or the result of cls(response)
+        :rtype: ~attestation_client.models.PolicyCertificatesResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union[str, "_models.CloudError"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'tenantBaseUrl': self._serialize.url("self._config.tenant_base_url", self._config.tenant_base_url, 'str', skip_quote=True),
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -82,58 +82,50 @@ class PolicyCertificatesOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 401]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('CloudError', pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('PolicyCertificatesResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/operations/policy/certificates'}  # type: ignore
+    get.metadata = {'url': '/certificates'}  # type: ignore
 
     def add(
         self,
         policy_certificate_to_add,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union[str, "_models.CloudError"]
+        # type: (...) -> "_models.PolicyCertificatesModifyResponse"
         """Adds a new attestation policy certificate to the set of policy management certificates.
 
         Adds a new attestation policy certificate to the set of policy management certificates.
 
-        :param policy_certificate_to_add: An RFC7519 JSON Web Token containing a claim named "maa-
-         policyCertificate" whose value is an RFC7517 JSON Web Key which specifies a new key to add. The
-         RFC7519 JWT must be signed with one of the existing signing certificates.
+        :param policy_certificate_to_add: An RFC7519 JSON Web Token whose body is an RFC7517 JSON Web
+         Key object. The RFC7519 JWT must be signed with one of the existing signing certificates.
         :type policy_certificate_to_add: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: str or CloudError, or the result of cls(response)
-        :rtype: str or ~attestation_client.models.CloudError
+        :return: PolicyCertificatesModifyResponse, or the result of cls(response)
+        :rtype: ~attestation_client.models.PolicyCertificatesModifyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union[str, "_models.CloudError"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesModifyResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self.add.metadata['url']  # type: ignore
         path_format_arguments = {
-            'tenantBaseUrl': self._serialize.url("self._config.tenant_base_url", self._config.tenant_base_url, 'str', skip_quote=True),
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -149,63 +141,56 @@ class PolicyCertificatesOperations(object):
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(policy_certificate_to_add, 'str')
         body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 401]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('CloudError', pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('PolicyCertificatesModifyResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    add.metadata = {'url': '/operations/policy/certificates'}  # type: ignore
+    add.metadata = {'url': '/certificates:add'}  # type: ignore
 
     def remove(
         self,
         policy_certificate_to_remove,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union[str, "_models.CloudError"]
+        # type: (...) -> "_models.PolicyCertificatesModifyResponse"
         """Removes the specified policy management certificate. Note that the final policy management certificate cannot be removed.
 
         Removes the specified policy management certificate. Note that the final policy management
         certificate cannot be removed.
 
-        :param policy_certificate_to_remove: An RFC7519 JSON Web Token containing a claim named "maa-
-         policyCertificate" whose value is an RFC7517 JSON Web Key which specifies a new key to update.
-         The RFC7519 JWT must be signed with one of the existing signing certificates.
+        :param policy_certificate_to_remove: An RFC7519 JSON Web Token whose body is an
+         AttestationCertificateManagementBody object. The RFC7519 JWT must be signed with one of the
+         existing signing certificates.
         :type policy_certificate_to_remove: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: str or CloudError, or the result of cls(response)
-        :rtype: str or ~attestation_client.models.CloudError
+        :return: PolicyCertificatesModifyResponse, or the result of cls(response)
+        :rtype: ~attestation_client.models.PolicyCertificatesModifyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union[str, "_models.CloudError"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesModifyResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self.remove.metadata['url']  # type: ignore
         path_format_arguments = {
-            'tenantBaseUrl': self._serialize.url("self._config.tenant_base_url", self._config.tenant_base_url, 'str', skip_quote=True),
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -225,22 +210,15 @@ class PolicyCertificatesOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 401]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('CloudError', pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('PolicyCertificatesModifyResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    remove.metadata = {'url': '/operations/policy/certificates'}  # type: ignore
+    remove.metadata = {'url': '/certificates:remove'}  # type: ignore

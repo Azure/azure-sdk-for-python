@@ -12,6 +12,7 @@ from msrest import Deserializer, Serializer
 from ._configuration import AttestationClientConfiguration
 from .operations import PolicyOperations
 from .operations import PolicyCertificatesOperations
+from .operations import AttestationOperations
 from .operations import SigningCertificatesOperations
 from .operations import MetadataConfigurationOperations
 from .. import models
@@ -24,21 +25,23 @@ class AttestationClient(object):
     :vartype policy: attestation_client.aio.operations.PolicyOperations
     :ivar policy_certificates: PolicyCertificatesOperations operations
     :vartype policy_certificates: attestation_client.aio.operations.PolicyCertificatesOperations
+    :ivar attestation: AttestationOperations operations
+    :vartype attestation: attestation_client.aio.operations.AttestationOperations
     :ivar signing_certificates: SigningCertificatesOperations operations
     :vartype signing_certificates: attestation_client.aio.operations.SigningCertificatesOperations
     :ivar metadata_configuration: MetadataConfigurationOperations operations
     :vartype metadata_configuration: attestation_client.aio.operations.MetadataConfigurationOperations
-    :param tenant_base_url: The tenant name, for example https://mytenant.attest.azure.net.
-    :type tenant_base_url: str
+    :param instance_url: The attestation instance base URI, for example https://mytenant.attest.azure.net.
+    :type instance_url: str
     """
 
     def __init__(
         self,
-        tenant_base_url: str,
+        instance_url: str,
         **kwargs: Any
     ) -> None:
-        base_url = '{tenantBaseUrl}'
-        self._config = AttestationClientConfiguration(tenant_base_url, **kwargs)
+        base_url = '{instanceUrl}'
+        self._config = AttestationClientConfiguration(instance_url, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -48,6 +51,8 @@ class AttestationClient(object):
         self.policy = PolicyOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.policy_certificates = PolicyCertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.attestation = AttestationOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.signing_certificates = SigningCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize)
