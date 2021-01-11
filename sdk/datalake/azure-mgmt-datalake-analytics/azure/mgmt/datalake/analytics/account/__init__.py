@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_lake_analytics_account_management_client import DataLakeAnalyticsAccountManagementClient
-from .version import VERSION
+from ._configuration import DataLakeAnalyticsAccountManagementClientConfiguration
+from ._data_lake_analytics_account_management_client import DataLakeAnalyticsAccountManagementClient
+__all__ = ['DataLakeAnalyticsAccountManagementClient', 'DataLakeAnalyticsAccountManagementClientConfiguration']
 
-__all__ = ['DataLakeAnalyticsAccountManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

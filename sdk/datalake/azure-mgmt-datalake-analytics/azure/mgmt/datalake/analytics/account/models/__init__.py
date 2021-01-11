@@ -10,85 +10,112 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .resource_py3 import Resource
-    from .sub_resource_py3 import SubResource
-    from .data_lake_store_account_information_py3 import DataLakeStoreAccountInformation
-    from .storage_account_information_py3 import StorageAccountInformation
-    from .compute_policy_py3 import ComputePolicy
-    from .firewall_rule_py3 import FirewallRule
-    from .data_lake_analytics_account_py3 import DataLakeAnalyticsAccount
-    from .data_lake_analytics_account_basic_py3 import DataLakeAnalyticsAccountBasic
-    from .storage_container_py3 import StorageContainer
-    from .sas_token_information_py3 import SasTokenInformation
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .operation_list_result_py3 import OperationListResult
-    from .capability_information_py3 import CapabilityInformation
-    from .name_availability_information_py3 import NameAvailabilityInformation
-    from .add_data_lake_store_with_account_parameters_py3 import AddDataLakeStoreWithAccountParameters
-    from .add_storage_account_with_account_parameters_py3 import AddStorageAccountWithAccountParameters
-    from .create_compute_policy_with_account_parameters_py3 import CreateComputePolicyWithAccountParameters
-    from .create_firewall_rule_with_account_parameters_py3 import CreateFirewallRuleWithAccountParameters
-    from .create_data_lake_analytics_account_parameters_py3 import CreateDataLakeAnalyticsAccountParameters
-    from .update_data_lake_store_with_account_parameters_py3 import UpdateDataLakeStoreWithAccountParameters
-    from .update_storage_account_with_account_parameters_py3 import UpdateStorageAccountWithAccountParameters
-    from .update_compute_policy_with_account_parameters_py3 import UpdateComputePolicyWithAccountParameters
-    from .update_firewall_rule_with_account_parameters_py3 import UpdateFirewallRuleWithAccountParameters
-    from .update_data_lake_analytics_account_parameters_py3 import UpdateDataLakeAnalyticsAccountParameters
-    from .add_data_lake_store_parameters_py3 import AddDataLakeStoreParameters
-    from .add_storage_account_parameters_py3 import AddStorageAccountParameters
-    from .update_storage_account_parameters_py3 import UpdateStorageAccountParameters
-    from .create_or_update_compute_policy_parameters_py3 import CreateOrUpdateComputePolicyParameters
-    from .update_compute_policy_parameters_py3 import UpdateComputePolicyParameters
-    from .create_or_update_firewall_rule_parameters_py3 import CreateOrUpdateFirewallRuleParameters
-    from .update_firewall_rule_parameters_py3 import UpdateFirewallRuleParameters
-    from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import AddDataLakeStoreParameters
+    from ._models_py3 import AddDataLakeStoreWithAccountParameters
+    from ._models_py3 import AddStorageAccountParameters
+    from ._models_py3 import AddStorageAccountWithAccountParameters
+    from ._models_py3 import CapabilityInformation
+    from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import ComputePolicy
+    from ._models_py3 import CreateComputePolicyWithAccountParameters
+    from ._models_py3 import CreateDataLakeAnalyticsAccountParameters
+    from ._models_py3 import CreateFirewallRuleWithAccountParameters
+    from ._models_py3 import CreateOrUpdateComputePolicyParameters
+    from ._models_py3 import CreateOrUpdateFirewallRuleParameters
+    from ._models_py3 import DataLakeAnalyticsAccount
+    from ._models_py3 import DataLakeAnalyticsAccountBasic
+    from ._models_py3 import DataLakeStoreAccountInformation
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import FirewallRule
+    from ._models_py3 import HiveMetastore
+    from ._models_py3 import HiveMetastoreListResult
+    from ._models_py3 import NameAvailabilityInformation
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
+    from ._models_py3 import OperationMetaLogSpecification
+    from ._models_py3 import OperationMetaMetricAvailabilitiesSpecification
+    from ._models_py3 import OperationMetaMetricSpecification
+    from ._models_py3 import OperationMetaPropertyInfo
+    from ._models_py3 import OperationMetaServiceSpecification
+    from ._models_py3 import Resource
+    from ._models_py3 import SasTokenInformation
+    from ._models_py3 import StorageAccountInformation
+    from ._models_py3 import StorageContainer
+    from ._models_py3 import SubResource
+    from ._models_py3 import UpdateComputePolicyParameters
+    from ._models_py3 import UpdateComputePolicyWithAccountParameters
+    from ._models_py3 import UpdateDataLakeAnalyticsAccountParameters
+    from ._models_py3 import UpdateDataLakeStoreWithAccountParameters
+    from ._models_py3 import UpdateFirewallRuleParameters
+    from ._models_py3 import UpdateFirewallRuleWithAccountParameters
+    from ._models_py3 import UpdateStorageAccountParameters
+    from ._models_py3 import UpdateStorageAccountWithAccountParameters
+    from ._models_py3 import VirtualNetworkRule
+    from ._models_py3 import VirtualNetworkRuleListResult
 except (SyntaxError, ImportError):
-    from .resource import Resource
-    from .sub_resource import SubResource
-    from .data_lake_store_account_information import DataLakeStoreAccountInformation
-    from .storage_account_information import StorageAccountInformation
-    from .compute_policy import ComputePolicy
-    from .firewall_rule import FirewallRule
-    from .data_lake_analytics_account import DataLakeAnalyticsAccount
-    from .data_lake_analytics_account_basic import DataLakeAnalyticsAccountBasic
-    from .storage_container import StorageContainer
-    from .sas_token_information import SasTokenInformation
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .operation_list_result import OperationListResult
-    from .capability_information import CapabilityInformation
-    from .name_availability_information import NameAvailabilityInformation
-    from .add_data_lake_store_with_account_parameters import AddDataLakeStoreWithAccountParameters
-    from .add_storage_account_with_account_parameters import AddStorageAccountWithAccountParameters
-    from .create_compute_policy_with_account_parameters import CreateComputePolicyWithAccountParameters
-    from .create_firewall_rule_with_account_parameters import CreateFirewallRuleWithAccountParameters
-    from .create_data_lake_analytics_account_parameters import CreateDataLakeAnalyticsAccountParameters
-    from .update_data_lake_store_with_account_parameters import UpdateDataLakeStoreWithAccountParameters
-    from .update_storage_account_with_account_parameters import UpdateStorageAccountWithAccountParameters
-    from .update_compute_policy_with_account_parameters import UpdateComputePolicyWithAccountParameters
-    from .update_firewall_rule_with_account_parameters import UpdateFirewallRuleWithAccountParameters
-    from .update_data_lake_analytics_account_parameters import UpdateDataLakeAnalyticsAccountParameters
-    from .add_data_lake_store_parameters import AddDataLakeStoreParameters
-    from .add_storage_account_parameters import AddStorageAccountParameters
-    from .update_storage_account_parameters import UpdateStorageAccountParameters
-    from .create_or_update_compute_policy_parameters import CreateOrUpdateComputePolicyParameters
-    from .update_compute_policy_parameters import UpdateComputePolicyParameters
-    from .create_or_update_firewall_rule_parameters import CreateOrUpdateFirewallRuleParameters
-    from .update_firewall_rule_parameters import UpdateFirewallRuleParameters
-    from .check_name_availability_parameters import CheckNameAvailabilityParameters
-from .data_lake_analytics_account_basic_paged import DataLakeAnalyticsAccountBasicPaged
-from .data_lake_store_account_information_paged import DataLakeStoreAccountInformationPaged
-from .storage_account_information_paged import StorageAccountInformationPaged
-from .storage_container_paged import StorageContainerPaged
-from .sas_token_information_paged import SasTokenInformationPaged
-from .compute_policy_paged import ComputePolicyPaged
-from .firewall_rule_paged import FirewallRulePaged
-from .data_lake_analytics_account_management_client_enums import (
+    from ._models import AddDataLakeStoreParameters
+    from ._models import AddDataLakeStoreWithAccountParameters
+    from ._models import AddStorageAccountParameters
+    from ._models import AddStorageAccountWithAccountParameters
+    from ._models import CapabilityInformation
+    from ._models import CheckNameAvailabilityParameters
+    from ._models import ComputePolicy
+    from ._models import CreateComputePolicyWithAccountParameters
+    from ._models import CreateDataLakeAnalyticsAccountParameters
+    from ._models import CreateFirewallRuleWithAccountParameters
+    from ._models import CreateOrUpdateComputePolicyParameters
+    from ._models import CreateOrUpdateFirewallRuleParameters
+    from ._models import DataLakeAnalyticsAccount
+    from ._models import DataLakeAnalyticsAccountBasic
+    from ._models import DataLakeStoreAccountInformation
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import FirewallRule
+    from ._models import HiveMetastore
+    from ._models import HiveMetastoreListResult
+    from ._models import NameAvailabilityInformation
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationListResult
+    from ._models import OperationMetaLogSpecification
+    from ._models import OperationMetaMetricAvailabilitiesSpecification
+    from ._models import OperationMetaMetricSpecification
+    from ._models import OperationMetaPropertyInfo
+    from ._models import OperationMetaServiceSpecification
+    from ._models import Resource
+    from ._models import SasTokenInformation
+    from ._models import StorageAccountInformation
+    from ._models import StorageContainer
+    from ._models import SubResource
+    from ._models import UpdateComputePolicyParameters
+    from ._models import UpdateComputePolicyWithAccountParameters
+    from ._models import UpdateDataLakeAnalyticsAccountParameters
+    from ._models import UpdateDataLakeStoreWithAccountParameters
+    from ._models import UpdateFirewallRuleParameters
+    from ._models import UpdateFirewallRuleWithAccountParameters
+    from ._models import UpdateStorageAccountParameters
+    from ._models import UpdateStorageAccountWithAccountParameters
+    from ._models import VirtualNetworkRule
+    from ._models import VirtualNetworkRuleListResult
+from ._paged_models import ComputePolicyPaged
+from ._paged_models import DataLakeAnalyticsAccountBasicPaged
+from ._paged_models import DataLakeStoreAccountInformationPaged
+from ._paged_models import FirewallRulePaged
+from ._paged_models import SasTokenInformationPaged
+from ._paged_models import StorageAccountInformationPaged
+from ._paged_models import StorageContainerPaged
+from ._data_lake_analytics_account_management_client_enums import (
     AADObjectType,
+    NestedResourceProvisioningState,
+    VirtualNetworkRuleState,
     FirewallState,
     FirewallAllowAzureIpsState,
     TierType,
+    DebugDataAccessLevel,
     DataLakeAnalyticsAccountStatus,
     DataLakeAnalyticsAccountState,
     OperationOrigin,
@@ -96,39 +123,51 @@ from .data_lake_analytics_account_management_client_enums import (
 )
 
 __all__ = [
-    'Resource',
-    'SubResource',
-    'DataLakeStoreAccountInformation',
-    'StorageAccountInformation',
+    'AddDataLakeStoreParameters',
+    'AddDataLakeStoreWithAccountParameters',
+    'AddStorageAccountParameters',
+    'AddStorageAccountWithAccountParameters',
+    'CapabilityInformation',
+    'CheckNameAvailabilityParameters',
     'ComputePolicy',
-    'FirewallRule',
+    'CreateComputePolicyWithAccountParameters',
+    'CreateDataLakeAnalyticsAccountParameters',
+    'CreateFirewallRuleWithAccountParameters',
+    'CreateOrUpdateComputePolicyParameters',
+    'CreateOrUpdateFirewallRuleParameters',
     'DataLakeAnalyticsAccount',
     'DataLakeAnalyticsAccountBasic',
-    'StorageContainer',
-    'SasTokenInformation',
-    'OperationDisplay',
-    'Operation',
-    'OperationListResult',
-    'CapabilityInformation',
+    'DataLakeStoreAccountInformation',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
+    'FirewallRule',
+    'HiveMetastore',
+    'HiveMetastoreListResult',
     'NameAvailabilityInformation',
-    'AddDataLakeStoreWithAccountParameters',
-    'AddStorageAccountWithAccountParameters',
-    'CreateComputePolicyWithAccountParameters',
-    'CreateFirewallRuleWithAccountParameters',
-    'CreateDataLakeAnalyticsAccountParameters',
-    'UpdateDataLakeStoreWithAccountParameters',
-    'UpdateStorageAccountWithAccountParameters',
-    'UpdateComputePolicyWithAccountParameters',
-    'UpdateFirewallRuleWithAccountParameters',
-    'UpdateDataLakeAnalyticsAccountParameters',
-    'AddDataLakeStoreParameters',
-    'AddStorageAccountParameters',
-    'UpdateStorageAccountParameters',
-    'CreateOrUpdateComputePolicyParameters',
+    'Operation',
+    'OperationDisplay',
+    'OperationListResult',
+    'OperationMetaLogSpecification',
+    'OperationMetaMetricAvailabilitiesSpecification',
+    'OperationMetaMetricSpecification',
+    'OperationMetaPropertyInfo',
+    'OperationMetaServiceSpecification',
+    'Resource',
+    'SasTokenInformation',
+    'StorageAccountInformation',
+    'StorageContainer',
+    'SubResource',
     'UpdateComputePolicyParameters',
-    'CreateOrUpdateFirewallRuleParameters',
+    'UpdateComputePolicyWithAccountParameters',
+    'UpdateDataLakeAnalyticsAccountParameters',
+    'UpdateDataLakeStoreWithAccountParameters',
     'UpdateFirewallRuleParameters',
-    'CheckNameAvailabilityParameters',
+    'UpdateFirewallRuleWithAccountParameters',
+    'UpdateStorageAccountParameters',
+    'UpdateStorageAccountWithAccountParameters',
+    'VirtualNetworkRule',
+    'VirtualNetworkRuleListResult',
     'DataLakeAnalyticsAccountBasicPaged',
     'DataLakeStoreAccountInformationPaged',
     'StorageAccountInformationPaged',
@@ -137,9 +176,12 @@ __all__ = [
     'ComputePolicyPaged',
     'FirewallRulePaged',
     'AADObjectType',
+    'NestedResourceProvisioningState',
+    'VirtualNetworkRuleState',
     'FirewallState',
     'FirewallAllowAzureIpsState',
     'TierType',
+    'DebugDataAccessLevel',
     'DataLakeAnalyticsAccountStatus',
     'DataLakeAnalyticsAccountState',
     'OperationOrigin',
