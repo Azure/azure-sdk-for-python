@@ -35,11 +35,18 @@ The following section provides several code snippets covering some of the most c
 
 ### Client Initialization
 
-To initialize the SMS Client, the connection string can be used to instantiate:
+To initialize the SMS Client, the connection string can be used to instantiate.
+Alternatively, you can also use Active Directory authentication using DefaultAzureCredential.
 
 ```Python
-connection_string = "COMMUNICATION_SERVICES_CONNECTION_STRING"
+from azure.identity import DefaultAzureCredential
+
+connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 sms_client = SmsClient.from_connection_string(connection_string)
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
+# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+sms_client = SmsClient(endpoint, DefaultAzureCredential())
 ```
 
 ### Sending an SMS
