@@ -3,7 +3,7 @@
 ## 1.0.0b2 (Unreleased)
 
 - Fix to only retry upon request error
-  ([#15344](https://github.com/Azure/azure-sdk-for-python/pull/15344))
+  ([#16087](https://github.com/Azure/azure-sdk-for-python/pull/16087))
 
   **Breaking Changes**
   - Rename Azure Trace exporter class, only allow connection string configuration

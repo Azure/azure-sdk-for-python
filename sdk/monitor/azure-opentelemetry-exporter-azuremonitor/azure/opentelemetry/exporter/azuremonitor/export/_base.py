@@ -141,7 +141,7 @@ class BaseExporter:
                 return ExportResult.FAILED_RETRYABLE
             except Exception as ex:
                 logger.error(
-                    "Envelopes could not be exported and are not retriable: %s.", ex
+                    "Envelopes could not be exported and are not retryable: %s.", ex
                 )
                 return ExportResult.FAILED_NOT_RETRYABLE
             return ExportResult.FAILED_NOT_RETRYABLE
@@ -159,6 +159,7 @@ def is_retryable_code(response_code: int) -> bool:
         429,  # Throttle, too Many Requests
         439,  # Quota, too Many Requests over extended time
         500,  # Internal Server Error
+        502,  # BadGateway
         503,  # Service Unavailable
         504,  # Gateway timeout
     ))
