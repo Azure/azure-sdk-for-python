@@ -3,17 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from collections import namedtuple
-import os
 import functools
+import logging
+import os
+from time import sleep
 
+from azure.core.exceptions import ResourceExistsError
 from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 
-from azure_devtools.scenario_tests.preparers import (
-    AbstractPreparer,
-    SingleValueReplacer,
-)
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from . import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
@@ -22,8 +20,8 @@ from .resource_testcase import RESOURCE_GROUP_PARAM
 
 FakeStorageAccount = FakeResource
 
-# Storage Account Preparer and its shorthand decorator
 
+# Storage Account Preparer and its shorthand decorator
 class StorageAccountPreparer(AzureMgmtPreparer):
     def __init__(self,
                  name_prefix='',
@@ -103,8 +101,20 @@ class StorageAccountPreparer(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            group = self._get_resource_group(**kwargs)
-            self.client.storage_accounts.delete(group.name, name)
+            retries = 3
+            for _ in range(retries):
+                try:
+                    group = self._get_resource_group(**kwargs)
+                    self.client.storage_accounts.delete(group.name, name)
+                except ResourceExistsError as e:
+                    # Occassionally a storage test will try to delete the
+                    # resource before the previous operation has been completed
+                    logger = logging.getLogger()
+                    logger.warning(
+                        "An error occurred while trying to delete storage account {}. Waiting \
+                            ten seconds and retrying the delete.".format(self.resource.name)
+                    )
+                    sleep(30)
 
     def _get_resource_group(self, **kwargs):
         try:
