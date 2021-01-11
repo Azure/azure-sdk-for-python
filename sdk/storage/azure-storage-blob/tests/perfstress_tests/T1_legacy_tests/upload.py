@@ -14,13 +14,16 @@ class LegacyUploadTest(_LegacyContainerTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.blob_name = "blobtest-" + str(uuid.uuid4())
+        self.upload_stream = RandomStream(self.args.size)
+    
+    def reset_sync(self):
+        self.upload_stream = RandomStream(self.args.size)
 
     def run_sync(self):
-        data = RandomStream(self.args.size)
         self.service_client.create_blob_from_stream(
             container_name=self.container_name,
             blob_name=self.blob_name,
-            stream=data,
+            stream=self.upload_stream,
             max_connections=self.args.max_concurrency)
 
     async def run_async(self):

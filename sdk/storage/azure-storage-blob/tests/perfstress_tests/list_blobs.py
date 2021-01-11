@@ -5,8 +5,6 @@
 import itertools
 import asyncio
 
-from azure_devtools.perfstress_tests import get_random_bytes
-
 from ._test_base import _ContainerTest
 
 

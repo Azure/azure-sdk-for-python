@@ -177,7 +177,7 @@ class PerfStressRunner:
             runtime += time.time() - start
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
-            test.reset()
+            test.reset_sync()
 
 
     async def _run_async_loop(self, test, duration, id):
@@ -188,7 +188,7 @@ class PerfStressRunner:
             runtime += time.time() - start
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
-            test.reset()
+            await test.reset_async()
 
 
     def _print_status(self, title):

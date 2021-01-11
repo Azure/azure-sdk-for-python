@@ -5,12 +5,19 @@
 
 import os
 
+_DEFAULT_LENGTH = 1024*1024
+_BYTE_BUFFER = [_DEFAULT_LENGTH, os.urandom(_DEFAULT_LENGTH)]
+
+
 def get_random_bytes(buffer_length):
-    return os.urandom(buffer_length)
+    if buffer_length > _BYTE_BUFFER[0]:
+        _BYTE_BUFFER[0] = buffer_length
+        _BYTE_BUFFER[1] = os.urandom(buffer_length)
+    return _BYTE_BUFFER[1][:buffer_length]
 
 
 class RandomStream:
-    def __init__(self, length, initial_buffer_length=1024*1024):
+    def __init__(self, length, initial_buffer_length=_DEFAULT_LENGTH):
         self._base_data = get_random_bytes(initial_buffer_length)
         self._base_data_length = initial_buffer_length
         self._position = 0

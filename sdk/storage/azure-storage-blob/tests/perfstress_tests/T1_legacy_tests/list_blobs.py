@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure_devtools.perfstress_tests import get_random_bytes
-
 from ._test_base_legacy import _LegacyContainerTest
 
 

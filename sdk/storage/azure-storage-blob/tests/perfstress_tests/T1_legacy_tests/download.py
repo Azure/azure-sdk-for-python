@@ -9,7 +9,10 @@ from ._test_base_legacy import _LegacyContainerTest
 
 
 class LegacyDownloadTest(_LegacyContainerTest):
-    blob_name = "downloadtest"
+    def __init__(self, arguments):
+        super().__init__(arguments)
+        self.blob_name = "downloadtest"
+        self.download_stream = WriteStream()
 
     async def global_setup(self):
         await super().global_setup()
@@ -19,12 +22,14 @@ class LegacyDownloadTest(_LegacyContainerTest):
             blob_name=self.blob_name,
             blob=data)
 
+    def reset_sync(self):
+        self.download_stream = WriteStream()
+
     def run_sync(self):
-        download = WriteStream()
         self.service_client.get_blob_to_stream(
             container_name=self.container_name,
             blob_name=self.blob_name,
-            stream=download,
+            stream=self.download_stream,
             max_connections=self.args.max_concurrency)
 
     async def run_async(self):

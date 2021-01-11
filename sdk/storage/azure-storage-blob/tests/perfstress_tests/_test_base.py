@@ -73,20 +73,6 @@ class _BlobTest(_ContainerTest):
         self.blob_client = self.container_client.get_blob_client(blob_name)
         self.async_blob_client = self.async_container_client.get_blob_client(blob_name)
 
-    async def global_setup(self):
-        await super().global_setup()
-        try:
-            await self.async_blob_client.delete_blob()
-        except ResourceNotFoundError:
-            pass
-
-    async def global_cleanup(self):
-        try:
-            await self.async_blob_client.delete_blob()
-        except ResourceNotFoundError:
-            pass
-        await super().global_cleanup()
-
     async def close(self):
         await self.async_blob_client.close()
         await super().close()

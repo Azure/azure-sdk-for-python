@@ -14,21 +14,26 @@ class DownloadTest(_ContainerTest):
         blob_name = "downloadtest"
         self.blob_client = self.container_client.get_blob_client(blob_name)
         self.async_blob_client = self.async_container_client.get_blob_client(blob_name)
+        self.download_stream = WriteStream()
 
     async def global_setup(self):
         await super().global_setup()
         data = get_random_bytes(self.args.size)
         await self.async_blob_client.upload_blob(data)
+    
+    def reset_sync(self):
+        self.download_stream = WriteStream()
+
+    async def reset_async(self):
+        self.download_stream = WriteStream()
 
     def run_sync(self):
-        download = WriteStream()
         stream = self.blob_client.download_blob(max_concurrency=self.args.max_concurrency)
-        stream.readinto(download)
+        stream.readinto(self.download_stream)
 
     async def run_async(self):
-        download = WriteStream()
         stream = await self.async_blob_client.download_blob(max_concurrency=self.args.max_concurrency)
-        await stream.readinto(download)
+        await stream.readinto(self.download_stream)
 
     async def close(self):
         await self.async_blob_client.close()
