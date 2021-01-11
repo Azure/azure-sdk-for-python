@@ -8,6 +8,7 @@ from typing import ( # pylint: disable=unused-import
     Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import AsyncPipeline
@@ -19,9 +20,7 @@ from .._shared.response_handlers import (
     process_storage_error,
     return_headers_and_deserialized)
 from .._generated.aio import AzureFileStorage
-from .._generated.version import VERSION
 from .._generated.models import (
-    StorageErrorException,
     SignedIdentifier,
     DeleteSnapshotsOptionType)
 from .._deserialize import deserialize_share_properties, deserialize_permission
@@ -84,8 +83,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
         self._loop = loop
 
     def get_directory_client(self, directory_path=None):
@@ -228,7 +228,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -273,7 +273,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -308,7 +308,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 sharesnapshot=self.snapshot,
                 delete_snapshots=delete_include,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -339,7 +339,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 sharesnapshot=self.snapshot,
                 cls=deserialize_share_properties,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         props.name = self.share_name
         props.snapshot = self.snapshot
@@ -375,7 +375,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 access_tier=None,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def set_share_properties(self, **kwargs):
@@ -423,7 +423,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 root_squash=root_squash,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -461,7 +461,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -481,7 +481,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 timeout=timeout,
                 cls=return_headers_and_deserialized,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return {
             'public_access': response.get('share_public_access'),
@@ -524,7 +524,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -546,7 +546,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 timeout=timeout,
                 **kwargs)
             return stats.share_usage_bytes # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -608,7 +608,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         options = self._create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
             return await self._client.share.create_permission(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -635,7 +635,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 cls=deserialize_permission,
                 timeout=timeout,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
