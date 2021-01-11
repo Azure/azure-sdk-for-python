@@ -77,11 +77,11 @@ To interact with these resources, one should be familiar with the following SDK 
 
 * [ServiceBusClient][client_reference]: This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
 
-* [Sender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py).
+* [ServiceBusSender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py).
 
-* [Receiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
+* [ServiceBusReceiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
 
-* [Message][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload.
+* [ServiceBusMessage][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload.
 
 ## Examples
 
@@ -477,7 +477,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/#history
+[pypi]: https://pypi.org/project/azure-servicebus/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
