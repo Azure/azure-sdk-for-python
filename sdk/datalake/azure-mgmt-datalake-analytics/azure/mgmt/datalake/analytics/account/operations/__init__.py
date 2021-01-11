@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .accounts_operations import AccountsOperations
-from .data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .compute_policies_operations import ComputePoliciesOperations
-from .firewall_rules_operations import FirewallRulesOperations
-from .operations import Operations
-from .locations_operations import LocationsOperations
+from ._accounts_operations import AccountsOperations
+from ._data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
+from ._storage_accounts_operations import StorageAccountsOperations
+from ._compute_policies_operations import ComputePoliciesOperations
+from ._firewall_rules_operations import FirewallRulesOperations
+from ._operations import Operations
+from ._locations_operations import LocationsOperations
 
 __all__ = [
     'AccountsOperations',
