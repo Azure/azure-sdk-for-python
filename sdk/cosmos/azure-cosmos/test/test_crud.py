@@ -781,6 +781,15 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_document.get('id'),
                          document_definition['id'])
 
+        # create a document with auto ID generation
+        document_definition = {'name': 'sample document',
+                               'spam': 'eggs',
+                               'key': 'value'}
+
+        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
+        self.assertEqual(created_document.get('name'),
+                         document_definition['name'])
+
         # duplicated documents are not allowed when 'id' is provided.
         duplicated_definition_with_id = document_definition.copy()
         self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,
