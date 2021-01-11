@@ -125,9 +125,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self.key_encryption_key = kwargs.get("key_encryption_key")
         self.key_resolver_function = kwargs.get("key_resolver_function")
 
-        self._configure_credential(
-            self.credential, storage_sdk=service, **kwargs
-        )
+        self._configure_credential(self.credential)
 
         self._config = kwargs.get("_configuration") or AzureTableConfiguration(
             url=self.url,
@@ -264,7 +262,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             credential = None
         return query_str.rstrip("?&"), credential
 
-    def _configure_credential(self, credential, **kwargs):
+    def _configure_credential(self, credential):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
@@ -307,7 +305,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             boundary="batch_{}".format(uuid4()),
         )
 
-        pipeline_response = self._client._client._pipeline.run(request, **kwargs)
+        pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint:disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code == 403:

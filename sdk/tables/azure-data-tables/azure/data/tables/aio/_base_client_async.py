@@ -18,9 +18,8 @@ from typing import (  # pylint: disable=unused-import
 import logging
 from uuid import uuid4
 
-from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
-from azure.core.pipeline.policies import ( # NEED TO CHANGE OUT FOR THE ASYNC POLICIES
+from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
@@ -32,12 +31,12 @@ from azure.core.pipeline.policies import ( # NEED TO CHANGE OUT FOR THE ASYNC PO
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     HttpRequest,
-    AsyncioRequestsTransport
 )
 
-from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .._authentication import SharedKeyCredentialPolicy
-# from .._base_client import create_configuration
+from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .._generated.aio._configuration import AzureTableConfiguration
+from .._models import BatchErrorException, BatchTransactionResult
 from .._policies import (
     StorageContentValidation,
     StorageRequestHook,
@@ -45,18 +44,16 @@ from .._policies import (
     StorageHeadersPolicy,
     StorageLoggingPolicy,
 )
+from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import (
-    AsyncStorageResponseHook,
     AsyncStorageResponseHook,
     AsyncTablesRetryPolicy
 )
-from .._models import BatchErrorException, BatchTransactionResult
-from .._generated.aio._configuration import AzureTableConfiguration
-from .._sdk_moniker import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
     from azure.core.configuration import Configuration
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -80,8 +77,8 @@ class AsyncStorageAccountHostsMixin(object):
         """
         await self._client.close()
 
-    def _configure_credential(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
+    def _configure_credential(self, credential):
+        # type: (Any) -> None
         self._credential_policy = None
         if hasattr(credential, "get_token"):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(
@@ -93,7 +90,7 @@ class AsyncStorageAccountHostsMixin(object):
             raise TypeError("Unsupported credential: {}".format(credential))
 
     def _configure_policies(self, **kwargs):
-
+        # type: (**Any) -> None
         self._config = kwargs.get('_configuration') or AzureTableConfiguration(
             url=self.url,
             headers_policy=StorageHeadersPolicy(**kwargs),
@@ -123,14 +120,13 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),  # type: ignore
+            StorageHosts(hosts=self._hosts, **kwargs),
             self._config.retry_policy,
             self._config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-        # return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
         self,
@@ -162,7 +158,7 @@ class AsyncStorageAccountHostsMixin(object):
             boundary="batch_{}".format(uuid4()),
         )
 
-        pipeline_response = await self._client._client._pipeline.run(request, **kwargs)
+        pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint:disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code == 403:
