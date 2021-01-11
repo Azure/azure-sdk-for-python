@@ -449,6 +449,7 @@ class StorageClientTest(StorageTestCase):
         blob_client = BlobClient.from_blob_url(blob_emulator_url)
         self.assertEqual(blob_client.container_name, "containername")
         self.assertEqual(blob_client.blob_name, "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg")
+        self.assertEqual(blob_client.url, blob_emulator_url)
 
     def test_create_client_for_emulator(self):
         container_client = ContainerClient(
