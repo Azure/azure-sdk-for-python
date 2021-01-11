@@ -572,8 +572,37 @@ class BlobServiceClient(StorageAccountHostsMixin):
             **kwargs)
 
     @distributed_trace
+    def rename_container(self, source_container_name, destination_container_name, **kwargs):
+        # type: (str, str, **Any) -> ContainerClient
+        """Renames a container.
+
+        Operation is successful only if the source container exists.
+
+        .. versionadded:: 12.7.0
+            This operation was introduced in API version '2020-04-08'.
+
+        :param str source_container_name:
+            The name of the container to rename.
+        :param str destination_container_name:
+            The new container name the user wants to rename to.
+        :keyword source_lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source container.
+        :paramtype source_lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.ContainerClient
+        """
+        renamed_container = self.get_container_client(destination_container_name)
+        try:
+            renamed_container._client.container.rename(source_container_name)   # pylint: disable = protected-access
+            return renamed_container
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
     def undelete_container(self, deleted_container_name, deleted_container_version, **kwargs):
-        # type: (str, str, str, **Any) -> ContainerClient
+        # type: (str, str, **Any) -> ContainerClient
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days
