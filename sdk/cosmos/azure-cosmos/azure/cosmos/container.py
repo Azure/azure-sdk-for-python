@@ -509,8 +509,10 @@ class ContainerProxy(object):
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
 
+        passthrough_args = {k: v for k, v in kwargs.items() if k != "enable_automatic_id_generation"}
+
         result = self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+            database_or_container_link=self.container_link, document=body, options=request_options, **passthrough_args
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
