@@ -32,7 +32,6 @@ from azure.core.pipeline.policies import (
     HeadersPolicy,
     ContentDecodePolicy,
 )
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,

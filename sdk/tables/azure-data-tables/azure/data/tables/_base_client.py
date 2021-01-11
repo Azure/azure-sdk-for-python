@@ -30,7 +30,6 @@ from azure.core.configuration import Configuration
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
-    RequestsTransport,
     HttpTransport,
     HttpRequest,
 )

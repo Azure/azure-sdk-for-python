@@ -27,7 +27,7 @@ from .._table_service_client_base import TableServiceClientBase
 from .._models import TableItem
 from ._policies_async import ExponentialRetry
 from ._table_client_async import TableClient
-from ._base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TablePropertiesPaged
 
 
@@ -404,7 +404,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            transport=self._client._client._pipeline._transport,
+            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
             policies=self._policies,
             _configuration=self._config,
             _location_mode=self._location_mode,

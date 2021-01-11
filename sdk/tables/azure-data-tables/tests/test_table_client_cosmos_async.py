@@ -169,7 +169,6 @@ class StorageTableClientTest(TableTestCase):
         # Arrange
 
         for service_type in SERVICES.items():
-            print(service_type)
             # Act
             default_service = service_type[0](
                 self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key, table_name='foo')

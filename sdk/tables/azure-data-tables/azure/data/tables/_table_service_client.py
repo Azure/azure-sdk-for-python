@@ -20,7 +20,7 @@ from ._models import (
     service_properties_deserialize,
     TableItem
 )
-from ._base_client import parse_connection_str, TransportWrapper
+from ._base_client import parse_connection_str
 from ._models import LocationMode
 from ._error import _process_table_error
 from ._table_client import TableClient
@@ -374,7 +374,7 @@ class TableServiceClient(TableServiceClientBase):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            transport=self._client._client._pipeline._transport,
+            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
             policies=self._policies,
             _configuration=self._config,
             _location_mode=self._location_mode,

@@ -111,7 +111,6 @@ class AsyncStorageAccountHostsMixin(object):
 
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        # self._config.transport = kwargs.get("transport") or AioHttpTransport(**kwargs)
 
         self._policies = [
             self._config.headers_policy,
