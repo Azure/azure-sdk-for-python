@@ -77,7 +77,13 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             loop=loop,
             **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
+        self._configure_policies(**kwargs)
+        self._client = AzureTable(
+            self.url,
+            transport=self._config.transport,
+            policies=self._policies,
+            loop=loop
+        )
         self._loop = loop
 
     @classmethod

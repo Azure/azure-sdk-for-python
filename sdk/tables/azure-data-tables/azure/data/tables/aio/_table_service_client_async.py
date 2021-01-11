@@ -89,7 +89,12 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         super(TableServiceClient, self).__init__(  # type: ignore
             account_url, service="table", credential=credential, loop=loop, **kwargs
         )
-        self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
+        self._configure_policies(**kwargs)
+        self._client = AzureTable(
+            self.url,
+            transport=self._config.transport,
+            policies=self._policies
+        )
         self._loop = loop
 
     @classmethod
@@ -387,9 +392,9 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
-                self._pipeline._transport  # pylint: disable = protected-access
+                self._config.transport  # pylint: disable = protected-access
             ),
-            policies=self._pipeline._impl_policies,  # pylint: disable = protected-access
+            policies=self._policies,  # pylint: disable = protected-access
         )
 
         return TableClient(
@@ -400,7 +405,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            _pipeline=self._pipeline,
+            transport=self._config.transport,
+            policies=self._policies,
             _configuration=self._config,
             _location_mode=self._location_mode,
             _hosts=self._hosts,

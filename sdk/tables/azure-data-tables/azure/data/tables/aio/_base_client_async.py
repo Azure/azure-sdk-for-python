@@ -20,7 +20,7 @@ from uuid import uuid4
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
-from azure.core.pipeline.policies import (
+from azure.core.pipeline.policies import ( # NEED TO CHANGE OUT FOR THE ASYNC POLICIES
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
@@ -29,7 +29,11 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     ProxyPolicy,
 )
-from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
+from azure.core.pipeline.transport import (
+    AsyncHttpTransport,
+    HttpRequest,
+    AsyncioRequestsTransport
+)
 
 from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .._authentication import SharedKeyCredentialPolicy
@@ -40,9 +44,12 @@ from .._policies import (
     StorageHosts,
     StorageHeadersPolicy,
     StorageLoggingPolicy,
-    TablesRetryPolicy,
 )
-from ._policies_async import AsyncStorageResponseHook
+from ._policies_async import (
+    AsyncStorageResponseHook,
+    AsyncStorageResponseHook,
+    AsyncTablesRetryPolicy
+)
 from .._models import BatchErrorException, BatchTransactionResult
 from .._generated.aio._configuration import AzureTableConfiguration
 from .._sdk_moniker import SDK_MONIKER
@@ -73,7 +80,7 @@ class AsyncStorageAccountHostsMixin(object):
         """
         await self._client.close()
 
-    def _create_pipeline(self, credential, **kwargs):
+    def _configure_credential(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
@@ -84,44 +91,46 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
-        config = kwargs.get('_configuration') or AzureTableConfiguration(
+
+    def _configure_policies(self, **kwargs):
+
+        self._config = kwargs.get('_configuration') or AzureTableConfiguration(
             url=self.url,
             headers_policy=StorageHeadersPolicy(**kwargs),
             user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            retry_policy=kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs),
+            retry_policy=kwargs.get("retry_policy") or AsyncTablesRetryPolicy(**kwargs),
             logging_policy=StorageLoggingPolicy(**kwargs),
             proxy_policy=ProxyPolicy(**kwargs),
         )
-        if kwargs.get("_pipeline"):
-            return config, kwargs["_pipeline"]
-        config.transport = kwargs.get("transport")  # type: ignore
+
+        try:
+            from azure.core.pipeline.transport import AioHttpTransport
+        except ImportError:
+            raise ImportError(
+                "Unable to create async transport. Please check aiohttp is installed."
+            )
+
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            try:
-                from azure.core.pipeline.transport import AioHttpTransport
-            except ImportError:
-                raise ImportError(
-                    "Unable to create async transport. Please check aiohttp is installed."
-                )
-            config.transport = AioHttpTransport(**kwargs)
-        policies = [
-            config.headers_policy,
-            config.proxy_policy,
-            config.user_agent_policy,
+        self._config.transport = kwargs.get("transport") or AioHttpTransport(**kwargs)
+
+        self._policies = [
+            self._config.headers_policy,
+            self._config.proxy_policy,
+            self._config.user_agent_policy,
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),  # type: ignore
-            config.retry_policy,
-            config.logging_policy,
+            self._config.retry_policy,
+            self._config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-        return config, AsyncPipeline(config.transport, policies=policies)
+        # return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
         self,
@@ -153,7 +162,7 @@ class AsyncStorageAccountHostsMixin(object):
             boundary="batch_{}".format(uuid4()),
         )
 
-        pipeline_response = await self._pipeline.run(request, **kwargs)
+        pipeline_response = await self._client._client._pipeline.run(request, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code == 403:

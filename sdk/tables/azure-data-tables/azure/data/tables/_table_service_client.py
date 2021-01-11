@@ -69,12 +69,11 @@ class TableServiceClient(TableServiceClientBase):
         super(TableServiceClient, self).__init__(
             account_url, service="table", credential=credential, **kwargs
         )
-        # want to pass in transport and policies as kwargs
         self._client = AzureTable(
             self.url,
             transport=self._config.transport,
             policies=self._policies
-        )#pipeline=self._pipeline)
+        )
 
     @classmethod
     def from_connection_string(
@@ -378,7 +377,6 @@ class TableServiceClient(TableServiceClientBase):
             api_version=self.api_version,
             transport=self._config.transport,
             policies=self._policies,
-            # _pipeline=_pipeline,
             _configuration=self._config,
             _location_mode=self._location_mode,
             _hosts=self._hosts,
