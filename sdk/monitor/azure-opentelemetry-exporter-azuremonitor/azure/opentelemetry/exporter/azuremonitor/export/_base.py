@@ -8,7 +8,7 @@ from enum import Enum
 
 from opentelemetry.sdk.trace.export import SpanExportResult
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RequestIdPolicy
 from azure.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
 from azure.opentelemetry.exporter.azuremonitor._generated._configuration import AzureMonitorClientConfiguration
@@ -132,12 +132,18 @@ class BaseExporter:
                 if is_retryable_code(response_error.status_code):
                     return ExportResult.FAILED_RETRYABLE
                 return ExportResult.FAILED_NOT_RETRYABLE
-            except Exception as ex:
+            except ServiceRequestError as request_error:
+                # Errors when we're fairly sure that the server did not receive the
+                # request, so it should be safe to retry.
                 logger.warning(
-                    "Retrying due to transient client side error %s.", ex
+                    "Retrying due to server request error: %s.", request_error
                 )
-                # client side error (retryable)
                 return ExportResult.FAILED_RETRYABLE
+            except Exception as ex:
+                logger.error(
+                    "Envelopes could not be exported and are not retriable: %s.", ex
+                )
+                return ExportResult.FAILED_NOT_RETRYABLE
             return ExportResult.FAILED_NOT_RETRYABLE
         # No spans to export
         return ExportResult.SUCCESS
@@ -148,12 +154,13 @@ def is_retryable_code(response_code: int) -> bool:
     Determine if response is retryable
     """
     return bool(response_code in (
-        206,  # Retriable
+        206,  # Partial success
         408,  # Timeout
         429,  # Throttle, too Many Requests
         439,  # Quota, too Many Requests over extended time
         500,  # Internal Server Error
         503,  # Service Unavailable
+        504,  # Gateway timeout
     ))
 
 
