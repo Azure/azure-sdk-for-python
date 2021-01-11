@@ -543,8 +543,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :rtype: ~azure.storage.blob.ContainerClient
         """
         renamed_container = self.get_container_client(destination_container_name)
+        kwargs['source_lease_id'] = kwargs.pop('source_lease', None)
         try:
-            await renamed_container._client.container.rename(source_container_name)   # pylint: disable = protected-access
+            await renamed_container._client.container.rename(source_container_name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
