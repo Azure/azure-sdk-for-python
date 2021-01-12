@@ -66,8 +66,7 @@ class _QueueTest(_ServiceTest):
         self.mgmt_client = ServiceBusService(
             service_namespace=connection_props['namespace'],
             shared_access_key_name=connection_props['shared_access_key_name'],
-            shared_access_key_value=connection_props['shared_access_key']
-        )
+            shared_access_key_value=connection_props['shared_access_key'])
 
     async def global_setup(self):
         await super().global_setup()
@@ -76,6 +75,8 @@ class _QueueTest(_ServiceTest):
 
     async def setup(self):
         await super().setup()
+        # In T1, these operations check for the existance of the queue
+        # so must be created during setup, rather than in the constructor.
         self.queue_client = self.service_client.get_queue(self.queue_name)
         self.async_queue_client = self.async_service_client.get_queue(self.queue_name)
 
@@ -105,6 +106,10 @@ class _ReceiveTest(_QueueTest):
     receiver = None
     async_receiver = None
 
+    async def global_setup(self):
+        await super().global_setup()
+        await self._preload_queue()
+
     async def setup(self):
         await super().setup()
         mode = ReceiveSettleMode.PeekLock if self.args.peeklock else ReceiveSettleMode.ReceiveAndDelete
@@ -118,11 +123,11 @@ class _ReceiveTest(_QueueTest):
             idle_timeout=self.args.max_wait_time)
         self.receiver.open()
         await self.async_receiver.open()
-        await self._preload_queue()
 
     async def _preload_queue(self):
         data = get_random_bytes(self.args.message_size)
-        async with self.async_queue_client.get_sender() as sender:
+        async_queue_client = self.async_service_client.get_queue(self.queue_name)
+        async with async_queue_client.get_sender() as sender:
             for i in range(self.args.preload):
                 sender.queue_message(Message(data))
                 if i % 1000 == 0:
