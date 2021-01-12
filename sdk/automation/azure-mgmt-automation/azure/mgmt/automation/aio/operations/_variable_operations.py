@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class VariableOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,9 +46,9 @@ class VariableOperations:
         resource_group_name: str,
         automation_account_name: str,
         variable_name: str,
-        parameters: "models.VariableCreateOrUpdateParameters",
+        parameters: "_models.VariableCreateOrUpdateParameters",
         **kwargs
-    ) -> "models.Variable":
+    ) -> "_models.Variable":
         """Create a variable.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -64,7 +64,7 @@ class VariableOperations:
         :rtype: ~azure.mgmt.automation.models.Variable
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Variable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Variable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -101,7 +101,7 @@ class VariableOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -121,9 +121,9 @@ class VariableOperations:
         resource_group_name: str,
         automation_account_name: str,
         variable_name: str,
-        parameters: "models.VariableUpdateParameters",
+        parameters: "_models.VariableUpdateParameters",
         **kwargs
-    ) -> "models.Variable":
+    ) -> "_models.Variable":
         """Update a variable.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -139,7 +139,7 @@ class VariableOperations:
         :rtype: ~azure.mgmt.automation.models.Variable
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Variable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Variable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -176,7 +176,7 @@ class VariableOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Variable', pipeline_response)
@@ -239,7 +239,7 @@ class VariableOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -253,7 +253,7 @@ class VariableOperations:
         automation_account_name: str,
         variable_name: str,
         **kwargs
-    ) -> "models.Variable":
+    ) -> "_models.Variable":
         """Retrieve the variable identified by variable name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -267,7 +267,7 @@ class VariableOperations:
         :rtype: ~azure.mgmt.automation.models.Variable
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Variable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Variable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -299,7 +299,7 @@ class VariableOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Variable', pipeline_response)
@@ -315,7 +315,7 @@ class VariableOperations:
         resource_group_name: str,
         automation_account_name: str,
         **kwargs
-    ) -> AsyncIterable["models.VariableListResult"]:
+    ) -> AsyncIterable["_models.VariableListResult"]:
         """Retrieve a list of variables.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -327,7 +327,7 @@ class VariableOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.VariableListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VariableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VariableListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -374,7 +374,7 @@ class VariableOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

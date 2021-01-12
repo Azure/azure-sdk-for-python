@@ -520,6 +520,8 @@ class PatchVault(PatchTrackedResource):
     :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
     :param sku: Identifies the unique system identifier for each Azure resource.
     :type sku: ~azure.mgmt.recoveryservices.models.Sku
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.recoveryservices.models.IdentityData
     """
 
     _validation = {
@@ -537,6 +539,7 @@ class PatchVault(PatchTrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'VaultProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'IdentityData'},
     }
 
     def __init__(
@@ -547,11 +550,13 @@ class PatchVault(PatchTrackedResource):
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["VaultProperties"] = None,
         sku: Optional["Sku"] = None,
+        identity: Optional["IdentityData"] = None,
         **kwargs
     ):
         super(PatchVault, self).__init__(e_tag=e_tag, location=location, tags=tags, **kwargs)
         self.properties = properties
         self.sku = sku
+        self.identity = identity
 
 
 class PrivateEndpoint(msrest.serialization.Model):

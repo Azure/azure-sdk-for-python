@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class ActivityRunsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class ActivityRunsOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         run_id,  # type: str
-        filter_parameters,  # type: "models.RunFilterParameters"
+        filter_parameters,  # type: "_models.RunFilterParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ActivityRunsQueryResponse"
+        # type: (...) -> "_models.ActivityRunsQueryResponse"
         """Query activity runs based on input filter conditions.
 
         :param resource_group_name: The resource group name.
@@ -68,7 +68,7 @@ class ActivityRunsOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.ActivityRunsQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActivityRunsQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActivityRunsQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

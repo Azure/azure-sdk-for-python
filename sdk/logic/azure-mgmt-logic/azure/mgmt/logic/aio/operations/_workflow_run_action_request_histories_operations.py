@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class WorkflowRunActionRequestHistoriesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class WorkflowRunActionRequestHistoriesOperations:
         run_name: str,
         action_name: str,
         **kwargs
-    ) -> AsyncIterable["models.RequestHistoryListResult"]:
+    ) -> AsyncIterable["_models.RequestHistoryListResult"]:
         """List a workflow run request history.
 
         :param resource_group_name: The resource group name.
@@ -64,7 +64,7 @@ class WorkflowRunActionRequestHistoriesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.RequestHistoryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RequestHistoryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RequestHistoryListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,7 +113,7 @@ class WorkflowRunActionRequestHistoriesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -132,7 +132,7 @@ class WorkflowRunActionRequestHistoriesOperations:
         action_name: str,
         request_history_name: str,
         **kwargs
-    ) -> "models.RequestHistory":
+    ) -> "_models.RequestHistory":
         """Gets a workflow run request history.
 
         :param resource_group_name: The resource group name.
@@ -150,7 +150,7 @@ class WorkflowRunActionRequestHistoriesOperations:
         :rtype: ~azure.mgmt.logic.models.RequestHistory
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RequestHistory"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RequestHistory"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,7 +184,7 @@ class WorkflowRunActionRequestHistoriesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RequestHistory', pipeline_response)

@@ -14,11 +14,11 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -37,7 +37,7 @@ class SuppressionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class SuppressionsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SuppressionContract"
+        # type: (...) -> Union["_models.SuppressionContract", "_models.ArmErrorResponse"]
         """Obtains the details of a suppression.
 
         :param resource_uri: The fully qualified Azure Resource Manager identifier of the resource to
@@ -63,11 +63,11 @@ class SuppressionsOperations(object):
         :param name: The name of the suppression.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SuppressionContract, or the result of cls(response)
-        :rtype: ~azure.mgmt.advisor.models.SuppressionContract
+        :return: SuppressionContract or ArmErrorResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.advisor.models.SuppressionContract or ~azure.mgmt.advisor.models.ArmErrorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SuppressionContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.SuppressionContract", "_models.ArmErrorResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -96,11 +96,15 @@ class SuppressionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SuppressionContract', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('SuppressionContract', pipeline_response)
+
+        if response.status_code == 404:
+            deserialized = self._deserialize('ArmErrorResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -113,10 +117,10 @@ class SuppressionsOperations(object):
         resource_uri,  # type: str
         recommendation_id,  # type: str
         name,  # type: str
-        suppression_contract,  # type: "models.SuppressionContract"
+        suppression_contract,  # type: "_models.SuppressionContract"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SuppressionContract"
+        # type: (...) -> Union["_models.SuppressionContract", "_models.ArmErrorResponse"]
         """Enables the snoozed or dismissed attribute of a recommendation. The snoozed or dismissed
         attribute is referred to as a suppression. Use this API to create or update the snoozed or
         dismissed status of a recommendation.
@@ -132,11 +136,11 @@ class SuppressionsOperations(object):
          duration.
         :type suppression_contract: ~azure.mgmt.advisor.models.SuppressionContract
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SuppressionContract, or the result of cls(response)
-        :rtype: ~azure.mgmt.advisor.models.SuppressionContract
+        :return: SuppressionContract or ArmErrorResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.advisor.models.SuppressionContract or ~azure.mgmt.advisor.models.ArmErrorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SuppressionContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.SuppressionContract", "_models.ArmErrorResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,11 +174,15 @@ class SuppressionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SuppressionContract', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('SuppressionContract', pipeline_response)
+
+        if response.status_code == 404:
+            deserialized = self._deserialize('ArmErrorResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -247,7 +255,7 @@ class SuppressionsOperations(object):
         skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SuppressionContractListResult"]
+        # type: (...) -> Iterable["_models.SuppressionContractListResult"]
         """Retrieves the list of snoozed or dismissed suppressions for a subscription. The snoozed or
         dismissed attribute of a recommendation is referred to as a suppression.
 
@@ -260,7 +268,7 @@ class SuppressionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.advisor.models.SuppressionContractListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SuppressionContractListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SuppressionContractListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

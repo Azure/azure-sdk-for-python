@@ -49,13 +49,13 @@ class MgmtMySQLTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_mysql(self, resource_group):
-        SERVER_NAME = "testserver2134"
+        SERVER_NAME = "testserver21341"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        SERVER_GEO_NAME = "servergeo2134"
-        SERVER_REPLICA_NAME = "serverreplica2134"
-        SERVER_POINT_NAME = "serverpoint2134"
-        DATABASE_NAME = "testdatabase2134"
+        SERVER_GEO_NAME = "servergeo21341"
+        SERVER_REPLICA_NAME = "serverreplica21341"
+        SERVER_POINT_NAME = "serverpoint21341"
+        DATABASE_NAME = "testdatabase21341"
         FIREWALL_RULE_NAME = "firewallrule"
         CONFIGURATION_NAME = "configuration"
         VIRTUAL_NETWORK_RULE_NAME = "virutal_networkrule"
@@ -159,7 +159,7 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         #     "end_ip_address": "255.255.255.255"
         #   }
         # }
-        from azure.mgmt.rdbms.mysql.v2020_01_01.models import FirewallRule
+        from azure.mgmt.rdbms.mysql.models import FirewallRule
         firewall_rule = FirewallRule(start_ip_address='0.0.0.0', end_ip_address='255.255.255.255')
         result = self.mgmt_client.firewall_rules.begin_create_or_update(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, firewall_rule)
         result = result.result()
@@ -292,7 +292,7 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         #   "type": "Microsoft.DBforMySQL"
         # }
         NAME = self.create_random_name("name1")
-        from azure.mgmt.rdbms.mysql.v2020_01_01.models import NameAvailabilityRequest
+        from azure.mgmt.rdbms.mysql.models import NameAvailabilityRequest
         nameAvailabilityRequest = NameAvailabilityRequest(name=NAME, type="Microsoft.DBforMySQL")
         result = self.mgmt_client.check_name_availability.execute(nameAvailabilityRequest)
 

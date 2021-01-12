@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from azure.core.exceptions import HttpResponseError
 
 try:
     from urllib.parse import quote, unquote
@@ -15,7 +16,6 @@ from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
 from .._serialize import convert_datetime_to_rfc1123
 from .._deserialize import process_storage_error, deserialize_file_properties
-from .._generated.models import StorageErrorException
 from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
 
@@ -335,7 +335,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             **kwargs)
         try:
             return await self._client.path.append_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def flush_data(self, offset,  # type: int
@@ -402,7 +402,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return await self._client.path.flush_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def download_file(self, offset=None, length=None, **kwargs):

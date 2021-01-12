@@ -39,7 +39,7 @@ eg_storage_dict = {
 }
 
 eg_storage_string = json.dumps(eg_storage_dict)
-eg_storage_bytes = bytes(eg_storage_string, "utf-8")
+eg_storage_bytes = str(eg_storage_string).encode("utf-8")
 
 client = EventGridConsumer()
 deserialized_dict_event = client.decode_eventgrid_event(eg_storage_dict)

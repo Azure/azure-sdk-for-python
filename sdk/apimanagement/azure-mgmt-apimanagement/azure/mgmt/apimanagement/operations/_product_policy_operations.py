@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class ProductPolicyOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class ProductPolicyOperations(object):
         product_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyCollection"
+        # type: (...) -> "_models.PolicyCollection"
         """Get the policy configuration at the Product level.
 
         :param resource_group_name: The name of the resource group.
@@ -66,7 +66,7 @@ class ProductPolicyOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.PolicyCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -98,7 +98,7 @@ class ProductPolicyOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicyCollection', pipeline_response)
@@ -114,7 +114,7 @@ class ProductPolicyOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         product_id,  # type: str
-        policy_id,  # type: Union[str, "models.PolicyIdName"]
+        policy_id,  # type: Union[str, "_models.PolicyIdName"]
         **kwargs  # type: Any
     ):
         # type: (...) -> bool
@@ -167,7 +167,7 @@ class ProductPolicyOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -184,11 +184,11 @@ class ProductPolicyOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         product_id,  # type: str
-        policy_id,  # type: Union[str, "models.PolicyIdName"]
-        format="xml",  # type: Optional[Union[str, "models.PolicyExportFormat"]]
+        policy_id,  # type: Union[str, "_models.PolicyIdName"]
+        format="xml",  # type: Optional[Union[str, "_models.PolicyExportFormat"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyContract"
+        # type: (...) -> "_models.PolicyContract"
         """Get the policy configuration at the Product level.
 
         :param resource_group_name: The name of the resource group.
@@ -207,7 +207,7 @@ class ProductPolicyOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.PolicyContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -242,7 +242,7 @@ class ProductPolicyOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -260,13 +260,12 @@ class ProductPolicyOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         product_id,  # type: str
-        policy_id,  # type: Union[str, "models.PolicyIdName"]
+        policy_id,  # type: Union[str, "_models.PolicyIdName"]
+        parameters,  # type: "_models.PolicyContract"
         if_match=None,  # type: Optional[str]
-        value=None,  # type: Optional[str]
-        format="xml",  # type: Optional[Union[str, "models.PolicyContentFormat"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyContract"
+        # type: (...) -> "_models.PolicyContract"
         """Creates or updates policy configuration for the Product.
 
         :param resource_group_name: The name of the resource group.
@@ -278,25 +277,21 @@ class ProductPolicyOperations(object):
         :type product_id: str
         :param policy_id: The identifier of the Policy.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
+        :param parameters: The policy contents to apply.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract
         :param if_match: ETag of the Entity. Not required when creating an entity, but required when
          updating an entity.
         :type if_match: str
-        :param value: Contents of the Policy as defined by the format.
-        :type value: str
-        :param format: Format of the policyContent.
-        :type format: str or ~azure.mgmt.apimanagement.models.PolicyContentFormat
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyContract, or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.PolicyContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.PolicyContract(value=value, format=format)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -324,7 +319,7 @@ class ProductPolicyOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'PolicyContract')
+        body_content = self._serialize.body(parameters, 'PolicyContract')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -332,7 +327,7 @@ class ProductPolicyOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -355,7 +350,7 @@ class ProductPolicyOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         product_id,  # type: str
-        policy_id,  # type: Union[str, "models.PolicyIdName"]
+        policy_id,  # type: Union[str, "_models.PolicyIdName"]
         if_match,  # type: str
         **kwargs  # type: Any
     ):
@@ -413,7 +408,7 @@ class ProductPolicyOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

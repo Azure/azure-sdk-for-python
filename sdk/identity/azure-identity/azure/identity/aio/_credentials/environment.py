@@ -63,7 +63,9 @@ class EnvironmentCredential(AsyncContextManager):
             expected_variables = set(EnvironmentVariables.CERT_VARS + EnvironmentVariables.CLIENT_SECRET_VARS)
             set_variables = [v for v in expected_variables if v in os.environ]
             if set_variables:
-                _LOGGER.warning("Incomplete environment configuration. Set variables: %s", ", ".join(set_variables))
+                _LOGGER.warning(
+                    "Incomplete environment configuration. These variables are set: %s", ", ".join(set_variables)
+                )
             else:
                 _LOGGER.info("No environment configuration found.")
 

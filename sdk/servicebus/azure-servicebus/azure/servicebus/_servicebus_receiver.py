@@ -17,7 +17,11 @@ from uamqp.authentication.common import AMQPAuth
 from .exceptions import ServiceBusError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
-from ._common.utils import create_authentication, trace_link_message, receive_trace_context_manager
+from ._common.utils import (
+    create_authentication,
+    trace_link_message,
+    receive_trace_context_manager,
+)
 from ._common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -41,7 +45,7 @@ from ._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
-    ServiceBusToAMQPReceiveModeMap
+    ServiceBusToAMQPReceiveModeMap,
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
@@ -56,7 +60,9 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
+class ServiceBusReceiver(
+    BaseHandler, ReceiverMixin
+):  # pylint: disable=too-many-instance-attributes
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -111,14 +117,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
      (if provided) within its request to the service.
     """
-    def __init__(
-        self,
-        fully_qualified_namespace,
-        credential,
-        **kwargs
-    ):
+
+    def __init__(self, fully_qualified_namespace, credential, **kwargs):
         # type: (str, TokenCredential, Any) -> None
-        self._message_iter = None # type: Optional[Iterator[ServiceBusReceivedMessage]]
+        self._message_iter = None  # type: Optional[Iterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -130,12 +132,18 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             topic_name = kwargs.get("topic_name")  # type: Optional[str]
             subscription_name = kwargs.get("subscription_name")
             if queue_name and topic_name:
-                raise ValueError("Queue/Topic name can not be specified simultaneously.")
+                raise ValueError(
+                    "Queue/Topic name can not be specified simultaneously."
+                )
             if topic_name and not subscription_name:
-                raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
+                raise ValueError(
+                    "Subscription name is missing for the topic. Please specify subscription_name."
+                )
             entity_name = queue_name or topic_name
             if not entity_name:
-                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
+                raise ValueError(
+                    "Queue/Topic name is missing. Please specify queue_name/topic_name."
+                )
 
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -145,7 +153,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             )
 
         self._populate_attributes(**kwargs)
-        self._session = ServiceBusSession(self._session_id, self) if self._session_id else None
+        self._session = (
+            ServiceBusSession(self._session_id, self) if self._session_id else None
+        )
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -172,9 +182,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 if original_timeout:
                     try:
                         self._handler._timeout = original_timeout
-                    except AttributeError: # Handler may be disposed already.
+                    except AttributeError:  # Handler may be disposed already.
                         pass
-
 
     def _inner_next(self):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
@@ -193,7 +202,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             trace_link_message(message, receive_span)
             return message
 
-    next = __next__ # for python2.7
+    next = __next__  # for python2.7
 
     def _iter_next(self):
         self._open()
@@ -201,18 +210,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             self._message_iter = self._handler.receive_messages_iter()
         uamqp_message = next(self._message_iter)
         message = self._build_message(uamqp_message)
-        if self._auto_lock_renewer \
-                and not self._session \
-                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+        if (
+            self._auto_lock_renewer
+            and not self._session
+            and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+        ):
             self._auto_lock_renewer.register(self, message)
         return message
 
     @classmethod
-    def _from_connection_string(
-        cls,
-        conn_str,
-        **kwargs
-    ):
+    def _from_connection_string(cls, conn_str, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
         """Create a ServiceBusReceiver from a connection string.
 
@@ -262,15 +269,14 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = cls._convert_connection_string_to_kwargs(
-            conn_str,
-            **kwargs
-        )
+        constructor_args = cls._convert_connection_string_to_kwargs(conn_str, **kwargs)
         if kwargs.get("queue_name") and kwargs.get("subscription_name"):
             raise ValueError("Queue entity does not have subscription.")
 
         if kwargs.get("topic_name") and not kwargs.get("subscription_name"):
-            raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
+            raise ValueError(
+                "Subscription name is missing for the topic. Please specify subscription_name."
+            )
         return cls(**constructor_args)
 
     def _create_handler(self, auth):
@@ -286,13 +292,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             auto_complete=False,
             encoding=self._config.encoding,
             receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
-            send_settle_mode=SenderSettleMode.Settled \
-                if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE \
-                else None,
+            send_settle_mode=SenderSettleMode.Settled
+            if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
             keep_alive_interval=self._config.keep_alive,
-            shutdown_after_timeout=False
+            shutdown_after_timeout=False,
         )
 
     def _open(self):
@@ -324,8 +330,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         amqp_receive_client = self._handler
         received_messages_queue = amqp_receive_client._received_messages
         max_message_count = max_message_count or self._prefetch_count
-        timeout_ms = 1000 * (timeout or self._max_wait_time) if (timeout or self._max_wait_time) else 0
-        abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + timeout_ms if timeout_ms else 0
+        timeout_ms = (
+            1000 * (timeout or self._max_wait_time)
+            if (timeout or self._max_wait_time)
+            else 0
+        )
+        abs_timeout_ms = (
+            amqp_receive_client._counter.get_current_ms() + timeout_ms
+            if timeout_ms
+            else 0
+        )
 
         batch = []  # type: List[Message]
         while not received_messages_queue.empty() and len(batch) < max_message_count:
@@ -343,18 +357,29 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         receiving = True
         while receiving and not expired and len(batch) < max_message_count:
             while receiving and received_messages_queue.qsize() < max_message_count:
-                if abs_timeout_ms and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms:
+                if (
+                    abs_timeout_ms
+                    and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms
+                ):
                     expired = True
                     break
                 before = received_messages_queue.qsize()
                 receiving = amqp_receive_client.do_work()
                 received = received_messages_queue.qsize() - before
-                if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
+                if (
+                    not first_message_received
+                    and received_messages_queue.qsize() > 0
+                    and received > 0
+                ):
                     # first message(s) received, continue receiving for some time
                     first_message_received = True
-                    abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + \
-                                     self._further_pull_receive_timeout_ms
-            while not received_messages_queue.empty() and len(batch) < max_message_count:
+                    abs_timeout_ms = (
+                        amqp_receive_client._counter.get_current_ms()
+                        + self._further_pull_receive_timeout_ms
+                    )
+            while (
+                not received_messages_queue.empty() and len(batch) < max_message_count
+            ):
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
 
@@ -365,12 +390,14 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         message,
         settle_operation,
         dead_letter_reason=None,
-        dead_letter_error_description=None
+        dead_letter_error_description=None,
     ):
         # pylint: disable=protected-access
         self._check_live()
         if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
+            raise TypeError(
+                "Parameter 'message' must be of type ServiceBusReceivedMessage"
+            )
         self._check_message_alive(message, settle_operation)
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
@@ -383,7 +410,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if not self._session and message._lock_expired:
             raise ServiceBusError(
                 message="The lock on the message lock has expired.",
-                error=message.auto_renew_error
+                error=message.auto_renew_error,
             )
 
         self._do_retryable_operation(
@@ -392,12 +419,18 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message=message,
             settle_operation=settle_operation,
             dead_letter_reason=dead_letter_reason,
-            dead_letter_error_description=dead_letter_error_description
+            dead_letter_error_description=dead_letter_error_description,
         )
 
         message._settled = True
 
-    def _settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
+    def _settle_message(
+        self,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         # pylint: disable=protected-access
         try:
@@ -407,7 +440,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                         message,
                         settle_operation,
                         dead_letter_reason=dead_letter_reason,
-                        dead_letter_error_description=dead_letter_error_description
+                        dead_letter_error_description=dead_letter_error_description,
                     )()
                     return
                 except RuntimeError as exception:
@@ -415,30 +448,37 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
                         settle_operation,
-                        exception
+                        exception,
                     )
-            dead_letter_details = {
-                MGMT_REQUEST_DEAD_LETTER_REASON: dead_letter_reason or "",
-                MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description or ""
-            } if settle_operation == MESSAGE_DEAD_LETTER else None
+            dead_letter_details = (
+                {
+                    MGMT_REQUEST_DEAD_LETTER_REASON: dead_letter_reason or "",
+                    MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description
+                    or "",
+                }
+                if settle_operation == MESSAGE_DEAD_LETTER
+                else None
+            )
             self._settle_message_via_mgmt_link(
                 MESSAGE_MGMT_SETTLEMENT_TERM_MAP[settle_operation],
                 [message.lock_token],  # type: ignore
-                dead_letter_details=dead_letter_details
+                dead_letter_details=dead_letter_details,
             )
         except Exception as exception:
             _LOGGER.info(
                 "Message settling: %r has encountered an exception (%r) through management link",
                 settle_operation,
-                exception
+                exception,
             )
             raise
 
-    def _settle_message_via_mgmt_link(self, settlement, lock_tokens, dead_letter_details=None):
+    def _settle_message_via_mgmt_link(
+        self, settlement, lock_tokens, dead_letter_details=None
+    ):
         # type: (str, List[Union[uuid.UUID, str]], Optional[Dict[str, Any]]) -> Any
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
-            MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
+            MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens),
         }
 
         self._populate_message_properties(message)
@@ -447,9 +487,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         # We don't do retry here, retry is done in the ServiceBusReceivedMessage._settle_message
         return self._mgmt_request_response(
-            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
-            message,
-            mgmt_handlers.default
+            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
         )
 
     def _renew_locks(self, *lock_tokens, **kwargs):
@@ -460,7 +498,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
             mgmt_handlers.message_lock_renew_op,
-            timeout=timeout
+            timeout=timeout,
         )
 
     @property
@@ -559,12 +597,14 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 self._receive,
                 max_message_count=max_message_count,
                 timeout=max_wait_time,
-                operation_requires_timeout=True
+                operation_requires_timeout=True,
             )
             trace_link_message(messages, receive_span)
-            if self._auto_lock_renewer \
-                    and not self._session \
-                    and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+            if (
+                self._auto_lock_renewer
+                and not self._session
+                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            ):
                 for message in messages:
                     self._auto_lock_renewer.register(self, message)
             return messages
@@ -599,7 +639,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
         if len(sequence_numbers) == 0:
-            return [] # no-op on empty list.
+            return []  # no-op on empty list.
         self._open()
         uamqp_receive_mode = ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
@@ -607,24 +647,34 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         except AttributeError:
             receive_mode = int(uamqp_receive_mode.value)
         message = {
-            MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
-            MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode)
+            MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(
+                [types.AMQPLong(s) for s in sequence_numbers]
+            ),
+            MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode),
         }
 
         self._populate_message_properties(message)
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, receive_mode=self._receive_mode, receiver=self)
-        with receive_trace_context_manager(self, span_name=SPAN_NAME_RECEIVE_DEFERRED) as receive_span:
+        handler = functools.partial(
+            mgmt_handlers.deferred_message_op,
+            receive_mode=self._receive_mode,
+            receiver=self,
+        )
+        with receive_trace_context_manager(
+            self, span_name=SPAN_NAME_RECEIVE_DEFERRED
+        ) as receive_span:
             messages = self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
                 message,
                 handler,
-                timeout=timeout
+                timeout=timeout,
             )
             trace_link_message(messages, receive_span)
-            if self._auto_lock_renewer \
-                    and not self._session \
-                    and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+            if (
+                self._auto_lock_renewer
+                and not self._session
+                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            ):
                 for message in messages:
                     self._auto_lock_renewer.register(self, message)
             return messages
@@ -667,17 +717,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._open()
         message = {
             MGMT_REQUEST_FROM_SEQUENCE_NUMBER: types.AMQPLong(sequence_number),
-            MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count
+            MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
         }
 
         self._populate_message_properties(message)
-        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK) as receive_span:
+        with receive_trace_context_manager(
+            self, span_name=SPAN_NAME_PEEK
+        ) as receive_span:
             handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
             messages = self._mgmt_request_response_with_retry(
-                REQUEST_RESPONSE_PEEK_OPERATION,
-                message,
-                handler,
-                timeout=timeout
+                REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
             )
             trace_link_message(messages, receive_span)
             return messages
@@ -785,7 +834,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message,
             MESSAGE_DEAD_LETTER,
             dead_letter_reason=reason,
-            dead_letter_error_description=error_description
+            dead_letter_error_description=error_description,
         )
 
     def renew_message_lock(self, message, **kwargs):
@@ -842,6 +891,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise ValueError("The timeout must be greater than 0.")
 
         expiry = self._renew_locks(token, timeout=timeout)  # type: ignore
-        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
+        message._expiry = utc_from_timestamp(
+            expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0] / 1000.0
+        )
 
         return message._expiry  # type: ignore

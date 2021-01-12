@@ -194,9 +194,3 @@ class ChatThreadClientTest(CommunicationTestCase):
 
         self.chat_thread_client.send_typing_notification()
 
-    @pytest.mark.live_test_only
-    def test_send_read_receipt(self):
-        self._create_thread()
-        self._send_message()
-
-        self.chat_thread_client.send_read_receipt(self.message_id)

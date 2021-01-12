@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with ServiceBus
+Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with EventHub
 """
 
 # pylint: disable=C0111

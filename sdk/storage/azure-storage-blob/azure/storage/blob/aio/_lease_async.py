@@ -10,12 +10,10 @@ from typing import (  # pylint: disable=unused-import
     TypeVar, TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._generated.models import (
-    StorageErrorException,
-    LeaseAccessConditions)
 from .._serialize import get_modify_conditions
 from .._lease import BlobLeaseClient as LeaseClientBase
 
@@ -111,7 +109,7 @@ class BlobLeaseClient(LeaseClientBase):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
@@ -163,7 +161,7 @@ class BlobLeaseClient(LeaseClientBase):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -213,7 +211,7 @@ class BlobLeaseClient(LeaseClientBase):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -263,7 +261,7 @@ class BlobLeaseClient(LeaseClientBase):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -322,6 +320,6 @@ class BlobLeaseClient(LeaseClientBase):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return response.get('lease_time') # type: ignore

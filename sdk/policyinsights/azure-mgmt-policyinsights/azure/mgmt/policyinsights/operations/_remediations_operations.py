@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class RemediationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class RemediationsOperations(object):
         self,
         management_group_id,  # type: str
         remediation_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RemediationDeploymentsListResult"]
+        # type: (...) -> Iterable["_models.RemediationDeploymentsListResult"]
         """Gets all deployments for a remediation at management group scope.
 
         :param management_group_id: Management group ID.
@@ -66,7 +66,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationDeploymentsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RemediationDeploymentsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemediationDeploymentsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,7 +120,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -137,7 +137,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Cancels a remediation at management group scope.
 
         :param management_group_id: Management group ID.
@@ -149,7 +149,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -181,7 +181,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -195,10 +195,10 @@ class RemediationsOperations(object):
     def list_for_management_group(
         self,
         management_group_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RemediationListResult"]
+        # type: (...) -> Iterable["_models.RemediationListResult"]
         """Gets all remediations for the management group.
 
         :param management_group_id: Management group ID.
@@ -210,7 +210,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RemediationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemediationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,7 +267,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -282,10 +282,10 @@ class RemediationsOperations(object):
         self,
         management_group_id,  # type: str
         remediation_name,  # type: str
-        parameters,  # type: "models.Remediation"
+        parameters,  # type: "_models.Remediation"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Creates or updates a remediation at management group scope.
 
         :param management_group_id: Management group ID.
@@ -299,7 +299,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -336,7 +336,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -357,7 +357,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Gets an existing remediation at management group scope.
 
         :param management_group_id: Management group ID.
@@ -369,7 +369,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -401,7 +401,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -418,7 +418,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Remediation"]
+        # type: (...) -> Optional["_models.Remediation"]
         """Deletes an existing remediation at management group scope.
 
         :param management_group_id: Management group ID.
@@ -430,7 +430,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Remediation"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Remediation"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -462,7 +462,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -478,10 +478,10 @@ class RemediationsOperations(object):
     def list_deployments_at_subscription(
         self,
         remediation_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RemediationDeploymentsListResult"]
+        # type: (...) -> Iterable["_models.RemediationDeploymentsListResult"]
         """Gets all deployments for a remediation at subscription scope.
 
         :param remediation_name: The name of the remediation.
@@ -493,7 +493,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationDeploymentsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RemediationDeploymentsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemediationDeploymentsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -545,7 +545,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -561,7 +561,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Cancels a remediation at subscription scope.
 
         :param remediation_name: The name of the remediation.
@@ -571,7 +571,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -601,7 +601,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -614,10 +614,10 @@ class RemediationsOperations(object):
 
     def list_for_subscription(
         self,
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RemediationListResult"]
+        # type: (...) -> Iterable["_models.RemediationListResult"]
         """Gets all remediations for the subscription.
 
         :param query_options: Parameter group.
@@ -627,7 +627,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RemediationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemediationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -682,7 +682,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -696,10 +696,10 @@ class RemediationsOperations(object):
     def create_or_update_at_subscription(
         self,
         remediation_name,  # type: str
-        parameters,  # type: "models.Remediation"
+        parameters,  # type: "_models.Remediation"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Creates or updates a remediation at subscription scope.
 
         :param remediation_name: The name of the remediation.
@@ -711,7 +711,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -746,7 +746,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -766,7 +766,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Gets an existing remediation at subscription scope.
 
         :param remediation_name: The name of the remediation.
@@ -776,7 +776,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -806,7 +806,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -822,7 +822,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Remediation"]
+        # type: (...) -> Optional["_models.Remediation"]
         """Deletes an existing remediation at subscription scope.
 
         :param remediation_name: The name of the remediation.
@@ -832,7 +832,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Remediation"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Remediation"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -862,7 +862,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -879,10 +879,10 @@ class RemediationsOperations(object):
         self,
         resource_group_name,  # type: str
         remediation_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RemediationDeploymentsListResult"]
+        # type: (...) -> Iterable["_models.RemediationDeploymentsListResult"]
         """Gets all deployments for a remediation at resource group scope.
 
         :param resource_group_name: Resource group name.
@@ -896,7 +896,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationDeploymentsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RemediationDeploymentsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemediationDeploymentsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -949,7 +949,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -966,7 +966,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Cancels a remediation at resource group scope.
 
         :param resource_group_name: Resource group name.
@@ -978,7 +978,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1009,7 +1009,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1023,10 +1023,10 @@ class RemediationsOperations(object):
     def list_for_resource_group(
         self,
         resource_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RemediationListResult"]
+        # type: (...) -> Iterable["_models.RemediationListResult"]
         """Gets all remediations for the subscription.
 
         :param resource_group_name: Resource group name.
@@ -1038,7 +1038,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RemediationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemediationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1094,7 +1094,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1109,10 +1109,10 @@ class RemediationsOperations(object):
         self,
         resource_group_name,  # type: str
         remediation_name,  # type: str
-        parameters,  # type: "models.Remediation"
+        parameters,  # type: "_models.Remediation"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Creates or updates a remediation at resource group scope.
 
         :param resource_group_name: Resource group name.
@@ -1126,7 +1126,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1162,7 +1162,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1183,7 +1183,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Gets an existing remediation at resource group scope.
 
         :param resource_group_name: Resource group name.
@@ -1195,7 +1195,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1226,7 +1226,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1243,7 +1243,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Remediation"]
+        # type: (...) -> Optional["_models.Remediation"]
         """Deletes an existing remediation at resource group scope.
 
         :param resource_group_name: Resource group name.
@@ -1255,7 +1255,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Remediation"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Remediation"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1286,7 +1286,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1303,10 +1303,10 @@ class RemediationsOperations(object):
         self,
         resource_id,  # type: str
         remediation_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RemediationDeploymentsListResult"]
+        # type: (...) -> Iterable["_models.RemediationDeploymentsListResult"]
         """Gets all deployments for a remediation at resource scope.
 
         :param resource_id: Resource ID.
@@ -1320,7 +1320,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationDeploymentsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RemediationDeploymentsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemediationDeploymentsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1372,7 +1372,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1389,7 +1389,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Cancel a remediation at resource scope.
 
         :param resource_id: Resource ID.
@@ -1401,7 +1401,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1431,7 +1431,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1445,10 +1445,10 @@ class RemediationsOperations(object):
     def list_for_resource(
         self,
         resource_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RemediationListResult"]
+        # type: (...) -> Iterable["_models.RemediationListResult"]
         """Gets all remediations for a resource.
 
         :param resource_id: Resource ID.
@@ -1460,7 +1460,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RemediationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemediationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1515,7 +1515,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1530,10 +1530,10 @@ class RemediationsOperations(object):
         self,
         resource_id,  # type: str
         remediation_name,  # type: str
-        parameters,  # type: "models.Remediation"
+        parameters,  # type: "_models.Remediation"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Creates or updates a remediation at resource scope.
 
         :param resource_id: Resource ID.
@@ -1547,7 +1547,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1582,7 +1582,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1603,7 +1603,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Remediation"
+        # type: (...) -> "_models.Remediation"
         """Gets an existing remediation at resource scope.
 
         :param resource_id: Resource ID.
@@ -1615,7 +1615,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Remediation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Remediation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1645,7 +1645,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1662,7 +1662,7 @@ class RemediationsOperations(object):
         remediation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Remediation"]
+        # type: (...) -> Optional["_models.Remediation"]
         """Deletes an existing remediation at individual resource scope.
 
         :param resource_id: Resource ID.
@@ -1674,7 +1674,7 @@ class RemediationsOperations(object):
         :rtype: ~azure.mgmt.policyinsights.models.Remediation or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Remediation"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Remediation"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1704,7 +1704,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None

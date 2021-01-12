@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ServicesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,12 +51,12 @@ class ServicesOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        service,  # type: "models.SearchService"
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        service,  # type: "_models.SearchService"
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SearchService"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchService"]
+        # type: (...) -> "_models.SearchService"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,11 +116,11 @@ class ServicesOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        service,  # type: "models.SearchService"
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        service,  # type: "_models.SearchService"
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SearchService"]
+        # type: (...) -> LROPoller["_models.SearchService"]
         """Creates or updates a search service in the given resource group. If the search service already
         exists, all properties will be updated with the given values.
 
@@ -149,7 +149,7 @@ class ServicesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchService"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -175,7 +175,13 @@ class ServicesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -193,11 +199,11 @@ class ServicesOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        service,  # type: "models.SearchServiceUpdate"
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        service,  # type: "_models.SearchServiceUpdate"
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SearchService"
+        # type: (...) -> "_models.SearchService"
         """Updates an existing search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -214,7 +220,7 @@ class ServicesOperations(object):
         :rtype: ~azure.mgmt.search.models.SearchService
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -270,10 +276,10 @@ class ServicesOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SearchService"
+        # type: (...) -> "_models.SearchService"
         """Gets the search service with the given name in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -289,7 +295,7 @@ class ServicesOperations(object):
         :rtype: ~azure.mgmt.search.models.SearchService
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -340,7 +346,7 @@ class ServicesOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -406,10 +412,10 @@ class ServicesOperations(object):
     def list_by_resource_group(
         self,
         resource_group_name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SearchServiceListResult"]
+        # type: (...) -> Iterable["_models.SearchServiceListResult"]
         """Gets a list of all search services in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -422,7 +428,7 @@ class ServicesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.search.models.SearchServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchServiceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchServiceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -486,10 +492,10 @@ class ServicesOperations(object):
 
     def list_by_subscription(
         self,
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SearchServiceListResult"]
+        # type: (...) -> Iterable["_models.SearchServiceListResult"]
         """Gets a list of all search services in the given subscription.
 
         :param search_management_request_options: Parameter group.
@@ -499,7 +505,7 @@ class ServicesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.search.models.SearchServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchServiceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchServiceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -563,10 +569,10 @@ class ServicesOperations(object):
     def check_name_availability(
         self,
         name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckNameAvailabilityOutput"
+        # type: (...) -> "_models.CheckNameAvailabilityOutput"
         """Checks whether or not the given search service name is available for use. Search service names
         must be globally unique since they are part of the service URI
         (https://:code:`<name>`.search.windows.net).
@@ -582,7 +588,7 @@ class ServicesOperations(object):
         :rtype: ~azure.mgmt.search.models.CheckNameAvailabilityOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityOutput"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityOutput"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -592,7 +598,7 @@ class ServicesOperations(object):
         if search_management_request_options is not None:
             _client_request_id = search_management_request_options.client_request_id
 
-        _check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
+        _check_name_availability_input = _models.CheckNameAvailabilityInput(name=name)
         api_version = "2020-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"

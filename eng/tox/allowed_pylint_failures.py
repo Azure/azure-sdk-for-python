@@ -49,4 +49,5 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-synapse-managedprivateendpoints",
     "azure-synapse-nspkg",
     "azure-ai-anomalydetector",
+    "azure-security-attestation",
 ]

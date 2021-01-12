@@ -14,13 +14,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9?api-version=2015-10-31
   response:
     body:
       string: '{"name":"myAutomationAccount9","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9","type":"Microsoft.Automation/AutomationAccounts","location":"East
-        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://3724e496-979d-40c5-8bf0-64d0848f4c0f.agentsvc.eus2.azure-automation.net/accounts/3724e496-979d-40c5-8bf0-64d0848f4c0f","creationTime":"2020-11-11T06:05:23.033+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-11-11T06:05:23.033+00:00"}}'
+        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://cbf0a59c-e5f0-42e6-b866-464d06de6a04.agentsvc.eus2.azure-automation.net/accounts/cbf0a59c-e5f0-42e6-b866-464d06de6a04","creationTime":"2020-12-17T09:02:58.997+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-12-17T09:02:58.997+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:25 GMT
+      - Thu, 17 Dec 2020 09:03:02 GMT
       expires:
       - '-1'
       location:
@@ -72,25 +72,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft?api-version=2018-06-30
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft","name":"runbook_draft","type":"Microsoft.Automation/AutomationAccounts/Runbooks","location":"East
-        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637406715288500000\"","properties":{"description":"Description
-        of the Runbook","logVerbose":false,"logProgress":false,"logActivityTrace":0,"runbookType":"PowerShellWorkflow","parameters":{},"state":"New","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2020-11-11T06:05:28.85+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-11-11T06:05:28.85+00:00"}}'
+        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637437925857470000\"","properties":{"description":"Description
+        of the Runbook","logVerbose":false,"logProgress":false,"logActivityTrace":0,"runbookType":"PowerShellWorkflow","parameters":{},"state":"New","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2020-12-17T09:03:05.747+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-12-17T09:03:05.747+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '791'
+      - '793'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:29 GMT
+      - Thu, 17 Dec 2020 09:03:07 GMT
       etag:
-      - '"637406715288500000"'
+      - '"637437925857470000"'
       expires:
       - '-1'
       location:
@@ -132,22 +132,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1","name":"module1","type":"Microsoft.Automation/AutomationAccounts/Modules","location":"East
-        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2020-11-11T06:05:30.687+00:00","lastModifiedTime":"2020-11-11T06:05:30.8+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
+        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2020-12-17T09:03:08.03+00:00","lastModifiedTime":"2020-12-17T09:03:08.133+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '595'
+      - '596'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:30 GMT
+      - Thu, 17 Dec 2020 09:03:08 GMT
       expires:
       - '-1'
       location:
@@ -191,14 +191,14 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial?api-version=2018-06-30
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial","name":"Get-AzureVMTutorial","type":"Microsoft.Automation/AutomationAccounts/Runbooks","location":"East
-        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637406715334570000\"","properties":{"description":"Description
-        of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2020-11-11T06:05:33.453+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-11-11T06:05:33.457+00:00"}}'
+        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637437925905070000\"","properties":{"description":"Description
+        of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2020-12-17T09:03:10.503+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-12-17T09:03:10.507+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -207,9 +207,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:34 GMT
+      - Thu, 17 Dec 2020 09:03:11 GMT
       etag:
-      - '"637406715334570000"'
+      - '"637437925905070000"'
       expires:
       - '-1'
       location:
@@ -250,21 +250,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1?api-version=2017-05-15-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1","name":"job1","type":"Microsoft.Automation/AutomationAccounts/Jobs","properties":{"jobId":"90fcd007-3460-40b6-944d-25d677b43a85","creationTime":"2020-11-11T06:05:35.15+00:00","provisioningState":"Processing","status":"New","statusDetails":"None","startedBy":null,"startTime":null,"endTime":null,"lastModifiedTime":"2020-11-11T06:05:35.15+00:00","lastStatusModifiedTime":"2020-11-11T06:05:35.15+00:00","exception":null,"parameters":{"key01":"value01","key02":"value02"},"runOn":"","runbook":{"name":"Get-AzureVMTutorial"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1","name":"job1","type":"Microsoft.Automation/AutomationAccounts/Jobs","properties":{"jobId":"b380fd72-f244-4943-b530-48621cab1709","creationTime":"2020-12-17T09:03:12.243+00:00","provisioningState":"Processing","status":"New","statusDetails":"None","startedBy":null,"startTime":null,"endTime":null,"lastModifiedTime":"2020-12-17T09:03:12.243+00:00","lastStatusModifiedTime":"2020-12-17T09:03:12.243+00:00","exception":null,"parameters":{"key01":"value01","key02":"value02"},"runOn":"","runbook":{"name":"Get-AzureVMTutorial"}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '727'
+      - '730'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:35 GMT
+      - Thu, 17 Dec 2020 09:03:12 GMT
       expires:
       - '-1'
       location:
@@ -305,12 +305,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":true,"expiryTime":"2021-03-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2020-11-11T06:05:37.1263889+00:00","lastModifiedBy":"","lastModifiedTime":"2020-11-11T06:05:37.1263889+00:00"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":true,"expiryTime":"2021-03-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2020-12-17T09:03:14.1525601+00:00","lastModifiedBy":"","lastModifiedTime":"2020-12-17T09:03:14.1525601+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -319,7 +319,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:36 GMT
+      - Thu, 17 Dec 2020 09:03:13 GMT
       expires:
       - '-1'
       location:
@@ -355,22 +355,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule","name":"mySchedule","type":"Microsoft.Automation/AutomationAccounts/Schedules","properties":{"description":"my
-        description of schedule goes here","startTime":"2020-12-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2021-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":true,"nextRun":"2020-12-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2020-11-11T06:05:37.673+00:00","lastModifiedTime":"2020-11-11T06:05:37.673+00:00","timeZone":"UTC","advancedSchedule":null}}'
+        description of schedule goes here","startTime":"2020-12-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2021-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":true,"nextRun":"2020-12-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2020-12-17T09:03:14.67+00:00","lastModifiedTime":"2020-12-17T09:03:14.67+00:00","timeZone":"UTC","advancedSchedule":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '756'
+      - '754'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:37 GMT
+      - Thu, 17 Dec 2020 09:03:14 GMT
       expires:
       - '-1'
       location:
@@ -411,12 +411,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2020-11-11T06:05:38.227+00:00","lastModifiedTime":"2020-11-11T06:05:38.227+00:00","isEncrypted":false,"value":"\"ComputerName.domain.com\"","description":"my
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2020-12-17T09:03:15.237+00:00","lastModifiedTime":"2020-12-17T09:03:15.237+00:00","isEncrypted":false,"value":"\"ComputerName.domain.com\"","description":"my
         description"}}'
     headers:
       cache-control:
@@ -426,7 +426,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:38 GMT
+      - Thu, 17 Dec 2020 09:03:14 GMT
       expires:
       - '-1'
       location:
@@ -467,22 +467,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential","name":"myCredential","type":"Microsoft.Automation/AutomationAccounts/Credentials","properties":{"userName":"mylingaiah","description":"my
-        description goes here","creationTime":"2020-11-11T06:05:38.76+00:00","lastModifiedTime":"2020-11-11T06:05:38.76+00:00"}}'
+        description goes here","creationTime":"2020-12-17T09:03:15.773+00:00","lastModifiedTime":"2020-12-17T09:03:15.773+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '479'
+      - '481'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:38 GMT
+      - Thu, 17 Dec 2020 09:03:15 GMT
       expires:
       - '-1'
       location:
@@ -518,7 +518,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/softwareUpdateConfigurationMachineRuns?api-version=2017-05-15-preview
   response:
@@ -532,7 +532,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:38 GMT
+      - Thu, 17 Dec 2020 09:03:15 GMT
       expires:
       - '-1'
       pragma:
@@ -564,7 +564,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/softwareUpdateConfigurationRuns?api-version=2017-05-15-preview
   response:
@@ -578,7 +578,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:39 GMT
+      - Thu, 17 Dec 2020 09:03:16 GMT
       expires:
       - '-1'
       pragma:
@@ -610,12 +610,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/draft?api-version=2018-06-30
   response:
     body:
-      string: '{"creationTime":"2020-11-11T06:05:28.85+00:00","lastModifiedTime":"2020-11-11T06:05:28.85+00:00","inEdit":true,"parameters":{},"outputTypes":[]}'
+      string: '{"creationTime":"2020-12-17T09:03:05.75+00:00","lastModifiedTime":"2020-12-17T09:03:05.75+00:00","inEdit":true,"parameters":{},"outputTypes":[]}'
     headers:
       cache-control:
       - no-cache
@@ -624,7 +624,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:39 GMT
+      - Thu, 17 Dec 2020 09:03:16 GMT
       expires:
       - '-1'
       pragma:
@@ -656,22 +656,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential","name":"myCredential","type":"Microsoft.Automation/AutomationAccounts/Credentials","properties":{"userName":"mylingaiah","description":"my
-        description goes here","creationTime":"2020-11-11T06:05:38.76+00:00","lastModifiedTime":"2020-11-11T06:05:38.76+00:00"}}'
+        description goes here","creationTime":"2020-12-17T09:03:15.773+00:00","lastModifiedTime":"2020-12-17T09:03:15.773+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '479'
+      - '481'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:39 GMT
+      - Thu, 17 Dec 2020 09:03:16 GMT
       expires:
       - '-1'
       pragma:
@@ -703,7 +703,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/softwareUpdateConfigurationRuns?api-version=2017-05-15-preview
   response:
@@ -717,7 +717,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:40 GMT
+      - Thu, 17 Dec 2020 09:03:17 GMT
       expires:
       - '-1'
       pragma:
@@ -749,7 +749,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/softwareUpdateConfigurationRuns?api-version=2017-05-15-preview
   response:
@@ -763,7 +763,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:40 GMT
+      - Thu, 17 Dec 2020 09:03:17 GMT
       expires:
       - '-1'
       pragma:
@@ -795,12 +795,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2020-11-11T06:05:38.227+00:00","lastModifiedTime":"2020-11-11T06:05:38.227+00:00","isEncrypted":false,"value":"\"ComputerName.domain.com\"","description":"my
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2020-12-17T09:03:15.237+00:00","lastModifiedTime":"2020-12-17T09:03:15.237+00:00","isEncrypted":false,"value":"\"ComputerName.domain.com\"","description":"my
         description"}}'
     headers:
       cache-control:
@@ -810,7 +810,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:40 GMT
+      - Thu, 17 Dec 2020 09:03:17 GMT
       expires:
       - '-1'
       pragma:
@@ -842,22 +842,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule","name":"mySchedule","type":"Microsoft.Automation/AutomationAccounts/Schedules","properties":{"description":"my
-        description of schedule goes here","startTime":"2020-12-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2021-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":true,"nextRun":"2020-12-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2020-11-11T06:05:37.673+00:00","lastModifiedTime":"2020-11-11T06:05:37.673+00:00","timeZone":"UTC","advancedSchedule":null}}'
+        description of schedule goes here","startTime":"2020-12-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2021-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":true,"nextRun":"2020-12-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2020-12-17T09:03:14.67+00:00","lastModifiedTime":"2020-12-17T09:03:14.67+00:00","timeZone":"UTC","advancedSchedule":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '756'
+      - '754'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:41 GMT
+      - Thu, 17 Dec 2020 09:03:18 GMT
       expires:
       - '-1'
       pragma:
@@ -889,14 +889,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial?api-version=2018-06-30
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial","name":"Get-AzureVMTutorial","type":"Microsoft.Automation/AutomationAccounts/Runbooks","location":"East
-        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637406715334570000\"","properties":{"description":"Description
-        of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2020-11-11T06:05:33.453+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-11-11T06:05:33.457+00:00"}}'
+        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637437925905070000\"","properties":{"description":"Description
+        of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2020-12-17T09:03:10.503+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-12-17T09:03:10.507+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -905,9 +905,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:41 GMT
+      - Thu, 17 Dec 2020 09:03:18 GMT
       etag:
-      - '"637406715334570000"'
+      - '"637437925905070000"'
       expires:
       - '-1'
       pragma:
@@ -939,12 +939,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":true,"expiryTime":"2021-03-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2020-11-11T06:05:37.1263889+00:00","lastModifiedBy":"","lastModifiedTime":"2020-11-11T06:05:37.1263889+00:00"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":true,"expiryTime":"2021-03-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2020-12-17T09:03:14.1525601+00:00","lastModifiedBy":"","lastModifiedTime":"2020-12-17T09:03:14.1525601+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -953,7 +953,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:42 GMT
+      - Thu, 17 Dec 2020 09:03:18 GMT
       expires:
       - '-1'
       pragma:
@@ -983,7 +983,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1/output?api-version=2017-05-15-preview
   response:
@@ -997,7 +997,7 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Wed, 11 Nov 2020 06:05:42 GMT
+      - Thu, 17 Dec 2020 09:03:19 GMT
       expires:
       - '-1'
       pragma:
@@ -1025,22 +1025,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1","name":"module1","type":"Microsoft.Automation/AutomationAccounts/Modules","location":"East
-        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2020-11-11T06:05:30.687+00:00","lastModifiedTime":"2020-11-11T06:05:30.8+00:00","error":{"code":null,"message":""},"provisioningState":"Creating","isComposite":false}}'
+        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2020-12-17T09:03:08.03+00:00","lastModifiedTime":"2020-12-17T09:03:08.133+00:00","error":{"code":null,"message":""},"provisioningState":"Creating","isComposite":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '593'
+      - '594'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:42 GMT
+      - Thu, 17 Dec 2020 09:03:19 GMT
       expires:
       - '-1'
       pragma:
@@ -1072,21 +1072,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1?api-version=2017-05-15-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1","name":"job1","type":"Microsoft.Automation/AutomationAccounts/Jobs","properties":{"jobId":"90fcd007-3460-40b6-944d-25d677b43a85","creationTime":"2020-11-11T06:05:35.169596+00:00","provisioningState":"Processing","status":"New","statusDetails":"None","startedBy":"{scrubbed}","startTime":null,"endTime":null,"lastModifiedTime":"2020-11-11T06:05:35.169596+00:00","lastStatusModifiedTime":"2020-11-11T06:05:35.169596+00:00","exception":null,"parameters":{"key01":"value01","key02":"value02"},"runOn":"","runbook":{"name":"Get-AzureVMTutorial"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1","name":"job1","type":"Microsoft.Automation/AutomationAccounts/Jobs","properties":{"jobId":"b380fd72-f244-4943-b530-48621cab1709","creationTime":"2020-12-17T09:03:12.2568218+00:00","provisioningState":"Processing","status":"New","statusDetails":"None","startedBy":"{scrubbed}","startTime":null,"endTime":null,"lastModifiedTime":"2020-12-17T09:03:12.2568218+00:00","lastStatusModifiedTime":"2020-12-17T09:03:12.2568218+00:00","exception":null,"parameters":{"key01":"value01","key02":"value02"},"runOn":"","runbook":{"name":"Get-AzureVMTutorial"}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '747'
+      - '750'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:43 GMT
+      - Thu, 17 Dec 2020 09:03:20 GMT
       expires:
       - '-1'
       pragma:
@@ -1120,7 +1120,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/linkedWorkspace?api-version=2015-10-31
   response:
@@ -1134,7 +1134,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:43 GMT
+      - Thu, 17 Dec 2020 09:03:20 GMT
       expires:
       - '-1'
       pragma:
@@ -1166,13 +1166,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9?api-version=2015-10-31
   response:
     body:
       string: '{"name":"myAutomationAccount9","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9","type":"Microsoft.Automation/AutomationAccounts","location":"East
-        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://3724e496-979d-40c5-8bf0-64d0848f4c0f.agentsvc.eus2.azure-automation.net/accounts/3724e496-979d-40c5-8bf0-64d0848f4c0f","creationTime":"2020-11-11T06:05:23.033+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-11-11T06:05:23.033+00:00"}}'
+        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://cbf0a59c-e5f0-42e6-b866-464d06de6a04.agentsvc.eus2.azure-automation.net/accounts/cbf0a59c-e5f0-42e6-b866-464d06de6a04","creationTime":"2020-12-17T09:02:58.997+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-12-17T09:02:58.997+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -1181,11 +1181,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:43 GMT
+      - Thu, 17 Dec 2020 09:03:20 GMT
       expires:
       - '-1'
       ocp-automation-accountid:
-      - 3724e496-979d-40c5-8bf0-64d0848f4c0f
+      - cbf0a59c-e5f0-42e6-b866-464d06de6a04
       pragma:
       - no-cache
       server:
@@ -1221,22 +1221,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1","name":"module1","type":"Microsoft.Automation/AutomationAccounts/Modules","location":"East
-        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2020-11-11T06:05:30.687+00:00","lastModifiedTime":"2020-11-11T06:05:30.8+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
+        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2020-12-17T09:03:08.03+00:00","lastModifiedTime":"2020-12-17T09:03:08.133+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '595'
+      - '596'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:05:44 GMT
+      - Thu, 17 Dec 2020 09:03:21 GMT
       expires:
       - '-1'
       pragma:
@@ -1272,7 +1272,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish?api-version=2018-06-30
   response:
@@ -1284,16 +1284,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:05:44 GMT
+      - Thu, 17 Dec 2020 09:03:21 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/03aa59c4-a43e-4811-b877-ed743fe37043?api-version=2018-06-30
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/a425e716-f487-40e3-b5db-6081d4362899?api-version=2018-06-30
       ocp-automation-operationresultid:
-      - 03aa59c4-a43e-4811-b877-ed743fe37043
-      - 03aa59c4-a43e-4811-b877-ed743fe37043
+      - a425e716-f487-40e3-b5db-6081d4362899
+      - a425e716-f487-40e3-b5db-6081d4362899
       ocp-location:
-      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/03aa59c4-a43e-4811-b877-ed743fe37043?api-version=2018-06-30
+      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/a425e716-f487-40e3-b5db-6081d4362899?api-version=2018-06-30
       pragma:
       - no-cache
       server:
@@ -1305,7 +1305,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-location:
-      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/03aa59c4-a43e-4811-b877-ed743fe37043?api-version=2018-06-30
+      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/a425e716-f487-40e3-b5db-6081d4362899?api-version=2018-06-30
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
       x-powered-by:
@@ -1323,9 +1323,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/03aa59c4-a43e-4811-b877-ed743fe37043?api-version=2018-06-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/a425e716-f487-40e3-b5db-6081d4362899?api-version=2018-06-30
   response:
     body:
       string: ''
@@ -1337,7 +1337,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:15 GMT
+      - Thu, 17 Dec 2020 09:03:51 GMT
       expires:
       - '-1'
       pragma:
@@ -1370,22 +1370,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential","name":"myCredential","type":"Microsoft.Automation/AutomationAccounts/Credentials","properties":{"userName":"mylingaiah","description":"my
-        description goes here","creationTime":"2020-11-11T06:05:38.76+00:00","lastModifiedTime":"2020-11-11T06:05:38.76+00:00"}}'
+        description goes here","creationTime":"2020-12-17T09:03:15.773+00:00","lastModifiedTime":"2020-12-17T09:03:15.773+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '479'
+      - '481'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:15 GMT
+      - Thu, 17 Dec 2020 09:03:52 GMT
       expires:
       - '-1'
       pragma:
@@ -1423,12 +1423,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2020-11-11T06:05:38.227+00:00","lastModifiedTime":"2020-11-11T06:06:16.787+00:00","isEncrypted":false,"value":"\"ComputerName3.domain.com\"","description":"my
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2020-12-17T09:03:15.237+00:00","lastModifiedTime":"2020-12-17T09:03:53.903+00:00","isEncrypted":false,"value":"\"ComputerName3.domain.com\"","description":"my
         description"}}'
     headers:
       cache-control:
@@ -1438,7 +1438,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:16 GMT
+      - Thu, 17 Dec 2020 09:03:53 GMT
       expires:
       - '-1'
       pragma:
@@ -1477,22 +1477,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule","name":"mySchedule","type":"Microsoft.Automation/AutomationAccounts/Schedules","properties":{"description":"my
-        updated description of schedule goes here","startTime":"2020-12-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2021-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":false,"nextRun":"2020-12-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2020-11-11T06:05:37.673+00:00","lastModifiedTime":"2020-11-11T06:05:37.673+00:00","timeZone":"UTC","advancedSchedule":null}}'
+        updated description of schedule goes here","startTime":"2020-12-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2021-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":false,"nextRun":"2020-12-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2020-12-17T09:03:14.67+00:00","lastModifiedTime":"2020-12-17T09:03:14.67+00:00","timeZone":"UTC","advancedSchedule":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '765'
+      - '763'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:16 GMT
+      - Thu, 17 Dec 2020 09:03:53 GMT
       expires:
       - '-1'
       pragma:
@@ -1531,25 +1531,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial?api-version=2018-06-30
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial","name":"Get-AzureVMTutorial","type":"Microsoft.Automation/AutomationAccounts/Runbooks","location":"East
-        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637406715777500000\"","properties":{"description":"Updated
-        Description of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2020-11-11T06:05:33.453+00:00","lastModifiedBy":"{scrubbed}","lastModifiedTime":"2020-11-11T06:06:17.75+00:00"}}'
+        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637437926349230000\"","properties":{"description":"Updated
+        Description of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2020-12-17T09:03:10.503+00:00","lastModifiedBy":"{scrubbed}","lastModifiedTime":"2020-12-17T09:03:54.923+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '825'
+      - '826'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:17 GMT
+      - Thu, 17 Dec 2020 09:03:54 GMT
       etag:
-      - '"637406715777500000"'
+      - '"637437926349230000"'
       expires:
       - '-1'
       pragma:
@@ -1585,7 +1585,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1/suspend?api-version=2017-05-15-preview
   response:
@@ -1597,7 +1597,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:17 GMT
+      - Thu, 17 Dec 2020 09:03:54 GMT
       expires:
       - '-1'
       pragma:
@@ -1632,12 +1632,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":false,"expiryTime":"2021-03-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2020-11-11T06:05:37.1263889+00:00","lastModifiedBy":"","lastModifiedTime":"2020-11-11T06:06:18.8050997+00:00"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":false,"expiryTime":"2021-03-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2020-12-17T09:03:14.1525601+00:00","lastModifiedBy":"","lastModifiedTime":"2020-12-17T09:03:55.9911183+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -1646,7 +1646,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:18 GMT
+      - Thu, 17 Dec 2020 09:03:55 GMT
       expires:
       - '-1'
       pragma:
@@ -1684,22 +1684,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1?api-version=2015-10-31
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1","name":"module1","type":"Microsoft.Automation/AutomationAccounts/Modules","location":"East
-        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2020-11-11T06:05:30.687+00:00","lastModifiedTime":"2020-11-11T06:05:30.8+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
+        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2020-12-17T09:03:08.03+00:00","lastModifiedTime":"2020-12-17T09:03:08.133+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '595'
+      - '596'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:18 GMT
+      - Thu, 17 Dec 2020 09:03:55 GMT
       expires:
       - '-1'
       pragma:
@@ -1735,7 +1735,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1/stop?api-version=2017-05-15-preview
   response:
@@ -1747,7 +1747,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:19 GMT
+      - Thu, 17 Dec 2020 09:04:56 GMT
       expires:
       - '-1'
       pragma:
@@ -1779,12 +1779,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/listKeys?api-version=2015-10-31
   response:
     body:
-      string: '{"keys":[{"KeyName":"Primary","Permissions":"Full","Value":"AW+dTB4GYsSvr9do6SQzglWwBnPJKYFtuv+EPGGJcX/GNTGZH3mwb3cbYK7ORzMa2/xz7uSXJf6MbfHZWsSXvA=="},{"KeyName":"Secondary","Permissions":"Full","Value":"gdZy1hEmpj383bv4DlE+0hvx7Ijr/Y6y1ooiarl0UP6hg0XiYL2vDEEgkz/5aXl8UtFCLh3k7yzbGnDkQD/gnA=="}]}'
+      string: '{"keys":[{"KeyName":"Primary","Permissions":"Full","Value":"5EvXiIS+YlA0HpA2OmwJZ8RveEt+gZp7K+GD+CzHMktVIXXaVsY9JcY792NfTCV/MxC3cY4SUVjOXJzPQAsxaQ=="},{"KeyName":"Secondary","Permissions":"Full","Value":"1KERRgEEOloIIfpg1MUwcFUTBpghMAeevuEVNNRJ5FpvUVljdWLIMaev9VwlacQy+gUD3Rw/10lG7D3tvRHonA=="}]}'
     headers:
       cache-control:
       - no-cache
@@ -1793,7 +1793,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:19 GMT
+      - Thu, 17 Dec 2020 09:04:57 GMT
       expires:
       - '-1'
       pragma:
@@ -1832,13 +1832,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9?api-version=2015-10-31
   response:
     body:
       string: '{"name":"myAutomationAccount9","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9","type":"Microsoft.Automation/AutomationAccounts","location":"East
-        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://3724e496-979d-40c5-8bf0-64d0848f4c0f.agentsvc.eus2.azure-automation.net/accounts/3724e496-979d-40c5-8bf0-64d0848f4c0f","creationTime":"2020-11-11T06:05:23.033+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-11-11T06:06:20.51+00:00"}}'
+        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://cbf0a59c-e5f0-42e6-b866-464d06de6a04.agentsvc.eus2.azure-automation.net/accounts/cbf0a59c-e5f0-42e6-b866-464d06de6a04","creationTime":"2020-12-17T09:02:58.997+00:00","lastModifiedBy":null,"lastModifiedTime":"2020-12-17T09:04:57.82+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -1847,7 +1847,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 06:06:20 GMT
+      - Thu, 17 Dec 2020 09:04:57 GMT
       expires:
       - '-1'
       pragma:
@@ -1883,7 +1883,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential?api-version=2015-10-31
   response:
@@ -1895,7 +1895,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:20 GMT
+      - Thu, 17 Dec 2020 09:04:58 GMT
       expires:
       - '-1'
       pragma:
@@ -1927,7 +1927,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable?api-version=2015-10-31
   response:
@@ -1939,7 +1939,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:23 GMT
+      - Thu, 17 Dec 2020 09:05:01 GMT
       expires:
       - '-1'
       pragma:
@@ -1971,7 +1971,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule?api-version=2015-10-31
   response:
@@ -1983,7 +1983,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:24 GMT
+      - Thu, 17 Dec 2020 09:05:01 GMT
       expires:
       - '-1'
       pragma:
@@ -2015,7 +2015,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1?api-version=2015-10-31
   response:
@@ -2027,7 +2027,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:24 GMT
+      - Thu, 17 Dec 2020 09:05:03 GMT
       expires:
       - '-1'
       pragma:
@@ -2057,7 +2057,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial?api-version=2018-06-30
   response:
@@ -2069,7 +2069,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:30 GMT
+      - Thu, 17 Dec 2020 09:05:09 GMT
       expires:
       - '-1'
       pragma:
@@ -2101,7 +2101,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1?api-version=2015-10-31
   response:
@@ -2113,7 +2113,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:30 GMT
+      - Thu, 17 Dec 2020 09:05:09 GMT
       expires:
       - '-1'
       pragma:
@@ -2145,7 +2145,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-automation/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-automation/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9?api-version=2015-10-31
   response:
@@ -2157,7 +2157,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Nov 2020 06:06:34 GMT
+      - Thu, 17 Dec 2020 09:05:14 GMT
       expires:
       - '-1'
       pragma:

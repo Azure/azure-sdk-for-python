@@ -459,6 +459,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         blob_client = BlobClient.from_blob_url(blob_emulator_url)
         self.assertEqual(blob_client.container_name, "containername")
         self.assertEqual(blob_client.blob_name, "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg")
+        self.assertEqual(blob_client.url, blob_emulator_url)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

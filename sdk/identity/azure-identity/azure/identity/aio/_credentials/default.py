@@ -16,7 +16,8 @@ from .shared_cache import SharedTokenCacheCredential
 from .vscode import VisualStudioCodeCredential
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, List
+    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -83,7 +84,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
 
-        credentials = []
+        credentials = []  # type: List[AsyncTokenCredential]
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:

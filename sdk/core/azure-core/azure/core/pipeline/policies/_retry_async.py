@@ -36,15 +36,14 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     ServiceRequestError,
 )
-from ._base import HTTPPolicy
 from ._base_async import AsyncHTTPPolicy
-from ._retry import RetryPolicy
+from ._retry import RetryPolicyBase
 
 _LOGGER = logging.getLogger(__name__)
 
 
 
-class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
+class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
     """Async flavor of the retry policy.
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
