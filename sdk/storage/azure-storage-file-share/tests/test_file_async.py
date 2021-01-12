@@ -10,6 +10,8 @@ import os
 import unittest
 from datetime import datetime, timedelta
 import asyncio
+
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 import requests
@@ -2036,6 +2038,44 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_account_sas_credential_async(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if not self.is_live:
+            return
+
+        self._setup(storage_account, storage_account_key)
+        file_client = await self._create_file(storage_account, storage_account_key)
+        token = generate_account_sas(
+            self.fsc.account_name,
+            self.fsc.credential.account_key,
+            ResourceTypes(object=True),
+            AccountSasPermissions(read=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path=file_client.file_name,
+            credential=AzureSasCredential(token))
+
+        properties = await file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(properties)
+
+    @GlobalStorageAccountPreparer()
+    def test_account_sas_raises_if_sas_already_in_uri(self, resource_group, location, storage_account, storage_account_key):
+        with self.assertRaises(ValueError):
+            ShareFileClient(
+                self.account_url(storage_account, "file") + "?sig=foo",
+                share_name="foo",
+                file_path="foo",
+                credential=AzureSasCredential("?foo=bar"))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

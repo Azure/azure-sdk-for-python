@@ -55,7 +55,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
         authenticated with a SAS token.
     :param credential:
         The credential with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string or an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -121,7 +122,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient

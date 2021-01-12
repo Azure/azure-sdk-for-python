@@ -1,7 +1,8 @@
 # Release History
 
 ## 12.4.0b2 (Unreleased)
-
+**New features**
+- Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
 
 ## 12.4.0b1 (2020-12-07)
 **New features**
