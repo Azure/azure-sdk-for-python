@@ -112,23 +112,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
         # pylint:disable=protected-access
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
-            conn_str
+        return BaseHandlerSync._convert_connection_string_to_kwargs(
+            conn_str,
+            token_cred_type=ServiceBusSASTokenCredential,
+            key_cred_type=ServiceBusSharedKeyCredential,
+            **kwargs
         )
-        kwargs = BaseHandlerSync._create_non_credential_kwargs_from_conn_str_params(host, entity_in_conn_str, **kwargs)
-        # This has to be defined seperately to support sync vs async credentials.
-        kwargs["credential"] = cls._create_credential_from_connection_string_parameters(
-            token, token_expiry, policy, key
-        )
-        return kwargs
-
-    @classmethod
-    def _create_credential_from_connection_string_parameters(
-        cls, token, token_expiry, policy, key
-    ):
-        if token and token_expiry:
-            return ServiceBusSASTokenCredential(token, token_expiry)
-        return ServiceBusSharedKeyCredential(policy, key)
 
     async def __aenter__(self):
         if self._shutdown.is_set():
