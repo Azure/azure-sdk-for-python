@@ -48,7 +48,7 @@ interactions:
         "accuracy": 0.8}, {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName":
         "CompanyPhoneNumber", "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy":
         1.0}, {"fieldName": "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy":
-        1.0}, {"fieldName": "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber",
+        1.0}, {"fieldName": "PhoneNumberIdentifier", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber",
         "accuracy": 1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName":
         "Signature", "accuracy": 0.8}, {"fieldName": "Subtotal", "accuracy": 1.0},
         {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
@@ -582,7 +582,7 @@ interactions:
         [{"docType": "custom:7103b323-0593-4885-ab2c-9e05b251065e", "modelId": "7103b323-0593-4885-ab2c-9e05b251065e",
         "pageRange": [1, 1], "fields": {"CompanyAddress": null, "CompanyName": null,
         "CompanyPhoneNumber": null, "DatedAs": null, "Email": null, "Merchant": null,
-        "PhoneNumber": null, "PurchaseOrderNumber": null, "Quantity": null, "Signature":
+        "PhoneNumberIdentifier": null, "PurchaseOrderNumber": null, "Quantity": null, "Signature":
         null, "Subtotal": null, "Tax": null, "Total": null, "VendorName": null, "Website":
         null}, "docTypeConfidence": 1.0}], "errors": []}}'
     headers:

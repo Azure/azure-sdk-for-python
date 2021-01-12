@@ -10,7 +10,7 @@ from azure.communication.chat.aio import ChatThreadClient
 from azure.communication.chat import (
     ChatMessagePriority,
     ChatThreadMember,
-    CommunicationUser,
+    CommunicationUserIdentifier,
 )
 from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError
@@ -212,7 +212,7 @@ async def test_add_members():
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     new_member = ChatThreadMember(
-            user=CommunicationUser(new_member_id),
+            user=CommunicationUserIdentifier(new_member_id),
             display_name='name',
             share_history_time=datetime.utcnow())
     members = [new_member]

@@ -141,7 +141,7 @@ Use the `create_chat_thread` method to create a chat thread client object.
 
 - Use `topic` to give a thread topic;
 - Use `thread_members` to list the `ChatThreadMember` to be added to the thread;
-- `user`, required, it is the `CommunicationUser` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+- `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens) -->
 - `display_name`, optional, is the display name for the thread member.
 - `share_history_time`, optional, time from which the chat history is shared with the member.
@@ -300,7 +300,7 @@ for chat_thread_member in chat_thread_members:
 Use `add_members` method to add thread members to the thread.
 
 - Use `thread_members` to list the `ChatThreadMember` to be added to the thread;
-- `user`, required, it is the `CommunicationUser` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+- `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens) -->
 - `display_name`, optional, is the display name for the thread member.
 - `share_history_time`, optional, time from which the chat history is shared with the member.
@@ -319,7 +319,7 @@ chat_thread_client.add_members(thread_members)
 ### Remove thread member
 
 Use `remove_member` method to remove thread member from the thread identified by threadId.
-`user` is the `CommunicationUser` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+`user` is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens)  -->
 and was added into this chat thread.
 

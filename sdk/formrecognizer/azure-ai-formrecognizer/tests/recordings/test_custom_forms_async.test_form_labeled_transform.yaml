@@ -48,7 +48,7 @@ interactions:
         "accuracy": 0.8}, {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName":
         "CompanyPhoneNumber", "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy":
         1.0}, {"fieldName": "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy":
-        1.0}, {"fieldName": "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber",
+        1.0}, {"fieldName": "PhoneNumberIdentifier", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber",
         "accuracy": 1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName":
         "Signature", "accuracy": 0.8}, {"fieldName": "Subtotal", "accuracy": 1.0},
         {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
@@ -423,7 +423,7 @@ interactions:
         "elements": ["#/readResults/0/lines/4/words/1"]}, "Tax": {"type": "string",
         "valueString": "$4.00", "text": "$4.00", "page": 1, "boundingBox": [1458.0,
         1615.0, 1529.0, 1615.0, 1529.0, 1643.0, 1458.0, 1643.0], "confidence": 0.994,
-        "elements": ["#/readResults/0/lines/44/words/0"]}, "PhoneNumber": {"type":
+        "elements": ["#/readResults/0/lines/44/words/0"]}, "PhoneNumberIdentifier": {"type":
         "string", "valueString": "555-348-6512", "text": "555-348-6512", "page": 1,
         "boundingBox": [364.0, 351.0, 528.0, 351.0, 528.0, 378.0, 364.0, 378.0], "confidence":
         0.89, "elements": ["#/readResults/0/lines/3/words/2"]}, "Quantity": {"type":

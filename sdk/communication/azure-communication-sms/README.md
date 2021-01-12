@@ -48,8 +48,8 @@ Once the client is initialized, the `.send()` method can be invoked:
 
 ```Python
 smsresponse = sms_client.send(
-    from_phone_number=PhoneNumber("<leased-phone-number>"),
-    to_phone_numbers=[PhoneNumber("<to-phone-number>")],
+    from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
+    to_phone_numbers=[PhoneNumberIdentifier("<to-phone-number>")],
     message="Hello World via SMS",
     send_sms_options=SendSmsOptions(enable_delivery_report=True)) # optional property
 ```

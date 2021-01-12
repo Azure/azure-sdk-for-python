@@ -64,7 +64,7 @@ interactions:
         {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber",
         "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy": 1.0}, {"fieldName":
         "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName":
-        "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy":
+        "PhoneNumberIdentifier", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy":
         1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName": "Signature",
         "accuracy": 0.8}, {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName":
         "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy": 1.0}, {"fieldName":
@@ -1064,7 +1064,7 @@ interactions:
         "Merchant": {"type": "string", "valueString": "Hero Limited", "text": "Hero
         Limited", "page": 1, "boundingBox": [621.0, 202.0, 1075.0, 202.0, 1075.0,
         266.0, 621.0, 266.0], "confidence": 1.0, "elements": ["#/readResults/0/lines/1/words/0",
-        "#/readResults/0/lines/1/words/1"]}, "PhoneNumber": {"type": "string", "valueString":
+        "#/readResults/0/lines/1/words/1"]}, "PhoneNumberIdentifier": {"type": "string", "valueString":
         "555-348-6512", "text": "555-348-6512", "page": 1, "boundingBox": [367.0,
         351.0, 529.0, 351.0, 529.0, 378.0, 367.0, 378.0], "confidence": 1.0, "elements":
         ["#/readResults/0/lines/2/words/2"]}, "CompanyName": {"type": "string", "valueString":

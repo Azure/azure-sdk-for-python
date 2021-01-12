@@ -51,7 +51,7 @@ class ChatThreadClientSamples(object):
         from azure.communication.chat import (
             ChatClient,
             ChatThreadMember,
-            CommunicationUser,
+            CommunicationUserIdentifier,
             CommunicationUserCredential
         )
         chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))

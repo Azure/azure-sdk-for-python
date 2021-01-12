@@ -160,7 +160,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             self.assertEqual(results[0].entities[0].text, "859-98-0987")
             self.assertEqual(results[0].entities[0].category, "U.S. Social Security Number (SSN)")
             self.assertEqual(results[1].entities[0].text, "111000025")
-            # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
+            # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumberIdentifier here
             self.assertEqual(results[2].entities[0].text, "998.214.865-68")
             self.assertEqual(results[2].entities[0].category, "Brazil CPF Number")
             for doc in results:
@@ -277,7 +277,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             self.assertEqual(results[0].entities[0].text, "859-98-0987")
             self.assertEqual(results[0].entities[0].category, "U.S. Social Security Number (SSN)")
             self.assertEqual(results[1].entities[0].text, "111000025")
-            # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
+            # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumberIdentifier here
             self.assertEqual(results[2].entities[0].text, "998.214.865-68")
             self.assertEqual(results[2].entities[0].category, "Brazil CPF Number")
             for doc in results:
@@ -397,7 +397,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             self.assertEqual(results[0].entities[0].text, "859-98-0987")
             self.assertEqual(results[0].entities[0].category, "U.S. Social Security Number (SSN)")
             self.assertEqual(results[1].entities[0].text, "111000025")
-            # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
+            # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumberIdentifier here
             self.assertEqual(results[2].entities[0].text, "998.214.865-68")
             self.assertEqual(results[2].entities[0].category, "Brazil CPF Number")
 
