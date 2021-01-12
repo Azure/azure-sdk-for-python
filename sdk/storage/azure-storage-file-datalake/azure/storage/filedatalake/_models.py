@@ -53,12 +53,14 @@ class FileSystemProperties(object):
         self.has_immutability_policy = None
         self.has_legal_hold = None
         self.metadata = None
+        self.deleted = None
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
+        props.deleted = generated.deleted
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
