@@ -24,17 +24,17 @@ class UploadTest(_BlobTest):
         await self.async_blob_client.upload_blob(data)
     
     def run_sync(self):
+        self.upload_stream.reset()
         self.blob_client.upload_blob(
             self.upload_stream,
             length=self.args.size,
             overwrite=True,
             max_concurrency=self.args.max_concurrency)
-        self.upload_stream.reset()
 
     async def run_async(self):
+        self.upload_stream_async.reset()
         await self.async_blob_client.upload_blob(
             self.upload_stream_async,
             length=self.args.size,
             overwrite=True,
             max_concurrency=self.args.max_concurrency)
-        self.upload_stream_async.reset()

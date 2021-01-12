@@ -23,12 +23,12 @@ class LegacyDownloadTest(_LegacyContainerTest):
             blob=data)
 
     def run_sync(self):
+        self.download_stream.reset()
         self.service_client.get_blob_to_stream(
             container_name=self.container_name,
             blob_name=self.blob_name,
             stream=self.download_stream,
             max_connections=self.args.max_concurrency)
-        self.download_stream.reset()
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")
