@@ -3,13 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure_devtools.perfstress_tests import get_random_bytes
+from azure_devtools.perfstress_tests import get_random_bytes, WriteStream
 
 from ._test_base import _LegacyShareTest
 
 
 class LegacyDownloadTest(_LegacyShareTest):
-    file_name = "downloadtest"
+    def __init__(self, arguments):
+        super().__init__(arguments)
+        self.file_name = "downloadtest"
+        self.download_stream = WriteStream()
 
     async def global_setup(self):
         await super().global_setup()
@@ -21,10 +24,12 @@ class LegacyDownloadTest(_LegacyShareTest):
             file=data)
 
     def run_sync(self):
-        self.service_client.get_file_to_bytes(
+        self.download_stream.reset()
+        self.service_client.get_file_to_stream(
             share_name=self.share_name,
             directory_name=None,
             file_name=self.file_name,
+            stream=self.download_stream,
             max_connections=self.args.max_concurrency)
 
     async def run_async(self):

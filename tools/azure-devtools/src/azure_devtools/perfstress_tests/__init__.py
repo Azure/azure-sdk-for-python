@@ -8,13 +8,14 @@ import asyncio
 
 from .perf_stress_runner import PerfStressRunner
 from .perf_stress_test import PerfStressTest
-from .random_stream import RandomStream, get_random_bytes
+from .random_stream import RandomStream, WriteStream, get_random_bytes
 from .async_random_stream import AsyncRandomStream
 
 __all__ = [
     "PerfStressRunner",
     "PerfStressTest",
     "RandomStream",
+    "WriteStream",
     "AsyncRandomStream",
     "get_random_bytes"
 ]

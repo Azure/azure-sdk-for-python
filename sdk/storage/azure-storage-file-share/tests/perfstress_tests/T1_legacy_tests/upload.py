@@ -14,14 +14,15 @@ class LegacyUploadTest(_LegacyShareTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.file_name = "sharefiletest-" + str(uuid.uuid4())
+        self.upload_stream = RandomStream(self.args.size)
 
     def run_sync(self):
-        data = RandomStream(self.args.size)
+        self.upload_stream.reset()
         self.service_client.create_file_from_stream(
             share_name=self.share_name,
             directory_name=None,
             file_name=self.file_name,
-            stream=data,
+            stream=self.upload_stream,
             count=self.args.size,
             max_connections=self.args.max_concurrency)
 

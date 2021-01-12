@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure_devtools.perfstress_tests import get_random_bytes
+from azure_devtools.perfstress_tests import get_random_bytes, WriteStream
 
 from ._test_base import _ShareTest
 
@@ -14,6 +14,7 @@ class DownloadTest(_ShareTest):
         file_name = "downloadtest"
         self.sharefile_client = self.share_client.get_file_client(file_name)
         self.async_sharefile_client = self.async_share_client.get_file_client(file_name)
+        self.download_stream = WriteStream()
 
     async def global_setup(self):
         await super().global_setup()
@@ -21,14 +22,14 @@ class DownloadTest(_ShareTest):
         await self.async_sharefile_client.upload_file(data)
 
     def run_sync(self):
-        stream = self.sharefile_client.download_file()
-        for _ in stream.chunks():
-            pass
+        self.download_stream.reset()
+        stream = self.sharefile_client.download_file(max_concurrency=self.args.max_concurrency)
+        stream.readinto(self.download_stream)
 
     async def run_async(self):
-        stream = await self.async_sharefile_client.download_file()
-        async for _ in stream.chunks():
-            pass
+        self.download_stream.reset()
+        stream = await self.async_sharefile_client.download_file(max_concurrency=self.args.max_concurrency)
+        await stream.readinto(self.download_stream)
 
     async def close(self):
         await self.async_sharefile_client.close()
