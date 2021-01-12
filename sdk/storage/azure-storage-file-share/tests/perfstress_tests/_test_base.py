@@ -8,7 +8,6 @@ import uuid
 
 from azure_devtools.perfstress_tests import PerfStressTest
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.fileshare import ShareServiceClient as SyncShareServiceClient
 from azure.storage.fileshare.aio import ShareServiceClient as AsyncShareServiceClient
 
@@ -69,13 +68,6 @@ class _FileTest(_ShareTest):
         file_name = "sharefiletest-" + str(uuid.uuid4())
         self.sharefile_client = self.share_client.get_file_client(file_name)
         self.async_sharefile_client = self.async_share_client.get_file_client(file_name)
-
-    async def global_setup(self):
-        await super().global_setup()
-        try:
-            self.sharefile_client.delete_file()
-        except ResourceNotFoundError:
-            pass
 
     async def close(self):
         await self.async_sharefile_client.close()
