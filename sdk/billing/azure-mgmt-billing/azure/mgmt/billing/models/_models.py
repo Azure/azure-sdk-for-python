@@ -2828,10 +2828,16 @@ class ValidateSubscriptionTransferEligibilityError(Model):
     """Error details of the transfer eligibility validation.
 
     :param code: Error code for the product transfer validation. Possible
-     values include: 'InvalidSource', 'SubscriptionNotActive',
-     'InsufficientPermissionOnSource', 'InsufficientPermissionOnDestination',
-     'DestinationBillingProfilePastDue', 'SubscriptionTypeNotSupported',
-     'CrossBillingAccountNotAllowed', 'NotAvailableForDestinationMarket'
+     values include: 'BillingAccountInactive', 'CrossBillingAccountNotAllowed',
+     'DestinationBillingProfileInactive', 'DestinationBillingProfileNotFound',
+     'DestinationBillingProfilePastDue', 'DestinationInvoiceSectionInactive',
+     'DestinationInvoiceSectionNotFound',
+     'InsufficientPermissionOnDestination', 'InsufficientPermissionOnSource',
+     'InvalidDestination', 'InvalidSource',
+     'MarketplaceNotEnabledOnDestination', 'NotAvailableForDestinationMarket',
+     'ProductInactive', 'ProductNotFound', 'ProductTypeNotSupported',
+     'SourceBillingProfilePastDue', 'SourceInvoiceSectionInactive',
+     'SubscriptionNotActive', 'SubscriptionTypeNotSupported'
     :type code: str or
      ~azure.mgmt.billing.models.SubscriptionTransferValidationErrorCode
     :param message: The error message.
