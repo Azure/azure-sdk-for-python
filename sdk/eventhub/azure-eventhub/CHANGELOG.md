@@ -1,5 +1,8 @@
 # Release History
 
+## 5.2.2 (Unreleased)
+
+
 ## 5.2.1 (2021-01-11)
 
 **Bug fixes**
