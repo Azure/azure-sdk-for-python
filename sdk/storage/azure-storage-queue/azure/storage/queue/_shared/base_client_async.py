@@ -9,6 +9,8 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 import logging
+
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline import AsyncPipeline
 from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
@@ -17,7 +19,7 @@ from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy,
+    HttpLoggingPolicy, AzureSasCredentialPolicy,
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
@@ -71,6 +73,8 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
