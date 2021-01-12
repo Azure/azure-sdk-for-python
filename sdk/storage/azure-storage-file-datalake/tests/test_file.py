@@ -515,6 +515,10 @@ class FileTest(StorageTestCase):
             with self.assertRaises(HttpResponseError):
                 file_client.append_data(b"abcd", 0, 4)
 
+    def test_account_sas_raises_if_sas_already_in_uri(self):
+        with self.assertRaises(ValueError):
+            DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
+
     @record
     def test_file_sas_only_applies_to_file_level(self):
         # SAS URL is calculated from storage key, so this test runs live only

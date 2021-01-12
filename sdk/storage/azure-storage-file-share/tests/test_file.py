@@ -1909,6 +1909,15 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(properties)
 
     @GlobalStorageAccountPreparer()
+    def test_account_sas_raises_if_sas_already_in_uri(self, resource_group, location, storage_account, storage_account_key):
+        with self.assertRaises(ValueError):
+            ShareFileClient(
+                self.account_url(storage_account, "file") + "?sig=foo",
+                share_name=self.share_name,
+                file_path="foo",
+                credential=AzureSasCredential("?foo=bar"))
+
+    @GlobalStorageAccountPreparer()
     def test_shared_read_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:

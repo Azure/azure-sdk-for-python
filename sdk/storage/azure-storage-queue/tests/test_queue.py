@@ -577,6 +577,13 @@ class StorageQueueTest(StorageTestCase):
             self.assertNotEqual('', message.id)
             self.assertEqual(u'message1', message.content)
 
+    @GlobalStorageAccountPreparer()
+    def test_account_sas_raises_if_sas_already_in_uri(self, resource_group, location, storage_account, storage_account_key):
+        with self.assertRaises(ValueError):
+            QueueServiceClient(
+                self.account_url(storage_account, "queue") + "?sig=foo",
+                credential=AzureSasCredential("?foo=bar"))
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
