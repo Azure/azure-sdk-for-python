@@ -138,12 +138,44 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_rename_container(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        container = bsc.get_container_client("oldname")
-        container.create_container()
-        new_container = bsc.rename_container(source_container_name="oldname", destination_container_name="newname")
+        old_name1 = self._get_container_reference(prefix="oldcontainer1")
+        old_name2 = self._get_container_reference(prefix="oldcontainer2")
+        new_name = self._get_container_reference(prefix="newcontainer")
+        container1 = bsc.get_container_client(old_name1)
+        container2 = bsc.get_container_client(old_name2)
+
+        container1.create_container()
+        container2.create_container()
+
+        new_container = bsc.rename_container(
+            source_container_name=old_name1, destination_container_name=new_name)
         with self.assertRaises(HttpResponseError):
-            container.get_container_properties()
-        self.assertIsNotNone(new_container.get_container_properties)
+            bsc.rename_container(
+                source_container_name=old_name2, destination_container_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            container1.get_container_properties()
+        with self.assertRaises(HttpResponseError):
+            bsc.rename_container(
+                source_container_name="badcontainer", destination_container_name="container")
+        self.assertEqual(new_name, new_container.get_container_properties().name)
+
+    @GlobalStorageAccountPreparer()
+    def test_rename_container_with_source_lease(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name = self._get_container_reference(prefix="old")
+        new_name = self._get_container_reference(prefix="new")
+        container = bsc.get_container_client(old_name)
+        container.create_container()
+        container_lease_id = container.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            bsc.rename_container(
+                source_container_name=old_name, destination_container_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            bsc.rename_container(
+                source_container_name=old_name, destination_container_name=new_name, source_lease="bad_id")
+        new_container = bsc.rename_container(
+            source_container_name=old_name, destination_container_name=new_name, source_lease=container_lease_id)
+        self.assertEqual(new_name, new_container.get_container_properties().name)
 
     @GlobalStorageAccountPreparer()
     def test_unicode_create_container_unicode_name(self, resource_group, location, storage_account, storage_account_key):
@@ -155,8 +187,6 @@ class StorageContainerTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             # not supported - container name must be alphanumeric, lowercase
             container.create_container()
-
-        # Assert
 
     @GlobalStorageAccountPreparer()
     def test_list_containers(self, resource_group, location, storage_account, storage_account_key):
