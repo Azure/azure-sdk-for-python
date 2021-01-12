@@ -64,7 +64,7 @@ interactions:
         "accuracy": 0.8}, {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName":
         "CompanyPhoneNumber", "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy":
         1.0}, {"fieldName": "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy":
-        1.0}, {"fieldName": "PhoneNumberIdentifier", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber",
+        1.0}, {"fieldName": "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber",
         "accuracy": 1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName":
         "Signature", "accuracy": 0.8}, {"fieldName": "Subtotal", "accuracy": 1.0},
         {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
@@ -457,7 +457,7 @@ interactions:
         "confidence": 1.0, "elements": ["#/readResults/0/lines/12/words/1", "#/readResults/0/lines/12/words/2",
         "#/readResults/0/lines/12/words/3", "#/readResults/0/lines/12/words/4", "#/readResults/0/lines/13/words/0",
         "#/readResults/0/lines/13/words/1", "#/readResults/0/lines/13/words/2", "#/readResults/0/lines/13/words/3"]},
-        "PhoneNumberIdentifier": {"type": "string", "valueString": "555-348-6512", "text": "555-348-6512",
+        "PhoneNumber": {"type": "string", "valueString": "555-348-6512", "text": "555-348-6512",
         "page": 1, "boundingBox": [364.0, 351.0, 528.0, 351.0, 528.0, 378.0, 364.0,
         378.0], "confidence": 0.89, "elements": ["#/readResults/0/lines/3/words/2"]},
         "Quantity": {"type": "number", "text": "20", "page": 1, "boundingBox": [861.0,

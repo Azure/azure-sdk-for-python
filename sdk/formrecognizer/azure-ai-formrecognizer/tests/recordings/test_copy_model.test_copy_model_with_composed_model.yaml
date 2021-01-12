@@ -64,7 +64,7 @@ interactions:
         [{"fieldName": "CompanyAddress", "accuracy": 0.8}, {"fieldName": "CompanyName",
         "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber", "accuracy": 1.0}, {"fieldName":
         "DatedAs", "accuracy": 1.0}, {"fieldName": "Email", "accuracy": 0.8}, {"fieldName":
-        "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumberIdentifier", "accuracy": 1.0},
+        "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumber", "accuracy": 1.0},
         {"fieldName": "PurchaseOrderNumber", "accuracy": 1.0}, {"fieldName": "Quantity",
         "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 0.8}, {"fieldName":
         "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName":
@@ -153,7 +153,7 @@ interactions:
         [{"fieldName": "CompanyAddress", "accuracy": 0.8}, {"fieldName": "CompanyName",
         "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber", "accuracy": 1.0}, {"fieldName":
         "DatedAs", "accuracy": 1.0}, {"fieldName": "Email", "accuracy": 0.8}, {"fieldName":
-        "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumberIdentifier", "accuracy": 1.0},
+        "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumber", "accuracy": 1.0},
         {"fieldName": "PurchaseOrderNumber", "accuracy": 1.0}, {"fieldName": "Quantity",
         "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 0.8}, {"fieldName":
         "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName":
@@ -242,7 +242,7 @@ interactions:
         [{"fieldName": "CompanyAddress", "accuracy": 0.8}, {"fieldName": "CompanyName",
         "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber", "accuracy": 1.0}, {"fieldName":
         "DatedAs", "accuracy": 1.0}, {"fieldName": "Email", "accuracy": 0.8}, {"fieldName":
-        "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumberIdentifier", "accuracy": 1.0},
+        "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumber", "accuracy": 1.0},
         {"fieldName": "PurchaseOrderNumber", "accuracy": 1.0}, {"fieldName": "Quantity",
         "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 0.8}, {"fieldName":
         "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName":
@@ -256,7 +256,7 @@ interactions:
         "fields": [{"fieldName": "CompanyAddress", "accuracy": 0.8}, {"fieldName":
         "CompanyName", "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber", "accuracy":
         1.0}, {"fieldName": "DatedAs", "accuracy": 1.0}, {"fieldName": "Email", "accuracy":
-        0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumberIdentifier",
+        0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumber",
         "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy": 1.0}, {"fieldName":
         "Quantity", "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 0.8},
         {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy":
@@ -562,7 +562,7 @@ interactions:
         [{"fieldName": "CompanyAddress", "accuracy": 0.8}, {"fieldName": "CompanyName",
         "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber", "accuracy": 1.0}, {"fieldName":
         "DatedAs", "accuracy": 1.0}, {"fieldName": "Email", "accuracy": 0.8}, {"fieldName":
-        "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumberIdentifier", "accuracy": 1.0},
+        "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumber", "accuracy": 1.0},
         {"fieldName": "PurchaseOrderNumber", "accuracy": 1.0}, {"fieldName": "Quantity",
         "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 0.8}, {"fieldName":
         "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName":
@@ -576,7 +576,7 @@ interactions:
         "fields": [{"fieldName": "CompanyAddress", "accuracy": 0.8}, {"fieldName":
         "CompanyName", "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber", "accuracy":
         1.0}, {"fieldName": "DatedAs", "accuracy": 1.0}, {"fieldName": "Email", "accuracy":
-        0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumberIdentifier",
+        0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName": "PhoneNumber",
         "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy": 1.0}, {"fieldName":
         "Quantity", "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 0.8},
         {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy":

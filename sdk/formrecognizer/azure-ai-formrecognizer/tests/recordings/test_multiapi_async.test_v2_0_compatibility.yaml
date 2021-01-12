@@ -48,7 +48,7 @@ interactions:
         {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber",
         "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy": 1.0}, {"fieldName":
         "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName":
-        "PhoneNumberIdentifier", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy":
+        "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy":
         1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName": "Signature",
         "accuracy": 0.8}, {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName":
         "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy": 1.0}, {"fieldName":
@@ -524,7 +524,7 @@ interactions:
         {"rowIndex": 4, "columnIndex": 3, "text": "100.00", "boundingBox": [1309,
         1216, 1544, 1216, 1544, 1260, 1309, 1260], "elements": ["#/readResults/0/lines/40/words/0"]}]}]}],
         "documentResults": [{"docType": "custom:form", "pageRange": [1, 1], "fields":
-        {"PhoneNumberIdentifier": {"type": "string", "valueString": "555-348-6512", "text":
+        {"PhoneNumber": {"type": "string", "valueString": "555-348-6512", "text":
         "555-348-6512", "page": 1, "boundingBox": [367.0, 351.0, 529.0, 351.0, 529.0,
         378.0, 367.0, 378.0], "confidence": 1.0, "elements": ["#/readResults/0/lines/2/words/2"]},
         "DatedAs": {"type": "string", "valueString": "12/20/2020", "text": "12/20/2020",

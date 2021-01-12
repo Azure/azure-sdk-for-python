@@ -1722,7 +1722,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         # /SensitivityLabels/put/Updates the sensitivity label of a given column with all parameters[put]
 #--------------------------------------------------------------------------
         BODY = {
-          "information_type": "PhoneNumberIdentifier",
+          "information_type": "PhoneNumber",
           "information_type_id": "d22fa6e9-5ee4-3bde-4c2b-a409604c4646",
           "label_id": "bf91e08c-f4f0-478a-b016-25164b2a65ff",
           "label_name": "PII"
@@ -1761,7 +1761,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         # /ManagedDatabaseSensitivityLabels/put/Updates or creates a sensitivity label of a given column with all parameters in a managed database[put]
 #--------------------------------------------------------------------------
         BODY = {
-          "information_type": "PhoneNumberIdentifier",
+          "information_type": "PhoneNumber",
           "information_type_id": "d22fa6e9-5ee4-3bde-4c2b-a409604c4646",
           "label_id": "bf91e08c-f4f0-478a-b016-25164b2a65ff",
           "label_name": "PII"
