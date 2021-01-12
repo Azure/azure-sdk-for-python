@@ -56,6 +56,8 @@ class _ServiceTest(PerfStressTest):
 
 class _QueueTest(_ServiceTest):
     queue_name = "perfstress-" + str(uuid.uuid4())
+    queue_client = None
+    async_queue_client = None
 
     def __init__(self, arguments):
         super().__init__(arguments)
@@ -66,8 +68,14 @@ class _QueueTest(_ServiceTest):
             shared_access_key_name=connection_props['shared_access_key_name'],
             shared_access_key_value=connection_props['shared_access_key']
         )
-        queue = Queue(max_size_in_megabytes=40960)
+
+    async def global_setup(self):
+        await super().global_setup()
+        queue = Queue(max_size_in_megabytes=5120)
         self.mgmt_client.create_queue(self.queue_name, queue=queue)
+
+    async def setup(self):
+        await super().setup()
         self.queue_client = self.service_client.get_queue(self.queue_name)
         self.async_queue_client = self.async_service_client.get_queue(self.queue_name)
 
@@ -77,14 +85,13 @@ class _QueueTest(_ServiceTest):
 
 
 class _SendTest(_QueueTest):
-
-    def __init__(self, arguments):
-        super().__init__(arguments)
-        self.sender = self.queue_client.get_sender()
-        self.async_sender = self.async_queue_client.get_sender()
+    sender = None
+    async_sender = None
 
     async def setup(self):
-        await super().global_setup()
+        await super().setup()
+        self.sender = self.queue_client.get_sender()
+        self.async_sender = self.async_queue_client.get_sender()
         self.sender.open()
         await self.async_sender.open()
     
@@ -95,9 +102,11 @@ class _SendTest(_QueueTest):
 
 
 class _ReceiveTest(_QueueTest):
+    receiver = None
+    async_receiver = None
 
-    def __init__(self, arguments):
-        super().__init__(arguments)
+    async def setup(self):
+        await super().setup()
         mode = ReceiveSettleMode.PeekLock if self.args.peeklock else ReceiveSettleMode.ReceiveAndDelete
         self.receiver = self.queue_client.get_receiver(
             mode=mode,
@@ -107,24 +116,19 @@ class _ReceiveTest(_QueueTest):
             mode=mode,
             prefetch=self.args.num_messages,
             idle_timeout=self.args.max_wait_time)
-    
+        self.receiver.open()
+        await self.async_receiver.open()
+        await self._preload_queue()
+
     async def _preload_queue(self):
         data = get_random_bytes(self.args.message_size)
         async with self.async_queue_client.get_sender() as sender:
             for i in range(self.args.preload):
                 sender.queue_message(Message(data))
                 if i % 1000 == 0:
+                    print("Loaded {} messages".format(i))
                     await sender.send_pending_messages()
             await sender.send_pending_messages()
-
-    async def global_setup(self):
-        await super().global_setup()
-        await self._preload_queue()
-
-    async def setup(self):
-        await super().setup()
-        self.receiver.open()
-        await self.async_receiver.open()
     
     async def close(self):
         self.receiver.close()

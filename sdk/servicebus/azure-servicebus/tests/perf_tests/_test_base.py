@@ -49,7 +49,7 @@ class _QueueTest(_ServiceTest):
 
     async def global_setup(self):
         await super().global_setup()
-        await self.async_mgmt_client.create_queue(self.queue_name, max_size_in_megabytes=40960)
+        await self.async_mgmt_client.create_queue(self.queue_name, max_size_in_megabytes=5120)
 
     async def global_cleanup(self):
         await self.async_mgmt_client.delete_queue(self.queue_name)
@@ -61,9 +61,11 @@ class _QueueTest(_ServiceTest):
 
 
 class _SendTest(_QueueTest):
+    sender = None
+    async_sender = None
 
-    def __init__(self, arguments):
-        super().__init__(arguments)
+    async def setup(self):
+        await super().setup()
         self.sender = self.service_client.get_queue_sender(self.queue_name)
         self.async_sender = self.async_service_client.get_queue_sender(self.queue_name)
     
@@ -74,21 +76,9 @@ class _SendTest(_QueueTest):
 
 
 class _ReceiveTest(_QueueTest):
+    receiver = None
+    async_receiver = None
 
-    def __init__(self, arguments):
-        super().__init__(arguments)
-        mode = ServiceBusReceiveMode.PEEK_LOCK if self.args.peeklock else ServiceBusReceiveMode.RECEIVE_AND_DELETE
-        self.receiver = self.service_client.get_queue_receiver(
-            queue_name=self.queue_name,
-            receive_mode=mode,
-            prefetch_count=self.args.num_messages,
-            max_wait_time=self.args.max_wait_time or None)
-        self.async_receiver = self.async_service_client.get_queue_receiver(
-            queue_name=self.queue_name,
-            receive_mode=mode,
-            prefetch_count=self.args.num_messages,
-            max_wait_time=self.args.max_wait_time or None)
-    
     async def _preload_queue(self):
         data = get_random_bytes(self.args.message_size)
         async with self.async_service_client.get_queue_sender(self.queue_name) as sender:
@@ -104,8 +94,19 @@ class _ReceiveTest(_QueueTest):
                     batch.add_message(ServiceBusMessage(data))
             await sender.send_messages(batch)
 
-    async def global_setup(self):
-        await super().global_setup()
+    async def setup(self):
+        await super().setup()
+        mode = ServiceBusReceiveMode.PEEK_LOCK if self.args.peeklock else ServiceBusReceiveMode.RECEIVE_AND_DELETE
+        self.receiver = self.service_client.get_queue_receiver(
+            queue_name=self.queue_name,
+            receive_mode=mode,
+            prefetch_count=self.args.num_messages,
+            max_wait_time=self.args.max_wait_time or None)
+        self.async_receiver = self.async_service_client.get_queue_receiver(
+            queue_name=self.queue_name,
+            receive_mode=mode,
+            prefetch_count=self.args.num_messages,
+            max_wait_time=self.args.max_wait_time or None)
         await self._preload_queue()
     
     async def close(self):
