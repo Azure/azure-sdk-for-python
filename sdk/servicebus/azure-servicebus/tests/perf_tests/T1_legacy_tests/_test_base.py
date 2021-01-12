@@ -71,7 +71,7 @@ class _QueueTest(_ServiceTest):
 
     async def global_setup(self):
         await super().global_setup()
-        queue = Queue(max_size_in_megabytes=5120)
+        queue = Queue(max_size_in_megabytes=40960)
         self.mgmt_client.create_queue(self.queue_name, queue=queue)
 
     async def setup(self):
