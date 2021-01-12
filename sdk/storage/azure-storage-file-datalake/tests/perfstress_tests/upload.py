@@ -10,19 +10,23 @@ from azure_devtools.perfstress_tests import AsyncRandomStream
 
 
 class UploadTest(_FileTest):
+    def __init__(self, arguments):
+        super().__init__(arguments)
+        self.upload_stream = RandomStream(self.args.size)
+        self.upload_stream_async = AsyncRandomStream(self.args.size)
 
     def run_sync(self):
-        data = RandomStream(self.args.size)
+        self.upload_stream.reset()
         self.file_client.upload_data(
-            data,
+            self.upload_stream,
             length=self.args.size,
             overwrite=True,
             max_concurrency=self.args.max_concurrency)
 
     async def run_async(self):
-        data = AsyncRandomStream(self.args.size)
+        self.upload_stream_async.reset()
         await self.async_file_client.upload_data(
-            data,
+            self.upload_stream_async,
             length=self.args.size,
             overwrite=True,
             max_concurrency=self.args.max_concurrency)

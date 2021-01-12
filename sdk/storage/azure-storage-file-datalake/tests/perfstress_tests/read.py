@@ -14,6 +14,7 @@ class DownloadTest(_FileSystemTest):
         file_name = "downloadtest"
         self.file_client = self.fs_client.get_file_client(file_name)
         self.async_file_client = self.async_fs_client.get_file_client(file_name)
+        self.download_stream = WriteStream()
 
     async def global_setup(self):
         await super().global_setup()
@@ -22,14 +23,14 @@ class DownloadTest(_FileSystemTest):
         await self.async_file_client.upload_data(data, overwrite=True)
 
     def run_sync(self):
-        download = WriteStream()
+        self.download_stream.reset()
         stream = self.file_client.download_file(max_concurrency=self.args.max_concurrency)
-        stream.readinto(download)
+        stream.readinto(self.download_stream)
 
     async def run_async(self):
-        download = WriteStream()
+        self.download_stream.reset()
         stream = await self.async_file_client.download_file(max_concurrency=self.args.max_concurrency)
-        await stream.readinto(download)
+        await stream.readinto(self.download_stream)
 
     async def close(self):
         await self.async_file_client.close()

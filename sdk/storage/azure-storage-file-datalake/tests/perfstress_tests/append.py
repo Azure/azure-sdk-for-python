@@ -16,20 +16,22 @@ class AppendTest(_FileSystemTest):
         file_name = "filetest-" + str(uuid.uuid4())
         self.file_client = self.fs_client.get_file_client(file_name)
         self.async_file_client = self.async_fs_client.get_file_client(file_name)
+        self.upload_stream = RandomStream(self.args.size)
+        self.upload_stream_async = AsyncRandomStream(self.args.size)
 
     async def setup(self):
         await self.async_file_client.create_file()
 
     def run_sync(self):
-        data = RandomStream(self.args.size)
+        self.upload_stream.reset()
         self.file_client.append_data(
-            data,
+            self.upload_stream,
             length=self.args.size,
             offset=0)
 
     async def run_async(self):
-        data = AsyncRandomStream(self.args.size)
+        self.upload_stream_async.reset()
         await self.async_file_client.append_data(
-            data,
+            self.upload_stream_async,
             length=self.args.size,
             offset=0)
