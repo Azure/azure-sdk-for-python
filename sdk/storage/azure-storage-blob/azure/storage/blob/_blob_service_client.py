@@ -69,8 +69,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string,
         an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If AzureSasCredential is used, the URI must not contain a SAS token otherwise
-        if the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
