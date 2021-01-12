@@ -91,7 +91,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         account URL already has a SAS token. The value can be a SAS token string,
         an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If AzureSasCredential is used, the URI must not contain a SAS token otherwise
+        if the URL already has a SAS token, specifying an explicit credential will take priority.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
@@ -206,7 +207,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             access key values. The value can be a SAS token string,
             an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
+            If AzureSasCredential is used, the URI must not contain a SAS token otherwise
+            if the URL already has a SAS token, specifying an explicit credential will take priority.
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override

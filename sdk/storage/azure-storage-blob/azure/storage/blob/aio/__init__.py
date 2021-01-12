@@ -35,7 +35,8 @@ async def upload_blob_to_url(
         blob URL already has a SAS token. The value can be a SAS token string,
         an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If AzureSasCredential is used, the URI must not contain a SAS token otherwise
+        if the URL already has a SAS token, specifying an explicit credential will take priority.
     :keyword bool overwrite:
         Whether the blob to be uploaded should overwrite the current data.
         If True, upload_blob_to_url will overwrite any existing data. If set to False, the
@@ -90,7 +91,8 @@ async def download_blob_from_url(
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
         an instance of a AzureSasCredential from azure.core.credentials,
         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If AzureSasCredential is used, the URI must not contain a SAS token otherwise
+        if the URL already has a SAS token, specifying an explicit credential will take priority.
     :keyword bool overwrite:
         Whether the local file should be overwritten if it already exists. The default value is
         `False` - in which case a ValueError will be raised if the file already exists. If set to
