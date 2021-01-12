@@ -18,6 +18,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
         client_kwargs=None,
         random_name_enabled=False,
         use_cache=True,
+        preparers=None,
         **kwargs
     ):
         super(PowerShellPreparer, self).__init__(
@@ -29,6 +30,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
         self.fake_values = {}
         self.real_values = {}
         self._set_secrets(**kwargs)
+        self._backup_preparers=preparers
 
     def _set_secrets(self, **kwargs):
         keys = kwargs.keys()
@@ -52,20 +54,34 @@ class PowerShellPreparer(AzureMgmtPreparer):
 
         if self.is_live:
             self._set_mgmt_settings_real_values()
-            for key in self.needed_keys:
+            try:
+                for key in self.needed_keys:
 
-                scrubbed_value = self.fake_values[key]
-                if scrubbed_value:
-                    self.real_values[key.lower()] = os.environ[key.upper()]
-                    self.test_class_instance.scrubber.register_name_pair(
-                        self.real_values[key.lower()],
-                        scrubbed_value
-                    )
-                else:
-                    template = 'To pass a live ID you must provide the scrubbed value for recordings to \
-                        prevent secrets from being written to files. {} was not given. For example: \
-                            @PowerShellPreparer("schemaregistry", schemaregistry_endpoint="fake_endpoint.servicebus.windows.net")'
-                    raise AzureTestError(template.format(key))
+                    scrubbed_value = self.fake_values[key]
+                    if scrubbed_value:
+                        self.real_values[key.lower()] = os.environ[key.upper()]
+                        self.test_class_instance.scrubber.register_name_pair(
+                            self.real_values[key.lower()],
+                            scrubbed_value
+                        )
+                    else:
+                        template = 'To pass a live ID you must provide the scrubbed value for recordings to \
+                            prevent secrets from being written to files. {} was not given. For example: \
+                                @PowerShellPreparer("schemaregistry", schemaregistry_endpoint="fake_endpoint.servicebus.windows.net")'
+                        raise AzureTestError(template.format(key))
+            except KeyError as key_error:
+                if not self._backup_preparers:
+                    raise
+
+                self.real_values = {}
+                create_kwargs = {}
+                for preparer in self._backup_preparers:
+                    resource_name, vals = preparer._prepare_create_resource(self.test_class_instance, **create_kwargs)
+                    # vals = preparer.create_resource(name, **create_kwargs)
+                    self.real_values.update(vals)
+                    if 'resource_group' in self.real_values.keys():
+                        create_kwargs['resource_group'] = self.real_values['resource_group']
+
             return self.real_values
 
         else:

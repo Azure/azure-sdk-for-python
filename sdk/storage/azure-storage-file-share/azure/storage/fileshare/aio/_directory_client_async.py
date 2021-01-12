@@ -11,6 +11,7 @@ from typing import ( # pylint: disable=unused-import
 )
 
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -18,8 +19,6 @@ from .._parser import _get_file_permission, _datetime_to_str
 from .._shared.parser import _str
 
 from .._generated.aio import AzureFileStorage
-from .._generated.version import VERSION
-from .._generated.models import StorageErrorException
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
@@ -89,8 +88,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
         self._loop = loop
 
     def get_file_client(self, file_name, **kwargs):
@@ -178,7 +178,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -203,7 +203,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         timeout = kwargs.pop('timeout', None)
         try:
             await self._client.directory.delete(timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -297,7 +297,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 'closed_handles_count': response.get('number_of_handles_closed', 0),
                 'failed_handles_count': response.get('number_of_handles_failed', 0)
             }
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -334,7 +334,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                     cls=return_response_headers,
                     **kwargs
                 )
-            except StorageErrorException as error:
+            except HttpResponseError as error:
                 process_storage_error(error)
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)
@@ -365,7 +365,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 timeout=timeout,
                 cls=deserialize_directory_properties,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return response # type: ignore
 
@@ -395,7 +395,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -448,7 +448,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async

@@ -154,13 +154,14 @@ avro<2.0.0,>=1.10.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
-opentelemetry-api==0.13b0
+opentelemetry-api==0.16b1
+opentelemetry-sdk==0.16b1
 #override azure-eventhub-checkpointstoreblob msrest>=0.6.10
 #override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.10
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
-#override azure-eventhub uamqp>=1.2.12,<2.0.0
+#override azure-eventhub uamqp>=1.2.13,<2.0.0
 #override azure-appconfiguration msrest>=0.6.10
-#override azure-servicebus uamqp>=1.2.12,<2.0.0
+#override azure-servicebus uamqp>=1.2.13,<2.0.0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.6.0
 #override azure-search-documents msrest>=0.6.10
@@ -181,3 +182,6 @@ opentelemetry-api==0.13b0
 #override azure-communication-administration azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.12
+#override azure-opentelemetry-exporter-azuremonitor azure-core<2.0.0,>=1.6.0
+#override azure-opentelemetry-exporter-azuremonitor msrest>=0.6.10
+#override azure-core-tracing-opentelemetry opentelemetry-api==0.13b0
