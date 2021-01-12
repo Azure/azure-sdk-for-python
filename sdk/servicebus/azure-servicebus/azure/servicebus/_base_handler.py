@@ -198,6 +198,16 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
             conn_str
         )
+        kwargs = cls._create_non_credential_kwargs_from_conn_str_params(host, entity_in_conn_str, **kwargs)
+        # This has to be defined seperately to support sync vs async credentials.
+        kwargs["credential"] = cls._create_credential_from_connection_string_parameters(
+            token, token_expiry, policy, key
+        )
+        return kwargs
+
+    @classmethod
+    def _create_non_credential_kwargs_from_conn_str_params(cls, host, entity_in_conn_str, **kwargs):
+        # method can be used for both sync and async handlers
         queue_name = kwargs.get("queue_name")
         topic_name = kwargs.get("topic_name")
         if not (queue_name or topic_name or entity_in_conn_str):
@@ -226,10 +236,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
-        # This has to be defined seperately to support sync vs async credentials.
-        kwargs["credential"] = cls._create_credential_from_connection_string_parameters(
-            token, token_expiry, policy, key
-        )
         return kwargs
 
     @classmethod

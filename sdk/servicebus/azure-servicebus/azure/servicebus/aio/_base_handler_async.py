@@ -115,34 +115,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
             conn_str
         )
-        queue_name = kwargs.get("queue_name")
-        topic_name = kwargs.get("topic_name")
-        if not (queue_name or topic_name or entity_in_conn_str):
-            raise ValueError(
-                "Entity name is missing. Please specify `queue_name` or `topic_name`"
-                " or use a connection string including the entity information."
-            )
-
-        if queue_name and topic_name:
-            raise ValueError(
-                "`queue_name` and `topic_name` can not be specified simultaneously."
-            )
-
-        entity_in_kwargs = queue_name or topic_name
-        if (
-            entity_in_conn_str
-            and entity_in_kwargs
-            and (entity_in_conn_str != entity_in_kwargs)
-        ):
-            raise ValueError(
-                "The queue or topic name provided: {} which does not match the EntityPath in"
-                " the connection string passed to the ServiceBusClient constructor: {}.".format(
-                    entity_in_conn_str, entity_in_kwargs
-                )
-            )
-
-        kwargs["fully_qualified_namespace"] = host
-        kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
+        kwargs = BaseHandlerSync._create_non_credential_kwargs_from_conn_str_params(host, entity_in_conn_str, **kwargs)
         # This has to be defined seperately to support sync vs async credentials.
         kwargs["credential"] = cls._create_credential_from_connection_string_parameters(
             token, token_expiry, policy, key
