@@ -10,11 +10,11 @@ from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 from azure.core.exceptions import HttpResponseError
 
+from preparers import TablesPreparer
 from _shared.testcase import (
     TableTestCase
 )
-
-from preparers import TablesPreparer
+from devtools_testutils import AzureUnitTest
 
 # ------------------------------------------------------------------------------
 
@@ -27,9 +27,69 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
+
 class StorageTableClientTest(TableTestCase):
+
     def setUp(self):
         super(StorageTableClientTest, self).setUp()
+        self.sas_token = self.generate_sas_token()
+        self.token_credential = self.generate_oauth_token()
+
+    # --Helpers-----------------------------------------------------------------
+    def validate_standard_account_endpoints(self, service, account_name, account_key):
+        assert service is not None
+        assert service.account_name ==  account_name
+        assert service.credential.account_name ==  account_name
+        assert service.credential.account_key ==  account_key
+        assert ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url)
+
+    @TablesPreparer()
+    def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
+        service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
+
+        def callback(response):
+            assert 'User-Agent' in response.http_request.headers
+            assert "azsdk-python-data-tables/{} Python/{} ({})".format(
+                    VERSION,
+                    platform.python_version(),
+                    platform.platform()) in response.http_request.headers['User-Agent']
+
+        tables = list(service.list_tables(raw_response_hook=callback))
+        assert isinstance(tables,  list)
+
+    @TablesPreparer()
+    def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):
+        custom_app = "TestApp/v1.0"
+        service = TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key, user_agent=custom_app)
+
+        def callback(response):
+            assert 'User-Agent' in response.http_request.headers
+            assert "TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
+                    VERSION,
+                    platform.python_version(),
+                    platform.platform()) in response.http_request.headers['User-Agent']
+
+        tables = list(service.list_tables(raw_response_hook=callback))
+        assert isinstance(tables,  list)
+
+        def callback(response):
+            assert 'User-Agent' in response.http_request.headers
+            assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
+                    VERSION,
+                    platform.python_version(),
+                    platform.platform()) in response.http_request.headers['User-Agent']
+
+        tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
+        assert isinstance(tables,  list)
+
+
+
+
+
+class TestTableClientUnit(AzureUnitTest, TableTestCase):
+    def setUp(self):
+        super(TestTableClientUnit, self).setUp()
         self.sas_token = self.generate_sas_token()
         self.token_credential = self.generate_oauth_token()
 
@@ -45,6 +105,7 @@ class StorageTableClientTest(TableTestCase):
     @TablesPreparer()
     def test_create_service_with_key(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
+        print(tables_storage_account_name, tables_primary_storage_account_key)
 
         for client, url in SERVICES.items():
             # Act
@@ -371,46 +432,6 @@ class StorageTableClientTest(TableTestCase):
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
     @TablesPreparer()
-    def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
-        service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
-
-        def callback(response):
-            assert 'User-Agent' in response.http_request.headers
-            assert "azsdk-python-data-tables/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform()) in response.http_request.headers['User-Agent']
-
-        tables = list(service.list_tables(raw_response_hook=callback))
-        assert isinstance(tables,  list)
-
-    @TablesPreparer()
-    def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):
-        custom_app = "TestApp/v1.0"
-        service = TableServiceClient(
-            self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key, user_agent=custom_app)
-
-        def callback(response):
-            assert 'User-Agent' in response.http_request.headers
-            assert "TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform()) in response.http_request.headers['User-Agent']
-
-        tables = list(service.list_tables(raw_response_hook=callback))
-        assert isinstance(tables,  list)
-
-        def callback(response):
-            assert 'User-Agent' in response.http_request.headers
-            assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform()) in response.http_request.headers['User-Agent']
-
-        tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
-        assert isinstance(tables,  list)
-
-    @TablesPreparer()
     def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -446,31 +467,6 @@ class StorageTableClientTest(TableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  tables_storage_account_name
 
-    def test_create_table_client_with_invalid_name(self):
-        # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format("test")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="tables_primary_storage_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
-
-    def test_error_with_malformed_conn_str(self):
-        # Arrange
-
-        for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
-            for service_type in SERVICES.items():
-                # Act
-                with pytest.raises(ValueError) as e:
-                    service = service_type[0].from_connection_string(conn_str, table_name="test")
-
-                if conn_str in("", "foobar", "foo;bar;baz", ";"):
-                    assert str(e.value) == "Connection string is either blank or malformed."
-                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    assert str(e.value) == "Connection string missing required connection details."
-
     @TablesPreparer()
     def test_closing_pipeline_client(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -492,3 +488,27 @@ class StorageTableClientTest(TableTestCase):
             service = client(
                 self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key, table_name='table')
             service.close()
+
+    def test_create_table_client_with_invalid_name(self):
+        # Arrange
+        table_url = "https://{}.table.core.windows.net:443/foo".format("test")
+        invalid_table_name = "my_table"
+
+        # Assert
+        with pytest.raises(ValueError) as excinfo:
+            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="tables_primary_storage_account_key")
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
+
+    def test_error_with_malformed_conn_str(self):
+        # Arrange
+        for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
+            for service_type in SERVICES.items():
+                # Act
+                with pytest.raises(ValueError) as e:
+                    service = service_type[0].from_connection_string(conn_str, table_name="test")
+
+                if conn_str in("", "foobar", "foo;bar;baz", ";"):
+                    assert str(e.value) == "Connection string is either blank or malformed."
+                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
+                    assert str(e.value) == "Connection string missing required connection details."
