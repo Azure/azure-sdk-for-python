@@ -1085,7 +1085,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
 
         if base.IsItemContainerLink(database_or_container_link):
-            print('checking link', document)
             options = self._AddPartitionKey(database_or_container_link, document, options)
 
         return self.Create(document, path, "docs", collection_id, None, options, **kwargs)
