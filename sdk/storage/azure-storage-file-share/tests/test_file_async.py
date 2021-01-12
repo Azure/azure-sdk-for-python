@@ -2073,7 +2073,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         with self.assertRaises(ValueError):
             ShareFileClient(
                 self.account_url(storage_account, "file") + "?sig=foo",
-                share_name=self.share_name,
+                share_name="foo",
                 file_path="foo",
                 credential=AzureSasCredential("?foo=bar"))
 
