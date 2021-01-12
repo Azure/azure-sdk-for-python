@@ -12,6 +12,7 @@ import requests
 from opentelemetry.sdk.metrics.export import MetricsExportResult
 from opentelemetry.sdk.trace.export import SpanExportResult
 
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.opentelemetry.exporter.azuremonitor.export._base import (
     BaseExporter,
     ExportResult,
@@ -116,10 +117,29 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    def test_transmit_http_error_retryable(self):
+        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base.is_retryable_code") as m:
+            m.return_value = True
+            with mock.patch("requests.Session.request", throw(HttpResponseError)):
+                result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmit_http_error_retryable(self):
+        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base.is_retryable_code") as m:
+            m.return_value = False
+            with mock.patch("requests.Session.request", throw(HttpResponseError)):
+                result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+
+    def test_transmit_request_error(self):
+        with mock.patch("requests.Session.request", throw(ServiceRequestError, message="error")):
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
     def test_transmit_request_exception(self):
         with mock.patch("requests.Session.request", throw(Exception)):
             result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_200(self):
         with mock.patch("requests.Session.request") as post:
@@ -236,9 +256,21 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    def test_transmission_502(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(503, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
     def test_transmission_503(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(503, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_504(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(504, "{}")
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
