@@ -136,6 +136,16 @@ class StorageContainerTest(StorageTestCase):
         self.assertTrue(exists)
 
     @GlobalStorageAccountPreparer()
+    def test_rename_container(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = bsc.get_container_client("oldname")
+        container.create_container()
+        new_container = bsc.rename_container(source_container_name="oldname", destination_container_name="newname")
+        with self.assertRaises(HttpResponseError):
+            container.get_container_properties()
+        self.assertIsNotNone(new_container.get_container_properties)
+
+    @GlobalStorageAccountPreparer()
     def test_unicode_create_container_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_name = u'啊齄丂狛狜'

@@ -1,0 +1,82 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 00:42:08 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/oldname?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 12 Jan 2021 00:42:06 GMT
+      etag:
+      - '"0x8D8B692E3AE3722"'
+      last-modified:
+      - Tue, 12 Jan 2021 00:42:07 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 00:42:08 GMT
+      x-ms-source-container-name:
+      - oldname
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/newname?restype=container&comp=rename
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>InvalidQueryParameterValue</Code><Message>Value
+        for one of the query parameters specified in the request URI is invalid.\nRequestId:f36636d3-201e-0033-6f7b-e88569000000\nTime:2021-01-12T00:42:07.5401859Z</Message><QueryParameterName>comp</QueryParameterName><QueryParameterValue>rename</QueryParameterValue></Error>"
+    headers:
+      content-length:
+      - '368'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 12 Jan 2021 00:42:06 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidQueryParameterValue
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 400
+      message: Value for one of the query parameters specified in the request URI
+        is invalid.
+version: 1
