@@ -7,9 +7,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - c02c55cd-54a7-11eb-a6ed-c8348e5fffbc
+      - c52243d6-555f-11eb-95a0-c8348e5fffbc
       x-ms-date:
-      - Tue, 12 Jan 2021 07:28:22 GMT
+      - Wed, 13 Jan 2021 05:25:38 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -18,12 +18,12 @@ interactions:
     body:
       string: ''
     headers:
-      Date: Tue, 12 Jan 2021 07:28:22 GMT
-      ETag: '"0x8D8B6CBA485F5DA"'
-      Last-Modified: Tue, 12 Jan 2021 07:28:22 GMT
+      Date: Wed, 13 Jan 2021 05:25:37 GMT
+      ETag: '"0x8D8B783A982BA7C"'
+      Last-Modified: Wed, 13 Jan 2021 05:25:38 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
-      x-ms-request-id: 429f8c31-301e-0004-01b4-e814cb000000
+      x-ms-request-id: cb1d8a08-801e-0016-706c-e920d7000000
       x-ms-version: '2020-04-08'
     status:
       code: 201
@@ -37,9 +37,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - c054ec67-54a7-11eb-9ee0-c8348e5fffbc
+      - c557b10f-555f-11eb-8082-c8348e5fffbc
       x-ms-date:
-      - Tue, 12 Jan 2021 07:28:22 GMT
+      - Wed, 13 Jan 2021 05:25:38 GMT
       x-ms-version:
       - '2020-04-08'
     method: DELETE
@@ -48,10 +48,10 @@ interactions:
     body:
       string: ''
     headers:
-      Date: Tue, 12 Jan 2021 07:28:22 GMT
+      Date: Wed, 13 Jan 2021 05:25:38 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
-      x-ms-request-id: 429f8c36-301e-0004-03b4-e814cb000000
+      x-ms-request-id: cb1d8a0d-801e-0016-726c-e920d7000000
       x-ms-version: '2020-04-08'
     status:
       code: 202
@@ -65,9 +65,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - c0639258-54a7-11eb-9eaf-c8348e5fffbc
+      - c56609b7-555f-11eb-848b-c8348e5fffbc
       x-ms-date:
-      - Tue, 12 Jan 2021 07:28:22 GMT
+      - Wed, 13 Jan 2021 05:25:38 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
@@ -75,14 +75,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:429f8c3a-301e-0004-05b4-e814cb000000\nTime:2021-01-12T07:28:22.9505385Z</Message></Error>"
+        specified container does not exist.\nRequestId:cb1d8a0e-801e-0016-736c-e920d7000000\nTime:2021-01-13T05:25:38.7712499Z</Message></Error>"
     headers:
       Content-Length: '225'
       Content-Type: application/xml
-      Date: Tue, 12 Jan 2021 07:28:22 GMT
+      Date: Wed, 13 Jan 2021 05:25:38 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ContainerNotFound
-      x-ms-request-id: 429f8c3a-301e-0004-05b4-e814cb000000
+      x-ms-request-id: cb1d8a0e-801e-0016-736c-e920d7000000
       x-ms-version: '2020-04-08'
     status:
       code: 404
@@ -96,13 +96,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - c06da477-54a7-11eb-ba63-c8348e5fffbc
+      - c56fa695-555f-11eb-9119-c8348e5fffbc
       x-ms-date:
-      - Tue, 12 Jan 2021 07:28:22 GMT
+      - Wed, 13 Jan 2021 05:25:38 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://storagename.blob.core.windows.net/?comp=list&include=deleted
+    uri: https://storagename.blob.core.windows.net/?comp=list&include=
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
@@ -115,13 +115,13 @@ interactions:
         /></EnumerationResults>"
     headers:
       Content-Type: application/xml
-      Date: Tue, 12 Jan 2021 07:28:23 GMT
+      Date: Wed, 13 Jan 2021 05:25:38 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
-      x-ms-request-id: 429f8c3b-301e-0004-06b4-e814cb000000
+      x-ms-request-id: cb1d8a10-801e-0016-756c-e920d7000000
       x-ms-version: '2020-04-08'
     status:
       code: 200
       message: OK
-    url: https://storagename.blob.core.windows.net/?comp=list&include=deleted
+    url: https://storagename.blob.core.windows.net/?comp=list&include=
 version: 1

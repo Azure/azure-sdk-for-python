@@ -210,7 +210,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems(include_deleted=True):
+        async for fs in self.dsc.list_file_systems():
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
@@ -245,7 +245,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems(include_deleted=True):
+        async for fs in self.dsc.list_file_systems():
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
@@ -277,7 +277,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems(include_deleted=True):
+        async for fs in self.dsc.list_file_systems():
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 

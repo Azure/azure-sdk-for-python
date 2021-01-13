@@ -139,10 +139,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :param bool include_metadata:
             Specifies that file system metadata be returned in the response.
             The default value is `False`.
-        :keyword bool include_deleted:
-            Specifies that deleted containers to be returned in the response. This is for container restore enabled
-            account. The default value is `False`.
-            .. versionadded:: 12.3.0
         :keyword int results_per_page:
             The maximum number of file system names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items per page.

@@ -170,7 +170,7 @@ class FileSystemTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             filesystem_client.get_file_system_properties()
 
-        filesystem_list = list(self.dsc.list_file_systems(include_deleted=True))
+        filesystem_list = list(self.dsc.list_file_systems())
         self.assertTrue(len(filesystem_list) >= 1)
 
         restored_version = 0
@@ -199,7 +199,7 @@ class FileSystemTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             filesystem_client.get_file_system_properties()
 
-        filesystem_list = list(self.dsc.list_file_systems(include_deleted=True))
+        filesystem_list = list(self.dsc.list_file_systems())
         self.assertTrue(len(filesystem_list) >= 1)
 
         for filesystem in filesystem_list:
@@ -226,7 +226,7 @@ class FileSystemTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             filesystem_client.get_file_system_properties()
 
-        filesystem_list = list(dsc.list_file_systems(include_deleted=True))
+        filesystem_list = list(dsc.list_file_systems())
         self.assertTrue(len(filesystem_list) >= 1)
 
         restored_version = 0
