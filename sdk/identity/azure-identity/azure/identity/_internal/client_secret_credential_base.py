@@ -5,10 +5,9 @@
 import abc
 from typing import TYPE_CHECKING
 
-from msal import TokenCache
-
 from . import validate_tenant_id
 from .persistent_cache import load_service_principal_cache
+from .._token_cache import TokenCache
 
 try:
     ABC = abc.ABC

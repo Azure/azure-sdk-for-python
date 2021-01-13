@@ -4,13 +4,10 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from msal import TokenCache
-
 from .._internal import AadClient, AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ..._credentials.certificate import get_client_credential
-from ..._internal import AadClientCertificate, validate_tenant_id
-from ..._internal.persistent_cache import load_service_principal_cache
+from ..._internal import _TokenCache, AadClientCertificate, validate_tenant_id
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -46,14 +43,8 @@ class CertificateCredential(AsyncContextManager):
             client_credential["private_key"], password=client_credential.get("passphrase")
         )
 
-        enable_persistent_cache = kwargs.pop("enable_persistent_cache", False)
-        if enable_persistent_cache:
-            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
-            cache = load_service_principal_cache(allow_unencrypted)
-        else:
-            cache = TokenCache()
-
-        self._client = AadClient(tenant_id, client_id, cache=cache, **kwargs)
+        cache = kwargs.pop("token_cache", None) or _TokenCache()
+        self._client = AadClient(tenant_id, client_id, cache=cache._cache, **kwargs)
         self._client_id = client_id
 
     async def __aenter__(self):

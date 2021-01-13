@@ -6,14 +6,14 @@ from typing import TYPE_CHECKING
 
 from .._internal import AadClient, AsyncContextManager
 from .._internal.decorators import log_get_token_async
-from ..._internal import ClientSecretCredentialBase
+from ..._internal import _TokenCache, validate_tenant_id
 
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AccessToken
 
 
-class ClientSecretCredential(AsyncContextManager, ClientSecretCredentialBase):
+class ClientSecretCredential(AsyncContextManager):
     """Authenticates as a service principal using a client ID and client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
@@ -28,6 +28,23 @@ class ClientSecretCredential(AsyncContextManager, ClientSecretCredentialBase):
     :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
           is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
+
+    def __init__(self, tenant_id, client_id, client_secret, **kwargs):
+        # type: (str, str, str, **Any) -> None
+        if not client_id:
+            raise ValueError("client_id should be the id of an Azure Active Directory application")
+        if not client_secret:
+            raise ValueError("secret should be an Azure Active Directory application's client secret")
+        if not tenant_id:
+            raise ValueError(
+                "tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')"
+            )
+        validate_tenant_id(tenant_id)
+
+        self._cache = kwargs.pop("token_cache", None) or _TokenCache()
+        self._client = AadClient(tenant_id, client_id, cache=self._cache._cache, **kwargs)
+        self._client_id = client_id
+        self._secret = client_secret
 
     async def __aenter__(self):
         await self._client.__aenter__()

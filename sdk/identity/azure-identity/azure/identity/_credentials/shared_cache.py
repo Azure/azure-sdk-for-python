@@ -54,7 +54,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             # authenticate in the tenant that produced the record unless "tenant_id" specifies another
             self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
             validate_tenant_id(self._tenant_id)
-            self._cache = kwargs.pop("_cache", None)
+            self._cache = kwargs.pop("token_cache", None)
             self._app = None
             self._client_kwargs = kwargs
             self._initialized = False
@@ -121,7 +121,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             self._app = PublicClientApplication(
                 client_id=self._auth_record.client_id,
                 authority="https://{}/{}".format(self._auth_record.authority, self._tenant_id),
-                token_cache=self._cache,
+                token_cache=self._cache._cache,  # pylint:disable=protected-access
                 http_client=MsalClient(**self._client_kwargs),
                 client_capabilities=["CP1"]
             )
