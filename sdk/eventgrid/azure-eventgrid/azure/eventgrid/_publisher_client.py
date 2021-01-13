@@ -36,8 +36,7 @@ from ._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent 
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import AzureKeyCredential
-    from ._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
+    from azure.core.credentials import AzureKeyCredential, AzureSasCredential
     SendType = Union[
         CloudEvent,
         EventGridEvent,
@@ -63,11 +62,11 @@ class EventGridPublisherClient(object):
     :param str topic_hostname: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which
      implements SAS key authentication or SAS token authentication.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or EventGridSharedAccessSignatureCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or AzureSasCredential
     """
 
     def __init__(self, topic_hostname, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
+        # type: (str, Union[AzureKeyCredential, AzureSasCredential], Any) -> None
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
 
         self._topic_hostname = topic_hostname
@@ -78,7 +77,7 @@ class EventGridPublisherClient(object):
 
     @staticmethod
     def _policies(credential, **kwargs):
-        # type: (Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> List[Any]
+        # type: (Union[AzureKeyCredential, AzureSasCredential], Any) -> List[Any]
         auth_policy = _get_authentication_policy(credential)
         sdk_moniker = 'eventgrid/{}'.format(VERSION)
         policies = [

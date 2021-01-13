@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Union, List, Dict, cast
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import (
     RequestIdPolicy,
@@ -32,7 +32,6 @@ from .._helpers import (
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent as InternalEventGridEvent
-from .._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from .._version import VERSION
 
 SendType = Union[
@@ -59,13 +58,13 @@ class EventGridPublisherClient():
     :param str topic_hostname: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which implements
      SAS key authentication or SAS token authentication.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or EventGridSharedAccessSignatureCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or AzureSasCredential
     """
 
     def __init__(
         self,
         topic_hostname: str,
-        credential: Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential],
+        credential: Union[AzureKeyCredential, AzureSasCredential],
         **kwargs: Any) -> None:
         self._client = EventGridPublisherClientAsync(
             policies=EventGridPublisherClient._policies(credential, **kwargs),
@@ -76,7 +75,7 @@ class EventGridPublisherClient():
 
     @staticmethod
     def _policies(
-        credential: Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential],
+        credential: Union[AzureKeyCredential, AzureSasCredential],
         **kwargs: Any
         ) -> List[Any]:
         auth_policy = _get_authentication_policy(credential)
