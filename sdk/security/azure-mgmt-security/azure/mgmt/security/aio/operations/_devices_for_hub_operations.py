@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class DevicesForHubOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,9 +46,9 @@ class DevicesForHubOperations:
         resource_id: str,
         limit: Optional[int] = None,
         skip_token: Optional[str] = None,
-        device_management_type: Optional[Union[str, "models.ManagementState"]] = None,
+        device_management_type: Optional[Union[str, "_models.ManagementState"]] = None,
         **kwargs
-    ) -> AsyncIterable["models.DeviceList"]:
+    ) -> AsyncIterable["_models.DeviceList"]:
         """Get list of the devices for the specified IoT Hub resource.
 
         :param resource_id: The identifier of the resource.
@@ -64,7 +64,7 @@ class DevicesForHubOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.DeviceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeviceList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeviceList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

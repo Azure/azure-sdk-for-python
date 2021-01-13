@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ApplicationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ApplicationListResult"]:
+    ) -> AsyncIterable["_models.ApplicationListResult"]:
         """Lists all of the applications for the HDInsight cluster.
 
         :param resource_group_name: The name of the resource group.
@@ -60,7 +60,7 @@ class ApplicationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hdinsight.models.ApplicationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,7 +107,7 @@ class ApplicationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -124,7 +124,7 @@ class ApplicationsOperations:
         cluster_name: str,
         application_name: str,
         **kwargs
-    ) -> "models.Application":
+    ) -> "_models.Application":
         """Gets properties of the specified application.
 
         :param resource_group_name: The name of the resource group.
@@ -138,7 +138,7 @@ class ApplicationsOperations:
         :rtype: ~azure.mgmt.hdinsight.models.Application
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Application"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Application"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,7 +170,7 @@ class ApplicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Application', pipeline_response)
@@ -186,10 +186,10 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: "models.Application",
+        parameters: "_models.Application",
         **kwargs
-    ) -> "models.Application":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Application"]
+    ) -> "_models.Application":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Application"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -226,7 +226,7 @@ class ApplicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Application', pipeline_response)
@@ -242,9 +242,9 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: "models.Application",
+        parameters: "_models.Application",
         **kwargs
-    ) -> AsyncLROPoller["models.Application"]:
+    ) -> AsyncLROPoller["_models.Application"]:
         """Creates applications for the HDInsight cluster.
 
         :param resource_group_name: The name of the resource group.
@@ -266,7 +266,7 @@ class ApplicationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Application"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Application"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -292,7 +292,14 @@ class ApplicationsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'applicationName': self._serialize.url("application_name", application_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -345,7 +352,7 @@ class ApplicationsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -401,7 +408,14 @@ class ApplicationsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'applicationName': self._serialize.url("application_name", application_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

@@ -21,55 +21,67 @@ USAGE:
 """
 
 import os
+from dotenv import find_dotenv, load_dotenv
 
 
 class QueryTables(object):
-    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-    table_name = "OfficeSupplies"
+
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name,
+            self.access_key,
+            self.endpoint
+        )
+        self.table_name = "SampleQueryTables"
 
     def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
         from azure.data.tables import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
+        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
 
-        # [START tsc_create_table]
-        table_service.create_table("mytable1")
-        table_service.create_table("mytable2")
-        # [END tsc_create_table]
+            # [START tsc_create_table]
+            table_service.create_table("mytable1")
+            table_service.create_table("mytable2")
+            # [END tsc_create_table]
 
-        try:
-            # [START tsc_list_tables]
-            # List all the tables in the service
-            list_tables = table_service.list_tables()
-            print("Listing tables:")
-            for table in list_tables:
-                print("\t{}".format(table.table_name))
-            # [END tsc_list_tables]
+            try:
+                # [START tsc_list_tables]
+                # List all the tables in the service
+                list_tables = table_service.list_tables()
+                print("Listing tables:")
+                for table in list_tables:
+                    print("\t{}".format(table.table_name))
+                # [END tsc_list_tables]
 
-            # [START tsc_query_tables]
-            table_name = "mytable1"
-            name_filter = "TableName eq '{}'".format(table_name)
-            queried_tables = table_service.query_tables(filter=name_filter)
+                # [START tsc_query_tables]
+                table_name = "mytable1"
+                name_filter = "TableName eq '{}'".format(table_name)
+                queried_tables = table_service.query_tables(filter=name_filter)
 
-            print("Queried_tables")
-            for table in queried_tables:
-                print("\t{}".format(table.table_name))
-            # [END tsc_query_tables]
+                print("Queried_tables")
+                for table in queried_tables:
+                    print("\t{}".format(table.table_name))
+                # [END tsc_query_tables]
 
-        finally:
-            # [START tsc_delete_table]
-            self.delete_tables()
-            # [END tsc_delete_table]
+            finally:
+                # [START tsc_delete_table]
+                self.delete_tables()
+                # [END tsc_delete_table]
 
     def delete_tables(self):
         from azure.data.tables import TableServiceClient
-        ts = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-        tables = ["mytable1", "mytable2"]
-        for table in tables:
-            try:
-                ts.delete_table(table_name=table)
-            except:
-                pass
+        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as ts:
+            tables = ["mytable1", "mytable2"]
+            for table in tables:
+                try:
+                    ts.delete_table(table_name=table)
+                except:
+                    pass
 
 if __name__ == '__main__':
     sample = QueryTables()

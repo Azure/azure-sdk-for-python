@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/checkNameAvailability?api-version=2016-11-01
   response:
@@ -27,7 +27,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:26:16 GMT
+      - Mon, 21 Dec 2020 07:18:56 GMT
       expires:
       - '-1'
       pragma:
@@ -67,15 +67,15 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7?api-version=2016-11-01
   response:
     body:
-      string: '{"properties":{"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"2d0a972f-feca-4106-849b-c3641a8e94dc"},"location":"eastus2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
+      string: '{"properties":{"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"5b67fe82-da80-45c7-be22-8860820f0ff6"},"location":"eastus2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/2d0a972f-feca-4106-849b-c3641a8e94dc_0?api-version=2016-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/5b67fe82-da80-45c7-be22-8860820f0ff6_0?api-version=2016-11-01
       cache-control:
       - no-cache
       content-length:
@@ -83,7 +83,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:26:34 GMT
+      - Mon, 21 Dec 2020 07:19:09 GMT
       expires:
       - '-1'
       location:
@@ -99,7 +99,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
       x-powered-by:
       - ASP.NET
     status:
@@ -115,9 +115,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/2d0a972f-feca-4106-849b-c3641a8e94dc_0?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/5b67fe82-da80-45c7-be22-8860820f0ff6_0?api-version=2016-11-01
   response:
     body:
       string: '{"status":"InProgress"}'
@@ -129,7 +129,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:26:46 GMT
+      - Mon, 21 Dec 2020 07:19:20 GMT
       expires:
       - '-1'
       pragma:
@@ -161,9 +161,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/2d0a972f-feca-4106-849b-c3641a8e94dc_0?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/5b67fe82-da80-45c7-be22-8860820f0ff6_0?api-version=2016-11-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -175,7 +175,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:27:17 GMT
+      - Mon, 21 Dec 2020 07:19:50 GMT
       expires:
       - '-1'
       pragma:
@@ -207,12 +207,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7?api-version=2016-11-01
   response:
     body:
-      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"2d0a972f-feca-4106-849b-c3641a8e94dc","creationTime":"2020-10-26T09:26:35.5792525Z","lastModifiedTime":"2020-10-26T09:26:35.5792525Z"},"location":"eastus2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"117d3854-3e25-4cbd-a1c3-32f852440765","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
+      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"5b67fe82-da80-45c7-be22-8860820f0ff6","creationTime":"2020-12-21T07:19:09.5616055Z","lastModifiedTime":"2020-12-21T07:19:09.5616055Z"},"location":"eastus2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"896ecab2-bd1a-4351-9c3d-99ca04cc4136","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
     headers:
       cache-control:
       - no-cache
@@ -221,7 +221,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:27:19 GMT
+      - Mon, 21 Dec 2020 07:19:52 GMT
       expires:
       - '-1'
       pragma:
@@ -257,7 +257,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/checkNameAvailability?api-version=2016-11-01
   response:
@@ -272,7 +272,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:27:20 GMT
+      - Mon, 21 Dec 2020 07:19:53 GMT
       expires:
       - '-1'
       pragma:
@@ -306,12 +306,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7?api-version=2016-11-01
   response:
     body:
-      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"2d0a972f-feca-4106-849b-c3641a8e94dc","creationTime":"2020-10-26T09:26:35.5792525Z","lastModifiedTime":"2020-10-26T09:26:35.5792525Z"},"location":"eastus2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"117d3854-3e25-4cbd-a1c3-32f852440765","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
+      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"5b67fe82-da80-45c7-be22-8860820f0ff6","creationTime":"2020-12-21T07:19:09.5616055Z","lastModifiedTime":"2020-12-21T07:19:09.5616055Z"},"location":"eastus2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"896ecab2-bd1a-4351-9c3d-99ca04cc4136","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
     headers:
       cache-control:
       - no-cache
@@ -320,7 +320,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:27:21 GMT
+      - Mon, 21 Dec 2020 07:19:54 GMT
       expires:
       - '-1'
       pragma:
@@ -356,15 +356,15 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7?api-version=2016-11-01
   response:
     body:
-      string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"0335442f-541a-4f78-9809-3727cf6ac9fc"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
+      string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"9c2577cf-214b-4397-8e5f-ccb5edefb2d4"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/0335442f-541a-4f78-9809-3727cf6ac9fc_0?api-version=2016-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/9c2577cf-214b-4397-8e5f-ccb5edefb2d4_0?api-version=2016-11-01
       cache-control:
       - no-cache
       content-length:
@@ -372,7 +372,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:27:28 GMT
+      - Mon, 21 Dec 2020 07:19:59 GMT
       expires:
       - '-1'
       location:
@@ -388,7 +388,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
       x-powered-by:
       - ASP.NET
     status:
@@ -404,9 +404,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/0335442f-541a-4f78-9809-3727cf6ac9fc_0?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/9c2577cf-214b-4397-8e5f-ccb5edefb2d4_0?api-version=2016-11-01
   response:
     body:
       string: '{"status":"InProgress"}'
@@ -418,7 +418,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:27:40 GMT
+      - Mon, 21 Dec 2020 07:20:10 GMT
       expires:
       - '-1'
       pragma:
@@ -450,9 +450,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/0335442f-541a-4f78-9809-3727cf6ac9fc_0?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/operationResults/9c2577cf-214b-4397-8e5f-ccb5edefb2d4_0?api-version=2016-11-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -464,7 +464,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:28:12 GMT
+      - Mon, 21 Dec 2020 07:20:42 GMT
       expires:
       - '-1'
       pragma:
@@ -496,12 +496,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7?api-version=2016-11-01
   response:
     body:
-      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls2847d11a7.azuredatalakestore.net","accountId":"0335442f-541a-4f78-9809-3727cf6ac9fc","creationTime":"2020-10-26T09:27:28.7029072Z","lastModifiedTime":"2020-10-26T09:27:28.7029072Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
+      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls2847d11a7.azuredatalakestore.net","accountId":"9c2577cf-214b-4397-8e5f-ccb5edefb2d4","creationTime":"2020-12-21T07:20:00.8214792Z","lastModifiedTime":"2020-12-21T07:20:00.8214792Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
     headers:
       cache-control:
       - no-cache
@@ -510,7 +510,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:28:13 GMT
+      - Mon, 21 Dec 2020 07:20:43 GMT
       expires:
       - '-1'
       pragma:
@@ -542,12 +542,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7?api-version=2016-11-01
   response:
     body:
-      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls2847d11a7.azuredatalakestore.net","accountId":"0335442f-541a-4f78-9809-3727cf6ac9fc","creationTime":"2020-10-26T09:27:28.7029072Z","lastModifiedTime":"2020-10-26T09:27:28.7029072Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
+      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls2847d11a7.azuredatalakestore.net","accountId":"9c2577cf-214b-4397-8e5f-ccb5edefb2d4","creationTime":"2020-12-21T07:20:00.8214792Z","lastModifiedTime":"2020-12-21T07:20:00.8214792Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
     headers:
       cache-control:
       - no-cache
@@ -556,7 +556,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:28:14 GMT
+      - Mon, 21 Dec 2020 07:20:44 GMT
       expires:
       - '-1'
       pragma:
@@ -588,21 +588,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts?api-version=2016-11-01
   response:
     body:
-      string: '{"value":[{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2847d11a7.azuredatalakestore.net","accountId":"4343d7b2-ae8e-4499-a1e1-a027bb521d6e","creationTime":"2020-10-26T02:58:21.9733601Z","lastModifiedTime":"2020-10-26T09:23:12.729278Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"1048f184-5bcb-4478-953f-0400ef4ce9ea","creationTime":"2020-10-26T09:22:23.9870139Z","lastModifiedTime":"2020-10-26T09:22:23.9870139Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"testadls2847d11a7.azuredatalakestore.net","accountId":"0335442f-541a-4f78-9809-3727cf6ac9fc","creationTime":"2020-10-26T09:27:28.7029072Z","lastModifiedTime":"2020-10-26T09:27:28.7029072Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"2d0a972f-feca-4106-849b-c3641a8e94dc","creationTime":"2020-10-26T09:26:35.5792525Z","lastModifiedTime":"2020-10-26T09:26:35.5792525Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}]}'
+      string: '{"value":[{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"testadls2847d11a7.azuredatalakestore.net","accountId":"9c2577cf-214b-4397-8e5f-ccb5edefb2d4","creationTime":"2020-12-21T07:20:00.8214792Z","lastModifiedTime":"2020-12-21T07:20:00.8214792Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"5b67fe82-da80-45c7-be22-8860820f0ff6","creationTime":"2020-12-21T07:19:09.5616055Z","lastModifiedTime":"2020-12-21T07:19:09.5616055Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2286'
+      - '1146'
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:28:16 GMT
+      - Mon, 21 Dec 2020 07:20:46 GMT
       expires:
       - '-1'
       pragma:
@@ -634,21 +634,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/accounts?api-version=2016-11-01
   response:
     body:
-      string: '{"value":[{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2847d11a7.azuredatalakestore.net","accountId":"4343d7b2-ae8e-4499-a1e1-a027bb521d6e","creationTime":"2020-10-26T02:58:21.9733601Z","lastModifiedTime":"2020-10-26T09:23:12.729278Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"1048f184-5bcb-4478-953f-0400ef4ce9ea","creationTime":"2020-10-26T09:22:23.9870139Z","lastModifiedTime":"2020-10-26T09:22:23.9870139Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"testadls2847d11a7.azuredatalakestore.net","accountId":"0335442f-541a-4f78-9809-3727cf6ac9fc","creationTime":"2020-10-26T09:27:28.7029072Z","lastModifiedTime":"2020-10-26T09:27:28.7029072Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"2d0a972f-feca-4106-849b-c3641a8e94dc","creationTime":"2020-10-26T09:26:35.5792525Z","lastModifiedTime":"2020-10-26T09:26:35.5792525Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"yemingdatalake.azuredatalakestore.net","accountId":"1c7154c9-59ae-4866-bcc3-e4b04cfb49e5","creationTime":"2020-01-14T02:37:56.1188477Z","lastModifiedTime":"2020-01-14T02:37:56.1188477Z"},"location":"eastus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yeming/providers/Microsoft.DataLakeStore/accounts/yemingdatalake","name":"yemingdatalake","type":"Microsoft.DataLakeStore/accounts"}]}'
+      string: '{"value":[{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"testadls2847d11a7.azuredatalakestore.net","accountId":"9c2577cf-214b-4397-8e5f-ccb5edefb2d4","creationTime":"2020-12-21T07:20:00.8214792Z","lastModifiedTime":"2020-12-21T07:20:00.8214792Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls2847d11a7","name":"testadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"5b67fe82-da80-45c7-be22-8860820f0ff6","creationTime":"2020-12-21T07:19:09.5616055Z","lastModifiedTime":"2020-12-21T07:19:09.5616055Z"},"location":"eastus2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2776'
+      - '1146'
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:28:18 GMT
+      - Mon, 21 Dec 2020 07:20:47 GMT
       expires:
       - '-1'
       pragma:
@@ -684,12 +684,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7?api-version=2016-11-01
   response:
     body:
-      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"2d0a972f-feca-4106-849b-c3641a8e94dc","creationTime":"2020-10-26T09:26:35.5792525Z","lastModifiedTime":"2020-10-26T09:28:20.6827214Z"},"location":"eastus2","tags":{"tag2":"value2"},"identity":{"type":"SystemAssigned","principalId":"117d3854-3e25-4cbd-a1c3-32f852440765","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
+      string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","dataLakePerformanceTierState":"Disabled","provisioningState":"Succeeded","state":"Active","endpoint":"testadls847d11a7.azuredatalakestore.net","accountId":"5b67fe82-da80-45c7-be22-8860820f0ff6","creationTime":"2020-12-21T07:19:09.5616055Z","lastModifiedTime":"2020-12-21T07:20:48.9970883Z"},"location":"eastus2","tags":{"tag2":"value2"},"identity":{"type":"SystemAssigned","principalId":"896ecab2-bd1a-4351-9c3d-99ca04cc4136","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7","name":"testadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'
     headers:
       cache-control:
       - no-cache
@@ -698,7 +698,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:28:24 GMT
+      - Mon, 21 Dec 2020 07:20:50 GMT
       expires:
       - '-1'
       pragma:
@@ -716,7 +716,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1197'
       x-powered-by:
       - ASP.NET
     status:
@@ -732,12 +732,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/eastus2/capability?api-version=2016-11-01
   response:
     body:
-      string: '{"subscriptionId":"00000000-0000-0000-0000-000000000000","state":"Registered","maxAccountCount":10,"accountCount":5,"migrationState":false}'
+      string: '{"subscriptionId":"00000000-0000-0000-0000-000000000000","state":"Registered","maxAccountCount":10,"accountCount":2,"migrationState":false}'
     headers:
       cache-control:
       - no-cache
@@ -746,7 +746,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:28:25 GMT
+      - Mon, 21 Dec 2020 07:20:51 GMT
       expires:
       - '-1'
       pragma:
@@ -778,7 +778,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/providers/Microsoft.DataLakeStore/operations?api-version=2016-11-01
   response:
@@ -817,13 +817,21 @@ interactions:
         Trusted Identity Provider","description":"Create or update a trusted identity
         provider."}},{"name":"Microsoft.DataLakeStore/accounts/trustedIdProviders/delete","display":{"provider":"Microsoft
         DataLakeStore","resource":"Trusted IdProvider","operation":"Delete Trusted
-        Identity Provider","description":"Delete a trusted identity provider."}},{"name":"Microsoft.DataLakeStore/accounts/shares/read","display":{"provider":"Microsoft
+        Identity Provider","description":"Delete a trusted identity provider."}},{"name":"Microsoft.DataLakeStore/accounts/cosmosCertMappings/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Cosmos Cert Mapping","operation":"Get Cosmos Cert
+        Mapping","description":"Get information about a Cosmos Cert Mapping."}},{"name":"Microsoft.DataLakeStore/accounts/cosmosCertMappings/write","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Cosmos Cert Mapping","operation":"Create or Update
+        Cosmos Cert Mapping","description":"Create or update a Cosmos Cert Mapping."}},{"name":"Microsoft.DataLakeStore/accounts/cosmosCertMappings/delete","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Cosmos Cert Mapping","operation":"Delete Cosmos
+        Cert Mapping","description":"Delete a Cosmos Cert Mapping."}},{"name":"Microsoft.DataLakeStore/accounts/shares/read","display":{"provider":"Microsoft
         DataLakeStore","resource":"Share","operation":"Get Share","description":"Get
         information about a share."}},{"name":"Microsoft.DataLakeStore/accounts/shares/write","display":{"provider":"Microsoft
         DataLakeStore","resource":"Share","operation":"Create or Update Share","description":"Create
         or update a share."}},{"name":"Microsoft.DataLakeStore/accounts/shares/delete","display":{"provider":"Microsoft
         DataLakeStore","resource":"Share","operation":"Delete Share","description":"Delete
-        a share."}},{"name":"Microsoft.DataLakeStore/accounts/Superuser/action","display":{"provider":"Microsoft
+        a share."}},{"name":"Microsoft.DataLakeStore/accounts/mountpoints/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"MountPoint","operation":"Get Mountpoint","description":"Get
+        information about a mount point."}},{"name":"Microsoft.DataLakeStore/accounts/Superuser/action","display":{"provider":"Microsoft
         DataLakeStore","resource":"Superuser","operation":"Grant Superuser","description":"Grant
         Superuser on Data Lake Store when granted with Microsoft.Authorization/roleAssignments/write."}},{"name":"Microsoft.DataLakeStore/accounts/eventGridFilters/read","display":{"provider":"Microsoft
         DataLakeStore","resource":"EventGrid Filter","operation":"Get EventGrid Filter","description":"Get
@@ -869,11 +877,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '9822'
+      - '10784'
       content-type:
       - application/json
       date:
-      - Mon, 26 Oct 2020 09:28:26 GMT
+      - Mon, 21 Dec 2020 07:20:53 GMT
       expires:
       - '-1'
       pragma:
@@ -907,7 +915,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-datalake-store/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/testadls847d11a7?api-version=2016-11-01
   response:
@@ -919,7 +927,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Oct 2020 09:28:36 GMT
+      - Mon, 21 Dec 2020 07:21:00 GMT
       expires:
       - '-1'
       pragma:

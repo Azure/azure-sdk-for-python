@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class LocationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class LocationsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AscLocationList"]
+        # type: (...) -> Iterable["_models.AscLocationList"]
         """The location of the responsible ASC of the specific subscription (home region). For each
         subscription there is only one responsible location. The location in the response should be
         used to read or write other resources in ASC according to their ID.
@@ -59,7 +59,7 @@ class LocationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.AscLocationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AscLocationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AscLocationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -118,7 +118,7 @@ class LocationsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AscLocation"
+        # type: (...) -> "_models.AscLocation"
         """Details of a specific location.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -126,7 +126,7 @@ class LocationsOperations(object):
         :rtype: ~azure.mgmt.security.models.AscLocation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AscLocation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AscLocation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

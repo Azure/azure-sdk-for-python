@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class CertificateOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -56,7 +56,7 @@ class CertificateOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListCertificatesResult"]
+        # type: (...) -> Iterable["_models.ListCertificatesResult"]
         """Lists all of the certificates in the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -77,7 +77,7 @@ class CertificateOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.batch.models.ListCertificatesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListCertificatesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListCertificatesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -145,13 +145,13 @@ class CertificateOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         certificate_name,  # type: str
-        parameters,  # type: "models.CertificateCreateOrUpdateParameters"
+        parameters,  # type: "_models.CertificateCreateOrUpdateParameters"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Certificate"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+        # type: (...) -> "_models.Certificate"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -209,12 +209,12 @@ class CertificateOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         certificate_name,  # type: str
-        parameters,  # type: "models.CertificateCreateOrUpdateParameters"
+        parameters,  # type: "_models.CertificateCreateOrUpdateParameters"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Certificate"]
+        # type: (...) -> LROPoller["_models.Certificate"]
         """Creates a new certificate inside the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -245,7 +245,7 @@ class CertificateOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -276,7 +276,14 @@ class CertificateOperations(object):
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
+            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str', max_length=45, min_length=5, pattern=r'^[\w]+-[\w]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -295,11 +302,11 @@ class CertificateOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         certificate_name,  # type: str
-        parameters,  # type: "models.CertificateCreateOrUpdateParameters"
+        parameters,  # type: "_models.CertificateCreateOrUpdateParameters"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Certificate"
+        # type: (...) -> "_models.Certificate"
         """Updates the properties of an existing certificate.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -320,7 +327,7 @@ class CertificateOperations(object):
         :rtype: ~azure.mgmt.batch.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -474,7 +481,14 @@ class CertificateOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
+            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str', max_length=45, min_length=5, pattern=r'^[\w]+-[\w]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -495,7 +509,7 @@ class CertificateOperations(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Certificate"
+        # type: (...) -> "_models.Certificate"
         """Gets information about the specified certificate.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -511,7 +525,7 @@ class CertificateOperations(object):
         :rtype: ~azure.mgmt.batch.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -562,7 +576,7 @@ class CertificateOperations(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Certificate"
+        # type: (...) -> "_models.Certificate"
         """Cancels a failed deletion of a certificate from the specified account.
 
         If you try to delete a certificate that is being used by a pool or compute node, the status of
@@ -585,7 +599,7 @@ class CertificateOperations(object):
         :rtype: ~azure.mgmt.batch.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

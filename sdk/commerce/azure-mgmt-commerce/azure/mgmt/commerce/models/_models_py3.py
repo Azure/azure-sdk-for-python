@@ -140,7 +140,7 @@ class OfferTermInfo(msrest.serialization.Model):
 
     :param name: Required. Name of the offer term.Constant filled by server.  Possible values
      include: "Recurring Charge", "Monetary Commitment", "Monetary Credit".
-    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoName
+    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoEnum
     :param effective_date: Indicates the date from which the offer term is effective.
     :type effective_date: ~datetime.datetime
     """
@@ -176,7 +176,7 @@ class MonetaryCommitment(OfferTermInfo):
 
     :param name: Required. Name of the offer term.Constant filled by server.  Possible values
      include: "Recurring Charge", "Monetary Commitment", "Monetary Credit".
-    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoName
+    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoEnum
     :param effective_date: Indicates the date from which the offer term is effective.
     :type effective_date: ~datetime.datetime
     :param tiered_discount: The list of key/value pairs for the tiered meter rates, in the format
@@ -219,7 +219,7 @@ class MonetaryCredit(OfferTermInfo):
 
     :param name: Required. Name of the offer term.Constant filled by server.  Possible values
      include: "Recurring Charge", "Monetary Commitment", "Monetary Credit".
-    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoName
+    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoEnum
     :param effective_date: Indicates the date from which the offer term is effective.
     :type effective_date: ~datetime.datetime
     :param credit: The amount of credit provided under the terms of the given offer level.
@@ -308,7 +308,7 @@ class RecurringCharge(OfferTermInfo):
 
     :param name: Required. Name of the offer term.Constant filled by server.  Possible values
      include: "Recurring Charge", "Monetary Commitment", "Monetary Credit".
-    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoName
+    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoEnum
     :param effective_date: Indicates the date from which the offer term is effective.
     :type effective_date: ~datetime.datetime
     :param recurring_charge: The amount of recurring charge as per the offer term.

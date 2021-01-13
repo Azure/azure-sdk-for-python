@@ -15,27 +15,27 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription?api-version=2020-08-20-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription695209b?api-version=2020-08-20-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription","name":"test-resource-list-by-subscription","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Accepted","hostName":"test-resource-list-by-subscription.communication.azure.com","immutableResourceId":"49a123dc-d2b8-475d-9aba-fb211d5fa248","dataLocation":"UnitedStates"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription695209b","name":"test-resource-list-by-subscription695209b","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Accepted","hostName":"test-resource-list-by-subscription695209b.communication.azure.com","immutableResourceId":"9f84f5c2-b799-4866-9285-14dbf5ebe4cb","dataLocation":"UnitedStates"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/0d4d6663-bc85-4295-b3e3-c0575e86ddc3?api-version=2020-08-20-preview
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/f771e6ac-11c9-40ce-9fca-1fbe8e270b24?api-version=2020-08-20-preview
       cache-control:
       - no-cache
       content-length:
-      - '604'
+      - '601'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 02 Dec 2020 18:30:14 GMT
+      - Tue, 15 Dec 2020 00:43:49 GMT
       etag:
-      - '"240edb8b-0000-0700-0000-5fc7dd370000"'
+      - '"500036f5-0000-0700-0000-5fd806c50000"'
       expires:
       - '-1'
       location:
-      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/0d4d6663-bc85-4295-b3e3-c0575e86ddc3?api-version=2020-08-20-preview
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/f771e6ac-11c9-40ce-9fca-1fbe8e270b24?api-version=2020-08-20-preview
       pragma:
       - no-cache
       server:
@@ -61,21 +61,21 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/0d4d6663-bc85-4295-b3e3-c0575e86ddc3?api-version=2020-08-20-preview
+    uri: https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/f771e6ac-11c9-40ce-9fca-1fbe8e270b24?api-version=2020-08-20-preview
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/0d4d6663-bc85-4295-b3e3-c0575e86ddc3","name":"0d4d6663-bc85-4295-b3e3-c0575e86ddc3","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription","status":"Succeeded","startTime":"2020-12-02T18:30:15.1673692Z","endTime":"2020-12-02T18:30:17.0907594Z","percentComplete":100.0,"properties":null}'
+      string: '{"id":"/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/f771e6ac-11c9-40ce-9fca-1fbe8e270b24","name":"f771e6ac-11c9-40ce-9fca-1fbe8e270b24","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription695209b","status":"Succeeded","startTime":"2020-12-15T00:43:49.192803Z","endTime":"2020-12-15T00:43:50.4109899Z","percentComplete":100.0,"properties":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '576'
+      - '574'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 02 Dec 2020 18:30:45 GMT
+      - Tue, 15 Dec 2020 00:44:18 GMT
       etag:
-      - '"2b005aed-0000-0800-0000-5fc7dd390000"'
+      - '"e20bf2a0-0000-0800-0000-5fd806c60000"'
       expires:
       - '-1'
       pragma:
@@ -105,21 +105,21 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription?api-version=2020-08-20-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription695209b?api-version=2020-08-20-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription","name":"test-resource-list-by-subscription","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-list-by-subscription.communication.azure.com","immutableResourceId":"49a123dc-d2b8-475d-9aba-fb211d5fa248","dataLocation":"UnitedStates"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription695209b","name":"test-resource-list-by-subscription695209b","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-list-by-subscription695209b.communication.azure.com","immutableResourceId":"9f84f5c2-b799-4866-9285-14dbf5ebe4cb","dataLocation":"UnitedStates"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '605'
+      - '602'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 02 Dec 2020 18:30:45 GMT
+      - Tue, 15 Dec 2020 00:44:19 GMT
       etag:
-      - '"240e488c-0000-0700-0000-5fc7dd390000"'
+      - '"50003ef5-0000-0700-0000-5fd806c60000"'
       expires:
       - '-1'
       pragma:
@@ -152,16 +152,16 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Communication/communicationServices?api-version=2020-08-20-preview
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crud","name":"test-resource-crud","type":"Microsoft.Communication/communicationServices","location":"global","tags":{"tag1":"tag1val","tag2":"tag2val"},"properties":{"provisioningState":"Deleted","hostName":"test-resource-crud.communication.azure.com","immutableResourceId":"bf2900e2-806a-40ce-abf4-0cbb994b97ee","dataLocation":"UnitedStates"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.Communication/communicationServices/test-resource-link-notif-hub","name":"test-resource-link-notif-hub","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-link-notif-hub.communication.azure.com","immutableResourceId":"1c415a75-470b-4f01-b88d-e7959b515a84","dataLocation":"UnitedStates","notificationHubId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm/notificationHubs/test-notification-hub-for-comm"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgbf101e32/providers/Microsoft.Communication/communicationServices/test-resource-list-by-rg","name":"test-resource-list-by-rg","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-list-by-rg.communication.azure.com","immutableResourceId":"369ed78f-8fde-45c5-b8cf-a873e6f737dd","dataLocation":"UnitedStates"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription","name":"test-resource-list-by-subscription","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-list-by-subscription.communication.azure.com","immutableResourceId":"49a123dc-d2b8-475d-9aba-fb211d5fa248","dataLocation":"UnitedStates"}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgd3a91c4f/providers/Microsoft.Communication/communicationServices/test-resource-list-by-rgd3a91c4f","name":"test-resource-list-by-rgd3a91c4f","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-list-by-rgd3a91c4f.communication.azure.com","immutableResourceId":"e6c1d48e-5265-4c58-9823-19c5dd6c3303","dataLocation":"UnitedStates"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_subscription695209b/providers/Microsoft.Communication/communicationServices/test-resource-list-by-subscription695209b","name":"test-resource-list-by-subscription695209b","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-list-by-subscription695209b.communication.azure.com","immutableResourceId":"9f84f5c2-b799-4866-9285-14dbf5ebe4cb","dataLocation":"UnitedStates"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '46022'
+      - '36229'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 02 Dec 2020 18:30:46 GMT
+      - Tue, 15 Dec 2020 00:44:19 GMT
       expires:
       - '-1'
       pragma:

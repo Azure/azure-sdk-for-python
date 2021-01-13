@@ -13,6 +13,7 @@ parameters:
   AllocateResourceGroup: true
   DeployArmTemplate: false
   TestTimeoutInMinutes: 120
+  TestSamples: false
   Location: ''
   Matrix:
     Linux_Python35:
@@ -35,8 +36,6 @@ parameters:
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '3.9'
       CoverageArg: ''
-
-
   CloudConfigurations:
     AzureCloud:
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
@@ -88,6 +87,7 @@ jobs:
             BuildTargetingString: ${{ parameters.BuildTargetingString }}
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             CoverageArg: $(CoverageArg)
+            TestSamples: ${{ parameters.TestSamples }}
             EnvVars:
               AZURE_RUN_MODE: 'Live' #Record, Playback
               ${{ insert }}: ${{ parameters.EnvVars }}

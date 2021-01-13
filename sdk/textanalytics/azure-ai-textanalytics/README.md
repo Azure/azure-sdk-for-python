@@ -76,7 +76,7 @@ This table shows the relationship between SDK versions and supported API version
 |SDK version|Supported API version of service
 |-|-
 |5.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 3.0
-|5.1.0b3 - Latest release (beta)| 3.0, 3.1-preview.2, 3.1-preview.3
+|5.1.0b4 - Latest release (beta)| 3.0, 3.1-preview.2, 3.1-preview.3
 
 
 ### Authenticate the client
@@ -471,7 +471,9 @@ This sample demonstrates the usage for [long-running operations](#long-running-o
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import (
+    TextAnalyticsClient, EntitiesRecognitionTask, PiiEntitiesRecognitionTask, KeyPhraseExtractionTask
+)
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -493,7 +495,7 @@ result = poller.result()
 for page in result:
     for task in page.entities_recognition_results:
         print("Results of Entities Recognition task:")
-        
+
         docs = [doc for doc in task.results if not doc.is_error]
         for idx, doc in enumerate(docs):
             print("\nDocument text: {}".format(documents[idx]))

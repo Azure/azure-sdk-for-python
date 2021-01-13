@@ -6,10 +6,11 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 from azure.core.async_paging import AsyncPageIterator
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob.aio._models import ContainerPropertiesPaged
 
-from .._deserialize import return_headers_and_deserialized_path_list, process_storage_error
-from .._generated.models import StorageErrorException, Path
+from .._deserialize import process_storage_error
+from .._generated.models import Path
 from .._models import PathProperties
 
 from .._models import FileSystemProperties
@@ -84,21 +85,23 @@ class PathPropertiesPaged(AsyncPageIterator):
 
     async def _get_next_cb(self, continuation_token):
         try:
-            return await self._command(
+            return self._command(
                 self.recursive,
                 continuation=continuation_token or None,
                 path=self.path,
                 max_results=self.results_per_page,
-                upn=self.upn,
-                cls=return_headers_and_deserialized_path_list)
-        except StorageErrorException as error:
+                upn=self.upn)
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
-        self.path_list, self._response = get_next_return
+        path_list = []
+        async for path in get_next_return:
+            path_list.append(path)
+        self.path_list = path_list
         self.current_page = [self._build_item(item) for item in self.path_list]
 
-        return self._response['continuation'] or None, self.current_page
+        return None, self.current_page
 
     @staticmethod
     def _build_item(item):

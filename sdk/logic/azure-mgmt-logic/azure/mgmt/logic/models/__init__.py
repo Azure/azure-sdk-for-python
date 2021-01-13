@@ -95,6 +95,8 @@ try:
     from ._models_py3 import IntegrationAccountSessionFilter
     from ._models_py3 import IntegrationAccountSessionListResult
     from ._models_py3 import IntegrationAccountSku
+    from ._models_py3 import IntegrationServiceEnvironmenEncryptionConfiguration
+    from ._models_py3 import IntegrationServiceEnvironmenEncryptionKeyReference
     from ._models_py3 import IntegrationServiceEnvironment
     from ._models_py3 import IntegrationServiceEnvironmentAccessEndpoint
     from ._models_py3 import IntegrationServiceEnvironmentListResult
@@ -293,6 +295,8 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationAccountSessionFilter  # type: ignore
     from ._models import IntegrationAccountSessionListResult  # type: ignore
     from ._models import IntegrationAccountSku  # type: ignore
+    from ._models import IntegrationServiceEnvironmenEncryptionConfiguration  # type: ignore
+    from ._models import IntegrationServiceEnvironmenEncryptionKeyReference  # type: ignore
     from ._models import IntegrationServiceEnvironment  # type: ignore
     from ._models import IntegrationServiceEnvironmentAccessEndpoint  # type: ignore
     from ._models import IntegrationServiceEnvironmentListResult  # type: ignore
@@ -540,6 +544,8 @@ __all__ = [
     'IntegrationAccountSessionFilter',
     'IntegrationAccountSessionListResult',
     'IntegrationAccountSku',
+    'IntegrationServiceEnvironmenEncryptionConfiguration',
+    'IntegrationServiceEnvironmenEncryptionKeyReference',
     'IntegrationServiceEnvironment',
     'IntegrationServiceEnvironmentAccessEndpoint',
     'IntegrationServiceEnvironmentListResult',

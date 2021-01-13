@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/checkNameAvailability?api-version=2020-08-01
   response:
@@ -27,15 +27,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:41:16 GMT
+      - Tue, 22 Dec 2020 06:24:09 GMT
       elapsed-time:
-      - '130'
+      - '156'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 8e3a7fca-1838-11eb-8044-0242ac110007
+      - 4bbccc22-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -45,7 +45,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -64,7 +64,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_services20f20f30/providers/Microsoft.Search/searchServices/ptvstestsearch?api-version=2020-08-01
   response:
@@ -79,17 +79,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:41:24 GMT
+      - Tue, 22 Dec 2020 06:24:19 GMT
       elapsed-time:
-      - '2065'
+      - '2304'
       etag:
-      - W/"datetime'2020-10-27T09%3A41%3A23.5184327Z'"
+      - W/"datetime'2020-12-22T06%3A24%3A18.0440358Z'"
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 8f733e2c-1838-11eb-8044-0242ac110007
+      - 4d52cee2-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -113,7 +113,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/checkNameAvailability?api-version=2020-08-01
   response:
@@ -127,15 +127,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:41:24 GMT
+      - Tue, 22 Dec 2020 06:24:19 GMT
       elapsed-time:
-      - '63'
+      - '177'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 943574e8-1838-11eb-8044-0242ac110007
+      - 52d1154a-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -145,7 +145,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -159,7 +159,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_services20f20f30/providers/Microsoft.Search/searchServices/ptvstestsearch?api-version=2020-08-01
   response:
@@ -174,17 +174,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:41:25 GMT
+      - Tue, 22 Dec 2020 06:24:20 GMT
       elapsed-time:
-      - '165'
+      - '161'
       etag:
-      - W/"datetime'2020-10-27T09%3A41%3A23.5184327Z'"
+      - W/"datetime'2020-12-22T06%3A24%3A18.0440358Z'"
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 946c49b4-1838-11eb-8044-0242ac110007
+      - 5319f580-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -206,13 +206,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_services20f20f30/providers/Microsoft.Search/searchServices?api-version=2020-08-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_services20f20f30/providers/Microsoft.Search/searchServices/ptvstestsearch","name":"ptvstestsearch","type":"Microsoft.Search/searchServices","location":"West
-        US","properties":{"replicaCount":1,"partitionCount":1,"status":"running","statusDetails":"","provisioningState":"succeeded","hostingMode":"Default","publicNetworkAccess":"Enabled","networkRuleSet":{"ipRules":[],"bypass":"None"},"privateEndpointConnections":[],"sharedPrivateLinkResources":[],"eTag":"W/\"datetime''2020-10-27T09%3A41%3A23.5184327Z''\""},"sku":{"name":"standard"}}],"nextLink":null}'
+        US","properties":{"replicaCount":1,"partitionCount":1,"status":"running","statusDetails":"","provisioningState":"succeeded","hostingMode":"Default","publicNetworkAccess":"Enabled","networkRuleSet":{"ipRules":[],"bypass":"None"},"privateEndpointConnections":[],"sharedPrivateLinkResources":[],"eTag":"W/\"datetime''2020-12-22T06%3A24%3A18.0440358Z''\""},"sku":{"name":"standard"}}],"nextLink":null}'
     headers:
       cache-control:
       - no-cache
@@ -221,15 +221,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 09:41:25 GMT
+      - Tue, 22 Dec 2020 06:24:20 GMT
       elapsed-time:
-      - '169'
+      - '174'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 94ae98a0-1838-11eb-8044-0242ac110007
+      - 535dba40-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -253,7 +253,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-search/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_services20f20f30/providers/Microsoft.Search/searchServices/ptvstestsearch?api-version=2020-08-01
   response:
@@ -265,21 +265,21 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Oct 2020 09:41:31 GMT
+      - Tue, 22 Dec 2020 06:24:26 GMT
       elapsed-time:
-      - '1021'
+      - '1336'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 94f82920-1838-11eb-8044-0242ac110007
+      - 53a62eb0-441e-11eb-b05a-0242ac110003
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 200
       message: OK

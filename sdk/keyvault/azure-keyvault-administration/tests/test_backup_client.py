@@ -11,6 +11,7 @@ from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.administration import KeyVaultBackupClient, BackupOperation
+from azure.keyvault.administration._internal import parse_folder_url
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
 from six.moves.urllib_parse import urlparse
@@ -44,10 +45,10 @@ class BackupClientTests(KeyVaultTestCase):
     def test_full_backup_and_restore(self, container_uri, sas_token):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
-        backup_poller = backup_client.begin_full_backup(container_uri, sas_token)
+        backup_poller = backup_client.begin_backup(container_uri, sas_token)
 
         # check backup status and result
-        job_id = backup_poller.polling_method().resource().id
+        job_id = backup_poller.polling_method().resource().job_id
         backup_status = backup_client.get_backup_status(job_id)
         assert_in_progress_operation(backup_status)
         backup_operation = backup_poller.result()
@@ -56,10 +57,10 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the backup
-        restore_poller = backup_client.begin_full_restore(backup_status.blob_storage_url, sas_token)
+        restore_poller = backup_client.begin_restore(backup_status.folder_url, sas_token)
 
         # check restore status and result
-        job_id = restore_poller.polling_method().resource().id
+        job_id = restore_poller.polling_method().resource().job_id
         restore_status = backup_client.get_restore_status(job_id)
         assert_in_progress_operation(restore_status)
         restore_operation = restore_poller.result()
@@ -78,10 +79,10 @@ class BackupClientTests(KeyVaultTestCase):
 
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
-        backup_poller = backup_client.begin_full_backup(container_uri, sas_token)
+        backup_poller = backup_client.begin_backup(container_uri, sas_token)
 
         # check backup status and result
-        job_id = backup_poller.polling_method().resource().id
+        job_id = backup_poller.polling_method().resource().job_id
         backup_status = backup_client.get_backup_status(job_id)
         assert_in_progress_operation(backup_status)
         backup_operation = backup_poller.result()
@@ -90,10 +91,10 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = backup_client.begin_selective_restore(backup_status.blob_storage_url, sas_token, key_name)
+        restore_poller = backup_client.begin_selective_restore(backup_status.folder_url, sas_token, key_name)
 
         # check restore status and result
-        job_id = restore_poller.polling_method().resource().id
+        job_id = restore_poller.polling_method().resource().job_id
         restore_status = backup_client.get_restore_status(job_id)
         assert_in_progress_operation(restore_status)
         restore_operation = restore_poller.result()
@@ -116,8 +117,8 @@ def test_continuation_token():
 
     backup_client = KeyVaultBackupClient("vault-url", object())
     backup_client._client = mock_generated_client
-    backup_client.begin_full_restore("storage uri", "sas", continuation_token=expected_token)
-    backup_client.begin_full_backup("storage uri", "sas", continuation_token=expected_token)
+    backup_client.begin_restore("storage uri", "sas", continuation_token=expected_token)
+    backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
     backup_client.begin_selective_restore("storage uri", "sas", "key", continuation_token=expected_token)
 
     for method in ("begin_full_backup", "begin_full_restore_operation", "begin_selective_key_restore_operation"):
@@ -129,7 +130,7 @@ def test_continuation_token():
 
 def assert_in_progress_operation(operation):
     if isinstance(operation, BackupOperation):
-        assert operation.blob_storage_url is None
+        assert operation.folder_url is None
     assert operation.status == "InProgress"
     assert operation.end_time is None
     assert isinstance(operation.start_time, datetime)
@@ -137,7 +138,26 @@ def assert_in_progress_operation(operation):
 
 def assert_successful_operation(operation):
     if isinstance(operation, BackupOperation):
-        assert operation.blob_storage_url
+        assert operation.folder_url
     assert operation.status == "Succeeded"
     assert isinstance(operation.end_time, datetime)
     assert operation.start_time < operation.end_time
+
+
+@pytest.mark.parametrize(
+    "url,expected_container_url,expected_folder_name",
+    [
+        (
+            "https://account.blob.core.windows.net/backup/mhsm-account-2020090117323313",
+            "https://account.blob.core.windows.net/backup",
+            "mhsm-account-2020090117323313",
+        ),
+        ("https://account.storage/account/storage", "https://account.storage/account", "storage"),
+        ("https://account.storage/a/b/c", "https://account.storage/a", "b/c"),
+        ("https://account.storage/a/b-c", "https://account.storage/a", "b-c"),
+    ],
+)
+def test_parse_folder_url(url, expected_container_url, expected_folder_name):
+    container_url, folder_name = parse_folder_url(url)
+    assert container_url == expected_container_url
+    assert folder_name == expected_folder_name

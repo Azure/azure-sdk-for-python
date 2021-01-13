@@ -81,15 +81,17 @@ class AccessControlTests(KeyVaultTestCase):
 
         # new assignment should be in the list of all assignments
         matching_assignments = [
-            a for a in client.list_role_assignments(scope) if a.assignment_id == created.assignment_id
+            a for a in client.list_role_assignments(scope) if a.role_assignment_id == created.role_assignment_id
         ]
         assert len(matching_assignments) == 1
 
         # delete the assignment
         deleted = client.delete_role_assignment(scope, created.name)
         assert deleted.name == created.name
-        assert deleted.assignment_id == created.assignment_id
+        assert deleted.role_assignment_id == created.role_assignment_id
         assert deleted.scope == scope
         assert deleted.role_definition_id == created.role_definition_id
 
-        assert not any(a for a in client.list_role_assignments(scope) if a.assignment_id == created.assignment_id)
+        assert not any(
+            a for a in client.list_role_assignments(scope) if a.role_assignment_id == created.role_assignment_id
+        )

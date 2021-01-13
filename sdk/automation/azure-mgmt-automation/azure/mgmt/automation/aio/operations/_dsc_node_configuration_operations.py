@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DscNodeConfigurationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -95,7 +95,7 @@ class DscNodeConfigurationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -109,7 +109,7 @@ class DscNodeConfigurationOperations:
         automation_account_name: str,
         node_configuration_name: str,
         **kwargs
-    ) -> "models.DscNodeConfiguration":
+    ) -> "_models.DscNodeConfiguration":
         """Retrieve the Dsc node configurations by node configuration.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -123,7 +123,7 @@ class DscNodeConfigurationOperations:
         :rtype: ~azure.mgmt.automation.models.DscNodeConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscNodeConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscNodeConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -155,7 +155,7 @@ class DscNodeConfigurationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DscNodeConfiguration', pipeline_response)
@@ -171,10 +171,10 @@ class DscNodeConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_configuration_name: str,
-        parameters: "models.DscNodeConfigurationCreateOrUpdateParameters",
+        parameters: "_models.DscNodeConfigurationCreateOrUpdateParameters",
         **kwargs
-    ) -> Optional["models.DscNodeConfiguration"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DscNodeConfiguration"]]
+    ) -> Optional["_models.DscNodeConfiguration"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DscNodeConfiguration"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -211,7 +211,7 @@ class DscNodeConfigurationOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -229,9 +229,9 @@ class DscNodeConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_configuration_name: str,
-        parameters: "models.DscNodeConfigurationCreateOrUpdateParameters",
+        parameters: "_models.DscNodeConfigurationCreateOrUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.DscNodeConfiguration"]:
+    ) -> AsyncLROPoller["_models.DscNodeConfiguration"]:
         """Create the node configuration identified by node configuration name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -253,7 +253,7 @@ class DscNodeConfigurationOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscNodeConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscNodeConfiguration"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -309,7 +309,7 @@ class DscNodeConfigurationOperations:
         top: Optional[int] = None,
         inlinecount: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DscNodeConfigurationListResult"]:
+    ) -> AsyncIterable["_models.DscNodeConfigurationListResult"]:
         """Retrieve a list of dsc node configurations.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -329,7 +329,7 @@ class DscNodeConfigurationOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.DscNodeConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscNodeConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscNodeConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -384,7 +384,7 @@ class DscNodeConfigurationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

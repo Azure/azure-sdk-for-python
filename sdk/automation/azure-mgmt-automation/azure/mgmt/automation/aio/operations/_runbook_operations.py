@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class RunbookOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -82,7 +82,7 @@ class RunbookOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -230,7 +230,7 @@ class RunbookOperations:
         automation_account_name: str,
         runbook_name: str,
         **kwargs
-    ) -> "models.Runbook":
+    ) -> "_models.Runbook":
         """Retrieve the runbook identified by runbook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -244,7 +244,7 @@ class RunbookOperations:
         :rtype: ~azure.mgmt.automation.models.Runbook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Runbook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Runbook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -276,7 +276,7 @@ class RunbookOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Runbook', pipeline_response)
@@ -292,9 +292,9 @@ class RunbookOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        parameters: "models.RunbookCreateOrUpdateParameters",
+        parameters: "_models.RunbookCreateOrUpdateParameters",
         **kwargs
-    ) -> "models.Runbook":
+    ) -> "_models.Runbook":
         """Create the runbook identified by runbook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -311,7 +311,7 @@ class RunbookOperations:
         :rtype: ~azure.mgmt.automation.models.Runbook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Runbook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Runbook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -348,7 +348,7 @@ class RunbookOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -368,9 +368,9 @@ class RunbookOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        parameters: "models.RunbookUpdateParameters",
+        parameters: "_models.RunbookUpdateParameters",
         **kwargs
-    ) -> "models.Runbook":
+    ) -> "_models.Runbook":
         """Update the runbook identified by runbook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -386,7 +386,7 @@ class RunbookOperations:
         :rtype: ~azure.mgmt.automation.models.Runbook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Runbook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Runbook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -423,7 +423,7 @@ class RunbookOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Runbook', pipeline_response)
@@ -486,7 +486,7 @@ class RunbookOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -499,7 +499,7 @@ class RunbookOperations:
         resource_group_name: str,
         automation_account_name: str,
         **kwargs
-    ) -> AsyncIterable["models.RunbookListResult"]:
+    ) -> AsyncIterable["_models.RunbookListResult"]:
         """Retrieve a list of runbooks.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -511,7 +511,7 @@ class RunbookOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.RunbookListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunbookListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunbookListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -558,7 +558,7 @@ class RunbookOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

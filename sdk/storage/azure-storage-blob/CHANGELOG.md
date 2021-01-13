@@ -1,5 +1,14 @@
 # Release History
 
+## 12.7.0 (2021-01-13)
+**Stable release of preview features**
+- Added `upload_blob_from_url` api on `BlobClient`.
+- Added support for leasing blob when get/set tags, listing all tags when find blobs by tags.
+- Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
+
+**Fixes**
+- Fixed url parsing for blob emulator/localhost (#15882)
+
 ## 12.7.0b1 (2020-12-07)
 **New features**
 - Added `upload_blob_from_url` api on `BlobClient`
