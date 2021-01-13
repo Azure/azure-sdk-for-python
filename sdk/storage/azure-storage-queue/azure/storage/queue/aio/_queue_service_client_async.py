@@ -14,6 +14,7 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import AsyncPipeline
@@ -26,7 +27,7 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTran
 from .._shared.response_handlers import process_storage_error
 from .._generated.version import VERSION
 from .._generated.aio import AzureQueueStorage
-from .._generated.models import StorageServiceProperties, StorageErrorException
+from .._generated.models import StorageServiceProperties
 
 from ._models import QueuePropertiesPaged
 from ._queue_client_async import QueueClient
@@ -135,7 +136,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -163,7 +164,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
             return service_properties_deserialize(service_props)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -219,7 +220,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         )
         try:
             return await self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
