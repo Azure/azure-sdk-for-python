@@ -1,6 +1,6 @@
 # Release History
 
-## 12.7.0 (2021-01-12)
+## 12.7.0 (2021-01-13)
 **Stable release of preview features**
 - Added `upload_blob_from_url` api on `BlobClient`.
 - Added support for leasing blob when get/set tags, listing all tags when find blobs by tags.
