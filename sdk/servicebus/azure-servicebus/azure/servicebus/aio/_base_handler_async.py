@@ -14,7 +14,7 @@ from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken
 
-from .._base_handler import _parse_conn_str, _generate_sas_token, BaseHandler as BaseHandlerSync
+from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync
 from .._common._configuration import Configuration
 from .._common.utils import create_properties, strip_protocol_from_uri
 from .._common.constants import (
