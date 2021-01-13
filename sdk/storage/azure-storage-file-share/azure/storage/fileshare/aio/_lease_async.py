@@ -9,12 +9,11 @@ from typing import (  # pylint: disable=unused-import
     TypeVar, TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._generated.models import (
-    StorageErrorException)
-from .._generated.aio.operations_async import FileOperations, ShareOperations
+from .._generated.aio.operations import FileOperations, ShareOperations
 from .._lease import ShareLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
@@ -84,7 +83,7 @@ class ShareLeaseClient(LeaseClientBase):
                 proposed_lease_id=self.id,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
@@ -116,7 +115,7 @@ class ShareLeaseClient(LeaseClientBase):
                 sharesnapshot=self._snapshot,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -141,7 +140,7 @@ class ShareLeaseClient(LeaseClientBase):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -169,7 +168,7 @@ class ShareLeaseClient(LeaseClientBase):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -204,6 +203,6 @@ class ShareLeaseClient(LeaseClientBase):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return response.get('lease_time') # type: ignore

@@ -79,23 +79,26 @@ class StorageChangeFeedTest(StorageTestCase):
                                                             storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
         # To get the total events number
-        change_feed = cf_client.list_changes()
+        start_time = datetime(2020, 8, 18)
+        end_time = datetime(2020, 8, 19)
+        change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time)
         all_events = list(change_feed)
         total_events = len(all_events)
 
         # To start read events and get continuation token
-        change_feed = cf_client.list_changes(results_per_page=180).by_page()
+        change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=180).by_page()
         change_feed_page1 = next(change_feed)
         events_per_page1 = list(change_feed_page1)
         token = change_feed.continuation_token
 
         # restart to read using the continuation token
+        rest_events = list()
         change_feed2 = cf_client.list_changes().by_page(continuation_token=token)
-        change_feed_page2 = next(change_feed2)
-        events_per_page2 = list(change_feed_page2)
+        for page in change_feed2:
+            rest_events.extend(list(page))
 
         # Assert the
-        self.assertEqual(total_events, len(events_per_page1) + len(events_per_page2))
+        self.assertEqual(total_events, len(events_per_page1) + len(rest_events))
 
     @GlobalStorageAccountPreparer()
     def test_get_change_feed_events_in_a_time_range(self, resource_group, location, storage_account, storage_account_key):
@@ -113,7 +116,7 @@ class StorageChangeFeedTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_change_feed_does_not_fail_on_empty_event_stream(self, resource_group, location, storage_account, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
-        start_time = datetime(2021, 8, 19)
+        start_time = datetime(2300, 8, 19)
         change_feed = cf_client.list_changes(start_time=start_time)
 
         events = list(change_feed)
@@ -125,7 +128,11 @@ class StorageChangeFeedTest(StorageTestCase):
 
         # to read until the end
         start_time = datetime(2020, 8, 19, 23)
-        change_feed = cf_client.list_changes(start_time=start_time).by_page()
+
+        # this end_time is to avoid breaking change caused by a new year, it was 2020/08/19 when we recorded the test
+        end_time = datetime(2020, 8, 28, 1)
+
+        change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time).by_page()
 
         events = list()
         for page in change_feed:
@@ -179,7 +186,11 @@ class StorageChangeFeedTest(StorageTestCase):
 
         # to read until the end
         start_time = datetime(2020, 8, 20, 1)
-        change_feed = cf_client.list_changes(start_time=start_time, results_per_page=3).by_page()
+
+        # this end_time is to avoid breaking change caused by a new year, it was 2020/08/20 when we recorded the test
+        end_time = datetime(2020, 8, 28, 8)
+
+        change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=3).by_page()
 
         page = next(change_feed)
         events_on_first_page = list()

@@ -63,7 +63,7 @@ except (SyntaxError, ImportError):
     from ._models import RuleWebhookAction  # type: ignore
     from ._models import ThresholdRuleCondition  # type: ignore
 
-from ._monitor_client_enums import (
+from ._monitor_management_client_enums import (
     AggregationType,
     ConditionOperator,
     TimeAggregationOperator,

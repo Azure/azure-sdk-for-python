@@ -23,12 +23,25 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
-import asyncio
+import sys
+from dotenv import find_dotenv, load_dotenv
 
 
 class CreateClients(object):
-    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-    my_table = os.getenv("AZURE_TABLES_NAME") or ""
+
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
+        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name,
+            self.access_key,
+            self.endpoint
+        )
+        self.table_name = "sampleBatching"
 
     def sample_batching(self):
         # Instantiate a TableServiceClient using a connection string
@@ -62,23 +75,43 @@ class CreateClients(object):
         }
 
         # [START batching]
-        from azure.data.tables import TableClient, UpdateMode
-        table_client = TableClient.from_connection_string(conn_str=self.connection_string, table_name="tableName")
+        from azure.data.tables import TableClient, UpdateMode, BatchErrorException
+        from azure.core.exceptions import ResourceExistsError
+        self.table_client = TableClient.from_connection_string(
+            conn_str=self.connection_string, table_name=self.table_name)
 
-        batch = table_client.create_batch()
+        try:
+            self.table_client.create_table()
+            print("Created table")
+        except ResourceExistsError:
+            print("Table already exists")
+
+        self.table_client.create_entity(entity2)
+        self.table_client.create_entity(entity3)
+        self.table_client.create_entity(entity4)
+
+        batch = self.table_client.create_batch()
         batch.create_entity(entity1)
-        batch.delete_entity(entity2)
+        batch.delete_entity(entity2['PartitionKey'], entity2['RowKey'])
         batch.upsert_entity(entity3)
         batch.update_entity(entity4, mode=UpdateMode.REPLACE)
+
         try:
-            table_client.send_batch(batch)
+            self.table_client.send_batch(batch)
         except BatchErrorException as e:
             print("There was an error with the batch operation")
             print("Error: {}".format(e))
         # [END batching]
 
+    def clean_up(self):
+        self.table_client.delete_table()
+        self.table_client.__exit__()
 
 
 if __name__ == '__main__':
-    sample = CreateClients()
-    sample.sample_batching()
+    if sys.version_info > (3, 5):
+        sample = CreateClients()
+        try:
+            sample.sample_batching()
+        finally:
+            sample.clean_up()

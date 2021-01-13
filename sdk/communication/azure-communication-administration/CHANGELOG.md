@@ -2,6 +2,8 @@
 
 ## 1.0.0b4 (Unreleased)
 
+### Breaking Changes
+
 ##### `PhoneNumberAdministrationClient`
 -  `begin_reserve_phone_numbers` now takes `display_name`, `description`, `phone_plan_ids`, 
 `area_code`, `quantity`, `location_options`, or `continuation_token` keywords as input. 
@@ -13,9 +15,14 @@ Caller must provide one of the following:
  (3) only keyword `continuation_token` to restart a poller from a saved state.
 -  `list_all_orders` renamed to `list_all_reservations`.
 
+### Added
+
+##### `IdentityClient`
+- Added support for Azure Active Directory authentication for the Identity client
+
 ## 1.0.0b3 (2020-11-16)
 
-**Breaking Changes**
+### Breaking Changes
 
 ##### `PhoneNumberSearch` renamed to `PhoneNumberReservation`.
 
@@ -35,7 +42,7 @@ Caller must provide one of the following:
 -  `begin_purchase_reservation` now returns `LROPoller[PurchaseReservationPolling]`.
 - `cancel_search` has been renamed to `cancel_reservation`.
 
-**New Features**
+### Added
 
 ##### `PhoneNumberAdministrationClient`
 - Add long run operation polling method `ReservePhoneNumberPolling`,`PurchaseReservationPolling`,

@@ -1,6 +1,9 @@
 # Release History
 
-## 3.1.0b2 (Unreleased)
+## 3.1.0b3 (Unreleased)
+
+
+## 3.1.0b2 (2021-01-12)
 
 **Bug Fixes**
 

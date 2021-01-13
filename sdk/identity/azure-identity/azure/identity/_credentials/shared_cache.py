@@ -130,6 +130,11 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         # type: (*str, **Any) -> AccessToken
         """Silently acquire a token from MSAL. Requires an AuthenticationRecord."""
 
+        # self._auth_record and ._app will not be None when this method is called by get_token
+        # but should either be None anyway (and to satisfy mypy) we raise
+        if self._app is None or self._auth_record is None:
+            raise CredentialUnavailableError("Initialization failed")
+
         result = None
 
         accounts_for_user = self._app.get_accounts(username=self._auth_record.username)

@@ -23,7 +23,8 @@ function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
 }
 
 # Returns the pypi publish status of a package id and version.
-function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
+function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
+{
   try 
   {
     $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -RetryIntervalSec 10 -Method "Get" -uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
@@ -48,7 +49,8 @@ function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
 }
 
 # Parse out package publishing information given a python sdist of ZIP format.
-function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory) {
+function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
+{
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
@@ -109,7 +111,8 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
   }
 }
 
-function Get-python-GithubIoDocIndex() {
+function Get-python-GithubIoDocIndex()
+{
   # Update the main.js and docfx.json language content
   UpdateDocIndexFiles -appTitleLang Python 
   # Fetch out all package metadata from csv file.
@@ -125,7 +128,8 @@ function Get-python-GithubIoDocIndex() {
 # Updates a python CI configuration json.
 # For "latest", the version attribute is cleared, as default behavior is to pull latest "non-preview".
 # For "preview", we update to >= the target releasing package version.
-function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$null){
+function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$null)
+{
   $pkgJsonLoc = (Join-Path -Path $ciRepo -ChildPath $locationInDocRepo)
 
   if (-not (Test-Path $pkgJsonLoc)) {
@@ -185,6 +189,13 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
 {
   # Find wheel file in given artifact directory
   # Make sure to pick only package with given artifact name
+  # Skip auto API review creation for management packages
+  if ($artifactName -match "mgmt")
+  {
+    Write-Host "Skipping automatic API review for management artifact $($artifactName)"
+    return $null
+  }
+
   $packageName = $artifactName + "-"
   Write-Host "Searching for $($packageName) wheel in artifact path $($artifactDir)"
   $files = Get-ChildItem "${artifactDir}" | Where-Object -FilterScript {$_.Name.StartsWith($packageName) -and $_.Name.EndsWith(".whl")}
@@ -204,4 +215,14 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     $files[0].Name = $files[0].FullName
   }
   return $packages
+}
+
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $BuildType=$null, $GroupId=$null)
+{
+  if($null -eq $ReleaseDate)
+  {
+    $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
+  }
+  pip install -r "$EngDir/versioning/requirements.txt" -q -I
+  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
 }

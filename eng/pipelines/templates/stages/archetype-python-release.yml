@@ -2,6 +2,7 @@ parameters:
   Artifacts: []
   TestPipeline: false
   ArtifactName: 'not-specified'
+  ServiceDirectory: 'not-specified'
   DependsOn: Build
   DocArtifact: 'documentation'
   DevFeedName: 'public/azure-sdk-for-python'
@@ -227,7 +228,7 @@ stages:
                         displayName: Increment package version
                         inputs:
                           scriptPath: 'eng/versioning/version_increment.py'
-                          arguments: '--package-name ${{ artifact.name }}'
+                          arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoName: azure-sdk-for-python
