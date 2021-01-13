@@ -4,6 +4,9 @@
 **New features**
 - Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
 
+**Fixes**
+- Converted PathProperties.last_modified to datetime format (#16019)
+
 ## 12.2.0 (2020-11-10)
 **Stable release of preview features**
 - Preview feature set/update/remove access control recursively.
