@@ -25,7 +25,6 @@ from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
 from .._shared.models import LocationMode
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.response_handlers import process_storage_error
-from .._generated.version import VERSION
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import StorageServiceProperties
 
@@ -102,7 +101,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureQueueStorage(url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async

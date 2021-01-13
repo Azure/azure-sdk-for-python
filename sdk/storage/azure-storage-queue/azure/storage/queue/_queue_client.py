@@ -27,7 +27,7 @@ from ._shared.response_handlers import (
     return_headers_and_deserialized)
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from ._generated import AzureQueueStorage, VERSION
+from ._generated import AzureQueueStorage
 from ._generated.models import SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
 from ._models import QueueMessage, AccessPolicy, MessagesPaged
@@ -101,7 +101,8 @@ class QueueClient(StorageAccountHostsMixin):
         self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

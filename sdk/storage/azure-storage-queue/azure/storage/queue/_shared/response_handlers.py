@@ -80,10 +80,12 @@ def return_headers_and_deserialized(response, deserialized, response_headers):  
 
 
 def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
-    return response.location_mode, deserialized
+    return response.http_response.location_mode, deserialized
 
 
 def process_storage_error(storage_error):
+    if isinstance(storage_error, (DecodeError, ResourceExistsError, HttpResponseError)):
+        raise storage_error
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message

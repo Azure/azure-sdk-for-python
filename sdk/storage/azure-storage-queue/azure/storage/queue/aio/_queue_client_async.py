@@ -39,7 +39,6 @@ from .._shared.response_handlers import (
     return_headers_and_deserialized,
 )
 from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from .._generated.version import VERSION
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import SignedIdentifier
 from .._generated.models import QueueMessage as GenQueueMessage
@@ -112,7 +111,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
