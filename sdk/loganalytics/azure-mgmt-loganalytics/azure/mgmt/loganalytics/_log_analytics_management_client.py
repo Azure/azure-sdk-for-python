@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
 
-from ._configuration import OperationalInsightsManagementClientConfiguration
+from ._configuration import LogAnalyticsManagementClientConfiguration
 from .operations import DataExportsOperations
 from .operations import DataSourcesOperations
 from .operations import IntelligencePacksOperations
@@ -41,7 +41,7 @@ from .operations import TablesOperations
 from . import models
 
 
-class OperationalInsightsManagementClient(object):
+class LogAnalyticsManagementClient(object):
     """Operational Insights Client.
 
     :ivar data_exports: DataExportsOperations operations
@@ -102,7 +102,7 @@ class OperationalInsightsManagementClient(object):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = OperationalInsightsManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = LogAnalyticsManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -156,7 +156,7 @@ class OperationalInsightsManagementClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> OperationalInsightsManagementClient
+        # type: () -> LogAnalyticsManagementClient
         self._client.__enter__()
         return self
 
