@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import OperationalInsightsManagementClientConfiguration
+from ._configuration import LogAnalyticsManagementClientConfiguration
 from .operations import DataExportsOperations
 from .operations import DataSourcesOperations
 from .operations import IntelligencePacksOperations
@@ -39,7 +39,7 @@ from .operations import TablesOperations
 from .. import models
 
 
-class OperationalInsightsManagementClient(object):
+class LogAnalyticsManagementClient(object):
     """Operational Insights Client.
 
     :ivar data_exports: DataExportsOperations operations
@@ -99,7 +99,7 @@ class OperationalInsightsManagementClient(object):
     ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = OperationalInsightsManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = LogAnalyticsManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -151,7 +151,7 @@ class OperationalInsightsManagementClient(object):
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "OperationalInsightsManagementClient":
+    async def __aenter__(self) -> "LogAnalyticsManagementClient":
         await self._client.__aenter__()
         return self
 
