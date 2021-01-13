@@ -3,16 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime, timedelta
 import pytest
 import platform
 
-from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables import (
+    TableServiceClient,
+    TableClient,
+    generate_account_sas,
+    AccountSasPermissions,
+    ResourceTypes
+)
 from azure.data.tables._version import VERSION
 from azure.core.exceptions import HttpResponseError
 
 from preparers import TablesPreparer
 from _shared.testcase import (
-    TableTestCase
+    TableTestCase,
+    FakeTokenCredential
 )
 from devtools_testutils import AzureUnitTest
 
@@ -87,11 +95,59 @@ class StorageTableClientTest(TableTestCase):
 
 
 
-class TestTableClientUnit(AzureUnitTest, TableTestCase):
-    def setUp(self):
-        super(TestTableClientUnit, self).setUp()
-        self.sas_token = self.generate_sas_token()
-        self.token_credential = self.generate_oauth_token()
+class TestTableClientUnit(AzureUnitTest):#, TableTestCase):
+
+    def connection_string(self, account, key):
+        return "DefaultEndpointsProtocol=https;AccountName=" + account + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
+
+    def generate_oauth_token(self):
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
+            )
+        return self.generate_fake_token()
+
+    def generate_sas_token(self):
+        fake_key = 'a'*30 + 'b'*30
+
+        return '?' + generate_account_sas(
+            account_name = 'test', # name of the storage account
+            account_key = fake_key, # key for the storage account
+            resource_types = ResourceTypes(object=True),
+            permission = AccountSasPermissions(read=True,list=True),
+            start = datetime.now() - timedelta(hours = 24),
+            expiry = datetime.now() + timedelta(days = 8)
+        )
+
+    def generate_fake_token(self):
+        return FakeTokenCredential()
+
+    def account_url(self, account, endpoint_type):
+        """Return an url of storage account.
+
+        :param str storage_account: Storage account name
+        :param str storage_type: The Storage type part of the URL. Should be "table", or "cosmos", etc.
+        """
+        try:
+            if endpoint_type == "table":
+                return account.primary_endpoints.table.rstrip("/")
+            if endpoint_type == "cosmos":
+                return "https://{}.table.cosmos.azure.com".format(account.name)
+            else:
+                raise ValueError("Unknown storage type {}".format(storage_type))
+        except AttributeError: # Didn't find "primary_endpoints"
+            if endpoint_type == "table":
+                return 'https://{}.{}.core.windows.net'.format(account, endpoint_type)
+            if endpoint_type == "cosmos":
+                return "https://{}.table.cosmos.azure.com".format(account)
+
+    # def setUp(self):
+    #     super(TestTableClientUnit, self).setUp()
+        # self.sas_token = self.generate_sas_token()
+        # self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):
@@ -135,14 +191,15 @@ class TestTableClientUnit(AzureUnitTest, TableTestCase):
         suffix = '.table.core.windows.net'
         for service_type in SERVICES:
             # Act
+            token = self.generate_sas_token()
             service = service_type(
-                self.account_url(tables_storage_account_name, "table"), credential=self.sas_token, table_name='foo')
+                self.account_url(tables_storage_account_name, "table"), credential=token, table_name='foo')
 
             # Assert
             assert service is not None
             assert service.account_name ==  tables_storage_account_name
             assert service.url.startswith('https://' + tables_storage_account_name + suffix)
-            assert service.url.endswith(self.sas_token)
+            assert service.url.endswith(token)
             assert service.credential is None
 
     @TablesPreparer()
@@ -151,13 +208,14 @@ class TestTableClientUnit(AzureUnitTest, TableTestCase):
         suffix = '.table.core.windows.net'
         for service_type in SERVICES:
             # Act
-            service = service_type(url, credential=self.token_credential, table_name='foo')
+            credential = self.generate_oauth_token()
+            service = service_type(url, credential=credential, table_name='foo')
 
             # Assert
             assert service is not None
             assert service.account_name ==  tables_storage_account_name
             assert service.url.startswith('https://' + tables_storage_account_name + suffix)
-            assert service.credential ==  self.token_credential
+            assert service.credential == credential
             assert not hasattr(service.credential, 'account_key')
             assert hasattr(service.credential, 'get_token')
 
@@ -167,7 +225,7 @@ class TestTableClientUnit(AzureUnitTest, TableTestCase):
             # Act
             with pytest.raises(ValueError):
                 url = self.account_url(tables_storage_account_name, "table").replace('https', 'http')
-                service_type(url, credential=self.token_credential, table_name='foo')
+                service_type(url, credential=self.generate_oauth_token(), table_name='foo')
 
     @TablesPreparer()
     def test_create_service_china(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -249,7 +307,8 @@ class TestTableClientUnit(AzureUnitTest, TableTestCase):
     @TablesPreparer()
     def test_create_service_with_connection_string_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(tables_storage_account_name, self.sas_token)
+        token = self.generate_sas_token()
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(tables_storage_account_name, token)
 
         for service_type in SERVICES:
             # Act
@@ -259,7 +318,7 @@ class TestTableClientUnit(AzureUnitTest, TableTestCase):
             assert service is not None
             assert service.account_name ==  tables_storage_account_name
             assert service.url.startswith('https://' + tables_storage_account_name + '.table.core.windows.net')
-            assert service.url.endswith(self.sas_token)
+            assert service.url.endswith(token)
             assert service.credential is None
 
     @TablesPreparer()
@@ -397,7 +456,8 @@ class TestTableClientUnit(AzureUnitTest, TableTestCase):
 
     @TablesPreparer()
     def test_create_service_with_custom_account_endpoint_path(self, tables_storage_account_name, tables_primary_storage_account_key):
-        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
+        token = self.generate_sas_token()
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + token
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
                 tables_storage_account_name, tables_primary_storage_account_key, custom_account_url)
@@ -424,7 +484,7 @@ class TestTableClientUnit(AzureUnitTest, TableTestCase):
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
+        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.generate_sas_token())
         assert service.account_name ==  None
         assert service.table_name ==  "foo"
         assert service.credential ==  None
