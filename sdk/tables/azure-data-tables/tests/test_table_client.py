@@ -161,8 +161,6 @@ class TestTableClientUnit(AzureUnitTest):#, TableTestCase):
     @TablesPreparer()
     def test_create_service_with_key(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        print(tables_storage_account_name, tables_primary_storage_account_key)
-
         for client, url in SERVICES.items():
             # Act
             service = client(
