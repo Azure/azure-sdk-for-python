@@ -29,6 +29,19 @@ def throw(exc_type, *args, **kwargs):
     return func
 
 
+def clean_folder(folder):
+    if os.path.isfile(folder):
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+
 # pylint: disable=W0212
 # pylint: disable=R0904
 class TestBaseExporter(unittest.TestCase):
@@ -43,6 +56,9 @@ class TestBaseExporter(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls._base.storage._path, True)
+
+    def tearDown(self):
+        clean_folder(self._base.storage._path)
 
     def test_constructor(self):
         """Test the constructor."""
