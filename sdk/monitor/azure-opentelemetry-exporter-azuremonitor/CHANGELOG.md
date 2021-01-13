@@ -2,9 +2,6 @@
 
 ## 1.0.0b2 (Unreleased)
 
-- Fix to only retry upon request error
-  ([#16087](https://github.com/Azure/azure-sdk-for-python/pull/16087))
-
   **Breaking Changes**
   - Rename Azure Trace exporter class, only allow connection string configuration
     ([#15349](https://github.com/Azure/azure-sdk-for-python/pull/15349))
@@ -17,6 +14,9 @@
 
   - This library is renamed to `azure-opentelemetry-exporter-azuremonitor`.
     ([#16030](https://github.com/Azure/azure-sdk-for-python/pull/16030))
+
+  - Fix to only retry upon request error
+    ([#16087](https://github.com/Azure/azure-sdk-for-python/pull/16087))
 
 ## 1.0.0b1 (2020-11-13)
 
