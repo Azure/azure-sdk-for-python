@@ -66,7 +66,7 @@ class TestLocalFileBlob(unittest.TestCase):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "foobar.blob"))
         test_input = (1, 2, 3)
         blob.put(test_input)
-        self.assertEqual(len(os.listdir(TEST_FOLDER)), 1)
+        self.assertGreaterEqual(len(os.listdir(TEST_FOLDER)), 1)
 
     def test_lease_error(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "foobar.blob"))
