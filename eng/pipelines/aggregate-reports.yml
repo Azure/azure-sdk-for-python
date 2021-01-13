@@ -18,11 +18,11 @@ jobs:
 
   steps:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-      displayName: 'Run CredScan'
-      inputs:
-        toolMajorVersion: V2
-        outputFormat: sarif
-        suppressionsFile: eng/CredScanSuppression.json
+    displayName: 'Run CredScan'
+    inputs:
+      toolMajorVersion: V2
+      outputFormat: sarif
+      suppressionsFile: eng/CredScanSuppression.json
   - task: ms-codeanalysis.vss-microsoft-security-code-analysis-devops.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
     displayName: 'Publish Security Analysis Logs'
     inputs:
