@@ -7,7 +7,6 @@
 
 
 RUN_BREAKING_CHANGES_PACKAGES = [
-    "azure-ai-formrecognizer"
 ]
 
 
