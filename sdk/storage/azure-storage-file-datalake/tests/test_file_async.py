@@ -9,6 +9,8 @@ import unittest
 from datetime import datetime, timedelta
 import asyncio
 
+import pytest
+
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 
@@ -522,6 +524,7 @@ class FileTest(StorageTestCase):
         loop.run_until_complete(self._test_account_sas())
 
     def test_account_sas_raises_if_sas_already_in_uri(self):
+        pytest.skip("Re-enable this test after min dependency on blobs is updated.")
         with self.assertRaises(ValueError):
             DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
 
