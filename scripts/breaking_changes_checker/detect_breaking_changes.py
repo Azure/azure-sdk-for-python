@@ -124,7 +124,7 @@ def check_base_classes(cls_node: ast.ClassDef) -> bool:
                             if node.value.func.id == "super":
                                 should_look = True
     else:
-        should_look = True  # not init node so it is using init from base class
+        should_look = True  # no init node so it is using init from base class
     return should_look
 
 
@@ -156,7 +156,7 @@ def get_properties(cls: Type) -> Dict:
                     module = ast.parse(source.read())
             except (TypeError, SyntaxError):
                 _LOGGER.info(f"Unable to create ast of {base_class}")
-                continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here with SyntaxError
+                continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here
 
             analyzer = ClassTreeAnalyzer(base_class.__name__)
             analyzer.visit(module)
@@ -231,8 +231,7 @@ def resolve_module_name(module_name: str, target_module: str) -> str:
     return module_name
 
 
-def test_build_library_report(target_module: str = "azure.search.documents") -> Dict:
-    _LOGGER.info(f"{target_module} in build library")
+def build_library_report(target_module: str) -> Dict:
     module = importlib.import_module(target_module)
     modules = test_find_modules(module.__path__[0])
 
@@ -255,9 +254,7 @@ def test_build_library_report(target_module: str = "azure.search.documents") -> 
     return public_api
 
 
-# "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\formrecognizer\\azure-ai-formrecognizer"
-# "C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-blob"
-def test_compare_reports(pkg_dir: str="C:\\Users\\krpratic\\azure-sdk-for-python\\sdk\\storage\\azure-storage-queue", version: str = "") -> None:
+def test_compare_reports(pkg_dir: str, version: str) -> None:
     package_name = os.path.basename(pkg_dir)
 
     with open(os.path.join(pkg_dir, "stable.json"), "r") as fd:
@@ -312,7 +309,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
                 _LOGGER.warning(f"Version {version} failed to create a JSON report.")
                 exit(1)
     try:
-        public_api = test_build_library_report(target_module)
+        public_api = build_library_report(target_module)
 
         if in_venv:
             with open("stable.json", "w") as fd:
@@ -383,7 +380,6 @@ if __name__ == "__main__":
     # TODO need to parse setup.py here to get the top module/namespace since not always the same.
     #  e.g. azure-storage-file-share and azure.storage.fileshare
     target_module = package_name.replace("-", ".")
-    _LOGGER.info(f"target module is ... {target_module}")
     if not stable_version:
 
         from pypi_tools.pypi import PyPIClient
