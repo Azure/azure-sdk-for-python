@@ -78,6 +78,7 @@ class TestBaseExporter(unittest.TestCase):
         with self.assertRaises(TypeError):
             BaseExporter(something_else=6)
 
+    @unittest.skip("transient storage")
     def test_transmit_from_storage_failed_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
         self._base.storage.put(envelopes_to_store)
@@ -89,6 +90,7 @@ class TestBaseExporter(unittest.TestCase):
         # File still present
         self.assertGreaterEqual(len(os.listdir(self._base.storage._path)), 1)
 
+    @unittest.skip("transient storage")
     def test_transmit_from_storage_failed_not_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
         self._base.storage.put(envelopes_to_store)
