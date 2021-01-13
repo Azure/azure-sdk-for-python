@@ -353,8 +353,8 @@ def find_whl(package_name, version, whl_directory):
     parsed_version = parse(version)
 
     logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    paths = glob.glob(os.path.join(whl_directory, whl_name))
+    whl_name = "**/{0}-{1}-*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
+    paths = glob.glob(os.path.join(whl_directory, whl_name), recursive=True)
     if not paths:
         logging.error(
             "whl is not found in whl directory {0} for package {1}-{2}".format(
