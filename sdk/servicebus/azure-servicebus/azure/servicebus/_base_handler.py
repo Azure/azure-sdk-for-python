@@ -228,8 +228,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
 
         # Set the type to sync credentials, unless async credentials are passed in.
-        token_cred_type = kwargs.get("token_cred_type") or ServiceBusSASTokenCredential
-        key_cred_type = kwargs.get("key_cred_type") or ServiceBusSharedKeyCredential
+        token_cred_type = kwargs.pop("token_cred_type", ServiceBusSASTokenCredential)
+        key_cred_type = kwargs.pop("key_cred_type", ServiceBusSharedKeyCredential)
 
         if token and token_expiry:
             kwargs["credential"] = token_cred_type(token, token_expiry)
