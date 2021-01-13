@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     PolicyType = Union[HTTPPolicy, SansIOHTTPPolicy]
 
 
-class ManagedIdentityClient(object):
+class ManagedIdentityClientBase(ABC):
     # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(self, request_factory, client_id=None, **kwargs):
         # type: (Callable[[str, dict], HttpRequest], Optional[str], **Any) -> None
@@ -54,24 +54,6 @@ class ManagedIdentityClient(object):
         self._pipeline = self._build_pipeline(config, **kwargs)
 
         self._request_factory = request_factory
-
-    def get_cached_token(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
-        resource = _scopes_to_resource(*scopes)
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
-        for token in tokens:
-            if token["expires_on"] > time.time():
-                return AccessToken(token["secret"], token["expires_on"])
-        return None
-
-    def request_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        resource = _scopes_to_resource(*scopes)
-        request = self._request_factory(resource, self._identity_config)
-        request_time = int(time.time())
-        response = self._pipeline.run(request)
-        token = self._process_response(response, request_time)
-        return token
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
@@ -100,6 +82,34 @@ class ManagedIdentityClient(object):
             event={"response": content, "scope": content["resource"]}, now=request_time,
         )
 
+        return token
+
+    def get_cached_token(self, *scopes):
+        # type: (*str) -> Optional[AccessToken]
+        resource = _scopes_to_resource(*scopes)
+        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
+        for token in tokens:
+            if token["expires_on"] > time.time():
+                return AccessToken(token["secret"], token["expires_on"])
+        return None
+
+    @abc.abstractmethod
+    def request_token(self, *scopes, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def _build_pipeline(self, config, policies=None, transport=None, **kwargs):
+        pass
+
+
+class ManagedIdentityClient(ManagedIdentityClientBase):
+    def request_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
+        resource = _scopes_to_resource(*scopes)
+        request = self._request_factory(resource, self._identity_config)
+        request_time = int(time.time())
+        response = self._pipeline.run(request)
+        token = self._process_response(response, request_time)
         return token
 
     def _build_pipeline(self, config, policies=None, transport=None, **kwargs):  # pylint:disable=no-self-use

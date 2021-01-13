@@ -26,7 +26,7 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Generic, TypeVar, Optional, Any
+from typing import Generic, TypeVar, Union, Any, cast
 
 from azure.core.pipeline import PipelineRequest
 
@@ -60,7 +60,9 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline
-        self.next = None # type: Optional[Any]
+        from ..transport._base_async import AsyncHttpTransport
+        self.next = cast(Union[AsyncHTTPPolicy,
+                               AsyncHttpTransport], None)
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest):

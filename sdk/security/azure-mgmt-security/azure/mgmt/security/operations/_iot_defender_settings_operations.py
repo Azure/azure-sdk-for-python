@@ -13,11 +13,11 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -36,7 +36,7 @@ class IotDefenderSettingsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,7 +48,7 @@ class IotDefenderSettingsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotDefenderSettingsList"
+        # type: (...) -> "_models.IotDefenderSettingsList"
         """List IoT Defender Settings.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -56,7 +56,7 @@ class IotDefenderSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.IotDefenderSettingsList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotDefenderSettingsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotDefenderSettingsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -99,7 +99,7 @@ class IotDefenderSettingsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotDefenderSettingsModel"
+        # type: (...) -> "_models.IotDefenderSettingsModel"
         """Get IoT Defender Settings.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -107,7 +107,7 @@ class IotDefenderSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.IotDefenderSettingsModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotDefenderSettingsModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotDefenderSettingsModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -148,10 +148,10 @@ class IotDefenderSettingsOperations(object):
 
     def create_or_update(
         self,
-        iot_defender_settings_model,  # type: "models.IotDefenderSettingsModel"
+        iot_defender_settings_model,  # type: "_models.IotDefenderSettingsModel"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotDefenderSettingsModel"
+        # type: (...) -> "_models.IotDefenderSettingsModel"
         """Create or update IoT Defender settings.
 
         :param iot_defender_settings_model: The IoT defender settings model.
@@ -161,7 +161,7 @@ class IotDefenderSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.IotDefenderSettingsModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotDefenderSettingsModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotDefenderSettingsModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -261,7 +261,7 @@ class IotDefenderSettingsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PackageDownloads"
+        # type: (...) -> "_models.PackageDownloads"
         """Information about downloadable packages.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -269,7 +269,7 @@ class IotDefenderSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.PackageDownloads
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PackageDownloads"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PackageDownloads"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -307,3 +307,54 @@ class IotDefenderSettingsOperations(object):
 
         return deserialized
     package_downloads.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default/packageDownloads'}  # type: ignore
+
+    def download_manager_activation(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> IO
+        """Download manager activation data defined for this subscription.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/zip"
+
+        # Construct URL
+        url = self.download_manager_activation.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = response.stream_download(self._client._pipeline)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    download_manager_activation.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default/downloadManagerActivation'}  # type: ignore

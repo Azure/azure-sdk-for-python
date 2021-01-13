@@ -47,7 +47,8 @@ class QueueClient(StorageAccountHostsMixin):
     :type queue_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -122,7 +123,8 @@ class QueueClient(StorageAccountHostsMixin):
         :param str queue_url: The full URI to the queue, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string, an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
@@ -168,7 +170,8 @@ class QueueClient(StorageAccountHostsMixin):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient

@@ -176,7 +176,7 @@ class EventData(object):
         # type: () -> Optional[int]
         """The sequence number of the event.
 
-        :rtype: int or long
+        :rtype: int
         """
         return self.message.annotations.get(PROP_SEQ_NUMBER, None)
 

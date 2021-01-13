@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class HybridRunbookWorkerGroupOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -93,7 +93,7 @@ class HybridRunbookWorkerGroupOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -107,7 +107,7 @@ class HybridRunbookWorkerGroupOperations:
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
         **kwargs
-    ) -> "models.HybridRunbookWorkerGroup":
+    ) -> "_models.HybridRunbookWorkerGroup":
         """Retrieve a hybrid runbook worker group.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -121,7 +121,7 @@ class HybridRunbookWorkerGroupOperations:
         :rtype: ~azure.mgmt.automation.models.HybridRunbookWorkerGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridRunbookWorkerGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridRunbookWorkerGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -153,7 +153,7 @@ class HybridRunbookWorkerGroupOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridRunbookWorkerGroup', pipeline_response)
@@ -169,9 +169,9 @@ class HybridRunbookWorkerGroupOperations:
         resource_group_name: str,
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
-        parameters: "models.HybridRunbookWorkerGroupUpdateParameters",
+        parameters: "_models.HybridRunbookWorkerGroupUpdateParameters",
         **kwargs
-    ) -> "models.HybridRunbookWorkerGroup":
+    ) -> "_models.HybridRunbookWorkerGroup":
         """Update a hybrid runbook worker group.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -187,7 +187,7 @@ class HybridRunbookWorkerGroupOperations:
         :rtype: ~azure.mgmt.automation.models.HybridRunbookWorkerGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridRunbookWorkerGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridRunbookWorkerGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -224,7 +224,7 @@ class HybridRunbookWorkerGroupOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridRunbookWorkerGroup', pipeline_response)
@@ -241,7 +241,7 @@ class HybridRunbookWorkerGroupOperations:
         automation_account_name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.HybridRunbookWorkerGroupsListResult"]:
+    ) -> AsyncIterable["_models.HybridRunbookWorkerGroupsListResult"]:
         """Retrieve a list of hybrid runbook worker groups.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -255,7 +255,7 @@ class HybridRunbookWorkerGroupOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.HybridRunbookWorkerGroupsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridRunbookWorkerGroupsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridRunbookWorkerGroupsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -304,7 +304,7 @@ class HybridRunbookWorkerGroupOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

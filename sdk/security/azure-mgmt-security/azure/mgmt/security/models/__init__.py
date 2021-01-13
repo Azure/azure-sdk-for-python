@@ -56,6 +56,9 @@ try:
     from ._models_py3 import AzureResourceIdentifier
     from ._models_py3 import AzureResourceLink
     from ._models_py3 import AzureTrackedResourceLocation
+    from ._models_py3 import Baseline
+    from ._models_py3 import BaselineAdjustedResult
+    from ._models_py3 import BenchmarkReference
     from ._models_py3 import CVE
     from ._models_py3 import CVSS
     from ._models_py3 import CefExternalSecuritySolution
@@ -116,16 +119,22 @@ try:
     from ._models_py3 import IoTSeverityMetrics
     from ._models_py3 import IotAlert
     from ._models_py3 import IotAlertList
+    from ._models_py3 import IotAlertListModel
+    from ._models_py3 import IotAlertModel
     from ._models_py3 import IotAlertType
     from ._models_py3 import IotAlertTypeList
     from ._models_py3 import IotDefenderSettingsList
     from ._models_py3 import IotDefenderSettingsModel
     from ._models_py3 import IotRecommendation
     from ._models_py3 import IotRecommendationList
+    from ._models_py3 import IotRecommendationListModel
+    from ._models_py3 import IotRecommendationModel
     from ._models_py3 import IotRecommendationType
     from ._models_py3 import IotRecommendationTypeList
-    from ._models_py3 import IotSensor
     from ._models_py3 import IotSensorsList
+    from ._models_py3 import IotSensorsModel
+    from ._models_py3 import IotSitesList
+    from ._models_py3 import IotSitesModel
     from ._models_py3 import IpAddress
     from ._models_py3 import JitNetworkAccessPoliciesList
     from ._models_py3 import JitNetworkAccessPolicy
@@ -162,7 +171,6 @@ try:
     from ._models_py3 import PackageDownloadsSensor
     from ._models_py3 import PackageDownloadsSensorFull
     from ._models_py3 import PackageDownloadsSensorFullOvf
-    from ._models_py3 import PackageDownloadsThreatIntelligence
     from ._models_py3 import PathRecommendation
     from ._models_py3 import Pricing
     from ._models_py3 import PricingList
@@ -171,6 +179,7 @@ try:
     from ._models_py3 import Protocol
     from ._models_py3 import ProxyServerProperties
     from ._models_py3 import PublisherInfo
+    from ._models_py3 import QueryCheck
     from ._models_py3 import QueuePurgesNotInAllowedRange
     from ._models_py3 import RecommendationConfigurationProperties
     from ._models_py3 import RegulatoryComplianceAssessment
@@ -179,10 +188,23 @@ try:
     from ._models_py3 import RegulatoryComplianceControlList
     from ._models_py3 import RegulatoryComplianceStandard
     from ._models_py3 import RegulatoryComplianceStandardList
+    from ._models_py3 import Remediation
+    from ._models_py3 import ResetPasswordInput
     from ._models_py3 import Resource
     from ._models_py3 import ResourceDetails
     from ._models_py3 import ResourceIdentifier
     from ._models_py3 import Rule
+    from ._models_py3 import RuleResults
+    from ._models_py3 import RuleResultsInput
+    from ._models_py3 import RuleResultsProperties
+    from ._models_py3 import RulesResults
+    from ._models_py3 import RulesResultsInput
+    from ._models_py3 import Scan
+    from ._models_py3 import ScanProperties
+    from ._models_py3 import ScanResult
+    from ._models_py3 import ScanResultProperties
+    from ._models_py3 import ScanResults
+    from ._models_py3 import Scans
     from ._models_py3 import ScopeElement
     from ._models_py3 import SecureScoreControlDefinitionItem
     from ._models_py3 import SecureScoreControlDefinitionList
@@ -211,13 +233,14 @@ try:
     from ._models_py3 import SecurityTaskList
     from ._models_py3 import SecurityTaskParameters
     from ._models_py3 import SensitivityLabel
+    from ._models_py3 import Sensor
     from ._models_py3 import ServerVulnerabilityAssessment
     from ._models_py3 import ServerVulnerabilityAssessmentsList
     from ._models_py3 import ServerVulnerabilityProperties
     from ._models_py3 import ServicePrincipalProperties
     from ._models_py3 import Setting
-    from ._models_py3 import SettingResource
     from ._models_py3 import SettingsList
+    from ._models_py3 import Site
     from ._models_py3 import SqlServerVulnerabilityProperties
     from ._models_py3 import SubAssessmentStatus
     from ._models_py3 import SuppressionAlertsScope
@@ -234,8 +257,10 @@ try:
     from ._models_py3 import TwinUpdatesNotInAllowedRange
     from ._models_py3 import UnauthorizedOperationsNotInAllowedRange
     from ._models_py3 import UpdateIotSecuritySolutionData
+    from ._models_py3 import UpgradePackageDownloadInfo
     from ._models_py3 import UserDefinedResourcesProperties
     from ._models_py3 import UserRecommendation
+    from ._models_py3 import VaRule
     from ._models_py3 import VendorReference
     from ._models_py3 import VmRecommendation
     from ._models_py3 import WorkspaceSetting
@@ -290,6 +315,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureResourceIdentifier  # type: ignore
     from ._models import AzureResourceLink  # type: ignore
     from ._models import AzureTrackedResourceLocation  # type: ignore
+    from ._models import Baseline  # type: ignore
+    from ._models import BaselineAdjustedResult  # type: ignore
+    from ._models import BenchmarkReference  # type: ignore
     from ._models import CVE  # type: ignore
     from ._models import CVSS  # type: ignore
     from ._models import CefExternalSecuritySolution  # type: ignore
@@ -350,16 +378,22 @@ except (SyntaxError, ImportError):
     from ._models import IoTSeverityMetrics  # type: ignore
     from ._models import IotAlert  # type: ignore
     from ._models import IotAlertList  # type: ignore
+    from ._models import IotAlertListModel  # type: ignore
+    from ._models import IotAlertModel  # type: ignore
     from ._models import IotAlertType  # type: ignore
     from ._models import IotAlertTypeList  # type: ignore
     from ._models import IotDefenderSettingsList  # type: ignore
     from ._models import IotDefenderSettingsModel  # type: ignore
     from ._models import IotRecommendation  # type: ignore
     from ._models import IotRecommendationList  # type: ignore
+    from ._models import IotRecommendationListModel  # type: ignore
+    from ._models import IotRecommendationModel  # type: ignore
     from ._models import IotRecommendationType  # type: ignore
     from ._models import IotRecommendationTypeList  # type: ignore
-    from ._models import IotSensor  # type: ignore
     from ._models import IotSensorsList  # type: ignore
+    from ._models import IotSensorsModel  # type: ignore
+    from ._models import IotSitesList  # type: ignore
+    from ._models import IotSitesModel  # type: ignore
     from ._models import IpAddress  # type: ignore
     from ._models import JitNetworkAccessPoliciesList  # type: ignore
     from ._models import JitNetworkAccessPolicy  # type: ignore
@@ -396,7 +430,6 @@ except (SyntaxError, ImportError):
     from ._models import PackageDownloadsSensor  # type: ignore
     from ._models import PackageDownloadsSensorFull  # type: ignore
     from ._models import PackageDownloadsSensorFullOvf  # type: ignore
-    from ._models import PackageDownloadsThreatIntelligence  # type: ignore
     from ._models import PathRecommendation  # type: ignore
     from ._models import Pricing  # type: ignore
     from ._models import PricingList  # type: ignore
@@ -405,6 +438,7 @@ except (SyntaxError, ImportError):
     from ._models import Protocol  # type: ignore
     from ._models import ProxyServerProperties  # type: ignore
     from ._models import PublisherInfo  # type: ignore
+    from ._models import QueryCheck  # type: ignore
     from ._models import QueuePurgesNotInAllowedRange  # type: ignore
     from ._models import RecommendationConfigurationProperties  # type: ignore
     from ._models import RegulatoryComplianceAssessment  # type: ignore
@@ -413,10 +447,23 @@ except (SyntaxError, ImportError):
     from ._models import RegulatoryComplianceControlList  # type: ignore
     from ._models import RegulatoryComplianceStandard  # type: ignore
     from ._models import RegulatoryComplianceStandardList  # type: ignore
+    from ._models import Remediation  # type: ignore
+    from ._models import ResetPasswordInput  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceDetails  # type: ignore
     from ._models import ResourceIdentifier  # type: ignore
     from ._models import Rule  # type: ignore
+    from ._models import RuleResults  # type: ignore
+    from ._models import RuleResultsInput  # type: ignore
+    from ._models import RuleResultsProperties  # type: ignore
+    from ._models import RulesResults  # type: ignore
+    from ._models import RulesResultsInput  # type: ignore
+    from ._models import Scan  # type: ignore
+    from ._models import ScanProperties  # type: ignore
+    from ._models import ScanResult  # type: ignore
+    from ._models import ScanResultProperties  # type: ignore
+    from ._models import ScanResults  # type: ignore
+    from ._models import Scans  # type: ignore
     from ._models import ScopeElement  # type: ignore
     from ._models import SecureScoreControlDefinitionItem  # type: ignore
     from ._models import SecureScoreControlDefinitionList  # type: ignore
@@ -445,13 +492,14 @@ except (SyntaxError, ImportError):
     from ._models import SecurityTaskList  # type: ignore
     from ._models import SecurityTaskParameters  # type: ignore
     from ._models import SensitivityLabel  # type: ignore
+    from ._models import Sensor  # type: ignore
     from ._models import ServerVulnerabilityAssessment  # type: ignore
     from ._models import ServerVulnerabilityAssessmentsList  # type: ignore
     from ._models import ServerVulnerabilityProperties  # type: ignore
     from ._models import ServicePrincipalProperties  # type: ignore
     from ._models import Setting  # type: ignore
-    from ._models import SettingResource  # type: ignore
     from ._models import SettingsList  # type: ignore
+    from ._models import Site  # type: ignore
     from ._models import SqlServerVulnerabilityProperties  # type: ignore
     from ._models import SubAssessmentStatus  # type: ignore
     from ._models import SuppressionAlertsScope  # type: ignore
@@ -468,8 +516,10 @@ except (SyntaxError, ImportError):
     from ._models import TwinUpdatesNotInAllowedRange  # type: ignore
     from ._models import UnauthorizedOperationsNotInAllowedRange  # type: ignore
     from ._models import UpdateIotSecuritySolutionData  # type: ignore
+    from ._models import UpgradePackageDownloadInfo  # type: ignore
     from ._models import UserDefinedResourcesProperties  # type: ignore
     from ._models import UserRecommendation  # type: ignore
+    from ._models import VaRule  # type: ignore
     from ._models import VendorReference  # type: ignore
     from ._models import VmRecommendation  # type: ignore
     from ._models import WorkspaceSetting  # type: ignore
@@ -504,8 +554,6 @@ from ._security_center_enums import (
     Enum15,
     Enum17,
     Enum3,
-    Enum37,
-    Enum38,
     EventSource,
     ExpandControlsEnum,
     ExpandEnum,
@@ -535,10 +583,16 @@ from ._security_center_enums import (
     ReportedSeverity,
     ResourceIdentifierType,
     ResourceStatus,
+    RuleSeverity,
     RuleState,
+    RuleStatus,
+    RuleType,
+    ScanState,
+    ScanTriggerType,
     ScanningFunctionality,
     SecurityFamily,
     SecuritySolutionStatus,
+    SensorStatus,
     ServerVulnerabilityAssessmentPropertiesProvisioningState,
     SettingKind,
     Severity,
@@ -549,6 +603,7 @@ from ._security_center_enums import (
     StatusReason,
     SubAssessmentStatusCode,
     Threats,
+    TiStatus,
     TransportProtocol,
     UnmaskedIpLoggingStatus,
     UserImpact,
@@ -606,6 +661,9 @@ __all__ = [
     'AzureResourceIdentifier',
     'AzureResourceLink',
     'AzureTrackedResourceLocation',
+    'Baseline',
+    'BaselineAdjustedResult',
+    'BenchmarkReference',
     'CVE',
     'CVSS',
     'CefExternalSecuritySolution',
@@ -666,16 +724,22 @@ __all__ = [
     'IoTSeverityMetrics',
     'IotAlert',
     'IotAlertList',
+    'IotAlertListModel',
+    'IotAlertModel',
     'IotAlertType',
     'IotAlertTypeList',
     'IotDefenderSettingsList',
     'IotDefenderSettingsModel',
     'IotRecommendation',
     'IotRecommendationList',
+    'IotRecommendationListModel',
+    'IotRecommendationModel',
     'IotRecommendationType',
     'IotRecommendationTypeList',
-    'IotSensor',
     'IotSensorsList',
+    'IotSensorsModel',
+    'IotSitesList',
+    'IotSitesModel',
     'IpAddress',
     'JitNetworkAccessPoliciesList',
     'JitNetworkAccessPolicy',
@@ -712,7 +776,6 @@ __all__ = [
     'PackageDownloadsSensor',
     'PackageDownloadsSensorFull',
     'PackageDownloadsSensorFullOvf',
-    'PackageDownloadsThreatIntelligence',
     'PathRecommendation',
     'Pricing',
     'PricingList',
@@ -721,6 +784,7 @@ __all__ = [
     'Protocol',
     'ProxyServerProperties',
     'PublisherInfo',
+    'QueryCheck',
     'QueuePurgesNotInAllowedRange',
     'RecommendationConfigurationProperties',
     'RegulatoryComplianceAssessment',
@@ -729,10 +793,23 @@ __all__ = [
     'RegulatoryComplianceControlList',
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceStandardList',
+    'Remediation',
+    'ResetPasswordInput',
     'Resource',
     'ResourceDetails',
     'ResourceIdentifier',
     'Rule',
+    'RuleResults',
+    'RuleResultsInput',
+    'RuleResultsProperties',
+    'RulesResults',
+    'RulesResultsInput',
+    'Scan',
+    'ScanProperties',
+    'ScanResult',
+    'ScanResultProperties',
+    'ScanResults',
+    'Scans',
     'ScopeElement',
     'SecureScoreControlDefinitionItem',
     'SecureScoreControlDefinitionList',
@@ -761,13 +838,14 @@ __all__ = [
     'SecurityTaskList',
     'SecurityTaskParameters',
     'SensitivityLabel',
+    'Sensor',
     'ServerVulnerabilityAssessment',
     'ServerVulnerabilityAssessmentsList',
     'ServerVulnerabilityProperties',
     'ServicePrincipalProperties',
     'Setting',
-    'SettingResource',
     'SettingsList',
+    'Site',
     'SqlServerVulnerabilityProperties',
     'SubAssessmentStatus',
     'SuppressionAlertsScope',
@@ -784,8 +862,10 @@ __all__ = [
     'TwinUpdatesNotInAllowedRange',
     'UnauthorizedOperationsNotInAllowedRange',
     'UpdateIotSecuritySolutionData',
+    'UpgradePackageDownloadInfo',
     'UserDefinedResourcesProperties',
     'UserRecommendation',
+    'VaRule',
     'VendorReference',
     'VmRecommendation',
     'WorkspaceSetting',
@@ -818,8 +898,6 @@ __all__ = [
     'Enum15',
     'Enum17',
     'Enum3',
-    'Enum37',
-    'Enum38',
     'EventSource',
     'ExpandControlsEnum',
     'ExpandEnum',
@@ -849,10 +927,16 @@ __all__ = [
     'ReportedSeverity',
     'ResourceIdentifierType',
     'ResourceStatus',
+    'RuleSeverity',
     'RuleState',
+    'RuleStatus',
+    'RuleType',
+    'ScanState',
+    'ScanTriggerType',
     'ScanningFunctionality',
     'SecurityFamily',
     'SecuritySolutionStatus',
+    'SensorStatus',
     'ServerVulnerabilityAssessmentPropertiesProvisioningState',
     'SettingKind',
     'Severity',
@@ -863,6 +947,7 @@ __all__ = [
     'StatusReason',
     'SubAssessmentStatusCode',
     'Threats',
+    'TiStatus',
     'TransportProtocol',
     'UnmaskedIpLoggingStatus',
     'UserImpact',

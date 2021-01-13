@@ -14,14 +14,14 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-resourcegraph/unknown Python/3.6.9 (Linux-4.19.128-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
   response:
     body:
       string: "{\"error\":{\"code\":\"BadRequest\",\"message\":\"Please provide below\
-        \ info when asking for support: timestamp = 2020-10-19T07:38:49.5742526Z,\
-        \ correlationId = 51623244-2174-4f5b-ba3e-988e245c6729.\",\"details\":[{\"\
+        \ info when asking for support: timestamp = 2020-12-15T09:46:59.0405078Z,\
+        \ correlationId = c0a5961d-2258-4095-a131-5549202a1243.\",\"details\":[{\"\
         code\":\"InvalidQuery\",\"message\":\"Query is invalid. Please refer to the\
         \ documentation for the Azure Resource Graph service and fix the error before\
         \ retrying.\"},{\"code\":\"ParserFailure\",\"message\":\"ParserFailure\",\"\
@@ -35,7 +35,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 07:38:48 GMT
+      - Tue, 15 Dec 2020 09:46:58 GMT
       expires:
       - '-1'
       pragma:
@@ -47,9 +47,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-tenant-resource-requests:
-      - '12'
+      - '11'
       x-ms-user-quota-remaining:
-      - '12'
+      - '11'
       x-ms-user-quota-resets-after:
       - 00:00:05
     status:

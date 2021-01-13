@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2020-12-15)
+
+**Bugfixes**
+
+  - Fix unreasonable boolean enumeration type
+
 ## 1.0.0b1 (2020-11-02)
 
 This is beta preview version.

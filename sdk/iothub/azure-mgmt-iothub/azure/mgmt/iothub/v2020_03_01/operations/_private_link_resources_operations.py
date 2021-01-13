@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,14 +29,14 @@ class PrivateLinkResourcesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.iothub.v2020_03_01.models
+    :type models: ~azure.mgmt.iothub.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class PrivateLinkResourcesOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateLinkResources"
+        # type: (...) -> "_models.PrivateLinkResources"
         """List private link resources.
 
         List private link resources for the given IotHub.
@@ -61,10 +61,10 @@ class PrivateLinkResourcesOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResources, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.PrivateLinkResources
+        :rtype: ~azure.mgmt.iothub.models.PrivateLinkResources
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResources"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResources"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -95,7 +95,7 @@ class PrivateLinkResourcesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateLinkResources', pipeline_response)
@@ -113,7 +113,7 @@ class PrivateLinkResourcesOperations(object):
         group_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.GroupIdInformation"
+        # type: (...) -> "_models.GroupIdInformation"
         """Get the specified private link resource.
 
         Get the specified private link resource for the given IotHub.
@@ -126,10 +126,10 @@ class PrivateLinkResourcesOperations(object):
         :type group_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GroupIdInformation, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.GroupIdInformation
+        :rtype: ~azure.mgmt.iothub.models.GroupIdInformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GroupIdInformation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GroupIdInformation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -161,7 +161,7 @@ class PrivateLinkResourcesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('GroupIdInformation', pipeline_response)

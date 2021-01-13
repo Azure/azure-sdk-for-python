@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class AlertsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class AlertsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.AlertList"]:
+    ) -> AsyncIterable["_models.AlertList"]:
         """List all the alerts that are associated with the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,7 +52,7 @@ class AlertsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.AlertList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AlertList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,7 +111,7 @@ class AlertsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AlertList"]:
+    ) -> AsyncIterable["_models.AlertList"]:
         """List all the alerts that are associated with the resource group.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -122,7 +122,7 @@ class AlertsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.AlertList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AlertList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -181,7 +181,7 @@ class AlertsOperations:
     def list_subscription_level_alerts_by_region(
         self,
         **kwargs
-    ) -> AsyncIterable["models.AlertList"]:
+    ) -> AsyncIterable["_models.AlertList"]:
         """List all the alerts that are associated with the subscription that are stored in a specific
         location.
 
@@ -190,7 +190,7 @@ class AlertsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.AlertList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AlertList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -250,7 +250,7 @@ class AlertsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AlertList"]:
+    ) -> AsyncIterable["_models.AlertList"]:
         """List all the alerts that are associated with the resource group that are stored in a specific
         location.
 
@@ -262,7 +262,7 @@ class AlertsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.AlertList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AlertList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -323,7 +323,7 @@ class AlertsOperations:
         self,
         alert_name: str,
         **kwargs
-    ) -> "models.Alert":
+    ) -> "_models.Alert":
         """Get an alert that is associated with a subscription.
 
         :param alert_name: Name of the alert object.
@@ -333,7 +333,7 @@ class AlertsOperations:
         :rtype: ~azure.mgmt.security.models.Alert
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Alert"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Alert"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -379,7 +379,7 @@ class AlertsOperations:
         alert_name: str,
         resource_group_name: str,
         **kwargs
-    ) -> "models.Alert":
+    ) -> "_models.Alert":
         """Get an alert that is associated a resource group or a resource in a resource group.
 
         :param alert_name: Name of the alert object.
@@ -392,7 +392,7 @@ class AlertsOperations:
         :rtype: ~azure.mgmt.security.models.Alert
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Alert"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Alert"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

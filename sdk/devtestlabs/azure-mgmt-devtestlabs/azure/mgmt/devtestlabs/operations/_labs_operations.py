@@ -17,7 +17,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -40,7 +40,7 @@ class LabsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -56,7 +56,7 @@ class LabsOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LabList"]
+        # type: (...) -> Iterable["_models.LabList"]
         """List labs in a subscription.
 
         :param expand: Specify the $expand query. Example: 'properties($select=defaultStorageAccount)'.
@@ -73,7 +73,7 @@ class LabsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.LabList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LabList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -145,7 +145,7 @@ class LabsOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LabList"]
+        # type: (...) -> Iterable["_models.LabList"]
         """List labs in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -164,7 +164,7 @@ class LabsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.LabList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LabList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -235,7 +235,7 @@ class LabsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Lab"
+        # type: (...) -> "_models.Lab"
         """Get lab.
 
         :param resource_group_name: The name of the resource group.
@@ -249,7 +249,7 @@ class LabsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Lab
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Lab"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Lab"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -296,11 +296,11 @@ class LabsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        lab,  # type: "models.Lab"
+        lab,  # type: "_models.Lab"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Lab"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Lab"]
+        # type: (...) -> "_models.Lab"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Lab"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -354,10 +354,10 @@ class LabsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        lab,  # type: "models.Lab"
+        lab,  # type: "_models.Lab"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Lab"]
+        # type: (...) -> LROPoller["_models.Lab"]
         """Create or replace an existing lab. This operation can take a while to complete.
 
         :param resource_group_name: The name of the resource group.
@@ -377,7 +377,7 @@ class LabsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Lab"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Lab"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -402,7 +402,13 @@ class LabsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -506,7 +512,13 @@ class LabsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -524,10 +536,10 @@ class LabsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        lab,  # type: "models.LabFragment"
+        lab,  # type: "_models.LabFragment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Lab"
+        # type: (...) -> "_models.Lab"
         """Allows modifying tags of labs. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -541,7 +553,7 @@ class LabsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Lab
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Lab"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Lab"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -678,7 +690,13 @@ class LabsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -696,7 +714,7 @@ class LabsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        lab_virtual_machine_creation_parameter,  # type: "models.LabVirtualMachineCreationParameter"
+        lab_virtual_machine_creation_parameter,  # type: "_models.LabVirtualMachineCreationParameter"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -747,7 +765,7 @@ class LabsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        lab_virtual_machine_creation_parameter,  # type: "models.LabVirtualMachineCreationParameter"
+        lab_virtual_machine_creation_parameter,  # type: "_models.LabVirtualMachineCreationParameter"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -792,7 +810,13 @@ class LabsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -821,7 +845,7 @@ class LabsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _export_resource_usage_parameters = models.ExportResourceUsageParameters(blob_storage_absolute_sas_uri=blob_storage_absolute_sas_uri, usage_start_date=usage_start_date)
+        _export_resource_usage_parameters = _models.ExportResourceUsageParameters(blob_storage_absolute_sas_uri=blob_storage_absolute_sas_uri, usage_start_date=usage_start_date)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -916,7 +940,13 @@ class LabsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -937,7 +967,7 @@ class LabsOperations(object):
         blob_name=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.GenerateUploadUriResponse"
+        # type: (...) -> "_models.GenerateUploadUriResponse"
         """Generate a URI for uploading custom disk images to a Lab.
 
         :param resource_group_name: The name of the resource group.
@@ -951,13 +981,13 @@ class LabsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.GenerateUploadUriResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenerateUploadUriResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GenerateUploadUriResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _generate_upload_uri_parameter = models.GenerateUploadUriParameter(blob_name=blob_name)
+        _generate_upload_uri_parameter = _models.GenerateUploadUriParameter(blob_name=blob_name)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -1014,7 +1044,7 @@ class LabsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _import_lab_virtual_machine_request = models.ImportLabVirtualMachineRequest(source_virtual_machine_resource_id=source_virtual_machine_resource_id, destination_virtual_machine_name=destination_virtual_machine_name)
+        _import_lab_virtual_machine_request = _models.ImportLabVirtualMachineRequest(source_virtual_machine_resource_id=source_virtual_machine_resource_id, destination_virtual_machine_name=destination_virtual_machine_name)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -1108,7 +1138,13 @@ class LabsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1128,7 +1164,7 @@ class LabsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LabVhdList"]
+        # type: (...) -> Iterable["_models.LabVhdList"]
         """List disk images available for custom image creation.
 
         :param resource_group_name: The name of the resource group.
@@ -1140,7 +1176,7 @@ class LabsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.LabVhdList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LabVhdList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabVhdList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

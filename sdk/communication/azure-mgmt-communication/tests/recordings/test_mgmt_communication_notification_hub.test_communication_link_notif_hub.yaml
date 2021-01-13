@@ -1,0 +1,481 @@
+interactions:
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-notificationhubs/7.0.0b1 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b","name":"test-namespace-for-comm80451e9b","type":"Microsoft.NotificationHubs/namespaces","location":"West
+        US","kind":"NotificationHub","tags":{},"properties":{"provisioningState":"Unknown","enabled":false,"namespaceType":"NotificationHub"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '477'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:44:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/SN1
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/SN1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-notificationhubs/7.0.0b1 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b","name":"test-namespace-for-comm80451e9b","type":"Microsoft.NotificationHubs/namespaces","location":"West
+        US","kind":"NotificationHub","sku":{"name":"Free"},"tags":{},"properties":{"provisioningState":"Activating","status":"Created","createdAt":"2020-12-15T00:44:23.49Z","serviceBusEndpoint":"https://test-namespace-for-comm80451e9b.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2020-12-15T00:44:23.49Z","namespaceType":"NotificationHub"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '704'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:44:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/SN1
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/SN1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-notificationhubs/7.0.0b1 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b","name":"test-namespace-for-comm80451e9b","type":"Microsoft.NotificationHubs/namespaces","location":"West
+        US","kind":"NotificationHub","sku":{"name":"Free"},"tags":{},"properties":{"provisioningState":"Succeeded","status":"Active","createdAt":"2020-12-15T00:44:23.49Z","serviceBusEndpoint":"https://test-namespace-for-comm80451e9b.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2020-12-15T00:44:56.39Z","namespaceType":"NotificationHub"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '702'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:45:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/SN1
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/SN1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-notificationhubs/7.0.0b1 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b/notificationHubs/test-notification-hub-for-comm80451e9b?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b/notificationHubs/test-notification-hub-for-comm80451e9b","name":"test-notification-hub-for-comm80451e9b","type":"Microsoft.NotificationHubs/namespaces/notificationHubs","location":"West
+        US","properties":{"registrationTtl":"10675199.02:48:05.4775807"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '488'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:45:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/SN1
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/SN1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"properties": {"rights": ["Listen"]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '38'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-notificationhubs/7.0.0b1 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b/notificationHubs/test-notification-hub-for-comm80451e9b/AuthorizationRules/TestMgmtCommunicationLinkNotificationHub?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b/notificationHubs/test-notification-hub-for-comm80451e9b/AuthorizationRules/TestMgmtCommunicationLinkNotificationHub","name":"TestMgmtCommunicationLinkNotificationHub","type":"Microsoft.NotificationHubs/namespaces/notificationHubs/authorizationRules","location":null,"tags":null,"properties":{"rights":["Listen"]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '550'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:45:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/SN1
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/SN1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-notificationhubs/7.0.0b1 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b/notificationHubs/test-notification-hub-for-comm80451e9b/AuthorizationRules/TestMgmtCommunicationLinkNotificationHub/listKeys?api-version=2017-04-01
+  response:
+    body:
+      string: '{"primaryConnectionString":"Endpoint=sb://test-namespace-for-comm80451e9b.servicebus.windows.net/;SharedAccessKeyName=TestMgmtCommunicationLinkNotificationHub;SharedAccessKey=","secondaryConnectionString":"Endpoint=sb://test-namespace-for-comm80451e9b.servicebus.windows.net/;SharedAccessKeyName=TestMgmtCommunicationLinkNotificationHub;SharedAccessKey=","primaryKey":"","secondaryKey":"","keyName":"TestMgmtCommunicationLinkNotificationHub"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '618'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:45:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/SN1
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/SN1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "global", "properties": {"dataLocation": "UnitedStates"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '70'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.Communication/communicationServices/test-resource-link-notif-hub80451e9b?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.Communication/communicationServices/test-resource-link-notif-hub80451e9b","name":"test-resource-link-notif-hub80451e9b","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Accepted","hostName":"test-resource-link-notif-hub80451e9b.communication.azure.com","immutableResourceId":"9b81016f-78e0-4be0-974d-17a4ce60dd54","dataLocation":"UnitedStates"}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/644c8026-ad07-4e1e-882e-9374f75a58fa?api-version=2020-08-20-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '583'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:45:08 GMT
+      etag:
+      - '"5000c9f6-0000-0700-0000-5fd807150000"'
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/644c8026-ad07-4e1e-882e-9374f75a58fa?api-version=2020-08-20-preview
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/644c8026-ad07-4e1e-882e-9374f75a58fa?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/644c8026-ad07-4e1e-882e-9374f75a58fa","name":"644c8026-ad07-4e1e-882e-9374f75a58fa","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.Communication/communicationServices/test-resource-link-notif-hub80451e9b","status":"Succeeded","startTime":"2020-12-15T00:45:09.1100492Z","endTime":"2020-12-15T00:45:10.6644344Z","percentComplete":100.0,"properties":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '567'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:45:38 GMT
+      etag:
+      - '"e20bb7a1-0000-0800-0000-5fd807160000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.Communication/communicationServices/test-resource-link-notif-hub80451e9b?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.Communication/communicationServices/test-resource-link-notif-hub80451e9b","name":"test-resource-link-notif-hub80451e9b","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-link-notif-hub80451e9b.communication.azure.com","immutableResourceId":"9b81016f-78e0-4be0-974d-17a4ce60dd54","dataLocation":"UnitedStates"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '584'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:45:38 GMT
+      etag:
+      - '"5000d5f6-0000-0700-0000-5fd807160000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b/notificationHubs/test-notification-hub-for-comm80451e9b",
+      "connectionString": "Endpoint=sb://test-namespace-for-comm80451e9b.servicebus.windows.net/;SharedAccessKeyName=TestMgmtCommunicationLinkNotificationHub;SharedAccessKey="}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '518'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.Communication/communicationServices/test-resource-link-notif-hub80451e9b/linkNotificationHub?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_notification_hub_test_communication_link_notif_hub80451e9b/providers/Microsoft.NotificationHubs/namespaces/test-namespace-for-comm80451e9b/notificationHubs/test-notification-hub-for-comm80451e9b"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '302'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:45:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+version: 1

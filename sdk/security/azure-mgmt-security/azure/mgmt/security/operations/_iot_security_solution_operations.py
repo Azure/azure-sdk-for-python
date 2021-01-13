@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class IotSecuritySolutionOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class IotSecuritySolutionOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IoTSecuritySolutionsList"]
+        # type: (...) -> Iterable["_models.IoTSecuritySolutionsList"]
         """Use this method to get the list of IoT Security solutions by subscription.
 
         :param filter: Filter the IoT Security solution with OData syntax. Supports filtering by
@@ -61,7 +61,7 @@ class IotSecuritySolutionOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.IoTSecuritySolutionsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -124,7 +124,7 @@ class IotSecuritySolutionOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IoTSecuritySolutionsList"]
+        # type: (...) -> Iterable["_models.IoTSecuritySolutionsList"]
         """Use this method to get the list IoT Security solutions organized by resource group.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -138,7 +138,7 @@ class IotSecuritySolutionOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.IoTSecuritySolutionsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -202,7 +202,7 @@ class IotSecuritySolutionOperations(object):
         solution_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IoTSecuritySolutionModel"
+        # type: (...) -> "_models.IoTSecuritySolutionModel"
         """User this method to get details of a specific IoT Security solution based on solution name.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -215,7 +215,7 @@ class IotSecuritySolutionOperations(object):
         :rtype: ~azure.mgmt.security.models.IoTSecuritySolutionModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -260,10 +260,10 @@ class IotSecuritySolutionOperations(object):
         self,
         resource_group_name,  # type: str
         solution_name,  # type: str
-        iot_security_solution_data,  # type: "models.IoTSecuritySolutionModel"
+        iot_security_solution_data,  # type: "_models.IoTSecuritySolutionModel"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IoTSecuritySolutionModel"
+        # type: (...) -> "_models.IoTSecuritySolutionModel"
         """Use this method to create or update yours IoT Security solution.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -278,7 +278,7 @@ class IotSecuritySolutionOperations(object):
         :rtype: ~azure.mgmt.security.models.IoTSecuritySolutionModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -332,10 +332,10 @@ class IotSecuritySolutionOperations(object):
         self,
         resource_group_name,  # type: str
         solution_name,  # type: str
-        update_iot_security_solution_data,  # type: "models.UpdateIotSecuritySolutionData"
+        update_iot_security_solution_data,  # type: "_models.UpdateIotSecuritySolutionData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IoTSecuritySolutionModel"
+        # type: (...) -> "_models.IoTSecuritySolutionModel"
         """Use this method to update existing IoT Security solution tags or user defined resources. To
         update other fields use the CreateOrUpdate method.
 
@@ -351,7 +351,7 @@ class IotSecuritySolutionOperations(object):
         :rtype: ~azure.mgmt.security.models.IoTSecuritySolutionModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -15,8 +15,9 @@ import json
 from azure.eventgrid import EventGridConsumer
 
 consumer = EventGridConsumer()
+path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./cs4_event_grid_event_custom_event.json"))
 
-with open('./cs4_event_grid_event_custom_event.json', 'r') as f:
+with open(path, 'r') as f:
     eg_event_received_message = json.loads(f.read())
 
 # returns List[DeserializedEvent]

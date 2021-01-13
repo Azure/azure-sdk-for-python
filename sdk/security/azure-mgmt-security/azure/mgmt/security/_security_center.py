@@ -62,12 +62,16 @@ from .operations import SecureScoreControlsOperations
 from .operations import SecureScoreControlDefinitionsOperations
 from .operations import SecuritySolutionsOperations
 from .operations import ConnectorsOperations
+from .operations import SqlVulnerabilityAssessmentScansOperations
+from .operations import SqlVulnerabilityAssessmentScanResultsOperations
+from .operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 from .operations import IotDefenderSettingsOperations
 from .operations import IotSensorsOperations
 from .operations import DevicesForSubscriptionOperations
 from .operations import DevicesForHubOperations
 from .operations import DeviceOperations
 from .operations import OnPremiseIotSensorsOperations
+from .operations import IotSitesOperations
 from . import models
 
 
@@ -162,6 +166,12 @@ class SecurityCenter(object):
     :vartype security_solutions: azure.mgmt.security.operations.SecuritySolutionsOperations
     :ivar connectors: ConnectorsOperations operations
     :vartype connectors: azure.mgmt.security.operations.ConnectorsOperations
+    :ivar sql_vulnerability_assessment_scans: SqlVulnerabilityAssessmentScansOperations operations
+    :vartype sql_vulnerability_assessment_scans: azure.mgmt.security.operations.SqlVulnerabilityAssessmentScansOperations
+    :ivar sql_vulnerability_assessment_scan_results: SqlVulnerabilityAssessmentScanResultsOperations operations
+    :vartype sql_vulnerability_assessment_scan_results: azure.mgmt.security.operations.SqlVulnerabilityAssessmentScanResultsOperations
+    :ivar sql_vulnerability_assessment_baseline_rules: SqlVulnerabilityAssessmentBaselineRulesOperations operations
+    :vartype sql_vulnerability_assessment_baseline_rules: azure.mgmt.security.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
     :ivar iot_defender_settings: IotDefenderSettingsOperations operations
     :vartype iot_defender_settings: azure.mgmt.security.operations.IotDefenderSettingsOperations
     :ivar iot_sensors: IotSensorsOperations operations
@@ -174,6 +184,8 @@ class SecurityCenter(object):
     :vartype device: azure.mgmt.security.operations.DeviceOperations
     :ivar on_premise_iot_sensors: OnPremiseIotSensorsOperations operations
     :vartype on_premise_iot_sensors: azure.mgmt.security.operations.OnPremiseIotSensorsOperations
+    :ivar iot_sites: IotSitesOperations operations
+    :vartype iot_sites: azure.mgmt.security.operations.IotSitesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Azure subscription ID.
@@ -291,6 +303,12 @@ class SecurityCenter(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.connectors = ConnectorsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_scan_results = SqlVulnerabilityAssessmentScanResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.iot_defender_settings = IotDefenderSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.iot_sensors = IotSensorsOperations(
@@ -302,6 +320,8 @@ class SecurityCenter(object):
         self.device = DeviceOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.on_premise_iot_sensors = OnPremiseIotSensorsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.iot_sites = IotSitesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

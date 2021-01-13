@@ -50,12 +50,16 @@ from ._secure_score_controls_operations import SecureScoreControlsOperations
 from ._secure_score_control_definitions_operations import SecureScoreControlDefinitionsOperations
 from ._security_solutions_operations import SecuritySolutionsOperations
 from ._connectors_operations import ConnectorsOperations
+from ._sql_vulnerability_assessment_scans_operations import SqlVulnerabilityAssessmentScansOperations
+from ._sql_vulnerability_assessment_scan_results_operations import SqlVulnerabilityAssessmentScanResultsOperations
+from ._sql_vulnerability_assessment_baseline_rules_operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 from ._iot_defender_settings_operations import IotDefenderSettingsOperations
 from ._iot_sensors_operations import IotSensorsOperations
 from ._devices_for_subscription_operations import DevicesForSubscriptionOperations
 from ._devices_for_hub_operations import DevicesForHubOperations
 from ._device_operations import DeviceOperations
 from ._on_premise_iot_sensors_operations import OnPremiseIotSensorsOperations
+from ._iot_sites_operations import IotSitesOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -102,10 +106,14 @@ __all__ = [
     'SecureScoreControlDefinitionsOperations',
     'SecuritySolutionsOperations',
     'ConnectorsOperations',
+    'SqlVulnerabilityAssessmentScansOperations',
+    'SqlVulnerabilityAssessmentScanResultsOperations',
+    'SqlVulnerabilityAssessmentBaselineRulesOperations',
     'IotDefenderSettingsOperations',
     'IotSensorsOperations',
     'DevicesForSubscriptionOperations',
     'DevicesForHubOperations',
     'DeviceOperations',
     'OnPremiseIotSensorsOperations',
+    'IotSitesOperations',
 ]

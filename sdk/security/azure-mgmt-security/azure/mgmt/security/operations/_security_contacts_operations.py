@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class SecurityContactsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class SecurityContactsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecurityContactList"]
+        # type: (...) -> Iterable["_models.SecurityContactList"]
         """Security contact configurations for the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class SecurityContactsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecurityContactList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityContactList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityContactList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,7 +117,7 @@ class SecurityContactsOperations(object):
         security_contact_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityContact"
+        # type: (...) -> "_models.SecurityContact"
         """Security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object.
@@ -127,7 +127,7 @@ class SecurityContactsOperations(object):
         :rtype: ~azure.mgmt.security.models.SecurityContact
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityContact"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityContact"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,10 +170,10 @@ class SecurityContactsOperations(object):
     def create(
         self,
         security_contact_name,  # type: str
-        security_contact,  # type: "models.SecurityContact"
+        security_contact,  # type: "_models.SecurityContact"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityContact"
+        # type: (...) -> "_models.SecurityContact"
         """Security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object.
@@ -185,7 +185,7 @@ class SecurityContactsOperations(object):
         :rtype: ~azure.mgmt.security.models.SecurityContact
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityContact"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityContact"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -285,10 +285,10 @@ class SecurityContactsOperations(object):
     def update(
         self,
         security_contact_name,  # type: str
-        security_contact,  # type: "models.SecurityContact"
+        security_contact,  # type: "_models.SecurityContact"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityContact"
+        # type: (...) -> "_models.SecurityContact"
         """Security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object.
@@ -300,7 +300,7 @@ class SecurityContactsOperations(object):
         :rtype: ~azure.mgmt.security.models.SecurityContact
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityContact"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityContact"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -40,6 +40,7 @@ try:
     from ._models_py3 import ClusterPatchParameters
     from ._models_py3 import ClusterResizeParameters
     from ._models_py3 import ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAdditionalproperties
+    from ._models_py3 import ComputeIsolationProperties
     from ._models_py3 import ComputeProfile
     from ._models_py3 import ConnectivityEndpoint
     from ._models_py3 import DataDisksGroups
@@ -125,6 +126,7 @@ except (SyntaxError, ImportError):
     from ._models import ClusterPatchParameters  # type: ignore
     from ._models import ClusterResizeParameters  # type: ignore
     from ._models import ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
+    from ._models import ComputeIsolationProperties  # type: ignore
     from ._models import ComputeProfile  # type: ignore
     from ._models import ConnectivityEndpoint  # type: ignore
     from ._models import DataDisksGroups  # type: ignore
@@ -225,6 +227,7 @@ __all__ = [
     'ClusterPatchParameters',
     'ClusterResizeParameters',
     'ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAdditionalproperties',
+    'ComputeIsolationProperties',
     'ComputeProfile',
     'ConnectivityEndpoint',
     'DataDisksGroups',

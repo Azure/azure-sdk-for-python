@@ -64,6 +64,7 @@ try:
     from ._models_py3 import ReservationSummariesListResult
     from ._models_py3 import ReservationSummary
     from ._models_py3 import ReservationTransaction
+    from ._models_py3 import ReservationTransactionResource
     from ._models_py3 import ReservationTransactionsListResult
     from ._models_py3 import Resource
     from ._models_py3 import ResourceAttributes
@@ -130,6 +131,7 @@ except (SyntaxError, ImportError):
     from ._models import ReservationSummariesListResult  # type: ignore
     from ._models import ReservationSummary  # type: ignore
     from ._models import ReservationTransaction  # type: ignore
+    from ._models import ReservationTransactionResource  # type: ignore
     from ._models import ReservationTransactionsListResult  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceAttributes  # type: ignore
@@ -219,6 +221,7 @@ __all__ = [
     'ReservationSummariesListResult',
     'ReservationSummary',
     'ReservationTransaction',
+    'ReservationTransactionResource',
     'ReservationTransactionsListResult',
     'Resource',
     'ResourceAttributes',
