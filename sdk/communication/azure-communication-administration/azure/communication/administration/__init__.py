@@ -14,20 +14,13 @@ from ._identity._generated.models import (
 
 from ._phonenumber._generated.models import (
     AcquiredPhoneNumber,
-    AcquiredPhoneNumbers,
     AcquiredPhoneNumberUpdate,
     PhoneNumberAssignmentType,
     CommunicationError,
     CommunicationErrorResponse,
-    OperationKind,
-    PhoneNumberAssignmentType,
     PhoneNumberCapabilitiesRequest,
     PhoneNumberCapabilityValue,
     PhoneNumberCost,
-    PhoneNumberOperation,
-    PhoneNumberOperationStatusCodes,
-    PhoneNumberPurchaseRequest,
-    PhoneNumberSearchRequest,
     PhoneNumberSearchResult,
     PhoneNumberType
 )
@@ -48,20 +41,13 @@ __all__ = [
 
     # from _phonenumber
     'AcquiredPhoneNumber',
-    'AcquiredPhoneNumbers',
     'AcquiredPhoneNumberUpdate',
     'PhoneNumberAssignmentType',
     'CommunicationError',
     'CommunicationErrorResponse',
-    'OperationKind',
-    'PhoneNumberAssignmentType',
     'PhoneNumberCapabilitiesRequest',
     'PhoneNumberCapabilityValue',
     'PhoneNumberCost',
-    'PhoneNumberOperation',
-    'PhoneNumberOperationStatusCodes',
-    'PhoneNumberPurchaseRequest',
-    'PhoneNumberSearchRequest',
     'PhoneNumberSearchResult',
     'PhoneNumberType',
 
