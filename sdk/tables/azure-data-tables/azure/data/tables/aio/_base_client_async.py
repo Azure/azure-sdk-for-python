@@ -91,15 +91,6 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _configure_policies(self, **kwargs):
         # type: (**Any) -> None
-        self._config = kwargs.get('_configuration') or AzureTableConfiguration(
-            url=self.url,
-            headers_policy=StorageHeadersPolicy(**kwargs),
-            user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            retry_policy=kwargs.get("retry_policy") or AsyncTablesRetryPolicy(**kwargs),
-            logging_policy=StorageLoggingPolicy(**kwargs),
-            proxy_policy=ProxyPolicy(**kwargs),
-        )
-
         try:
             from azure.core.pipeline.transport import AioHttpTransport
             if not kwargs.get("transport"):
@@ -113,17 +104,17 @@ class AsyncStorageAccountHostsMixin(object):
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
 
         self._policies = [
-            self._config.headers_policy,
-            self._config.proxy_policy,
-            self._config.user_agent_policy,
+            StorageHeadersPolicy(**kwargs),
+            ProxyPolicy(**kwargs),
+            UserAgentPolicy(**kwargs),
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
-            self._config.retry_policy,
-            self._config.logging_policy,
+            AsyncTablesRetryPolicy(**kwargs),
+            StorageLoggingPolicy(**kwargs),
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),

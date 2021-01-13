@@ -125,33 +125,21 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self.key_resolver_function = kwargs.get("key_resolver_function")
 
         self._configure_credential(self.credential)
-
-        self._config = kwargs.get("_configuration") or AzureTableConfiguration(
-            url=self.url,
-            headers_policy=StorageHeadersPolicy(**kwargs),
-            user_agent_policy=UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            retry_policy=kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs),
-            logging_policy=StorageLoggingPolicy(**kwargs),
-            proxy_policy=ProxyPolicy(**kwargs)
-        )
-
-        print(kwargs)
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        print(kwargs)
 
         self._policies = [
-            self._config.headers_policy,
-            self._config.proxy_policy,
-            self._config.user_agent_policy,
+            StorageHeadersPolicy(**kwargs),
+            ProxyPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
-            self._config.retry_policy,
-            self._config.logging_policy,
+            kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs),
+            StorageLoggingPolicy(**kwargs),
             StorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
