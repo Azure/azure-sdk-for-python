@@ -27,12 +27,14 @@ def create_coverage_report():
         logging.info("Name: {}".format(name))
         folder = name[1]
         package = name[2]
-        print("Folder: {}\tPackage: {}".format(folder, package))
+        print("Folder: {}\tPackage: {}\tName: {}".format(folder, package, name))
         if (folder, package) not in packages_to_report:
             packages_to_report.append((folder, package))
             logging.info("Found a package: {}".format(package))
 
     print(packages_to_report)
+    package_names = [p[1] for p in packages_to_report]
+    print("package names: {}".format(package_names))
 
     packages_root = root.find('packages')
     packages_root = packages
@@ -50,11 +52,8 @@ def create_coverage_report():
     # 5. pray
 
     packages_nodes = []
-    for package_tuple in packages_to_report:
-        folder, package_name = package_tuple
-
+    for folder, package_name in packages_to_report:
         condense_nodes = []
-        master_package = False
         for child in packages:
             # print(child.tag, child.attrib)
 
@@ -63,10 +62,10 @@ def create_coverage_report():
                 package_name,
                 package_name.replace('-', '.')
             )
-            print("Test string: ", test_str)
+            # print("Test string: ", test_str)
 
-            if test_str in child.attrib['name']:
-                # print("condense_package")
+            if package_name in child.attrib['name']:
+                print("condense_package \t {}".format(child.attrib['name']))
                 condense_nodes.append(child)
 
         print("Condensing into one:")
@@ -92,13 +91,28 @@ def create_coverage_report():
                     first_package_classes.append(_class)
                 nodes_to_remove.append(node)
 
+
     print("\nRemoving nodes:")
     for n in nodes_to_remove:
         print(n.tag, n.attrib)
 
         packages_root.remove(n)
 
-    ET.ElementTree(root).write("coverage-new.xml")
+    # Compress into the one package
+    # Change name to just the one package
+
+    # Last thing with root, change the 'name' attrib to be just the package name
+
+    for package in root.find('packages'):
+        name = package.attrib['name'].split('.')
+        print(name)
+        package.attrib['name'] = name[2]
+
+    # ET.ElementTree(root).write("coverage-new.xml")
+    with open(coverage_file, "wb") as f:
+        data = ET.tostring(root, encoding="utf8")
+        f.write(data)
+
 
     print("\n\n\nFinal packages")
     for package in packages_root:
