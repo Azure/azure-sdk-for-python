@@ -17,9 +17,9 @@ from azure.identity._internal.shared_token_cache import (
     NO_ACCOUNTS,
     NO_MATCHING_ACCOUNTS,
 )
-from azure.identity._internal import get_default_authority
+from azure.identity._internal import _TokenCache, get_default_authority
 from azure.identity._internal.user_agent import USER_AGENT
-from msal import TokenCache
+import msal
 import pytest
 from six.moves.urllib_parse import urlparse
 
@@ -65,7 +65,7 @@ def test_supported():
 def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
 
-    credential = SharedTokenCacheCredential(_cache=TokenCache())
+    credential = SharedTokenCacheCredential(token_cache=_TokenCache())
     with pytest.raises(ValueError):
         credential.get_token()
 
@@ -77,7 +77,7 @@ def test_policies_configurable():
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     credential = SharedTokenCacheCredential(
-        _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
+        token_cache=populated_cache(get_account_event("test@user", "uid", "utid")),
         policies=[policy],
         transport=Mock(send=send),
     )
@@ -94,7 +94,7 @@ def test_user_agent():
     )
 
     credential = SharedTokenCacheCredential(
-        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+        token_cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
     )
 
     credential.get_token("scope")
@@ -114,23 +114,23 @@ def test_authority(authority):
             assert actual.netloc == expected_netloc
 
     transport = Mock(send=Mock(side_effect=Exception("credential shouldn't send a request")))
-    MockCredential(_cache=TokenCache(), authority=authority, transport=transport)
+    MockCredential(token_cache=_TokenCache(), authority=authority, transport=transport)
 
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
-        MockCredential(_cache=TokenCache(), authority=authority, transport=transport)
+        MockCredential(token_cache=_TokenCache(), authority=authority, transport=transport)
 
 
 def test_empty_cache():
     """the credential should raise CredentialUnavailableError when the cache is empty"""
 
     with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
-        SharedTokenCacheCredential(_cache=TokenCache()).get_token("scope")
+        SharedTokenCacheCredential(token_cache=_TokenCache()).get_token("scope")
     with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
-        SharedTokenCacheCredential(_cache=TokenCache(), username="not@cache").get_token("scope")
+        SharedTokenCacheCredential(token_cache=_TokenCache(), username="not@cache").get_token("scope")
     with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
-        SharedTokenCacheCredential(_cache=TokenCache(), tenant_id="not-cached").get_token("scope")
+        SharedTokenCacheCredential(token_cache=_TokenCache(), tenant_id="not-cached").get_token("scope")
     with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
-        SharedTokenCacheCredential(_cache=TokenCache(), tenant_id="not-cached", username="not@cache").get_token("scope")
+        SharedTokenCacheCredential(token_cache=_TokenCache(), tenant_id="not-cached", username="not@cache").get_token("scope")
 
 
 def test_no_matching_account_for_username():
@@ -142,7 +142,7 @@ def test_no_matching_account_for_username():
     cache = populated_cache(account)
 
     with pytest.raises(CredentialUnavailableError) as ex:
-        SharedTokenCacheCredential(_cache=cache, username="not" + upn).get_token("scope")
+        SharedTokenCacheCredential(token_cache=cache, username="not" + upn).get_token("scope")
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
     assert "not" + upn in ex.value.message
@@ -157,7 +157,7 @@ def test_no_matching_account_for_tenant():
     cache = populated_cache(account)
 
     with pytest.raises(CredentialUnavailableError) as ex:
-        SharedTokenCacheCredential(_cache=cache, tenant_id="not-" + tenant).get_token("scope")
+        SharedTokenCacheCredential(token_cache=cache, tenant_id="not-" + tenant).get_token("scope")
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
     assert "not-" + tenant in ex.value.message
@@ -172,7 +172,7 @@ def test_no_matching_account_for_tenant_and_username():
     cache = populated_cache(account)
 
     with pytest.raises(CredentialUnavailableError) as ex:
-        SharedTokenCacheCredential(_cache=cache, tenant_id="not-" + tenant, username="not" + upn).get_token("scope")
+        SharedTokenCacheCredential(token_cache=cache, tenant_id="not-" + tenant, username="not" + upn).get_token("scope")
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
     assert "not" + upn in ex.value.message and "not-" + tenant in ex.value.message
@@ -193,13 +193,13 @@ def test_no_matching_account_for_tenant_or_username():
 
     transport = Mock(side_effect=Exception())  # credential shouldn't use the network
 
-    credential = SharedTokenCacheCredential(username=upn_a, tenant_id=tenant_b, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(username=upn_a, tenant_id=tenant_b, token_cache=cache, transport=transport)
     with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
     assert upn_a in ex.value.message and tenant_b in ex.value.message
 
-    credential = SharedTokenCacheCredential(username=upn_b, tenant_id=tenant_a, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(username=upn_b, tenant_id=tenant_a, token_cache=cache, transport=transport)
     with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
@@ -220,7 +220,7 @@ def test_single_account_matching_username():
         requests=[Request(required_data={"refresh_token": refresh_token, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_token))],
     )
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport, username=upn)
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport, username=upn)
     token = credential.get_token(scope)
     assert token.token == expected_token
 
@@ -239,7 +239,7 @@ def test_single_account_matching_tenant():
         requests=[Request(required_data={"refresh_token": refresh_token, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_token))],
     )
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport, tenant_id=tenant_id)
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport, tenant_id=tenant_id)
     token = credential.get_token(scope)
     assert token.token == expected_token
 
@@ -259,7 +259,7 @@ def test_single_account_matching_tenant_and_username():
         requests=[Request(required_data={"refresh_token": refresh_token, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_token))],
     )
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport, tenant_id=tenant_id, username=upn)
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport, tenant_id=tenant_id, username=upn)
     token = credential.get_token(scope)
     assert token.token == expected_token
 
@@ -277,7 +277,7 @@ def test_single_account():
         requests=[Request(required_data={"refresh_token": refresh_token, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_token))],
     )
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport)
 
     token = credential.get_token(scope)
     assert token.token == expected_token
@@ -291,11 +291,11 @@ def test_no_refresh_token():
 
     transport = Mock(side_effect=Exception())  # credential shouldn't use the network
 
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport)
     with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         credential.get_token("scope")
 
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport, username="not@cache")
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport, username="not@cache")
     with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         credential.get_token("scope")
 
@@ -313,7 +313,7 @@ def test_two_accounts_no_username_or_tenant():
     transport = Mock(side_effect=Exception())
 
     # two users in the cache, no username specified -> CredentialUnavailableError
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport)
     with pytest.raises(ClientAuthenticationError, match=MULTIPLE_ACCOUNTS) as ex:
         credential.get_token("scope")
 
@@ -334,7 +334,7 @@ def test_two_accounts_username_specified():
         requests=[Request(required_data={"refresh_token": expected_refresh_token, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_token))],
     )
-    credential = SharedTokenCacheCredential(username=upn_a, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(username=upn_a, token_cache=cache, transport=transport)
     token = credential.get_token(scope)
     assert token.token == expected_token
 
@@ -356,7 +356,7 @@ def test_two_accounts_tenant_specified():
         requests=[Request(required_data={"refresh_token": expected_refresh_token, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_token))],
     )
-    credential = SharedTokenCacheCredential(tenant_id=tenant_id, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(tenant_id=tenant_id, token_cache=cache, transport=transport)
     token = credential.get_token(scope)
     assert token.token == expected_token
 
@@ -378,7 +378,7 @@ def test_two_accounts_tenant_and_username_specified():
         requests=[Request(required_data={"refresh_token": expected_refresh_token, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_token))],
     )
-    credential = SharedTokenCacheCredential(tenant_id=tenant_id, username=upn_a, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(tenant_id=tenant_id, username=upn_a, token_cache=cache, transport=transport)
     token = credential.get_token(scope)
     assert token.token == expected_token
 
@@ -400,7 +400,7 @@ def test_same_username_different_tenants():
 
     # with no tenant specified the credential can't select an identity
     transport = Mock(side_effect=Exception())  # (so it shouldn't use the network)
-    credential = SharedTokenCacheCredential(username=upn, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(username=upn, token_cache=cache, transport=transport)
     with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
 
@@ -413,7 +413,7 @@ def test_same_username_different_tenants():
         requests=[Request(required_data={"refresh_token": refresh_token_a, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))],
     )
-    credential = SharedTokenCacheCredential(tenant_id=tenant_a, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(tenant_id=tenant_a, token_cache=cache, transport=transport)
     token = credential.get_token(scope)
     assert token.token == access_token_a
 
@@ -421,7 +421,7 @@ def test_same_username_different_tenants():
         requests=[Request(required_data={"refresh_token": refresh_token_b, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))],
     )
-    credential = SharedTokenCacheCredential(tenant_id=tenant_b, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(tenant_id=tenant_b, token_cache=cache, transport=transport)
     token = credential.get_token(scope)
     assert token.token == access_token_b
 
@@ -443,7 +443,7 @@ def test_same_tenant_different_usernames():
 
     # with no username specified the credential can't select an identity
     transport = Mock(side_effect=Exception())  # (so it shouldn't use the network)
-    credential = SharedTokenCacheCredential(tenant_id=tenant_id, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(tenant_id=tenant_id, token_cache=cache, transport=transport)
     with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
 
@@ -456,7 +456,7 @@ def test_same_tenant_different_usernames():
         requests=[Request(required_data={"refresh_token": refresh_token_b, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))],
     )
-    credential = SharedTokenCacheCredential(username=upn_b, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(username=upn_b, token_cache=cache, transport=transport)
     token = credential.get_token(scope)
     assert token.token == access_token_a
 
@@ -464,7 +464,7 @@ def test_same_tenant_different_usernames():
         requests=[Request(required_data={"refresh_token": refresh_token_a, "scope": scope})],
         responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))],
     )
-    credential = SharedTokenCacheCredential(username=upn_a, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(username=upn_a, token_cache=cache, transport=transport)
     token = credential.get_token(scope)
     assert token.token == access_token_a
 
@@ -487,7 +487,7 @@ def test_authority_aliases():
             requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
             responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
         )
-        credential = SharedTokenCacheCredential(authority=authority, _cache=cache, transport=transport)
+        credential = SharedTokenCacheCredential(authority=authority, token_cache=cache, transport=transport)
         token = credential.get_token("scope")
         assert token.token == expected_access_token
 
@@ -497,7 +497,7 @@ def test_authority_aliases():
                 requests=[Request(authority=alias, required_data={"refresh_token": expected_refresh_token})],
                 responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
             )
-            credential = SharedTokenCacheCredential(authority=alias, _cache=cache, transport=transport)
+            credential = SharedTokenCacheCredential(authority=alias, token_cache=cache, transport=transport)
             token = credential.get_token("scope")
             assert token.token == expected_access_token
 
@@ -514,7 +514,7 @@ def test_authority_with_no_known_alias():
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
-    credential = SharedTokenCacheCredential(authority=authority, _cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(authority=authority, token_cache=cache, transport=transport)
     token = credential.get_token("scope")
     assert token.token == expected_access_token
 
@@ -532,7 +532,7 @@ def test_authority_environment_variable():
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
-        credential = SharedTokenCacheCredential(transport=transport, _cache=cache)
+        credential = SharedTokenCacheCredential(transport=transport, token_cache=cache)
     token = credential.get_token("scope")
     assert token.token == expected_access_token
 
@@ -546,7 +546,7 @@ def test_authentication_record_empty_cache():
         return get_discovery_response()
 
     credential = SharedTokenCacheCredential(
-        authentication_record=record, transport=Mock(send=send), _cache=TokenCache()
+        authentication_record=record, transport=Mock(send=send), token_cache=_TokenCache()
     )
 
     with pytest.raises(CredentialUnavailableError):
@@ -572,7 +572,7 @@ def test_authentication_record_no_match():
             "not-" + username, "not-" + object_id, "different-" + tenant_id, client_id="not-" + client_id,
         ),
     )
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=Mock(send=send), _cache=cache)
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=Mock(send=send), token_cache=cache)
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
@@ -599,7 +599,7 @@ def test_authentication_record():
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, token_cache=cache)
 
     token = credential.get_token("scope")
     assert token.token == expected_access_token
@@ -636,36 +636,10 @@ def test_auth_record_multiple_accounts_for_username():
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, token_cache=cache)
 
     token = credential.get_token("scope")
     assert token.token == expected_access_token
-
-
-@patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
-@patch("azure.identity._internal.persistent_cache.msal_extensions")
-def test_allow_unencrypted_cache(mock_extensions):
-    """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly allows it.
-
-    This test was written when Linux was the only platform on which encryption may not be available.
-    """
-
-    # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
-    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
-    mock_extensions.PersistedTokenCache.reset_mock()
-
-    # (when LibsecretPersistence's dependencies aren't available, constructing it raises ImportError)
-    mock_extensions.LibsecretPersistence = Mock(side_effect=ImportError)
-
-    # encryption unavailable, no opt in to unencrypted cache -> credential should be unavailable
-    with pytest.raises(CredentialUnavailableError):
-        SharedTokenCacheCredential().get_token("scope")
-    assert mock_extensions.PersistedTokenCache.call_count == 0
-
-    # still no encryption, but now we allow the unencrypted fallback
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
-    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 
 def test_writes_to_cache():
@@ -680,8 +654,8 @@ def test_writes_to_cache():
     uid = "uid"
     utid = "utid"
     account = get_account_event(username=username, uid=uid, utid=utid, refresh_token=first_refresh_token)
-    cache = TokenCache()
-    cache.add(account)
+    cache = _TokenCache()
+    cache._cache.add(account)
 
     transport = validating_transport(
         requests=[Request(required_data={"refresh_token": first_refresh_token})],  # credential redeems refresh token
@@ -699,13 +673,13 @@ def test_writes_to_cache():
             )
         ],
     )
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport)
     token = credential.get_token(scope)
     assert token.token == expected_access_token
 
     # access token should be in the cache, and another instance should retrieve it
     credential = SharedTokenCacheCredential(
-        _cache=cache, transport=Mock(send=Mock(side_effect=Exception("the credential should return a cached token")))
+        token_cache=cache, transport=Mock(send=Mock(side_effect=Exception("the credential should return a cached token")))
     )
     token = credential.get_token(scope)
     assert token.token == expected_access_token
@@ -716,57 +690,18 @@ def test_writes_to_cache():
         requests=[Request(required_data={"refresh_token": second_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=second_access_token))],
     )
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
+    credential = SharedTokenCacheCredential(token_cache=cache, transport=transport)
     token = credential.get_token("some other " + scope)
     assert token.token == second_access_token
 
     # verify the credential didn't add a new cache entry
-    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 1
-
-
-def test_access_token_caching():
-    """'get_token' shouldn't return other users' access tokens"""
-
-    scope = "scope"
-    forbidden_access_token = "don't use me"
-    expected_access_token = "access token"
-    my_refresh_token = "my refresh token"
-    your_refresh_token = "your refresh token"
-
-    me = "me"
-    uid = "uidme"
-    utid = "utidme"
-    cache = TokenCache()
-    cache.add(
-        get_account_event(
-            username=me,
-            uid=uid,
-            utid=utid,
-            refresh_token=my_refresh_token,
-            access_token=forbidden_access_token,
-            scopes=[scope],
-        )
-    )
-
-    you = "you"
-    uid = "uidyou"
-    utid = "utidyou"
-    cache.add(
-        get_account_event(
-            username=you,
-            uid=uid,
-            utid=utid,
-            refresh_token=your_refresh_token,
-            access_token=expected_access_token,
-            scopes=[scope],
-        )
-    )
+    assert len(cache._cache.find(msal.TokenCache.CredentialType.REFRESH_TOKEN)) == 1
 
 
 def test_initialization():
     """the credential should attempt to load the cache only once, when it's first needed"""
 
-    with patch("azure.identity._internal.persistent_cache._load_persistent_cache") as mock_cache_loader:
+    with patch("azure.identity._persistent_cache._get_persistence") as mock_cache_loader:
         mock_cache_loader.side_effect = Exception("it didn't work")
 
         credential = SharedTokenCacheCredential()
@@ -792,7 +727,7 @@ def test_authentication_record_authenticating_tenant():
 
     transport = Mock(send=Mock(wraps=mock_send))
     credential = SharedTokenCacheCredential(
-        authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id, transport=transport
+        authentication_record=record, token_cache=_TokenCache(), tenant_id=expected_tenant_id, transport=transport
     )
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")  # this raises because the cache is empty
@@ -805,7 +740,7 @@ def test_client_capabilities():
 
     record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
+    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=_TokenCache())
 
     with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
         credential._initialize()
@@ -829,7 +764,7 @@ def test_claims_challenge():
     )
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
+    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=_TokenCache())
     with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication", lambda *_, **__: msal_app):
         credential.get_token("scope", claims=expected_claims)
 
@@ -862,8 +797,8 @@ def get_account_event(
 
 
 def populated_cache(*accounts):
-    cache = TokenCache()
+    cache = _TokenCache()
     for account in accounts:
-        cache.add(account)
-    cache.add = lambda *_, **__: None  # prevent anything being added to the cache
+        cache._cache.add(account)
+    cache._cache.add = lambda *_, **__: None  # prevent anything being added to the cache
     return cache

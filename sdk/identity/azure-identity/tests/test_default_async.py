@@ -289,4 +289,4 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
 
     # this credential uses a mock shared cache, so it works on all platforms
     with patch.object(SharedTokenCacheCredential, "supported", lambda: True):
-        return DefaultAzureCredential(_cache=cache, transport=transport, **exclude_other_credentials, **kwargs)
+        return DefaultAzureCredential(token_cache=cache, transport=transport, **exclude_other_credentials, **kwargs)
