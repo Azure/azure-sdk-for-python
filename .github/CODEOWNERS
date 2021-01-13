@@ -110,6 +110,9 @@
 # PRLabel: %Tables
 /sdk/tables/                                                         @seankane-msft
 
+# PRLabel: %Media
+/sdk/media/                                                          @naiteeks @bennage @giakas
+
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
