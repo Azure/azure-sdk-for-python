@@ -383,14 +383,12 @@ async def test_list_read_receipts_with_results_per_page():
 async def test_list_read_receipts_with_results_per_page_and_skip():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     message_id_1 = "1596823919339"
-    message_id_2 = "1596823919340"
     raised = False
 
     async def mock_send(*_, **__):
         return mock_response(status_code=200, json_payload={
             "value": [
-                {"chatMessageId": message_id_1},
-                {"chatMessageId": message_id_2}
+                {"chatMessageId": message_id_1}
             ]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 

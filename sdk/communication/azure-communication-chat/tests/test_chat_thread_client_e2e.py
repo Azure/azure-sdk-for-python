@@ -49,9 +49,12 @@ class ChatThreadClientTest(CommunicationTestCase):
 
         # create another user
         self.new_user = self.identity_client.create_user()
+        tokenresponse = self.identity_client.issue_token(self.new_user, scopes=["chat"])
+        self.token_new_user = tokenresponse.token
 
         # create ChatClient
         self.chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationUserCredential(self.token_new_user))
 
     def tearDown(self):
         super(ChatThreadClientTest, self).tearDown()
@@ -75,6 +78,29 @@ class ChatThreadClientTest(CommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
+        self.chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
+        self.thread_id = self.chat_thread_client.thread_id
+
+    def _create_thread_w_two_users(
+            self,
+            **kwargs
+    ):
+        # create chat thread, and ChatThreadClient
+        topic = "test topic"
+        share_history_time = datetime.utcnow()
+        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        participants = [
+            ChatThreadParticipant(
+                user=self.user,
+                display_name='name',
+                share_history_time=share_history_time
+            ),
+            ChatThreadParticipant(
+                user=self.new_user,
+                display_name='name',
+                share_history_time=share_history_time
+            )
+        ]
         self.chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
         self.thread_id = self.chat_thread_client.thread_id
 
@@ -229,17 +255,19 @@ class ChatThreadClientTest(CommunicationTestCase):
         self.chat_thread_client.send_read_receipt(message_id)
 
 
-    def _wait_on_read_receipts(self, read_receipts_sent):
-        print("Read Receipts Sent: ", read_receipts_sent)
+    def _wait_on_thread(self, chat_client, thread_id, message_id):
+        # print("Read Receipts Sent: ", read_receipts_sent)
+        chat_thread_client = chat_client.get_chat_thread_client(thread_id)
         for _ in range(10):
-            print("Iteration: ", _)
-            read_receipts_paged = self.chat_thread_client.list_read_receipts(results_per_page=read_receipts_sent)
-            read_receipts = [item for item in read_receipts_paged]
-            if len(read_receipts) == read_receipts_sent:
-                print("All read receipts logged. Exiting...")
+            read_receipts_paged = chat_thread_client.list_read_receipts()
+            chat_message_ids = []
+            for page in read_receipts_paged.by_page():
+                for item in page:
+                    chat_message_ids.append(item.chat_message_id)
+
+            if message_id in chat_message_ids:
                 return
             else:
-                print("Read Receipts Logged: ", len(read_receipts))
                 print("Sleeping for additional 2 secs")
                 time.sleep(2)
         raise Exception("Read receipts not updated in 20 seconds. Failing.")
@@ -247,8 +275,9 @@ class ChatThreadClientTest(CommunicationTestCase):
 
     @pytest.mark.live_test_only
     def test_list_read_receipts(self):
-        self._create_thread()
+        self._create_thread_w_two_users()
 
+        # first user send 2 messages
         # send messages and read receipts
         for i in range(2):
             message_id = self._send_message()
@@ -256,12 +285,27 @@ class ChatThreadClientTest(CommunicationTestCase):
             self.chat_thread_client.send_read_receipt(message_id)
 
             if self.is_live:
-                self._wait_on_read_receipts(read_receipts_sent=i)
+                self._wait_on_thread(chat_client=self.chat_client, thread_id=self.thread_id, message_id=message_id)
+
+        # get chat thread client for second user
+        chat_thread_client_new_user = self.chat_client_new_user.get_chat_thread_client(self.thread_id)
+        # second user sends 1 message
+        message_id_new_user = chat_thread_client_new_user.send_message(
+            "content",
+            priority=ChatMessagePriority.NORMAL,
+            sender_display_name="sender_display_name")
+        # send read receipt
+        chat_thread_client_new_user.send_read_receipt(message_id_new_user)
+
+        if self.is_live:
+            self._wait_on_thread(chat_client=self.chat_client_new_user, thread_id=self.thread_id, message_id=message_id_new_user)
 
         # list read receipts
-        read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=1, skip=0)
+        read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=2, skip=0)
 
         items = []
-        for item in read_receipts:
-            items.append(item)
-        assert len(items) == 1
+        for page in read_receipts.by_page():
+            for item in page:
+                items.append(item)
+
+        assert len(items) == 2

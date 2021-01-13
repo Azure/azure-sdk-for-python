@@ -41,16 +41,23 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
         self.identity_client = CommunicationIdentityClient.from_connection_string(self.connection_str)
 
-        # create user
+        self.users = []
+        self.user_tokens = []
+        self.chat_clients = []
+
+        # create user 1
         self.user = self.identity_client.create_user()
         token_response = self.identity_client.issue_token(self.user, scopes=["chat"])
         self.token = token_response.token
 
-        # create another user
+        # create user 2
         self.new_user = self.identity_client.create_user()
+        token_response = self.identity_client.issue_token(self.new_user, scopes=["chat"])
+        self.token_new_user = token_response.token
 
         # create ChatClient
         self.chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationUserCredential(self.token_new_user))
 
     def tearDown(self):
         super(ChatThreadClientTestAsync, self).tearDown()
@@ -72,6 +79,27 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
         )]
         self.chat_thread_client = await self.chat_client.create_chat_thread(topic, participants)
         self.thread_id = self.chat_thread_client.thread_id
+
+    async def _create_thread_w_two_users(self):
+        # create chat thread
+        topic = "test topic"
+        share_history_time = datetime.utcnow()
+        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        participants = [
+            ChatThreadParticipant(
+                user=self.user,
+                display_name='name',
+                share_history_time=share_history_time
+            ),
+            ChatThreadParticipant(
+                user=self.new_user,
+                display_name='name',
+                share_history_time=share_history_time
+            )
+        ]
+        self.chat_thread_client = await self.chat_client.create_chat_thread(topic, participants)
+        self.thread_id = self.chat_thread_client.thread_id
+
 
     async def _send_message(self):
         # send a message
@@ -128,9 +156,9 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             await self._create_thread()
 
             async with self.chat_thread_client:
-                await self._send_message()
-                message = await self.chat_thread_client.get_message(self.message_id)
-                assert message.id == self.message_id
+                message_id = await self._send_message()
+                message = await self.chat_thread_client.get_message(message_id)
+                assert message.id == message_id
 
             # delete chat threads
             if not self.is_playback():
@@ -164,10 +192,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             await self._create_thread()
 
             async with self.chat_thread_client:
-                await self._send_message()
+                message_id = await self._send_message()
 
                 content = "updated message content"
-                await self.chat_thread_client.update_message(self.message_id, content=content)
+                await self.chat_thread_client.update_message(message_id, content=content)
 
             # delete chat threads
             if not self.is_playback():
@@ -180,9 +208,9 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             await self._create_thread()
 
             async with self.chat_thread_client:
-                await self._send_message()
+                message_id = await self._send_message()
 
-                await self.chat_thread_client.delete_message(self.message_id)
+                await self.chat_thread_client.delete_message(message_id)
 
             # delete chat threads
             if not self.is_playback():
@@ -299,41 +327,39 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             await self._create_thread()
 
             async with self.chat_thread_client:
-                await self._send_message()
+                message_id = await self._send_message()
 
-                await self.chat_thread_client.send_read_receipt(self.message_id)
+                await self.chat_thread_client.send_read_receipt(message_id)
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
 
-    async def _wait_on_thread(self, read_receipts_sent):
-        print("Read Receipts Sent: ", read_receipts_sent)
+    async def _wait_on_thread(self, chat_client, thread_id, message_id):
+        # print("Read Receipts Sent: ", read_receipts_sent)
+        chat_thread_client = chat_client.get_chat_thread_client(thread_id)
         for _ in range(10):
-            print("Iteration: ", _)
-            read_receipts_paged = self.chat_thread_client.list_read_receipts()
-            read_receipts = []
+            read_receipts_paged = chat_thread_client.list_read_receipts()
+            chat_message_ids = []
             async for page in read_receipts_paged.by_page():
                 async for item in page:
-                    print(item.chat_message_id)
-                    read_receipts.append(item)
+                    chat_message_ids.append(item.chat_message_id)
 
-            if len(read_receipts) == read_receipts_sent:
-                print("All read receipts logged. Exiting...")
+            if message_id in chat_message_ids:
                 return
             else:
-                print("Read Receipts Logged: ", len(read_receipts))
                 print("Sleeping for additional 2 secs")
-                await asyncio.sleep(5)
+                await asyncio.sleep(2)
         raise Exception("Read receipts not updated in 20 seconds. Failing.")
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_read_receipts(self):
         async with self.chat_client:
-            await self._create_thread()
+            await self._create_thread_w_two_users()
 
             async with self.chat_thread_client:
 
+                # first user sends 2 messages
                 for i in range(2):
                     message_id = await self._send_message()
                     print(f"Message Id: {message_id}")
@@ -341,17 +367,35 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                     # send read receipts first
                     await self.chat_thread_client.send_read_receipt(message_id)
 
+                    if self.is_live:
+                        await self._wait_on_thread(chat_client=self.chat_client, thread_id=self.thread_id, message_id=message_id)
+
+
+
+                # get chat thread client for second user
+                chat_thread_client_new_user = self.chat_client_new_user.get_chat_thread_client(self.thread_id)
+
+                # second user sends 1 message
+                message_id_new_user = await chat_thread_client_new_user.send_message(
+                    "content",
+                    priority=ChatMessagePriority.NORMAL,
+                    sender_display_name="sender_display_name")
+                # send read receipt
+                await chat_thread_client_new_user.send_read_receipt(message_id_new_user)
+
+                print(f"Second User message id: {message_id_new_user}")
                 if self.is_live:
-                    await self._wait_on_thread(read_receipts_sent=2)
+                    await self._wait_on_thread(chat_client=self.chat_client_new_user, thread_id=self.thread_id, message_id=message_id_new_user)
 
                 # list read receipts
                 read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=2, skip=0)
 
                 items = []
                 async for page in read_receipts.by_page():
-                    items += [item async for item in page]
+                    async for item in page:
+                        items.append(item)
 
-                assert len(items) == 0
+                assert len(items) == 2
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
