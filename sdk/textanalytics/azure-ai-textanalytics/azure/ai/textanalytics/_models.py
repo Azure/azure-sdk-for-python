@@ -997,21 +997,21 @@ class SentenceSentiment(DictMixin):
 
 class MinedOpinion(DictMixin):
     """A mined opinion object represents an opinion we've extracted from a sentence.
-    It consists of both an aspect that these opinions are about, and the actual
-    opinions themselves.
+    It consists of both a target that these opinions are about, and the assessments
+    representing the opinion.
 
-    :ivar aspect: The aspect of a product/service that this opinion is about
-    :vartype aspect: ~azure.ai.textanalytics.AspectSentiment
-    :ivar opinions: The actual opinions of the aspect
-    :vartype opinions: list[~azure.ai.textanalytics.OpinionSentiment]
+    :ivar target: The target aspect of a product/service that this opinion is about
+    :vartype target: ~azure.ai.textanalytics.TargetSentiment #~azure.ai.textanalytics.AspectSentiment
+    :ivar assessments: The assessments representing the opinion of the target.
+    :vartype assessments: list[~azure.ai.textanalytics.AssessmentSentiment] #~azure.ai.textanalytics.OpinionSentiment
     """
 
     def __init__(self, **kwargs):
-        self.aspect = kwargs.get("aspect", None)
-        self.opinions = kwargs.get("opinions", None)
+        self.target = kwargs.get("target", None)
+        self.assessments = kwargs.get("assessments", None)
 
     @staticmethod
-    def _get_opinions(relations, results, sentiment):  # pylint: disable=unused-argument
+    def _get_assessments(relations, results, sentiment):  # pylint: disable=unused-argument
         if not relations:
             return []
         opinion_relations = [r.ref for r in relations if r.relation_type == "opinion"]
@@ -1026,38 +1026,38 @@ class MinedOpinion(DictMixin):
         return opinions
 
     @classmethod
-    def _from_generated(cls, aspect, results, sentiment):
+    def _from_generated(cls, target, results, sentiment):
         return cls(
-            aspect=AspectSentiment._from_generated(aspect),  # pylint: disable=protected-access
+            aspect=TargetSentiment._from_generated(target),  # pylint: disable=protected-access
             opinions=[
-                OpinionSentiment._from_generated(opinion)  # pylint: disable=protected-access
-                for opinion in cls._get_opinions(aspect.relations, results, sentiment)
+                AssessmentSentiment._from_generated(assessment)  # pylint: disable=protected-access
+                for assessment in cls._get_assessments(target.relations, results, sentiment)
             ],
         )
 
     def __repr__(self):
-        return "MinedOpinion(aspect={}, opinions={})".format(
-            repr(self.aspect),
-            repr(self.opinions)
+        return "MinedOpinion(target={}, assessments={})".format(
+            repr(self.target),
+            repr(self.assessments)
         )[:1024]
 
 
-class AspectSentiment(DictMixin):
-    """AspectSentiment contains the related opinions, predicted sentiment,
-    confidence scores and other information about an aspect of a product.
+class TargetSentiment(DictMixin):
+    """TargetSentiment contains the predicted sentiment,
+    confidence scores and other information about an aspect of a product/service.
     An aspect of a product/service is a key component of that product/service.
     For example in "The food at Hotel Foo is good", "food" is an aspect of
     "Hotel Foo".
 
-    :ivar str text: The aspect text.
-    :ivar str sentiment: The predicted Sentiment for the aspect. Possible values
+    :ivar str text: The text value of the target.
+    :ivar str sentiment: The predicted Sentiment for the target. Possible values
         include 'positive', 'mixed', and 'negative'.
     :ivar confidence_scores: The sentiment confidence score between 0
-        and 1 for the aspect for 'positive' and 'negative' labels. It's score
+        and 1 for the target for 'positive' and 'negative' labels. It's score
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The aspect offset from the start of the document. Returned
+    :ivar int offset: The target's offset from the start of the document. Returned
         in unicode code points.
     """
 
@@ -1068,16 +1068,16 @@ class AspectSentiment(DictMixin):
         self.offset = kwargs.get("offset", None)
 
     @classmethod
-    def _from_generated(cls, aspect):
+    def _from_generated(cls, target):
         return cls(
-            text=aspect.text,
-            sentiment=aspect.sentiment,
-            confidence_scores=SentimentConfidenceScores._from_generated(aspect.confidence_scores),  # pylint: disable=protected-access
-            offset=aspect.offset,
+            text=target.text,
+            sentiment=target.sentiment,
+            confidence_scores=SentimentConfidenceScores._from_generated(target.confidence_scores),  # pylint: disable=protected-access
+            offset=target.offset,
         )
 
     def __repr__(self):
-        return "AspectSentiment(text={}, sentiment={}, confidence_scores={}, offset={})".format(
+        return "TargetSentiment(text={}, sentiment={}, confidence_scores={}, offset={})".format(
             self.text,
             self.sentiment,
             repr(self.confidence_scores),
@@ -1085,24 +1085,24 @@ class AspectSentiment(DictMixin):
         )[:1024]
 
 
-class OpinionSentiment(DictMixin):
+class AssessmentSentiment(DictMixin):
     """OpinionSentiment contains the predicted sentiment,
-    confidence scores and other information about an opinion of an aspect.
-    For example, in the sentence "The food is good", the opinion of the
-    aspect 'food' is 'good'.
+    confidence scores and other information about an assessment given about
+    a particular target.  For example, in the sentence "The food is good", the assessment
+    of the target 'food' is 'good'.
 
-    :ivar str text: The opinion text.
-    :ivar str sentiment: The predicted Sentiment for the opinion. Possible values
+    :ivar str text: The assessment text.
+    :ivar str sentiment: The predicted Sentiment for the assessment. Possible values
         include 'positive', 'mixed', and 'negative'.
     :ivar confidence_scores: The sentiment confidence score between 0
-        and 1 for the opinion for 'positive' and 'negative' labels. It's score
+        and 1 for the assessment for 'positive' and 'negative' labels. It's score
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The opinion offset from the start of the document. Returned
+    :ivar int offset: The assessment offset from the start of the document. Returned
         in unicode code points.
-    :ivar bool is_negated: Whether the opinion is negated. For example, in
-        "The food is not good", the opinion "good" is negated.
+    :ivar bool is_negated: Whether the value of the assessment is negated. For example, in
+        "The food is not good", the assessment "good" is negated.
     """
 
     def __init__(self, **kwargs):
@@ -1113,18 +1113,18 @@ class OpinionSentiment(DictMixin):
         self.is_negated = kwargs.get("is_negated", None)
 
     @classmethod
-    def _from_generated(cls, opinion):
+    def _from_generated(cls, assessment):
         return cls(
-            text=opinion.text,
-            sentiment=opinion.sentiment,
-            confidence_scores=SentimentConfidenceScores._from_generated(opinion.confidence_scores),  # pylint: disable=protected-access
-            offset=opinion.offset,
-            is_negated=opinion.is_negated
+            text=assessment.text,
+            sentiment=assessment.sentiment,
+            confidence_scores=SentimentConfidenceScores._from_generated(assessment.confidence_scores),  # pylint: disable=protected-access
+            offset=assessment.offset,
+            is_negated=assessment.is_negated
         )
 
     def __repr__(self):
         return (
-            "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, is_negated={})".format(
+            "AssessmentSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, is_negated={})".format(
                 self.text,
                 self.sentiment,
                 repr(self.confidence_scores),
