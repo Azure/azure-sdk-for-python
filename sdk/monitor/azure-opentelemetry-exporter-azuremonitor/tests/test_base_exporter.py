@@ -62,17 +62,6 @@ class TestBaseExporter(unittest.TestCase):
         with self.assertRaises(TypeError):
             BaseExporter(something_else=6)
 
-    def test_transmit_from_storage(self):
-        envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
-        self._base.storage.put(envelopes_to_store)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(200, "OK")
-            self._base._transmit_from_storage()
-        # Run storage process to check lease, retention and timeout and clean file if needed
-        self._base.storage.get()
-        # File no longer present
-        self.assertEqual(len(os.listdir(self._base.storage._path)), 0)
-
     def test_transmit_from_storage_failed_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
         self._base.storage.put(envelopes_to_store)
