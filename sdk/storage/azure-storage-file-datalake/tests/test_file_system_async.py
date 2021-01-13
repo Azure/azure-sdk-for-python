@@ -261,6 +261,9 @@ class FileSystemTest(StorageTestCase):
         loop.run_until_complete(self._test_restore_to_existing_file_system())
 
     async def _test_restore_file_system_with_sas(self):
+        # We are generating a SAS token therefore play only live
+        if TestMode.need_recording_file(self.test_mode):
+            return
         token = generate_account_sas(
             self.dsc.account_name,
             self.dsc.credential.account_key,

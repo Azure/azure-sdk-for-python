@@ -21,6 +21,7 @@ from testcase import (
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
+from tests.testcase import TestMode
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
@@ -211,6 +212,9 @@ class FileSystemTest(StorageTestCase):
 
     @record
     def test_restore_file_system_with_sas(self):
+        # We are generating a SAS token therefore play only live
+        if TestMode.need_recording_file(self.test_mode):
+            return
         token = generate_account_sas(
             self.dsc.account_name,
             self.dsc.credential.account_key,
