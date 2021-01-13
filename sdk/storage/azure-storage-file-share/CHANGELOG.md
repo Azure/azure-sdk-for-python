@@ -1,6 +1,6 @@
 # Release History
 
-## 12.4.0 (2021-01-12)
+## 12.4.0 (2021-01-13)
 **Stable release of preview features**
 - Added support for enabling root squash and share protocols for file share.
 - Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
