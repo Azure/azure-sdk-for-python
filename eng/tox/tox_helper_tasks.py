@@ -110,10 +110,9 @@ def find_whl(whl_dir, pkg_name, pkg_version):
         logging.error("Package name cannot be empty to find whl")
         return
 
-    pdb.set_trace()
 
-    pkg_name_format = "**{0}-{1}-*.whl".format(pkg_name.replace("-", "_"), pkg_version)
-    whls = [os.path.basename(w) for w in glob.glob(os.path.join(whl_dir, pkg_name_format), recursive=True)]
+    pkg_name_format = "{0}-{1}-*.whl".format(pkg_name.replace("-", "_"), pkg_version)
+    whls = [os.path.relpath(w, whl_dir) for w in glob.glob(os.path.join(whl_dir, "**", pkg_name_format), recursive=True)]
     if not whls:
         logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
         logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
@@ -139,6 +138,3 @@ def find_whl(whl_dir, pkg_name, pkg_version):
         return whls[0]
     else:
         return None
-
-
-
