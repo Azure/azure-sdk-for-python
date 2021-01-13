@@ -54,12 +54,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('analyze_status')
         if api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_status'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.analyze_status(job_id, show_stats, top, skip, **kwargs)
 
@@ -88,12 +91,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze')
         if api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.begin_analyze(body, **kwargs)
 
@@ -121,12 +127,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('begin_cancel_health_job')
         if api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_cancel_health_job'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.begin_cancel_health_job(job_id, **kwargs)
 
@@ -164,12 +173,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('begin_health')
         if api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_health'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.begin_health(documents, model_version, string_index_type, **kwargs)
 
@@ -206,12 +218,15 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_linking'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.entities_linking(documents, model_version, show_stats, **kwargs)
 
@@ -249,12 +264,15 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_general'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.entities_recognition_general(documents, model_version, show_stats, **kwargs)
 
@@ -299,12 +317,15 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_pii'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.entities_recognition_pii(documents, model_version, show_stats, domain, string_index_type, **kwargs)
 
@@ -339,12 +360,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('health_status')
         if api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'health_status'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.health_status(job_id, top, skip, show_stats, **kwargs)
 
@@ -381,12 +405,15 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'key_phrases'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.key_phrases(documents, model_version, show_stats, **kwargs)
 
@@ -424,12 +451,15 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'languages'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.languages(documents, model_version, show_stats, **kwargs)
 
@@ -467,11 +497,14 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.3':
             from ..v3_1_preview_3.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from ..v3_1_preview_4.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'sentiment'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.sentiment(documents, model_version, show_stats, **kwargs)

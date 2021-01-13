@@ -9,7 +9,7 @@
         "custom_base_url": "\u0027{Endpoint}/text/analytics/v3.1-preview.3\u0027",
         "azure_arm": false,
         "has_lro_operations": true,
-        "client_side_validation": true
+        "client_side_validation": false
     },
     "global_parameters": {
         "sync": {
