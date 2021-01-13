@@ -10,7 +10,6 @@ import time
 from azure.core.credentials import AccessToken
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
-from devtools_testutils import CachedResourceGroupPreparer
 import pytest
 from six.moves.urllib_parse import urlparse
 

@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from azure.core.tracing.decorator import distributed_trace
 
-from ._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition, KeyVaultPermission
+from ._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition
 from ._internal import KeyVaultClientBase
 
 if TYPE_CHECKING:
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from typing import Any, List, Union
     from uuid import UUID
     from azure.core.paging import ItemPaged
-    from ._models import KeyVaultRoleScope
+    from ._models import KeyVaultRoleScope, KeyVaultPermission
 
 
 class KeyVaultAccessControlClient(KeyVaultClientBase):

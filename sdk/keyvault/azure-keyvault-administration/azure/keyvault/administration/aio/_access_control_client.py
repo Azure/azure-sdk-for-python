@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Union
     from uuid import UUID
     from azure.core.async_paging import AsyncItemPaged
-    from .._models import KeyVaultRoleScope
+    from .._models import KeyVaultRoleScope, KeyVaultPermission
 
 
 class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
@@ -115,62 +115,88 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def set_role_definition(self, **kwargs):
-        # type: (...) -> "_models.RoleDefinition"
+    async def set_role_definition(
+            self, role_scope: "Union[str, KeyVaultRoleScope]", **kwargs: "Any"
+    ) -> "KeyVaultRoleDefinition":
         """Creates or updates a custom role definition.
 
-        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
-        :type vault_base_url: str
-        :param scope: The scope of the role definition to create or update. Managed HSM only supports
-         '/'.
-        :type scope: str
-        :param role_definition_name: The name of the role definition to create or update. It can be any
-         valid GUID.
-        :type role_definition_name: str
-        :param parameters: Parameters for the role definition.
-        :type parameters: ~key_vault_client.models.RoleDefinitionCreateParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RoleDefinition, or the result of cls(response)
-        :rtype: ~key_vault_client.models.RoleDefinition
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        role_definition_operations = self._client.role_definitions
-
-    @distributed_trace_async
-    async def get_role_definition(self, **kwargs):
-        # type: (...) -> "_models.RoleDefinition"
-        """Get the specified role definition.
-
-        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
-        :type vault_base_url: str
-        :param scope: The scope of the role definition to get. Managed HSM only supports '/'.
-        :type scope: str
-        :param role_definition_name: The name of the role definition to get.
-        :type role_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RoleDefinition, or the result of cls(response)
-        :rtype: ~key_vault_client.models.RoleDefinition
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        role_definition_operations = self._client.role_definitions
-
-    @distributed_trace_async
-    async def delete_role_definition(self, role_scope, role_definition_name, **kwargs):
-        # type: (...) -> "_models.RoleDefinition"
-        """Deletes a custom role definition.
-
-        :param role_scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad scopes.
+        :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
         :type role_scope: str or KeyVaultRoleScope
-        :param role_definition_name: the definition's name. Must be a UUID.
+        :keyword role_definition_name: the role definition's name. Must be a UUID.
         :type role_definition_name: str or uuid.UUID
-        :returns: the deleted definition
+        :keyword str description: the role definition's description.
+        :keyword str role_type: the role type.
+        :keyword permissions: the role definition's permissions.
+        :type permissions: List[KeyVaultPermission]
+        :keyword assignable_scopes: the role definition's assignable scopes.
+        :type assignable_scopes: List[str]
+        :returns: The created or updated role definition
         :rtype: KeyVaultRoleDefinition
         """
-        definition = self._client.role_definitions.delete(
+        role_definition_name = kwargs.pop("role_definition_name", None) or uuid4()
+        permissions = kwargs.pop("permissions", None)
+        if permissions is not None:
+            permissions = [
+                self._client.role_definitions.models.Permission(
+                    actions=p.allowed_actions,
+                    not_actions=p.denied_actions,
+                    data_actions=p.allowed_data_actions,
+                    not_data_actions=p.denied_data_actions,
+                )
+                for p in permissions
+            ]
+
+        properties = self._client.role_definitions.models.RoleDefinitionProperties(
+            role_name=role_definition_name, permissions=permissions, **kwargs
+        )
+        parameters = self._client.role_definitions.models.RoleDefinitionCreateParameters(properties=properties)
+
+        definition = await self._client.role_definitions.create_or_update(
+            vault_base_url=self._vault_url,
+            scope=role_scope,
+            role_definition_name=role_definition_name,
+            parameters=parameters,
+            **kwargs
+        )
+        return KeyVaultRoleDefinition._from_generated(definition)
+
+    @distributed_trace_async
+    async def get_role_definition(
+            self, role_scope: "Union[str, KeyVaultRoleScope]", role_definition_name: Union[str, UUID], **kwargs: "Any"
+    ) -> "KeyVaultRoleDefinition":
+        """Get the specified role definition.
+
+        :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
+            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
+        :type role_scope: str or KeyVaultRoleScope
+        :param role_definition_name: the role definition's name. Must be a UUID.
+        :type role_definition_name: str or uuid.UUID
+        :rtype: KeyVaultRoleDefinition
+        """
+        definition = await self._client.role_definitions.get(
             vault_base_url=self._vault_url, scope=role_scope, role_definition_name=str(role_definition_name), **kwargs
         )
-        return definition
+        return KeyVaultRoleDefinition._from_generated(definition)
+
+    @distributed_trace_async
+    async def delete_role_definition(
+            self, role_scope: "Union[str, KeyVaultRoleScope]", role_definition_name: Union[str, UUID], **kwargs: "Any"
+    ) -> "KeyVaultRoleDefinition":
+        """Deletes a custom role definition.
+
+        :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
+            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
+        :type role_scope: str or KeyVaultRoleScope
+        :param role_definition_name: the role definition's name. Must be a UUID.
+        :type role_definition_name: str or uuid.UUID
+        :returns: the deleted role definition
+        :rtype: KeyVaultRoleDefinition
+        """
+        definition = await self._client.role_definitions.delete(
+            vault_base_url=self._vault_url, scope=role_scope, role_definition_name=str(role_definition_name), **kwargs
+        )
+        return KeyVaultRoleDefinition._from_generated(definition)
 
     @distributed_trace
     def list_role_definitions(
