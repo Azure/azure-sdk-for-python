@@ -57,7 +57,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtMonitorClientTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.monitor.MonitorClient
+            azure.mgmt.monitor.MonitorManagementClient
         )
 
         if self.is_live:
