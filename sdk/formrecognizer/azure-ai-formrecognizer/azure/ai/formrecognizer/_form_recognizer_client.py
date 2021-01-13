@@ -70,7 +70,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         return prepare_prebuilt_models(analyze_result)
 
     @distributed_trace
-    def begin_recognize_receipts(self, receipt, **kwargs):
+    def begin_recognize_receipts(self, **kwargs):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
