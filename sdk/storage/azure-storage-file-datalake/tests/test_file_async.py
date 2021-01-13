@@ -520,6 +520,7 @@ class FileTest(StorageTestCase):
 
     @record
     def test_account_sas_async(self):
+        pytest.skip("Re-enable this test after min dependency on blobs is updated.")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_account_sas())
 

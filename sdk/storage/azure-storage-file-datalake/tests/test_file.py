@@ -486,6 +486,7 @@ class FileTest(StorageTestCase):
 
     @record
     def test_account_sas(self):
+        pytest.skip("Re-enable this test after min dependency on blobs is updated.")
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
