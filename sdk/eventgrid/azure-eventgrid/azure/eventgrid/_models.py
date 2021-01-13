@@ -55,7 +55,8 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     All required parameters must be populated in order to send to Azure.
 
     :param source: Required. Identifies the context in which an event happened. The combination of id and source must
-        be unique for each distinct event, and otherwise can be any user-defined string. If publishing to a domain topic, source must be the domain name.
+        be unique for each distinct event, and otherwise can be any user-defined string.
+If publishing to a domain topic, source must be the domain name.
     :type source: str
     :param data: Event data specific to the event type.
     :type data: object
