@@ -234,7 +234,7 @@ class PhoneNumbersClient(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AcquiredPhoneNumber or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.models.AcquiredPhoneNumbers]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.models.AcquiredPhoneNumber]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._phone_numbers_client.phone_numbers.list_phone_numbers(
