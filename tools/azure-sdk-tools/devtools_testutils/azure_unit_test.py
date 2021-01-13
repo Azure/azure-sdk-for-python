@@ -10,6 +10,7 @@ from . import mgmt_settings_fake as fake_settings
 from .azure_testcase import get_resource_name, get_qualified_method_name
 from .config import TEST_SETTING_FILENAME
 
+
 class AzureUnitTest(unittest.TestCase):
     def __init__(self, method_name, config_file=None):
         load_dotenv(find_dotenv())
@@ -38,7 +39,6 @@ class AzureUnitTest(unittest.TestCase):
 
     def create_client_from_credential(self):
         pass
-
 
     def get_resource_name(self, name):
         """Alias to create_random_name for back compatibility."""
