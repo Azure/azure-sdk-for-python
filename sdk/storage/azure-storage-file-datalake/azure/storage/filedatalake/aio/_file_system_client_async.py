@@ -710,7 +710,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return file_client
 
     @distributed_trace_async
-    async def undelete_path(self, deleted_path_name, deleted_path_version, **kwargs):
+    async def undelete_path(self, deleted_path_name, deletion_id, **kwargs):
         # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
         """Restores soft-deleted path.
 
@@ -721,15 +721,15 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             This operation was introduced in API version '2020-06-12'.
 
         :param str deleted_path_name:
-            Specifies the name of the deleted path (file or directory) to restore.
-        :param str deleted_path_version:
-            Specifies the version of the deleted path to restore.
+            Specifies the name of the deleted container to restore.
+        :param str deletion_id:
+            Specifies the version of the deleted container to restore.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
                 or azure.storage.file.datalake.aio.DataLakeFileClient
         """
-        _, url, undelete_source = self._undelete_path(deleted_path_name, deleted_path_version)
+        _, url, undelete_source = self._undelete_path(deleted_path_name, deletion_id)
 
         pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
