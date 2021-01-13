@@ -227,13 +227,13 @@ class PhoneNumbersClient(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.AcquiredPhoneNumbers"]
+        # type: (...) -> Iterable["_models.AcquiredPhoneNumber"]
         """Lists acquired phone numbers.
 
         Lists acquired phone numbers.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AcquiredPhoneNumbers or the result of cls(response)
+        :return: An iterator like instance of either AcquiredPhoneNumber or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.models.AcquiredPhoneNumbers]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
