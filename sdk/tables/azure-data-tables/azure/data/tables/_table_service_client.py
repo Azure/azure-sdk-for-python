@@ -10,16 +10,17 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._models import TableItem
 
+from ._constants import CONNECTION_TIMEOUT
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties
 from ._models import (
     TablePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
+    TableItem
 )
-from ._base_client import parse_connection_str, TransportWrapper
+from ._base_client import parse_connection_str
 from ._models import LocationMode
 from ._error import _process_table_error
 from ._table_client import TableClient
@@ -65,11 +66,15 @@ class TableServiceClient(TableServiceClientBase):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a Shared Account Key
         """
-
         super(TableServiceClient, self).__init__(
             account_url, service="table", credential=credential, **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline)
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
 
     @classmethod
     def from_connection_string(
@@ -357,10 +362,8 @@ class TableServiceClient(TableServiceClientBase):
         """
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(
-                self._pipeline._transport  # pylint: disable=protected-access
-            ),
-            policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
+            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
+            policies=self._policies,  # pylint: disable=protected-access
         )
 
         return TableClient(
@@ -371,8 +374,9 @@ class TableServiceClient(TableServiceClientBase):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            _pipeline=_pipeline,
-            _configuration=self._config,
+            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
+            policies=self._policies,
+            _configuration=self._client._config,  # pylint: disable=protected-access
             _location_mode=self._location_mode,
             _hosts=self._hosts,
             **kwargs
