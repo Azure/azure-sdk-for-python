@@ -72,7 +72,7 @@ class TableServiceClient(TableServiceClientBase):
         kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
         self._client = AzureTable(
             self.url,
-            policies=kwargs.pop('policies', None) or self._policies,
+            policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
 

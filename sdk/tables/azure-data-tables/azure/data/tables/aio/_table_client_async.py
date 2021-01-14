@@ -82,7 +82,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         self._configure_policies(**kwargs)
         self._client = AzureTable(
             self.url,
-            policies=kwargs.pop('policies', None) or self._policies,
+            policies=kwargs.pop('policies', self._policies),
             loop=loop,
             **kwargs
         )
