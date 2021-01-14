@@ -77,7 +77,6 @@ def test_find_modules(pkg_root_path: str) -> Dict:
             ]
             modules[module_name].extend(["{0}.{1}".format(module_name, x) for x in sub_modules])
 
-    _LOGGER.info("Modules in package: {}".format(modules))
     return modules
 
 
@@ -282,6 +281,7 @@ def remove_json_files(pkg_dir: str) -> None:
         os.remove(stable_json)
     if os.path.isfile(current_json):
         os.remove(current_json)
+    _LOGGER.info("cleaning up")
 
 
 def main(package_name: str, target_module: str, version: str, in_venv: Union[bool, str], pkg_dir: str):

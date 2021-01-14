@@ -7,9 +7,11 @@
 
 
 RUN_BREAKING_CHANGES_PACKAGES = [
+    "azure-ai-formrecognizer",
+    "azure-ai-textanalytics"
 ]
 
 
-IGNORE_BREAKING_CHANGES = {
+# See Readme for ignore format
 
-}
+IGNORE_BREAKING_CHANGES = {}
