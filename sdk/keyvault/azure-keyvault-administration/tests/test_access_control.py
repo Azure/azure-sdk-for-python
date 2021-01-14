@@ -9,7 +9,7 @@ import time
 
 from azure.core.credentials import AccessToken
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
+from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope, KeyVaultPermission
 import pytest
 from six.moves.urllib_parse import urlparse
 
@@ -50,31 +50,68 @@ class AccessControlTests(KeyVaultTestCase):
             return value
         return replay_value
 
-    def test_a_rest_api(self):
+    def _assert_role_definitions_equal(self, d1, d2):
+        assert d1.id == d2.id
+        assert d1.name == d2.name
+        assert d1.role_name == d2.role_name
+        assert d1.description == d2.description
+        assert d1.role_type == d2.role_type
+        assert d1.type == d2.type
+        assert len(d1.permissions) == len(d2.permissions)
+        for i in range(len(d1.permissions)):
+            assert d1.permissions[i].allowed_actions == d2.permissions[i].allowed_actions
+            assert d1.permissions[i].denied_actions == d2.permissions[i].denied_actions
+            assert d1.permissions[i].allowed_data_actions == d2.permissions[i].allowed_data_actions
+            assert d1.permissions[i].denied_data_actions == d2.permissions[i].denied_data_actions
+        assert d1.assignable_scopes == d2.assignable_scopes
+
+    def test_role_definitions(self):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 
-        properties = None
-        definition = client.set_role_definition(role_scope="/", role_definition_properties=properties)
-        print(definition)
+        # list initial role definitions
+        scope = KeyVaultRoleScope.global_value
+        original_definitions = [d for d in client.list_role_definitions(scope)]
+        assert len(original_definitions)
 
-    def test_list_role_definitions(self):
-        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
+        # create custom role definition
+        definition_name = self.get_replayable_uuid("definition-name")
+        permissions = [KeyVaultPermission(
+            allowed_data_actions=["Microsoft.KeyVault/managedHsm/keys/read/action"]
+        )]
+        created_definition = client.set_role_definition(
+            role_scope=scope, role_definition_name=definition_name, permissions=permissions
+        )
+        assert "/" in created_definition.assignable_scopes
+        assert created_definition.name == definition_name
+        assert len(created_definition.permissions) == 1
+        assert len(created_definition.permissions[0].allowed_data_actions) == 1
 
-        definitions = [d for d in client.list_role_definitions(KeyVaultRoleScope.global_value)]
-        assert len(definitions)
+        # update custom role definition
+        permissions = [KeyVaultPermission(
+            allowed_data_actions=[],
+            denied_data_actions=["Microsoft.KeyVault/managedHsm/keys/read/action"]
+        )]
+        updated_definition = client.set_role_definition(
+            role_scope=scope, role_definition_name=definition_name, permissions=permissions
+        )
+        assert len(updated_definition.permissions) == 1
+        assert len(updated_definition.permissions[0].allowed_data_actions) == 0
+        assert len(updated_definition.permissions[0].denied_data_actions) == 1
 
-        for definition in definitions:
-            assert "/" in definition.assignable_scopes
-            assert definition.description is not None
-            assert definition.id is not None
-            assert definition.name is not None
-            assert len(definition.permissions)
-            assert definition.role_name is not None
-            assert definition.role_type is not None
-            assert definition.type is not None
+        # assert that the created role definition isn't duplicated
+        matching_definitions = [d for d in client.list_role_definitions(scope) if d.id == updated_definition.id]
+        assert len(matching_definitions) == 1
+
+        # get custom role definition
+        definition = client.get_role_definition(role_scope=scope, role_definition_name=definition_name)
+        self._assert_role_definitions_equal(definition, updated_definition)
+
+        # delete custom role definition
+        deleted_definition = client.delete_role_definition(scope, definition_name)
+        self._assert_role_definitions_equal(deleted_definition, definition)
 
     def test_role_assignment(self):
-        client = KeyVaultAccessControlClient("https://mcpatinotesthsm.azure.net", self.credential)
+        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 
         scope = KeyVaultRoleScope.global_value
         definitions = [d for d in client.list_role_definitions(scope)]

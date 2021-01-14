@@ -12,7 +12,7 @@ from ._internal import KeyVaultClientBase
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, List, Union
+    from typing import Any, Union
     from uuid import UUID
     from azure.core.paging import ItemPaged
     from ._models import KeyVaultRoleScope, KeyVaultPermission
@@ -119,12 +119,10 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type role_scope: str or KeyVaultRoleScope
         :keyword role_definition_name: the role definition's name. Must be a UUID.
         :type role_definition_name: str or uuid.UUID
-        :keyword str description: the role definition's description.
-        :keyword str role_type: the role type.
         :keyword permissions: the role definition's permissions.
-        :type permissions: List[KeyVaultPermission]
+        :type permissions: list[KeyVaultPermission]
         :keyword assignable_scopes: the role definition's assignable scopes.
-        :type assignable_scopes: List[str]
+        :type assignable_scopes: list[str]
         :returns: The created or updated role definition
         :rtype: KeyVaultRoleDefinition
         """

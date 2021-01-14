@@ -31,10 +31,10 @@ class KeyVaultPermission(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.allowed_actions = kwargs.get("allowed_actions")
-        self.denied_actions = kwargs.get("denied_actions")
-        self.allowed_data_actions = kwargs.get("allowed_data_actions")
-        self.denied_data_actions = kwargs.get("denied_data_actions")
+        self.allowed_actions = kwargs.get("allowed_actions", [])
+        self.denied_actions = kwargs.get("denied_actions", [])
+        self.allowed_data_actions = kwargs.get("allowed_data_actions", [])
+        self.denied_data_actions = kwargs.get("denied_data_actions", [])
 
     @classmethod
     def _from_generated(cls, permissions):
