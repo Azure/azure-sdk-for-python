@@ -13,6 +13,8 @@ from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.control_client import ServiceBusService
 from azure.servicebus.control_client.models import Queue
 
+MAX_QUEUE_SIZE = 40960
+
 
 def parse_connection_string(conn_str):
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
@@ -39,12 +41,15 @@ class _ServiceTest(PerfStressTest):
         super().__init__(arguments)
 
         connection_string = self.get_from_env("AZURE_SERVICEBUS_CONNECTION_STRING")
-        if not _ServiceTest.service_client or self.args.service_client_per_instance:
-            _ServiceTest.service_client = ServiceBusClient.from_connection_string(connection_string)
-            _ServiceTest.async_service_client = AsyncServiceBusClient.from_connection_string(connection_string)
-
-        self.service_client = _ServiceTest.service_client
-        self.async_service_client =_ServiceTest.async_service_client
+        if self.args.service_client_per_instance:
+            self.service_client = ServiceBusClient.from_connection_string(connection_string)
+            self.async_service_client = AsyncServiceBusClient.from_connection_string(connection_string)
+        else:
+            if not _ServiceTest.service_client:
+                    _ServiceTest.service_client = ServiceBusClient.from_connection_string(connection_string)
+                    _ServiceTest.async_service_client = AsyncServiceBusClient.from_connection_string(connection_string)
+            self.service_client = _ServiceTest.service_client
+            self.async_service_client =_ServiceTest.async_service_client
 
     @staticmethod
     def add_arguments(parser):
@@ -70,7 +75,7 @@ class _QueueTest(_ServiceTest):
 
     async def global_setup(self):
         await super().global_setup()
-        queue = Queue(max_size_in_megabytes=40960)
+        queue = Queue(max_size_in_megabytes=MAX_QUEUE_SIZE)
         self.mgmt_client.create_queue(self.queue_name, queue=queue)
 
     async def setup(self):
