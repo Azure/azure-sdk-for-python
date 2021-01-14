@@ -94,6 +94,8 @@ def create_coverage_report():
 
     print("\nRemoving nodes:")
     for n in nodes_to_remove:
+        if n not in packages_root:
+            continue
         print(n.tag, n.attrib)
 
         packages_root.remove(n)
