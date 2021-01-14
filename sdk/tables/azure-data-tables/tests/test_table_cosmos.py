@@ -15,7 +15,6 @@ from datetime import (
     timedelta,
 )
 
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
