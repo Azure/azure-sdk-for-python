@@ -84,7 +84,7 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 
 
 def process_storage_error(storage_error):
-    if isinstance(storage_error, (DecodeError, ResourceExistsError, HttpResponseError)):
+    if isinstance(storage_error, (HttpResponseError, ClientAuthenticationError)):
         raise storage_error
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
