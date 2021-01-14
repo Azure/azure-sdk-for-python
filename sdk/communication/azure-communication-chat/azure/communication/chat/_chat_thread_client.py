@@ -486,7 +486,7 @@ class ChatThreadClient(object):
         """Remove a member from a thread.
 
         :param user: Required. User identity of the thread member to remove from the thread.
-        :type user: ~azure.communication.chat.CommunicationUser
+        :type user: ~azure.communication.chat.CommunicationUserIdentifier
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None

@@ -10,7 +10,7 @@ from azure.communication.chat.aio import (
 )
 from azure.communication.chat import (
     ChatThreadMember,
-    CommunicationUser
+    CommunicationUserIdentifier
 )
 from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError
@@ -37,7 +37,7 @@ async def test_create_chat_thread():
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
     topic="test topic"
-    user = CommunicationUser("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
+    user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
     members=[ChatThreadMember(
         user=user,
         display_name='name',
@@ -53,7 +53,7 @@ async def test_create_chat_thread_raises_error():
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
     topic="test topic",
-    user = CommunicationUser("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
+    user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
     members=[ChatThreadMember(
         user=user,
         display_name='name',

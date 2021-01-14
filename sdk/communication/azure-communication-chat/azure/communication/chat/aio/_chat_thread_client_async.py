@@ -33,7 +33,7 @@ from .._models import (
     ChatMessage,
     ReadReceipt
 )
-from .._shared.models import CommunicationUser
+from .._shared.models import CommunicationUserIdentifier
 from .._utils import _to_utc_datetime # pylint: disable=unused-import
 from .._version import SDK_MONIKER
 
@@ -467,13 +467,13 @@ class ChatThreadClient(object):
     @distributed_trace_async
     async def remove_member(
         self,
-        user: CommunicationUser,
+        user: CommunicationUserIdentifier,
         **kwargs
     ) -> None:
         """Remove a member from a thread.
 
         :param user: Required. User identity of the thread member to remove from the thread.
-        :type user: ~azure.communication.chat.CommunicationUser
+        :type user: ~azure.communication.chat.CommunicationUserIdentifier
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
