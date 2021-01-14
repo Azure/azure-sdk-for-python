@@ -6,6 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._disks_operations import DisksOperations
+from ._snapshots_operations import SnapshotsOperations
+from ._disk_encryption_sets_operations import DiskEncryptionSetsOperations
+from ._disk_accesses_operations import DiskAccessesOperations
+from ._disk_restore_point_operations import DiskRestorePointOperations
 from ._galleries_operations import GalleriesOperations
 from ._gallery_images_operations import GalleryImagesOperations
 from ._gallery_image_versions_operations import GalleryImageVersionsOperations
@@ -17,6 +22,11 @@ from ._shared_gallery_images_operations import SharedGalleryImagesOperations
 from ._shared_gallery_image_versions_operations import SharedGalleryImageVersionsOperations
 
 __all__ = [
+    'DisksOperations',
+    'SnapshotsOperations',
+    'DiskEncryptionSetsOperations',
+    'DiskAccessesOperations',
+    'DiskRestorePointOperations',
     'GalleriesOperations',
     'GalleryImagesOperations',
     'GalleryImageVersionsOperations',
