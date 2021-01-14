@@ -406,7 +406,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_healthcare(  # type: ignore
+    def begin_analyze_healthcare_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
@@ -475,14 +475,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_healthcare' endpoint is only available for API version v3.1-preview.3"
+                    "'begin_analyze_healthcare_entities' method is only available for API version \
+                    v3.1-preview.3 and up."
                 )
             raise error
 
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def begin_cancel_analyze_healthcare(  # type: ignore
+    def begin_cancel_analyze_healthcare_entities(  # type: ignore
         self,
         poller,  # type: LROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
         **kwargs
@@ -515,6 +516,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 job_id,
                 polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
             )
+
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_cancel_health_job'" in str(error):
+                raise ValueError(
+                    "'begin_cancel_analyze_healthcare_entities' method is only available for API version \
+                    v3.1-preview.3 and up."
+                )
+            raise error
 
         except HttpResponseError as error:
             process_http_response_error(error)
@@ -616,6 +625,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.SentenceSentiment` objects
             will have property `mined_opinions` containing the result of this analysis. Only available for
             API version v3.1-preview and up.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.  Possible values are
+            'UnicodeCodePoint', 'TextElements_v8', or 'Utf16CodeUnit'.  The default value is 'UnicodeCodePoint'.  
+            Only available for API version v3.1-preview and up.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -649,9 +661,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+        show_opinion_mining = kwargs.pop("show_opinion_mining", True)
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+
+        if string_index_type is not None:
+            kwargs.update({"string_index_type": string_index_type})
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})
