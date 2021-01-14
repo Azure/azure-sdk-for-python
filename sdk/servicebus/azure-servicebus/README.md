@@ -13,12 +13,8 @@ Use the Service Bus client library for Python to communicate between application
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/CHANGELOG.md)
 
-> **NOTE**: This document has instructions, references, and code snippets for the latest version of the `azure-servicebus` package.
-> This package is replacing the preview version (`azure-servicebus==0.53`) which is no longer maintained. 
-> Please view the links below for reference if needed; however, migrating to the latest version using the [migration guide][migration_guide] is recommended.
-
-[V0.50 Source code][0_50_source] | [V0.50 Package (PyPi)][0_50_pypi] | [V0.50 API reference documentation][0_50_api_docs] | [V0.50 Product documentation][0_50_product_docs] | [V0.50 Samples][0_50_samples] | [V0.50 Changelog][0_50_changelog]
-
+**NOTE**: If you are using version 0.50 or lower and want to migrate to the latest version
+of this package please look at our [migration guide to move from Service Bus V0.50 to Service Bus V7][migration_guide].
 
 ## Getting started
 
@@ -81,11 +77,11 @@ To interact with these resources, one should be familiar with the following SDK 
 
 * [ServiceBusClient][client_reference]: This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
 
-* [Sender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py).
+* [ServiceBusSender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py).
 
-* [Receiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
+* [ServiceBusReceiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
 
-* [Message][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload.
+* [ServiceBusMessage][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload.
 
 ## Examples
 
@@ -481,7 +477,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/#history
+[pypi]: https://pypi.org/project/azure-servicebus/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
@@ -518,10 +514,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [topic_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=topic#azure.servicebus.ServiceBusClient.get_topic_sender
 [sample_authenticate_client_connstr]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/authenticate_client_connstr.py
 [sample_authenticate_client_aad]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/client_identity_authentication.py
-[0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/
-[0_50_pypi]: https://pypi.org/project/azure-servicebus/0.50.3/
-[0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.3/index.html
-[0_50_product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
-[0_50_samples]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples
-[0_50_changelog]: https://github.com/Azure/azure-sdk-for-python/blob/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/CHANGELOG.md
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/migration_guide.md

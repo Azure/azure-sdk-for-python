@@ -15,6 +15,7 @@ from _shared.testcase import (
     SLEEP_DELAY
 )
 from preparers import CosmosPreparer
+from devtools_testutils import AzureTestCase
 
 # ------------------------------------------------------------------------------
 
@@ -249,7 +250,6 @@ class StorageTableClientTest(TableTestCase):
             assert service.account_name ==  tables_cosmos_account_name
             assert service.credential.account_name ==  tables_cosmos_account_name
             assert service.credential.account_key ==  tables_primary_cosmos_account_key
-            print(service._primary_endpoint)
             assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(tables_cosmos_account_name, "table"))
             assert service.scheme ==  'http'
 
@@ -474,6 +474,7 @@ class StorageTableClientTest(TableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  tables_cosmos_account_name
 
+    @AzureTestCase.await_prepared_test
     async def test_create_table_client_with_invalid_name_async(self):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
@@ -485,6 +486,7 @@ class StorageTableClientTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
+    @AzureTestCase.await_prepared_test
     async def test_error_with_malformed_conn_str_async(self):
         # Arrange
 

@@ -18,7 +18,7 @@ USAGE:
 
 import sys
 from azure.communication.sms import (
-    SendSmsOptions, PhoneNumber, SmsClient
+    SendSmsOptions, PhoneNumberIdentifier, SmsClient
 )
 
 sys.path.append("..")
@@ -32,8 +32,8 @@ class SmsSamples(object):
 
         # calling send() with sms values
         smsresponse = sms_client.send(
-            from_phone_number=PhoneNumber("<leased-phone-number>"),
-            to_phone_numbers=[PhoneNumber("<to-phone-number>")],
+            from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
+            to_phone_numbers=[PhoneNumberIdentifier("<to-phone-number>")],
             message="Hello World via SMS",
             send_sms_options=SendSmsOptions(enable_delivery_report=True)) # optional property
 

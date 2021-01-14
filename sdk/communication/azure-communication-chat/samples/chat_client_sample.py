@@ -55,7 +55,7 @@ class ChatClientSamples(object):
         from azure.communication.chat import(
             ChatClient,
             ChatThreadMember,
-            CommunicationUser,
+            CommunicationUserIdentifier,
             CommunicationUserCredential
         )
 

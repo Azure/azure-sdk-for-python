@@ -40,9 +40,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
     :type file_path: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 

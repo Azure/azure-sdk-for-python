@@ -347,6 +347,7 @@ class FileSystemTest(StorageTestCase):
         paths = list(file_system.get_paths(upn=True))
 
         self.assertEqual(len(paths), 6)
+        self.assertTrue(isinstance(paths[0].last_modified, datetime))
 
     @record
     def test_list_paths_which_are_all_files(self):

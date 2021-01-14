@@ -1,10 +1,18 @@
 # Release History
 
-## 7.0.1 (Unreleased)
+## 7.0.2 (Unreleased)
+
+
+## 7.0.1 (2021-01-12)
 
 **BugFixes**
 
-* `forward_to` and `forward_dead_lettered_messages_to` will no longer cause authorization errors when used in `ServiceBusAdministrationClient` for queues and subscriptions.
+* `forward_to` and `forward_dead_lettered_messages_to` will no longer cause authorization errors when used in `ServiceBusAdministrationClient` for queues and subscriptions (#15543).
+* Updated uAMQP dependency to 1.2.13.
+  - Fixed bug that macOS was unable to detect network error (#15473).
+  - Fixed bug that `uamqp.ReceiveClient` and `uamqp.ReceiveClientAsync` receive messages during connection establishment (#15555).
+  - Fixed bug where connection establishment on macOS with Clang 12 triggering unrecognized selector exception (#15567).
+  - Fixed bug in accessing message properties triggering segmentation fault when the underlying C bytes are NULL (#15568).
 
 ## 7.0.0 (2020-11-23)
 

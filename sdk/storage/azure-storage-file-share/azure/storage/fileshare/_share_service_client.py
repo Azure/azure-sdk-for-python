@@ -9,19 +9,21 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, List,
     TYPE_CHECKING
 )
+
+
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
 from ._generated import AzureFileStorage
-from ._generated.models import StorageErrorException, StorageServiceProperties
-from ._generated.version import VERSION
+from ._generated.models import StorageServiceProperties
 from ._share_client import ShareClient
 from ._serialize import get_api_version
 from ._models import (
@@ -53,7 +55,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
         authenticated with a SAS token.
     :param credential:
         The credential with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string or an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -97,8 +100,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ShareServiceClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -118,7 +122,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
@@ -162,7 +167,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -216,7 +221,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         )
         try:
             self._client.service.set_properties(storage_service_properties=props, timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -373,7 +378,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
                                         deleted_share_version=deleted_share_version,
                                         timeout=kwargs.pop('timeout', None), **kwargs)
             return share
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def get_share_client(self, share, snapshot=None):

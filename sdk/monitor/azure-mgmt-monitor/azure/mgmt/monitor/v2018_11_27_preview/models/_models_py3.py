@@ -11,7 +11,7 @@ from typing import List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_client_enums import *
+from ._monitor_management_client_enums import *
 
 
 class DataContainer(msrest.serialization.Model):
