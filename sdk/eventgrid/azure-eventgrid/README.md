@@ -38,15 +38,17 @@ In order to interact with the Event Grid service, you will need to create an ins
 A **topic_hostname** and **credential** are necessary to instantiate the client object.
 
 #### Looking up the endpoint
-You can find the topic endpoint within the Event Grid Topic resource on the Azure portal.
-The topic hostname is the URL host component of this endpoint. (Everything up-to and including "eventgrid.azure.net".)
+You can find the topic endpoint within the Event Grid Topic resource on the Azure portal. This will look like:
+`"https://<event-grid-topic-name>.<topic-location>.eventgrid.azure.net/api/events"`
+The topic hostname is the URL host component of this endpoint, which will be in the format:
+`"https://<event-grid-topic-name>.<topic-location>.eventgrid.azure.net"`
 
 #### Create the client with AzureKeyCredential
 
 To use an Access Key as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
-> **Note:** The Access Key may be found in the azure portal in the "Access Keys" menu of the Event Grid Topic resource.  They may also be obtained via the azure CLI, or the `azure-mgmt-eventgrid` library.
+> **Note:** The Access Key may be found in the azure portal in the "Access Keys" menu of the Event Grid Topic resource.  They may also be obtained via the azure CLI, or the `azure-mgmt-eventgrid` library. A guide for getting access keys can be found [here](https://docs.microsoft.com/azure/event-grid/get-access-keys).
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -64,7 +66,7 @@ eg_publisher_client = EventGridPublisherClient(topic_hostname, credential)
 Information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc]
 
 ### Topic
-A channel within the EventGrid service to send events.  Must be of CloudEvent or EventGridEvent schema, (decided at creation time) and the corrosponding event type must be used.
+A channel within the EventGrid service to send events.  Must be of [CloudEvent](https://docs.microsoft.com/azure/event-grid/cloud-event-schema) or [EventGridEvent](https://docs.microsoft.com/azure/event-grid/event-schema) schema, (decided at creation time) and the corresponding event type must be used.
 
 ### Domain Topic
 A domain exists to rout arbitrary named topics within it.  Topics must not exist beforehand if using a domain, topic name can be provided at send time.  Simply provide the domain endpoint at client construction instead of topic endpoint.
