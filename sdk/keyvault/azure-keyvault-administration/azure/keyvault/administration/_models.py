@@ -134,42 +134,79 @@ class KeyVaultRoleAssignmentProperties(object):
 
 
 class KeyVaultRoleDefinition(object):
-    """Role definition.
-
-    :ivar str id: The role definition ID.
-    :ivar str name: The role definition name.
-    :ivar str type: The role definition type.
-    :ivar str role_name: The role name.
-    :ivar str description: The role definition description.
-    :ivar str role_type: The role type.
-    :ivar permissions: Role definition permissions.
-    :vartype permissions: list[KeyVaultPermission]
-    :ivar list[str] assignable_scopes: Role definition assignable scopes.
-    """
+    """Represents the definition of a role over a scope."""
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.id = kwargs.get("id")
-        self.name = kwargs.get("name")
-        self.role_name = kwargs.get("role_name")
-        self.description = kwargs.get("description")
-        self.role_type = kwargs.get("role_type")
-        self.type = kwargs.get("type")
-        self.permissions = kwargs.get("permissions")
-        self.assignable_scopes = kwargs.get("assignable_scopes")
+        self._role_definition_id = kwargs.get("role_definition_id")
+        self._name = kwargs.get("name")
+        self._role_name = kwargs.get("role_name")
+        self._description = kwargs.get("description")
+        self._role_type = kwargs.get("role_type")
+        self._type = kwargs.get("type")
+        self._permissions = kwargs.get("permissions")
+        self._assignable_scopes = kwargs.get("assignable_scopes")
 
     def __repr__(self):
         # type: () -> str
-        return "<KeyVaultRoleDefinition {}>".format(self.role_name)[:1024]
+        return "KeyVaultRoleDefinition<{}>".format(self._role_definition_id)
+
+    @property
+    def role_definition_id(self):
+        # type: () -> str
+        """unique identifier for this role definition"""
+        return self._role_definition_id
+
+    @property
+    def name(self):
+        # type: () -> str
+        """name of the role definition"""
+        return self._name
+
+    @property
+    def role_name(self):
+        # type: () -> str
+        """name of the role"""
+        return self._role_name
+
+    @property
+    def description(self):
+        # type: () -> str
+        """description of the role definition"""
+        return self._description
+
+    @property
+    def role_type(self):
+        # type: () -> str
+        """type of the role"""
+        return self._role_type
+
+    @property
+    def type(self):
+        # type: () -> str
+        """type of the role definition"""
+        return self._type
+
+    @property
+    def permissions(self):
+        # type: () -> list[KeyVaultPermission]
+        """permissions defined for the role"""
+        return self._permissions
+
+    @property
+    def assignable_scopes(self):
+        # type: () -> list[str]
+        """scopes that can be assigned to the role"""
+        return self._assignable_scopes
 
     @classmethod
     def _from_generated(cls, definition):
         return cls(
             assignable_scopes=definition.assignable_scopes,
             description=definition.description,
-            id=definition.id,
             name=definition.name,
             permissions=[KeyVaultPermission._from_generated(p) for p in definition.permissions],
+            role_definition_id=definition.id,
             role_name=definition.role_name,
             role_type=definition.role_type,
             type=definition.type,

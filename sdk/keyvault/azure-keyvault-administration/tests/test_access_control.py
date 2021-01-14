@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
 import os
 import uuid
 import time
@@ -50,21 +49,6 @@ class AccessControlTests(KeyVaultTestCase):
             return value
         return replay_value
 
-    def _assert_role_definitions_equal(self, d1, d2):
-        assert d1.id == d2.id
-        assert d1.name == d2.name
-        assert d1.role_name == d2.role_name
-        assert d1.description == d2.description
-        assert d1.role_type == d2.role_type
-        assert d1.type == d2.type
-        assert len(d1.permissions) == len(d2.permissions)
-        for i in range(len(d1.permissions)):
-            assert d1.permissions[i].allowed_actions == d2.permissions[i].allowed_actions
-            assert d1.permissions[i].denied_actions == d2.permissions[i].denied_actions
-            assert d1.permissions[i].allowed_data_actions == d2.permissions[i].allowed_data_actions
-            assert d1.permissions[i].denied_data_actions == d2.permissions[i].denied_data_actions
-        assert d1.assignable_scopes == d2.assignable_scopes
-
     def test_role_definitions(self):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 
@@ -75,9 +59,7 @@ class AccessControlTests(KeyVaultTestCase):
 
         # create custom role definition
         definition_name = self.get_replayable_uuid("definition-name")
-        permissions = [KeyVaultPermission(
-            allowed_data_actions=["Microsoft.KeyVault/managedHsm/keys/read/action"]
-        )]
+        permissions = [KeyVaultPermission(allowed_data_actions=["Microsoft.KeyVault/managedHsm/keys/read/action"])]
         created_definition = client.set_role_definition(
             role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
@@ -87,10 +69,11 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(created_definition.permissions[0].allowed_data_actions) == 1
 
         # update custom role definition
-        permissions = [KeyVaultPermission(
-            allowed_data_actions=[],
-            denied_data_actions=["Microsoft.KeyVault/managedHsm/keys/read/action"]
-        )]
+        permissions = [
+            KeyVaultPermission(
+                allowed_data_actions=[], denied_data_actions=["Microsoft.KeyVault/managedHsm/keys/read/action"]
+            )
+        ]
         updated_definition = client.set_role_definition(
             role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
@@ -99,16 +82,19 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(updated_definition.permissions[0].denied_data_actions) == 1
 
         # assert that the created role definition isn't duplicated
-        matching_definitions = [d for d in client.list_role_definitions(scope) if d.id == updated_definition.id]
+        matching_definitions = [
+            d for d in client.list_role_definitions(scope)
+            if d.role_definition_id == updated_definition.role_definition_id
+        ]
         assert len(matching_definitions) == 1
 
         # get custom role definition
         definition = client.get_role_definition(role_scope=scope, role_definition_name=definition_name)
-        self._assert_role_definitions_equal(definition, updated_definition)
+        assert_role_definitions_equal(definition, updated_definition)
 
         # delete custom role definition
         deleted_definition = client.delete_role_definition(scope, definition_name)
-        self._assert_role_definitions_equal(deleted_definition, definition)
+        assert_role_definitions_equal(deleted_definition, definition)
 
     def test_role_assignment(self):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
@@ -121,17 +107,19 @@ class AccessControlTests(KeyVaultTestCase):
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
 
-        created = client.create_role_assignment(scope, definition.id, principal_id, role_assignment_name=name)
+        created = client.create_role_assignment(
+            scope, definition.role_definition_id, principal_id, role_assignment_name=name
+        )
         assert created.name == name
         assert created.principal_id == principal_id
-        assert created.role_definition_id == definition.id
+        assert created.role_definition_id == definition.role_definition_id
         assert created.scope == scope
 
         # should be able to get the new assignment
         got = client.get_role_assignment(scope, name)
         assert got.name == name
         assert got.principal_id == principal_id
-        assert got.role_definition_id == definition.id
+        assert got.role_definition_id == definition.role_definition_id
         assert got.scope == scope
 
         # new assignment should be in the list of all assignments
@@ -150,3 +138,19 @@ class AccessControlTests(KeyVaultTestCase):
         assert not any(
             a for a in client.list_role_assignments(scope) if a.role_assignment_id == created.role_assignment_id
         )
+
+
+def assert_role_definitions_equal(d1, d2):
+    assert d1.role_definition_id == d2.role_definition_id
+    assert d1.name == d2.name
+    assert d1.role_name == d2.role_name
+    assert d1.description == d2.description
+    assert d1.role_type == d2.role_type
+    assert d1.type == d2.type
+    assert len(d1.permissions) == len(d2.permissions)
+    for i in range(len(d1.permissions)):
+        assert d1.permissions[i].allowed_actions == d2.permissions[i].allowed_actions
+        assert d1.permissions[i].denied_actions == d2.permissions[i].denied_actions
+        assert d1.permissions[i].allowed_data_actions == d2.permissions[i].allowed_data_actions
+        assert d1.permissions[i].denied_data_actions == d2.permissions[i].denied_data_actions
+    assert d1.assignable_scopes == d2.assignable_scopes

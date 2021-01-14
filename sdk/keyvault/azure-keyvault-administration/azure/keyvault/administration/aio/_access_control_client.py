@@ -125,12 +125,10 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type role_scope: str or KeyVaultRoleScope
         :keyword role_definition_name: the role definition's name. Must be a UUID.
         :type role_definition_name: str or uuid.UUID
-        :keyword str description: the role definition's description.
-        :keyword str role_type: the role type.
         :keyword permissions: the role definition's permissions.
-        :type permissions: List[KeyVaultPermission]
+        :type permissions: list[KeyVaultPermission]
         :keyword assignable_scopes: the role definition's assignable scopes.
-        :type assignable_scopes: List[str]
+        :type assignable_scopes: list[str]
         :returns: The created or updated role definition
         :rtype: KeyVaultRoleDefinition
         """
@@ -163,7 +161,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_role_definition(
-            self, role_scope: "Union[str, KeyVaultRoleScope]", role_definition_name: Union[str, UUID], **kwargs: "Any"
+            self, role_scope: "Union[str, KeyVaultRoleScope]", role_definition_name: "Union[str, UUID]", **kwargs: "Any"
     ) -> "KeyVaultRoleDefinition":
         """Get the specified role definition.
 
@@ -181,7 +179,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_definition(
-            self, role_scope: "Union[str, KeyVaultRoleScope]", role_definition_name: Union[str, UUID], **kwargs: "Any"
+            self, role_scope: "Union[str, KeyVaultRoleScope]", role_definition_name: "Union[str, UUID]", **kwargs: "Any"
     ) -> "KeyVaultRoleDefinition":
         """Deletes a custom role definition.
 
