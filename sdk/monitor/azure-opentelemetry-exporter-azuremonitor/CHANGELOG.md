@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2021-1-13)
+## 1.0.0b2 (2021-01-13)
 
   **Breaking Changes**
   - Rename Azure Trace exporter class, only allow connection string configuration
