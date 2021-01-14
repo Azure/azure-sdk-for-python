@@ -13,7 +13,7 @@ from azure.communication.chat import (
     ChatThreadClient,
     ChatMessagePriority,
     ChatThreadMember,
-    CommunicationUser,
+    CommunicationUserIdentifier,
     CommunicationUserCredential
 )
 from unittest_helpers import mock_response
@@ -199,7 +199,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         new_member = ChatThreadMember(
-                user=CommunicationUser(new_member_id),
+                user=CommunicationUserIdentifier(new_member_id),
                 display_name='name',
                 share_history_time=datetime.utcnow())
         members = [new_member]
@@ -221,7 +221,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         try:
-            chat_thread_client.remove_member(CommunicationUser(member_id))
+            chat_thread_client.remove_member(CommunicationUserIdentifier(member_id))
         except:
             raised = True
 

@@ -7,7 +7,7 @@
 import os
 import pytest
 from azure.communication.sms import (
-    PhoneNumber, SendSmsOptions, SmsClient
+    PhoneNumberIdentifier, SendSmsOptions, SmsClient
 )
 from _shared.testcase import (
     CommunicationTestCase,
@@ -38,8 +38,8 @@ class SMSClientTest(CommunicationTestCase):
 
         # calling send() with sms values
         sms_response = self.sms_client.send(
-            from_phone_number=PhoneNumber(self.phone_number),
-            to_phone_numbers=[PhoneNumber(self.phone_number)],
+            from_phone_number=PhoneNumberIdentifier(self.phone_number),
+            to_phone_numbers=[PhoneNumberIdentifier(self.phone_number)],
             message="Hello World via SMS",
             send_sms_options=SendSmsOptions(enable_delivery_report=True))  # optional property
 
