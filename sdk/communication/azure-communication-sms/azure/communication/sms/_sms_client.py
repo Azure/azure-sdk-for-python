@@ -74,17 +74,17 @@ class SmsClient(object):
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
-    def send(self, from_phone_number, # type: ~azure.communication.sms.PhoneNumber
-             to_phone_numbers, # type: list[~azure.communication.sms.PhoneNumber]
+    def send(self, from_phone_number, # type: ~azure.communication.sms.PhoneNumberIdentifier
+             to_phone_numbers, # type: list[~azure.communication.sms.PhoneNumberIdentifier]
              message, # type: str
              **kwargs  #type: Any
         ): # type: (...) -> SendSmsResponse
         """Sends SMSs to phone numbers.
 
         :param from_phone_number: the sender of the SMS.
-        :type from_phone_number: ~azure.communication.sms.PhoneNumber
+        :type from_phone_number: ~azure.communication.sms.PhoneNumberIdentifier
         :param to_phone_numbers: the list of recipients of the SMS.
-        :type to_phone_numbers: list[~azure.communication.sms.PhoneNumber]
+        :type to_phone_numbers: list[~azure.communication.sms.PhoneNumberIdentifier]
         :param str message: The message in the SMS
         :keyword send_sms_options: the options object to configure delivery reporting.
         :type send_sms_options: ~azure.communication.sms.models.SendSmsOptions

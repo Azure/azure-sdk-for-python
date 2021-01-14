@@ -50,7 +50,7 @@ class ChatThreadClientSamplesAsync(object):
         # [START create_chat_thread_client]
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
-        from azure.communication.chat import ChatThreadMember, CommunicationUser
+        from azure.communication.chat import ChatThreadMember, CommunicationUserIdentifier
 
         chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
 
