@@ -103,7 +103,7 @@ class PagingMethodABC():
 
         raise NotImplementedError("This method needs to be implemented")
 
-class NextLinkPagingMethod(PagingMethodABC):
+class ContinueWithNextLink(PagingMethodABC):
 
     def __init__(self, path_format_arguments=None, **kwargs):  # pylint: disable=unused-argument
         """Most common paging method. Uses the continuation token as the URL for the next call.
@@ -180,14 +180,14 @@ class NextLinkPagingMethod(PagingMethodABC):
         return None
 
 
-class CallbackPagingMethod(NextLinkPagingMethod):  # pylint: disable=too-many-instance-attributes
+class ContinueWithCallback(ContinueWithNextLink):  # pylint: disable=too-many-instance-attributes
     def __init__(self, next_request_callback, **kwargs):
         """Base paging method. Accepts the callback for the next request as an init arg.
 
         :param callable next_request_callback: Takes the continuation token as input and
          outputs the next request
         """
-        super(CallbackPagingMethod, self).__init__(**kwargs)
+        super(ContinueWithCallback, self).__init__(**kwargs)
         self._next_request_callback = next_request_callback
 
 
@@ -205,12 +205,12 @@ class CallbackPagingMethod(NextLinkPagingMethod):  # pylint: disable=too-many-in
         """
         return self._next_request_callback(continuation_token)
 
-class HeaderPagingMethod(NextLinkPagingMethod):
+class ContinueWithRequestHeader(ContinueWithNextLink):
 
     def __init__(self, header_name, **kwargs):
         """Passes continuation token as a header parameter to next call.
         """
-        super(HeaderPagingMethod, self).__init__(**kwargs)
+        super(ContinueWithRequestHeader, self).__init__(**kwargs)
         self._header_name = header_name
 
     def get_next_request(self, continuation_token, initial_request, client):

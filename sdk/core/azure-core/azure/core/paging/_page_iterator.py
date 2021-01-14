@@ -29,7 +29,6 @@ from ._utils import ResponseType, ReturnType
 from ._paging_method_handler import _PagingMethodHandler
 
 from ..exceptions import AzureError
-from ..pipeline import PipelineResponse
 
 if TYPE_CHECKING:
     from typing import (

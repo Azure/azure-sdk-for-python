@@ -30,18 +30,18 @@ from ._utils import ResponseType, ReturnType
 
 from ._paging_method import (
     PagingMethodABC,
-    NextLinkPagingMethod,
-    HeaderPagingMethod,
-    CallbackPagingMethod,
+    ContinueWithNextLink,
+    ContinueWithRequestHeader,
+    ContinueWithCallback,
 )
 
 
 
 __all__ = [
-    "CallbackPagingMethod",
+    "ContinueWithCallback",
     "ItemPaged",
-    "HeaderPagingMethod",
-    "NextLinkPagingMethod",
+    "ContinueWithRequestHeader",
+    "ContinueWithNextLink",
     "PageIterator",
     "PagingMethodABC",
     "ResponseType",

@@ -28,7 +28,7 @@ import itertools
 import logging
 
 from typing import Iterator, TYPE_CHECKING
-from ._utils import ResponseType, ReturnType
+from ._utils import ReturnType
 from ._page_iterator import PageIterator
 
 if TYPE_CHECKING:
