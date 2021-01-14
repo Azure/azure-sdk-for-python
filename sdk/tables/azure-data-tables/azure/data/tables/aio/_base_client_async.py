@@ -106,7 +106,7 @@ class AsyncStorageAccountHostsMixin(object):
         self._policies = [
             StorageHeadersPolicy(**kwargs),
             ProxyPolicy(**kwargs),
-            UserAgentPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,

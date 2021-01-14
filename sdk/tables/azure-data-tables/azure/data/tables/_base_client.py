@@ -64,7 +64,6 @@ from ._policies import (
 )
 from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
-from ._generated._configuration import AzureTableConfiguration
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {

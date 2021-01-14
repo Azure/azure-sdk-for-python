@@ -376,7 +376,7 @@ class TableServiceClient(TableServiceClientBase):
             api_version=self.api_version,
             transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
             policies=self._policies,
-            _configuration=self._config,
+            _configuration=self._client._config,  # pylint: disable=protected-access
             _location_mode=self._location_mode,
             _hosts=self._hosts,
             **kwargs
