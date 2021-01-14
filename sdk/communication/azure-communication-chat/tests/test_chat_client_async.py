@@ -6,7 +6,7 @@
 from azure.core.credentials import AccessToken
 from azure.communication.chat.aio import (
     ChatClient,
-    CommunicationUserCredential
+    CommunicationTokenCredential
 )
 from azure.communication.chat import (
     ChatThreadMember,
