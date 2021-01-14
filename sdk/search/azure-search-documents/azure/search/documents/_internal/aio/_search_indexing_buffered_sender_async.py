@@ -306,11 +306,11 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if not counter:
             # first time that fails
             self._retry_counter[key] = 1
-            await self._index_documents_batch.enqueue_action(action)
+            await self._index_documents_batch.enqueue_actions(action)
         elif counter < self._max_retries - 1:
             # not reach retry limit yet
             self._retry_counter[key] = counter + 1
-            await self._index_documents_batch.enqueue_action(action)
+            await self._index_documents_batch.enqueue_actions(action)
         else:
             await self._callback_fail(action)
 

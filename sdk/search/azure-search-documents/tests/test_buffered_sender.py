@@ -39,7 +39,7 @@ class TestSearchBatchingClient(object):
             actions = client._index_documents_batch.dequeue_actions()
             assert len(client.actions) == 0
             for action in actions:
-                client._index_documents_batch.enqueue_action(action)
+                client._index_documents_batch.enqueue_actions(action)
             assert len(client.actions) == 7
 
 

@@ -1,7 +1,10 @@
 # Release History
 
-## 11.1.0b5 (Unreleased)
+## 11.1.0 (2021-02-09)
 
+**Breaking Changes**
+
+- `IndexDocumentsBatch` does not support `enqueue_action` any longer. `enqueue_actions` takes a single action too.
 
 ## 11.1.0b4 (2020-11-10)
 
