@@ -13,7 +13,7 @@ from ._models import (
     ChatThread,
     ReadReceipt,
 )
-from ._shared.models import CommunicationUser
+from ._shared.models import CommunicationUserIdentifier
 
 __all__ = [
     'ChatClient',
@@ -26,6 +26,6 @@ __all__ = [
     'ChatThreadInfo',
     'CommunicationUserCredential',
     'ChatThreadMember',
-    'CommunicationUser',
+    'CommunicationUserIdentifier',
 ]
 __version__ = VERSION

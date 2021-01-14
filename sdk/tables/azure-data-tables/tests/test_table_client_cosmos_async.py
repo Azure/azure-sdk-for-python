@@ -250,7 +250,6 @@ class StorageTableClientTest(TableTestCase):
             assert service.account_name ==  tables_cosmos_account_name
             assert service.credential.account_name ==  tables_cosmos_account_name
             assert service.credential.account_key ==  tables_primary_cosmos_account_key
-            print(service._primary_endpoint)
             assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(tables_cosmos_account_name, "table"))
             assert service.scheme ==  'http'
 

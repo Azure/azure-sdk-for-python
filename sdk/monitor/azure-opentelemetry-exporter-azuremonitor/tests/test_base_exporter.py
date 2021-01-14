@@ -12,6 +12,7 @@ import requests
 from opentelemetry.sdk.metrics.export import MetricsExportResult
 from opentelemetry.sdk.trace.export import SpanExportResult
 
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.opentelemetry.exporter.azuremonitor.export._base import (
     BaseExporter,
     ExportResult,
@@ -28,6 +29,19 @@ def throw(exc_type, *args, **kwargs):
     return func
 
 
+def clean_folder(folder):
+    if os.path.isfile(folder):
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+
 # pylint: disable=W0212
 # pylint: disable=R0904
 class TestBaseExporter(unittest.TestCase):
@@ -42,6 +56,9 @@ class TestBaseExporter(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls._base.storage._path, True)
+
+    def tearDown(self):
+        clean_folder(self._base.storage._path)
 
     def test_constructor(self):
         """Test the constructor."""
@@ -61,17 +78,7 @@ class TestBaseExporter(unittest.TestCase):
         with self.assertRaises(TypeError):
             BaseExporter(something_else=6)
 
-    def test_transmit_from_storage(self):
-        envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
-        self._base.storage.put(envelopes_to_store)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(200, "OK")
-            self._base._transmit_from_storage()
-        # Run storage process to check lease, retention and timeout and clean file if needed
-        self._base.storage.get()
-        # File no longer present
-        self.assertEqual(len(os.listdir(self._base.storage._path)), 0)
-
+    @unittest.skip("transient storage")
     def test_transmit_from_storage_failed_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
         self._base.storage.put(envelopes_to_store)
@@ -83,6 +90,7 @@ class TestBaseExporter(unittest.TestCase):
         # File still present
         self.assertGreaterEqual(len(os.listdir(self._base.storage._path)), 1)
 
+    @unittest.skip("transient storage")
     def test_transmit_from_storage_failed_not_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
         self._base.storage.put(envelopes_to_store)
@@ -99,6 +107,7 @@ class TestBaseExporter(unittest.TestCase):
             post.return_value = None
             self._base._transmit_from_storage()
 
+    @unittest.skip("transient storage")
     @mock.patch("requests.Session.request", return_value=mock.Mock())
     def test_transmit_from_storage_lease_failure(self, requests_mock):
         requests_mock.return_value = MockResponse(200, "unknown")
@@ -116,10 +125,29 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    def test_transmit_http_error_retryable(self):
+        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base.is_retryable_code") as m:
+            m.return_value = True
+            with mock.patch("requests.Session.request", throw(HttpResponseError)):
+                result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmit_http_error_retryable(self):
+        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base.is_retryable_code") as m:
+            m.return_value = False
+            with mock.patch("requests.Session.request", throw(HttpResponseError)):
+                result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+
+    def test_transmit_request_error(self):
+        with mock.patch("requests.Session.request", throw(ServiceRequestError, message="error")):
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
     def test_transmit_request_exception(self):
         with mock.patch("requests.Session.request", throw(Exception)):
             result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_200(self):
         with mock.patch("requests.Session.request") as post:
@@ -236,9 +264,21 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    def test_transmission_502(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(503, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
     def test_transmission_503(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(503, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_504(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(504, "{}")
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 

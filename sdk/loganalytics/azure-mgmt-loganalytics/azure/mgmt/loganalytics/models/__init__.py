@@ -131,7 +131,7 @@ except (SyntaxError, ImportError):
     from ._models import WorkspacePurgeStatusResponse  # type: ignore
     from ._models import WorkspaceSku  # type: ignore
 
-from ._operational_insights_management_client_enums import (
+from ._log_analytics_management_client_enums import (
     ClusterEntityStatus,
     ClusterSkuNameEnum,
     DataIngestionStatus,
