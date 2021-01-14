@@ -22,7 +22,7 @@ class _ServiceTest(PerfStressTest):
         super().__init__(arguments)
 
         connection_string = self.get_from_env("AZURE_SERVICEBUS_CONNECTION_STRING")
-        if self.args.service_client_per_instance:
+        if self.args.no_client_share:
             self.service_client = ServiceBusClient.from_connection_string(connection_string)
             self.async_service_client = AsyncServiceBusClient.from_connection_string(connection_string)
         else:
