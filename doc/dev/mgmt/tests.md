@@ -35,13 +35,13 @@ sdk/storage/azure-mgmt-storage> pytest
 
 You can provide directories or individual files as positional arguments to specify particular tests to run rather than running the entire test suite. For example:
 ```Shell
-sdk/storage/azure-mgmt-storage> pytest sdk/storage/azure-mgmt-storage/
-sdk/storage/azure-mgmt-storage> pytest sdk/storage/azure-mgmt-storage/tests/test_mgmt_storage.py
+sdk/storage/azure-mgmt-storage> pytest
+sdk/storage/azure-mgmt-storage> pytest tests/test_mgmt_storage.py
 ```
 
 If you have print statements in your tests for debugging you can add the `-s` flag to send those print statements to standard output:
 ```Shell
-sdk/storage/azure-mgmt-storage> pytest sdk/storage/azure-mgmt-storage/ -s
+sdk/storage/azure-mgmt-storage> pytest -s
 ```
 
 ## Getting Azure credentials
@@ -106,6 +106,7 @@ def get_credentials(**kwargs):
 ```python
 def get_azure_core_credentials(**kwargs):
     from azure.identity import ClientSecretCredential
+    import os
     return ClientSecretCredential(
         client_id = os.environ['AZURE_CLIENT_ID'],
         client_secret = os.environ['AZURE_CLIENT_SECRET'],

@@ -84,6 +84,12 @@ azure-sdk-for-python\sdk\my-directory\my-library> pytest
 azure-sdk-for-python\sdk\my-directory\my-library> pytest <test_file.py>
 ```
 
+If your tests are broken up into multiple folders for organization, you can run specific folders:
+```cmd
+azure-sdk-for-python\sdk\my-directory\my-library> pytest ./async_tests/
+azure-sdk-for-python\sdk\my-directory\my-library> pytest ./async_tests/<test_file.py>
+```
+
 In addition you can provide keywords to run specific tests within the suite or within a specific file
 ```cmd
 azure-sdk-for-python\sdk\my-directory\my-library> pytest -k <keyword>
