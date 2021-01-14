@@ -97,6 +97,10 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 ```bash
 pip install azure-servicebus
 ```
+To run samples that utilize the Azure Active Directory for authentication, please install the `azure-identity` library:
+```bash
+pip install azure-identity
+```
 2. Clone or download this sample repository.
 3. Open the sample folder in Visual Studio Code or your IDE of choice.
 

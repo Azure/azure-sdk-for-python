@@ -24,7 +24,7 @@ cloud_custom_dict = {
     "specversion":"1.0"
 }
 cloud_custom_string = json.dumps(cloud_custom_dict)
-cloud_custom_bytes = bytes(cloud_custom_string, "utf-8")
+cloud_custom_bytes = str(cloud_custom_string).encode("utf-8")
 
 client = EventGridConsumer()
 deserialized_dict_event = client.decode_cloud_event(cloud_custom_dict)

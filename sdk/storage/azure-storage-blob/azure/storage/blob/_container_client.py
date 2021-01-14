@@ -84,9 +84,11 @@ class ContainerClient(StorageAccountHostsMixin):
     :type container_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
@@ -173,9 +175,11 @@ class ContainerClient(StorageAccountHostsMixin):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
         """
@@ -219,7 +223,8 @@ class ContainerClient(StorageAccountHostsMixin):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :returns: A container client.

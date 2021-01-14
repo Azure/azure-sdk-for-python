@@ -20,6 +20,14 @@ if TYPE_CHECKING:
     from ._generated.models import PageList
 
 
+def deserialize_pipeline_response_into_cls(cls_method, response, obj, headers):
+    try:
+        deserialized_response = response.http_response
+    except AttributeError:
+        deserialized_response = response
+    return cls_method(deserialized_response, obj, headers)
+
+
 def deserialize_blob_properties(response, obj, headers):
     blob_properties = BlobProperties(
         metadata=deserialize_metadata(response, obj, headers),

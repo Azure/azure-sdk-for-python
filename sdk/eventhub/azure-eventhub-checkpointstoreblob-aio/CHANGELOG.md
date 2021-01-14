@@ -1,6 +1,9 @@
 # Release History
 
-## 1.1.2 (Unreleased)
+## 1.1.3 (Unreleased)
+
+
+## 1.1.2 (2021-01-11)
 
 **Bug fixes**
 - Fixed a bug that `BlobCheckpointStore.list_ownership` and `BlobCheckpointStore.list_checkpoints` triggering `KeyError` due to reading empty metadata of parent node when working with Data Lake enabled Blob Storage.

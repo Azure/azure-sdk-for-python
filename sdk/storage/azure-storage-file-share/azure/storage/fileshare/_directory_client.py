@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
 
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -17,13 +18,12 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureFileStorage
-from ._generated.version import VERSION
-from ._generated.models import StorageErrorException
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
@@ -60,7 +60,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
         The credential with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string or an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -112,8 +113,9 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareDirectoryClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
 
     @classmethod
     def from_directory_url(cls, directory_url,  # type: str
@@ -131,7 +133,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
@@ -193,7 +196,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             The directory path.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
@@ -291,7 +295,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -316,7 +320,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         try:
             self._client.directory.delete(timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -411,7 +415,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 'closed_handles_count': response.get('number_of_handles_closed', 0),
                 'failed_handles_count': response.get('number_of_handles_failed', 0)
             }
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -448,7 +452,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                     cls=return_response_headers,
                     **kwargs
                 )
-            except StorageErrorException as error:
+            except HttpResponseError as error:
                 process_storage_error(error)
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)
@@ -479,7 +483,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=deserialize_directory_properties,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return response # type: ignore
 
@@ -509,7 +513,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -562,7 +566,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
