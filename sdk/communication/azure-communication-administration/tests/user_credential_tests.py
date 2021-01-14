@@ -17,24 +17,24 @@ class TestCommunicationTokenCredential(TestCase):
         "eyJleHAiOjEwMH0.1h_scYkNp-G98-O4cW6KvfJZwiz54uJMyeDACE4nypg"
 
 
-    def test_CommunicationTokenCredential_decodes_token(self):
+    def test_communicationtokencredential_decodes_token(self):
         credential = CommunicationTokenCredential(self.sample_token)
         access_token = credential.get_token()
 
         self.assertEqual(access_token.token, self.sample_token)
 
-    def test_CommunicationTokenCredential_throws_if_invalid_token(self):
+    def test_communicationtokencredential_throws_if_invalid_token(self):
         self.assertRaises(ValueError, lambda: CommunicationTokenCredential("foo.bar.tar"))
 
-    def test_CommunicationTokenCredential_throws_if_nonstring_token(self):
+    def test_communicationtokencredential_throws_if_nonstring_token(self):
         self.assertRaises(TypeError, lambda: CommunicationTokenCredential(454))
 
-    def test_CommunicationTokenCredential_static_token_returns_expired_token(self):
+    def test_communicationtokencredential_static_token_returns_expired_token(self):
         credential = CommunicationTokenCredential(self.expired_token)
 
         self.assertEqual(credential.get_token().token, self.expired_token)
 
-    def test_CommunicationTokenCredential_token_expired_refresh_called(self):
+    def test_communicationtokencredential_token_expired_refresh_called(self):
         refresher = MagicMock(return_value=self.sample_token)
         access_token = CommunicationTokenCredential(
             self.expired_token,
@@ -43,7 +43,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertEqual(access_token, self.sample_token)
 
 
-    def test_CommunicationTokenCredential_token_expired_refresh_called_asnecessary(self):
+    def test_communicationtokencredential_token_expired_refresh_called_asnecessary(self):
         refresher = MagicMock(return_value=create_access_token(self.expired_token))
         credential = CommunicationTokenCredential(
             self.expired_token,
