@@ -2485,6 +2485,10 @@ class ElasticPoolPerformanceLevelCapability(Model):
     :ivar zone_redundant: Whether or not zone redundancy is supported for the
      performance level.
     :vartype zone_redundant: bool
+    :ivar supported_maintenance_configurations: List of supported maintenance
+     configurations
+    :vartype supported_maintenance_configurations:
+     list[~azure.mgmt.sql.models.MaintenanceConfigurationCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -2502,6 +2506,7 @@ class ElasticPoolPerformanceLevelCapability(Model):
         'supported_per_database_max_sizes': {'readonly': True},
         'supported_per_database_max_performance_levels': {'readonly': True},
         'zone_redundant': {'readonly': True},
+        'supported_maintenance_configurations': {'readonly': True},
         'status': {'readonly': True},
     }
 
@@ -2515,6 +2520,7 @@ class ElasticPoolPerformanceLevelCapability(Model):
         'supported_per_database_max_sizes': {'key': 'supportedPerDatabaseMaxSizes', 'type': '[MaxSizeRangeCapability]'},
         'supported_per_database_max_performance_levels': {'key': 'supportedPerDatabaseMaxPerformanceLevels', 'type': '[ElasticPoolPerDatabaseMaxPerformanceLevelCapability]'},
         'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
+        'supported_maintenance_configurations': {'key': 'supportedMaintenanceConfigurations', 'type': '[MaintenanceConfigurationCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -2530,6 +2536,7 @@ class ElasticPoolPerformanceLevelCapability(Model):
         self.supported_per_database_max_sizes = None
         self.supported_per_database_max_performance_levels = None
         self.zone_redundant = None
+        self.supported_maintenance_configurations = None
         self.status = None
         self.reason = reason
 
@@ -4650,6 +4657,45 @@ class LongTermRetentionBackup(ProxyResource):
         self.backup_expiration_time = None
 
 
+class MaintenanceConfigurationCapability(Model):
+    """The maintenance configuration capability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Maintenance configuration name
+    :vartype name: str
+    :ivar zone_redundant: Whether or not zone redundancy is supported for the
+     maintenance configuration.
+    :vartype zone_redundant: bool
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'zone_redundant': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(MaintenanceConfigurationCapability, self).__init__(**kwargs)
+        self.name = None
+        self.zone_redundant = None
+        self.status = None
+        self.reason = reason
+
+
 class ManagedBackupShortTermRetentionPolicy(ProxyResource):
     """A short term retention policy.
 
@@ -4824,6 +4870,86 @@ class ManagedDatabase(TrackedResource):
         self.long_term_retention_backup_resource_id = long_term_retention_backup_resource_id
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
+
+
+class ManagedDatabaseRestoreDetailsResult(ProxyResource):
+    """A managed database restore details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar status: Restore status.
+    :vartype status: str
+    :ivar current_restoring_file_name: Current restoring file name.
+    :vartype current_restoring_file_name: str
+    :ivar last_restored_file_name: Last restored file name.
+    :vartype last_restored_file_name: str
+    :ivar last_restored_file_time: Last restored file time.
+    :vartype last_restored_file_time: datetime
+    :ivar percent_completed: Percent completed.
+    :vartype percent_completed: float
+    :ivar unrestorable_files: List of unrestorable files.
+    :vartype unrestorable_files: list[str]
+    :ivar number_of_files_detected: Number of files detected.
+    :vartype number_of_files_detected: long
+    :ivar last_uploaded_file_name: Last uploaded file name.
+    :vartype last_uploaded_file_name: str
+    :ivar last_uploaded_file_time: Last uploaded file time.
+    :vartype last_uploaded_file_time: datetime
+    :ivar block_reason: The reason why restore is in Blocked state.
+    :vartype block_reason: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'status': {'readonly': True},
+        'current_restoring_file_name': {'readonly': True},
+        'last_restored_file_name': {'readonly': True},
+        'last_restored_file_time': {'readonly': True},
+        'percent_completed': {'readonly': True},
+        'unrestorable_files': {'readonly': True},
+        'number_of_files_detected': {'readonly': True},
+        'last_uploaded_file_name': {'readonly': True},
+        'last_uploaded_file_time': {'readonly': True},
+        'block_reason': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'current_restoring_file_name': {'key': 'properties.currentRestoringFileName', 'type': 'str'},
+        'last_restored_file_name': {'key': 'properties.lastRestoredFileName', 'type': 'str'},
+        'last_restored_file_time': {'key': 'properties.lastRestoredFileTime', 'type': 'iso-8601'},
+        'percent_completed': {'key': 'properties.percentCompleted', 'type': 'float'},
+        'unrestorable_files': {'key': 'properties.unrestorableFiles', 'type': '[str]'},
+        'number_of_files_detected': {'key': 'properties.numberOfFilesDetected', 'type': 'long'},
+        'last_uploaded_file_name': {'key': 'properties.lastUploadedFileName', 'type': 'str'},
+        'last_uploaded_file_time': {'key': 'properties.lastUploadedFileTime', 'type': 'iso-8601'},
+        'block_reason': {'key': 'properties.blockReason', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ManagedDatabaseRestoreDetailsResult, self).__init__(**kwargs)
+        self.status = None
+        self.current_restoring_file_name = None
+        self.last_restored_file_name = None
+        self.last_restored_file_time = None
+        self.percent_completed = None
+        self.unrestorable_files = None
+        self.number_of_files_detected = None
+        self.last_uploaded_file_name = None
+        self.last_uploaded_file_time = None
+        self.block_reason = None
 
 
 class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
@@ -5322,6 +5448,13 @@ class ManagedInstanceEditionCapability(Model):
     :ivar supported_families: The supported families.
     :vartype supported_families:
      list[~azure.mgmt.sql.models.ManagedInstanceFamilyCapability]
+    :ivar supported_storage_capabilities: The list of supported storage
+     capabilities for this edition
+    :vartype supported_storage_capabilities:
+     list[~azure.mgmt.sql.models.StorageCapability]
+    :ivar zone_redundant: Whether or not zone redundancy is supported for the
+     edition.
+    :vartype zone_redundant: bool
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -5332,12 +5465,16 @@ class ManagedInstanceEditionCapability(Model):
     _validation = {
         'name': {'readonly': True},
         'supported_families': {'readonly': True},
+        'supported_storage_capabilities': {'readonly': True},
+        'zone_redundant': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'supported_families': {'key': 'supportedFamilies', 'type': '[ManagedInstanceFamilyCapability]'},
+        'supported_storage_capabilities': {'key': 'supportedStorageCapabilities', 'type': '[StorageCapability]'},
+        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -5346,6 +5483,8 @@ class ManagedInstanceEditionCapability(Model):
         super(ManagedInstanceEditionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_families = None
+        self.supported_storage_capabilities = None
+        self.zone_redundant = None
         self.status = None
         self.reason = reason
 
@@ -5629,6 +5768,39 @@ class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
         self.monthly_retention = monthly_retention
         self.yearly_retention = yearly_retention
         self.week_of_year = week_of_year
+
+
+class ManagedInstanceMaintenanceConfigurationCapability(Model):
+    """The maintenance configuration capability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Maintenance configuration name
+    :vartype name: str
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(ManagedInstanceMaintenanceConfigurationCapability, self).__init__(**kwargs)
+        self.name = None
+        self.status = None
+        self.reason = reason
 
 
 class ManagedInstanceOperation(ProxyResource):
@@ -6137,6 +6309,10 @@ class ManagedInstanceVcoresCapability(Model):
     :ivar standalone_supported: True if this service objective is supported
      for standalone managed instances.
     :vartype standalone_supported: bool
+    :ivar supported_maintenance_configurations: List of supported maintenance
+     configurations
+    :vartype supported_maintenance_configurations:
+     list[~azure.mgmt.sql.models.ManagedInstanceMaintenanceConfigurationCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -6151,6 +6327,7 @@ class ManagedInstanceVcoresCapability(Model):
         'supported_storage_sizes': {'readonly': True},
         'instance_pool_supported': {'readonly': True},
         'standalone_supported': {'readonly': True},
+        'supported_maintenance_configurations': {'readonly': True},
         'status': {'readonly': True},
     }
 
@@ -6161,6 +6338,7 @@ class ManagedInstanceVcoresCapability(Model):
         'supported_storage_sizes': {'key': 'supportedStorageSizes', 'type': '[MaxSizeRangeCapability]'},
         'instance_pool_supported': {'key': 'instancePoolSupported', 'type': 'bool'},
         'standalone_supported': {'key': 'standaloneSupported', 'type': 'bool'},
+        'supported_maintenance_configurations': {'key': 'supportedMaintenanceConfigurations', 'type': '[ManagedInstanceMaintenanceConfigurationCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -6173,6 +6351,7 @@ class ManagedInstanceVcoresCapability(Model):
         self.supported_storage_sizes = None
         self.instance_pool_supported = None
         self.standalone_supported = None
+        self.supported_maintenance_configurations = None
         self.status = None
         self.reason = reason
 
@@ -9251,6 +9430,10 @@ class ServiceObjectiveCapability(Model):
      list[~azure.mgmt.sql.models.MinCapacityCapability]
     :ivar compute_model: The compute model
     :vartype compute_model: str
+    :ivar supported_maintenance_configurations: List of supported maintenance
+     configurations
+    :vartype supported_maintenance_configurations:
+     list[~azure.mgmt.sql.models.MaintenanceConfigurationCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -9270,6 +9453,7 @@ class ServiceObjectiveCapability(Model):
         'supported_auto_pause_delay': {'readonly': True},
         'supported_min_capacities': {'readonly': True},
         'compute_model': {'readonly': True},
+        'supported_maintenance_configurations': {'readonly': True},
         'status': {'readonly': True},
     }
 
@@ -9285,6 +9469,7 @@ class ServiceObjectiveCapability(Model):
         'supported_auto_pause_delay': {'key': 'supportedAutoPauseDelay', 'type': 'AutoPauseDelayTimeRange'},
         'supported_min_capacities': {'key': 'supportedMinCapacities', 'type': '[MinCapacityCapability]'},
         'compute_model': {'key': 'computeModel', 'type': 'str'},
+        'supported_maintenance_configurations': {'key': 'supportedMaintenanceConfigurations', 'type': '[MaintenanceConfigurationCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -9302,6 +9487,7 @@ class ServiceObjectiveCapability(Model):
         self.supported_auto_pause_delay = None
         self.supported_min_capacities = None
         self.compute_model = None
+        self.supported_maintenance_configurations = None
         self.status = None
         self.reason = reason
 
