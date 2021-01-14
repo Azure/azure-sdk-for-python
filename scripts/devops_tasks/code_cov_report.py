@@ -112,7 +112,7 @@ def create_coverage_report():
 
     # ET.ElementTree(root).write("coverage-new.xml")
     with open(coverage_file, "wb") as f:
-        data = ET.tostring(root)#, encoding="utf8")
+        data = ET.tostring(root)#, encoding="utf8") # Build System does not support utf-8 encoding
         f.write(data)
 
 
