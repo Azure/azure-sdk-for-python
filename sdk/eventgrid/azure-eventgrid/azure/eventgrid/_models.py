@@ -186,7 +186,7 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
         kwargs.setdefault('subject', subject)
         kwargs.setdefault("event_type", event_type)
         kwargs.setdefault('event_time', dt.datetime.now(UTC()).isoformat())
-        kwargs.setdefault('data', None)
+        kwargs.setdefault('data', data)
         kwargs.setdefault('data_version', data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
