@@ -77,13 +77,13 @@ def _get_authentication_policy(credential):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
+        return AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
     if isinstance(credential, AzureSasCredential):
-        authentication_policy = EventGridSasCredentialPolicy(
+        return EventGridSasCredentialPolicy(
             credential=credential,
             name=constants.EVENTGRID_TOKEN_HEADER
         )
-    return authentication_policy
+    raise ValueError("The provided credential should be an instance of AzureSasCredential or AzureKeyCredential")
 
 def _is_cloud_event(event):
     # type: (Any) -> bool
