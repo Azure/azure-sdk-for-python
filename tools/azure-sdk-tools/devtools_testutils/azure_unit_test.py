@@ -3,7 +3,7 @@ import logging
 import os
 import unittest
 
-from azure_devtools.scenario_tests import GeneralNameReplacer
+from azure_devtools.scenario_tests import GeneralNameReplacer, AzureTestError
 # from azure_devtools.scenario_tests.config import TestConfig
 
 from . import mgmt_settings_fake as fake_settings
