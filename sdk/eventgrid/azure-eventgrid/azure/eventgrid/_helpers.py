@@ -85,7 +85,7 @@ def _get_authentication_policy(credential):
             name=constants.EVENTGRID_TOKEN_HEADER
         )
     raise ValueError("The provided credential should be an instance of \
-        EventGridSharedAccessSignatureCredentialPolicy or AzureKeyCredentialPolicy"
+        AzureSasCredential or AzureKeyCredential"
         )
 
 def _is_cloud_event(event):
