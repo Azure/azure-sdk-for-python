@@ -18,11 +18,11 @@ class AzureUnitTest(unittest.TestCase):
 
         self.working_folder = os.path.dirname(__file__)
         self.scrubber = GeneralNameReplacer()
-        config_file = config_file or os.path.join(
-            self.working_folder, TEST_SETTING_FILENAME
-        )
-
-        self.config = TestConfig(config_file=config_file)
+        # config_file = config_file or os.path.join(
+        #     self.working_folder, TEST_SETTING_FILENAME
+        # )
+        # if not os.path.exists(config_file):
+        #     config_file = None
 
         # For now leaving this as live always, the recordings don't generate traffic so passing in credentials is fine
         self.is_live = True
