@@ -4,7 +4,7 @@ import os
 import unittest
 
 from azure_devtools.scenario_tests import GeneralNameReplacer
-from azure_devtools.scenario_tests.config import TestConfig
+# from azure_devtools.scenario_tests.config import TestConfig
 
 from . import mgmt_settings_fake as fake_settings
 from .azure_testcase import get_resource_name, get_qualified_method_name
@@ -13,6 +13,9 @@ from .config import TEST_SETTING_FILENAME
 
 class AzureUnitTest(unittest.TestCase):
     def __init__(self, method_name, config_file=None):
+        print("init")
+        print("loading dotenv")
+        self.unit_test = True
         load_dotenv(find_dotenv())
         self.qualified_test_name = get_qualified_method_name(self, method_name)
 
@@ -33,6 +36,7 @@ class AzureUnitTest(unittest.TestCase):
         super(AzureUnitTest, self).__init__(method_name)
 
     def setUp(self):
+        print('setUp')
         # Incorporating this for leftover unittest dependent
         # tests. Will test without as well
         pass

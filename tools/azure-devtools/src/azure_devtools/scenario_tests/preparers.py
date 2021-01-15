@@ -37,7 +37,8 @@ class AbstractPreparer(object):
         self._aggregate_cache_key = None
 
     def _prepare_create_resource(self, test_class_instance, **kwargs):
-        self.live_test = not isinstance(test_class_instance, ReplayableTest)
+        self.live_test = not isinstance(test_class_instance, ReplayableTest) and not getattr(test_class_instance, "unit_test")
+        print("is live test: {}".format(self.live_test))
         self.test_class_instance = test_class_instance
 
         # This latter conditional is to triage a specific failure mode:
