@@ -20,7 +20,7 @@ from random import randint, sample
 import time
 
 from datetime import datetime, timedelta
-from azure.core import AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.eventgrid import EventGridPublisherClient, CloudEvent, generate_shared_access_signature
 
 key = os.environ["CLOUD_ACCESS_KEY"]
