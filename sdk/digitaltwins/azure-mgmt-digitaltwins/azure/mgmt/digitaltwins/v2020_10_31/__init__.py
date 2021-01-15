@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._azure_digital_twins_management_client import AzureDigitalTwinsManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['AzureDigitalTwinsManagementClient']
 
 try:
