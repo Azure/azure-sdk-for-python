@@ -598,18 +598,18 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             "It has a sleek premium aluminum design that makes it beautiful to look at."
         ]
 
-        document = (await client.analyze_sentiment(documents=documents, show_opinion_mining=True))[0]
+        document = (await client.analyze_sentiment(documents=documents))[0]
 
         for sentence in document.sentences:
             for mined_opinion in sentence.mined_opinions:
-                aspect = mined_opinion.aspect
-                self.assertEqual('design', aspect.text)
-                self.assertEqual('positive', aspect.sentiment)
-                self.assertEqual(0.0, aspect.confidence_scores.neutral)
-                self.validateConfidenceScores(aspect.confidence_scores)
-                self.assertEqual(32, aspect.offset)
+                target = mined_opinion.target
+                self.assertEqual('design', target.text)
+                self.assertEqual('positive', target.sentiment)
+                self.assertEqual(0.0, target.confidence_scores.neutral)
+                self.validateConfidenceScores(target.confidence_scores)
+                self.assertEqual(32, target.offset)
 
-                sleek_opinion = mined_opinion.opinions[0]
+                sleek_opinion = mined_opinion.assessments[0]
                 self.assertEqual('sleek', sleek_opinion.text)
                 self.assertEqual('positive', sleek_opinion.sentiment)
                 self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
@@ -617,7 +617,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 self.assertEqual(9, sleek_opinion.offset)
                 self.assertFalse(sleek_opinion.is_negated)
 
-                premium_opinion = mined_opinion.opinions[1]
+                premium_opinion = mined_opinion.assessments[1]
                 self.assertEqual('premium', premium_opinion.text)
                 self.assertEqual('positive', premium_opinion.sentiment)
                 self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
@@ -632,11 +632,11 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             "The food and service is not good"
         ]
 
-        document = (await client.analyze_sentiment(documents=documents, show_opinion_mining=True))[0]
+        document = (await client.analyze_sentiment(documents=documents))[0]
 
         for sentence in document.sentences:
-            food_aspect = sentence.mined_opinions[0].aspect
-            service_aspect = sentence.mined_opinions[1].aspect
+            food_aspect = sentence.mined_opinions[0].target
+            service_aspect = sentence.mined_opinions[1].target
 
             self.assertEqual('food', food_aspect.text)
             self.assertEqual('negative', food_aspect.sentiment)
@@ -650,8 +650,8 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.validateConfidenceScores(service_aspect.confidence_scores)
             self.assertEqual(13, service_aspect.offset)
 
-            food_opinion = sentence.mined_opinions[0].opinions[0]
-            service_opinion = sentence.mined_opinions[1].opinions[0]
+            food_opinion = sentence.mined_opinions[0].assessments[0]
+            service_opinion = sentence.mined_opinions[1].assessments[0]
             self.assertOpinionsEqual(food_opinion, service_opinion)
 
             self.assertEqual('good', food_opinion.text)
@@ -674,7 +674,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             "The toilet smelled."
         ]
 
-        analyzed_documents = await client.analyze_sentiment(documents, show_opinion_mining=True)
+        analyzed_documents = await client.analyze_sentiment(documents)
         doc_5 = analyzed_documents[5]
         doc_6 = analyzed_documents[6]
 
@@ -682,14 +682,14 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             opinion.text
             for sentence in doc_5.sentences
             for mined_opinion in sentence.mined_opinions
-            for opinion in mined_opinion.opinions
+            for opinion in mined_opinion.assessments
         ]
 
         doc_6_opinions = [
             opinion.text
             for sentence in doc_6.sentences
             for mined_opinion in sentence.mined_opinions
-            for opinion in mined_opinion.opinions
+            for opinion in mined_opinion.assessments
         ]
 
         assert doc_5_opinions == ["nice", "old", "dirty"]
@@ -698,7 +698,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_opinion_mining_no_mined_opinions(self, client):
-        document = (await client.analyze_sentiment(documents=["today is a hot day"], show_opinion_mining=True))[0]
+        document = (await client.analyze_sentiment(documents=["today is a hot day"], show_opinion_mining=False))[0]
 
         assert not document.sentences[0].mined_opinions
 
@@ -706,7 +706,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     async def test_opinion_mining_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
-            await client.analyze_sentiment(["will fail"], show_opinion_mining=True)
+            await client.analyze_sentiment(["will fail"]) # TODO: is it a problem for show_opinion_mining to be True by default in this case?
 
         assert "'show_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)
 

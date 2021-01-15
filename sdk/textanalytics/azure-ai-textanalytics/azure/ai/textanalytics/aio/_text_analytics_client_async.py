@@ -520,18 +520,16 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+        show_opinion_mining = kwargs.pop("show_opinion_mining", True)
         if self._string_code_unit:
             kwargs.update({"string_index_type": self._string_code_unit})
-
-        if show_opinion_mining is not None:
-            kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
             return await self._client.sentiment(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                show_opinion_mining=show_opinion_mining,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
