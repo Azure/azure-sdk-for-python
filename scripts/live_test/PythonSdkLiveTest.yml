@@ -18,7 +18,6 @@ jobs:
     vmImage: 'ubuntu-18.04'
   steps:
     - task: UsePythonVersion38
-      condition: succeededOrFailed()
       inputs:
         versionSpec: '3.8'
         addToPath: true
@@ -28,8 +27,8 @@ jobs:
         pwd
         ls
         # ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
-        git config --global user.email "AzurePipelines"
-        git config --global user.name "AzurePipelines"
+        git config --global user.email "PythonSdkPipelines"
+        git config --global user.name "PythonSdkPipelines"
 
         # clone and create new branch
         git clone -b $(BASE_BRANCH) $(BASE_REPO)
