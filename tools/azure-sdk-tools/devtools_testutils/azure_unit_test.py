@@ -29,7 +29,7 @@ class AzureUnitTest(unittest.TestCase):
         # This should always be false, these tests don't generate live traffic
         self.in_recording = False
         self._fake_settings, self._real_settings = self._load_settings()
-        print(getattr(self._real_settings, "CLIENT_ID"))
+        # print(getattr(self._real_settings, "CLIENT_ID"))
         super(AzureUnitTest, self).__init__(method_name)
 
     def setUp(self):
