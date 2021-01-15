@@ -17,8 +17,11 @@ Caller must provide one of the following:
 
 ### Added
 
+- Added `MicrosoftTeamsUserIdentifier`
+
 ##### `IdentityClient`
 - Added support for Azure Active Directory authentication for the Identity client
+
 
 ## 1.0.0b3 (2020-11-16)
 

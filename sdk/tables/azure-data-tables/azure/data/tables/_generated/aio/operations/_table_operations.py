@@ -65,7 +65,7 @@ class TableOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         _top = None
         _select = None
@@ -158,7 +158,7 @@ class TableOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -322,7 +322,7 @@ class TableOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         _top = None
         _select = None
@@ -427,7 +427,7 @@ class TableOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         _select = None
         _filter = None
@@ -536,7 +536,7 @@ class TableOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -643,7 +643,7 @@ class TableOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -746,7 +746,7 @@ class TableOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -835,7 +835,7 @@ class TableOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format

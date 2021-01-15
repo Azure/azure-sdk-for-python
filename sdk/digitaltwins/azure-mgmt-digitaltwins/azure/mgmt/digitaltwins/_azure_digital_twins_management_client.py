@@ -9,51 +9,180 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import AzureDigitalTwinsManagementClientConfiguration
-from .operations import DigitalTwinsOperations
-from .operations import DigitalTwinsEndpointOperations
-from .operations import Operations
-from . import models
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
-class AzureDigitalTwinsManagementClient(SDKClient):
-    """Azure Digital Twins Client for managing DigitalTwinsInstance
+class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
+    """Azure Digital Twins Client for managing DigitalTwinsInstance.
 
-    :ivar config: Configuration for client.
-    :vartype config: AzureDigitalTwinsManagementClientConfiguration
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
+    The api-version parameter sets the default API version if the operation
+    group is not described in the profile.
 
-    :ivar digital_twins: DigitalTwins operations
-    :vartype digital_twins: azure.mgmt.digitaltwins.operations.DigitalTwinsOperations
-    :ivar digital_twins_endpoint: DigitalTwinsEndpoint operations
-    :vartype digital_twins_endpoint: azure.mgmt.digitaltwins.operations.DigitalTwinsEndpointOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.digitaltwins.operations.Operations
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
+    DEFAULT_API_VERSION = '2020-12-01'
+    _PROFILE_TAG = "azure.mgmt.digitaltwins.AzureDigitalTwinsManagementClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
+        }},
+        _PROFILE_TAG + " latest"
+    )
+
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = AzureDigitalTwinsManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        super(AzureDigitalTwinsManagementClient, self).__init__(
+            api_version=api_version,
+            profile=profile
+        )
 
-        self.config = AzureDigitalTwinsManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(AzureDigitalTwinsManagementClient, self).__init__(self.config.credentials, self.config)
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-03-01-preview'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+    @classmethod
+    def models(cls, api_version=DEFAULT_API_VERSION):
+        """Module depends on the API version:
 
-        self.digital_twins = DigitalTwinsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.digital_twins_endpoint = DigitalTwinsEndpointOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
+           * 2020-03-01-preview: :mod:`v2020_03_01_preview.models<azure.mgmt.digitaltwins.v2020_03_01_preview.models>`
+           * 2020-10-31: :mod:`v2020_10_31.models<azure.mgmt.digitaltwins.v2020_10_31.models>`
+           * 2020-12-01: :mod:`v2020_12_01.models<azure.mgmt.digitaltwins.v2020_12_01.models>`
+        """
+        if api_version == '2020-03-01-preview':
+            from .v2020_03_01_preview import models
+            return models
+        elif api_version == '2020-10-31':
+            from .v2020_10_31 import models
+            return models
+        elif api_version == '2020-12-01':
+            from .v2020_12_01 import models
+            return models
+        raise ValueError("API version {} is not available".format(api_version))
+
+    @property
+    def digital_twins(self):
+        """Instance depends on the API version:
+
+           * 2020-03-01-preview: :class:`DigitalTwinsOperations<azure.mgmt.digitaltwins.v2020_03_01_preview.operations.DigitalTwinsOperations>`
+           * 2020-10-31: :class:`DigitalTwinsOperations<azure.mgmt.digitaltwins.v2020_10_31.operations.DigitalTwinsOperations>`
+           * 2020-12-01: :class:`DigitalTwinsOperations<azure.mgmt.digitaltwins.v2020_12_01.operations.DigitalTwinsOperations>`
+        """
+        api_version = self._get_api_version('digital_twins')
+        if api_version == '2020-03-01-preview':
+            from .v2020_03_01_preview.operations import DigitalTwinsOperations as OperationClass
+        elif api_version == '2020-10-31':
+            from .v2020_10_31.operations import DigitalTwinsOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from .v2020_12_01.operations import DigitalTwinsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'digital_twins'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def digital_twins_endpoint(self):
+        """Instance depends on the API version:
+
+           * 2020-03-01-preview: :class:`DigitalTwinsEndpointOperations<azure.mgmt.digitaltwins.v2020_03_01_preview.operations.DigitalTwinsEndpointOperations>`
+           * 2020-10-31: :class:`DigitalTwinsEndpointOperations<azure.mgmt.digitaltwins.v2020_10_31.operations.DigitalTwinsEndpointOperations>`
+           * 2020-12-01: :class:`DigitalTwinsEndpointOperations<azure.mgmt.digitaltwins.v2020_12_01.operations.DigitalTwinsEndpointOperations>`
+        """
+        api_version = self._get_api_version('digital_twins_endpoint')
+        if api_version == '2020-03-01-preview':
+            from .v2020_03_01_preview.operations import DigitalTwinsEndpointOperations as OperationClass
+        elif api_version == '2020-10-31':
+            from .v2020_10_31.operations import DigitalTwinsEndpointOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from .v2020_12_01.operations import DigitalTwinsEndpointOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'digital_twins_endpoint'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2020-03-01-preview: :class:`Operations<azure.mgmt.digitaltwins.v2020_03_01_preview.operations.Operations>`
+           * 2020-10-31: :class:`Operations<azure.mgmt.digitaltwins.v2020_10_31.operations.Operations>`
+           * 2020-12-01: :class:`Operations<azure.mgmt.digitaltwins.v2020_12_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2020-03-01-preview':
+            from .v2020_03_01_preview.operations import Operations as OperationClass
+        elif api_version == '2020-10-31':
+            from .v2020_10_31.operations import Operations as OperationClass
+        elif api_version == '2020-12-01':
+            from .v2020_12_01.operations import Operations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def private_endpoint_connections(self):
+        """Instance depends on the API version:
+
+           * 2020-12-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.digitaltwins.v2020_12_01.operations.PrivateEndpointConnectionsOperations>`
+        """
+        api_version = self._get_api_version('private_endpoint_connections')
+        if api_version == '2020-12-01':
+            from .v2020_12_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def private_link_resources(self):
+        """Instance depends on the API version:
+
+           * 2020-12-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.digitaltwins.v2020_12_01.operations.PrivateLinkResourcesOperations>`
+        """
+        api_version = self._get_api_version('private_link_resources')
+        if api_version == '2020-12-01':
+            from .v2020_12_01.operations import PrivateLinkResourcesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)
