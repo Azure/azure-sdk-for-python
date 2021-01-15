@@ -15,7 +15,7 @@ import six
 from msrest.serialization import TZ_UTC
 from .utils import create_access_token
 
-class CommunicationUserCredential(object):
+class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service
     :raises: TypeError

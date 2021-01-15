@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.async_paging import AsyncItemPaged
 
-from .._shared.user_credential_async import CommunicationUserCredential
+from .._shared.user_credential_async import CommunicationTokenCredential
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
     AddChatThreadMembersRequest,
@@ -51,7 +51,7 @@ class ChatThreadClient(object):
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationUserCredential credential:
+    :param CommunicationTokenCredential credential:
         The credentials with which to authenticate. The value contains a User
         Access Token
     :param str thread_id:
@@ -70,7 +70,7 @@ class ChatThreadClient(object):
     def __init__(
             self,
             endpoint: str,
-            credential: CommunicationUserCredential,
+            credential: CommunicationTokenCredential,
             thread_id: str,
             **kwargs
     ) -> None:

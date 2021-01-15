@@ -13,7 +13,7 @@ from msrest.serialization import TZ_UTC
 from azure.communication.administration import CommunicationIdentityClient
 from azure.communication.chat import (
     ChatClient,
-    CommunicationUserCredential,
+    CommunicationTokenCredential,
     ChatThreadMember
 )
 from azure.communication.chat._shared.utils import parse_connection_str
@@ -48,7 +48,7 @@ class ChatClientTest(CommunicationTestCase):
         self.token = tokenresponse.token
 
         # create ChatClient
-        self.chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
 
     def tearDown(self):
         super(ChatClientTest, self).tearDown()
