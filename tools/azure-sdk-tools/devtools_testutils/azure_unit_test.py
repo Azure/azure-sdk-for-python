@@ -163,3 +163,15 @@ class AzureUnitTest(unittest.TestCase):
             return fake_settings, real_settings
         except ImportError:
             return fake_settings, None
+
+    @property
+    def settings(self):
+        if self.is_live:
+            if self._real_settings:
+                return self._real_settings
+            else:
+                raise AzureTestError(
+                    "Need a mgmt_settings_real.py file to run tests live."
+                )
+        else:
+            return self._fake_settings
