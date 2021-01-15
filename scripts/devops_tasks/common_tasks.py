@@ -356,7 +356,7 @@ def find_whl(package_name, version, whl_directory):
     whl_name_format = "{0}-{1}-*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
     whls = [os.path.relpath(w, whl_directory) for w in glob.glob(os.path.join(whl_directory, "**", whl_name_format), recursive=True)]
 
-    if not paths:
+    if not whls:
         logging.error(
             "whl is not found in whl directory {0} for package {1}-{2}".format(
                 whl_directory, package_name, parsed_version.base_version
@@ -364,7 +364,7 @@ def find_whl(package_name, version, whl_directory):
         )
         exit(1)
 
-    return paths[0]
+    return whls[0]
 
 # This method installs package from a pre-built whl
 def install_package_from_whl(
