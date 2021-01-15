@@ -3,6 +3,9 @@
 ## 2.0.0b5 (Unreleased)
 
   **Breaking Changes**
+  - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
+  
+  **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.
 
 ## 2.0.0b4 (2020-11-11)
