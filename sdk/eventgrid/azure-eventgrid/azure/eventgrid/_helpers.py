@@ -13,9 +13,8 @@ except ImportError:
     from urllib2 import quote # type: ignore
 
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.core.credentials import AzureKeyCredential
-from ._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
-from ._signature_credential_policy import EventGridSharedAccessSignatureCredentialPolicy
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
 if TYPE_CHECKING:
@@ -79,8 +78,8 @@ def _get_authentication_policy(credential):
         raise ValueError("Parameter 'self._credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
         authentication_policy = AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
-    if isinstance(credential, EventGridSharedAccessSignatureCredential):
-        authentication_policy = EventGridSharedAccessSignatureCredentialPolicy(
+    if isinstance(credential, AzureSasCredential):
+        authentication_policy = EventGridSasCredentialPolicy(
             credential=credential,
             name=constants.EVENTGRID_TOKEN_HEADER
         )
