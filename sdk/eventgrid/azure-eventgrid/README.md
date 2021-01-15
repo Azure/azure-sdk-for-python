@@ -146,7 +146,7 @@ eg_storage_dict = {
     "topic":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.EventGrid/topics/eventgridegsub"
 }
 
-deserialized_event = consumer.decode_eventgrid_event(eg_storage_dict)
+deserialized_event = consumer.deserialize_eventgrid_events(eg_storage_dict)
 
 # both allow access to raw properties as strings
 time_string = deserialized_event.event_time
@@ -173,7 +173,7 @@ cloud_storage_dict = {
     "specversion":"1.0"
 }
 
-deserialized_event = consumer.decode_cloud_event(cloud_storage_dict)
+deserialized_event = consumer.deserialize_cloud_events(cloud_storage_dict)
 
 # both allow access to raw properties as strings
 time_string = deserialized_event.time

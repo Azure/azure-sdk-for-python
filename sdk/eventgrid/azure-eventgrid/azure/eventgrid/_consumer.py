@@ -21,7 +21,7 @@ class EventGridDeserializer(object):
     A consumer responsible for deserializing event handler messages, to allow for
     access to strongly typed Event objects.
     """
-    def decode_cloud_event(self, cloud_event, **kwargs): # pylint: disable=no-self-use
+    def deserialize_cloud_events(self, cloud_event, **kwargs): # pylint: disable=no-self-use
         # type: (Union[str, dict, bytes], Any) -> CloudEvent
         """Single event following CloudEvent schema will be parsed and returned as Deserialized Event.
         :param cloud_event: The event to be deserialized.
@@ -44,7 +44,7 @@ class EventGridDeserializer(object):
             raise ValueError('Error: cannot deserialize event. Event does not have a valid format. \
                 Event must be a string, dict, or bytes following the CloudEvent schema.')
 
-    def decode_eventgrid_event(self, eventgrid_event, **kwargs): # pylint: disable=no-self-use
+    def deserialize_eventgrid_events(self, eventgrid_event, **kwargs): # pylint: disable=no-self-use
         # type: (Union[str, dict, bytes], Any) -> EventGridEvent
         """Single event following EventGridEvent schema will be parsed and returned as Deserialized Event.
         :param eventgrid_event: The event to be deserialized.

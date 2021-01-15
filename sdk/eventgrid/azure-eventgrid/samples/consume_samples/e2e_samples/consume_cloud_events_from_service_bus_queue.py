@@ -34,13 +34,13 @@ with sb_client:
         for msg in msgs:
             # receive single dict message
             if 'specversion' in msg:
-                deserialized_event = consumer.decode_cloud_event(str(msg))
+                deserialized_event = consumer.deserialize_cloud_events(str(msg))
                 dict_event = deserialized_event.to_json()
                 print("event.to_json(): {}\n".format(dict_event))
                 print("model: {}\n".format(deserialized_event.model))
                 print("model.data: {}\n".format(deserialized_event.model.data))
             else:
-                deserialized_event = consumer.decode_eventgrid_event(str(msg))
+                deserialized_event = consumer.deserialize_eventgrid_events(str(msg))
                 dict_event = deserialized_event.to_json()
                 print("event.to_json(): {}\n".format(dict_event))
                 print("model: {}\n".format(deserialized_event.model))

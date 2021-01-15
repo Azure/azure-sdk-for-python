@@ -20,7 +20,7 @@ path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./cs3_syst
 with open(path, 'r') as f:
     eg_event_received_message = json.loads(f.read())
 # returns List[DeserializedEvent]
-event = consumer.decode_eventgrid_event(eg_event_received_message)
+event = consumer.deserialize_eventgrid_events(eg_event_received_message)
 
 datetime_object = event.event_time
 print(datetime_object)

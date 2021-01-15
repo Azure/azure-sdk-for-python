@@ -27,11 +27,11 @@ cloud_custom_string = json.dumps(cloud_custom_dict)
 cloud_custom_bytes = str(cloud_custom_string).encode("utf-8")
 
 client = EventGridDeserializer()
-deserialized_dict_event = client.decode_cloud_event(cloud_custom_dict)
+deserialized_dict_event = client.deserialize_cloud_events(cloud_custom_dict)
 print(deserialized_dict_event)
 
-deserialized_str_event = client.decode_cloud_event(cloud_custom_string)
+deserialized_str_event = client.deserialize_cloud_events(cloud_custom_string)
 print(deserialized_str_event)
 
-deserialized_bytes_event = client.decode_cloud_event(cloud_custom_bytes)
+deserialized_bytes_event = client.deserialize_cloud_events(cloud_custom_bytes)
 print(deserialized_bytes_event)

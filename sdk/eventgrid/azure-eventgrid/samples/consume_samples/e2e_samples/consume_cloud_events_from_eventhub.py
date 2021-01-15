@@ -25,7 +25,7 @@ EVENTHUB_NAME = os.environ["EVENTHUB_NAME"]
 def on_event(partition_context, event):
 
     dict_event = event.body_as_json()[0]
-    deserialized_event = eg_consumer.decode_eventgrid_event(dict_event)
+    deserialized_event = eg_consumer.deserialize_eventgrid_events(dict_event)
     if deserialized_event.model.__class__ == CloudEvent:
         dict_event = deserialized_event.to_json()
         print("event.type: {}\n".format(dict_event["type"]))

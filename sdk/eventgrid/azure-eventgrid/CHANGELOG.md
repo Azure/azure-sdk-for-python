@@ -5,6 +5,8 @@
   **Breaking Changes**
   - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
   - `EventGridConsumer` is now renamed to `EventGridDeserializer`.
+  - `decode_cloud_event` is renamed to `deserialize_cloud_events`.
+  - `decode_eventgrid_event` is renamed to `deserialize_eventgrid_events`.
   
   **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.

@@ -42,11 +42,11 @@ eg_storage_string = json.dumps(eg_storage_dict)
 eg_storage_bytes = str(eg_storage_string).encode("utf-8")
 
 client = EventGridDeserializer()
-deserialized_dict_event = client.decode_eventgrid_event(eg_storage_dict)
+deserialized_dict_event = client.deserialize_eventgrid_events(eg_storage_dict)
 print(deserialized_dict_event)
 
-deserialized_str_event = client.decode_eventgrid_event(eg_storage_string)
+deserialized_str_event = client.deserialize_eventgrid_events(eg_storage_string)
 print(deserialized_str_event)
 
-deserialized_bytes_event = client.decode_eventgrid_event(eg_storage_bytes)
+deserialized_bytes_event = client.deserialize_eventgrid_events(eg_storage_bytes)
 print(deserialized_bytes_event)

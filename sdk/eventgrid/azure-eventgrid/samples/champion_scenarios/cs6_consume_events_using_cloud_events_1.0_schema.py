@@ -21,7 +21,7 @@ with open(path, 'r') as f:
     cloud_event_received_message = json.loads(f.read())
 
 # returns List[DeserializedEvent]
-event = consumer.decode_cloud_event(cloud_event_received_message)
+event = consumer.deserialize_cloud_events(cloud_event_received_message)
 
 datetime_object = event.time
 print(datetime_object)

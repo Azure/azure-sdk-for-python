@@ -86,9 +86,9 @@ The `publish_events` API is replaced with `send` in v2.0. Additionally, `send` A
 In v2.0, `EventGridDeserializer` can be used to decode both Cloud Events and EventGrid Events. Please find the samples [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples/consume_samples) to see detailed examples of the consumer.
 
 ```Python
-EventGridDeserializer().decode_cloud_event(cloud_event_dict)
+EventGridDeserializer().deserialize_cloud_events(cloud_event_dict)
 
-EventGridDeserializer().decode_eventgrid_event(eventgrid_event_dict)
+EventGridDeserializer().deserialize_eventgrid_events(eventgrid_event_dict)
 ```
 
 ## Additional samples
