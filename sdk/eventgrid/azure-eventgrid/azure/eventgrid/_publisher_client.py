@@ -62,7 +62,7 @@ class EventGridPublisherClient(object):
     :param str topic_hostname: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which
      implements SAS key authentication or SAS token authentication.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or AzureSasCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
     """
 
     def __init__(self, topic_hostname, credential, **kwargs):
