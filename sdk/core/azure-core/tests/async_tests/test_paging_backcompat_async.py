@@ -47,7 +47,7 @@ async def _as_list(async_iter: AsyncIterator[T]) -> List[T]:
     return result
 
 
-class TestPaging:
+class TestPagingBackCompatAsync:
 
     @pytest.mark.asyncio
     async def test_basic_paging(self):
@@ -135,7 +135,7 @@ class TestPaging:
                 raise HttpResponseError()
         async def extract_data(response):
             return response['nextLink'], iter(response['value'] or [])
-        
+
         pager = AsyncItemPaged(get_next, extract_data)
         assert await pager.__anext__() == 'bar'
         with pytest.raises(HttpResponseError) as err:
