@@ -6,11 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_digital_twins_management_client import AzureDigitalTwinsManagementClient
-__all__ = ['AzureDigitalTwinsManagementClient']
+from ._digital_twins_operations import DigitalTwinsOperations
+from ._digital_twins_endpoint_operations import DigitalTwinsEndpointOperations
+from ._operations import Operations
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'DigitalTwinsOperations',
+    'DigitalTwinsEndpointOperations',
+    'Operations',
+]
