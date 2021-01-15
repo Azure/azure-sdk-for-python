@@ -47,7 +47,7 @@ stages:
                           ForRelease: true
                     - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                       parameters:
-                        SourceFolder: ${{parameters.ArtifactName}} 
+                        SourceFolder: ${{parameters.ArtifactName}}
                         TargetFolder: ${{artifact.safeName}}
                         PackageName: ${{artifact.name}}
                     - pwsh: |
@@ -83,7 +83,7 @@ stages:
 
                       - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                         parameters:
-                          SourceFolder: ${{parameters.ArtifactName}} 
+                          SourceFolder: ${{parameters.ArtifactName}}
                           TargetFolder: ${{artifact.safeName}}
                           PackageName: ${{artifact.name}}
 
@@ -175,7 +175,7 @@ stages:
                       - checkout: self
                       - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                         parameters:
-                          SourceFolder: ${{parameters.ArtifactName}} 
+                          SourceFolder: ${{parameters.ArtifactName}}
                           TargetFolder: ${{artifact.safeName}}
                           PackageName: ${{artifact.name}}
                       - pwsh: |
@@ -200,7 +200,7 @@ stages:
                           ArtifactName: ${{artifact.name}}
                           Language: 'python'
                           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-                          DocRepoDestinationPath: 'docs-ref-services/' 
+                          DocRepoDestinationPath: 'docs-ref-services/'
                           GHReviewersVariable: 'OwningGHUser'
                           CIConfigs: $(CIConfigs)
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
@@ -237,6 +237,16 @@ stages:
                           PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
+  - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - stage: SmokeTest_Release_Packages
+      displayName: Smoke Test Release Packages
+      jobs:
+        - template: /eng/pipelines/templates/jobs/smoke-test.yml
+          parameters:
+            Daily: false
+            ArtifactName: ${{ parameters.ArtifactName }}
+            Artifacts: ${{ parameters.Artifacts }}
+
   - stage: Integration
     dependsOn: ${{parameters.DependsOn}}
     jobs:
@@ -272,7 +282,7 @@ stages:
               Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
 
               $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}} | Measure-Object).Count
-              if ($fileCount -eq 0) { 
+              if ($fileCount -eq 0) {
                 Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
                 exit 0
               }
@@ -281,4 +291,4 @@ stages:
               echo "Uploaded whl to devops feed $(DevFeedName)"
               twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.zip
               echo "Uploaded sdist to devops feed $(DevFeedName)"
-            displayName: 'Publish ${{artifact.name}} alpha package'       
+            displayName: 'Publish ${{artifact.name}} alpha package'
