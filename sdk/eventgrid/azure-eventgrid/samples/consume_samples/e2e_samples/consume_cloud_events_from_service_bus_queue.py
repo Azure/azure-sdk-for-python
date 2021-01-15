@@ -18,14 +18,14 @@ import os
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 
-from azure.eventgrid import EventGridConsumer, CloudEvent
+from azure.eventgrid import EventGridDeserializer, CloudEvent
 from azure.servicebus import ServiceBusClient
 
 connection_str = os.environ['SB_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 sb_client = ServiceBusClient.from_connection_string(connection_str)
-consumer = EventGridConsumer()
+consumer = EventGridDeserializer()
 with sb_client:
     receiver = sb_client.get_queue_receiver(queue_name, prefetch=10)
     with receiver:

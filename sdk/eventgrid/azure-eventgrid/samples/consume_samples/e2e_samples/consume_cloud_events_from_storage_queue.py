@@ -15,7 +15,7 @@ USAGE:
 """
 import os
 from azure.storage.queue import QueueServiceClient
-from azure.eventgrid import EventGridConsumer, CloudEvent
+from azure.eventgrid import EventGridDeserializer, CloudEvent
 from base64 import b64decode
 
 connection_str = os.environ["STORAGE_QUEUE_CONN_STR"]
@@ -23,7 +23,7 @@ queue_name = os.environ["STORAGE_QUEUE_NAME"]
 queue_service = QueueServiceClient.from_connection_string(conn_str=connection_str)
 
 queue_client = queue_service.get_queue_client(queue_name)
-consumer = EventGridConsumer()
+consumer = EventGridDeserializer()
 
 msgs = queue_client.receive_messages()
 for msg in msgs:

@@ -3,7 +3,7 @@ import logging
 import sys
 
 import azure.functions as func
-from azure.eventgrid import EventGridConsumer
+from azure.eventgrid import EventGridDeserializer
 
 def main(event: func.EventGridEvent):
     logging.info(sys.version)
@@ -16,7 +16,7 @@ def main(event: func.EventGridEvent):
         'event_type': event.event_type
     })
     logging.info(result)
-    consumer = EventGridConsumer()
+    consumer = EventGridDeserializer()
     deserialized_event = consumer.deserialize_events(result)
     ## can only be EventGridEvent
     print("model: {}".format(event.model))

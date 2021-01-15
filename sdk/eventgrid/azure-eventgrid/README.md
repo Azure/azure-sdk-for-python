@@ -62,8 +62,8 @@ Information about the key concepts on Event Grid, see [Concepts in Azure Event G
 `EventGridPublisherClient` provides operations to send event data to topic hostname specified during client initialization.
 Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can be sent.
 
-### EventGridConsumer
-`EventGridConsumer` is used to desrialize an event received.
+### EventGridDeserializer
+`EventGridDeserializer` is used to desrialize an event received.
 
 ## Examples
 
@@ -129,9 +129,9 @@ This example demonstrates consuming and deserializing an eventgrid event.
 
 ```Python
 import os
-from azure.eventgrid import EventGridConsumer
+from azure.eventgrid import EventGridDeserializer
 
-consumer = EventGridConsumer()
+consumer = EventGridDeserializer()
 
 eg_storage_dict = {
     "id":"bbab625-dc56-4b22-abeb-afcc72e5290c",
@@ -158,9 +158,9 @@ This example demonstrates consuming and deserializing a cloud event.
 
 ```Python
 import os
-from azure.eventgrid import EventGridConsumer
+from azure.eventgrid import EventGridDeserializer
 
-consumer = EventGridConsumer()
+consumer = EventGridDeserializer()
 
 cloud_storage_dict = {
     "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",

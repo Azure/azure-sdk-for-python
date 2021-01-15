@@ -12,7 +12,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
 """
 import json
-from azure.eventgrid import EventGridConsumer, CloudEvent
+from azure.eventgrid import EventGridDeserializer, CloudEvent
 
 # all types of CloudEvents below produce same DeserializedEvent
 cloud_custom_dict = {
@@ -26,7 +26,7 @@ cloud_custom_dict = {
 cloud_custom_string = json.dumps(cloud_custom_dict)
 cloud_custom_bytes = str(cloud_custom_string).encode("utf-8")
 
-client = EventGridConsumer()
+client = EventGridDeserializer()
 deserialized_dict_event = client.decode_cloud_event(cloud_custom_dict)
 print(deserialized_dict_event)
 

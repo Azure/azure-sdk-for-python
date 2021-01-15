@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-class EventGridConsumer(object):
+class EventGridDeserializer(object):
     """
     A consumer responsible for deserializing event handler messages, to allow for
     access to strongly typed Event objects.

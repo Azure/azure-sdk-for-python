@@ -12,7 +12,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
 """
 import json
-from azure.eventgrid import EventGridConsumer, EventGridEvent
+from azure.eventgrid import EventGridDeserializer, EventGridEvent
 from azure.eventgrid.models import StorageBlobCreatedEventData
 
 # all types of EventGridEvents below produce same DeserializedEvent
@@ -41,7 +41,7 @@ eg_storage_dict = {
 eg_storage_string = json.dumps(eg_storage_dict)
 eg_storage_bytes = str(eg_storage_string).encode("utf-8")
 
-client = EventGridConsumer()
+client = EventGridDeserializer()
 deserialized_dict_event = client.decode_eventgrid_event(eg_storage_dict)
 print(deserialized_dict_event)
 

@@ -12,9 +12,9 @@ USAGE:
 """
 import os
 import json
-from azure.eventgrid import EventGridConsumer
+from azure.eventgrid import EventGridDeserializer
 
-consumer = EventGridConsumer()
+consumer = EventGridDeserializer()
 path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./cs3_system_event.json"))
 
 with open(path, 'r') as f:

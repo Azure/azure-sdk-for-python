@@ -15,7 +15,7 @@ USAGE:
 """
 import os
 
-from azure.eventgrid import EventGridConsumer, CloudEvent, EventGridEvent
+from azure.eventgrid import EventGridDeserializer, CloudEvent, EventGridEvent
 from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -38,7 +38,7 @@ def on_event(partition_context, event):
         print("model: {}\n".format(deserialized_event.model))
         print("model.data: {}\n".format(deserialized_event.model.data))
 
-eg_consumer = EventGridConsumer()
+eg_consumer = EventGridDeserializer()
 consumer_client = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     consumer_group='$Default',
