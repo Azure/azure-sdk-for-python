@@ -525,7 +525,7 @@ class TableClient(TableClientBase):
                 :caption: Get a single entity from a table
         """
         try:
-            entity = self._client.table.query_entities_with_partition_and_row_key(
+            entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
