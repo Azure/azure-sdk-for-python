@@ -7,13 +7,14 @@ import uuid
 import time
 
 from azure.core.credentials import AccessToken
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission
 from azure.keyvault.administration.aio import KeyVaultAccessControlClient
 import pytest
 from six.moves.urllib_parse import urlparse
+from devtools_testutils import AzureTestCase
 
-from _shared.helpers import mock
+from _shared.helpers_async import mock
 from _shared.test_case_async import KeyVaultTestCase
 from test_access_control import assert_role_definitions_equal
 
@@ -21,7 +22,7 @@ from test_access_control import assert_role_definitions_equal
 @pytest.mark.usefixtures("managed_hsm")
 class AccessControlTests(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
-        super(AccessControlTests, self).__init__(*args, **kwargs)
+        super(AccessControlTests, self).__init__(*args, match_body=False, **kwargs)
 
     def setUp(self, *args, **kwargs):
         if self.is_live:
@@ -51,6 +52,7 @@ class AccessControlTests(KeyVaultTestCase):
             return value
         return replay_value
 
+    @AzureTestCase.await_prepared_test
     async def test_role_definitions(self):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 
@@ -100,6 +102,7 @@ class AccessControlTests(KeyVaultTestCase):
         deleted_definition = await client.delete_role_definition(scope, definition_name)
         assert_role_definitions_equal(deleted_definition, definition)
 
+    @AzureTestCase.await_prepared_test
     async def test_role_assignment(self):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 

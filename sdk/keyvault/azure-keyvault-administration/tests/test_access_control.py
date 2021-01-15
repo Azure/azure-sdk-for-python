@@ -19,7 +19,7 @@ from _shared.test_case import KeyVaultTestCase
 @pytest.mark.usefixtures("managed_hsm")
 class AccessControlTests(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
-        super(AccessControlTests, self).__init__(*args, **kwargs)
+        super(AccessControlTests, self).__init__(*args, match_body=False, **kwargs)
 
     def setUp(self, *args, **kwargs):
         if self.is_live:
