@@ -7,6 +7,7 @@
   
   **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.
+  - `EventGridPublisherClient` now appropriately throws a `ValueError` if an invalid credential is passed during initialization.
 
 ## 2.0.0b4 (2020-11-11)
 
