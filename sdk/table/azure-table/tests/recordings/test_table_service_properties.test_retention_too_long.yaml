@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '273'
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 15 Jul 2020 13:02:11 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 15 Jul 2020 13:02:11 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>InvalidXmlDocument</m:code><m:message
+        xml:lang="en-US">XML specified is not syntactically valid.
+
+        RequestId:99a752b8-0002-002b-5da8-5a6c88000000
+
+        Time:2020-07-15T13:02:10.9573743Z</m:message></m:error>'
+    headers:
+      content-length:
+      - '327'
+      content-type:
+      - application/xml
+      date:
+      - Wed, 15 Jul 2020 13:02:10 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidXmlDocument
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 400
+      message: XML specified is not syntactically valid.
+version: 1
