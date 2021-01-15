@@ -26,7 +26,7 @@ class AzureUnitTest(unittest.TestCase):
         #     config_file = None
 
         # For now leaving this as live always, the recordings don't generate traffic so passing in credentials is fine
-        self.is_live = True
+        self.is_live = False
         # This should always be false, these tests don't generate live traffic
         self.in_recording = False
         self._fake_settings, self._real_settings = self._load_settings()
@@ -166,6 +166,8 @@ class AzureUnitTest(unittest.TestCase):
 
     @property
     def settings(self):
+        print("in settings")
+        quit()
         if self.is_live:
             if self._real_settings:
                 return self._real_settings
