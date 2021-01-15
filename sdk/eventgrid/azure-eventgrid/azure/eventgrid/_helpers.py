@@ -12,8 +12,9 @@ try:
 except ImportError:
     from urllib2 import quote # type: ignore
 
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AzureSasCredentialPolicy
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
 if TYPE_CHECKING:
@@ -78,7 +79,7 @@ def _get_authentication_policy(credential):
     if isinstance(credential, AzureKeyCredential):
         authentication_policy = AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
     if isinstance(credential, AzureSasCredential):
-        authentication_policy = AzureSasCredentialPolicy(
+        authentication_policy = EventGridSasCredentialPolicy(
             credential=credential,
             name=constants.EVENTGRID_TOKEN_HEADER
         )
