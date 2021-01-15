@@ -140,13 +140,13 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :type subject: str
     :param event_type: Required. The type of the event that occurred.
     :type event_type: str
+    :param data: Required. Event data specific to the event type.
+    :type data: object
     :param data_version: Required. The schema version of the data object.
         If not provided, will be stamped with an empty value.
     :type data_version: str
     :param topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
     :type topic: str
-    :param data: Event data specific to the event type.
-    :type data: object
     :ivar metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
         If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
@@ -180,8 +180,8 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
         'data_version': {'key': 'dataVersion', 'type': 'str'},
     }
 
-    def __init__(self, subject, event_type, data_version, **kwargs):
-        # type: (str, str, str, Any) -> None
+    def __init__(self, subject, event_type, data, data_version, **kwargs):
+        # type: (str, str, object, str, Any) -> None
         kwargs.setdefault('id', uuid.uuid4())
         kwargs.setdefault('subject', subject)
         kwargs.setdefault("event_type", event_type)
