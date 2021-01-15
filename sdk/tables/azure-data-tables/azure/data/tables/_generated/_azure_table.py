@@ -28,7 +28,7 @@ class AzureTable(object):
     :vartype table: azure.data.tables.operations.TableOperations
     :ivar service: ServiceOperations operations
     :vartype service: azure.data.tables.operations.ServiceOperations
-    :param url: The URL of the service account or table that is the target of the desired operation.
+    :param url: The URL of the service account or table that is the targe of the desired operation.
     :type url: str
     """
 
