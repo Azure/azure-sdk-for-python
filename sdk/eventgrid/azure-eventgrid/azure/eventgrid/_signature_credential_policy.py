@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class EventGridSasCredentialPolicy(SansIOHTTPPolicy):
     """Adds a token header for the provided credential.
-    :param credential: The credential used to authenticate requests.	
+    :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureSasCredential
     :param str name: The name of the token header used for the credential.
     :raises: ValueError or TypeError
