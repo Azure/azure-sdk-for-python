@@ -17,6 +17,7 @@ from azure_devtools.scenario_tests import (
     DeploymentNameReplacer,
     RequestUrlNormalizer,
 )
+from .azure_unit_test import AzureUnitTest
 from .azure_testcase import AzureTestCase
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
@@ -144,7 +145,9 @@ class AzureMgmtPreparer(AbstractPreparer):
 
     @property
     def is_live(self):
-        return self.test_class_instance.is_live
+        # print(self.test_class_instance)
+        # print(isinstance(self.test_class_instance, AzureUnitTest))
+        return self.test_class_instance.is_live and not isinstance(self.test_class_instance, AzureUnitTest)
 
     def create_random_name(self):
         if self.random_name_enabled:

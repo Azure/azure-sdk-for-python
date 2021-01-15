@@ -50,8 +50,8 @@ class PowerShellPreparer(AzureMgmtPreparer):
         self.needed_keys = needed_keys
 
     def _set_mgmt_settings_real_values(self):
+        print("Preparer pov: is_live = {}".format(self.is_live))
         if self.is_live:
-            print("loading azure ids/secrets")
             os.environ["AZURE_TENANT_ID"] = os.environ[
                 "{}_TENANT_ID".format(self.directory.upper())
             ]
@@ -63,7 +63,6 @@ class PowerShellPreparer(AzureMgmtPreparer):
             ]
 
     def create_resource(self, name, **kwargs):
-        print(kwargs)
         if self.is_live:
             self._set_mgmt_settings_real_values()
             try:

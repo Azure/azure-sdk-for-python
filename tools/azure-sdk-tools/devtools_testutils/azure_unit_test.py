@@ -13,8 +13,6 @@ from .config import TEST_SETTING_FILENAME
 
 class AzureUnitTest(unittest.TestCase):
     def __init__(self, method_name, config_file=None):
-        print("init")
-        print("loading dotenv")
         self.unit_test = True
         load_dotenv(find_dotenv())
         self.qualified_test_name = get_qualified_method_name(self, method_name)
@@ -32,11 +30,9 @@ class AzureUnitTest(unittest.TestCase):
         # This should always be false, these tests don't generate live traffic
         self.in_recording = False
         self._fake_settings, self._real_settings = self._load_settings()
-        # print(getattr(self._real_settings, "CLIENT_ID"))
         super(AzureUnitTest, self).__init__(method_name)
 
     def setUp(self):
-        print('setUp')
         # Incorporating this for leftover unittest dependent
         # tests. Will test without as well
         pass
