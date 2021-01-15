@@ -238,3 +238,8 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     }
                 )
         client.send([custom_event1, custom_event2])
+
+    def test_send_throws_with_bad_credential(self):
+        bad_credential = "I am a bad credential"
+        with pytest.raises(ValueError, match="The provided credential should be an instance of AzureSasCredential or AzureKeyCredential"):
+            client = EventGridPublisherClient("eventgrid_endpoint", bad_credential)

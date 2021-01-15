@@ -5,6 +5,9 @@
   **Breaking Changes**
   - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
 
+  **Bug Fixes**
+  - `EventGridPublisherClient` now appropriately throws a `ValueError` if an invalid credential is passed during initialization.
+
 ## 2.0.0b4 (2020-11-11)
 
   **Bug Fixes**
