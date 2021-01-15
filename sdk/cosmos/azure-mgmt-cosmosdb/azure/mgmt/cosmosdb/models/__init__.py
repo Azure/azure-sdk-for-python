@@ -113,6 +113,17 @@ try:
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
     from ._models_py3 import RestorableDatabaseAccountGetResult
+    from ._models_py3 import RestorableLocationResource
+    from ._models_py3 import RestorableMongodbCollectionGetResult
+    from ._models_py3 import RestorableMongodbCollectionPropertiesResource
+    from ._models_py3 import RestorableMongodbDatabaseGetResult
+    from ._models_py3 import RestorableMongodbDatabasePropertiesResource
+    from ._models_py3 import RestorableSqlContainerGetResult
+    from ._models_py3 import RestorableSqlContainerPropertiesResource
+    from ._models_py3 import RestorableSqlContainerPropertiesResourceContainer
+    from ._models_py3 import RestorableSqlDatabaseGetResult
+    from ._models_py3 import RestorableSqlDatabasePropertiesResource
+    from ._models_py3 import RestorableSqlDatabasePropertiesResourceDatabase
     from ._models_py3 import RestoreParameters
     from ._models_py3 import RestoreReqeustDatabaseAccountCreateUpdateProperties
     from ._models_py3 import SpatialSpec
@@ -262,6 +273,17 @@ except (SyntaxError, ImportError):
     from ._models import RegionForOnlineOffline
     from ._models import Resource
     from ._models import RestorableDatabaseAccountGetResult
+    from ._models import RestorableLocationResource
+    from ._models import RestorableMongodbCollectionGetResult
+    from ._models import RestorableMongodbCollectionPropertiesResource
+    from ._models import RestorableMongodbDatabaseGetResult
+    from ._models import RestorableMongodbDatabasePropertiesResource
+    from ._models import RestorableSqlContainerGetResult
+    from ._models import RestorableSqlContainerPropertiesResource
+    from ._models import RestorableSqlContainerPropertiesResourceContainer
+    from ._models import RestorableSqlDatabaseGetResult
+    from ._models import RestorableSqlDatabasePropertiesResource
+    from ._models import RestorableSqlDatabasePropertiesResourceDatabase
     from ._models import RestoreParameters
     from ._models import RestoreReqeustDatabaseAccountCreateUpdateProperties
     from ._models import SpatialSpec
@@ -310,6 +332,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import CassandraKeyspaceGetResultsPaged
 from ._paged_models import CassandraTableGetResultsPaged
 from ._paged_models import DatabaseAccountGetResultsPaged
+from ._paged_models import DatabaseRestoreResourcePaged
 from ._paged_models import GremlinDatabaseGetResultsPaged
 from ._paged_models import GremlinGraphGetResultsPaged
 from ._paged_models import MetricDefinitionPaged
@@ -324,6 +347,10 @@ from ._paged_models import PercentileMetricPaged
 from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import PrivateLinkResourcePaged
 from ._paged_models import RestorableDatabaseAccountGetResultPaged
+from ._paged_models import RestorableMongodbCollectionGetResultPaged
+from ._paged_models import RestorableMongodbDatabaseGetResultPaged
+from ._paged_models import RestorableSqlContainerGetResultPaged
+from ._paged_models import RestorableSqlDatabaseGetResultPaged
 from ._paged_models import SqlContainerGetResultsPaged
 from ._paged_models import SqlDatabaseGetResultsPaged
 from ._paged_models import SqlRoleAssignmentGetResultsPaged
@@ -356,7 +383,9 @@ from ._cosmos_db_management_client_enums import (
     KeyKind,
     UnitType,
     PrimaryAggregationType,
+    ApiType,
     RoleDefinitionType,
+    OperationType,
 )
 
 __all__ = [
@@ -463,6 +492,17 @@ __all__ = [
     'RegionForOnlineOffline',
     'Resource',
     'RestorableDatabaseAccountGetResult',
+    'RestorableLocationResource',
+    'RestorableMongodbCollectionGetResult',
+    'RestorableMongodbCollectionPropertiesResource',
+    'RestorableMongodbDatabaseGetResult',
+    'RestorableMongodbDatabasePropertiesResource',
+    'RestorableSqlContainerGetResult',
+    'RestorableSqlContainerPropertiesResource',
+    'RestorableSqlContainerPropertiesResourceContainer',
+    'RestorableSqlDatabaseGetResult',
+    'RestorableSqlDatabasePropertiesResource',
+    'RestorableSqlDatabasePropertiesResourceDatabase',
     'RestoreParameters',
     'RestoreReqeustDatabaseAccountCreateUpdateProperties',
     'SpatialSpec',
@@ -532,6 +572,11 @@ __all__ = [
     'GremlinGraphGetResultsPaged',
     'RestorableDatabaseAccountGetResultPaged',
     'NotebookWorkspacePaged',
+    'RestorableSqlDatabaseGetResultPaged',
+    'RestorableSqlContainerGetResultPaged',
+    'DatabaseRestoreResourcePaged',
+    'RestorableMongodbDatabaseGetResultPaged',
+    'RestorableMongodbCollectionGetResultPaged',
     'PrivateLinkResourcePaged',
     'PrivateEndpointConnectionPaged',
     'DatabaseAccountKind',
@@ -556,5 +601,7 @@ __all__ = [
     'KeyKind',
     'UnitType',
     'PrimaryAggregationType',
+    'ApiType',
     'RoleDefinitionType',
+    'OperationType',
 ]
