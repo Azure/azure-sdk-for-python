@@ -161,14 +161,14 @@ def serialize_batch_body(requests, batch_id):
 
     Serializes the requests in this batch to a single HTTP mixed/multipart body.
 
-    :param list(class:`~azure.storage.common._http.HTTPRequest`) requests:
+    :param list[~azure.core.pipeline.transport.HttpRequest] requests:
         a list of sub-request for the batch request
     :param str batch_id:
         to be embedded in batch sub-request delimiter
     :return: The body bytes for this batch.
     """
 
-    if requests is None or len(requests) is 0:
+    if requests is None or len(requests) == 0:
         raise ValueError('Please provide sub-request(s) for this batch request')
 
     delimiter_bytes = (_get_batch_request_delimiter(batch_id, True, False) + _HTTP_LINE_ENDING).encode('utf-8')
@@ -197,9 +197,12 @@ def _get_batch_request_delimiter(batch_id, is_prepend_dashes=False, is_append_da
     """
     Gets the delimiter used for this batch request's mixed/multipart HTTP format.
 
-    :param batch_id Randomly generated id
-    :param is_prepend_dashes Whether to include the starting dashes. Used in the body, but non on defining the delimiter.
-    :param is_append_dashes  Whether to include the ending dashes. Used in the body on the closing delimiter only.
+    :param str batch_id:
+        Randomly generated id
+    :param bool is_prepend_dashes:
+        Whether to include the starting dashes. Used in the body, but non on defining the delimiter.
+    :param bool is_append_dashes:
+        Whether to include the ending dashes. Used in the body on the closing delimiter only.
     :return: The delimiter, WITHOUT a trailing newline.
     """
 
@@ -223,7 +226,8 @@ def _make_body_from_sub_request(sub_request):
 
      Serializes an http request.
 
-     :param :class:`~azure.storage.common._http.HTTPRequest` sub_request Request to serialize.
+     :param ~azure.core.pipeline.transport.HttpRequest sub_request:
+        Request to serialize.
      :return: The serialized sub-request in bytes
      """
 
