@@ -25,13 +25,13 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, CloudEvent
 
 domain_key = os.environ["DOMAIN_ACCESS_KEY"]
-domain_topic_hostname = os.environ["DOMAIN_TOPIC_HOSTNAME"]
+domain_endpoint = os.environ["DOMAIN_TOPIC_HOSTNAME"]
 domain_name = os.environ["DOMAIN_NAME"]
 
 
 # authenticate client
 credential = AzureKeyCredential(domain_key)
-client = EventGridPublisherClient(domain_topic_hostname, credential)
+client = EventGridPublisherClient(domain_endpoint, credential)
 
 def publish_event():
     # publish events
