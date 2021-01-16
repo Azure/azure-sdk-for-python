@@ -25,7 +25,7 @@ from azure.core.pipeline.policies import (
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import CloudEvent, EventGridEvent, CustomEvent
 from .._helpers import (
-    _get_topic_hostname_only_fqdn,
+    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _eventgrid_data_typecheck
@@ -55,7 +55,7 @@ ListEventType = Union[
 class EventGridPublisherClient():
     """Asynchronous EventGrid Python Publisher Client.
 
-    :param str topic_hostname: The topic endpoint to send the events to.
+    :param str endpoint: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which implements
      SAS key authentication or SAS token authentication.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
@@ -63,15 +63,15 @@ class EventGridPublisherClient():
 
     def __init__(
         self,
-        topic_hostname: str,
+        endpoint: str,
         credential: Union[AzureKeyCredential, AzureSasCredential],
         **kwargs: Any) -> None:
         self._client = EventGridPublisherClientAsync(
             policies=EventGridPublisherClient._policies(credential, **kwargs),
             **kwargs
             )
-        topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
-        self._topic_hostname = topic_hostname
+        endpoint = _get_endpoint_only_fqdn(endpoint)
+        self._endpoint = endpoint
 
     @staticmethod
     def _policies(
@@ -124,7 +124,7 @@ class EventGridPublisherClient():
                 pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
             await self._client.publish_cloud_event_events(
-                self._topic_hostname,
+                self._endpoint,
                 cast(List[InternalCloudEvent], events),
                 **kwargs
                 )
@@ -133,14 +133,14 @@ class EventGridPublisherClient():
             for event in events:
                 _eventgrid_data_typecheck(event)
             await self._client.publish_events(
-                self._topic_hostname,
+                self._endpoint,
                 cast(List[InternalEventGridEvent], events),
                 **kwargs
                 )
         elif all(isinstance(e, CustomEvent) for e in events):
             serialized_events = [dict(e) for e in events] # type: ignore
             await self._client.publish_custom_event_events(
-                self._topic_hostname,
+                self._endpoint,
                 cast(List, serialized_events),
                 **kwargs
                 )
