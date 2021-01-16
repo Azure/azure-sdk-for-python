@@ -1126,6 +1126,45 @@ class StorageContainerTest(StorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_batch_blobs_with_container_sas(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container_name = self._get_container_reference()
+        sas_token = generate_container_sas(
+            storage_account.name,
+            container_name,
+            account_key=storage_account_key,
+            permission=ContainerSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        container_client = bsc.get_container_client(container_name)
+        container_client.create_container()
+        container = ContainerClient.from_container_url(container_client.url, credential=sas_token)
+        data = b'hello world'
+
+        try:
+            blob_client1 = container.get_blob_client('blob1')
+            blob_client1.upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = container.delete_blobs(
+            blob_client1.get_blob_properties(),
+            'blob2',
+            'blob3',
+        )
+        response = list(response)
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')

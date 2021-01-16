@@ -964,7 +964,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
-        return await self._batch_send(*reqs, **options)
+        return await self._batch_send(*reqs, container_name=self.container_name, **options)
 
     @distributed_trace
     async def set_standard_blob_tier_blobs(
@@ -1030,7 +1030,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         reqs, options = self._generate_set_tiers_options(standard_blob_tier, *blobs, **kwargs)
 
-        return await self._batch_send(*reqs, **options)
+        return await self._batch_send(*reqs, container_name=self.container_name, **options)
 
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
@@ -1080,7 +1080,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         reqs, options = self._generate_set_tiers_options(premium_page_blob_tier, *blobs, **kwargs)
 
-        return await self._batch_send(*reqs, **options)
+        return await self._batch_send(*reqs, container_name=self.container_name, **options)
 
     def get_blob_client(
             self, blob,  # type: Union[BlobProperties, str]

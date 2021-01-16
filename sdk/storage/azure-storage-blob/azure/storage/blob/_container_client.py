@@ -1204,7 +1204,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
-        return self._batch_send(*reqs, **options)
+        return self._batch_send(*reqs, container_name=self.container_name, **options)
 
     def _generate_set_tiers_subrequest_options(
         self, tier, snapshot=None, version_id=None, rehydrate_priority=None, lease_access_conditions=None, **kwargs
@@ -1361,7 +1361,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         reqs, options = self._generate_set_tiers_options(standard_blob_tier, *blobs, **kwargs)
 
-        return self._batch_send(*reqs, **options)
+        return self._batch_send(*reqs, container_name=self.container_name, **options)
 
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
@@ -1412,7 +1412,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         reqs, options = self._generate_set_tiers_options(premium_page_blob_tier, *blobs, **kwargs)
 
-        return self._batch_send(*reqs, **options)
+        return self._batch_send(*reqs, container_name=self.container_name, **options)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

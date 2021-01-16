@@ -29,7 +29,7 @@ from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.pipeline.transport import RequestsTransport, HttpTransport, HttpRequest
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -262,7 +262,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
-        self, *reqs,  # type: HttpRequest
+        self,
+        *reqs,  # type: HttpRequest
+        container_name,  # type: str
         **kwargs
     ):
         """Given a series of request, do a Storage batch call.
@@ -270,9 +272,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='{}://{}/?comp=batch{}{}'.format(
+            url='{}://{}/{}?restype=container&comp=batch{}{}'.format(
                 self.scheme,
                 self.primary_hostname,
+                container_name,
                 kwargs.pop('sas', ""),
                 kwargs.pop('timeout', "")
             ),
