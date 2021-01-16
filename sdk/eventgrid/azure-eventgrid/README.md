@@ -87,8 +87,8 @@ key = os.environ["EG_ACCESS_KEY"]
 topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
 
 event = EventGridEvent(
-    subject="Door1",
     data={"team": "azure-sdk"},
+    subject="Door1",
     event_type="Azure.Sdk.Demo",
     data_version="2.0"
 )
