@@ -8,6 +8,7 @@ omitted_paths:
   - doc/*
   - sdk/**/samples/*
   - sdk/identity/azure-identity/tests/*
+  - sdk/**/tests/perfstress_tests/*
 
 language: python
 root_check_enabled: True
