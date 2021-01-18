@@ -29,6 +29,12 @@ from ._cassandra_resources_operations import CassandraResourcesOperations
 from ._gremlin_resources_operations import GremlinResourcesOperations
 from ._restorable_database_accounts_operations import RestorableDatabaseAccountsOperations
 from ._notebook_workspaces_operations import NotebookWorkspacesOperations
+from ._restorable_sql_databases_operations import RestorableSqlDatabasesOperations
+from ._restorable_sql_containers_operations import RestorableSqlContainersOperations
+from ._restorable_sql_resources_operations import RestorableSqlResourcesOperations
+from ._restorable_mongodb_databases_operations import RestorableMongodbDatabasesOperations
+from ._restorable_mongodb_collections_operations import RestorableMongodbCollectionsOperations
+from ._restorable_mongodb_resources_operations import RestorableMongodbResourcesOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 
@@ -53,6 +59,12 @@ __all__ = [
     'GremlinResourcesOperations',
     'RestorableDatabaseAccountsOperations',
     'NotebookWorkspacesOperations',
+    'RestorableSqlDatabasesOperations',
+    'RestorableSqlContainersOperations',
+    'RestorableSqlResourcesOperations',
+    'RestorableMongodbDatabasesOperations',
+    'RestorableMongodbCollectionsOperations',
+    'RestorableMongodbResourcesOperations',
     'PrivateLinkResourcesOperations',
     'PrivateEndpointConnectionsOperations',
 ]

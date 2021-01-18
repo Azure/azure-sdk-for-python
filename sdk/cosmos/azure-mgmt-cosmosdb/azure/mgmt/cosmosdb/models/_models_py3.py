@@ -185,16 +185,19 @@ class AutoUpgradePolicyResource(Model):
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -218,19 +221,21 @@ class Resource(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -1664,9 +1669,10 @@ class DatabaseAccountUpdateParameters(Model):
 class DatabaseRestoreResource(Model):
     """Specific Databases to restore.
 
-    :param database_name: The name of the database to restore.
+    :param database_name: The name of the database available for restore.
     :type database_name: str
-    :param collection_names: The names of the collections to restore.
+    :param collection_names: The names of the collections available for
+     restore.
     :type collection_names: list[str]
     """
 
@@ -3782,19 +3788,21 @@ class Permission(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -3820,13 +3828,13 @@ class PrivateEndpointConnection(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param private_endpoint: Private endpoint which the connection belongs to.
     :type private_endpoint:
@@ -4008,6 +4016,110 @@ class RestorableDatabaseAccountGetResult(ARMResourceProperties):
     :param deletion_time: The time at which the restorable database account
      has been deleted (ISO-8601 format).
     :type deletion_time: datetime
+    :ivar api_type: The API type of the restorable database account. Possible
+     values include: 'MongoDB', 'Gremlin', 'Cassandra', 'Table', 'Sql',
+     'GremlinV2'
+    :vartype api_type: str or ~azure.mgmt.cosmosdb.models.ApiType
+    :ivar restorable_locations: List of regions where the of the database
+     account can be restored from.
+    :vartype restorable_locations:
+     list[~azure.mgmt.cosmosdb.models.RestorableLocationResource]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'api_type': {'readonly': True},
+        'restorable_locations': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'account_name': {'key': 'properties.accountName', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'deletion_time': {'key': 'properties.deletionTime', 'type': 'iso-8601'},
+        'api_type': {'key': 'properties.apiType', 'type': 'str'},
+        'restorable_locations': {'key': 'properties.restorableLocations', 'type': '[RestorableLocationResource]'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, identity=None, account_name: str=None, creation_time=None, deletion_time=None, **kwargs) -> None:
+        super(RestorableDatabaseAccountGetResult, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.account_name = account_name
+        self.creation_time = creation_time
+        self.deletion_time = deletion_time
+        self.api_type = None
+        self.restorable_locations = None
+
+
+class RestorableLocationResource(Model):
+    """Properties of the regional restorable account.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar location_name: The location of the regional restorable account.
+    :vartype location_name: str
+    :ivar regional_database_account_instance_id: The instance id of the
+     regional restorable account.
+    :vartype regional_database_account_instance_id: str
+    :ivar creation_time: The creation time of the regional restorable database
+     account (ISO-8601 format).
+    :vartype creation_time: datetime
+    :ivar deletion_time: The time at which the regional restorable database
+     account has been deleted (ISO-8601 format).
+    :vartype deletion_time: datetime
+    """
+
+    _validation = {
+        'location_name': {'readonly': True},
+        'regional_database_account_instance_id': {'readonly': True},
+        'creation_time': {'readonly': True},
+        'deletion_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location_name': {'key': 'locationName', 'type': 'str'},
+        'regional_database_account_instance_id': {'key': 'regionalDatabaseAccountInstanceId', 'type': 'str'},
+        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'deletion_time': {'key': 'deletionTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(RestorableLocationResource, self).__init__(**kwargs)
+        self.location_name = None
+        self.regional_database_account_instance_id = None
+        self.creation_time = None
+        self.deletion_time = None
+
+
+class RestorableMongodbCollectionGetResult(ARMResourceProperties):
+    """An Azure Cosmos DB restorable MongoDB collection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param identity:
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :param resource:
+    :type resource:
+     ~azure.mgmt.cosmosdb.models.RestorableMongodbCollectionPropertiesResource
     """
 
     _validation = {
@@ -4023,16 +4135,470 @@ class RestorableDatabaseAccountGetResult(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'account_name': {'key': 'properties.accountName', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'deletion_time': {'key': 'properties.deletionTime', 'type': 'iso-8601'},
+        'resource': {'key': 'properties.resource', 'type': 'RestorableMongodbCollectionPropertiesResource'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, identity=None, account_name: str=None, creation_time=None, deletion_time=None, **kwargs) -> None:
-        super(RestorableDatabaseAccountGetResult, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
-        self.account_name = account_name
-        self.creation_time = creation_time
-        self.deletion_time = deletion_time
+    def __init__(self, *, location: str=None, tags=None, identity=None, resource=None, **kwargs) -> None:
+        super(RestorableMongodbCollectionGetResult, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class RestorableMongodbCollectionPropertiesResource(Model):
+    """RestorableMongodbCollectionPropertiesResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar operation_type: The operation type of this collection event.
+     Possible values include: 'Create', 'Replace', 'Delete', 'SystemOperation'
+    :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar event_timestamp: The timestamp of this collection event.
+    :vartype event_timestamp: str
+    :ivar owner_id: The name of this restorable MongoDB collection.
+    :vartype owner_id: str
+    :ivar owner_resource_id: The resource Id of this restorable MongoDB
+     collection.
+    :vartype owner_resource_id: str
+    """
+
+    _validation = {
+        '_rid': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'owner_id': {'readonly': True},
+        'owner_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        '_rid': {'key': '_rid', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
+        'owner_resource_id': {'key': 'ownerResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(RestorableMongodbCollectionPropertiesResource, self).__init__(**kwargs)
+        self._rid = None
+        self.operation_type = None
+        self.event_timestamp = None
+        self.owner_id = None
+        self.owner_resource_id = None
+
+
+class RestorableMongodbDatabaseGetResult(ARMResourceProperties):
+    """An Azure Cosmos DB restorable MongoDB database.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param identity:
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :param resource:
+    :type resource:
+     ~azure.mgmt.cosmosdb.models.RestorableMongodbDatabasePropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'RestorableMongodbDatabasePropertiesResource'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, identity=None, resource=None, **kwargs) -> None:
+        super(RestorableMongodbDatabaseGetResult, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class RestorableMongodbDatabasePropertiesResource(Model):
+    """RestorableMongodbDatabasePropertiesResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar operation_type: The operation type of this database event. Possible
+     values include: 'Create', 'Replace', 'Delete', 'SystemOperation'
+    :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar event_timestamp: The timestamp of this database event.
+    :vartype event_timestamp: str
+    :ivar owner_id: The name of this restorable MongoDB database.
+    :vartype owner_id: str
+    :ivar owner_resource_id: The resource Id of this restorable MongoDB
+     database.
+    :vartype owner_resource_id: str
+    """
+
+    _validation = {
+        '_rid': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'owner_id': {'readonly': True},
+        'owner_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        '_rid': {'key': '_rid', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
+        'owner_resource_id': {'key': 'ownerResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(RestorableMongodbDatabasePropertiesResource, self).__init__(**kwargs)
+        self._rid = None
+        self.operation_type = None
+        self.event_timestamp = None
+        self.owner_id = None
+        self.owner_resource_id = None
+
+
+class RestorableSqlContainerGetResult(ARMResourceProperties):
+    """An Azure Cosmos DB restorable SQL container.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param identity:
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :param resource:
+    :type resource:
+     ~azure.mgmt.cosmosdb.models.RestorableSqlContainerPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'RestorableSqlContainerPropertiesResource'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, identity=None, resource=None, **kwargs) -> None:
+        super(RestorableSqlContainerGetResult, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class RestorableSqlContainerPropertiesResource(Model):
+    """RestorableSqlContainerPropertiesResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar operation_type: The operation type of this container event. Possible
+     values include: 'Create', 'Replace', 'Delete', 'SystemOperation'
+    :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar event_timestamp: The timestamp of this container event.
+    :vartype event_timestamp: str
+    :ivar owner_id: The name of this restorable SQL container.
+    :vartype owner_id: str
+    :ivar owner_resource_id: The resource Id of this restorable SQL container.
+    :vartype owner_resource_id: str
+    :param container:
+    :type container:
+     ~azure.mgmt.cosmosdb.models.RestorableSqlContainerPropertiesResourceContainer
+    """
+
+    _validation = {
+        '_rid': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'owner_id': {'readonly': True},
+        'owner_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        '_rid': {'key': '_rid', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
+        'owner_resource_id': {'key': 'ownerResourceId', 'type': 'str'},
+        'container': {'key': 'container', 'type': 'RestorableSqlContainerPropertiesResourceContainer'},
+    }
+
+    def __init__(self, *, container=None, **kwargs) -> None:
+        super(RestorableSqlContainerPropertiesResource, self).__init__(**kwargs)
+        self._rid = None
+        self.operation_type = None
+        self.event_timestamp = None
+        self.owner_id = None
+        self.owner_resource_id = None
+        self.container = container
+
+
+class RestorableSqlContainerPropertiesResourceContainer(Model):
+    """RestorableSqlContainerPropertiesResourceContainer.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL container
+    :type id: str
+    :param indexing_policy: The configuration of the indexing policy. By
+     default, the indexing is automatic for all document paths within the
+     container
+    :type indexing_policy: ~azure.mgmt.cosmosdb.models.IndexingPolicy
+    :param partition_key: The configuration of the partition key to be used
+     for partitioning data into multiple partitions
+    :type partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
+    :param default_ttl: Default time to live
+    :type default_ttl: int
+    :param unique_key_policy: The unique key policy configuration for
+     specifying uniqueness constraints on documents in the collection in the
+     Azure Cosmos DB service.
+    :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
+    :param conflict_resolution_policy: The conflict resolution policy for the
+     container.
+    :type conflict_resolution_policy:
+     ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    :ivar _self: A system generated property that specifies the addressable
+     path of the container resource.
+    :vartype _self: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+        '_self': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'indexing_policy': {'key': 'indexingPolicy', 'type': 'IndexingPolicy'},
+        'partition_key': {'key': 'partitionKey', 'type': 'ContainerPartitionKey'},
+        'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
+        'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
+        'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        '_rid': {'key': '_rid', 'type': 'str'},
+        '_ts': {'key': '_ts', 'type': 'object'},
+        '_etag': {'key': '_etag', 'type': 'str'},
+        '_self': {'key': '_self', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
+        super(RestorableSqlContainerPropertiesResourceContainer, self).__init__(**kwargs)
+        self.id = id
+        self.indexing_policy = indexing_policy
+        self.partition_key = partition_key
+        self.default_ttl = default_ttl
+        self.unique_key_policy = unique_key_policy
+        self.conflict_resolution_policy = conflict_resolution_policy
+        self._rid = None
+        self._ts = None
+        self._etag = None
+        self._self = None
+
+
+class RestorableSqlDatabaseGetResult(ARMResourceProperties):
+    """An Azure Cosmos DB restorable SQL database.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param identity:
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :param resource:
+    :type resource:
+     ~azure.mgmt.cosmosdb.models.RestorableSqlDatabasePropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'RestorableSqlDatabasePropertiesResource'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, identity=None, resource=None, **kwargs) -> None:
+        super(RestorableSqlDatabaseGetResult, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class RestorableSqlDatabasePropertiesResource(Model):
+    """RestorableSqlDatabasePropertiesResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar operation_type: The operation type of this database event. Possible
+     values include: 'Create', 'Replace', 'Delete', 'SystemOperation'
+    :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar event_timestamp: The timestamp of this database event.
+    :vartype event_timestamp: str
+    :ivar owner_id: The name of this restorable SQL database.
+    :vartype owner_id: str
+    :ivar owner_resource_id: The resource Id of this restorable SQL database.
+    :vartype owner_resource_id: str
+    :param database:
+    :type database:
+     ~azure.mgmt.cosmosdb.models.RestorableSqlDatabasePropertiesResourceDatabase
+    """
+
+    _validation = {
+        '_rid': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'owner_id': {'readonly': True},
+        'owner_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        '_rid': {'key': '_rid', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
+        'owner_resource_id': {'key': 'ownerResourceId', 'type': 'str'},
+        'database': {'key': 'database', 'type': 'RestorableSqlDatabasePropertiesResourceDatabase'},
+    }
+
+    def __init__(self, *, database=None, **kwargs) -> None:
+        super(RestorableSqlDatabasePropertiesResource, self).__init__(**kwargs)
+        self._rid = None
+        self.operation_type = None
+        self.event_timestamp = None
+        self.owner_id = None
+        self.owner_resource_id = None
+        self.database = database
+
+
+class RestorableSqlDatabasePropertiesResourceDatabase(Model):
+    """RestorableSqlDatabasePropertiesResourceDatabase.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL database
+    :type id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    :ivar _colls: A system generated property that specified the addressable
+     path of the collections resource.
+    :vartype _colls: str
+    :ivar _users: A system generated property that specifies the addressable
+     path of the users resource.
+    :vartype _users: str
+    :ivar _self: A system generated property that specifies the addressable
+     path of the database resource.
+    :vartype _self: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+        '_colls': {'readonly': True},
+        '_users': {'readonly': True},
+        '_self': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        '_rid': {'key': '_rid', 'type': 'str'},
+        '_ts': {'key': '_ts', 'type': 'object'},
+        '_etag': {'key': '_etag', 'type': 'str'},
+        '_colls': {'key': '_colls', 'type': 'str'},
+        '_users': {'key': '_users', 'type': 'str'},
+        '_self': {'key': '_self', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, **kwargs) -> None:
+        super(RestorableSqlDatabasePropertiesResourceDatabase, self).__init__(**kwargs)
+        self.id = id
+        self._rid = None
+        self._ts = None
+        self._etag = None
+        self._colls = None
+        self._users = None
+        self._self = None
 
 
 class RestoreParameters(Model):
@@ -4041,13 +4607,15 @@ class RestoreParameters(Model):
     :param restore_mode: Describes the mode of the restore. Possible values
      include: 'PointInTime'
     :type restore_mode: str or ~azure.mgmt.cosmosdb.models.RestoreMode
-    :param restore_source: Path of the source account from which the restore
-     has to be initiated
+    :param restore_source: The id of the restorable database account from
+     which the restore has to be initiated. For example:
+     /subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{restorableDatabaseAccountName}
     :type restore_source: str
     :param restore_timestamp_in_utc: Time to which the account has to be
      restored (ISO-8601 format).
     :type restore_timestamp_in_utc: datetime
-    :param databases_to_restore: List of specific databases to restore.
+    :param databases_to_restore: List of specific databases available for
+     restore.
     :type databases_to_restore:
      list[~azure.mgmt.cosmosdb.models.DatabaseRestoreResource]
     """
@@ -5775,20 +6343,23 @@ class ThroughputSettingsUpdateParameters(ARMResourceProperties):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]

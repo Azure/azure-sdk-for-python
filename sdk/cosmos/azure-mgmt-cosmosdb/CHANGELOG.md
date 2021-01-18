@@ -1,5 +1,17 @@
 # Release History
 
+## 2.0.0rc2 (2021-01-15)
+
+**Features**
+  - Model RestorableDatabaseAccountGetResult has a new parameter restorable_locations
+  - Model RestorableDatabaseAccountGetResult has a new parameter api_type
+  - Added operation group RestorableMongodbResourcesOperations
+  - Added operation group RestorableMongodbDatabasesOperations
+  - Added operation group RestorableSqlDatabasesOperations
+  - Added operation group RestorableMongodbCollectionsOperations
+  - Added operation group RestorableSqlContainersOperations
+  - Added operation group RestorableSqlResourcesOperations
+
 ## 2.0.0rc1 (2020-10-14)
 
 **Features**
