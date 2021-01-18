@@ -17,11 +17,11 @@ from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess, gene
 from testcase import (
     StorageTestCase,
     record,
+    TestMode
 )
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
-from tests.testcase import TestMode
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
