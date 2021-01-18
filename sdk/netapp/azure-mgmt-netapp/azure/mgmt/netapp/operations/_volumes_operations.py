@@ -75,7 +75,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -109,7 +109,7 @@ class VolumesOperations(object):
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -159,7 +159,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -212,7 +212,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -359,7 +359,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -502,7 +502,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -627,7 +627,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -761,7 +761,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -914,7 +914,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -966,7 +966,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
 
         # Construct URL
         url = self._resync_replication_initial.metadata['url']  # type: ignore
@@ -1011,7 +1011,7 @@ class VolumesOperations(object):
         """Resync volume replication.
 
         Resync the connection on the destination volume. If the operation is ran on the source volume
-        it will reverse-resync the connection and sync from source to destination.
+        it will reverse-resync the connection and sync from destination to source.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1091,7 +1091,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
 
         # Construct URL
         url = self._delete_replication_initial.metadata['url']  # type: ignore
@@ -1217,7 +1217,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1350,7 +1350,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
 
         # Construct URL
         url = self._re_initialize_replication_initial.metadata['url']  # type: ignore
@@ -1475,7 +1475,7 @@ class VolumesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL

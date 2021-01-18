@@ -60,6 +60,10 @@ class ActiveDirectory(msrest.serialization.Model):
     :type aes_encryption: bool
     :param ldap_signing: Specifies whether or not the LDAP traffic needs to be signed.
     :type ldap_signing: bool
+    :param security_operators: Domain Users in the Active directory to be given SeSecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :type security_operators: list[str]
     """
 
     _validation = {
@@ -88,6 +92,7 @@ class ActiveDirectory(msrest.serialization.Model):
         'server_root_ca_certificate': {'key': 'serverRootCACertificate', 'type': 'str'},
         'aes_encryption': {'key': 'aesEncryption', 'type': 'bool'},
         'ldap_signing': {'key': 'ldapSigning', 'type': 'bool'},
+        'security_operators': {'key': 'securityOperators', 'type': '[str]'},
     }
 
     def __init__(
@@ -107,6 +112,7 @@ class ActiveDirectory(msrest.serialization.Model):
         server_root_ca_certificate: Optional[str] = None,
         aes_encryption: Optional[bool] = None,
         ldap_signing: Optional[bool] = None,
+        security_operators: Optional[List[str]] = None,
         **kwargs
     ):
         super(ActiveDirectory, self).__init__(**kwargs)
@@ -126,6 +132,7 @@ class ActiveDirectory(msrest.serialization.Model):
         self.server_root_ca_certificate = server_root_ca_certificate
         self.aes_encryption = aes_encryption
         self.ldap_signing = ldap_signing
+        self.security_operators = security_operators
 
 
 class AuthorizeRequest(msrest.serialization.Model):
@@ -2180,6 +2187,12 @@ class Volume(msrest.serialization.Model):
     :type kerberos_enabled: bool
     :param security_style: The security style of volume. Possible values include: "ntfs", "unix".
     :type security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
+    :param smb_encryption: Enables encryption for in-flight smb3 data. Only applicable for
+     SMB/DualProtocol volume. To be used with swagger version 2020-08-01 or later.
+    :type smb_encryption: bool
+    :param smb_continuously_available: Enables continuously available share property for smb
+     volume. Only applicable for SMB volume.
+    :type smb_continuously_available: bool
     :param throughput_mibps: Maximum throughput in Mibps that can be achieved by this volume.
     :type throughput_mibps: float
     """
@@ -2224,6 +2237,8 @@ class Volume(msrest.serialization.Model):
         'snapshot_directory_visible': {'key': 'properties.snapshotDirectoryVisible', 'type': 'bool'},
         'kerberos_enabled': {'key': 'properties.kerberosEnabled', 'type': 'bool'},
         'security_style': {'key': 'properties.securityStyle', 'type': 'str'},
+        'smb_encryption': {'key': 'properties.smbEncryption', 'type': 'bool'},
+        'smb_continuously_available': {'key': 'properties.smbContinuouslyAvailable', 'type': 'bool'},
         'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
     }
 
@@ -2247,6 +2262,8 @@ class Volume(msrest.serialization.Model):
         snapshot_directory_visible: Optional[bool] = None,
         kerberos_enabled: Optional[bool] = False,
         security_style: Optional[Union[str, "SecurityStyle"]] = None,
+        smb_encryption: Optional[bool] = False,
+        smb_continuously_available: Optional[bool] = False,
         throughput_mibps: Optional[float] = None,
         **kwargs
     ):
@@ -2274,6 +2291,8 @@ class Volume(msrest.serialization.Model):
         self.snapshot_directory_visible = snapshot_directory_visible
         self.kerberos_enabled = kerberos_enabled
         self.security_style = security_style
+        self.smb_encryption = smb_encryption
+        self.smb_continuously_available = smb_continuously_available
         self.throughput_mibps = throughput_mibps
 
 
@@ -2349,20 +2368,25 @@ class VolumeList(msrest.serialization.Model):
 
     :param value: List of volumes.
     :type value: list[~azure.mgmt.netapp.models.Volume]
+    :param next_link: URL to get the next set of results.
+    :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Volume]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         value: Optional[List["Volume"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(VolumeList, self).__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class VolumePatch(msrest.serialization.Model):

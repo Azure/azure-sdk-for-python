@@ -70,7 +70,7 @@ class SnapshotPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -148,7 +148,7 @@ class SnapshotPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -214,7 +214,7 @@ class SnapshotPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -289,7 +289,7 @@ class SnapshotPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -344,7 +344,7 @@ class SnapshotPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -454,7 +454,7 @@ class SnapshotPoliciesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.SnapshotPolicyVolumeList"
-        """Get volumes associated with snapshot policy.
+        """Get volumes for snapshot policy.
 
         Get volumes associated with snapshot policy.
 
@@ -474,7 +474,7 @@ class SnapshotPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
