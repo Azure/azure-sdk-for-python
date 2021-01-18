@@ -176,6 +176,52 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_container(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name1 = self._get_container_reference(prefix="oldcontainer1")
+        old_name2 = self._get_container_reference(prefix="oldcontainer2")
+        new_name = self._get_container_reference(prefix="newcontainer")
+        container1 = bsc.get_container_client(old_name1)
+        container2 = bsc.get_container_client(old_name2)
+
+        await container1.create_container()
+        await container2.create_container()
+
+        new_container = await bsc.rename_container(
+            source_container_name=old_name1, destination_container_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await bsc.rename_container(
+                source_container_name=old_name2, destination_container_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await container1.get_container_properties()
+        with self.assertRaises(HttpResponseError):
+            await bsc.rename_container(
+                source_container_name="badcontainer", destination_container_name="container")
+        props = await new_container.get_container_properties()
+        self.assertEqual(new_name, props.name)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_container_with_source_lease(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name = self._get_container_reference(prefix="old")
+        new_name = self._get_container_reference(prefix="new")
+        container = bsc.get_container_client(old_name)
+        await container.create_container()
+        container_lease_id = await container.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            await bsc.rename_container(
+                source_container_name=old_name, destination_container_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await bsc.rename_container(
+                source_container_name=old_name, destination_container_name=new_name, source_lease="bad_id")
+        new_container = await bsc.rename_container(
+            source_container_name=old_name, destination_container_name=new_name, source_lease=container_lease_id)
+        props = await new_container.get_container_properties()
+        self.assertEqual(new_name, props.name)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_create_container_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = u'啊齄丂狛狜'

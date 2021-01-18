@@ -12,14 +12,14 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from azure.core import MatchConditions
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.filedatalake import AccessPolicy, generate_directory_sas, DirectorySasPermissions, \
-    generate_file_system_sas
+    generate_file_system_sas, generate_account_sas, ResourceTypes, AccountSasPermissions
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake import PublicAccess
 from testcase import (
@@ -153,6 +153,152 @@ class FileSystemTest(StorageTestCase):
     def test_delete_file_system_with_existing_file_system_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_file_system_with_existing_file_system_async())
+
+    async def _test_rename_file_system(self):
+        old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
+        old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
+        new_name = self._get_file_system_reference(prefix="newcontainer")
+        filesystem1 = await self.dsc.create_file_system(old_name1)
+        await self.dsc.create_file_system(old_name2)
+
+        new_filesystem = await self.dsc.rename_file_system(
+            source_file_system_name=old_name1, destination_file_system_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await self.dsc.rename_file_system(
+                source_file_system_name=old_name2, destination_file_system_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await filesystem1.get_file_system_properties()
+        with self.assertRaises(HttpResponseError):
+            await self.dsc.rename_file_system(
+                source_file_system_name="badfilesystem", destination_file_system_name="filesystem")
+        props = await new_filesystem.get_file_system_properties()
+        self.assertEqual(new_name, props.name)
+
+    @record
+    def test_rename_file_system(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_rename_file_system())
+
+    async def _test_rename_file_system_with_source_lease(self):
+        old_name = self._get_file_system_reference(prefix="old")
+        new_name = self._get_file_system_reference(prefix="new")
+        filesystem = await self.dsc.create_file_system(old_name)
+        filesystem_lease_id = await filesystem.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            await self.dsc.rename_file_system(
+                source_file_system_name=old_name, destination_file_system_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await self.dsc.rename_file_system(
+                source_file_system_name=old_name, destination_file_system_name=new_name, source_lease="bad_id")
+        new_filesystem = await self.dsc.rename_file_system(
+            source_file_system_name=old_name, destination_file_system_name=new_name, source_lease=filesystem_lease_id)
+        props = await new_filesystem.get_file_system_properties()
+        self.assertEqual(new_name, props.name)
+
+    @record
+    def test_rename_file_system_with_source_lease(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_rename_file_system_with_source_lease())
+
+    async def _test_undelete_file_system(self):
+        name = self._get_file_system_reference(prefix="filesystem")
+        filesystem_client = await self.dsc.create_file_system(name)
+
+        await filesystem_client.delete_file_system()
+        # to make sure the filesystem deleted
+        with self.assertRaises(ResourceNotFoundError):
+            await filesystem_client.get_file_system_properties()
+
+        filesystem_list = []
+        async for fs in self.dsc.list_file_systems():
+            filesystem_list.append(fs)
+        self.assertTrue(len(filesystem_list) >= 1)
+
+        restored_version = 0
+        for filesystem in filesystem_list:
+            # find the deleted filesystem and restore it
+            if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
+                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                                                                         new_name="restored" + str(restored_version))
+                restored_version += 1
+
+                # to make sure the deleted filesystem is restored
+                props = await restored_fs_client.get_file_system_properties()
+                self.assertIsNotNone(props)
+
+    @record
+    def test_undelete_file_system(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_undelete_file_system())
+
+    async def _test_restore_to_existing_file_system(self):
+        # get an existing filesystem
+        existing_name = self._get_file_system_reference(prefix="existing")
+        name = self._get_file_system_reference(prefix="filesystem")
+        existing_filesystem_client = await self.dsc.create_file_system(existing_name)
+        filesystem_client = await self.dsc.create_file_system(name)
+
+        # Act
+        await filesystem_client.delete_file_system()
+        # to make sure the filesystem deleted
+        with self.assertRaises(ResourceNotFoundError):
+            await filesystem_client.get_file_system_properties()
+
+        filesystem_list = []
+        async for fs in self.dsc.list_file_systems():
+            filesystem_list.append(fs)
+        self.assertTrue(len(filesystem_list) >= 1)
+
+        for filesystem in filesystem_list:
+            # find the deleted filesystem and restore it
+            if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
+                with self.assertRaises(HttpResponseError):
+                    await self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                                                        new_name=existing_filesystem_client.file_system_name)
+    @record
+    def test_restore_to_existing_file_system(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_restore_to_existing_file_system())
+
+    async def _test_restore_file_system_with_sas(self):
+        # We are generating a SAS token therefore play only live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(service=True, file_system=True),
+            AccountSasPermissions(read=True, write=True, list=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+        dsc = DataLakeServiceClient(self.dsc.url, token)
+        name = self._get_file_system_reference(prefix="filesystem")
+        filesystem_client = await dsc.create_file_system(name)
+        await filesystem_client.delete_file_system()
+        # to make sure the filesystem is deleted
+        with self.assertRaises(ResourceNotFoundError):
+            await filesystem_client.get_file_system_properties()
+
+        filesystem_list = []
+        async for fs in self.dsc.list_file_systems():
+            filesystem_list.append(fs)
+        self.assertTrue(len(filesystem_list) >= 1)
+
+        restored_version = 0
+        for filesystem in filesystem_list:
+            # find the deleted filesystem and restore it
+            if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
+                restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.version,
+                                                                    new_name="restored" + str(restored_version))
+                restored_version += 1
+
+                # to make sure the deleted filesystem is restored
+                props = await restored_fs_client.get_file_system_properties()
+                self.assertIsNotNone(props)
+    @record
+    def test_restore_file_system_with_sas(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_restore_file_system_with_sas())
 
     async def _test_delete_none_existing_file_system_async(self):
         fake_file_system_client = self.dsc.get_file_system_client("fakeclient")
