@@ -46,7 +46,6 @@ class ConfigurationSetting(Model):
         self.value = kwargs.get('value', None)
         self.last_modified = kwargs.get('last_modified', None)
         self.read_only = kwargs.get('read_only', None)
-        self.tags = kwargs.get('tags', None)
 
     @classmethod
     def _from_key_value(cls, key_value):
