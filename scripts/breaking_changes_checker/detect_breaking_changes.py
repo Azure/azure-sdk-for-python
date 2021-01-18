@@ -91,7 +91,7 @@ def get_parameter_default(param: inspect.Parameter) -> None:
         if inspect.isclass(default_value):
             default_value = default_value.__name__
         if hasattr(default_value, "value"):
-            default_value = default_value.value
+            default_value = f"{default_value}={default_value.value}"
 
     return default_value
 
@@ -288,7 +288,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
     if not in_venv:
-        packages = [f"{package_name}=={version}", "aiohttp"]
+        packages = [f"{package_name}=={version}", "aiohttp", "trio"]
         with create_venv_with_package(packages) as venv:
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
             args = [
