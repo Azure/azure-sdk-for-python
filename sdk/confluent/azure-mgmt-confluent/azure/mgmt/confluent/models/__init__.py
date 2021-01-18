@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import ConfluentAgreementProperties
     from ._models_py3 import ConfluentAgreementResource
     from ._models_py3 import ConfluentAgreementResourceListResponse
     from ._models_py3 import ErrorResponseBody
@@ -25,7 +24,6 @@ try:
     from ._models_py3 import ResourceProviderDefaultErrorResponse
     from ._models_py3 import UserDetail
 except (SyntaxError, ImportError):
-    from ._models import ConfluentAgreementProperties  # type: ignore
     from ._models import ConfluentAgreementResource  # type: ignore
     from ._models import ConfluentAgreementResourceListResponse  # type: ignore
     from ._models import ErrorResponseBody  # type: ignore
@@ -49,7 +47,6 @@ from ._confluent_management_client_enums import (
 )
 
 __all__ = [
-    'ConfluentAgreementProperties',
     'ConfluentAgreementResource',
     'ConfluentAgreementResourceListResponse',
     'ErrorResponseBody',
