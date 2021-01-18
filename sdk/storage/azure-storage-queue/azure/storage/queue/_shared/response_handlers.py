@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import inspect
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
     TYPE_CHECKING
@@ -84,9 +84,10 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 
 
 def process_storage_error(storage_error):
-    if isinstance(storage_error, (HttpResponseError, ClientAuthenticationError)):
-        raise storage_error
     raise_error = HttpResponseError
+    # If the status code is 200 or 204 then it has already been deserialized.
+    if storage_error.response.status_code in [200, 204]:
+        raise storage_error
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
@@ -133,7 +134,6 @@ def process_storage_error(storage_error):
                               StorageErrorCode.share_being_deleted]:
                 raise_error = ResourceExistsError
     except ValueError:
-        # Got an unknown error code
         pass
 
     try:
