@@ -6,6 +6,7 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
 from azure.communication.administration._shared.user_credential import CommunicationTokenCredential
+from azure.communication.administration._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.administration._shared.utils import create_access_token
 
 
@@ -18,24 +19,29 @@ class TestCommunicationTokenCredential(TestCase):
 
 
     def test_communicationtokencredential_decodes_token(self):
-        credential = CommunicationTokenCredential(self.sample_token)
+        refresh_options = CommunicationTokenCredential(self.sample_token)
+        credential = CommunicationTokenCredential(refresh_options)
         access_token = credential.get_token()
 
         self.assertEqual(access_token.token, self.sample_token)
 
     def test_communicationtokencredential_throws_if_invalid_token(self):
-        self.assertRaises(ValueError, lambda: CommunicationTokenCredential("foo.bar.tar"))
+        refresh_options = CommunicationTokenCredential("foo.bar.tar")
+        self.assertRaises(ValueError, lambda: CommunicationTokenCredential(refresh_options))
 
     def test_communicationtokencredential_throws_if_nonstring_token(self):
-        self.assertRaises(TypeError, lambda: CommunicationTokenCredential(454))
+        refresh_options = CommunicationTokenCredential(454):
+        self.assertRaises(TypeError, lambda: CommunicationTokenCredential(refresh_options)
 
     def test_communicationtokencredential_static_token_returns_expired_token(self):
-        credential = CommunicationTokenCredential(self.expired_token)
+        refresh_options = CommunicationTokenCredential(self.expired_token)
+        credential = CommunicationTokenCredential(refresh_options)
 
         self.assertEqual(credential.get_token().token, self.expired_token)
 
     def test_communicationtokencredential_token_expired_refresh_called(self):
         refresher = MagicMock(return_value=self.sample_token)
+        refresh_options = CommunicationTokenCredential(self.sample_token, refresher)
         access_token = CommunicationTokenCredential(
             self.expired_token,
             token_refresher=refresher).get_token()
@@ -45,9 +51,8 @@ class TestCommunicationTokenCredential(TestCase):
 
     def test_communicationtokencredential_token_expired_refresh_called_asnecessary(self):
         refresher = MagicMock(return_value=create_access_token(self.expired_token))
-        credential = CommunicationTokenCredential(
-            self.expired_token,
-            token_refresher=refresher)
+        refresh_options = CommunicationTokenCredential(self.expired_token, token_refresher=refresher)
+        credential = CommunicationTokenCredential(refresh_options)
 
         credential.get_token()
         access_token = credential.get_token()

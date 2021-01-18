@@ -16,19 +16,14 @@ from .utils import create_access_token
 class CommunicationTokenRefreshOptions(object):
 
     def __init__(self, # type: str
-        token_refresher,
-        refresh_proactively,
-        token = None,
+        token,
+        token_refresher=None
     ):
         self._token = token
         self._token_refresher = token_refresher
-        self._refresh_proactively = refresh_proactively
     
     def get_token(self):
-        return self._token
+        return create_access_token(self._token)
 
     def get_token_refresher(self):
         return self._token_refresher
-
-    def get_refresh_proactively(self):
-        return self._refresh_proactively
