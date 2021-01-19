@@ -23,14 +23,13 @@ class CommunicationTokenCredential(object):
     ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
 
     def __init__(self,
-            token, # type: str
-            token_refresher=None
+            communication_token_refresh_options
         ):
         # type: (str) -> None
         if not isinstance(token, six.string_types):
             raise TypeError("token must be a string.")
-        self._token = create_access_token(token)
-        self._token_refresher = token_refresher
+        self._token = communication_token_refresh_options.get_token()
+        self._token_refresher = communication_token_refresh_options.get_token_refresher()
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 
