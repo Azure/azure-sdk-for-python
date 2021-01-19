@@ -9,7 +9,6 @@ from typing import ( # pylint: disable=unused-import
     cast,
     Tuple,
 )
-import six
 
 from msrest.serialization import TZ_UTC
 
