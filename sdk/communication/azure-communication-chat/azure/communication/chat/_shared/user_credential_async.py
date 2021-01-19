@@ -10,14 +10,12 @@ from typing import (  # pylint: disable=unused-import
     Tuple,
 )
 
-import six
-
 from msrest.serialization import TZ_UTC
 from .utils import create_access_token
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-    :param str token: The token used to authenticate to an Azure Communication service
+    :param CommunicationTokenRefreshOptions communication_token_refresh_options: The token used to authenticate to an Azure Communication service
     :raises: TypeError
     """
 
@@ -26,9 +24,6 @@ class CommunicationTokenCredential(object):
     def __init__(self,
             communication_token_refresh_options
         ):
-        # type: (str) -> None
-        if not isinstance(token, six.string_types):
-            raise TypeError("token must be a string.")
         self._token = communication_token_refresh_options.get_token()
         self._token_refresher = communication_token_refresh_options.get_token_refresher()
         self._lock = Condition(Lock())
