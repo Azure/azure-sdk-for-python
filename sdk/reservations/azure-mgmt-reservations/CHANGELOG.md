@@ -1,5 +1,17 @@
 # Release History
 
+## 0.9.0 (2021-01-19)
+
+**Features**
+
+  - Added operation group CalculateExchangeOperations
+  - Added operation group ExchangeOperations
+
+**Breaking changes**
+
+  - Operation ReservationOperations.available_scopes has a new signature
+  - Removed operation group AutoQuotaIncreaseOperations
+
 ## 0.8.0 (2020-07-15)
 
 **Features**
