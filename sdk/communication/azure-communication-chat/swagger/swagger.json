@@ -1571,6 +1571,35 @@
                     }
                 }
             }
+        },
+        "CommunicationIdentifierModel": {
+            "description": "Test",
+            "required": [
+                "kind"
+            ],
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "description": "Test",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Test",
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "description": "Test",
+                    "type": "string"
+                },
+                "isAnonymous": {
+                    "description": "Test",
+                    "type": "boolean"
+                },
+                "microsoftTeamsUserId": {
+                    "description": "Test",
+                    "type": "string"
+                }
+            }
         }
     },
     "parameters": {
