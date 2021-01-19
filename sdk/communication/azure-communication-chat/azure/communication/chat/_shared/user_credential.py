@@ -15,7 +15,8 @@ from msrest.serialization import TZ_UTC
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-    :param CommunicationTokenRefreshOptions communication_token_refresh_options: The token used to authenticate to an Azure Communication service
+    :param communication_token_refresh_options: The token used to authenticate to an Azure Communication service
+    :type communication_token_refresh_options: ~azure.communication.chat.CommunicationTokenRefreshOptions
     """
 
     ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2

@@ -11,11 +11,11 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from msrest.serialization import TZ_UTC
-from .utils import create_access_token
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-    :param CommunicationTokenRefreshOptions communication_token_refresh_options: The token used to authenticate to an Azure Communication service
+    :param communication_token_refresh_options: The token used to authenticate to an Azure Communication service
+    :type communication_token_refresh_options: ~azure.communication.chat.aio.CommunicationTokenRefreshOptions
     :raises: TypeError
     """
 
