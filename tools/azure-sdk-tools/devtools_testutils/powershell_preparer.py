@@ -91,7 +91,6 @@ class PowerShellPreparer(AzureMgmtPreparer):
                         resource_name, vals = preparer._prepare_create_resource(
                             self.test_class_instance, **create_kwargs
                         )
-                        # vals = preparer.create_resource(name, **create_kwargs)
                         self.real_values.update(vals)
                         if "resource_group" in self.real_values.keys():
                             create_kwargs["resource_group"] = self.real_values[
@@ -99,7 +98,11 @@ class PowerShellPreparer(AzureMgmtPreparer):
                             ]
 
                 return self.real_values
+
             except KeyError:
+                if self.is_live:
+                    raise
+
                 return self.fake_values
         else:
             return self.fake_values
