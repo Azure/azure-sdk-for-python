@@ -970,10 +970,10 @@ class SentenceSentiment(DictMixin):
             # we do not return offset for v3.0 since
             # the correct encoding was not introduced for v3.0
             offset = None
-        if hasattr(sentence, "aspects"):
+        if hasattr(sentence, "targets"):
             mined_opinions = (
-                [MinedOpinion._from_generated(aspect, results, sentiment) for aspect in sentence.aspects]  # pylint: disable=protected-access
-                if sentence.aspects else []
+                [MinedOpinion._from_generated(target, results, sentiment) for target in sentence.targets]  # pylint: disable=protected-access
+                if sentence.targets else []
             )
         else:
             mined_opinions = None
@@ -1000,10 +1000,10 @@ class MinedOpinion(DictMixin):
     It consists of both a target that these opinions are about, and the assessments
     representing the opinion.
 
-    :ivar target: The target aspect of a product/service that this opinion is about
-    :vartype target: ~azure.ai.textanalytics.TargetSentiment #~azure.ai.textanalytics.AspectSentiment
+    :ivar target: The target of an opinion about a product/service.
+    :vartype target: ~azure.ai.textanalytics.TargetSentiment
     :ivar assessments: The assessments representing the opinion of the target.
-    :vartype assessments: list[~azure.ai.textanalytics.AssessmentSentiment] #~azure.ai.textanalytics.OpinionSentiment
+    :vartype assessments: list[~azure.ai.textanalytics.AssessmentSentiment]
     """
 
     def __init__(self, **kwargs):
@@ -1014,22 +1014,22 @@ class MinedOpinion(DictMixin):
     def _get_assessments(relations, results, sentiment):  # pylint: disable=unused-argument
         if not relations:
             return []
-        opinion_relations = [r.ref for r in relations if r.relation_type == "opinion"]
-        opinions = []
-        for opinion_relation in opinion_relations:
-            nums = _get_indices(opinion_relation)
+        assessment_relations = [r.ref for r in relations if r.relation_type == "assessment"]
+        assessments = []
+        for assessment_relation in assessment_relations:
+            nums = _get_indices(assessment_relation)
             sentence_index = nums[1]
-            opinion_index = nums[2]
-            opinions.append(
-                sentiment.sentences[sentence_index].opinions[opinion_index]
+            assessment_index = nums[2]
+            assessments.append(
+                sentiment.sentences[sentence_index].assessments[assessment_index]
             )
-        return opinions
+        return assessments
 
     @classmethod
     def _from_generated(cls, target, results, sentiment):
         return cls(
-            aspect=TargetSentiment._from_generated(target),  # pylint: disable=protected-access
-            opinions=[
+            target=TargetSentiment._from_generated(target),  # pylint: disable=protected-access
+            assessments=[
                 AssessmentSentiment._from_generated(assessment)  # pylint: disable=protected-access
                 for assessment in cls._get_assessments(target.relations, results, sentiment)
             ],
@@ -1044,9 +1044,8 @@ class MinedOpinion(DictMixin):
 
 class TargetSentiment(DictMixin):
     """TargetSentiment contains the predicted sentiment,
-    confidence scores and other information about an aspect of a product/service.
-    An aspect of a product/service is a key component of that product/service.
-    For example in "The food at Hotel Foo is good", "food" is an aspect of
+    confidence scores and other information about a key component of a product/service.
+    For example in "The food at Hotel Foo is good", "food" is an key component of
     "Hotel Foo".
 
     :ivar str text: The text value of the target.
@@ -1086,7 +1085,7 @@ class TargetSentiment(DictMixin):
 
 
 class AssessmentSentiment(DictMixin):
-    """OpinionSentiment contains the predicted sentiment,
+    """AssessmentSentiment contains the predicted sentiment,
     confidence scores and other information about an assessment given about
     a particular target.  For example, in the sentence "The food is good", the assessment
     of the target 'food' is 'good'.
