@@ -7,8 +7,8 @@ from typing import ( # pylint: disable=unused-import
     cast,
     Tuple,
 )
-from .utils import create_access_token
 import six
+from .utils import create_access_token
 
 class CommunicationTokenRefreshOptions(object):
     """Options for refreshing CommunicationTokenCredential.
