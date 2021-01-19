@@ -64,6 +64,9 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
             *self._args, **self._kwargs, continuation_token=continuation_token
         )
 
+    def __repr__(self):
+        return "<iterator object azure.core.async_paging.AsyncItemPaged at {}>".format(hex(id(self)))
+
     async def __anext__(self) -> ReturnType:
         if self._page_iterator is None:
             self._page_iterator = self.by_page()
