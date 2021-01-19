@@ -402,15 +402,15 @@ from azure.core.pipeline.policies import (
 |  |  | headers | x | x | The HTTP Request headers. |
 | RequestIdPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | request_id | x | x | The request id to be added into header. |
-|  |  | auto_request_id | x |  | Auto generates a unique request ID per call if true which is by default. |
+|  |  | auto_request_id | x |  | Auto generates a unique request ID per call if `True` which is by default. |
 | UserAgentPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | base_user_agent | x |  | Sets the base user agent value. |
-|  |  | user_agent_overwrite | x |  | Overwrites User-Agent when True. Defaults to False. |
-|  |  | user_agent_use_env | x |  | Gets user-agent from environment. Defaults to True. |
+|  |  | user_agent_overwrite | x |  | Overwrites User-Agent when True. Defaults to `False`. |
+|  |  | user_agent_use_env | x |  | Gets user-agent from environment. Defaults to `True`. |
 |  |  | user_agent | x | x | If specified, this will be added in front of the user agent string. |
-|  |  | sdk_moniker | x |  | If specified, the user agent string will be azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version]) |
+|  |  | sdk_moniker | x |  | If specified, the user agent string will be `azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])` |
 | NetworkTraceLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
-|  |  | logging_enable | x | x | Use to enable per operation. Defaults to False. |
+|  |  | logging_enable | x | x | Use to enable per operation. Defaults to `False`. |
 | HttpLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | logger | x | x | If specified, it will be used to log information |
 | ContentDecodePolicy | SansIOHTTPPolicy |  |  |  |  |
@@ -425,29 +425,29 @@ from azure.core.pipeline.policies import (
 |  |  | tracing_attributes | x | x | Attributes to set on all created spans. |
 | --- | --- | --- | --- | --- | --- |
 | RedirectPolicy | HTTPPolicy |  |  |  |  |
-|  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to True. |
-|  |  | redirect_max | x | x | The maximum allowed redirects. Defaults to 30. |
+|  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |
+|  |  | redirect_max | x | x | The maximum allowed redirects. Defaults to `30`. |
 | AsyncRedirectPolicy | AsyncHTTPPolicy |  |  |  |  |
-|  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to True. |
-|  |  | redirect_max | x | x | The maximum allowed redirects. Defaults to 30. |
+|  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |
+|  |  | redirect_max | x | x | The maximum allowed redirects. Defaults to `30`. |
 | RetryPolicy | HTTPPolicy |  |  |  |  |
-|  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is 10. |
-|  |  | retry_connect | x | x | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is 3. |
-|  |  | retry_read | x | x | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is 3. |
-|  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is 3. |
-|  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8. |
-|  |  | retry_backoff_max | x | x | The maximum back off time. Default value is 120 seconds (2 minutes). |
-|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is exponential. |
-|  |  | timeout | x | x | Timeout setting for the operation in seconds, default is 604800s (7 days). |
+|  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
+|  |  | retry_connect | x | x | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is `3`. |
+|  |  | retry_read | x | x | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is `3`. |
+|  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
+|  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
+|  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is `exponential`. |
+|  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 | AsyncRetryPolicy | AsyncHTTPPolicy |  |  |  |  |
-|  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is 10. |
-|  |  | retry_connect | x | x | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is 3. |
-|  |  | retry_read | x | x | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is 3. |
-|  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is 3. |
-|  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8. |
-|  |  | retry_backoff_max | x | x | The maximum back off time. Default value is 120 seconds (2 minutes). |
+|  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
+|  |  | retry_connect | x | x | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is `3`. |
+|  |  | retry_read | x | x | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is `3`. |
+|  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
+|  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
+|  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
 |  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is exponential. |
-|  |  | timeout | x | x | Timeout setting for the operation in seconds, default is 604800s (7 days). |
+|  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 
 
 ### The Pipeline
