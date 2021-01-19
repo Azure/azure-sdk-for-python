@@ -157,14 +157,16 @@ class KeyVaultError(msrest.serialization.Model):
 class Permission(msrest.serialization.Model):
     """Role definition permissions.
 
-    :param actions: Allowed actions.
+    :param actions: Action permissions that are granted.
     :type actions: list[str]
-    :param not_actions: Denied actions.
+    :param not_actions: Action permissions that are excluded but not denied. They may be granted by
+     other role definitions assigned to a principal.
     :type not_actions: list[str]
-    :param data_actions: Allowed Data actions.
-    :type data_actions: list[str]
-    :param not_data_actions: Denied Data actions.
-    :type not_data_actions: list[str]
+    :param data_actions: Data action permissions that are granted.
+    :type data_actions: list[str or ~key_vault_client.models.DataActionPermission]
+    :param not_data_actions: Data action permissions that are excluded but not denied. They may be
+     granted by other role definitions assigned to a principal.
+    :type not_data_actions: list[str or ~key_vault_client.models.DataActionPermission]
     """
 
     _attribute_map = {
@@ -396,8 +398,8 @@ class RoleAssignmentProperties(msrest.serialization.Model):
 class RoleAssignmentPropertiesWithScope(msrest.serialization.Model):
     """Role assignment properties with scope.
 
-    :param scope: The role assignment scope.
-    :type scope: str
+    :param scope: The role scope. Possible values include: "/", "/keys".
+    :type scope: str or ~key_vault_client.models.RoleScope
     :param role_definition_id: The role definition ID.
     :type role_definition_id: str
     :param principal_id: The principal ID.
@@ -429,18 +431,19 @@ class RoleDefinition(msrest.serialization.Model):
     :vartype id: str
     :ivar name: The role definition name.
     :vartype name: str
-    :ivar type: The role definition type.
-    :vartype type: str
+    :ivar type: The role definition type. Possible values include:
+     "Microsoft.Authorization/roleDefinitions".
+    :vartype type: str or ~key_vault_client.models.RoleDefinitionType
     :param role_name: The role name.
     :type role_name: str
     :param description: The role definition description.
     :type description: str
-    :param role_type: The role type.
-    :type role_type: str
+    :param role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
+    :type role_type: str or ~key_vault_client.models.RoleType
     :param permissions: Role definition permissions.
     :type permissions: list[~key_vault_client.models.Permission]
     :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list[str]
+    :type assignable_scopes: list[str or ~key_vault_client.models.RoleScope]
     """
 
     _validation = {
@@ -549,12 +552,12 @@ class RoleDefinitionProperties(msrest.serialization.Model):
     :type role_name: str
     :param description: The role definition description.
     :type description: str
-    :param role_type: The role type.
-    :type role_type: str
+    :param role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
+    :type role_type: str or ~key_vault_client.models.RoleType
     :param permissions: Role definition permissions.
     :type permissions: list[~key_vault_client.models.Permission]
     :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list[str]
+    :type assignable_scopes: list[str or ~key_vault_client.models.RoleScope]
     """
 
     _attribute_map = {

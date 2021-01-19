@@ -5,10 +5,12 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from ._key_vault_client_enums import *
 
 
 class Attributes(msrest.serialization.Model):
@@ -172,14 +174,16 @@ class KeyVaultError(msrest.serialization.Model):
 class Permission(msrest.serialization.Model):
     """Role definition permissions.
 
-    :param actions: Allowed actions.
+    :param actions: Action permissions that are granted.
     :type actions: list[str]
-    :param not_actions: Denied actions.
+    :param not_actions: Action permissions that are excluded but not denied. They may be granted by
+     other role definitions assigned to a principal.
     :type not_actions: list[str]
-    :param data_actions: Allowed Data actions.
-    :type data_actions: list[str]
-    :param not_data_actions: Denied Data actions.
-    :type not_data_actions: list[str]
+    :param data_actions: Data action permissions that are granted.
+    :type data_actions: list[str or ~key_vault_client.models.DataActionPermission]
+    :param not_data_actions: Data action permissions that are excluded but not denied. They may be
+     granted by other role definitions assigned to a principal.
+    :type not_data_actions: list[str or ~key_vault_client.models.DataActionPermission]
     """
 
     _attribute_map = {
@@ -194,8 +198,8 @@ class Permission(msrest.serialization.Model):
         *,
         actions: Optional[List[str]] = None,
         not_actions: Optional[List[str]] = None,
-        data_actions: Optional[List[str]] = None,
-        not_data_actions: Optional[List[str]] = None,
+        data_actions: Optional[List[Union[str, "DataActionPermission"]]] = None,
+        not_data_actions: Optional[List[Union[str, "DataActionPermission"]]] = None,
         **kwargs
     ):
         super(Permission, self).__init__(**kwargs)
@@ -438,8 +442,8 @@ class RoleAssignmentProperties(msrest.serialization.Model):
 class RoleAssignmentPropertiesWithScope(msrest.serialization.Model):
     """Role assignment properties with scope.
 
-    :param scope: The role assignment scope.
-    :type scope: str
+    :param scope: The role scope. Possible values include: "/", "/keys".
+    :type scope: str or ~key_vault_client.models.RoleScope
     :param role_definition_id: The role definition ID.
     :type role_definition_id: str
     :param principal_id: The principal ID.
@@ -455,7 +459,7 @@ class RoleAssignmentPropertiesWithScope(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        scope: Optional[str] = None,
+        scope: Optional[Union[str, "RoleScope"]] = None,
         role_definition_id: Optional[str] = None,
         principal_id: Optional[str] = None,
         **kwargs
@@ -475,18 +479,19 @@ class RoleDefinition(msrest.serialization.Model):
     :vartype id: str
     :ivar name: The role definition name.
     :vartype name: str
-    :ivar type: The role definition type.
-    :vartype type: str
+    :ivar type: The role definition type. Possible values include:
+     "Microsoft.Authorization/roleDefinitions".
+    :vartype type: str or ~key_vault_client.models.RoleDefinitionType
     :param role_name: The role name.
     :type role_name: str
     :param description: The role definition description.
     :type description: str
-    :param role_type: The role type.
-    :type role_type: str
+    :param role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
+    :type role_type: str or ~key_vault_client.models.RoleType
     :param permissions: Role definition permissions.
     :type permissions: list[~key_vault_client.models.Permission]
     :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list[str]
+    :type assignable_scopes: list[str or ~key_vault_client.models.RoleScope]
     """
 
     _validation = {
@@ -511,9 +516,9 @@ class RoleDefinition(msrest.serialization.Model):
         *,
         role_name: Optional[str] = None,
         description: Optional[str] = None,
-        role_type: Optional[str] = None,
+        role_type: Optional[Union[str, "RoleType"]] = None,
         permissions: Optional[List["Permission"]] = None,
-        assignable_scopes: Optional[List[str]] = None,
+        assignable_scopes: Optional[List[Union[str, "RoleScope"]]] = None,
         **kwargs
     ):
         super(RoleDefinition, self).__init__(**kwargs)
@@ -608,12 +613,12 @@ class RoleDefinitionProperties(msrest.serialization.Model):
     :type role_name: str
     :param description: The role definition description.
     :type description: str
-    :param role_type: The role type.
-    :type role_type: str
+    :param role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
+    :type role_type: str or ~key_vault_client.models.RoleType
     :param permissions: Role definition permissions.
     :type permissions: list[~key_vault_client.models.Permission]
     :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list[str]
+    :type assignable_scopes: list[str or ~key_vault_client.models.RoleScope]
     """
 
     _attribute_map = {
@@ -629,9 +634,9 @@ class RoleDefinitionProperties(msrest.serialization.Model):
         *,
         role_name: Optional[str] = None,
         description: Optional[str] = None,
-        role_type: Optional[str] = None,
+        role_type: Optional[Union[str, "RoleType"]] = None,
         permissions: Optional[List["Permission"]] = None,
-        assignable_scopes: Optional[List[str]] = None,
+        assignable_scopes: Optional[List[Union[str, "RoleScope"]]] = None,
         **kwargs
     ):
         super(RoleDefinitionProperties, self).__init__(**kwargs)

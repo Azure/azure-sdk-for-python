@@ -49,6 +49,13 @@ except (SyntaxError, ImportError):
     from ._models import SelectiveKeyRestoreOperation  # type: ignore
     from ._models import SelectiveKeyRestoreOperationParameters  # type: ignore
 
+from ._key_vault_client_enums import (
+    DataActionPermission,
+    RoleDefinitionType,
+    RoleScope,
+    RoleType,
+)
+
 __all__ = [
     'Attributes',
     'Error',
@@ -71,4 +78,8 @@ __all__ = [
     'SASTokenParameter',
     'SelectiveKeyRestoreOperation',
     'SelectiveKeyRestoreOperationParameters',
+    'DataActionPermission',
+    'RoleDefinitionType',
+    'RoleScope',
+    'RoleType',
 ]
