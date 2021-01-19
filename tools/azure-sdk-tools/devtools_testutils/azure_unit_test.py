@@ -19,16 +19,12 @@ class AzureUnitTest(unittest.TestCase):
 
         self.working_folder = os.path.dirname(__file__)
         self.scrubber = GeneralNameReplacer()
-        # config_file = config_file or os.path.join(
-        #     self.working_folder, TEST_SETTING_FILENAME
-        # )
-        # if not os.path.exists(config_file):
-        #     config_file = None
 
-        # For now leaving this as live always, the recordings don't generate traffic so passing in credentials is fine
+        # Issue with always assuming false: never going to deliver live credentials for client-side validation
+        # For now leaving this as always False
         self.is_live = False
-        # This should always be false, these tests don't generate live traffic
-        self.in_recording = False
+        # This should always be false, these tests don't generate HTTP traffic
+        self.in_recording = False # os.environ.get("AZURE_TEST_RUN_LIVE", False)
         self._fake_settings, self._real_settings = self._load_settings()
         super(AzureUnitTest, self).__init__(method_name)
 
@@ -140,7 +136,6 @@ class AzureUnitTest(unittest.TestCase):
             and self._real_settings
             and getattr(self._real_settings, key) != key_value
         ):
-            print(key_value, getattr(self._real_settings, key))
             logger = logging.getLogger()
             logger.warning(
                 "You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values. Defaulting to the env variable".format(
@@ -166,8 +161,6 @@ class AzureUnitTest(unittest.TestCase):
 
     @property
     def settings(self):
-        print("in settings")
-        quit()
         if self.is_live:
             if self._real_settings:
                 return self._real_settings

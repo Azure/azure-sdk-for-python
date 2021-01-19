@@ -219,6 +219,7 @@ class TestTableClientUnit(AzureUnitTest):#, TableTestCase):
 
     @TablesPreparer()
     def test_create_service_with_token_and_http(self, tables_storage_account_name, tables_primary_storage_account_key):
+        print(tables_storage_account_name, tables_primary_storage_account_key)
         for service_type in SERVICES:
             # Act
             with pytest.raises(ValueError):
