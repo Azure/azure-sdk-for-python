@@ -212,7 +212,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def get_configuration_setting(
-        self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally, **kwargs
+        self, key, label=None, etag='*', match_condition=MatchConditions.IfPresent, **kwargs
     ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
@@ -323,7 +323,7 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def set_configuration_setting(
+    def update_configuration_setting(
         self, configuration_setting, match_condition=MatchConditions.Unconditionally, **kwargs
     ):  # type: (ConfigurationSetting, Optional[MatchConditions], dict) -> ConfigurationSetting
 
