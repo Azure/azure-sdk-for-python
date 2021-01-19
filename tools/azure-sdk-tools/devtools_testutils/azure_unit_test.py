@@ -13,28 +13,32 @@ from .config import TEST_SETTING_FILENAME
 
 class AzureUnitTest(unittest.TestCase):
     def __init__(self, method_name, config_file=None):
-        self.unit_test = True
-        load_dotenv(find_dotenv())
-        self.qualified_test_name = get_qualified_method_name(self, method_name)
-
-        self.working_folder = os.path.dirname(__file__)
-        self.scrubber = GeneralNameReplacer()
-
-        # Issue with always assuming false: never going to deliver live credentials for client-side validation
-        # For now leaving this as always False
-        self.is_live = False
-        # This should always be false, these tests don't generate HTTP traffic
-        self.in_recording = False # os.environ.get("AZURE_TEST_RUN_LIVE", False)
-        self._fake_settings, self._real_settings = self._load_settings()
         super(AzureUnitTest, self).__init__(method_name)
 
     def setUp(self):
-        # Incorporating this for leftover unittest dependent
-        # tests. Will test without as well
-        pass
+        super(AzureUnitTest, self).setUp()
 
-    def create_client_from_credential(self):
-        pass
+
+    def create_client_from_credential(self, client_class, credential, **kwargs):
+        if _is_autorest_v3(client_class):
+            kwargs.setdefault("logging_enable", True)
+            client = client_class(credential=credential, **kwargs)
+        else:
+            client = client_class(credentials=credential, **kwargs)
+
+        if self.is_playback():
+            try:
+                client._config.polling_interval = (
+                    0  # FIXME in azure-mgmt-core, make this a kwargs
+                )
+            except AttributeError:
+                pass
+
+        if hasattr(client, "config"):  # Autorest v2
+            if self.is_playback():
+                client.config.long_running_operation_timeout = 0
+            client.config.enable_http_logger = True
+        return client
 
     def get_resource_name(self, name):
         """Alias to create_random_name for back compatibility."""

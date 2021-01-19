@@ -16,7 +16,6 @@ from .recording_processors import RecordingProcessor
 from .exceptions import AzureNameError
 
 _logger = logging.getLogger(__name__)
-# Core Utility
 
 
 class AbstractPreparer(object):
@@ -37,8 +36,7 @@ class AbstractPreparer(object):
         self._aggregate_cache_key = None
 
     def _prepare_create_resource(self, test_class_instance, **kwargs):
-        self.live_test = not isinstance(test_class_instance, ReplayableTest) and not getattr(test_class_instance, "unit_test")
-        # print("preparers.py is live test: {}".format(self.live_test))
+        self.live_test = not isinstance(test_class_instance, ReplayableTest)
         self.test_class_instance = test_class_instance
 
         # This latter conditional is to triage a specific failure mode:
