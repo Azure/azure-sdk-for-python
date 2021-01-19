@@ -1,5 +1,8 @@
 # Release History
 
+## 12.2.2 (Unreleased)
+
+
 ## 12.2.1 (2021-01-13)
 **New features**
 - Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
@@ -39,7 +42,7 @@
 **New Feature**
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 
-## 12.0.2 (2020-6-12)
+## 12.0.2 
 **Fixes**
 - Improve the performance of upload when using max_concurrency
 
