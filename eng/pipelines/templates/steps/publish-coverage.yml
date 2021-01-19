@@ -1,4 +1,4 @@
-parameters: 
+parameters:
   RunCoverage: false
 
 steps:
@@ -9,6 +9,7 @@ steps:
     continueOnError: true
     condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
 
+  # This task should be the new last step
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true

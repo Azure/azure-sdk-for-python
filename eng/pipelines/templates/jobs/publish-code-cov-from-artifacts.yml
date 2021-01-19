@@ -1,0 +1,20 @@
+parameters:
+  - name: PublishCodeCov
+    type: boolean
+    default: true
+
+jobs:
+  - job: 'Download'
+    steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifact: '**/*.html'
+
+  - job: 'Combine'
+    steps:
+      # Python script here
+
+  - job: 'Publish'
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        summaryFileLocation: final_report.html

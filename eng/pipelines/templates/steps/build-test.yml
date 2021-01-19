@@ -33,7 +33,7 @@ steps:
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
-      parameters: 
+      parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ parameters.BeforeTestSteps }}
@@ -52,6 +52,11 @@ steps:
         --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
+
+  - pwsh: |
+      mv coverage.xml coverage-$(BuildTargetingString).xml
+    displayName: 'Rename coverage.xml file'
+
 
   - ${{ parameters.AfterTestSteps }}
 
