@@ -435,3 +435,21 @@ class TestPaging(object):
         )
 
         assert ['value1.0', 'value1.1', 'value2.0', 'value2.1'] == await _as_list(item_paged)
+
+    @pytest.mark.asyncio
+    async def test_cls(self, client, deserialize_output, page_iterator, http_request):
+        def cls(list_of_obj):
+
+            return ["changedByCls"] * len(list_of_obj)
+
+        item_paged = AsyncItemPaged(
+            deserialize_output=deserialize_output,
+            client=client,
+            page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
+            initial_state=http_request,
+            paging_method=ContinueWithNextLink(),
+            continuation_token_location="next_link",
+            _cls=cls,
+        )
+        async for obj in item_paged:
+            assert obj == "changedByCls"

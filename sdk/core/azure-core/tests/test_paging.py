@@ -415,3 +415,19 @@ class TestPaging(object):
         )
 
         assert ['value1.0', 'value1.1', 'value2.0', 'value2.1'] == list(item_paged)
+
+    def test_cls(self, client, deserialize_output, page_iterator, http_request):
+        def cls(list_of_obj):
+
+            return ["changedByCls"] * len(list_of_obj)
+
+        item_paged = ItemPaged(
+            deserialize_output=deserialize_output,
+            client=client,
+            page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
+            initial_state=http_request,
+            paging_method=ContinueWithNextLink(),
+            continuation_token_location="next_link",
+            _cls=cls,
+        )
+        assert all(obj == "changedByCls" for obj in item_paged)
