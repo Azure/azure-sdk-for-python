@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ProfilesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class ProfilesOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ProfileListResult"]:
+    ) -> AsyncIterable["_models.ProfileListResult"]:
         """Lists all of the CDN profiles within an Azure subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -54,12 +54,12 @@ class ProfilesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.ProfileListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProfileListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProfileListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -99,7 +99,7 @@ class ProfilesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -114,7 +114,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ProfileListResult"]:
+    ) -> AsyncIterable["_models.ProfileListResult"]:
         """Lists all of the CDN profiles within a resource group.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -124,12 +124,12 @@ class ProfilesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.ProfileListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProfileListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProfileListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -170,7 +170,7 @@ class ProfilesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -186,7 +186,7 @@ class ProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         **kwargs
-    ) -> "models.Profile":
+    ) -> "_models.Profile":
         """Gets a CDN profile with the specified profile name under the specified subscription and
         resource group.
 
@@ -199,12 +199,12 @@ class ProfilesOperations:
         :rtype: ~azure.mgmt.cdn.models.Profile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Profile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -230,7 +230,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Profile', pipeline_response)
@@ -245,15 +245,15 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile: "models.Profile",
+        profile: "_models.Profile",
         **kwargs
-    ) -> "models.Profile":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+    ) -> "_models.Profile":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Profile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -284,7 +284,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -306,9 +306,9 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile: "models.Profile",
+        profile: "_models.Profile",
         **kwargs
-    ) -> AsyncLROPoller["models.Profile"]:
+    ) -> AsyncLROPoller["_models.Profile"]:
         """Creates a new CDN profile with a profile name under the specified subscription and resource
         group.
 
@@ -329,7 +329,7 @@ class ProfilesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Profile"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -354,7 +354,13 @@ class ProfilesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -372,17 +378,15 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        profile_update_parameters: "_models.ProfileUpdateParameters",
         **kwargs
-    ) -> "models.Profile":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+    ) -> "_models.Profile":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Profile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _profile_update_parameters = models.ProfileUpdateParameters(tags=tags)
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -405,7 +409,7 @@ class ProfilesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_profile_update_parameters, 'ProfileUpdateParameters')
+        body_content = self._serialize.body(profile_update_parameters, 'ProfileUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -413,7 +417,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -432,9 +436,9 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        profile_update_parameters: "_models.ProfileUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.Profile"]:
+    ) -> AsyncLROPoller["_models.Profile"]:
         """Updates an existing CDN profile with the specified profile name under the specified
         subscription and resource group.
 
@@ -442,8 +446,8 @@ class ProfilesOperations:
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param tags: Profile tags.
-        :type tags: dict[str, str]
+        :param profile_update_parameters: Profile properties needed to update an existing profile.
+        :type profile_update_parameters: ~azure.mgmt.cdn.models.ProfileUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -455,7 +459,7 @@ class ProfilesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Profile"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -465,7 +469,7 @@ class ProfilesOperations:
             raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
-                tags=tags,
+                profile_update_parameters=profile_update_parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -480,7 +484,13 @@ class ProfilesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -505,7 +515,7 @@ class ProfilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -531,7 +541,7 @@ class ProfilesOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -584,7 +594,13 @@ class ProfilesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -603,7 +619,7 @@ class ProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         **kwargs
-    ) -> "models.SsoUri":
+    ) -> "_models.SsoUri":
         """Generates a dynamic SSO URI used to sign in to the CDN supplemental portal. Supplemental portal
         is used to configure advanced feature capabilities that are not yet available in the Azure
         portal, such as core reports in a standard profile; rules engine, advanced HTTP reports, and
@@ -619,12 +635,12 @@ class ProfilesOperations:
         :rtype: ~azure.mgmt.cdn.models.SsoUri
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SsoUri"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SsoUri"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -650,7 +666,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SsoUri', pipeline_response)
@@ -666,7 +682,7 @@ class ProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         **kwargs
-    ) -> "models.SupportedOptimizationTypesListResult":
+    ) -> "_models.SupportedOptimizationTypesListResult":
         """Gets the supported optimization types for the current profile. A user can create an endpoint
         with an optimization type from the listed values.
 
@@ -679,12 +695,12 @@ class ProfilesOperations:
         :rtype: ~azure.mgmt.cdn.models.SupportedOptimizationTypesListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SupportedOptimizationTypesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SupportedOptimizationTypesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -710,7 +726,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SupportedOptimizationTypesListResult', pipeline_response)
@@ -726,7 +742,7 @@ class ProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ResourceUsageListResult"]:
+    ) -> AsyncIterable["_models.ResourceUsageListResult"]:
         """Checks the quota and actual usage of endpoints under the given CDN profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -738,12 +754,12 @@ class ProfilesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.ResourceUsageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceUsageListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceUsageListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -785,7 +801,7 @@ class ProfilesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

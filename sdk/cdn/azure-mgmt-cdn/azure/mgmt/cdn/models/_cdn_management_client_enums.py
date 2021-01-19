@@ -35,6 +35,37 @@ class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOG = "Log"
     REDIRECT = "Redirect"
 
+class AfdCertificateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines the source of the SSL certificate.
+    """
+
+    CUSTOMER_CERTIFICATE = "CustomerCertificate"
+    MANAGED_CERTIFICATE = "ManagedCertificate"
+
+class AFDEndpointProtocols(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Supported protocols for the customer's endpoint.
+    """
+
+    HTTP = "Http"
+    HTTPS = "Https"
+
+class AfdMinimumTlsVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """TLS protocol version that will be used for Https
+    """
+
+    TLS10 = "TLS10"
+    TLS12 = "TLS12"
+
+class AfdProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning status
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    CREATING = "Creating"
+
 class Algorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Algorithm to use for URL signing
     """
@@ -82,6 +113,7 @@ class CookiesOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    REG_EX = "RegEx"
 
 class CustomDomainResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Resource status of the custom domain.
@@ -131,7 +163,7 @@ class DeleteRule(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NO_ACTION = "NoAction"
 
-class DeliveryRuleActionName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DeliveryRuleActionEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the action for the delivery rule.
     """
 
@@ -142,6 +174,14 @@ class DeliveryRuleActionName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     URL_REDIRECT = "UrlRedirect"
     URL_REWRITE = "UrlRewrite"
     URL_SIGNING = "UrlSigning"
+    ORIGIN_GROUP_OVERRIDE = "OriginGroupOverride"
+
+class DeploymentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NOT_STARTED = "NotStarted"
+    IN_PROGRESS = "InProgress"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
 
 class DestinationProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Protocol to use for the redirect. The default value is MatchRequest
@@ -150,6 +190,25 @@ class DestinationProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MATCH_REQUEST = "MatchRequest"
     HTTP = "Http"
     HTTPS = "Https"
+
+class DomainValidationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning substate shows the progress of custom HTTPS enabling/disabling process step by
+    step. DCV stands for DomainControlValidation.
+    """
+
+    UNKNOWN = "Unknown"
+    SUBMITTING = "Submitting"
+    PENDING = "Pending"
+    TIMED_OUT = "TimedOut"
+    PENDING_REVALIDATION = "PendingRevalidation"
+    APPROVED = "Approved"
+
+class EnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class EndpointResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Resource status of the endpoint.
@@ -162,7 +221,69 @@ class EndpointResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     STOPPED = "Stopped"
     STOPPING = "Stopping"
 
-class Enum16(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+class Enum31(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PT5_M = "PT5M"
+    PT1_H = "PT1H"
+    P1_D = "P1D"
+
+class Enum35(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    URL = "url"
+    REFERRER = "referrer"
+    BROWSER = "browser"
+    USER_AGENT = "userAgent"
+    COUNTRY_OR_REGION = "countryOrRegion"
+
+class Enum37(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PT5_M = "PT5M"
+    PT1_H = "PT1H"
+    P1_D = "P1D"
+
+class Enum38(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ALLOW = "allow"
+    BLOCK = "block"
+    LOG = "log"
+    REDIRECT = "redirect"
+
+class Enum39(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    HTTP_STATUS_CODE = "httpStatusCode"
+    CUSTOM_DOMAIN = "customDomain"
+
+class Enum40(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    MANAGED = "managed"
+    CUSTOM = "custom"
+    BOT = "bot"
+
+class Enum42(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ACTION = "action"
+    RULE_GROUP = "ruleGroup"
+    RULE_ID = "ruleId"
+    USER_AGENT = "userAgent"
+    CLIENT_IP = "clientIp"
+    URL = "url"
+    COUNTRY = "country"
+    RULE_TYPE = "ruleType"
+
+class Enum43(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ALLOW = "allow"
+    BLOCK = "block"
+    LOG = "log"
+    REDIRECT = "redirect"
+
+class Enum44(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    MANAGED = "managed"
+    CUSTOM = "custom"
+    BOT = "bot"
+
+class Enum47(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     """If the action type is block, this field defines the default customer overridable http response
     status code.
     """
@@ -173,12 +294,45 @@ class Enum16(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     FOUR_HUNDRED_SIX = 406
     FOUR_HUNDRED_TWENTY_NINE = 429
 
+class ForwardingProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Protocol this rule will use when forwarding traffic to backends.
+    """
+
+    HTTP_ONLY = "HttpOnly"
+    HTTPS_ONLY = "HttpsOnly"
+    MATCH_REQUEST = "MatchRequest"
+
 class GeoFilterActions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Action of the geo filter, i.e. allow or block access.
     """
 
     BLOCK = "Block"
     ALLOW = "Allow"
+
+class Get4ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CLIENT_REQUEST_COUNT = "clientRequestCount"
+    CLIENT_REQUEST_TRAFFIC = "clientRequestTraffic"
+    CLIENT_REQUEST_BANDWIDTH = "clientRequestBandwidth"
+    ORIGIN_REQUEST_TRAFFIC = "originRequestTraffic"
+    ORIGIN_REQUEST_BANDWIDTH = "originRequestBandwidth"
+    TOTAL_LATENCY = "totalLatency"
+
+class Get5ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CLIENT_REQUEST_COUNT = "clientRequestCount"
+    CLIENT_REQUEST_TRAFFIC = "clientRequestTraffic"
+    CLIENT_REQUEST_BANDWIDTH = "clientRequestBandwidth"
+    ORIGIN_REQUEST_TRAFFIC = "originRequestTraffic"
+    ORIGIN_REQUEST_BANDWIDTH = "originRequestBandwidth"
+
+class Get8ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    HTTP_STATUS_CODE = "httpStatusCode"
+    PROTOCOL = "protocol"
+    CACHE_STATUS = "cacheStatus"
+    COUNTRY = "country"
+    CUSTOM_DOMAIN = "customDomain"
 
 class HeaderAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Action to perform
@@ -196,11 +350,28 @@ class HealthProbeRequestType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     GET = "GET"
     HEAD = "HEAD"
 
+class HttpsRedirect(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether to automatically redirect HTTP traffic to HTTPS traffic. Note that this is a easy way
+    to set up this rule and it will be the first rule that gets executed.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class HttpVersionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes operator to be matched
     """
 
     EQUAL = "Equal"
+
+class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that creates/modifies resources
+    """
+
+    USER = "user"
+    APPLICATION = "application"
+    MANAGED_IDENTITY = "managedIdentity"
+    KEY = "key"
 
 class IsDeviceMatchConditionParametersMatchValuesItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -213,6 +384,13 @@ class IsDeviceOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     EQUAL = "Equal"
 
+class LinkToDefaultDomain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """whether this route will be linked to the default endpoint domain.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class ManagedRuleEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if the managed rule is in enabled or disabled state. Defaults to Disabled if not
     specified.
@@ -220,6 +398,14 @@ class ManagedRuleEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
+
+class MatchProcessingBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """If this rule is a match should the rules engine continue running the remaining rules or stop.
+    If not present, defaults to Continue.
+    """
+
+    CONTINUE_ENUM = "Continue"
+    STOP = "Stop"
 
 class MatchVariable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the condition for the delivery rule.
@@ -241,6 +427,18 @@ class MatchVariable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     IS_DEVICE = "IsDevice"
     REMOTE_ADDR = "RemoteAddr"
     SOCKET_ADDR = "SocketAddr"
+
+class MetricsResponseGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PT5_M = "PT5M"
+    PT1_H = "PT1H"
+    P1_D = "P1D"
+
+class MetricsResponseSeriesItemUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    COUNT = "count"
+    BYTES = "bytes"
+    BITS_PER_SECOND = "bitsPerSecond"
 
 class MinimumTlsVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """TLS protocol version that will be used for Https
@@ -340,6 +538,7 @@ class PostArgsOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    REG_EX = "RegEx"
 
 class PrivateEndpointStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The approval status for the connection to the Private Link
@@ -416,6 +615,7 @@ class QueryStringOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    REG_EX = "RegEx"
 
 class RedirectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The redirect type the rule will use when redirecting traffic.
@@ -447,6 +647,7 @@ class RequestBodyOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    REG_EX = "RegEx"
 
 class RequestHeaderOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes operator to be matched
@@ -461,6 +662,7 @@ class RequestHeaderOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    REG_EX = "RegEx"
 
 class RequestMethodMatchConditionParametersMatchValuesItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -496,6 +698,7 @@ class RequestUriOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    REG_EX = "RegEx"
 
 class ResponseBasedDetectedErrorTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of response errors for real user requests for which origin will be deemed unhealthy
@@ -504,6 +707,31 @@ class ResponseBasedDetectedErrorTypes(with_metaclass(_CaseInsensitiveEnumMeta, s
     NONE = "None"
     TCP_ERRORS_ONLY = "TcpErrorsOnly"
     TCP_AND_HTTP_ERRORS = "TcpAndHttpErrors"
+
+class SecretType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the Secret to create.
+    """
+
+    URL_SIGNING_KEY = "UrlSigningKey"
+    CUSTOMER_CERTIFICATE = "CustomerCertificate"
+    MANAGED_CERTIFICATE = "ManagedCertificate"
+
+class SecurityPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the Security policy to create.
+    """
+
+    WEB_APPLICATION_FIREWALL = "WebApplicationFirewall"
+
+class SharedPrivateLinkResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of the shared private link resource. Can be Pending, Approved, Rejected, Disconnected,
+    or Timeout.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+    TIMEOUT = "Timeout"
 
 class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the pricing tier.
@@ -516,6 +744,22 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_CHINA_CDN = "Standard_ChinaCdn"
     STANDARD_MICROSOFT = "Standard_Microsoft"
     PREMIUM_CHINA_CDN = "Premium_ChinaCdn"
+    STANDARD_AZURE_FRONT_DOOR = "Standard_AzureFrontDoor"
+    PREMIUM_AZURE_FRONT_DOOR = "Premium_AzureFrontDoor"
+    STANDARD955_BAND_WIDTH_CHINA_CDN = "Standard_955BandWidth_ChinaCdn"
+    STANDARD_AVG_BAND_WIDTH_CHINA_CDN = "Standard_AvgBandWidth_ChinaCdn"
+    STANDARD_PLUS_CHINA_CDN = "StandardPlus_ChinaCdn"
+    STANDARD_PLUS955_BAND_WIDTH_CHINA_CDN = "StandardPlus_955BandWidth_ChinaCdn"
+    STANDARD_PLUS_AVG_BAND_WIDTH_CHINA_CDN = "StandardPlus_AvgBandWidth_ChinaCdn"
+
+class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The validation status.
+    """
+
+    VALID = "Valid"
+    INVALID = "Invalid"
+    ACCESS_DENIED = "AccessDenied"
+    CERTIFICATE_EXPIRED = "CertificateExpired"
 
 class Transform(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes what transforms are applied before matching
@@ -554,6 +798,7 @@ class UrlFileExtensionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    REG_EX = "RegEx"
 
 class UrlFileNameOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes operator to be matched
@@ -568,6 +813,7 @@ class UrlFileNameOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    REG_EX = "RegEx"
 
 class UrlPathOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes operator to be matched
@@ -583,3 +829,24 @@ class UrlPathOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     WILDCARD = "Wildcard"
+    REG_EX = "RegEx"
+
+class UsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """An enum describing the unit of measurement.
+    """
+
+    COUNT = "Count"
+
+class ValidateSecretType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The secret type.
+    """
+
+    URL_SIGNING_KEY = "UrlSigningKey"
+    MANAGED_CERTIFICATE = "ManagedCertificate"
+    CUSTOMER_CERTIFICATE = "CustomerCertificate"
+
+class WafMetricsResponseGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PT5_M = "PT5M"
+    PT1_H = "PT1H"
+    P1_D = "P1D"
