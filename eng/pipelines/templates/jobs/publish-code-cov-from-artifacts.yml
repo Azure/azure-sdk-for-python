@@ -2,19 +2,42 @@ parameters:
   - name: PublishCodeCov
     type: boolean
     default: true
+  - name: CoverageDirectory
+    type: string
+    default: ''
 
-jobs:
+steps:
   - job: 'Download'
     steps:
       - task: DownloadPipelineArtifact@2
         inputs:
-          artifact: '**/*.html'
+          artifact: '**/*.xml'
 
-  - job: 'Combine'
-    steps:
-      # Python script here
+  - pwsh: 'List all XML files'
+    Get-ChildItem $(Pipeline.Workspace)
 
-  - job: 'Publish'
-    - task: PublishCodeCoverageResults@1
-      inputs:
-        summaryFileLocation: final_report.html
+  - task: PythonScript@0
+    displayName: 'Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/combine_cov_xmls.py'
+      arguments: >-
+        --coverage-directory=$(Pipeline.Workspace)
+      #   "${{ parameters.BuildTargetingString }}"
+      #   ${{ parameters.AdditionalTestArgs }}
+      #   ${{ parameters.CoverageArg }}
+      #   --mark_arg="${{ parameters.TestMarkArgument }}"
+      #   --service="${{ parameters.ServiceDirectory }}"
+      #   --toxenv="${{ parameters.ToxTestEnv }}"
+      #   --injected-packages="${{ parameters.InjectedPackages }}"
+      #   ${{ parameters.ToxEnvParallel }}
+    env: ${{ parameters.EnvVars }}
+
+
+  # - job: 'Combine'
+  #   steps:
+  #     # Python script here
+
+  # - job: 'Publish'
+  #   - task: PublishCodeCoverageResults@1
+  #     inputs:
+  #       summaryFileLocation: final_report.html
