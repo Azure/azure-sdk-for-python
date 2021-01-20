@@ -96,7 +96,7 @@ event = EventGridEvent(
 credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send(event)
+client.send_events(event)
 ```
 
 ### Send a Cloud Event
@@ -120,7 +120,7 @@ event = CloudEvent(
 credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send(event)
+client.send_events(event)
 ```
 
 ### Consume an Event Grid Event

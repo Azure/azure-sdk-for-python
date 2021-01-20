@@ -13,7 +13,7 @@ USAGE:
 """
 import json
 from azure.eventgrid import EventGridDeserializer, EventGridEvent
-from azure.eventgrid.models import StorageBlobCreatedEventData
+from azure.eventgrid.systemevents import StorageBlobCreatedEventData
 
 # all types of EventGridEvents below produce same DeserializedEvent
 eg_storage_dict = {
