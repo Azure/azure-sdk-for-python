@@ -104,7 +104,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
             assert 'data' not in json
     
     def test_models_exist_in_namespace(self):
-        exposed = dir(models)
+        exposed = dir(systemevents)
         generated = dir(internal_models)
 
         diff = {m for m in list(set(generated) - set(exposed)) if not m.startswith('_')}
