@@ -26,8 +26,8 @@ class PhoneNumberIdentifier(object):
     :param value: Value to initialize PhoneNumberIdentifier.
     :type value: str
     """
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, phone_number):
+        self.phone_number = phone_number
 
 class UnknownIdentifier(object):
     """

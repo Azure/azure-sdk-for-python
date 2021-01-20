@@ -27,7 +27,7 @@ class CommunicationUserIdentifierSerializer(object):
         elif isinstance(communicationIdentifier, PhoneNumberIdentifier):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.PhoneNumber,
-                id=communicationIdentifier.value
+                id=communicationIdentifier.phone_number
             )
         elif isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
             return CommunicationIdentifierModel(
