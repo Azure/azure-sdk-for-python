@@ -204,7 +204,7 @@ class InteractiveCredential(MsalCredential):
     def _get_app(self):
         # type: () -> msal.PublicClientApplication
         if not self._msal_app:
-            self._msal_app = self._create_app(msal.PublicClientApplication)
+            self._msal_app = self._create_app(msal.PublicClientApplication, client_capabilities=["CP1"])
         return self._msal_app
 
     @abc.abstractmethod

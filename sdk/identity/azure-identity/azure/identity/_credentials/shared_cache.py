@@ -121,6 +121,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
                 authority="https://{}/{}".format(self._auth_record.authority, self._tenant_id),
                 token_cache=self._cache,
                 http_client=MsalClient(**self._client_kwargs),
+                client_capabilities=["CP1"]
             )
 
         self._initialized = True
