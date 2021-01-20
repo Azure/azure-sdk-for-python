@@ -87,3 +87,5 @@ class FilterMode(str, Enum):
 
     exclude = "Exclude"
     include = "Include"
+    recommend = "Recommend"
+    default = "Default"
