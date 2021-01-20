@@ -8,7 +8,7 @@ import time
 
 from azure.core.credentials import AccessToken
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope, KeyVaultPermission, DataActionPermission
+from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
 import pytest
 from six.moves.urllib_parse import urlparse
 
@@ -53,39 +53,34 @@ class AccessControlTests(KeyVaultTestCase):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 
         # list initial role definitions
-        scope = KeyVaultRoleScope.global_value
+        scope = KeyVaultRoleScope.GLOBAL
         original_definitions = [d for d in client.list_role_definitions(scope)]
         assert len(original_definitions)
 
         # create custom role definition
         definition_name = self.get_replayable_uuid("definition-name")
-        permissions = [KeyVaultPermission(allowed_data_actions=[DataActionPermission.read_hsm_key])]
+        permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = client.set_role_definition(
             role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
         assert "/" in created_definition.assignable_scopes
         assert created_definition.name == definition_name
         assert len(created_definition.permissions) == 1
-        assert created_definition.permissions[0].allowed_data_actions == [DataActionPermission.read_hsm_key]
+        assert created_definition.permissions[0].allowed_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
 
         # update custom role definition
         permissions = [
-            KeyVaultPermission(
-                allowed_data_actions=[], denied_data_actions=[DataActionPermission.read_hsm_key]
-            )
+            KeyVaultPermission(allowed_data_actions=[], denied_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = client.set_role_definition(
             role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
         assert len(updated_definition.permissions) == 1
         assert len(updated_definition.permissions[0].allowed_data_actions) == 0
-        assert updated_definition.permissions[0].denied_data_actions == [DataActionPermission.read_hsm_key]
+        assert updated_definition.permissions[0].denied_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
 
         # assert that the created role definition isn't duplicated
-        matching_definitions = [
-            d for d in client.list_role_definitions(scope)
-            if d.id == updated_definition.id
-        ]
+        matching_definitions = [d for d in client.list_role_definitions(scope) if d.id == updated_definition.id]
         assert len(matching_definitions) == 1
 
         # get custom role definition
@@ -96,14 +91,12 @@ class AccessControlTests(KeyVaultTestCase):
         deleted_definition = client.delete_role_definition(scope, definition_name)
         assert_role_definitions_equal(deleted_definition, definition)
 
-        assert not any(
-            d for d in client.list_role_definitions(scope) if d.id == deleted_definition.id
-        )
+        assert not any(d.id == deleted_definition.id for d in client.list_role_definitions(scope))
 
     def test_role_assignment(self):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 
-        scope = KeyVaultRoleScope.global_value
+        scope = KeyVaultRoleScope.GLOBAL
         definitions = [d for d in client.list_role_definitions(scope)]
 
         # assign an arbitrary role to the service principal authenticating these requests
@@ -137,9 +130,7 @@ class AccessControlTests(KeyVaultTestCase):
         assert deleted.scope == scope
         assert deleted.role_definition_id == created.role_definition_id
 
-        assert not any(
-            a for a in client.list_role_assignments(scope) if a.role_assignment_id == created.role_assignment_id
-        )
+        assert not any(a.role_assignment_id == created.role_assignment_id for a in client.list_role_assignments(scope))
 
 
 def assert_role_definitions_equal(d1, d2):

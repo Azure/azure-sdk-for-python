@@ -8,7 +8,7 @@ import time
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission, DataActionPermission
+from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
 from azure.keyvault.administration.aio import KeyVaultAccessControlClient
 import pytest
 from six.moves.urllib_parse import urlparse
@@ -61,7 +61,7 @@ class AccessControlTests(KeyVaultTestCase):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 
         # list initial role definitions
-        scope = KeyVaultRoleScope.global_value
+        scope = KeyVaultRoleScope.GLOBAL
         original_definitions = []
         async for definition in client.list_role_definitions(scope):
             original_definitions.append(definition)
@@ -69,27 +69,25 @@ class AccessControlTests(KeyVaultTestCase):
 
         # create custom role definition
         definition_name = self.get_replayable_uuid("definition-name")
-        permissions = [KeyVaultPermission(allowed_data_actions=[DataActionPermission.read_hsm_key])]
+        permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = await client.set_role_definition(
             role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
         assert "/" in created_definition.assignable_scopes
         assert created_definition.name == definition_name
         assert len(created_definition.permissions) == 1
-        assert created_definition.permissions[0].allowed_data_actions == [DataActionPermission.read_hsm_key]
+        assert created_definition.permissions[0].allowed_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
 
         # update custom role definition
         permissions = [
-            KeyVaultPermission(
-                allowed_data_actions=[], denied_data_actions=[DataActionPermission.read_hsm_key]
-            )
+            KeyVaultPermission(allowed_data_actions=[], denied_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = await client.set_role_definition(
             role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
         assert len(updated_definition.permissions) == 1
         assert len(updated_definition.permissions[0].allowed_data_actions) == 0
-        assert updated_definition.permissions[0].denied_data_actions == [DataActionPermission.read_hsm_key]
+        assert updated_definition.permissions[0].denied_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
 
         # assert that the created role definition isn't duplicated
         matching_definitions = []
@@ -106,11 +104,14 @@ class AccessControlTests(KeyVaultTestCase):
         deleted_definition = await client.delete_role_definition(scope, definition_name)
         assert_role_definitions_equal(deleted_definition, definition)
 
+        async for definition in client.list_role_definitions(scope):
+            assert (definition.id != deleted_definition.id), "the role definition should have been deleted"
+
     @AzureTestCase.await_prepared_test
     async def test_role_assignment(self):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
 
-        scope = KeyVaultRoleScope.global_value
+        scope = KeyVaultRoleScope.GLOBAL
         definitions = []
         async for definition in client.list_role_definitions(scope):
             definitions.append(definition)
