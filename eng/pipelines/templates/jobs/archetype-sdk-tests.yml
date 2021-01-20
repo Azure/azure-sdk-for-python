@@ -113,9 +113,9 @@ jobs:
               ServiceDirectory: '${{ parameters.ServiceDirectory }}'
               SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
 
-  - job: Combine Code Coverage
-    # jobs:
-    - template: ../jobs/publish-code-cov-from-artifacts.yml
-      parameters:
-        PublishCodeCov: true
-        CoverageDirectory: $(Pipeline.Workspace)
+  # - job: Combine Code Coverage
+  #   # jobs:
+  #   - template: ../jobs/publish-code-cov-from-artifacts.yml
+  #     parameters:
+  #       PublishCodeCov: true
+  #       CoverageDirectory: $(Pipeline.Workspace)
