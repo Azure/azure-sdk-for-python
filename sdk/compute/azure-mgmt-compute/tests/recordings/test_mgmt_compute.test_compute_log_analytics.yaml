@@ -1,0 +1,141 @@
+interactions:
+- request:
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-01-18T03:44:02.647271Z",
+      "toTime": "2021-01-20T03:44:02.647277Z", "groupByResourceName": true, "intervalLength":
+      "SixtyMins"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '178'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getRequestRateByInterval?api-version=2020-06-01
+  response:
+    body:
+      string: '{"error":{"code":"ServerTimeout","message":"The request timed out.
+        Diagnostic information: timestamp ''20210120T034516Z'', subscription id ''00000000-0000-0000-0000-000000000000'',
+        tracking id ''cd8e4d6c-0e9c-485a-897c-944a90162921'', request correlation
+        id ''cd8e4d6c-0e9c-485a-897c-944a90162921''."}}'
+    headers:
+      cache-control:
+      - no-cache
+      connection:
+      - close
+      content-length:
+      - '294'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 20 Jan 2021 03:45:22 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 503
+      message: Service Unavailable
+- request:
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-01-18T03:44:02.647271Z",
+      "toTime": "2021-01-20T03:44:02.647277Z", "groupByResourceName": true, "intervalLength":
+      "SixtyMins"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '178'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getRequestRateByInterval?api-version=2020-06-01
+  response:
+    body:
+      string: '{"error":{"code":"SubscriptionNotFound","message":"The subscription
+        ''00000000-0000-0000-0000-000000000000'' could not be found."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '129'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 20 Jan 2021 03:46:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-01-18T03:46:10.242391Z",
+      "toTime": "2021-01-20T03:46:10.242396Z", "groupByOperationName": true, "groupByResourceName":
+      false}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '178'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getThrottledRequests?api-version=2020-06-01
+  response:
+    body:
+      string: '{"error":{"code":"SubscriptionNotFound","message":"The subscription
+        ''00000000-0000-0000-0000-000000000000'' could not be found."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '129'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 20 Jan 2021 03:46:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 404
+      message: Not Found
+version: 1
