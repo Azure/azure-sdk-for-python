@@ -16,6 +16,11 @@ from azure_devtools.scenario_tests import (
 from azure.synapse.monitoring import MonitoringClient
 from azure.identity import DefaultAzureCredential
 
+class MockCredential():
+    async def get_token(self, *scopes, **kwargs):
+        from azure.core.credentials import AccessToken
+        return AccessToken("fake-token", 0)
+
 class TestSynapseMonitoringClient(AzureTestCase):
 
     def __init__(self, method_name):
@@ -23,9 +28,11 @@ class TestSynapseMonitoringClient(AzureTestCase):
         self.vcr.match_on = ["path", "method", "query"]
         if self.is_live:
             service_endpoint = self.get_settings_value("SYNAPSE_ENDPOINT")
+            credential = DefaultAzureCredential()
         else:
             service_endpoint = "https://endpointname.dev.azuresynapse.net"
-        self.client = MonitoringClient(credential=DefaultAzureCredential(),
+            credential = MockCredential()
+        self.client = MonitoringClient(credential=credential,
                          endpoint=service_endpoint)
 
     def test_monitoring_spark_job(self):
