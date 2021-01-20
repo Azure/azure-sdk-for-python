@@ -16,7 +16,8 @@ if TYPE_CHECKING:
     from typing import Any, Iterable, Union
     from uuid import UUID
     from azure.core.async_paging import AsyncItemPaged
-    from .._models import KeyVaultRoleScope, KeyVaultPermission
+    from .._enums import KeyVaultRoleScope
+    from .._models import KeyVaultPermission
 
 
 class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):

@@ -15,7 +15,8 @@ if TYPE_CHECKING:
     from typing import Any, Iterable, Union
     from uuid import UUID
     from azure.core.paging import ItemPaged
-    from ._models import KeyVaultRoleScope, KeyVaultPermission
+    from ._enums import KeyVaultRoleScope
+    from ._models import KeyVaultPermission
 
 
 class KeyVaultAccessControlClient(KeyVaultClientBase):
