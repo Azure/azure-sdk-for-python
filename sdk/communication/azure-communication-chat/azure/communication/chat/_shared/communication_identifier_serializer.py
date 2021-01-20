@@ -39,3 +39,35 @@ class CommunicationUserIdentifierSerializer(object):
             kind=CommunicationIdentifierKind.Unknown,
             id=communicationIdentifier.identifier
         )
+    
+    @classmethod
+    def deserialize(self, identifierModel):
+        """
+        Deserialize the CommunicationIdentifierModel into Communication Identifier
+
+        :param identifierModel: CommunicationIdentifierModel
+        :type identifierModel: CommunicationIdentifierModel
+        :return: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
+        :rtype: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
+        :rasies: ValueError
+        """
+
+        id, kind = identifierModel.id, identifierModel.kind
+
+        if not id:
+            raise ValueError("identiferModel must have a valid id")
+
+        if kind == CommunicationIdentifierKind.CommunicationUser:
+            return CommunicationUserIdentifier(id)
+        if kind == CommunicationIdentifierKind.PhoneNumber:
+            return PhoneNumberIdentifier(id)
+        if kind == CommunicationIdentifierKind.MicrosoftTeamsUser:
+            is_anonymous = identifierModel.is_anonymous
+            if not is_anonymous:
+                raise ValueError("MicrosoftTeamsUser must have a valid attribute - is_anonymous")
+            return MicrosoftTeamsUserIdentifier(
+                id,
+                is_anonymous=is_anonymous
+            )
+        
+        return UnknownIdentifier(id)
