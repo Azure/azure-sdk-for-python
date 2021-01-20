@@ -24,7 +24,7 @@ domain_hostname = os.environ["EG_TOPIC_HOSTNAME"]
 credential = AzureKeyCredential(domain_key)
 client = EventGridPublisherClient(domain_hostname, credential)
 
-client.send([
+client.send_events([
 	EventGridEvent(
 		topic="MyCustomDomainTopic1",
 		event_type="Contoso.Items.ItemReceived",

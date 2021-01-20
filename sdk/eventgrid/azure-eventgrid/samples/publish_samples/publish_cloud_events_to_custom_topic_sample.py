@@ -47,7 +47,7 @@ def publish_event():
             event_list.append(event)
 
         # publish list of events
-        client.send(event_list)
+        client.send_events(event_list)
         print("Batch of size {} published".format(len(event_list)))
         time.sleep(randint(1, 5))
 
