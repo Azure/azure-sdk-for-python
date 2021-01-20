@@ -11,7 +11,7 @@ class CommunicationUserIdentifierSerializer(object):
 
     
     @classmethod
-    def serialize(self, communicationIdentifier):
+    def serialize(cls, communicationIdentifier):
         """ Serialize the Communication identifier into CommunicationIdentifierModel
 
         :param identifier: Communication service identifier
@@ -41,7 +41,7 @@ class CommunicationUserIdentifierSerializer(object):
         )
     
     @classmethod
-    def deserialize(self, identifierModel):
+    def deserialize(cls, identifierModel):
         """
         Deserialize the CommunicationIdentifierModel into Communication Identifier
 
