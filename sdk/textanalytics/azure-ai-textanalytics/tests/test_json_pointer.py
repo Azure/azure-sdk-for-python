@@ -77,7 +77,7 @@ def generated_sentence_sentiment(generated_sentiment_confidence_score, index, ta
 @pytest.fixture
 def generated_document_sentiment(generated_target, generated_assessment, generated_sentiment_confidence_score):
     target_sentence = generated_sentence_sentiment(generated_sentiment_confidence_score, index=0, targets=[generated_target])
-    assessment_sentence = generated_sentence_sentiment(generated_sentiment_confidence_score, index=1, opinions=[generated_assessment])
+    assessment_sentence = generated_sentence_sentiment(generated_sentiment_confidence_score, index=1, assessments=[generated_assessment])
 
     return _generated_models.DocumentSentiment(
         id=1,

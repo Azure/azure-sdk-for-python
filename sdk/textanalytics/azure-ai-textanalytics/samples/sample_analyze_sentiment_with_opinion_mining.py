@@ -33,7 +33,7 @@ OUTPUT:
 
     Since these reviews seem so mixed, and since I'm interested in finding exactly what it is about my hotel that should be improved, let's find the complaints users have about individual aspects of this hotel
 
-    In order to do that, I'm going to extract the target of a negative sentiment. I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target.
+    In order to do that, I'm going to extract the targets of a negative sentiment. I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target.
 
     Let's now go through the aspects of our hotel people have complained about and see what users have specifically said
     Users have made 1 complaints about 'food', specifically saying that it's 'unacceptable'
@@ -84,7 +84,7 @@ class AnalyzeSentimentWithOpinionMiningSample(object):
             """
         ]
 
-        result = text_analytics_client.analyze_sentiment(documents, show_opinion_mining=True)
+        result = text_analytics_client.analyze_sentiment(documents)
         doc_result = [doc for doc in result if not doc.is_error]
 
         print("\nLet's first see the general sentiment of each of these reviews")
@@ -100,8 +100,8 @@ class AnalyzeSentimentWithOpinionMiningSample(object):
         )
 
         print(
-            "\nIn order to do that, I'm going to extract aspects that have a negative sentiment. "
-            "I'm going to map aspect to the mined opinion object we get back to aggregate the reviews by aspect. "
+            "\nIn order to do that, I'm going to extract targets of a negative sentiment. "
+            "I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target. "
         )
         target_to_complaints = {}
 

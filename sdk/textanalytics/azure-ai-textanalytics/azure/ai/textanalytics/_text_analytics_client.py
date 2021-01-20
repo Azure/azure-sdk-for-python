@@ -657,7 +657,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                show_opinion_mining=show_opinion_mining,
+                opinion_mining=show_opinion_mining,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
