@@ -13,7 +13,7 @@ from .._internal import AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Union
+    from typing import Any, Iterable, Union
     from uuid import UUID
     from azure.core.async_paging import AsyncItemPaged
     from .._models import KeyVaultRoleScope, KeyVaultPermission
@@ -126,7 +126,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :keyword role_definition_name: the role definition's name. Must be a UUID.
         :type role_definition_name: str or uuid.UUID
         :keyword permissions: the role definition's permissions.
-        :type permissions: list[KeyVaultPermission]
+        :type permissions: Iterable[KeyVaultPermission]
         :keyword assignable_scopes: the role definition's assignable scopes.
         :type assignable_scopes: list[str]
         :returns: The created or updated role definition

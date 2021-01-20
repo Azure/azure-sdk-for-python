@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -10,14 +9,6 @@ if TYPE_CHECKING:
 
 
 # pylint:disable=protected-access
-
-
-class KeyVaultRoleScope(str, Enum):
-    """Collection of well known role scopes. This list is not exhaustive"""
-
-    global_value = "/"  #: use this if you want role assignments to apply to everything on the resource
-
-    keys_value = "/keys"  #: use this if you want role assignments to apply to all keys
 
 
 class KeyVaultPermission(object):
@@ -31,10 +22,10 @@ class KeyVaultPermission(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.allowed_actions = kwargs.get("allowed_actions", [])
-        self.denied_actions = kwargs.get("denied_actions", [])
-        self.allowed_data_actions = kwargs.get("allowed_data_actions", [])
-        self.denied_data_actions = kwargs.get("denied_data_actions", [])
+        self.allowed_actions = kwargs.get("allowed_actions")
+        self.denied_actions = kwargs.get("denied_actions")
+        self.allowed_data_actions = kwargs.get("allowed_data_actions")
+        self.denied_data_actions = kwargs.get("denied_data_actions")
 
     @classmethod
     def _from_generated(cls, permissions):
@@ -138,7 +129,7 @@ class KeyVaultRoleDefinition(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._role_definition_id = kwargs.get("role_definition_id")
+        self._id = kwargs.get("id")
         self._name = kwargs.get("name")
         self._role_name = kwargs.get("role_name")
         self._description = kwargs.get("description")
@@ -149,13 +140,13 @@ class KeyVaultRoleDefinition(object):
 
     def __repr__(self):
         # type: () -> str
-        return "KeyVaultRoleDefinition<{}>".format(self._role_definition_id)
+        return "KeyVaultRoleDefinition<{}>".format(self._id)
 
     @property
-    def role_definition_id(self):
+    def id(self):
         # type: () -> str
         """unique identifier for this role definition"""
-        return self._role_definition_id
+        return self._id
 
     @property
     def name(self):
@@ -204,9 +195,9 @@ class KeyVaultRoleDefinition(object):
         return cls(
             assignable_scopes=definition.assignable_scopes,
             description=definition.description,
+            id=definition.id,
             name=definition.name,
             permissions=[KeyVaultPermission._from_generated(p) for p in definition.permissions],
-            role_definition_id=definition.id,
             role_name=definition.role_name,
             role_type=definition.role_type,
             type=definition.type,

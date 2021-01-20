@@ -8,7 +8,7 @@ import time
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission
+from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission, DataActionPermission
 from azure.keyvault.administration.aio import KeyVaultAccessControlClient
 import pytest
 from six.moves.urllib_parse import urlparse
@@ -35,7 +35,11 @@ class AccessControlTests(KeyVaultTestCase):
     def credential(self):
         if self.is_live:
             return DefaultAzureCredential()
-        return mock.Mock(get_token=lambda *_, **__: AccessToken("secret", time.time() + 3600))
+
+        async def get_token(*_, **__):
+            return AccessToken("secret", time.time() + 3600)
+
+        return mock.Mock(get_token=get_token)
 
     def get_replayable_uuid(self, replay_value):
         if self.is_live:
@@ -65,19 +69,19 @@ class AccessControlTests(KeyVaultTestCase):
 
         # create custom role definition
         definition_name = self.get_replayable_uuid("definition-name")
-        permissions = [KeyVaultPermission(allowed_data_actions=["Microsoft.KeyVault/managedHsm/keys/read/action"])]
+        permissions = [KeyVaultPermission(allowed_data_actions=[DataActionPermission.read_hsm_key])]
         created_definition = await client.set_role_definition(
             role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
         assert "/" in created_definition.assignable_scopes
         assert created_definition.name == definition_name
         assert len(created_definition.permissions) == 1
-        assert len(created_definition.permissions[0].allowed_data_actions) == 1
+        assert created_definition.permissions[0].allowed_data_actions == [DataActionPermission.read_hsm_key]
 
         # update custom role definition
         permissions = [
             KeyVaultPermission(
-                allowed_data_actions=[], denied_data_actions=["Microsoft.KeyVault/managedHsm/keys/read/action"]
+                allowed_data_actions=[], denied_data_actions=[DataActionPermission.read_hsm_key]
             )
         ]
         updated_definition = await client.set_role_definition(
@@ -85,12 +89,12 @@ class AccessControlTests(KeyVaultTestCase):
         )
         assert len(updated_definition.permissions) == 1
         assert len(updated_definition.permissions[0].allowed_data_actions) == 0
-        assert len(updated_definition.permissions[0].denied_data_actions) == 1
+        assert updated_definition.permissions[0].denied_data_actions == [DataActionPermission.read_hsm_key]
 
         # assert that the created role definition isn't duplicated
         matching_definitions = []
         async for definition in client.list_role_definitions(scope):
-            if definition.role_definition_id == updated_definition.role_definition_id:
+            if definition.id == updated_definition.id:
                 matching_definitions.append(definition)
         assert len(matching_definitions) == 1
 
@@ -116,19 +120,17 @@ class AccessControlTests(KeyVaultTestCase):
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
 
-        created = await client.create_role_assignment(
-            scope, definition.role_definition_id, principal_id, role_assignment_name=name
-        )
+        created = await client.create_role_assignment(scope, definition.id, principal_id, role_assignment_name=name)
         assert created.name == name
         assert created.principal_id == principal_id
-        assert created.role_definition_id == definition.role_definition_id
+        assert created.role_definition_id == definition.id
         assert created.scope == scope
 
         # should be able to get the new assignment
         got = await client.get_role_assignment(scope, name)
         assert got.name == name
         assert got.principal_id == principal_id
-        assert got.role_definition_id == definition.role_definition_id
+        assert got.role_definition_id == definition.id
         assert got.scope == scope
 
         # new assignment should be in the list of all assignments
