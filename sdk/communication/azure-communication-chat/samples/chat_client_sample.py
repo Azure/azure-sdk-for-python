@@ -45,8 +45,8 @@ class ChatClientSamples(object):
 
     def create_chat_client(self):
         # [START create_chat_client]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
         # [END create_chat_client]
 
     def create_thread(self):
@@ -55,11 +55,11 @@ class ChatClientSamples(object):
         from azure.communication.chat import(
             ChatClient,
             ChatThreadMember,
-            CommunicationUser,
-            CommunicationUserCredential
+            CommunicationUserIdentifier,
+            CommunicationTokenCredential
         )
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
 
         topic = "test topic"
         members = [ChatThreadMember(
@@ -75,9 +75,9 @@ class ChatClientSamples(object):
 
     def get_chat_thread_client(self):
         # [START get_chat_thread_client]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
         chat_thread_client = chat_client.get_chat_thread_client(self._thread_id)
         # [END get_chat_thread_client]
 
@@ -85,9 +85,9 @@ class ChatClientSamples(object):
 
     def get_thread(self):
         # [START get_thread]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
         chat_thread = chat_client.get_chat_thread(self._thread_id)
         # [END get_thread]
 
@@ -95,11 +95,11 @@ class ChatClientSamples(object):
 
     def list_threads(self):
         # [START list_threads]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
         from datetime import datetime, timedelta
         import pytz
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
         start_time = datetime.utcnow() - timedelta(days=2)
         start_time = start_time.replace(tzinfo=pytz.utc)
         chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
@@ -111,9 +111,9 @@ class ChatClientSamples(object):
 
     def delete_thread(self):
         # [START delete_thread]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
         chat_client.delete_chat_thread(self._thread_id)
         # [END delete_thread]
 

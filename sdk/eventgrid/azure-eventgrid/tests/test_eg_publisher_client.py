@@ -15,8 +15,8 @@ import datetime as dt
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
-from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, CustomEvent ,EventGridSharedAccessSignatureCredential, generate_shared_access_signature
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, CustomEvent, generate_shared_access_signature
 
 from eventgrid_preparer import (
     CachedEventGridTopicPreparer
@@ -185,7 +185,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
         signature = generate_shared_access_signature(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
-        credential = EventGridSharedAccessSignatureCredential(signature)
+        credential = AzureSasCredential(signature)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
                 subject="sample", 
@@ -238,3 +238,8 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     }
                 )
         client.send([custom_event1, custom_event2])
+
+    def test_send_throws_with_bad_credential(self):
+        bad_credential = "I am a bad credential"
+        with pytest.raises(ValueError, match="The provided credential should be an instance of AzureSasCredential or AzureKeyCredential"):
+            client = EventGridPublisherClient("eventgrid_endpoint", bad_credential)

@@ -7,10 +7,10 @@
 # pylint: disable=super-init-not-called
 
 from typing import List # pylint: disable=unused-import
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin
-from ._generated.models import StorageErrorException
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
@@ -279,7 +279,7 @@ class MessagesPaged(PageIterator):
     def _get_next_cb(self, continuation_token):
         try:
             return self._command(number_of_messages=self.results_per_page)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, messages): # pylint: disable=no-self-use
@@ -349,7 +349,7 @@ class QueuePropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):

@@ -485,7 +485,6 @@ class FileTest(StorageTestCase):
 
     @record
     def test_account_sas(self):
-        pytest.skip("Re-enable this test after min dependency on blobs is updated.")
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -516,7 +515,6 @@ class FileTest(StorageTestCase):
                 file_client.append_data(b"abcd", 0, 4)
 
     def test_account_sas_raises_if_sas_already_in_uri(self):
-        pytest.skip("Re-enable this test after min dependency on blobs is updated.")
         with self.assertRaises(ValueError):
             DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
 

@@ -17,12 +17,12 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
+from ._constants import CONNECTION_TIMEOUT
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._error import _process_table_error
 from ._generated import AzureTable
 from ._generated.models import (
-    # AccessPolicy,
     SignedIdentifier,
     TableProperties,
 )
@@ -31,7 +31,6 @@ from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
-
 from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
@@ -66,7 +65,12 @@ class TableClient(TableClientBase):
         super(TableClient, self).__init__(
             account_url, table_name, credential=credential, **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline)
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
 
     @classmethod
     def from_connection_string(
@@ -525,7 +529,7 @@ class TableClient(TableClientBase):
                 :caption: Get a single entity from a table
         """
         try:
-            entity = self._client.table.query_entities_with_partition_and_row_key(
+            entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
