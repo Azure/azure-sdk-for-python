@@ -21,21 +21,21 @@ class CommunicationUserIdentifierSerializer(object):
         """ 
         if isinstance(communicationIdentifier, CommunicationUserIdentifier):
             return CommunicationIdentifierModel(
-                kind=CommunicationIdentifierKind.CommunicationUserValue,
+                kind=CommunicationIdentifierKind.CommunicationUser,
                 id=communicationIdentifier.identififier
             )
         elif isinstance(communicationIdentifier, PhoneNumberIdentifier):
             return CommunicationIdentifierModel(
-                kind=CommunicationIdentifierKind.PhoneNumberValue,
+                kind=CommunicationIdentifierKind.PhoneNumber,
                 id=communicationIdentifier.value
             )
         elif isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
             return CommunicationIdentifierModel(
-                kind=CommunicationIdentifierKind.MicrosoftTeamsUserValue,
+                kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
                 id=communicationIdentifier.user_id
             )
         
         return CommunicationIdentifierModel(
-            kind=CommunicationIdentifierKind.UnknownValue,
+            kind=CommunicationIdentifierKind.Unknown,
             id=communicationIdentifier.identifier
         )

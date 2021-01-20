@@ -119,9 +119,9 @@ class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     """Communication Identifier Kind.
     """
 
-    UnknownValue = "unknown"
-    CommunicationUserValue = "communicationUser"
-    PhoneNumberValue = "phoneNumber"
-    CallingApplicationValue = "callingApplication"
-    MicrosoftTeamsUserValue = "microsoftTeamsUser"
+    Unknown = "unknown"
+    CommunicationUser = "communicationUser"
+    PhoneNumber = "phoneNumber"
+    CallingApplication = "callingApplication"
+    MicrosoftTeamsUser = "microsoftTeamsUser"
  
