@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any
 
 try:
     from urllib.parse import urlparse
@@ -249,6 +250,57 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         file_system_client = self.get_file_system_client(file_system)
         file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
         return file_system_client
+
+    def rename_file_system(self, source_file_system_name, destination_file_system_name, **kwargs):
+        # type: (str, str, **Any) -> FileSystemClient
+        """Renames a filesystem.
+
+        Operation is successful only if the source filesystem exists.
+
+        .. versionadded:: 12.3.0.
+            This operation was introduced in API version '2020-04-08'.
+
+        :param str source_file_system_name:
+            The name of the filesystem to rename.
+        :param str destination_file_system_name:
+            The new filesystem name the user wants to rename to.
+        :keyword source_lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source filesystem.
+        :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        self._blob_service_client.rename_container(source_file_system_name, destination_file_system_name, **kwargs)   # pylint: disable=protected-access
+        renamed_file_system = self.get_file_system_client(destination_file_system_name)
+        return renamed_file_system
+
+    def undelete_file_system(self, deleted_file_system_name, deleted_file_system_version, **kwargs):
+        # type: (str, str, **Any) -> FileSystemClient
+        """Restores soft-deleted filesystem.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.3.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param str deleted_file_system_name:
+            Specifies the name of the deleted filesystem to restore.
+        :param str deleted_file_system_version:
+            Specifies the version of the deleted filesystem to restore.
+        :keyword str new_name:
+            The new name for the deleted filesystem to be restored to.
+            If not specified deleted_file_system_name will be used as the restored filesystem name.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        new_name = kwargs.pop('new_name', None)
+        self._blob_service_client.undelete_container(deleted_file_system_name, deleted_file_system_version, **kwargs)  # pylint: disable=protected-access
+        file_system = self.get_file_system_client(new_name or deleted_file_system_name)
+        return file_system
 
     def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
                            **kwargs):
