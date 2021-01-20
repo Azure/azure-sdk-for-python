@@ -1077,7 +1077,9 @@ class ContainerClient(StorageAccountHostsMixin):
         if_tags_match_condition = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
-                       'timeout': '&timeout=' + str(timeout) if timeout else ""
+                       'timeout': '&timeout=' + str(timeout) if timeout else "",
+                       'path': self.container_name,
+                       'restype': 'restype=container&'
                        })
 
         reqs = []
@@ -1204,7 +1206,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
-        return self._batch_send(*reqs, container_name=self.container_name, **options)
+        return self._batch_send(*reqs, **options)
 
     def _generate_set_tiers_subrequest_options(
         self, tier, snapshot=None, version_id=None, rehydrate_priority=None, lease_access_conditions=None, **kwargs
@@ -1259,7 +1261,9 @@ class ContainerClient(StorageAccountHostsMixin):
         if_tags = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
-                       'timeout': '&timeout=' + str(timeout) if timeout else ""
+                       'timeout': '&timeout=' + str(timeout) if timeout else "",
+                       'path': self.container_name,
+                       'restype': 'restype=container&'
                        })
 
         reqs = []
@@ -1361,7 +1365,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         reqs, options = self._generate_set_tiers_options(standard_blob_tier, *blobs, **kwargs)
 
-        return self._batch_send(*reqs, container_name=self.container_name, **options)
+        return self._batch_send(*reqs, **options)
 
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
@@ -1412,7 +1416,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         reqs, options = self._generate_set_tiers_options(premium_page_blob_tier, *blobs, **kwargs)
 
-        return self._batch_send(*reqs, container_name=self.container_name, **options)
+        return self._batch_send(*reqs, **options)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]
