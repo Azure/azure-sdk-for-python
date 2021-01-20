@@ -144,7 +144,7 @@ def collect_tox_coverage_files(targeted_packages, package_name):
 
 def get_coverage_name():
     files = [f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
-    cov_files = sum([1 for f in files if re.match("coverage*.xml", f) else 0])
+    cov_files = sum([1 if re.match("coverage*.xml", f) else 0 for f in files])
     return "coverage-{}.xml".format(cov_files)
 
 
