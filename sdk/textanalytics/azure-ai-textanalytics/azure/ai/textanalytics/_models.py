@@ -5,7 +5,6 @@
 # ------------------------------------
 import re
 from enum import Enum
-from six.moves.urllib.parse import urlparse
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
@@ -183,37 +182,9 @@ class RecognizePiiEntitiesResult(DictMixin):
             )[:1024]
 
 
-class AnalyzeHealthcareEntitiesOperation(DictMixin):
-    """TODO
+class AnalyzeHealthcareResultItem(DictMixin):
     """
-    def __init__(self, **kwargs):
-        self._poller = kwargs.get("poller", None)
-        self._initial_response = getattr(self._poller._polling_method, "_initial_response") # pylint: disable=protected-access       
-        self.id = self._poller.resource().job_id
-        self.created_date_time = None
-        self.expiration_date_time = None
-        self.last_update_date_time = None
-        self.status = None
-        self.continuation_token = self._poller.get_continuation_token()
-        self.update_status()
-
-    def get_result(self):
-        result = self._poller.result()
-        self.update_status()
-        return result
-
-    def update_status(self):
-        self._poller.update_status()
-        job_metadata = self._poller.resource()
-        self.created_date_time = job_metadata.created_date_time
-        self.expiration_date_time = job_metadata.expiration_date_time
-        self.last_update_date_time = job_metadata.last_update_date_time
-        self.status = job_metadata.status
-
-
-class AnalyzeHealthcareEntitiesResultItem(DictMixin):
-    """
-    AnalyzeHealthcareEntitiesResultItem contains the Healthcare entities and relations from a
+    AnalyzeHealthcareResultItem contains the Healthcare entities and relations from a
     particular document.
 
     :ivar str id: Unique, non-empty document identifier that matches the
@@ -233,7 +204,7 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AnalyzeHealthcareEntitiesResultItem.
+        results. Always False for an instance of a AnalyzeHealthcareResult.
     """
 
     def __init__(self, **kwargs):
@@ -263,7 +234,7 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
+        return "AnalyzeHealthcareResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
         is_error={})".format(
             self.id,
             self.entities,
@@ -1314,41 +1285,6 @@ class KeyPhraseExtractionTaskResult(DictMixin):
         return "KeyPhraseExtractionTaskResult(name={}, results={})" \
             .format(self.name, repr(self.results))[:1024]
 
-
-class AnalyzeBatchTasksOperation(DictMixin):
-    """TODO
-    """
-    def __init__(self, **kwargs):
-        self._poller = kwargs.get("poller", None)
-        self._initial_response = getattr(self._poller._polling_method, "_initial_response") # pylint: disable=protected-access       
-        self.id = self._poller.resource().job_id
-        self.created_date_time = None
-        self.expiration_date_time = None
-        self.last_update_date_time = None
-        self.status = None
-        self.tasks_completed = None
-        self.tasks_failed = None
-        self.tasks_in_progress = None
-        self.total_tasks = None
-        self.continuation_token = self._poller.get_continuation_token()
-        self.update_status()
-
-    def get_result(self):
-        result = self._poller.result()
-        self.update_status()
-        return result
-
-    def update_status(self):
-        self._poller.update_status()
-        job_metadata = self._poller.resource()
-        self.created_date_time = job_metadata.created_date_time
-        self.expiration_date_time = job_metadata.expiration_date_time
-        self.last_update_date_time = job_metadata.last_update_date_time
-        self.status = job_metadata.status
-        self.tasks_completed = job_metadata.tasks.completed
-        self.tasks_failed = job_metadata.tasks.failed
-        self.tasks_in_progress = job_metadata.tasks.in_progress
-        self.total_tasks = job_metadata.tasks.total
 
 class TextAnalysisResult(DictMixin):
     """TextAnalysisResult contains the results of multiple text analyses performed on a batch of documents.
