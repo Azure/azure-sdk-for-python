@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from enum import Enum, EnumMeta
+from six import with_metaclass
+
 import msrest
 
 class CommunicationUserIdentifier(object):
@@ -95,3 +98,30 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
         self.is_anonymous = kwargs.get('is_anonymous', None)
         self.microsoft_teams_user_id = kwargs.get('microsoft_teams_user_id', None)
 
+
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Communication Identifier Kind.
+    """
+
+    UnknownValue = "unknown"
+    CommunicationUserValue = "communicationUser"
+    PhoneNumberValue = "phoneNumber"
+    CallingApplicationValue = "callingApplication"
+    MicrosoftTeamsUserValue = "microsoftTeamsUser"
+ 
