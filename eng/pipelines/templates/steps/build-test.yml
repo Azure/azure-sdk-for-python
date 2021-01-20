@@ -57,7 +57,7 @@ steps:
       mv coverage.xml coverage-$(BuildTargetingString).xml
     displayName: 'Rename coverage.xml file'
 
-  -task: PublishPipelineArtifact@1
+  - task: PublishPipelineArtifact@1
     inputs:
       targetPath: $(System.DefaultWorkingDirectory)/coverage-*.xml
 
