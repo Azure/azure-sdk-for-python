@@ -1064,8 +1064,8 @@ class DedicatedHostGroup(Resource):
     :param support_automatic_placement: Specifies whether virtual machines or virtual machine scale
      sets can be placed automatically on the dedicated host group. Automatic placement means
      resources are allocated on dedicated hosts, that are chosen by Azure, under the dedicated host
-     group. The value is defaulted to 'true' when not provided. :code:`<br>`:code:`<br>`Minimum api-
-     version: 2020-06-01.
+     group. The value is defaulted to 'false' when not provided. :code:`<br>`:code:`<br>`Minimum
+     api-version: 2020-06-01.
     :type support_automatic_placement: bool
     """
 
@@ -1185,8 +1185,8 @@ class DedicatedHostGroupUpdate(UpdateResource):
     :param support_automatic_placement: Specifies whether virtual machines or virtual machine scale
      sets can be placed automatically on the dedicated host group. Automatic placement means
      resources are allocated on dedicated hosts, that are chosen by Azure, under the dedicated host
-     group. The value is defaulted to 'true' when not provided. :code:`<br>`:code:`<br>`Minimum api-
-     version: 2020-06-01.
+     group. The value is defaulted to 'false' when not provided. :code:`<br>`:code:`<br>`Minimum
+     api-version: 2020-06-01.
     :type support_automatic_placement: bool
     """
 
@@ -1592,26 +1592,29 @@ class HardwareProfile(msrest.serialization.Model):
     """Specifies the hardware settings for the virtual machine.
 
     :param vm_size: Specifies the size of the virtual machine. For more information about virtual
-     machine sizes, see `Sizes for virtual machines <https://docs.microsoft.com/azure/virtual-
-     machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-
-     machines%2fwindows%2ftoc.json>`_. :code:`<br>`:code:`<br>` The available VM sizes depend on
-     region and availability set. For a list of available sizes use these APIs:
-     :code:`<br>`:code:`<br>` `List all available virtual machine sizes in an availability set
+     machine sizes, see `Sizes for virtual machines <https://docs.microsoft.com/en-us/azure/virtual-
+     machines/sizes>`_. :code:`<br>`:code:`<br>` The available VM sizes depend on region and
+     availability set. For a list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List
+     all available virtual machine sizes in an availability set
      <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
      :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
-     <https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list>`_
+     <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_
      :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
-     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Possible
-     values include: "Basic_A0", "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4", "Standard_A0",
-     "Standard_A1", "Standard_A2", "Standard_A3", "Standard_A4", "Standard_A5", "Standard_A6",
-     "Standard_A7", "Standard_A8", "Standard_A9", "Standard_A10", "Standard_A11", "Standard_A1_v2",
-     "Standard_A2_v2", "Standard_A4_v2", "Standard_A8_v2", "Standard_A2m_v2", "Standard_A4m_v2",
-     "Standard_A8m_v2", "Standard_B1s", "Standard_B1ms", "Standard_B2s", "Standard_B2ms",
-     "Standard_B4ms", "Standard_B8ms", "Standard_D1", "Standard_D2", "Standard_D3", "Standard_D4",
-     "Standard_D11", "Standard_D12", "Standard_D13", "Standard_D14", "Standard_D1_v2",
-     "Standard_D2_v2", "Standard_D3_v2", "Standard_D4_v2", "Standard_D5_v2", "Standard_D2_v3",
-     "Standard_D4_v3", "Standard_D8_v3", "Standard_D16_v3", "Standard_D32_v3", "Standard_D64_v3",
-     "Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3",
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_.
+     :code:`<br>`:code:`<br>` This list of sizes is no longer updated and the
+     **VirtualMachineSizeTypes** string constants will be removed from the subsequent REST API
+     specification. Use `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_ to get the latest
+     sizes. Possible values include: "Basic_A0", "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4",
+     "Standard_A0", "Standard_A1", "Standard_A2", "Standard_A3", "Standard_A4", "Standard_A5",
+     "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A9", "Standard_A10", "Standard_A11",
+     "Standard_A1_v2", "Standard_A2_v2", "Standard_A4_v2", "Standard_A8_v2", "Standard_A2m_v2",
+     "Standard_A4m_v2", "Standard_A8m_v2", "Standard_B1s", "Standard_B1ms", "Standard_B2s",
+     "Standard_B2ms", "Standard_B4ms", "Standard_B8ms", "Standard_D1", "Standard_D2", "Standard_D3",
+     "Standard_D4", "Standard_D11", "Standard_D12", "Standard_D13", "Standard_D14",
+     "Standard_D1_v2", "Standard_D2_v2", "Standard_D3_v2", "Standard_D4_v2", "Standard_D5_v2",
+     "Standard_D2_v3", "Standard_D4_v3", "Standard_D8_v3", "Standard_D16_v3", "Standard_D32_v3",
+     "Standard_D64_v3", "Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3",
      "Standard_D32s_v3", "Standard_D64s_v3", "Standard_D11_v2", "Standard_D12_v2",
      "Standard_D13_v2", "Standard_D14_v2", "Standard_D15_v2", "Standard_DS1", "Standard_DS2",
      "Standard_DS3", "Standard_DS4", "Standard_DS11", "Standard_DS12", "Standard_DS13",
@@ -2411,6 +2414,10 @@ class LogAnalyticsInputBase(msrest.serialization.Model):
     :type group_by_operation_name: bool
     :param group_by_resource_name: Group query result by Resource Name.
     :type group_by_resource_name: bool
+    :param group_by_client_application_id: Group query result by Client Application ID.
+    :type group_by_client_application_id: bool
+    :param group_by_user_agent: Group query result by User Agent.
+    :type group_by_user_agent: bool
     """
 
     _validation = {
@@ -2426,6 +2433,8 @@ class LogAnalyticsInputBase(msrest.serialization.Model):
         'group_by_throttle_policy': {'key': 'groupByThrottlePolicy', 'type': 'bool'},
         'group_by_operation_name': {'key': 'groupByOperationName', 'type': 'bool'},
         'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
+        'group_by_client_application_id': {'key': 'groupByClientApplicationId', 'type': 'bool'},
+        'group_by_user_agent': {'key': 'groupByUserAgent', 'type': 'bool'},
     }
 
     def __init__(
@@ -2437,6 +2446,8 @@ class LogAnalyticsInputBase(msrest.serialization.Model):
         group_by_throttle_policy: Optional[bool] = None,
         group_by_operation_name: Optional[bool] = None,
         group_by_resource_name: Optional[bool] = None,
+        group_by_client_application_id: Optional[bool] = None,
+        group_by_user_agent: Optional[bool] = None,
         **kwargs
     ):
         super(LogAnalyticsInputBase, self).__init__(**kwargs)
@@ -2446,6 +2457,8 @@ class LogAnalyticsInputBase(msrest.serialization.Model):
         self.group_by_throttle_policy = group_by_throttle_policy
         self.group_by_operation_name = group_by_operation_name
         self.group_by_resource_name = group_by_resource_name
+        self.group_by_client_application_id = group_by_client_application_id
+        self.group_by_user_agent = group_by_user_agent
 
 
 class LogAnalyticsOperationResult(msrest.serialization.Model):
@@ -3233,6 +3246,10 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
     :type group_by_operation_name: bool
     :param group_by_resource_name: Group query result by Resource Name.
     :type group_by_resource_name: bool
+    :param group_by_client_application_id: Group query result by Client Application ID.
+    :type group_by_client_application_id: bool
+    :param group_by_user_agent: Group query result by User Agent.
+    :type group_by_user_agent: bool
     :param interval_length: Required. Interval value in minutes used to create LogAnalytics call
      rate logs. Possible values include: "ThreeMins", "FiveMins", "ThirtyMins", "SixtyMins".
     :type interval_length: str or ~azure.mgmt.compute.v2020_06_01.models.IntervalInMins
@@ -3252,6 +3269,8 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         'group_by_throttle_policy': {'key': 'groupByThrottlePolicy', 'type': 'bool'},
         'group_by_operation_name': {'key': 'groupByOperationName', 'type': 'bool'},
         'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
+        'group_by_client_application_id': {'key': 'groupByClientApplicationId', 'type': 'bool'},
+        'group_by_user_agent': {'key': 'groupByUserAgent', 'type': 'bool'},
         'interval_length': {'key': 'intervalLength', 'type': 'str'},
     }
 
@@ -3265,9 +3284,11 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         group_by_throttle_policy: Optional[bool] = None,
         group_by_operation_name: Optional[bool] = None,
         group_by_resource_name: Optional[bool] = None,
+        group_by_client_application_id: Optional[bool] = None,
+        group_by_user_agent: Optional[bool] = None,
         **kwargs
     ):
-        super(RequestRateByIntervalInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, **kwargs)
+        super(RequestRateByIntervalInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, group_by_client_application_id=group_by_client_application_id, group_by_user_agent=group_by_user_agent, **kwargs)
         self.interval_length = interval_length
 
 
@@ -4280,6 +4301,10 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
     :type group_by_operation_name: bool
     :param group_by_resource_name: Group query result by Resource Name.
     :type group_by_resource_name: bool
+    :param group_by_client_application_id: Group query result by Client Application ID.
+    :type group_by_client_application_id: bool
+    :param group_by_user_agent: Group query result by User Agent.
+    :type group_by_user_agent: bool
     """
 
     _validation = {
@@ -4295,6 +4320,8 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         'group_by_throttle_policy': {'key': 'groupByThrottlePolicy', 'type': 'bool'},
         'group_by_operation_name': {'key': 'groupByOperationName', 'type': 'bool'},
         'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
+        'group_by_client_application_id': {'key': 'groupByClientApplicationId', 'type': 'bool'},
+        'group_by_user_agent': {'key': 'groupByUserAgent', 'type': 'bool'},
     }
 
     def __init__(
@@ -4306,9 +4333,11 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         group_by_throttle_policy: Optional[bool] = None,
         group_by_operation_name: Optional[bool] = None,
         group_by_resource_name: Optional[bool] = None,
+        group_by_client_application_id: Optional[bool] = None,
+        group_by_user_agent: Optional[bool] = None,
         **kwargs
     ):
-        super(ThrottledRequestsInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, **kwargs)
+        super(ThrottledRequestsInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, group_by_client_application_id=group_by_client_application_id, group_by_user_agent=group_by_user_agent, **kwargs)
 
 
 class UpgradeOperationHistoricalStatusInfo(msrest.serialization.Model):
@@ -7013,6 +7042,8 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :param enable_accelerated_networking: Specifies whether the network interface is accelerated
      networking-enabled.
     :type enable_accelerated_networking: bool
+    :param enable_fpga: Specifies whether the network interface is FPGA networking-enabled.
+    :type enable_fpga: bool
     :param network_security_group: The network security group.
     :type network_security_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param dns_settings: The dns settings to be applied on the network interfaces.
@@ -7034,6 +7065,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'primary': {'key': 'properties.primary', 'type': 'bool'},
         'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
+        'enable_fpga': {'key': 'properties.enableFpga', 'type': 'bool'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'SubResource'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetNetworkConfigurationDnsSettings'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetIPConfiguration]'},
@@ -7047,6 +7079,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         id: Optional[str] = None,
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
+        enable_fpga: Optional[bool] = None,
         network_security_group: Optional["SubResource"] = None,
         dns_settings: Optional["VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
         ip_configurations: Optional[List["VirtualMachineScaleSetIPConfiguration"]] = None,
@@ -7057,6 +7090,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         self.name = name
         self.primary = primary
         self.enable_accelerated_networking = enable_accelerated_networking
+        self.enable_fpga = enable_fpga
         self.network_security_group = network_security_group
         self.dns_settings = dns_settings
         self.ip_configurations = ip_configurations
@@ -7706,6 +7740,8 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
     :param enable_accelerated_networking: Specifies whether the network interface is accelerated
      networking-enabled.
     :type enable_accelerated_networking: bool
+    :param enable_fpga: Specifies whether the network interface is FPGA networking-enabled.
+    :type enable_fpga: bool
     :param network_security_group: The network security group.
     :type network_security_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param dns_settings: The dns settings to be applied on the network interfaces.
@@ -7723,6 +7759,7 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'primary': {'key': 'properties.primary', 'type': 'bool'},
         'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
+        'enable_fpga': {'key': 'properties.enableFpga', 'type': 'bool'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'SubResource'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetNetworkConfigurationDnsSettings'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetUpdateIPConfiguration]'},
@@ -7736,6 +7773,7 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         name: Optional[str] = None,
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
+        enable_fpga: Optional[bool] = None,
         network_security_group: Optional["SubResource"] = None,
         dns_settings: Optional["VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
         ip_configurations: Optional[List["VirtualMachineScaleSetUpdateIPConfiguration"]] = None,
@@ -7746,6 +7784,7 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         self.name = name
         self.primary = primary
         self.enable_accelerated_networking = enable_accelerated_networking
+        self.enable_fpga = enable_fpga
         self.network_security_group = network_security_group
         self.dns_settings = dns_settings
         self.ip_configurations = ip_configurations
