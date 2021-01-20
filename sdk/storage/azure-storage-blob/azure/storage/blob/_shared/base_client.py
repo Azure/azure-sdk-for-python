@@ -29,7 +29,7 @@ from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport, HttpRequest
+from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
