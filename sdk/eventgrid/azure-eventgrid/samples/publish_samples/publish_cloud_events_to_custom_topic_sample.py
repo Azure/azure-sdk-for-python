@@ -23,11 +23,11 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, CloudEvent
 
 key = os.environ.get("CLOUD_ACCESS_KEY")
-topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
+endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
 
 # authenticate client
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(topic_hostname, credential)
+client = EventGridPublisherClient(endpoint, credential)
 
 team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
 

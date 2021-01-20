@@ -35,7 +35,7 @@ az eventgrid domain --create --location <location> --resource-group <resource-gr
 
 ### Authenticate the client
 In order to interact with the Event Grid service, you will need to create an instance of a client.
-A **topic_hostname** and **credential** are necessary to instantiate the client object.
+An **endpoint** and **credential** are necessary to instantiate the client object.
 
 #### Looking up the endpoint
 You can find the endpoint and the hostname on the Azure portal.
@@ -49,9 +49,9 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
 
-topic_hostname = "https://<name>.<region>.eventgrid.azure.net"
+endpoint = "https://<name>.<region>.eventgrid.azure.net"
 credential = AzureKeyCredential("<api_key>")
-eg_publisher_client = EventGridPublisherClient(topic_hostname, credential)
+eg_publisher_client = EventGridPublisherClient(endpoint, credential)
 ```
 
 ## Key concepts
@@ -84,17 +84,17 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
 key = os.environ["EG_ACCESS_KEY"]
-topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 
 event = EventGridEvent(
-    subject="Door1",
     data={"team": "azure-sdk"},
+    subject="Door1",
     event_type="Azure.Sdk.Demo",
     data_version="2.0"
 )
 
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(topic_hostname, credential)
+client = EventGridPublisherClient(endpoint, credential)
 
 client.send_events(event)
 ```
@@ -109,7 +109,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, CloudEvent
 
 key = os.environ["CLOUD_ACCESS_KEY"]
-topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
+endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
 
 event = CloudEvent(
     type="Azure.Sdk.Sample",
@@ -118,7 +118,7 @@ event = CloudEvent(
 )
 
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(topic_hostname, credential)
+client = EventGridPublisherClient(endpoint, credential)
 
 client.send_events(event)
 ```
