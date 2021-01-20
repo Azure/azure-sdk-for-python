@@ -358,7 +358,7 @@ print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.f
 container_name = 'testContainer'
 container = database.get_container_client(container_name)
 container_offer = database.read_offer()
-print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput']))
+print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput'])) 
 ```
 
 
