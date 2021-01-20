@@ -113,8 +113,8 @@ jobs:
               ServiceDirectory: '${{ parameters.ServiceDirectory }}'
               SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
 
-  - stage: Combine Code Coverage
-    jobs:
+  - job: Combine Code Coverage
+    # jobs:
     - template: ../jobs/publish-code-cov-from-artifacts.yml
       parameters:
         PublishCodeCov: true
