@@ -2,6 +2,8 @@
 
 ## 1.0.0b3 (Unreleased)
 
+- Added metrics exporter from previous repository
+    ([#15816](https://github.com/Azure/azure-sdk-for-python/pull/15816))
 
 ## 1.0.0b2 (2021-01-13)
 

@@ -6,6 +6,7 @@ import tempfile
 import typing
 from enum import Enum
 
+from opentelemetry.sdk.metrics.export import MetricsExportResult
 from opentelemetry.sdk.trace.export import SpanExportResult
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -173,4 +174,14 @@ def get_trace_export_result(result: ExportResult) -> SpanExportResult:
         ExportResult.FAILED_NOT_RETRYABLE,
     ):
         return SpanExportResult.FAILURE
+    return None
+
+def get_metrics_export_result(result: ExportResult) -> MetricsExportResult:
+    if result == ExportResult.SUCCESS:
+        return MetricsExportResult.SUCCESS
+    if result in (
+        ExportResult.FAILED_RETRYABLE,
+        ExportResult.FAILED_NOT_RETRYABLE,
+    ):
+        return MetricsExportResult.FAILURE
     return None
