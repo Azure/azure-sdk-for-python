@@ -17,7 +17,7 @@ from azure.synapse.monitoring import MonitoringClient
 from azure.identity import DefaultAzureCredential
 
 class MockCredential():
-    async def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs):
         from azure.core.credentials import AccessToken
         return AccessToken("fake-token", 0)
 
