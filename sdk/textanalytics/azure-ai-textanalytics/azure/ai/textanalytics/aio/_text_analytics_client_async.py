@@ -481,9 +481,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
-        :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+        :keyword bool disable_opinion_mining: Whether to disable the opinion mining feature, which
+            mines the opinions of a sentence and conduct more
             granular analysis around the aspects of a product or service (also known as
-            aspect-based sentiment analysis). If set to true, the returned
+            aspect-based sentiment analysis). The value is False by default, in which case the returned
             :class:`~azure.ai.textanalytics.SentenceSentiment` objects
             will have property `mined_opinions` containing the result of this analysis. Only available for
             API version v3.1-preview and up.
@@ -520,25 +521,23 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+        disable_opinion_mining = kwargs.pop("disable_opinion_mining", False)
         if self._string_code_unit:
             kwargs.update({"string_index_type": self._string_code_unit})
-
-        if show_opinion_mining is not None:
-            kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
             return await self._client.sentiment(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                opinion_mining=not disable_opinion_mining,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
         except TypeError as error:
             if "opinion_mining" in str(error):
                 raise ValueError(
-                    "'show_opinion_mining' is only available for API version v3.1-preview and up"
+                    "'disable_opinion_mining' is only available for API version v3.1-preview and up"
                 )
             raise error
         except HttpResponseError as error:
