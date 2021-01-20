@@ -136,7 +136,7 @@ The following sections provide several code snippets covering some of the most c
 * [Delete data](#delete-data "Delete data")
 * [Query the database](#query-the-database "Query the database")
 * [Get database properties](#get-database-properties "Get database properties")
-* [Get database and container throughputs](#Get-database-and-container-throughputs "Get database and container throughputs")
+* [Get database and container throughputs](#get-database-and-container-throughputs "Get database and container throughputs")
 * [Modify container properties](#modify-container-properties "Modify container properties")
 
 ### Create a database
