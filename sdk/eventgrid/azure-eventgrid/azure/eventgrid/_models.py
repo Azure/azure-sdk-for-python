@@ -136,14 +136,17 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
-    :type topic: str
     :param subject: Required. A resource path relative to the topic path.
     :type subject: str
-    :param data: Event data specific to the event type.
-    :type data: object
     :param event_type: Required. The type of the event that occurred.
     :type event_type: str
+    :param data: Required. Event data specific to the event type.
+    :type data: object
+    :param data_version: Required. The schema version of the data object.
+        If not provided, will be stamped with an empty value.
+    :type data_version: str
+    :param topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
+    :type topic: str
     :ivar metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
         If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
@@ -177,13 +180,14 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
         'data_version': {'key': 'dataVersion', 'type': 'str'},
     }
 
-    def __init__(self, subject, event_type, **kwargs):
-        # type: (str, str, Any) -> None
+    def __init__(self, data, subject, event_type, data_version, **kwargs):
+        # type: (object, str, str, str, Any) -> None
         kwargs.setdefault('id', uuid.uuid4())
         kwargs.setdefault('subject', subject)
         kwargs.setdefault("event_type", event_type)
         kwargs.setdefault('event_time', dt.datetime.now(UTC()).isoformat())
-        kwargs.setdefault('data', None)
+        kwargs.setdefault('data', data)
+        kwargs.setdefault('data_version', data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
 

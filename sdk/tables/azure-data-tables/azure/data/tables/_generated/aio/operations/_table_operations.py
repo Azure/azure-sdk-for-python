@@ -112,8 +112,7 @@ class TableOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TableServiceError, response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
@@ -393,7 +392,7 @@ class TableOperations:
         return deserialized
     query_entities.metadata = {'url': '/{table}()'}  # type: ignore
 
-    async def query_entities_with_partition_and_row_key(
+    async def query_entity_with_partition_and_row_key(
         self,
         table: str,
         partition_key: str,
@@ -403,7 +402,7 @@ class TableOperations:
         query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
     ) -> Dict[str, object]:
-        """Queries entities in a table.
+        """Queries a single entity in a table.
 
         :param table: The name of the table.
         :type table: str
@@ -440,7 +439,7 @@ class TableOperations:
         accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
-        url = self.query_entities_with_partition_and_row_key.metadata['url']  # type: ignore
+        url = self.query_entity_with_partition_and_row_key.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'table': self._serialize.url("table", table, 'str'),
@@ -491,7 +490,7 @@ class TableOperations:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    query_entities_with_partition_and_row_key.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
+    query_entity_with_partition_and_row_key.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
     async def update_entity(
         self,

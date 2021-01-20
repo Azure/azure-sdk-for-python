@@ -243,7 +243,7 @@ class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     SPECIALIZED = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
 
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Operating System type.
+    """The operating system of the osDiskImage.
     """
 
     WINDOWS = "Windows"

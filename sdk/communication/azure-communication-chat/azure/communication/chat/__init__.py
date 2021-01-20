@@ -6,7 +6,7 @@ from ._generated.models import (
     SendChatMessageResult,
     ChatThreadInfo,
 )
-from ._shared.user_credential import CommunicationUserCredential
+from ._shared.user_credential import CommunicationTokenCredential
 from ._models import (
     ChatThreadMember,
     ChatMessage,
@@ -24,7 +24,7 @@ __all__ = [
     'SendChatMessageResult',
     'ChatThread',
     'ChatThreadInfo',
-    'CommunicationUserCredential',
+    'CommunicationTokenCredential',
     'ChatThreadMember',
     'CommunicationUserIdentifier',
 ]

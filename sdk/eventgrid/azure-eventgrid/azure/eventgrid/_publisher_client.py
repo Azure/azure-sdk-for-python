@@ -24,7 +24,7 @@ from azure.core.pipeline.policies import (
 
 from ._models import CloudEvent, EventGridEvent, CustomEvent
 from ._helpers import (
-    _get_topic_hostname_only_fqdn,
+    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _eventgrid_data_typecheck
@@ -36,8 +36,7 @@ from ._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent 
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import AzureKeyCredential
-    from ._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
+    from azure.core.credentials import AzureKeyCredential, AzureSasCredential
     SendType = Union[
         CloudEvent,
         EventGridEvent,
@@ -60,17 +59,17 @@ ListEventType = Union[
 class EventGridPublisherClient(object):
     """EventGrid Python Publisher Client.
 
-    :param str topic_hostname: The topic endpoint to send the events to.
+    :param str endpoint: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which
      implements SAS key authentication or SAS token authentication.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or EventGridSharedAccessSignatureCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
     """
 
-    def __init__(self, topic_hostname, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
-        topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
+    def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, Union[AzureKeyCredential, AzureSasCredential], Any) -> None
+        endpoint = _get_endpoint_only_fqdn(endpoint)
 
-        self._topic_hostname = topic_hostname
+        self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs),
             **kwargs
@@ -78,7 +77,7 @@ class EventGridPublisherClient(object):
 
     @staticmethod
     def _policies(credential, **kwargs):
-        # type: (Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> List[Any]
+        # type: (Union[AzureKeyCredential, AzureSasCredential], Any) -> List[Any]
         auth_policy = _get_authentication_policy(credential)
         sdk_moniker = 'eventgrid/{}'.format(VERSION)
         policies = [
@@ -121,7 +120,7 @@ class EventGridPublisherClient(object):
                 pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
             self._client.publish_cloud_event_events(
-                self._topic_hostname,
+                self._endpoint,
                 cast(List[InternalCloudEvent], events),
                 **kwargs
                 )
@@ -129,9 +128,9 @@ class EventGridPublisherClient(object):
             kwargs.setdefault("content_type", "application/json; charset=utf-8")
             for event in events:
                 _eventgrid_data_typecheck(event)
-            self._client.publish_events(self._topic_hostname, cast(List[InternalEventGridEvent], events), **kwargs)
+            self._client.publish_events(self._endpoint, cast(List[InternalEventGridEvent], events), **kwargs)
         elif all(isinstance(e, CustomEvent) for e in events):
             serialized_events = [dict(e) for e in events] # type: ignore
-            self._client.publish_custom_event_events(self._topic_hostname, cast(List, serialized_events), **kwargs)
+            self._client.publish_custom_event_events(self._endpoint, cast(List, serialized_events), **kwargs)
         else:
             raise ValueError("Event schema is not correct.")
