@@ -142,11 +142,19 @@ def collect_tox_coverage_files(targeted_packages, package_name):
         generate_coverage_xml(package_name)
 
 
+def get_coverage_name():
+    files = [f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
+    cov_files = sum([1 for f in files if re.match("coverage*.xml", f) else 0])
+    return "coverage-{}.xml".format(cov_files)
+
+
 def generate_coverage_xml(package_name):
     coverage_path = os.path.join(root_dir, ".coverage")
     if os.path.exists(coverage_path):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"', "-o", "coverage-{}.xml".format(package_name)]
+        coverage_name = get_coverage_name()
+        print(coverage_name)
+        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"', "-o", "{}.xml".format(coverage_name)]
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_path))
