@@ -71,7 +71,7 @@ def generated_sentence_sentiment(generated_sentiment_confidence_score, index, ta
         offset=0,
         length=12,
         targets=targets,
-        assessmentss=assessments,
+        assessments=assessments,
     )
 
 @pytest.fixture
