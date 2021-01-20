@@ -27,7 +27,7 @@ signature = generate_shared_access_signature(endpoint, topic_key, expiration_dat
 credential = AzureSasCredential(signature)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send([
+client.send_events([
 	EventGridEvent(
 		event_type="Contoso.Items.ItemReceived",
 		data={

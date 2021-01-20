@@ -98,7 +98,7 @@ class EventGridPublisherClient(object):
         return policies
 
     @distributed_trace
-    def send(self, events, **kwargs):
+    def send_events(self, events, **kwargs):
         # type: (SendType, Any) -> None
         """Sends event data to topic hostname specified during client initialization.
 

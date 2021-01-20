@@ -14,7 +14,7 @@ import datetime as dt
 from devtools_testutils import AzureMgmtTestCase
 from msrest.serialization import UTC
 from azure.eventgrid import EventGridDeserializer, CloudEvent, EventGridEvent
-from azure.eventgrid.models import StorageBlobCreatedEventData
+from azure.eventgrid.systemevents import StorageBlobCreatedEventData
 from _mocks import (
     cloud_storage_dict,
     cloud_storage_string,
