@@ -9,6 +9,16 @@ steps:
     continueOnError: true
     condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
 
+  - pwsh: |
+      mv coverage.xml coverage-$(BuildTargetingString).xml
+    displayName: 'Rename coverage.xml file'
+    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+
+  - task: PublishPipelineArtifact@1
+    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+    inputs:
+      targetPath: $(System.DefaultWorkingDirectory)/coverage-*.xml
+
   # This task should be the new last step
   # Pausing this step for now
   # - task: PublishCodeCoverageResults@1
