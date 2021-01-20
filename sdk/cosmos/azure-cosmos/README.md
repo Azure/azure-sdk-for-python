@@ -354,7 +354,7 @@ database = client.get_database_client(database_name)
 db_offer = database.read_offer()
 print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.format(db_offer.properties['id'], database.id, db_offer.properties['content']['offerThroughput']))
 
-# Container with dedicated throughput only. Will return error "offer not find" for containers without dedicated throughput
+# Container with dedicated throughput only. Will return error "offer not found" for containers without dedicated throughput
 container_name = 'testContainer'
 container = database.get_container_client(container_name)
 container_offer = database.read_offer()
