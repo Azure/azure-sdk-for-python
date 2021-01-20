@@ -36,7 +36,7 @@ from ..pipeline import PipelineResponse
 
 _LOGGER = logging.getLogger(__name__)
 
-class _PagingMethodHandlerBase:
+class _PagingMethodHandlerBase(object):
     def __init__(
         self,
         paging_method,

@@ -86,7 +86,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
-        self._current_page= None  #type: Optional[Iterable[ReturnType]]
+        self._current_page = None  #type: Optional[Iterable[ReturnType]]
         self._did_a_call_already = False
         self._operation_config = kwargs
 
