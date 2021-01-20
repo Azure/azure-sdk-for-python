@@ -111,6 +111,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        self._opinion_mining_supported = False if kwargs.get("api_version") == "v3.0" else True
         self._deserialize = _get_deserialize()
 
     @distributed_trace_async
@@ -481,10 +482,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
-        :keyword bool disable_opinion_mining: Whether to disable the opinion mining feature, which
-            mines the opinions of a sentence and conduct more
+        :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
             granular analysis around the aspects of a product or service (also known as
-            aspect-based sentiment analysis). The value is False by default, in which case the returned
+            aspect-based sentiment analysis). The default value is True, in which case the returned
             :class:`~azure.ai.textanalytics.SentenceSentiment` objects
             will have property `mined_opinions` containing the result of this analysis. Only available for
             API version v3.1-preview and up.
@@ -521,7 +521,16 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        disable_opinion_mining = kwargs.pop("disable_opinion_mining", False)
+        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+
+        if not self._opinion_mining_supported and show_opinion_mining is not None:
+            raise ValueError("'show_opinion_mining' is only available for API version v3.1-preview and up")
+
+        else :
+            if show_opinion_mining is None:
+                show_opinion_mining = True
+            kwargs.update({"opinion_mining": show_opinion_mining})
+
         if self._string_code_unit:
             kwargs.update({"string_index_type": self._string_code_unit})
 
@@ -530,16 +539,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                opinion_mining=not disable_opinion_mining,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
-        except TypeError as error:
-            if "opinion_mining" in str(error):
-                raise ValueError(
-                    "'disable_opinion_mining' is only available for API version v3.1-preview and up"
-                )
-            raise error
         except HttpResponseError as error:
             process_http_response_error(error)
 
