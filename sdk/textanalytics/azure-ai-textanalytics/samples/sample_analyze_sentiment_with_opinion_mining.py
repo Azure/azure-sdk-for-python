@@ -33,7 +33,7 @@ OUTPUT:
 
     Since these reviews seem so mixed, and since I'm interested in finding exactly what it is about my hotel that should be improved, let's find the complaints users have about individual aspects of this hotel
 
-    In order to do that, I'm going to extract the target aspects having a negative sentiment. I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target.
+    In order to do that, I'm going to extract the target of a negative sentiment. I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target.
 
     Let's now go through the aspects of our hotel people have complained about and see what users have specifically said
     Users have made 1 complaints about 'food', specifically saying that it's 'unacceptable'
