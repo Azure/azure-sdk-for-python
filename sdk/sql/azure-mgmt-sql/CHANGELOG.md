@@ -1,5 +1,16 @@
 # Release History
 
+## 0.26.0 (2021-01-18)
+
+**Features**
+
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_maintenance_configurations
+  - Model ManagedInstanceEditionCapability has a new parameter zone_redundant
+  - Model ManagedInstanceEditionCapability has a new parameter supported_storage_capabilities
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_maintenance_configurations
+  - Model ServiceObjectiveCapability has a new parameter supported_maintenance_configurations
+  - Added operation group ManagedDatabaseRestoreDetailsOperations
+
 ## 0.25.0 (2020-12-14)
 
 **Features**
