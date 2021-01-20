@@ -105,7 +105,7 @@ def combine_coverage_files(targeted_packages):
         logging.error("tox.ini is not found in path {}".format(root_dir))
 
 
-def collect_tox_coverage_files(targeted_packages):
+def collect_tox_coverage_files(targeted_packages, package_name):
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
 
     clean_coverage(coverage_dir)
@@ -139,14 +139,14 @@ def collect_tox_coverage_files(targeted_packages):
 
         shutil.move(source, dest)
         # Generate coverage XML
-        generate_coverage_xml()
+        generate_coverage_xml(package_name)
 
 
-def generate_coverage_xml():
+def generate_coverage_xml(package_name):
     coverage_path = os.path.join(root_dir, ".coverage")
     if os.path.exists(coverage_path):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"']
+        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"', "-o", "coverage-{}.xml".format(package_name)]
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_path))
@@ -399,6 +399,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         return_code = execute_tox_serial(tox_command_tuples)
 
     if not parsed_args.disablecov:
-        collect_tox_coverage_files(targeted_packages)
+        print(parsed_args.package_name)
+        collect_tox_coverage_files(targeted_packages, parsed_args.package_name)
 
     sys.exit(return_code)

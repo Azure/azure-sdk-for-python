@@ -9,10 +9,10 @@ steps:
     continueOnError: true
     condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
 
-  - pwsh: |
-      Move-Item coverage.xml coverage-$(BuildTargetingString).xml; Get-ChildItem
-    displayName: 'Rename coverage.xml file'
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+  # - pwsh: |
+  #     Move-Item coverage.xml coverage-$(BuildTargetingString).xml; Get-ChildItem
+  #   displayName: 'Rename coverage.xml file'
+  #   condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
 
   - task: PublishPipelineArtifact@1
     condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})

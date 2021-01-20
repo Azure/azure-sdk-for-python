@@ -50,6 +50,7 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="${{ parameters.ToxTestEnv }}"
         --injected-packages="${{ parameters.InjectedPackages }}"
+        --package-name="{{ parameters.BuildTargetingString }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
 

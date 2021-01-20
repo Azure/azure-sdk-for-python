@@ -283,6 +283,11 @@ if __name__ == "__main__":
         choices=['Build', "Docs", "Regression", "Omit_management"]
     )
 
+    parser.add_argument(
+        "--package-name",
+        dest="package_name",
+        help="Name of the azure package installable."
+    )
 
     args = parser.parse_args()
 

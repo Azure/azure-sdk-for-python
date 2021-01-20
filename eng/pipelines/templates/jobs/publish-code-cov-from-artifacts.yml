@@ -16,21 +16,21 @@ steps:
   - pwsh: 'List all XML files'
     Get-ChildItem $(Pipeline.Workspace)
 
-  - task: PythonScript@0
-    displayName: 'Run Tests'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/combine_cov_xmls.py'
-      arguments: >-
-        --coverage-directory=$(Pipeline.Workspace)
-      #   "${{ parameters.BuildTargetingString }}"
-      #   ${{ parameters.AdditionalTestArgs }}
-      #   ${{ parameters.CoverageArg }}
-      #   --mark_arg="${{ parameters.TestMarkArgument }}"
-      #   --service="${{ parameters.ServiceDirectory }}"
-      #   --toxenv="${{ parameters.ToxTestEnv }}"
-      #   --injected-packages="${{ parameters.InjectedPackages }}"
-      #   ${{ parameters.ToxEnvParallel }}
-    env: ${{ parameters.EnvVars }}
+  # - task: PythonScript@0
+  #   displayName: 'Run Tests'
+  #   inputs:
+  #     scriptPath: 'scripts/devops_tasks/combine_cov_xmls.py'
+  #     arguments: >-
+  #       --coverage-directory=$(Pipeline.Workspace)
+  #     #   "${{ parameters.BuildTargetingString }}"
+  #     #   ${{ parameters.AdditionalTestArgs }}
+  #     #   ${{ parameters.CoverageArg }}
+  #     #   --mark_arg="${{ parameters.TestMarkArgument }}"
+  #     #   --service="${{ parameters.ServiceDirectory }}"
+  #     #   --toxenv="${{ parameters.ToxTestEnv }}"
+  #     #   --injected-packages="${{ parameters.InjectedPackages }}"
+  #     #   ${{ parameters.ToxEnvParallel }}
+  #   env: ${{ parameters.EnvVars }}
 
 
   # - job: 'Combine'
