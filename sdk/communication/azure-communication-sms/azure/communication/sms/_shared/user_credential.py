@@ -11,7 +11,7 @@ from typing import ( # pylint: disable=unused-import
 )
 import six
 from msrest.serialization import TZ_UTC
-from .utils import create_access_token, get_authentication_policy
+from .utils import create_access_token
 
 class CommunicationUserCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
