@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-synapse/0.1.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://xysynapsetest.dev.azuresynapse.net/monitoring/workloadTypes/sql/querystring?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"query":"select * from( SELECT COUNT(*) OVER () AS total_count, r.request_id,r.status,
+        r.submit_time, r.command, r.end_time, r.start_time, r.importance, r.classifier_name,
+        r.group_name, r.total_elapsed_time, s.login_name, s.session_id, Row_number()
+        over (  ORDER BY r.submit_time desc) as rownum FROM sys.dm_pdw_exec_requests
+        r INNER JOIN sys.dm_pdw_exec_sessions s ON r.session_Id = s.session_Id where  s.session_id
+        not in (select distinct session_id from sys.dm_pdw_exec_requests  where command
+        like''%@@Azure.Synapse.Monitoring.SQLQuerylist%''))tbl where rownum between  0
+        and 100-- @@Azure.Synapse.Monitoring.SQLQuerylist"}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Wed, 20 Jan 2021 18:42:41 GMT
+      server: Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://xysynapsetest.dev.azuresynapse.net/monitoring/workloadTypes/sql/querystring?api-version=2019-11-01-preview
+version: 1

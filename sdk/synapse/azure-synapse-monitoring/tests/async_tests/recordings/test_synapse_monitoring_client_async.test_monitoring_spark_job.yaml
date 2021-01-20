@@ -1,0 +1,143 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-synapse/0.1.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://xysynapsetest.dev.azuresynapse.net/monitoring/workloadTypes/spark/Applications?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"nJobs":54,"sparkJobs":[{"state":"Stopped","name":"spark-session-38787","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1611015639575_0006","livyId":"91","timing":["Ended","41h
+        10m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-19T01:26:15+00:00","endTime":"2021-01-19T01:32:19+00:00","queuedDuration":"2s","runningDuration":"6m
+        2s","totalDuration":"6m 4s","isJobTimedOut":"false"},{"state":"Stopped","name":"spark-session-63847","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1611015639575_0005","livyId":"90","timing":["Ended","41h
+        29m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-19T01:06:46+00:00","endTime":"2021-01-19T01:12:49+00:00","queuedDuration":"3s","runningDuration":"6m
+        0s","totalDuration":"6m 3s","isJobTimedOut":"false"},{"state":"Stopped","name":"spark-session-68158","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1611015639575_0004","livyId":"89","timing":["Ended","41h
+        36m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-19T00:56:16+00:00","endTime":"2021-01-19T01:06:24+00:00","queuedDuration":"2s","runningDuration":"10m
+        6s","totalDuration":"10m 8s","isJobTimedOut":"false"},{"state":"Stopped (session
+        timed out)","name":"spark-session-51573","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1611015639575_0003","livyId":"88","timing":["Ended","41h
+        37m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-19T00:47:40+00:00","endTime":"2021-01-19T01:04:44+00:00","queuedDuration":"2s","runningDuration":"17m
+        2s","totalDuration":"17m 4s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"spark-session-96228","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1611015639575_0002","livyId":"87","timing":["Ended","41h
+        59m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-19T00:31:54+00:00","endTime":"2021-01-19T00:42:46+00:00","queuedDuration":"2s","runningDuration":"10m
+        50s","totalDuration":"10m 52s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"spark-session-76535","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1611015639575_0001","livyId":"86","timing":["Ended","42h
+        0m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-19T00:19:05+00:00","endTime":"2021-01-19T00:41:47+00:00","queuedDuration":"2s","runningDuration":"22m
+        40s","totalDuration":"22m 42s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"spark-session-38731","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610923572244_0003","livyId":"85","timing":["Ended","67h
+        43m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-17T22:48:49+00:00","endTime":"2021-01-17T22:59:20+00:00","queuedDuration":"2s","runningDuration":"10m
+        29s","totalDuration":"10m 31s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"spark-session-97845","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610923572244_0002","livyId":"84","timing":["Ended","67h
+        45m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-17T22:45:58+00:00","endTime":"2021-01-17T22:57:20+00:00","queuedDuration":"2s","runningDuration":"11m
+        20s","totalDuration":"11m 22s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"spark-session-74167","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610923572244_0001","livyId":"83","timing":["Ended","67h
+        45m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-17T22:44:45+00:00","endTime":"2021-01-17T22:57:21+00:00","queuedDuration":"2s","runningDuration":"12m
+        34s","totalDuration":"12m 36s","isJobTimedOut":"true"},{"state":"Succeeded","name":"057498102a","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610697024301_0002","livyId":"82","timing":["Ended","130h
+        49m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-15T07:52:09+00:00","endTime":"2021-01-15T07:52:54+00:00","queuedDuration":"2s","runningDuration":"43s","totalDuration":"45s","isJobTimedOut":""},{"state":"Succeeded","name":"a8e701433c","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610697024301_0001","livyId":"81","timing":["Ended","130h
+        51m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-15T07:48:56+00:00","endTime":"2021-01-15T07:51:40+00:00","queuedDuration":"3s","runningDuration":"2m
+        41s","totalDuration":"2m 44s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample1_submit","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610674139905_0001","livyId":"80","timing":["Ended","137h
+        12m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-15T01:27:54+00:00","endTime":"2021-01-15T01:30:29+00:00","queuedDuration":"2s","runningDuration":"2m
+        33s","totalDuration":"2m 35s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample1_submit","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610668072319_0006","livyId":"79","timing":["Ended","138h
+        35m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-15T00:06:56+00:00","endTime":"2021-01-15T00:07:38+00:00","queuedDuration":"2s","runningDuration":"40s","totalDuration":"42s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample1_submit","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610668072319_0005","livyId":"78","timing":["Ended","138h
+        47m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-14T23:54:49+00:00","endTime":"2021-01-14T23:55:36+00:00","queuedDuration":"3s","runningDuration":"44s","totalDuration":"47s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample1_submit","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610668072319_0004","livyId":"77","timing":["Ended","138h
+        48m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-14T23:53:49+00:00","endTime":"2021-01-14T23:54:40+00:00","queuedDuration":"2s","runningDuration":"49s","totalDuration":"51s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample1_submit","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610668072319_0003","livyId":"76","timing":["Ended","138h
+        48m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-14T23:53:19+00:00","endTime":"2021-01-14T23:54:02+00:00","queuedDuration":"2s","runningDuration":"41s","totalDuration":"43s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample1_submit","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610668072319_0002","livyId":"75","timing":["Ended","138h
+        52m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-14T23:48:08+00:00","endTime":"2021-01-14T23:49:50+00:00","queuedDuration":"2s","runningDuration":"1m
+        40s","totalDuration":"1m 42s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample1_submit","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610668072319_0001","livyId":"74","timing":["Ended","138h
+        53m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-14T23:46:20+00:00","endTime":"2021-01-14T23:49:29+00:00","queuedDuration":"2s","runningDuration":"3m
+        7s","totalDuration":"3m 9s","isJobTimedOut":""},{"state":"Stopped (session
+        timed out)","name":"9a5eed45cc","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610659509840_0005","livyId":"73","timing":["Ended","140h
+        53m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-14T21:39:01+00:00","endTime":"2021-01-14T21:49:15+00:00","queuedDuration":"2s","runningDuration":"10m
+        12s","totalDuration":"10m 14s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"473bd93103","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610659509840_0004","livyId":"72","timing":["Ended","140h
+        55m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-14T21:36:52+00:00","endTime":"2021-01-14T21:47:16+00:00","queuedDuration":"3s","runningDuration":"10m
+        21s","totalDuration":"10m 24s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"c04b81a6be","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610659509840_0003","livyId":"71","timing":["Ended","140h
+        55m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-14T21:27:09+00:00","endTime":"2021-01-14T21:47:18+00:00","queuedDuration":"2s","runningDuration":"20m
+        7s","totalDuration":"20m 9s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"6f4679b337","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610659509840_0002","livyId":"70","timing":["Ended","141h
+        5m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-14T21:26:56+00:00","endTime":"2021-01-14T21:37:13+00:00","queuedDuration":"2s","runningDuration":"10m
+        15s","totalDuration":"10m 17s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"7ea1a7ff70","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610659509840_0001","livyId":"69","timing":["Ended","141h
+        6m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-14T21:23:42+00:00","endTime":"2021-01-14T21:36:17+00:00","queuedDuration":"2s","runningDuration":"12m
+        33s","totalDuration":"12m 35s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"4b1c36bfd8","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610653771487_0001","livyId":"68","timing":["Ended","142h
+        42m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-14T19:49:15+00:00","endTime":"2021-01-14T20:00:35+00:00","queuedDuration":"2s","runningDuration":"11m
+        18s","totalDuration":"11m 20s","isJobTimedOut":"true"},{"state":"Stopped (session
+        timed out)","name":"61efb0e7a7","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610653771487_0002","livyId":"67","timing":["Ended","142h
+        42m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-14T19:48:03+00:00","endTime":"2021-01-14T20:00:36+00:00","queuedDuration":"2s","runningDuration":"12m
+        31s","totalDuration":"12m 33s","isJobTimedOut":"true"},{"state":"Stopped","name":"92c69b8f8d","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"66","timing":["Ended","169h
+        7m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-13T17:34:54+00:00","endTime":"2021-01-13T17:34:55+00:00","queuedDuration":"169h
+        7m","runningDuration":"-169h -7m","totalDuration":"1s","isJobTimedOut":"false"},{"state":"Stopped","name":"ed48657345","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"65","timing":["Ended","169h
+        8m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-13T17:34:40+00:00","endTime":"2021-01-13T17:34:40+00:00","queuedDuration":"169h
+        8m","runningDuration":"-169h -8m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Stopped","name":"6f7e887d9a","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"64","timing":["Ended","169h
+        8m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Spark session","submitTime":"2021-01-13T17:34:30+00:00","endTime":"2021-01-13T17:34:30+00:00","queuedDuration":"169h
+        8m","runningDuration":"-169h -8m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Cancelled","name":"9aa1f3738b","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"63","timing":["Ended","179h
+        48m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-13T06:54:20+00:00","endTime":"2021-01-13T06:54:20+00:00","queuedDuration":"179h
+        48m","runningDuration":"-179h -48m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Cancelled","name":"6d984d0699","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"62","timing":["Ended","180h
+        35m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-13T06:07:20+00:00","endTime":"2021-01-13T06:07:20+00:00","queuedDuration":"180h
+        35m","runningDuration":"-180h -35m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Cancelled","name":"spark-job-6","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"61","timing":["Ended","184h
+        39m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-13T02:03:09+00:00","endTime":"2021-01-13T02:03:09+00:00","queuedDuration":"184h
+        39m","runningDuration":"-184h -39m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Cancelled","name":"spark-job-60","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"60","timing":["Ended","184h
+        42m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-13T02:00:30+00:00","endTime":"2021-01-13T02:00:30+00:00","queuedDuration":"184h
+        42m","runningDuration":"-184h -42m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Cancelled","name":"spark-job-340","submitter":"jianghlu@microsoft.com","compute":"jianghaospool","sparkPoolName":"jianghaospool","sparkApplicationId":null,"livyId":"4","timing":["Ended","184h
+        45m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-13T01:57:31+00:00","endTime":"2021-01-13T01:57:31+00:00","queuedDuration":"184h
+        45m","runningDuration":"-184h -45m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Succeeded","name":"spark-job-660","submitter":"jianghlu@microsoft.com","compute":"jianghaospool","sparkPoolName":"jianghaospool","sparkApplicationId":"application_1610502789704_0002","livyId":"3","timing":["Ended","184h
+        44m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-13T01:57:02+00:00","endTime":"2021-01-13T01:57:44+00:00","queuedDuration":"2s","runningDuration":"40s","totalDuration":"42s","isJobTimedOut":""},{"state":"Succeeded","name":"spark-job-334","submitter":"jianghlu@microsoft.com","compute":"jianghaospool","sparkPoolName":"jianghaospool","sparkApplicationId":"application_1610502789704_0001","livyId":"2","timing":["Ended","184h
+        47m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-13T01:51:41+00:00","endTime":"2021-01-13T01:54:43+00:00","queuedDuration":"2s","runningDuration":"3m
+        0s","totalDuration":"3m 2s","isJobTimedOut":""},{"state":"Succeeded","name":"jianghao-sample","submitter":"jianghlu@microsoft.com","compute":"jianghaospool","sparkPoolName":"jianghaospool","sparkApplicationId":"application_1610392462746_0001","livyId":"1","timing":["Ended","215h
+        27m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-11T19:12:54+00:00","endTime":"2021-01-11T19:15:29+00:00","queuedDuration":"3s","runningDuration":"2m
+        32s","totalDuration":"2m 35s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample-Scala_submit","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610345716295_0002","livyId":"59","timing":["Ended","228h
+        25m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-11T06:15:53+00:00","endTime":"2021-01-11T06:16:59+00:00","queuedDuration":"2s","runningDuration":"1m
+        4s","totalDuration":"1m 6s","isJobTimedOut":""},{"state":"Succeeded","name":"jianghao-sample","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1610345716295_0001","livyId":"58","timing":["Ended","228h
+        26m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-11T06:13:48+00:00","endTime":"2021-01-11T06:16:33+00:00","queuedDuration":"0s","runningDuration":"2m
+        45s","totalDuration":"2m 45s","isJobTimedOut":""},{"state":"Succeeded","name":"SparkJobDefinition_sample-Scala_submit","submitter":"jianghlu@microsoft.com","compute":"jianghaospool","sparkPoolName":"jianghaospool","sparkApplicationId":"application_1610345501539_0001","livyId":"0","timing":["Ended","228h
+        29m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-11T06:10:38+00:00","endTime":"2021-01-11T06:12:46+00:00","queuedDuration":"3s","runningDuration":"2m
+        5s","totalDuration":"2m 8s","isJobTimedOut":""},{"state":"Failed","name":"SparkJobDefinition_sample-Scala_submit","submitter":"jianghlu@microsoft.com","compute":"HamonsSpark","sparkPoolName":"HamonsSpark","sparkApplicationId":null,"livyId":"0","timing":["Ended","228h
+        33m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-11T06:02:27+00:00","endTime":"2021-01-11T06:08:46+00:00","queuedDuration":"1s","runningDuration":"6m
+        18s","totalDuration":"6m 19s","isJobTimedOut":""},{"state":"Failed","name":"jianghao-sample","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"57","timing":["Ended","228h
+        52m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-11T05:45:31+00:00","endTime":"2021-01-11T05:50:37+00:00","queuedDuration":"2s","runningDuration":"5m
+        4s","totalDuration":"5m 6s","isJobTimedOut":""},{"state":"Failed","name":"SparkJobDefinition_Spark
+        job definition 1_submit","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"56","timing":["Ended","228h
+        57m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-11T05:38:09+00:00","endTime":"2021-01-11T05:45:00+00:00","queuedDuration":"1s","runningDuration":"6m
+        50s","totalDuration":"6m 51s","isJobTimedOut":""},{"state":"Failed","name":"SparkJobDefinition_Spark
+        job definition 1_submit","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"55","timing":["Ended","280h
+        44m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-09T01:51:23+00:00","endTime":"2021-01-09T01:57:51+00:00","queuedDuration":"2s","runningDuration":"6m
+        26s","totalDuration":"6m 28s","isJobTimedOut":""},{"state":"Failed","name":"SparkJobDefinition_Spark
+        job definition 1_submit","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"54","timing":["Ended","287h
+        9m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-08T19:26:40+00:00","endTime":"2021-01-08T19:33:34+00:00","queuedDuration":"2s","runningDuration":"6m
+        52s","totalDuration":"6m 54s","isJobTimedOut":""},{"state":"Cancelled","name":"jianghao-sample","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"53","timing":["Ended","287h
+        16m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-08T19:26:01+00:00","endTime":"2021-01-08T19:26:01+00:00","queuedDuration":"287h
+        16m","runningDuration":"-287h -16m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Failed","name":"SparkJobDefinition_Spark
+        job definition 1_submit","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"52","timing":["Ended","298h
+        41m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-08T07:56:00+00:00","endTime":"2021-01-08T08:01:06+00:00","queuedDuration":"2s","runningDuration":"5m
+        4s","totalDuration":"5m 6s","isJobTimedOut":""},{"state":"Failed","name":"jianghao-sample","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"51","timing":["Ended","298h
+        44m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-08T07:53:13+00:00","endTime":"2021-01-08T07:58:20+00:00","queuedDuration":"2s","runningDuration":"5m
+        5s","totalDuration":"5m 7s","isJobTimedOut":""},{"state":"Failed","name":"sample1","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"50","timing":["Ended","298h
+        52m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-08T07:45:04+00:00","endTime":"2021-01-08T07:50:28+00:00","queuedDuration":"2s","runningDuration":"5m
+        22s","totalDuration":"5m 24s","isJobTimedOut":""},{"state":"Failed","name":"sample1","submitter":"jianghlu@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"49","timing":["Ended","298h
+        52m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-08T07:43:30+00:00","endTime":"2021-01-08T07:50:28+00:00","queuedDuration":"2s","runningDuration":"6m
+        56s","totalDuration":"6m 58s","isJobTimedOut":""},{"state":"Failed","name":"sample1","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"48","timing":["Ended","298h
+        54m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-08T07:43:10+00:00","endTime":"2021-01-08T07:48:36+00:00","queuedDuration":"2s","runningDuration":"5m
+        24s","totalDuration":"5m 26s","isJobTimedOut":""},{"state":"Failed","name":"sample1","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"47","timing":["Ended","298h
+        54m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-08T07:41:44+00:00","endTime":"2021-01-08T07:48:35+00:00","queuedDuration":"2s","runningDuration":"6m
+        49s","totalDuration":"6m 51s","isJobTimedOut":""},{"state":"Cancelled","name":"BatchName","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"46","timing":["Ended","335h
+        9m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-06T19:32:56+00:00","endTime":"2021-01-06T19:32:56+00:00","queuedDuration":"335h
+        9m","runningDuration":"-335h -9m","totalDuration":"0s","isJobTimedOut":"false"},{"state":"Failed","name":"BatchName","submitter":"30511c9d-ba1a-4c7b-b422-5b543da11b3f","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":null,"livyId":"45","timing":["Ended","335h
+        3m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2021-01-06T19:32:43+00:00","endTime":"2021-01-06T19:39:31+00:00","queuedDuration":"2s","runningDuration":"6m
+        46s","totalDuration":"6m 48s","isJobTimedOut":""},{"state":"Failed","name":"SparkJobDefinition_sample1_submit","submitter":"xiangyan@microsoft.com","compute":"testsparkpool","sparkPoolName":"testsparkpool","sparkApplicationId":"application_1605727387298_0001","livyId":"0","timing":["Ended","1511h
+        18m"],"sparkJobDefinition":null,"pipeline":null,"jobType":"Batch job","submitTime":"2020-11-18T19:21:36+00:00","endTime":"2020-11-18T19:24:30+00:00","queuedDuration":"1s","runningDuration":"2m
+        53s","totalDuration":"2m 54s","isJobTimedOut":""}]}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Wed, 20 Jan 2021 18:42:41 GMT
+      server: Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://xysynapsetest.dev.azuresynapse.net/monitoring/workloadTypes/spark/Applications?api-version=2019-11-01-preview
+version: 1
