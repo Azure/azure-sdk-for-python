@@ -48,7 +48,8 @@ from azure.communication.chat import ChatClient, CommunicationTokenCredential
 # Your unique Azure Communication service endpoint
 endpoint = "https://<RESOURCE_NAME>.communcationservices.azure.com"
 token = "<token>"
-chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
+refresh_options = CommunicationTokenRefreshOptions(token)
+chat_client = ChatClient(endpoint, CommunicationTokenCredential(refresh_options))
 ```
 
 ## Create Chat Thread Client

@@ -17,8 +17,8 @@ class CommunicationTokenRefreshOptions(object):
     :raises: TypeError
     """
 
-    def __init__(self, # type: str
-        token,
+    def __init__(self,
+        token, # type: str
         token_refresher=None
     ):
         # type: (str) -> None
