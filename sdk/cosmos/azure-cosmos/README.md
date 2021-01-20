@@ -334,6 +334,33 @@ properties = database.read()
 print(json.dumps(properties))
 ```
 
+### Get database and container throughputs
+
+Get and display the throughput values of a database and of a container with dedicated throughput:
+
+```Python
+from azure.cosmos import CosmosClient
+import os
+import json
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+
+# Database
+database_name = 'testDatabase'
+database = client.get_database_client(database_name)
+db_offer = database.read_offer()
+print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.format(db_offer.properties['id'], database.id, db_offer.properties['content']['offerThroughput']))
+
+# Container with dedicated throughput only. Will return error "offer not find" for containers without dedicated throughput
+container_name = 'testContainer'
+container = database.get_container_client(container_name)
+container_offer = database.read_offer()
+print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput']))
+```
+
+
 ### Modify container properties
 
 Certain properties of an existing container can be modified. This example sets the default time to live (TTL) for items in the container to 10 seconds:
