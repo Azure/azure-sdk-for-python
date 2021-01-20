@@ -10,10 +10,11 @@ steps:
     condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
 
   # This task should be the new last step
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage to DevOps'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+  # Pausing this step for now
+  # - task: PublishCodeCoverageResults@1
+  #   displayName: 'Publish Code Coverage to DevOps'
+  #   continueOnError: true
+  #   condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+  #   inputs:
+  #     codeCoverageTool: Cobertura
+  #     summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
