@@ -10,10 +10,12 @@ from . import AzureMgmtPreparer
 from .resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
+
 class PowerShellPreparer(AzureMgmtPreparer):
     def __init__(
-        self, directory,
-        name_prefix='',
+        self,
+        directory,
+        name_prefix="",
         disable_recording=True,
         client_kwargs=None,
         random_name_enabled=False,
@@ -22,15 +24,18 @@ class PowerShellPreparer(AzureMgmtPreparer):
         **kwargs
     ):
         super(PowerShellPreparer, self).__init__(
-            name_prefix, 24, disable_recording=disable_recording,
-            client_kwargs=client_kwargs, random_name_enabled=random_name_enabled
+            name_prefix,
+            24,
+            disable_recording=disable_recording,
+            client_kwargs=client_kwargs,
+            random_name_enabled=random_name_enabled,
         )
 
         self.directory = directory
         self.fake_values = {}
         self.real_values = {}
         self._set_secrets(**kwargs)
-        self._backup_preparers=preparers
+        self._backup_preparers = preparers
 
     def _set_secrets(self, **kwargs):
         keys = kwargs.keys()
@@ -46,9 +51,15 @@ class PowerShellPreparer(AzureMgmtPreparer):
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
-            os.environ["AZURE_TENANT_ID"] = os.environ["{}_TENANT_ID".format(self.directory.upper())]
-            os.environ["AZURE_CLIENT_ID"] = os.environ["{}_CLIENT_ID".format(self.directory.upper())]
-            os.environ["AZURE_CLIENT_SECRET"] = os.environ["{}_CLIENT_SECRET".format(self.directory.upper())]
+            os.environ["AZURE_TENANT_ID"] = os.environ[
+                "{}_TENANT_ID".format(self.directory.upper())
+            ]
+            os.environ["AZURE_CLIENT_ID"] = os.environ[
+                "{}_CLIENT_ID".format(self.directory.upper())
+            ]
+            os.environ["AZURE_CLIENT_SECRET"] = os.environ[
+                "{}_CLIENT_SECRET".format(self.directory.upper())
+            ]
 
     def create_resource(self, name, **kwargs):
 
@@ -61,8 +72,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
                     if scrubbed_value:
                         self.real_values[key.lower()] = os.environ[key.upper()]
                         self.test_class_instance.scrubber.register_name_pair(
-                            self.real_values[key.lower()],
-                            scrubbed_value
+                            self.real_values[key.lower()], scrubbed_value
                         )
                     else:
                         template = 'To pass a live ID you must provide the scrubbed value for recordings to \
@@ -76,11 +86,15 @@ class PowerShellPreparer(AzureMgmtPreparer):
                 self.real_values = {}
                 create_kwargs = {}
                 for preparer in self._backup_preparers:
-                    resource_name, vals = preparer._prepare_create_resource(self.test_class_instance, **create_kwargs)
+                    resource_name, vals = preparer._prepare_create_resource(
+                        self.test_class_instance, **create_kwargs
+                    )
                     # vals = preparer.create_resource(name, **create_kwargs)
                     self.real_values.update(vals)
-                    if 'resource_group' in self.real_values.keys():
-                        create_kwargs['resource_group'] = self.real_values['resource_group']
+                    if "resource_group" in self.real_values.keys():
+                        create_kwargs["resource_group"] = self.real_values[
+                            "resource_group"
+                        ]
 
             return self.real_values
 
