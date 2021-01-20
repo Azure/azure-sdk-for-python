@@ -208,6 +208,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.  
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'. 
+            For additional information see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -229,16 +232,22 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", entities_result),
                 **kwargs
             )
+        except TypeError as error:
+            if "string_index_type" in str(error):
+                raise ValueError(
+                    "'string_index_type' is only available for API version v3.1-preview and up"
+                )
+            raise error
         except HttpResponseError as error:
             process_http_response_error(error)
 
@@ -280,6 +289,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.  
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'. 
+            For additional information see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -302,14 +314,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
+                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
@@ -317,6 +329,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
                 raise ValueError(
                     "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up"
+                )
+            raise error
+        except TypeError as error:
+            if "string_index_type" in str(error):
+                raise ValueError(
+                    "'string_index_type' is only available for API version v3.1-preview and up"
                 )
             raise error
         except HttpResponseError as error:
