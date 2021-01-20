@@ -119,6 +119,7 @@ def collect_tox_coverage_files(targeted_packages, package_name):
     for package_dir in [package for package in targeted_packages]:
         coverage_file = os.path.join(package_dir, ".coverage")
         if os.path.isfile(coverage_file):
+            # Combine all of these .coverage files after final tests have run
             destination_file = os.path.join(
                 root_coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
             )
@@ -143,9 +144,9 @@ def collect_tox_coverage_files(targeted_packages, package_name):
 
 
 def get_coverage_name():
-    files = [f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
-    cov_files = sum([1 if re.match("coverage*.xml", f) else 0 for f in files])
-    return "coverage-{}.xml".format(cov_files)
+    files = [f for f in os.listdir() if os.path.isfile(f)]
+    num_cov_files = sum([1 for f in files if re.match("^coverage*.xml", f)])
+    return "coverage-{}.xml".format(num_cov_files)
 
 
 def generate_coverage_xml(package_name):
