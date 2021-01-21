@@ -1,4 +1,4 @@
-parameters: 
+parameters:
   RunCoverage: false
 
 steps:
@@ -8,6 +8,14 @@ steps:
     displayName: 'Publish Code Cov'
     continueOnError: true
     condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish .coverage files'
+    continueOnError: true
+    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+    inputs:
+      # codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/_coverage/.coverage*'
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
