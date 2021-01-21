@@ -132,7 +132,7 @@ def collect_tox_coverage_files(targeted_packages):
         cov_cmd_array.extend(coverage_files)
 
         # merge them with coverage combine and copy to root
-        run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/"))
+        # run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/")) # Don't run a coverage combine
 
         # Don't move to root and generate XML, this will be done at a later step.
         # source = os.path.join(coverage_dir, "./.coverage")
