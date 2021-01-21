@@ -1,7 +1,7 @@
 from .models import (
     CommunicationIdentifierKind,
     CommunicationIdentifierModel,
-    CommunicationUserIdentifier, 
+    CommunicationUserIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
     UnknownIdentifier
@@ -9,7 +9,6 @@ from .models import (
 
 class CommunicationUserIdentifierSerializer(object):
 
-    
     @classmethod
     def serialize(cls, communicationIdentifier):
         """ Serialize the Communication identifier into CommunicationIdentifierModel
@@ -18,7 +17,7 @@ class CommunicationUserIdentifierSerializer(object):
         :type identifier: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
         :return: CommunicationIdentifierModel
         :rtype: ~azure.communication.chat.CommunicationIdentifierModel
-        """ 
+        """
         if isinstance(communicationIdentifier, CommunicationUserIdentifier):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.CommunicationUser,
@@ -34,12 +33,12 @@ class CommunicationUserIdentifierSerializer(object):
                 kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
                 id=communicationIdentifier.user_id
             )
-        
+
         return CommunicationIdentifierModel(
             kind=CommunicationIdentifierKind.Unknown,
             id=communicationIdentifier.identifier
         )
-    
+
     @classmethod
     def deserialize(cls, identifierModel):
         """
@@ -74,5 +73,5 @@ class CommunicationUserIdentifierSerializer(object):
 
         if not id:
             raise ValueError("UnknownIdentifier must have a valid id")
-            
+
         return UnknownIdentifier(id)
