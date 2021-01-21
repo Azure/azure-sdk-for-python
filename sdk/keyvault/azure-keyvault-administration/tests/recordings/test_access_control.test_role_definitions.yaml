@@ -89,7 +89,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '45'
+      - '53'
     status:
       code: 201
       message: Created
@@ -183,7 +183,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '0'
+      - '1'
     status:
       code: 200
       message: OK
@@ -316,7 +316,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '1'
+      - '0'
     status:
       code: 200
       message: OK
