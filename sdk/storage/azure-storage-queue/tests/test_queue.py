@@ -10,6 +10,8 @@ from collections import namedtuple
 import unittest
 import pytest
 import sys
+
+from azure.core.credentials import AzureSasCredential
 from dateutil.tz import tzutc
 from datetime import (
     datetime,
@@ -559,20 +561,28 @@ class StorageQueueTest(StorageTestCase):
         )
 
         # Act
-        service = QueueServiceClient(
-            account_url=qsc.url,
-            credential=token,
-        )
-        new_queue_client = service.get_queue_client(queue_client.queue_name)
-        result = new_queue_client.peek_messages()
+        for credential in [token, AzureSasCredential(token)]:
+            service = QueueServiceClient(
+                account_url=qsc.url,
+                credential=credential,
+            )
+            new_queue_client = service.get_queue_client(queue_client.queue_name)
+            result = new_queue_client.peek_messages()
 
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertEqual(1, len(result))
-        message = result[0]
-        self.assertIsNotNone(message)
-        self.assertNotEqual('', message.id)
-        self.assertEqual(u'message1', message.content)
+            # Assert
+            self.assertIsNotNone(result)
+            self.assertEqual(1, len(result))
+            message = result[0]
+            self.assertIsNotNone(message)
+            self.assertNotEqual('', message.id)
+            self.assertEqual(u'message1', message.content)
+
+    @GlobalStorageAccountPreparer()
+    def test_account_sas_raises_if_sas_already_in_uri(self, resource_group, location, storage_account, storage_account_key):
+        with self.assertRaises(ValueError):
+            QueueServiceClient(
+                self.account_url(storage_account, "queue") + "?sig=foo",
+                credential=AzureSasCredential("?foo=bar"))
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

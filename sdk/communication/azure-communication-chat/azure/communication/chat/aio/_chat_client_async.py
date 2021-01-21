@@ -20,7 +20,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncItemPaged
 
 from ._chat_thread_client_async import ChatThreadClient
-from .._shared.user_credential_async import CommunicationUserCredential
+from .._shared.user_credential_async import CommunicationTokenCredential
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
     CreateChatThreadRequest,
@@ -42,7 +42,7 @@ class ChatClient(object):
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationUserCredential credential:
+    :param CommunicationTokenCredential credential:
         The credentials with which to authenticate.
 
     .. admonition:: Example:
@@ -57,7 +57,7 @@ class ChatClient(object):
 
     def __init__(
         self, endpoint: str,
-        credential: CommunicationUserCredential,
+        credential: CommunicationTokenCredential,
         **kwargs
     ) -> None:
         if not credential:

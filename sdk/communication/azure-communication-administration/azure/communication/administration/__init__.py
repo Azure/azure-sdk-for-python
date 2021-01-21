@@ -36,8 +36,8 @@ from ._phonenumber._generated.models import (
 )
 
 from ._shared.models import (
-    CommunicationUser,
-    PhoneNumber,
+    CommunicationUserIdentifier,
+    PhoneNumberIdentifier,
     UnknownIdentifier
 )
 
@@ -74,7 +74,7 @@ __all__ = [
     'UpdatePhoneNumberCapabilitiesResponse',
 
     # from _shared
-    'CommunicationUser',
-    'PhoneNumber',
+    'CommunicationUserIdentifier',
+    'PhoneNumberIdentifier',
     'UnknownIdentifier'
 ]
