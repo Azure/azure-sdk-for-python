@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.metricsadvisor import MetricsAdvisorClient, MetricsAdvisorKeyCredential
 from base_testcase import TestMetricsAdvisorClientBase
@@ -109,17 +110,9 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
     def test_credential_bad_input(self):
         credential = MetricsAdvisorKeyCredential(self.subscription_key, self.api_key)
 
-        try:
+        with pytest.raises(ValueError):
             credential.update()
-        except ValueError:
-            pass
-
-        try:
+        with pytest.raises(TypeError):
             credential.update(subscription_key=34)
-        except TypeError:
-            pass
-
-        try:
+        with pytest.raises(TypeError):
             credential.update(api_key=34)
-        except TypeError:
-            pass
