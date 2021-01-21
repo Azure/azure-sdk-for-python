@@ -14,7 +14,7 @@ steps:
     continueOnError: true
     condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
     inputs:
-      targetPath: '$(Build.SourcesDirectory)\_coverage'
+      targetPath: '$(Build.SourcesDirectory)/_coverage'
       artifactType: 'pipeline'
       # summaryFileLocation: '$(Build.SourcesDirectory)/_coverage/*'
 
