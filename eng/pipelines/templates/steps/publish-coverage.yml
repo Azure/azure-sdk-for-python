@@ -14,7 +14,10 @@ steps:
     continueOnError: true
     condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
     inputs:
-      summaryFileLocation: '$(Build.SourcesDirectory)/_coverage/*'
+      targetPath: '$(Pipeline.Workspace)'
+      artifactType: 'filepath'
+      fileSharePath: '$(Build.SourcesDirectory)\_coverage'
+      # summaryFileLocation: '$(Build.SourcesDirectory)/_coverage/*'
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
