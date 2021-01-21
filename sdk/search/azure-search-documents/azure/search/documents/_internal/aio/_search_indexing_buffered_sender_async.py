@@ -42,14 +42,13 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         tuning the behavior of the sender. The default value is 512.
     :keyword int max_retries_per_action: The number of times to retry a failed document. The default value is 3.
     :keyword callable on_new: If it is set, the client will call corresponding methods when there
-        is a new IndexAction added. This may be called from main thread or a worker thread.
+        is a new IndexAction added.
     :keyword callable on_progress: If it is set, the client will call corresponding methods when there
-        is a IndexAction succeeds. This may be called from main thread or a worker thread.
+        is a IndexAction succeeds.
     :keyword callable on_error: If it is set, the client will call corresponding methods when there
-        is a IndexAction fails. This may be called from main thread or a worker thread.
+        is a IndexAction fails.
     :keyword callable on_remove: If it is set, the client will call corresponding methods when there
-        is a IndexAction removed from the queue (succeeds or fails). This may be called from main
-        thread or a worker thread.
+        is a IndexAction removed from the queue (succeeds or fails).
     :keyword str api_version: The Search API version to use for requests.
     """
     # pylint: disable=too-many-instance-attributes
