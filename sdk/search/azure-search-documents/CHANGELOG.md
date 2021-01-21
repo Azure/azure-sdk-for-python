@@ -5,6 +5,8 @@
 **Breaking Changes**
 
 - `IndexDocumentsBatch` does not support `enqueue_action` any longer. `enqueue_actions` takes a single action too.
+- `max_retries` of `SearchIndexingBufferedSender` is renamed to `max_retries_per_action`
+- `SearchClient` does not support `get_search_indexing_buffered_sender`
 
 ## 11.1.0b4 (2020-11-10)
 

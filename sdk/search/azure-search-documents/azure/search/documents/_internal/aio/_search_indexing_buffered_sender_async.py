@@ -40,15 +40,16 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         to 86400s (1 day)
     :keyword int initial_batch_action_count: The initial number of actions to group into a batch when
         tuning the behavior of the sender. The default value is 512.
-    :keyword int max_retries: The number of times to retry a failed document. The default value is 3.
+    :keyword int max_retries_per_action: The number of times to retry a failed document. The default value is 3.
     :keyword callable on_new: If it is set, the client will call corresponding methods when there
-        is a new IndexAction added.
+        is a new IndexAction added. This may be called from main thread or a worker thread.
     :keyword callable on_progress: If it is set, the client will call corresponding methods when there
-        is a IndexAction succeeds.
+        is a IndexAction succeeds. This may be called from main thread or a worker thread.
     :keyword callable on_error: If it is set, the client will call corresponding methods when there
-        is a IndexAction fails.
+        is a IndexAction fails. This may be called from main thread or a worker thread.
     :keyword callable on_remove: If it is set, the client will call corresponding methods when there
-        is a IndexAction removed from the queue (succeeds or fails).
+        is a IndexAction removed from the queue (succeeds or fails). This may be called from main
+        thread or a worker thread.
     :keyword str api_version: The Search API version to use for requests.
     """
     # pylint: disable=too-many-instance-attributes
@@ -307,7 +308,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             # first time that fails
             self._retry_counter[key] = 1
             await self._index_documents_batch.enqueue_actions(action)
-        elif counter < self._max_retries - 1:
+        elif counter < self._max_retries_per_action - 1:
             # not reach retry limit yet
             self._retry_counter[key] = counter + 1
             await self._index_documents_batch.enqueue_actions(action)
