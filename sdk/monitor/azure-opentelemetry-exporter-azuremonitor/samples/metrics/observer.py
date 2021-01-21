@@ -2,14 +2,14 @@
 # Licensed under the MIT License.
 import psutil
 from opentelemetry import metrics
-from opentelemetry.sdk.metrics import MeterProvider, UpDownSumObserver
+from opentelemetry.sdk.metrics import MeterProvider
 
 from azure.opentelemetry.exporter.azuremonitor import AzureMonitorMetricsExporter
 
 metrics.set_meter_provider(MeterProvider())
 meter = metrics.get_meter(__name__)
 exporter = AzureMonitorMetricsExporter(
-    # connection_string="InstrumentationKey=<INSTRUMENTATION KEY HERE>"
+    connection_string="InstrumentationKey=<INSTRUMENTATION KEY HERE>"
 )
 metrics.get_meter_provider().start_pipeline(meter, exporter, 2)
 

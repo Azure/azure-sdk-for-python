@@ -39,9 +39,6 @@ class AzureMonitorMetricsExporter(BaseExporter, MetricsExporter):
     :param options: Exporter configuration options.
     :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
     """
-    def __init__(self, **options):
-        super().__init__(**options)
-        # self.add_telemetry_processor(standard_metrics_processor)
 
     def export(
         self, export_records: Sequence[ExportRecord]

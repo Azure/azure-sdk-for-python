@@ -8,7 +8,7 @@ from azure.opentelemetry.exporter.azuremonitor import AzureMonitorMetricsExporte
 metrics.set_meter_provider(MeterProvider())
 meter = metrics.get_meter(__name__)
 exporter = AzureMonitorMetricsExporter(
-    # connection_string="InstrumentationKey=<INSTRUMENTATION KEY HERE>"
+    connection_string="InstrumentationKey=<INSTRUMENTATION KEY HERE>"
 )
 metrics.get_meter_provider().start_pipeline(meter, exporter, 5)
 
