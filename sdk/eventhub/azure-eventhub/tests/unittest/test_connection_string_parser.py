@@ -30,7 +30,7 @@ class EventHubConnectionStringParserTests(AzureMgmtTestCase):
         assert parse_result.fully_qualified_namespace == 'eh-namespace.servicebus.windows.net'
         assert parse_result.shared_access_key_name == 'test-policy'
         assert parse_result.shared_access_key == 'THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
-        assert parse_result.event_hub_name == 'eventhub-name'
+        assert parse_result.eventhub_name == 'eventhub-name'
 
     def test_eh_conn_str_parse_sas_and_shared_key(self, **kwargs):
         conn_str = 'Endpoint=sb://eh-namespace.servicebus.windows.net/;SharedAccessKeyName=test-policy;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;SharedAccessSignature=THISISASASXXXXXXX='
