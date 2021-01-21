@@ -34,11 +34,9 @@ class EventGridDeserializer(object):
         try:
             cloud_event = CloudEvent._from_json(cloud_event, encode) # pylint: disable=protected-access
             deserialized_event = CloudEvent._from_generated(cloud_event) # pylint: disable=protected-access
-            CloudEvent._deserialize_data(deserialized_event, deserialized_event.type) # pylint: disable=protected-access
+            deserialized_event._deserialize_data(deserialized_event, deserialized_event.type) # pylint: disable=protected-access
             return deserialized_event
         except Exception as err:
-            _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. \
-                Event must be a string, dict, or bytes following the CloudEvent schema.')
             _LOGGER.error('Your event: %s', cloud_event)
             _LOGGER.error(err)
             raise ValueError('Error: cannot deserialize event. Event does not have a valid format. \
@@ -57,11 +55,9 @@ class EventGridDeserializer(object):
         try:
             eventgrid_event = EventGridEvent._from_json(eventgrid_event, encode) # pylint: disable=protected-access
             deserialized_event = EventGridEvent.deserialize(eventgrid_event)
-            EventGridEvent._deserialize_data(deserialized_event, deserialized_event.event_type) # pylint: disable=protected-access
+            deserialized_event._deserialize_data(deserialized_event, deserialized_event.event_type) # pylint: disable=protected-access
             return cast(EventGridEvent, deserialized_event)
         except Exception as err:
-            _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. \
-                Event must be a string, dict, or bytes following the CloudEvent schema.')
             _LOGGER.error('Your event: %s', eventgrid_event)
             _LOGGER.error(err)
             raise ValueError('Error: cannot deserialize event. Event does not have a valid format. \

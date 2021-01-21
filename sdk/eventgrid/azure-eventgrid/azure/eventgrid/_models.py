@@ -18,8 +18,13 @@ class EventMixin(object):
     """
     Mixin for the event models comprising of some helper methods.
     """
-    @staticmethod
-    def _deserialize_data(event, event_type):
+    def __init__(self):
+        """
+        Mixin for the event models
+        """
+        self._model = None
+
+    def _deserialize_data(self, event, event_type):
         """
         Sets the data of the desrialized event to strongly typed event object if event type exists in _event_mappings.
         Otherwise, sets it to None.
@@ -28,9 +33,9 @@ class EventMixin(object):
         """
         # if system event type defined, set event.data to system event object
         try:
-            event.data = (_event_mappings[event_type]).deserialize(event.data)
+            self._model = (_event_mappings[event_type]).deserialize(event.data)
         except KeyError: # else, if custom event, then event.data is dict and should be set to None
-            event.data = None
+            self._model = None
 
     @staticmethod
     def _from_json(event, encode):
@@ -45,6 +50,13 @@ class EventMixin(object):
         elif isinstance(event, six.string_types):
             event = json.loads(event)
         return event
+    
+    @property
+    def system_event_data(self):
+        """
+        Returns strongly typed EventGridEvent/CloudEvent object defined by the format of the properties.
+        """
+        return self._model
 
 
 class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes

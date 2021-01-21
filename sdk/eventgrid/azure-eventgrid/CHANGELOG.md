@@ -10,7 +10,11 @@
   - The system events now exist in the `azure.eventgrid.systemevents` namespace instead of `azure.eventgrid.models` namespace.
   - The `send` method in the `EventGridPubliserClient` is now replaced by the `send_events`.
   - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
+  - `data` in the events now return raw JSONs. For strongly typed model, `system_event_data` must be used.
   
+  **Features**
+  - Introduced `system_event_data` to consume data as strongly typed models.
+
   **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.
   - `EventGridPublisherClient` now appropriately throws a `ValueError` if an invalid credential is passed during initialization.

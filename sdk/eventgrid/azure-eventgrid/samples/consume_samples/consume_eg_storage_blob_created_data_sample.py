@@ -43,7 +43,14 @@ eg_storage_bytes = str(eg_storage_string).encode("utf-8")
 
 client = EventGridDeserializer()
 deserialized_dict_event = client.deserialize_eventgrid_events(eg_storage_dict)
-print(deserialized_dict_event)
+
+# to return raw json, we use the data param
+print(deserialized_dict_event.data)
+print(type(deserialized_dict_event.data)) # this is a dictionary
+
+# use system_event_data to get a strongly typed model
+print(deserialized_dict_event.system_event_data)
+print(type(deserialized_dict_event.system_event_data)) # this is a strongly typed model
 
 deserialized_str_event = client.deserialize_eventgrid_events(eg_storage_string)
 print(deserialized_str_event)
