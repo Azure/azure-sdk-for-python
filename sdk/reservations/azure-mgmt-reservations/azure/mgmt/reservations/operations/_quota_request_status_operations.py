@@ -24,7 +24,7 @@ class QuotaRequestStatusOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version. Constant value: "2019-07-19-preview".
+    :ivar api_version: API version. Constant value: "2020-10-25".
     """
 
     models = models
@@ -34,24 +34,24 @@ class QuotaRequestStatusOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-19-preview"
+        self.api_version = "2020-10-25"
 
         self.config = config
 
     def get(
             self, subscription_id, provider_id, location, id, custom_headers=None, raw=False, **operation_config):
-        """Gets the QuotaRequest details and status by the quota request Id for
-        the resources for the resource provider at a specific location. The
-        requestId is returned as response to the Put requests for
-        serviceLimits.
+        """For the specified Azure region (location), get the details and status
+        of the quota request by the quota request ID for the resources of the
+        resource provider. The PUT request for the quota (service limit)
+        returns a response with the requestId parameter.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
-        :param id: Quota Request id.
+        :param id: Quota Request ID.
         :type id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -108,14 +108,13 @@ class QuotaRequestStatusOperations(object):
 
     def list(
             self, subscription_id, provider_id, location, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
-        """For the specified location and Resource provider gets the current quota
-        requests under the subscription over the time period of one year ago
-        from now to one year back. oData filter can be used to select quota
-        requests.
+        """For the specified Azure region (location), subscription, and resource
+        provider, get the history of the quota requests for the past year. To
+        select specific quota requests, use the oData filter.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
@@ -127,8 +126,8 @@ class QuotaRequestStatusOperations(object):
         :type top: int
         :param skiptoken: Skiptoken is only used if a previous operation
          returned a partial result. If a previous response contains a nextLink
-         element, the value of the nextLink element will include a skiptoken
-         parameter that specifies a starting point to use for subsequent calls
+         element, the value of the nextLink element includes a skiptoken
+         parameter that specifies a starting point to use for subsequent calls.
         :type skiptoken: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

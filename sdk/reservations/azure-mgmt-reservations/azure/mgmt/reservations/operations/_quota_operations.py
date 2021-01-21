@@ -26,7 +26,7 @@ class QuotaOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version. Constant value: "2019-07-19-preview".
+    :ivar api_version: API version. Constant value: "2020-10-25".
     """
 
     models = models
@@ -36,18 +36,18 @@ class QuotaOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-19-preview"
+        self.api_version = "2020-10-25"
 
         self.config = config
 
     def get(
             self, subscription_id, provider_id, location, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the current service limits (quotas) and usage of a resource. The
-        response from Get API can be leveraged to submit quota update requests.
+        """Get the current quota (service limit) and usage of a resource. You can
+        use the response from the GET operation to submit quota update request.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
@@ -168,8 +168,8 @@ class QuotaOperations(object):
 
     def create_or_update(
             self, subscription_id, provider_id, location, resource_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update the service limits (quota) of a resource to requested
-        value.
+        """Create or update the quota (service limits) of a resource to the
+        requested value.
         Steps:
         1. Make the Get request to get the quota information for specific
         resource.
@@ -179,9 +179,9 @@ class QuotaOperations(object):
         The Create quota request may be constructed as follows. The PUT
         operation can be used to update the quota.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
@@ -287,19 +287,19 @@ class QuotaOperations(object):
 
     def update(
             self, subscription_id, provider_id, location, resource_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update the service limits (quota) of a resource to requested value.
-        Steps:
-        1. Make the Get request to get the quota information for specific
-        resource.
-        2. To increase the quota, update the limit field in the response from
-        Get request to new value.
-        3. Submit the JSON to the quota request API to update the quota.
-        The Update quota request may be constructed as follows. The PATCH
-        operation can be used to update the quota.
+        """Update the quota (service limits) of this resource to the requested
+        value.
+        • To get the quota information for specific resource, send a GET
+        request.
+        • To increase the quota, update the limit field from the GET response
+        to a new value.
+        • To update the quota value, submit the JSON response to the quota
+        request API to update the quota.
+        • To update the quota. use the PATCH operation.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
@@ -352,13 +352,13 @@ class QuotaOperations(object):
 
     def list(
             self, subscription_id, provider_id, location, custom_headers=None, raw=False, **operation_config):
-        """Get a list of current service limits (quota) and usages of all the
-        resources. The response from List API can be leveraged to submit quota
-        update requests.
+        """Gets a list of current quotas (service limits) and usage for all
+        resources. The response from the list quota operation can be leveraged
+        to request quota updates.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str

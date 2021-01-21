@@ -12,6 +12,54 @@
 from enum import Enum
 
 
+class ReservedResourceType(str, Enum):
+
+    virtual_machines = "VirtualMachines"
+    sql_databases = "SqlDatabases"
+    suse_linux = "SuseLinux"
+    cosmos_db = "CosmosDb"
+    red_hat = "RedHat"
+    sql_data_warehouse = "SqlDataWarehouse"
+    vmware_cloud_simple = "VMwareCloudSimple"
+    red_hat_osa = "RedHatOsa"
+    databricks = "Databricks"
+    app_service = "AppService"
+    managed_disk = "ManagedDisk"
+    block_blob = "BlockBlob"
+    redis_cache = "RedisCache"
+    azure_data_explorer = "AzureDataExplorer"
+    my_sql = "MySql"
+    maria_db = "MariaDb"
+    postgre_sql = "PostgreSql"
+    dedicated_host = "DedicatedHost"
+    sap_hana = "SapHana"
+    sql_azure_hybrid_benefit = "SqlAzureHybridBenefit"
+
+
+class ReservationTerm(str, Enum):
+
+    p1_y = "P1Y"
+    p3_y = "P3Y"
+
+
+class ReservationBillingPlan(str, Enum):
+
+    upfront = "Upfront"
+    monthly = "Monthly"
+
+
+class AppliedScopeType(str, Enum):
+
+    single = "Single"
+    shared = "Shared"
+
+
+class InstanceFlexibility(str, Enum):
+
+    on = "On"
+    off = "Off"
+
+
 class ReservationStatusCode(str, Enum):
 
     none = "None"
@@ -84,16 +132,29 @@ class ErrorResponseCode(str, Enum):
     calculate_price_failed = "CalculatePriceFailed"
 
 
-class ReservationBillingPlan(str, Enum):
+class CalculateExchangeOperationResultStatus(str, Enum):
 
-    upfront = "Upfront"
-    monthly = "Monthly"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    pending = "Pending"
 
 
-class ReservationTerm(str, Enum):
+class ExchangeOperationResultStatus(str, Enum):
 
-    p1_y = "P1Y"
-    p3_y = "P3Y"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    pending_refunds = "PendingRefunds"
+    pending_purchases = "PendingPurchases"
+
+
+class OperationStatus(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    pending = "Pending"
 
 
 class PaymentStatus(str, Enum):
@@ -102,39 +163,3 @@ class PaymentStatus(str, Enum):
     failed = "Failed"
     scheduled = "Scheduled"
     cancelled = "Cancelled"
-
-
-class ReservedResourceType(str, Enum):
-
-    virtual_machines = "VirtualMachines"
-    sql_databases = "SqlDatabases"
-    suse_linux = "SuseLinux"
-    cosmos_db = "CosmosDb"
-    red_hat = "RedHat"
-    sql_data_warehouse = "SqlDataWarehouse"
-    vmware_cloud_simple = "VMwareCloudSimple"
-    red_hat_osa = "RedHatOsa"
-    databricks = "Databricks"
-    app_service = "AppService"
-    managed_disk = "ManagedDisk"
-    block_blob = "BlockBlob"
-    redis_cache = "RedisCache"
-    azure_data_explorer = "AzureDataExplorer"
-    my_sql = "MySql"
-    maria_db = "MariaDb"
-    postgre_sql = "PostgreSql"
-    dedicated_host = "DedicatedHost"
-    sap_hana = "SapHana"
-    sql_azure_hybrid_benefit = "SqlAzureHybridBenefit"
-
-
-class InstanceFlexibility(str, Enum):
-
-    on = "On"
-    off = "Off"
-
-
-class AppliedScopeType(str, Enum):
-
-    single = "Single"
-    shared = "Shared"

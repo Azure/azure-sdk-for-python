@@ -26,7 +26,7 @@ class ReservationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Supported version for this document is 2019-04-01. Constant value: "2019-04-01".
+    :ivar api_version: Supported version for this document is 2020-10-01-preview. Constant value: "2020-10-01-preview".
     """
 
     models = models
@@ -36,13 +36,15 @@ class ReservationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-04-01"
+        self.api_version = "2020-10-01-preview"
 
         self.config = config
 
 
     def _available_scopes_initial(
-            self, reservation_order_id, reservation_id, body, custom_headers=None, raw=False, **operation_config):
+            self, reservation_order_id, reservation_id, properties=None, custom_headers=None, raw=False, **operation_config):
+        body = models.AvailableScopeRequest(properties=properties)
+
         # Construct URL
         url = self.available_scopes.metadata['url']
         path_format_arguments = {
@@ -67,7 +69,7 @@ class ReservationOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, '[str]')
+        body_content = self._serialize.body(body, 'AvailableScopeRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -79,7 +81,7 @@ class ReservationOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Properties', response)
+            deserialized = self._deserialize('AvailableScopeProperties', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -88,7 +90,7 @@ class ReservationOperations(object):
         return deserialized
 
     def available_scopes(
-            self, reservation_order_id, reservation_id, body, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, reservation_order_id, reservation_id, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Get Available Scopes for `Reservation`.
 
         Get Available Scopes for `Reservation`.
@@ -98,33 +100,35 @@ class ReservationOperations(object):
         :type reservation_order_id: str
         :param reservation_id: Id of the Reservation Item
         :type reservation_id: str
-        :param body:
-        :type body: list[str]
+        :param properties:
+        :type properties:
+         ~azure.mgmt.reservations.models.AvailableScopeRequestProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Properties or
-         ClientRawResponse<Properties> if raw==True
+        :return: An instance of LROPoller that returns
+         AvailableScopeProperties or
+         ClientRawResponse<AvailableScopeProperties> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.reservations.models.Properties]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.reservations.models.AvailableScopeProperties]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.reservations.models.Properties]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.reservations.models.AvailableScopeProperties]]
         :raises:
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
         raw_result = self._available_scopes_initial(
             reservation_order_id=reservation_order_id,
             reservation_id=reservation_id,
-            body=body,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Properties', response)
+            deserialized = self._deserialize('AvailableScopeProperties', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)

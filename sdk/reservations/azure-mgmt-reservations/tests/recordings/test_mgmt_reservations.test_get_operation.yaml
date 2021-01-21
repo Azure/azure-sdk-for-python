@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.19041-SP0) msrest/0.6.18 msrest_azure/0.6.4
-        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-reservations/0.9.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Capacity/operations?api-version=2019-04-01
+    uri: https://management.azure.com/providers/Microsoft.Capacity/operations?api-version=2020-10-01-preview
   response:
     body:
       string: '{"value":[{"name":"Microsoft.Capacity/appliedreservations/read","display":{"provider":"Microsoft
@@ -29,7 +29,9 @@ interactions:
         Capacity","resource":"Reservations","operation":"Check Subscription","description":"Check
         any Subscription"}},{"name":"Microsoft.Capacity/operations/read","display":{"provider":"Microsoft
         Capacity","resource":"Reservations","operation":"Read Operation","description":"Read
-        any Operation"}},{"name":"Microsoft.Capacity/reservationorders/availablescopes/action","display":{"provider":"Microsoft
+        any Operation"}},{"name":"Microsoft.Capacity/reservationorders/changedirectory/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Change reservation directory","description":"Change
+        directory of any reservation"}},{"name":"Microsoft.Capacity/reservationorders/availablescopes/action","display":{"provider":"Microsoft
         Capacity","resource":"Reservations","operation":"Find Available Scope","description":"Find
         any Available Scope"}},{"name":"Microsoft.Capacity/reservationorders/reservations/availablescopes/action","display":{"provider":"Microsoft
         Capacity","resource":"Reservations","operation":"Find Available Scope","description":"Find
@@ -80,16 +82,20 @@ interactions:
         Capacity","resource":"Reservations","operation":"Poll Reservation split operation","description":"Poll
         any split operation"}},{"name":"Microsoft.Capacity/reservationorders/mergeoperationresults/read","display":{"provider":"Microsoft
         Capacity","resource":"Reservations","operation":"Poll Reservation merge operation","description":"Poll
-        any merge operation"}}]}'
+        any merge operation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/archive/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Archive Reservation","description":"Archive
+        a reservation which is in a terminal state like Expired, Split etc."}},{"name":"Microsoft.Capacity/reservationorders/reservations/unarchive/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Unarchive a previously archived
+        Reservation","description":"Unarchive a Reservation which was previously archived"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '6592'
+      - '7376'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 Aug 2020 05:25:19 GMT
+      - Thu, 21 Jan 2021 02:22:30 GMT
       expires:
       - '-1'
       pragma:
