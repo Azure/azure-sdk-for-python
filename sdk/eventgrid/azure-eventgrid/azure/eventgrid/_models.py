@@ -171,7 +171,7 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :keyword topic: Optional. The resource path of the event source. If not provided, Event Grid will
         stamp onto the event.
     :type topic: str
-    :keyword metadata_version: Optional. The schema version of the event metadata. If provided, 
+    :keyword metadata_version: Optional. The schema version of the event metadata. If provided,
         must match Event Grid Schema exactly. If not provided, EventGrid will stamp onto event.
     :type metadata_version: str
     :keyword data_version: Optional. The schema version of the data object. If not provided,
