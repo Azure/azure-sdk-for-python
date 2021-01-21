@@ -14,8 +14,7 @@ steps:
     continueOnError: true
     condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
     inputs:
-      # codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/_coverage/.coverage*'
+      summaryFileLocation: '$(Build.SourcesDirectory)/_coverage/*'
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
