@@ -74,20 +74,33 @@ class SmsClient(object):
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
-    def send(self, from_phone_number, # type: ~azure.communication.sms.PhoneNumberIdentifier
-             to_phone_numbers, # type: list[~azure.communication.sms.PhoneNumberIdentifier]
+    def send(self, from_phone_number, # type: str
+             to_phone_numbers, # type: list[str]
              message, # type: str
              **kwargs  #type: Any
         ): # type: (...) -> SendSmsResponse
         """Sends SMSs to phone numbers.
 
-        :param from_phone_number: the sender of the SMS.
-        :type from_phone_number: ~azure.communication.sms.PhoneNumberIdentifier
-        :param to_phone_numbers: the list of recipients of the SMS.
-        :type to_phone_numbers: list[~azure.communication.sms.PhoneNumberIdentifier]
+        :param str from_phone_number: the sender of the SMS.
+        :param list[str] to_phone_numbers: the list of recipients of the SMS.
         :param str message: The message in the SMS
         :keyword send_sms_options: the options object to configure delivery reporting.
         :type send_sms_options: ~azure.communication.sms.models.SendSmsOptions
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, the client can make the request multiple times with the same
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
+         representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
+         (GUID), identifier for the request.
+        :type repeatability_request_id: str
+        :keyword repeatability_first_sent: MUST be sent by clients to specify that a request is
+         repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
+         was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
+        :type repeatability_first_sent: str
+        :keyword repeatability_result: MUST be returned to clients for a request that is repeatable. This
+         response header in the result of a repeatable request with one of the case-insensitive values
+         accepted or rejected.
+        :type repeatability_result: str
         :return: The response object with the message_id
         :rtype: SendMessageResponse: ~azure.communication.sms.models.SendMessageResponse
         """

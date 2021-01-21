@@ -10,13 +10,16 @@ try:
     from ._models_py3 import SendMessageRequest
     from ._models_py3 import SendSmsOptions
     from ._models_py3 import SendSmsResponse
+    from ._models_py3 import SendSmsResponseItem
 except (SyntaxError, ImportError):
     from ._models import SendMessageRequest  # type: ignore
     from ._models import SendSmsOptions  # type: ignore
     from ._models import SendSmsResponse  # type: ignore
+    from ._models import SendSmsResponseItem  # type: ignore
 
 __all__ = [
     'SendMessageRequest',
     'SendSmsOptions',
     'SendSmsResponse',
+    'SendSmsResponseItem',
 ]
