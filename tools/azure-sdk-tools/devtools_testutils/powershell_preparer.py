@@ -7,7 +7,6 @@ import functools
 import os
 
 from . import AzureMgmtPreparer
-from .azure_unit_test import AzureUnitTest
 from .resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
@@ -63,6 +62,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
             ]
 
     def create_resource(self, name, **kwargs):
+
         if self.is_live:
             self._set_mgmt_settings_real_values()
             try:
