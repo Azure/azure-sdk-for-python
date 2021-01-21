@@ -112,7 +112,7 @@ def collect_tox_coverage_files(targeted_packages):
 
     # coverage report has paths starting .tox and azure
     # coverage combine fixes this with the help of tox.ini[coverage:paths]
-    combine_coverage_files(targeted_packages)
+    # combine_coverage_files(targeted_packages) # Skipping this, upload all .coverage-{package-name} files
 
     coverage_files = []
     # generate coverage files
