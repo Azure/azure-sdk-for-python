@@ -311,8 +311,8 @@ def create_code_coverage_params(parsed_args, package_name):
         coverage_args.append("--no-cov")
     else:
         current_package_name = package_name.replace("-", ".")
-        coverage_args.append("--cov-append")
         coverage_args.append("--cov={}".format(current_package_name))
+        coverage_args.append("--cov-append")
         logging.info(
             "Code coverage is enabled for package {0}, pytest arguements: {1}".format(
                 current_package_name, coverage_args

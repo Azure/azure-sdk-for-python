@@ -128,18 +128,19 @@ def collect_tox_coverage_files(targeted_packages):
     logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
 
     if len(coverage_files):
-        cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
+        cov_cmd_array = [sys.executable, "-m", "coverage", "combine", "--append"]
         cov_cmd_array.extend(coverage_files)
 
         # merge them with coverage combine and copy to root
         run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/"))
 
-        source = os.path.join(coverage_dir, "./.coverage")
-        dest = os.path.join(root_dir, ".coverage")
+        # Don't move to root and generate XML, this will be done at a later step.
+        # source = os.path.join(coverage_dir, "./.coverage")
+        # dest = os.path.join(root_dir, ".coverage")
 
-        shutil.move(source, dest)
-        # Generate coverage XML
-        generate_coverage_xml()
+        # shutil.move(source, dest)
+        # # Generate coverage XML
+        # generate_coverage_xml()
 
 
 def generate_coverage_xml():
