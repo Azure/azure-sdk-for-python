@@ -22,7 +22,7 @@ class CommunicationUserIdentifierSerializer(object):
         if isinstance(communicationIdentifier, CommunicationUserIdentifier):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.CommunicationUser,
-                id=communicationIdentifier.identififier
+                id=communicationIdentifier.identifier
             )
         elif isinstance(communicationIdentifier, PhoneNumberIdentifier):
             return CommunicationIdentifierModel(
@@ -54,20 +54,25 @@ class CommunicationUserIdentifierSerializer(object):
 
         id, kind = identifierModel.id, identifierModel.kind
 
-        if not id:
-            raise ValueError("identiferModel must have a valid id")
-
         if kind == CommunicationIdentifierKind.CommunicationUser:
+            if not id:
+                raise ValueError("CommunictionUser must have a valid id")
             return CommunicationUserIdentifier(id)
         if kind == CommunicationIdentifierKind.PhoneNumber:
-            return PhoneNumberIdentifier(id)
+            if not identifierModel.phone_number:
+                raise ValueError("PhoneNumberIdentifier must have a valid attribute - phone_number")
+            return PhoneNumberIdentifier(identifierModel.phone_number)
         if kind == CommunicationIdentifierKind.MicrosoftTeamsUser:
-            is_anonymous = identifierModel.is_anonymous
-            if not is_anonymous:
+            if identifierModel.is_anonymous not in [True, False]:
                 raise ValueError("MicrosoftTeamsUser must have a valid attribute - is_anonymous")
+            if not identifierModel.microsoft_teams_user_id:
+                raise ValueError("MicrosoftTeamsUser must have a valid attribute - microsoft_teams_user_id")
             return MicrosoftTeamsUserIdentifier(
-                id,
-                is_anonymous=is_anonymous
+                identifierModel.microsoft_teams_user_id,
+                is_anonymous=identifierModel.is_anonymous
             )
-        
+
+        if not id:
+            raise ValueError("UnknownIdentifier must have a valid id")
+            
         return UnknownIdentifier(id)
