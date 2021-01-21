@@ -203,6 +203,7 @@ class RecognizedForm(object):
         self.pages = kwargs.get("pages", None)
         self.model_id = kwargs.get('model_id', None)
         self.form_type_confidence = kwargs.get('form_type_confidence', None)
+        self._prebuilt = kwargs.get("prebuilt", True)
 
     def __repr__(self):
         return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
@@ -215,6 +216,13 @@ class RecognizedForm(object):
                 self.form_type_confidence,
                 self.model_id
             )[:1024]
+
+    def __getattr__(self, attr):
+        if self._prebuilt and attr not in ["fields", "form_type", "page_range", "pages", "model_id", "form_type_confidence"]:
+            if attr in self.fields:
+                field = self.fields[attr]
+                return field
+        raise AttributeError
 
 
 class FormField(object):
@@ -278,6 +286,11 @@ class FormField(object):
                 repr(self.value),
                 self.confidence
             )[:1024]
+
+    def __getattr__(self, attr):
+        if self.value_type == "dictionary" and attr not in ["value_type", "value_data", "value", "label_data", "name", "confidence"]:
+            if attr in self.value:
+                return self.value[attr]
 
 
 class FieldData(object):
