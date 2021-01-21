@@ -84,7 +84,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
     """
-    def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
+    def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin, super-init-not-called
         # type: (str, str, Any) -> None
         self.source = source
         self.type = type
