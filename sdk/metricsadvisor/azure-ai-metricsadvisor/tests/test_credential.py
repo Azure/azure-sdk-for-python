@@ -37,10 +37,8 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
         assert credential.api_key == "xxx"
 
         # call fails
-        try:
+        with pytest.raises(ClientAuthenticationError):
             result = client.get_feedback(feedback_id=self.feedback_id)
-        except ClientAuthenticationError:
-            pass
 
         # rotate back to valid credentials
         credential.update(subscription_key=self.subscription_key, api_key=self.api_key)
@@ -65,10 +63,8 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
         assert credential.api_key == self.api_key
 
         # call fails
-        try:
+        with pytest.raises(ClientAuthenticationError):
             result = client.get_feedback(feedback_id=self.feedback_id)
-        except ClientAuthenticationError:
-            pass
 
         # rotate back to valid credentials
         credential.update(subscription_key=self.subscription_key)
@@ -93,10 +89,8 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
         assert credential.api_key == "xxx"
 
         # call fails
-        try:
+        with pytest.raises(HttpResponseError):
             result = client.get_feedback(feedback_id=self.feedback_id)
-        except HttpResponseError:
-            pass
 
         # rotate back to valid credentials
         credential.update(api_key=self.api_key)
