@@ -18,7 +18,7 @@ class EventHubConnectionStringProperties(DictMixin):
     def __init__(self, **kwargs):
         self._fully_qualified_namespace = kwargs.pop("fully_qualified_namespace", None)
         self._endpoint = kwargs.pop("endpoint", None)
-        self._event_hub_name = kwargs.pop("event_hub_name", None)
+        self._eventhub_name = kwargs.pop("eventhub_name", None)
         self._shared_access_signature = kwargs.pop("shared_access_signature", None)
         self._shared_access_key_name = kwargs.pop("shared_access_key_name", None)
         self._shared_access_key = kwargs.pop("shared_access_key", None)
@@ -36,9 +36,9 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._endpoint
 
     @property
-    def event_hub_name(self):
+    def eventhub_name(self):
         """Optional. The name of the Event Hub, represented by `EntityPath` in the connection string."""
-        return self._event_hub_name
+        return self._eventhub_name
 
     @property
     def shared_access_signature(self):
@@ -101,7 +101,7 @@ def parse_connection_string(conn_str):
     props = {
         "fully_qualified_namespace": namespace,
         "endpoint": endpoint,
-        "event_hub_name": conn_settings.get("EntityPath"),
+        "eventhub_name": conn_settings.get("EntityPath"),
         "shared_access_signature": shared_access_signature,
         "shared_access_key_name": shared_access_key_name,
         "shared_access_key": shared_access_key,
