@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from .models import (
     CommunicationIdentifierKind,
     CommunicationIdentifierModel,
@@ -23,12 +29,12 @@ class CommunicationUserIdentifierSerializer(object):
                 kind=CommunicationIdentifierKind.CommunicationUser,
                 id=communicationIdentifier.identifier
             )
-        elif isinstance(communicationIdentifier, PhoneNumberIdentifier):
+        if isinstance(communicationIdentifier, PhoneNumberIdentifier):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.PhoneNumber,
                 id=communicationIdentifier.phone_number
             )
-        elif isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
+        if isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
                 id=communicationIdentifier.user_id
