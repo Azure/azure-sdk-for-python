@@ -1,7 +1,8 @@
 # Release History
 
-## 12.4.1 (Unreleased)
-
+## 12.4.1 (2021-01-20)
+**Fixes**
+- Fixed msrest dependency issue (#16250)
 
 ## 12.4.0 (2021-01-13)
 **Stable release of preview features**
