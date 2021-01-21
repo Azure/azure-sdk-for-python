@@ -71,12 +71,12 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :keyword id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
-    :ivar source: Required. Identifies the context in which an event happened. The combination of id and source must
+    :ivar source: Identifies the context in which an event happened. The combination of id and source must
         be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :vartype source: str
     :ivar data: Event data specific to the event type.
     :vartype data: object
-    :ivar type: Required. Type of event related to the originating occurrence.
+    :ivar type: Type of event related to the originating occurrence.
     :vartype type: str
     :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
     :vartype time: ~datetime.datetime
@@ -87,7 +87,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :ivar subject: This describes the subject of the event in the context of the event producer
      (identified by source).
     :vartype subject: str
-    :ivar id: Optional. An identifier for the event. The combination of id and source must be
+    :ivar id: An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :vartype id: Optional[str]
     """
@@ -167,7 +167,7 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :keyword topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
     :type topic: str
     :keyword metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema
-        exactly. If not provided, EventGrid will stamp onto event.
+     exactly. If not provided, EventGrid will stamp onto event.
     :type metadata_version: str
     :keyword data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
     :type data_version: str
