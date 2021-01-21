@@ -54,7 +54,7 @@ class EventMixin(object):
     @property
     def system_event_data(self):
         """
-        Returns strongly typed EventGridEvent/CloudEvent object defined by the format of the properties.
+        Returns strongly typed system event object defined by the format of the properties.
         """
         return self._model
 
