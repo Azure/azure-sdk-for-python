@@ -86,7 +86,6 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     """
     def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
         # type: (str, str, Any) -> None
-        super(CloudEvent, self).__init__(**kwargs)
         self.source = source
         self.type = type
         self.specversion = kwargs.pop("specversion", "1.0")
