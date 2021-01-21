@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query
   response:
@@ -36,21 +36,21 @@ interactions:
         Aires","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=20"}'
     headers:
       apim-request-id:
-      - cde380f3-1b41-4628-acfb-cf045a0599ad
+      - d9d9ff0f-48ec-49de-8ba5-1e67aa09591b
       content-length:
       - '2487'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:38 GMT
+      - Sat, 26 Dec 2020 19:35:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '172'
+      - '184'
       x-request-id:
-      - cde380f3-1b41-4628-acfb-cf045a0599ad
+      - d9d9ff0f-48ec-49de-8ba5-1e67aa09591b
     status:
       code: 200
       message: OK
@@ -68,7 +68,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=20
   response:
@@ -86,21 +86,21 @@ interactions:
         & Advertising Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Santiago","category":"Beauty"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=40"}'
     headers:
       apim-request-id:
-      - a1b84ba3-7bb1-4dbc-b15f-05b543feebc2
+      - 21bcdd18-6ca8-4669-91c4-caf53ad635d8
       content-length:
       - '2432'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:38 GMT
+      - Sat, 26 Dec 2020 19:35:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '148'
+      - '225'
       x-request-id:
-      - a1b84ba3-7bb1-4dbc-b15f-05b543feebc2
+      - 21bcdd18-6ca8-4669-91c4-caf53ad635d8
     status:
       code: 200
       message: OK
@@ -118,7 +118,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=40
   response:
@@ -139,21 +139,21 @@ interactions:
         & Scientific"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=60"}'
     headers:
       apim-request-id:
-      - 65cc3467-163b-43ef-bb62-fbd164601c82
+      - cbe1be8f-d893-4065-8cfe-44c1f0a57fa9
       content-length:
       - '2479'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:39 GMT
+      - Sat, 26 Dec 2020 19:35:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '179'
+      - '182'
       x-request-id:
-      - 65cc3467-163b-43ef-bb62-fbd164601c82
+      - cbe1be8f-d893-4065-8cfe-44c1f0a57fa9
     status:
       code: 200
       message: OK
@@ -171,7 +171,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=60
   response:
@@ -194,21 +194,21 @@ interactions:
         (Consumer)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=80"}'
     headers:
       apim-request-id:
-      - e17e0029-1460-4157-ac33-9b0af1f35a32
+      - 420e21ec-d8d1-4438-ac26-a943a5f7d165
       content-length:
       - '2517'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:39 GMT
+      - Sat, 26 Dec 2020 19:35:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '168'
+      - '195'
       x-request-id:
-      - e17e0029-1460-4157-ac33-9b0af1f35a32
+      - 420e21ec-d8d1-4438-ac26-a943a5f7d165
     status:
       code: 200
       message: OK
@@ -226,7 +226,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=80
   response:
@@ -252,21 +252,21 @@ interactions:
         Phones"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=100"}'
     headers:
       apim-request-id:
-      - 3447e57e-2f83-4d24-8c51-a5280ebcfdd0
+      - 867573ca-930d-4533-b1a9-5a5fc52ec3b1
       content-length:
       - '2501'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:39 GMT
+      - Sat, 26 Dec 2020 19:35:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '208'
+      - '215'
       x-request-id:
-      - 3447e57e-2f83-4d24-8c51-a5280ebcfdd0
+      - 867573ca-930d-4533-b1a9-5a5fc52ec3b1
     status:
       code: 200
       message: OK
@@ -284,7 +284,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=100
   response:
@@ -305,21 +305,21 @@ interactions:
         Aires","category":"Device Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=120"}'
     headers:
       apim-request-id:
-      - e77cda26-9fe8-445d-ae50-df09705fa0da
+      - 48bed12c-c73c-419a-ae69-572397a83884
       content-length:
       - '2455'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:40 GMT
+      - Sat, 26 Dec 2020 19:35:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '145'
+      - '186'
       x-request-id:
-      - e77cda26-9fe8-445d-ae50-df09705fa0da
+      - 48bed12c-c73c-419a-ae69-572397a83884
     status:
       code: 200
       message: OK
@@ -337,7 +337,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=120
   response:
@@ -358,21 +358,21 @@ interactions:
         Paulo","category":"Electronics (Consumer)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kolkata","category":"Books"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=140"}'
     headers:
       apim-request-id:
-      - d405c1e2-701f-4144-997e-ea9ebddcfba4
+      - 72abac41-7787-4d00-b7de-d5d6c5f41ea8
       content-length:
       - '2456'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:40 GMT
+      - Sat, 26 Dec 2020 19:35:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '163'
+      - '147'
       x-request-id:
-      - d405c1e2-701f-4144-997e-ea9ebddcfba4
+      - 72abac41-7787-4d00-b7de-d5d6c5f41ea8
     status:
       code: 200
       message: OK
@@ -390,7 +390,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=140
   response:
@@ -414,21 +414,21 @@ interactions:
         & Scientific"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lagos","category":"Handmade"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=160"}'
     headers:
       apim-request-id:
-      - fa6ef6a4-79ba-4245-b3ce-8aa8ff30cc35
+      - 83af5920-8964-42e0-a0e7-ba5012f186d8
       content-length:
       - '2478'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:40 GMT
+      - Sat, 26 Dec 2020 19:35:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '160'
+      - '215'
       x-request-id:
-      - fa6ef6a4-79ba-4245-b3ce-8aa8ff30cc35
+      - 83af5920-8964-42e0-a0e7-ba5012f186d8
     status:
       code: 200
       message: OK
@@ -446,7 +446,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=160
   response:
@@ -470,21 +470,21 @@ interactions:
         Kong","category":"Outdoors"}},{"metricId":"metric_id","dimension":{"dimension_name":"Manila","category":"Handmade"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=180"}'
     headers:
       apim-request-id:
-      - 7a428145-50ee-44da-b5a6-e27bb8870005
+      - ab2be694-d105-4828-bb50-c57c43675358
       content-length:
       - '2480'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:40 GMT
+      - Sat, 26 Dec 2020 19:35:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '136'
+      - '187'
       x-request-id:
-      - 7a428145-50ee-44da-b5a6-e27bb8870005
+      - ab2be694-d105-4828-bb50-c57c43675358
     status:
       code: 200
       message: OK
@@ -502,7 +502,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=180
   response:
@@ -528,21 +528,21 @@ interactions:
         Instruments"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=200"}'
     headers:
       apim-request-id:
-      - c2fcdaf5-4dc4-4097-8b46-75b6e6de0ee0
+      - 8a29560a-c312-4efb-912e-88a82c492445
       content-length:
       - '2483'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:41 GMT
+      - Sat, 26 Dec 2020 19:35:42 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '167'
+      - '143'
       x-request-id:
-      - c2fcdaf5-4dc4-4097-8b46-75b6e6de0ee0
+      - 8a29560a-c312-4efb-912e-88a82c492445
     status:
       code: 200
       message: OK
@@ -560,7 +560,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=200
   response:
@@ -582,21 +582,21 @@ interactions:
         & Advertising Collectibles"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=220"}'
     headers:
       apim-request-id:
-      - 067066bb-a34e-4b6c-91f4-da65f5f41777
+      - ad51c5f4-b346-45d8-a938-8c28dbcd72bb
       content-length:
       - '2483'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:41 GMT
+      - Sat, 26 Dec 2020 19:35:42 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '163'
+      - '134'
       x-request-id:
-      - 067066bb-a34e-4b6c-91f4-da65f5f41777
+      - ad51c5f4-b346-45d8-a938-8c28dbcd72bb
     status:
       code: 200
       message: OK
@@ -614,7 +614,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=220
   response:
@@ -634,21 +634,21 @@ interactions:
         & Scientific"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=240"}'
     headers:
       apim-request-id:
-      - 81861588-0e29-4b3e-b4b7-f602693ef979
+      - 9b858fc7-a9aa-4937-b238-1e48f6cc96ea
       content-length:
       - '2424'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:41 GMT
+      - Sat, 26 Dec 2020 19:35:42 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '186'
+      - '111'
       x-request-id:
-      - 81861588-0e29-4b3e-b4b7-f602693ef979
+      - 9b858fc7-a9aa-4937-b238-1e48f6cc96ea
     status:
       code: 200
       message: OK
@@ -666,7 +666,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=240
   response:
@@ -687,21 +687,21 @@ interactions:
         (Consumer)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lahore","category":"Beauty"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=260"}'
     headers:
       apim-request-id:
-      - be9df3c3-f0e7-4c5a-9dc9-aaff0599c6aa
+      - ac20654a-efae-468f-85c1-bbee31d5371e
       content-length:
       - '2429'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:42 GMT
+      - Sat, 26 Dec 2020 19:35:42 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '164'
+      - '149'
       x-request-id:
-      - be9df3c3-f0e7-4c5a-9dc9-aaff0599c6aa
+      - ac20654a-efae-468f-85c1-bbee31d5371e
     status:
       code: 200
       message: OK
@@ -719,7 +719,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=260
   response:
@@ -742,21 +742,21 @@ interactions:
         Handbags & Sunglasses"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=280"}'
     headers:
       apim-request-id:
-      - ca8b1061-0717-436f-98b2-b85c6a145e25
+      - 91360ac8-7cea-4a35-8f7e-a16bdb9c908e
       content-length:
       - '2461'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:42 GMT
+      - Sat, 26 Dec 2020 19:35:42 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '187'
+      - '173'
       x-request-id:
-      - ca8b1061-0717-436f-98b2-b85c6a145e25
+      - 91360ac8-7cea-4a35-8f7e-a16bdb9c908e
     status:
       code: 200
       message: OK
@@ -774,7 +774,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=280
   response:
@@ -800,21 +800,21 @@ interactions:
         de Janeiro","category":"Books"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=300"}'
     headers:
       apim-request-id:
-      - d0ea76cd-c10a-4d9f-a692-7ea3873ebf75
+      - 6f8417b0-3ce8-48eb-85b6-cf814d3d3b75
       content-length:
       - '2491'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:42 GMT
+      - Sat, 26 Dec 2020 19:35:44 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '155'
+      - '187'
       x-request-id:
-      - d0ea76cd-c10a-4d9f-a692-7ea3873ebf75
+      - 6f8417b0-3ce8-48eb-85b6-cf814d3d3b75
     status:
       code: 200
       message: OK
@@ -832,7 +832,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=300
   response:
@@ -857,21 +857,21 @@ interactions:
         Instruments"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=320"}'
     headers:
       apim-request-id:
-      - a4e6921e-04d5-4a5b-95a3-01e62867671f
+      - e6ba7f36-fef9-4be1-a72f-ad4a2f77e382
       content-length:
       - '2541'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:43 GMT
+      - Sat, 26 Dec 2020 19:35:44 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '207'
+      - '125'
       x-request-id:
-      - a4e6921e-04d5-4a5b-95a3-01e62867671f
+      - e6ba7f36-fef9-4be1-a72f-ad4a2f77e382
     status:
       code: 200
       message: OK
@@ -889,7 +889,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=320
   response:
@@ -910,21 +910,21 @@ interactions:
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Bangkok","category":"Beauty"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=340"}'
     headers:
       apim-request-id:
-      - 16f737b4-f251-4c09-af03-cad74ed43f1f
+      - 35fd6ec8-eec4-48e3-94cd-0a7f18d40295
       content-length:
       - '2452'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:43 GMT
+      - Sat, 26 Dec 2020 19:35:44 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '172'
+      - '154'
       x-request-id:
-      - 16f737b4-f251-4c09-af03-cad74ed43f1f
+      - 35fd6ec8-eec4-48e3-94cd-0a7f18d40295
     status:
       code: 200
       message: OK
@@ -942,7 +942,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=340
   response:
@@ -967,21 +967,21 @@ interactions:
         York","category":"Luggage & Travel Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=360"}'
     headers:
       apim-request-id:
-      - b4dc723c-7b0a-48fc-ad43-f077dfaac0bf
+      - 43b33306-3b41-4354-8b9f-11f24c09ff09
       content-length:
       - '2502'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:43 GMT
+      - Sat, 26 Dec 2020 19:35:44 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '228'
+      - '132'
       x-request-id:
-      - b4dc723c-7b0a-48fc-ad43-f077dfaac0bf
+      - 43b33306-3b41-4354-8b9f-11f24c09ff09
     status:
       code: 200
       message: OK
@@ -999,7 +999,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=360
   response:
@@ -1026,21 +1026,21 @@ interactions:
         Kong","category":"Electronics (Consumer)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=380"}'
     headers:
       apim-request-id:
-      - 11d13e71-539f-45e8-a3d9-97ae380caac9
+      - d4be1188-9933-4506-b4e4-2fb22b10674c
       content-length:
       - '2520'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:44 GMT
+      - Sat, 26 Dec 2020 19:35:44 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '163'
+      - '124'
       x-request-id:
-      - 11d13e71-539f-45e8-a3d9-97ae380caac9
+      - d4be1188-9933-4506-b4e4-2fb22b10674c
     status:
       code: 200
       message: OK
@@ -1058,7 +1058,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=380
   response:
@@ -1082,21 +1082,21 @@ interactions:
         & Scientific"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=400"}'
     headers:
       apim-request-id:
-      - f177322c-0c24-4fee-8b79-109a254c4572
+      - 4b026a61-ce87-439d-a000-d2a854f21af7
       content-length:
       - '2453'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:44 GMT
+      - Sat, 26 Dec 2020 19:35:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '237'
+      - '137'
       x-request-id:
-      - f177322c-0c24-4fee-8b79-109a254c4572
+      - 4b026a61-ce87-439d-a000-d2a854f21af7
     status:
       code: 200
       message: OK
@@ -1114,7 +1114,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=400
   response:
@@ -1138,21 +1138,21 @@ interactions:
         Angeles","category":"Music"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=420"}'
     headers:
       apim-request-id:
-      - 224aa2d3-8ca3-4015-ae49-d268d5cf3772
+      - c046dc37-c0c7-4603-997f-5665dad376f9
       content-length:
       - '2493'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:44 GMT
+      - Sat, 26 Dec 2020 19:35:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '312'
+      - '159'
       x-request-id:
-      - 224aa2d3-8ca3-4015-ae49-d268d5cf3772
+      - c046dc37-c0c7-4603-997f-5665dad376f9
     status:
       code: 200
       message: OK
@@ -1170,7 +1170,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=420
   response:
@@ -1193,21 +1193,21 @@ interactions:
         & Garden"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=440"}'
     headers:
       apim-request-id:
-      - 9768112c-a012-45f6-98d9-b211e71aa5ed
+      - 96ab7fdc-b7b1-4d16-ad3a-1172eb0755c6
       content-length:
       - '2480'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:46 GMT
+      - Sat, 26 Dec 2020 19:35:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '163'
+      - '185'
       x-request-id:
-      - 9768112c-a012-45f6-98d9-b211e71aa5ed
+      - 96ab7fdc-b7b1-4d16-ad3a-1172eb0755c6
     status:
       code: 200
       message: OK
@@ -1225,7 +1225,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=440
   response:
@@ -1247,21 +1247,21 @@ interactions:
         Instruments"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=460"}'
     headers:
       apim-request-id:
-      - c0e676d3-09b1-4705-92cc-d9d5be6ce62a
+      - eb4a5328-2164-4487-a2e6-52dc303f42d9
       content-length:
       - '2466'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:46 GMT
+      - Sat, 26 Dec 2020 19:35:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '206'
+      - '183'
       x-request-id:
-      - c0e676d3-09b1-4705-92cc-d9d5be6ce62a
+      - eb4a5328-2164-4487-a2e6-52dc303f42d9
     status:
       code: 200
       message: OK
@@ -1279,7 +1279,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=460
   response:
@@ -1304,21 +1304,21 @@ interactions:
         Phones"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=480"}'
     headers:
       apim-request-id:
-      - 7540593c-8050-4302-8123-907a1f9a15c1
+      - b9f0496e-525b-46ab-ae68-8fca73cf5a99
       content-length:
       - '2490'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:46 GMT
+      - Sat, 26 Dec 2020 19:35:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '291'
+      - '149'
       x-request-id:
-      - 7540593c-8050-4302-8123-907a1f9a15c1
+      - b9f0496e-525b-46ab-ae68-8fca73cf5a99
     status:
       code: 200
       message: OK
@@ -1336,7 +1336,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=480
   response:
@@ -1353,21 +1353,21 @@ interactions:
         Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=500"}'
     headers:
       apim-request-id:
-      - 60e0f9a5-ba4b-437f-b051-6d90e49a707d
+      - a952b7fd-b0cb-4fb9-bb5c-244db314f110
       content-length:
       - '2386'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:47 GMT
+      - Sat, 26 Dec 2020 19:35:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '252'
+      - '126'
       x-request-id:
-      - 60e0f9a5-ba4b-437f-b051-6d90e49a707d
+      - a952b7fd-b0cb-4fb9-bb5c-244db314f110
     status:
       code: 200
       message: OK
@@ -1385,7 +1385,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=500
   response:
@@ -1409,21 +1409,21 @@ interactions:
         & Personal Care"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=520"}'
     headers:
       apim-request-id:
-      - 5393c349-56cc-4722-aeef-9f0061bf7dfe
+      - 1305629e-bbc6-4eb8-a321-628c2de44ff1
       content-length:
       - '2482'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:47 GMT
+      - Sat, 26 Dec 2020 19:35:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '200'
+      - '127'
       x-request-id:
-      - 5393c349-56cc-4722-aeef-9f0061bf7dfe
+      - 1305629e-bbc6-4eb8-a321-628c2de44ff1
     status:
       code: 200
       message: OK
@@ -1441,7 +1441,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=520
   response:
@@ -1461,21 +1461,21 @@ interactions:
         & Advertising Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chengdu","category":"Outdoors"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kolkata","category":"Beauty"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tianjin","category":"Books"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=540"}'
     headers:
       apim-request-id:
-      - 726c00d3-a39c-464e-b3b9-2aa1e6417636
+      - 3273f9e5-b031-4d4f-a13a-34c0857854a0
       content-length:
       - '2449'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:47 GMT
+      - Sat, 26 Dec 2020 19:35:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '184'
+      - '153'
       x-request-id:
-      - 726c00d3-a39c-464e-b3b9-2aa1e6417636
+      - 3273f9e5-b031-4d4f-a13a-34c0857854a0
     status:
       code: 200
       message: OK
@@ -1493,7 +1493,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=540
   response:
@@ -1515,21 +1515,21 @@ interactions:
         & Garden"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=560"}'
     headers:
       apim-request-id:
-      - 6f6346a3-0761-41ee-9577-30f405d165e7
+      - e63244a1-657a-4a77-9d9b-e27e24377bd7
       content-length:
       - '2438'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:48 GMT
+      - Sat, 26 Dec 2020 19:35:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '207'
+      - '231'
       x-request-id:
-      - 6f6346a3-0761-41ee-9577-30f405d165e7
+      - e63244a1-657a-4a77-9d9b-e27e24377bd7
     status:
       code: 200
       message: OK
@@ -1547,7 +1547,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=560
   response:
@@ -1570,21 +1570,21 @@ interactions:
         & Powersports"}},{"metricId":"metric_id","dimension":{"dimension_name":"Santiago","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=580"}'
     headers:
       apim-request-id:
-      - 6341beef-4b05-4e53-a606-2526aee791d8
+      - a8e44936-df5f-4115-a2f9-4d2bc4962f2f
       content-length:
       - '2486'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:48 GMT
+      - Sat, 26 Dec 2020 19:35:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '231'
+      - '229'
       x-request-id:
-      - 6341beef-4b05-4e53-a606-2526aee791d8
+      - a8e44936-df5f-4115-a2f9-4d2bc4962f2f
     status:
       code: 200
       message: OK
@@ -1602,7 +1602,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=580
   response:
@@ -1626,21 +1626,21 @@ interactions:
         (Consumer)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=600"}'
     headers:
       apim-request-id:
-      - 9fba5225-c59d-4474-9aa2-1c5255a0d8e2
+      - 88ce51d4-1ba7-4861-b69b-8f6b0f66594c
       content-length:
       - '2476'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:48 GMT
+      - Sat, 26 Dec 2020 19:35:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '190'
+      - '158'
       x-request-id:
-      - 9fba5225-c59d-4474-9aa2-1c5255a0d8e2
+      - 88ce51d4-1ba7-4861-b69b-8f6b0f66594c
     status:
       code: 200
       message: OK
@@ -1658,7 +1658,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=600
   response:
@@ -1677,21 +1677,21 @@ interactions:
         de Janeiro","category":"Musical Instruments"}},{"metricId":"metric_id","dimension":{"dimension_name":"Osaka","category":"Books"}},{"metricId":"metric_id","dimension":{"dimension_name":"Beijing","category":"Music"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chicago","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=620"}'
     headers:
       apim-request-id:
-      - 9204ac15-1c5e-49f3-82a8-6846f7827447
+      - a546f8db-3960-4a47-9b2d-1cbeff8f82d3
       content-length:
       - '2402'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:49 GMT
+      - Sat, 26 Dec 2020 19:35:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '164'
+      - '157'
       x-request-id:
-      - 9204ac15-1c5e-49f3-82a8-6846f7827447
+      - a546f8db-3960-4a47-9b2d-1cbeff8f82d3
     status:
       code: 200
       message: OK
@@ -1709,7 +1709,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=620
   response:
@@ -1734,21 +1734,21 @@ interactions:
         & Gourmet Food"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=640"}'
     headers:
       apim-request-id:
-      - d9337925-c244-422d-88df-7eab3dcf009e
+      - ab60cded-c66d-4e3f-9a41-b7de76f3bb40
       content-length:
       - '2503'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:49 GMT
+      - Sat, 26 Dec 2020 19:35:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '187'
+      - '178'
       x-request-id:
-      - d9337925-c244-422d-88df-7eab3dcf009e
+      - ab60cded-c66d-4e3f-9a41-b7de76f3bb40
     status:
       code: 200
       message: OK
@@ -1766,7 +1766,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=640
   response:
@@ -1787,21 +1787,21 @@ interactions:
         (Consumer)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=660"}'
     headers:
       apim-request-id:
-      - 78aa6b52-d952-47b6-ae0e-b875fc1b2f36
+      - f39d8038-62e1-40df-8100-2c943f05bf48
       content-length:
       - '2395'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:49 GMT
+      - Sat, 26 Dec 2020 19:35:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '185'
+      - '147'
       x-request-id:
-      - 78aa6b52-d952-47b6-ae0e-b875fc1b2f36
+      - f39d8038-62e1-40df-8100-2c943f05bf48
     status:
       code: 200
       message: OK
@@ -1819,7 +1819,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=660
   response:
@@ -1842,21 +1842,21 @@ interactions:
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Shanghai","category":"Music"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=680"}'
     headers:
       apim-request-id:
-      - 7c404899-61c2-4dee-a952-7dd80e939f60
+      - 14b98350-f502-4bd0-b49b-d46e252a8907
       content-length:
       - '2531'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:50 GMT
+      - Sat, 26 Dec 2020 19:35:48 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '172'
+      - '215'
       x-request-id:
-      - 7c404899-61c2-4dee-a952-7dd80e939f60
+      - 14b98350-f502-4bd0-b49b-d46e252a8907
     status:
       code: 200
       message: OK
@@ -1874,7 +1874,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=680
   response:
@@ -1898,21 +1898,21 @@ interactions:
         & Garden"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=700"}'
     headers:
       apim-request-id:
-      - 53b89880-755a-4aa3-a007-5020bc3e677d
+      - cbc05bf1-7a52-4dd3-abbc-349afaa76d7b
       content-length:
       - '2496'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:50 GMT
+      - Sat, 26 Dec 2020 19:35:48 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '175'
+      - '207'
       x-request-id:
-      - 53b89880-755a-4aa3-a007-5020bc3e677d
+      - cbc05bf1-7a52-4dd3-abbc-349afaa76d7b
     status:
       code: 200
       message: OK
@@ -1930,7 +1930,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=700
   response:
@@ -1955,21 +1955,21 @@ interactions:
         (Accessories)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=720"}'
     headers:
       apim-request-id:
-      - 5ec2f569-c575-4cb0-8158-eb336709f19c
+      - db47daa7-cbba-4177-9c30-e9bfb9ef7118
       content-length:
       - '2530'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:50 GMT
+      - Sat, 26 Dec 2020 19:35:48 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '165'
+      - '216'
       x-request-id:
-      - 5ec2f569-c575-4cb0-8158-eb336709f19c
+      - db47daa7-cbba-4177-9c30-e9bfb9ef7118
     status:
       code: 200
       message: OK
@@ -1987,7 +1987,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=720
   response:
@@ -2007,21 +2007,21 @@ interactions:
         & Gourmet Food"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=740"}'
     headers:
       apim-request-id:
-      - d3918342-8bf8-4459-a9f8-08be848fbed4
+      - b146d206-92f5-42b4-a227-a064fb5ad775
       content-length:
       - '2420'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:51 GMT
+      - Sat, 26 Dec 2020 19:35:48 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '198'
+      - '235'
       x-request-id:
-      - d3918342-8bf8-4459-a9f8-08be848fbed4
+      - b146d206-92f5-42b4-a227-a064fb5ad775
     status:
       code: 200
       message: OK
@@ -2039,7 +2039,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=740
   response:
@@ -2059,21 +2059,21 @@ interactions:
         Paulo","category":"Office Products"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=760"}'
     headers:
       apim-request-id:
-      - c8aa9f2f-49d5-4e90-bdc5-840c16f9c04c
+      - 184dfff6-e396-4819-8846-05da16570d51
       content-length:
       - '2420'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:51 GMT
+      - Sat, 26 Dec 2020 19:35:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '198'
+      - '171'
       x-request-id:
-      - c8aa9f2f-49d5-4e90-bdc5-840c16f9c04c
+      - 184dfff6-e396-4819-8846-05da16570d51
     status:
       code: 200
       message: OK
@@ -2091,7 +2091,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=760
   response:
@@ -2114,21 +2114,21 @@ interactions:
         & Gourmet Food"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=780"}'
     headers:
       apim-request-id:
-      - 1ec10f61-51e3-41a1-b2a6-6c4e9dc7cdda
+      - 1698ff22-d418-426d-8f1b-4f033b6c06aa
       content-length:
       - '2477'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:51 GMT
+      - Sat, 26 Dec 2020 19:35:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '184'
+      - '175'
       x-request-id:
-      - 1ec10f61-51e3-41a1-b2a6-6c4e9dc7cdda
+      - 1698ff22-d418-426d-8f1b-4f033b6c06aa
     status:
       code: 200
       message: OK
@@ -2146,7 +2146,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=780
   response:
@@ -2173,21 +2173,21 @@ interactions:
         & Gourmet Food"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=800"}'
     headers:
       apim-request-id:
-      - ab20c665-b473-4ca1-a93e-5335a095f685
+      - 12a0d8b2-b597-4c26-acc5-6d989e24bdae
       content-length:
       - '2490'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:51 GMT
+      - Sat, 26 Dec 2020 19:35:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '181'
+      - '240'
       x-request-id:
-      - ab20c665-b473-4ca1-a93e-5335a095f685
+      - 12a0d8b2-b597-4c26-acc5-6d989e24bdae
     status:
       code: 200
       message: OK
@@ -2205,7 +2205,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=800
   response:
@@ -2230,21 +2230,21 @@ interactions:
         & Computer Games"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hyderabad","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=820"}'
     headers:
       apim-request-id:
-      - 6f49d3ec-46df-444e-9a3a-90a997d5827c
+      - 276c9c1b-517f-4ae1-8625-25a9ef0c509f
       content-length:
       - '2481'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:52 GMT
+      - Sat, 26 Dec 2020 19:35:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '161'
+      - '189'
       x-request-id:
-      - 6f49d3ec-46df-444e-9a3a-90a997d5827c
+      - 276c9c1b-517f-4ae1-8625-25a9ef0c509f
     status:
       code: 200
       message: OK
@@ -2262,7 +2262,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=820
   response:
@@ -2287,21 +2287,21 @@ interactions:
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Dhaka","category":"Music"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=840"}'
     headers:
       apim-request-id:
-      - 7f7e8886-92bc-4626-b890-136884dbd4a5
+      - cb20dd10-6076-4401-b9e2-34687e7b45af
       content-length:
       - '2486'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:52 GMT
+      - Sat, 26 Dec 2020 19:35:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '209'
+      - '224'
       x-request-id:
-      - 7f7e8886-92bc-4626-b890-136884dbd4a5
+      - cb20dd10-6076-4401-b9e2-34687e7b45af
     status:
       code: 200
       message: OK
@@ -2319,7 +2319,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=840
   response:
@@ -2341,21 +2341,21 @@ interactions:
         Instruments"}},{"metricId":"metric_id","dimension":{"dimension_name":"Shenzhen","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=860"}'
     headers:
       apim-request-id:
-      - 08b3231f-3269-4f65-b0d3-a857fd38b942
+      - a1ff4e0b-ad23-4454-b144-7a5eb015335f
       content-length:
       - '2491'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:52 GMT
+      - Sat, 26 Dec 2020 19:35:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '164'
+      - '183'
       x-request-id:
-      - 08b3231f-3269-4f65-b0d3-a857fd38b942
+      - a1ff4e0b-ad23-4454-b144-7a5eb015335f
     status:
       code: 200
       message: OK
@@ -2373,7 +2373,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=860
   response:
@@ -2399,21 +2399,21 @@ interactions:
         York","category":"Home & Garden"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=880"}'
     headers:
       apim-request-id:
-      - 96f4f912-0497-4ad3-a214-73f424f0b39f
+      - b0984105-e47e-4d1a-a671-2e51a1732597
       content-length:
       - '2508'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:53 GMT
+      - Sat, 26 Dec 2020 19:35:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '172'
+      - '196'
       x-request-id:
-      - 96f4f912-0497-4ad3-a214-73f424f0b39f
+      - b0984105-e47e-4d1a-a671-2e51a1732597
     status:
       code: 200
       message: OK
@@ -2431,7 +2431,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=880
   response:
@@ -2455,21 +2455,21 @@ interactions:
         Handbags & Sunglasses"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=900"}'
     headers:
       apim-request-id:
-      - 90e65489-11a0-4239-80ae-752ea2b62186
+      - f504179a-47d2-430f-8e62-e09af18295ba
       content-length:
       - '2540'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:53 GMT
+      - Sat, 26 Dec 2020 19:35:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '164'
+      - '206'
       x-request-id:
-      - 90e65489-11a0-4239-80ae-752ea2b62186
+      - f504179a-47d2-430f-8e62-e09af18295ba
     status:
       code: 200
       message: OK
@@ -2487,7 +2487,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=900
   response:
@@ -2511,21 +2511,21 @@ interactions:
         Angeles","category":"Electronics (Accessories)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=920"}'
     headers:
       apim-request-id:
-      - 4e768cc6-47e5-41c5-acb3-4dd6f1294670
+      - 89d63da5-c048-4f48-93e2-54cd19827b3d
       content-length:
       - '2474'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:53 GMT
+      - Sat, 26 Dec 2020 19:35:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '170'
+      - '173'
       x-request-id:
-      - 4e768cc6-47e5-41c5-acb3-4dd6f1294670
+      - 89d63da5-c048-4f48-93e2-54cd19827b3d
     status:
       code: 200
       message: OK
@@ -2543,7 +2543,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=920
   response:
@@ -2563,21 +2563,21 @@ interactions:
         Instruments"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=940"}'
     headers:
       apim-request-id:
-      - 6879ca40-f6f5-443e-85d1-bc03a72e5b26
+      - 80dca63c-80a8-4d94-89c0-4acb1bdeeb4e
       content-length:
       - '2422'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:54 GMT
+      - Sat, 26 Dec 2020 19:35:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '175'
+      - '159'
       x-request-id:
-      - 6879ca40-f6f5-443e-85d1-bc03a72e5b26
+      - 80dca63c-80a8-4d94-89c0-4acb1bdeeb4e
     status:
       code: 200
       message: OK
@@ -2595,7 +2595,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=940
   response:
@@ -2615,21 +2615,21 @@ interactions:
         & Scientific"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lahore","category":"Jewelry"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=960"}'
     headers:
       apim-request-id:
-      - 1765ba45-d49e-45d0-a0f0-32df14097c06
+      - 011bac3c-f95b-4251-9eb8-9b32f4f028f0
       content-length:
       - '2461'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:54 GMT
+      - Sat, 26 Dec 2020 19:35:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '289'
+      - '188'
       x-request-id:
-      - 1765ba45-d49e-45d0-a0f0-32df14097c06
+      - 011bac3c-f95b-4251-9eb8-9b32f4f028f0
     status:
       code: 200
       message: OK
@@ -2647,7 +2647,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=960
   response:
@@ -2673,21 +2673,21 @@ interactions:
         Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=980"}'
     headers:
       apim-request-id:
-      - af49b238-68b1-45f2-85bd-2a5db536d3e5
+      - 71c88296-9002-461b-922f-478fb6add484
       content-length:
       - '2449'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:54 GMT
+      - Sat, 26 Dec 2020 19:35:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '403'
+      - '155'
       x-request-id:
-      - af49b238-68b1-45f2-85bd-2a5db536d3e5
+      - 71c88296-9002-461b-922f-478fb6add484
     status:
       code: 200
       message: OK
@@ -2705,7 +2705,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=980
   response:
@@ -2731,21 +2731,21 @@ interactions:
         Horizonte","category":"Device Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1000"}'
     headers:
       apim-request-id:
-      - c67daad6-a280-400b-89aa-04d52baa0986
+      - b42e76e6-8308-4fe7-9610-80f62e7c13eb
       content-length:
       - '2515'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:55 GMT
+      - Sat, 26 Dec 2020 19:35:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '319'
+      - '135'
       x-request-id:
-      - c67daad6-a280-400b-89aa-04d52baa0986
+      - b42e76e6-8308-4fe7-9610-80f62e7c13eb
     status:
       code: 200
       message: OK
@@ -2763,7 +2763,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1000
   response:
@@ -2789,21 +2789,21 @@ interactions:
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Haora","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1020"}'
     headers:
       apim-request-id:
-      - 7a74108f-406b-4baf-9fc4-25690e3177b6
+      - bc15aed4-9376-4779-9953-13bd420596e3
       content-length:
       - '2539'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:55 GMT
+      - Sat, 26 Dec 2020 19:35:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '231'
+      - '129'
       x-request-id:
-      - 7a74108f-406b-4baf-9fc4-25690e3177b6
+      - bc15aed4-9376-4779-9953-13bd420596e3
     status:
       code: 200
       message: OK
@@ -2821,7 +2821,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1020
   response:
@@ -2848,21 +2848,21 @@ interactions:
         & Photo"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1040"}'
     headers:
       apim-request-id:
-      - 91f1cc26-f22f-441f-b710-c2bf6dd14c27
+      - 3fd3053e-639e-43ad-94d3-1c8303bbad19
       content-length:
       - '2460'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:56 GMT
+      - Sat, 26 Dec 2020 19:35:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '249'
+      - '134'
       x-request-id:
-      - 91f1cc26-f22f-441f-b710-c2bf6dd14c27
+      - 3fd3053e-639e-43ad-94d3-1c8303bbad19
     status:
       code: 200
       message: OK
@@ -2880,7 +2880,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1040
   response:
@@ -2908,21 +2908,21 @@ interactions:
         Coins"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1060"}'
     headers:
       apim-request-id:
-      - 60339aac-72e2-4129-b607-8d5c05d16089
+      - fda8f44d-050b-4af3-b291-320d68534f2f
       content-length:
       - '2521'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:56 GMT
+      - Sat, 26 Dec 2020 19:35:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '178'
+      - '128'
       x-request-id:
-      - 60339aac-72e2-4129-b607-8d5c05d16089
+      - fda8f44d-050b-4af3-b291-320d68534f2f
     status:
       code: 200
       message: OK
@@ -2940,7 +2940,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1060
   response:
@@ -2968,21 +2968,21 @@ interactions:
         & Travel Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1080"}'
     headers:
       apim-request-id:
-      - 010b6073-f6df-490b-83f1-ee38e7925868
+      - ba6a1f80-c99a-49d4-9709-1cd885a8b601
       content-length:
       - '2560'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:56 GMT
+      - Sat, 26 Dec 2020 19:35:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '174'
+      - '144'
       x-request-id:
-      - 010b6073-f6df-490b-83f1-ee38e7925868
+      - ba6a1f80-c99a-49d4-9709-1cd885a8b601
     status:
       code: 200
       message: OK
@@ -3000,7 +3000,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1080
   response:
@@ -3028,21 +3028,21 @@ interactions:
         & Photo"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1100"}'
     headers:
       apim-request-id:
-      - 29f3d0c0-89cc-4a3f-afb1-7d558f0b13f9
+      - 222db120-b284-4a02-871a-dc65880dff46
       content-length:
       - '2437'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:57 GMT
+      - Sat, 26 Dec 2020 19:35:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '186'
+      - '148'
       x-request-id:
-      - 29f3d0c0-89cc-4a3f-afb1-7d558f0b13f9
+      - 222db120-b284-4a02-871a-dc65880dff46
     status:
       code: 200
       message: OK
@@ -3060,7 +3060,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1100
   response:
@@ -3088,21 +3088,21 @@ interactions:
         Handbags & Sunglasses"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1120"}'
     headers:
       apim-request-id:
-      - 37f5877e-0f98-4d8f-b7d4-69d9807534e4
+      - 92f73363-e8b9-4fcd-88df-87d595065234
       content-length:
       - '2495'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:57 GMT
+      - Sat, 26 Dec 2020 19:35:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '205'
+      - '139'
       x-request-id:
-      - 37f5877e-0f98-4d8f-b7d4-69d9807534e4
+      - 92f73363-e8b9-4fcd-88df-87d595065234
     status:
       code: 200
       message: OK
@@ -3120,7 +3120,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1120
   response:
@@ -3148,21 +3148,21 @@ interactions:
         Coins"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1140"}'
     headers:
       apim-request-id:
-      - 5fff92f4-58fe-4a8e-abb0-86900f55ca8d
+      - fba92075-2521-4616-b224-aca1276cf20b
       content-length:
       - '2461'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:57 GMT
+      - Sat, 26 Dec 2020 19:35:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '156'
+      - '145'
       x-request-id:
-      - 5fff92f4-58fe-4a8e-abb0-86900f55ca8d
+      - fba92075-2521-4616-b224-aca1276cf20b
     status:
       code: 200
       message: OK
@@ -3180,7 +3180,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1140
   response:
@@ -3208,21 +3208,21 @@ interactions:
         & Travel Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1160"}'
     headers:
       apim-request-id:
-      - 3193b7de-27fc-4d7c-822f-256d613551ba
+      - 1bc82687-171a-4e07-b838-90d73b4978c9
       content-length:
       - '2499'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:58 GMT
+      - Sat, 26 Dec 2020 19:35:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '165'
+      - '149'
       x-request-id:
-      - 3193b7de-27fc-4d7c-822f-256d613551ba
+      - 1bc82687-171a-4e07-b838-90d73b4978c9
     status:
       code: 200
       message: OK
@@ -3240,7 +3240,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1160
   response:
@@ -3266,21 +3266,21 @@ interactions:
         Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1180"}'
     headers:
       apim-request-id:
-      - 896172b4-1ce2-4443-bdfc-670aef8d1518
+      - 3dc6691f-5450-4960-b57e-d29c053671e4
       content-length:
       - '2497'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:58 GMT
+      - Sat, 26 Dec 2020 19:35:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '181'
+      - '191'
       x-request-id:
-      - 896172b4-1ce2-4443-bdfc-670aef8d1518
+      - 3dc6691f-5450-4960-b57e-d29c053671e4
     status:
       code: 200
       message: OK
@@ -3298,7 +3298,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1180
   response:
@@ -3322,21 +3322,21 @@ interactions:
         Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1200"}'
     headers:
       apim-request-id:
-      - 78333807-b571-490c-b9be-648b29949055
+      - 0b7eca37-0149-43da-8504-1d44cc3d996e
       content-length:
       - '2479'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:58 GMT
+      - Sat, 26 Dec 2020 19:35:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '178'
+      - '152'
       x-request-id:
-      - 78333807-b571-490c-b9be-648b29949055
+      - 0b7eca37-0149-43da-8504-1d44cc3d996e
     status:
       code: 200
       message: OK
@@ -3354,7 +3354,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1200
   response:
@@ -3376,21 +3376,21 @@ interactions:
         (Accessories)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1220"}'
     headers:
       apim-request-id:
-      - 6ca309a1-fd69-46cc-9146-da71abee6f7d
+      - 709b6916-29f9-44b0-ba45-b38db38c7c42
       content-length:
       - '2483'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:59 GMT
+      - Sat, 26 Dec 2020 19:35:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '140'
+      - '136'
       x-request-id:
-      - 6ca309a1-fd69-46cc-9146-da71abee6f7d
+      - 709b6916-29f9-44b0-ba45-b38db38c7c42
     status:
       code: 200
       message: OK
@@ -3408,7 +3408,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1220
   response:
@@ -3422,21 +3422,21 @@ interactions:
         & Garden"}},{"metricId":"metric_id","dimension":{"dimension_name":"Cairo","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chongqing","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Luanda","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1240"}'
     headers:
       apim-request-id:
-      - f4b7a953-41ae-4d2d-854d-87e070e86cb4
+      - 7de67f83-f8ee-4afb-9ca7-767aa9115906
       content-length:
       - '2323'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:59 GMT
+      - Sat, 26 Dec 2020 19:35:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '182'
+      - '152'
       x-request-id:
-      - f4b7a953-41ae-4d2d-854d-87e070e86cb4
+      - 7de67f83-f8ee-4afb-9ca7-767aa9115906
     status:
       code: 200
       message: OK
@@ -3454,7 +3454,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1240
   response:
@@ -3468,21 +3468,21 @@ interactions:
         de Janeiro","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lima","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Mumbai","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kinshasa","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1260"}'
     headers:
       apim-request-id:
-      - 21bfd727-42bd-4556-80db-4289b4eb7a37
+      - d68bd38c-3ae5-47a7-9cff-0d5eca939038
       content-length:
       - '2345'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:59 GMT
+      - Sat, 26 Dec 2020 19:35:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '142'
+      - '148'
       x-request-id:
-      - 21bfd727-42bd-4556-80db-4289b4eb7a37
+      - d68bd38c-3ae5-47a7-9cff-0d5eca939038
     status:
       code: 200
       message: OK
@@ -3500,7 +3500,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1260
   response:
@@ -3515,21 +3515,21 @@ interactions:
         Angeles","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Philadelphia","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1280"}'
     headers:
       apim-request-id:
-      - d5b56d6f-0f14-4ebd-8487-58c8a76951e8
+      - 62112627-ea8f-4bad-bad3-6bd67dfd69bf
       content-length:
       - '2338'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:59 GMT
+      - Sat, 26 Dec 2020 19:35:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '227'
+      - '188'
       x-request-id:
-      - d5b56d6f-0f14-4ebd-8487-58c8a76951e8
+      - 62112627-ea8f-4bad-bad3-6bd67dfd69bf
     status:
       code: 200
       message: OK
@@ -3547,7 +3547,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1280
   response:
@@ -3561,21 +3561,21 @@ interactions:
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"__SUM__","category":"Handmade"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1300"}'
     headers:
       apim-request-id:
-      - 07c2b4c6-57cc-48d7-b62a-5346ddf2330c
+      - 47d76cf4-ba2f-4f89-b10c-2c3be230064b
       content-length:
       - '2349'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:38:00 GMT
+      - Sat, 26 Dec 2020 19:35:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '186'
+      - '161'
       x-request-id:
-      - 07c2b4c6-57cc-48d7-b62a-5346ddf2330c
+      - 47d76cf4-ba2f-4f89-b10c-2c3be230064b
     status:
       code: 200
       message: OK
@@ -3593,7 +3593,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1300
   response:
@@ -3609,21 +3609,21 @@ interactions:
         Art"}},{"metricId":"metric_id","dimension":{"dimension_name":"Riyadh","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1320"}'
     headers:
       apim-request-id:
-      - 2202d96a-f7c7-4814-908f-aa8d589b5a12
+      - 76ff0e32-bfc6-42e0-9336-fb7af86b22f5
       content-length:
       - '2331'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:38:00 GMT
+      - Sat, 26 Dec 2020 19:35:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '148'
+      - '142'
       x-request-id:
-      - 2202d96a-f7c7-4814-908f-aa8d589b5a12
+      - 76ff0e32-bfc6-42e0-9336-fb7af86b22f5
     status:
       code: 200
       message: OK
@@ -3641,7 +3641,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1320
   response:
@@ -3660,21 +3660,21 @@ interactions:
         York","category":"Sports"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1340"}'
     headers:
       apim-request-id:
-      - ec5132a7-a7d8-46ee-bbdf-6867cc63f386
+      - a286d384-3abf-4ca4-8f0d-d3fcea626790
       content-length:
       - '2399'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:38:00 GMT
+      - Sat, 26 Dec 2020 19:35:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '263'
+      - '206'
       x-request-id:
-      - ec5132a7-a7d8-46ee-bbdf-6867cc63f386
+      - a286d384-3abf-4ca4-8f0d-d3fcea626790
     status:
       code: 200
       message: OK
@@ -3692,7 +3692,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1340
   response:
@@ -3714,21 +3714,21 @@ interactions:
         Products (Excluding Apparel)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hanoi","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Xi''an","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Melbourne","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1360"}'
     headers:
       apim-request-id:
-      - 5ad24d02-23f9-48c9-8602-712d594680b8
+      - c11d4d29-d017-47c7-bd36-d3349b98051f
       content-length:
       - '2462'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:38:01 GMT
+      - Sat, 26 Dec 2020 19:35:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '163'
+      - '132'
       x-request-id:
-      - 5ad24d02-23f9-48c9-8602-712d594680b8
+      - c11d4d29-d017-47c7-bd36-d3349b98051f
     status:
       code: 200
       message: OK
@@ -3746,7 +3746,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1360
   response:
@@ -3770,21 +3770,21 @@ interactions:
         de Janeiro","category":"Fine Art"}},{"metricId":"metric_id","dimension":{"dimension_name":"Cairo","category":"Sports"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1380"}'
     headers:
       apim-request-id:
-      - 49bf0eb8-0825-4d27-a7db-496354b0fb07
+      - 17837c81-c739-46e7-ae99-97598ac544e7
       content-length:
       - '2397'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:38:01 GMT
+      - Sat, 26 Dec 2020 19:35:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '174'
+      - '151'
       x-request-id:
-      - 49bf0eb8-0825-4d27-a7db-496354b0fb07
+      - 17837c81-c739-46e7-ae99-97598ac544e7
     status:
       code: 200
       message: OK
@@ -3802,7 +3802,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1380
   response:
@@ -3828,21 +3828,21 @@ interactions:
         & Travel Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1400"}'
     headers:
       apim-request-id:
-      - 76a33473-bded-4383-b9e1-852703b7c0a2
+      - 66e3ed03-7747-4bcd-86b9-7f08302f6734
       content-length:
       - '2608'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:38:01 GMT
+      - Sat, 26 Dec 2020 19:35:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '150'
+      - '123'
       x-request-id:
-      - 76a33473-bded-4383-b9e1-852703b7c0a2
+      - 66e3ed03-7747-4bcd-86b9-7f08302f6734
     status:
       code: 200
       message: OK
@@ -3860,7 +3860,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1400
   response:
@@ -3871,21 +3871,21 @@ interactions:
         Products (Excluding Apparel)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Ankara","category":"__SUM__"}}],"@nextLink":null}'
     headers:
       apim-request-id:
-      - 3e912672-0d24-4481-9f93-41831bb4501c
+      - 88775f64-c3fc-4c41-9955-c8e4f67707d3
       content-length:
       - '604'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:38:02 GMT
+      - Sat, 26 Dec 2020 19:35:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '179'
+      - '295'
       x-request-id:
-      - 3e912672-0d24-4481-9f93-41831bb4501c
+      - 88775f64-c3fc-4c41-9955-c8e4f67707d3
     status:
       code: 200
       message: OK
