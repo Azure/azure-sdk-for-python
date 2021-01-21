@@ -71,7 +71,7 @@ class AccessControlTests(KeyVaultTestCase):
         definition_name = self.get_replayable_uuid("definition-name")
         permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = await client.set_role_definition(
-            role_scope=scope, role_definition_name=definition_name, permissions=permissions
+            role_scope=scope, permissions=permissions, role_definition_name=definition_name
         )
         assert "/" in created_definition.assignable_scopes
         assert created_definition.name == definition_name
@@ -83,7 +83,7 @@ class AccessControlTests(KeyVaultTestCase):
             KeyVaultPermission(allowed_data_actions=[], denied_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = await client.set_role_definition(
-            role_scope=scope, role_definition_name=definition_name, permissions=permissions
+            role_scope=scope, permissions=permissions, role_definition_name=definition_name
         )
         assert len(updated_definition.permissions) == 1
         assert len(updated_definition.permissions[0].allowed_data_actions) == 0

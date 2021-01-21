@@ -111,34 +111,33 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def set_role_definition(self, role_scope, **kwargs):
-        # type: (Union[str, KeyVaultRoleScope], **Any) -> KeyVaultRoleDefinition
+    def set_role_definition(self, role_scope, permissions, **kwargs):
+        # type: (Union[str, KeyVaultRoleScope], Iterable[KeyVaultPermission], **Any) -> KeyVaultRoleDefinition
         """Creates or updates a custom role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
         :type role_scope: str or KeyVaultRoleScope
+        :param permissions: the role definition's permissions. An empty list results in a role definition with no action
+            permissions.
+        :type permissions: Iterable[KeyVaultPermission]
         :keyword role_definition_name: the role definition's name. Must be a UUID.
         :type role_definition_name: str or uuid.UUID
-        :keyword permissions: the role definition's permissions.
-        :type permissions: Iterable[KeyVaultPermission]
         :keyword assignable_scopes: the role definition's assignable scopes.
         :type assignable_scopes: list[str]
         :returns: The created or updated role definition
         :rtype: KeyVaultRoleDefinition
         """
         role_definition_name = kwargs.pop("role_definition_name", None) or uuid4()
-        permissions = kwargs.pop("permissions", None)
-        if permissions is not None:
-            permissions = [
-                self._client.role_definitions.models.Permission(
-                    actions=p.allowed_actions,
-                    not_actions=p.denied_actions,
-                    data_actions=p.allowed_data_actions,
-                    not_data_actions=p.denied_data_actions,
-                )
-                for p in permissions
-            ]
+        permissions = [
+            self._client.role_definitions.models.Permission(
+                actions=p.allowed_actions,
+                not_actions=p.denied_actions,
+                data_actions=p.allowed_data_actions,
+                not_data_actions=p.denied_data_actions,
+            )
+            for p in permissions
+        ]
 
         properties = self._client.role_definitions.models.RoleDefinitionProperties(
             role_name=role_definition_name, permissions=permissions, **kwargs

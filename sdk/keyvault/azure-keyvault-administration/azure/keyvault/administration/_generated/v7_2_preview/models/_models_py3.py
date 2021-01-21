@@ -180,10 +180,10 @@ class Permission(msrest.serialization.Model):
      other role definitions assigned to a principal.
     :type not_actions: list[str]
     :param data_actions: Data action permissions that are granted.
-    :type data_actions: list[str or ~key_vault_client.models.DataActionPermission]
+    :type data_actions: list[str or ~key_vault_client.models.DataAction]
     :param not_data_actions: Data action permissions that are excluded but not denied. They may be
      granted by other role definitions assigned to a principal.
-    :type not_data_actions: list[str or ~key_vault_client.models.DataActionPermission]
+    :type not_data_actions: list[str or ~key_vault_client.models.DataAction]
     """
 
     _attribute_map = {
@@ -198,8 +198,8 @@ class Permission(msrest.serialization.Model):
         *,
         actions: Optional[List[str]] = None,
         not_actions: Optional[List[str]] = None,
-        data_actions: Optional[List[Union[str, "DataActionPermission"]]] = None,
-        not_data_actions: Optional[List[Union[str, "DataActionPermission"]]] = None,
+        data_actions: Optional[List[Union[str, "DataAction"]]] = None,
+        not_data_actions: Optional[List[Union[str, "DataAction"]]] = None,
         **kwargs
     ):
         super(Permission, self).__init__(**kwargs)

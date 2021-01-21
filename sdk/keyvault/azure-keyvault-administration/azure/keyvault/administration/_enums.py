@@ -27,7 +27,7 @@ class KeyVaultDataAction(str, Enum):
     #: Backup HSM keys.
     BACKUP_HSM_KEYS = "Microsoft.KeyVault/managedHsm/keys/backup/action"
     #: Restore HSM keys.
-    RESTORE_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/restore/action"
+    RESTORE_HSM_KEYS = "Microsoft.KeyVault/managedHsm/keys/restore/action"
     #: Delete role assignment.
     DELETE_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/delete/action"
     #: Get role assignment.

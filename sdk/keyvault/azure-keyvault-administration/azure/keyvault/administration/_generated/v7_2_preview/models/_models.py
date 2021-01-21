@@ -163,10 +163,10 @@ class Permission(msrest.serialization.Model):
      other role definitions assigned to a principal.
     :type not_actions: list[str]
     :param data_actions: Data action permissions that are granted.
-    :type data_actions: list[str or ~key_vault_client.models.DataActionPermission]
+    :type data_actions: list[str or ~key_vault_client.models.DataAction]
     :param not_data_actions: Data action permissions that are excluded but not denied. They may be
      granted by other role definitions assigned to a principal.
-    :type not_data_actions: list[str or ~key_vault_client.models.DataActionPermission]
+    :type not_data_actions: list[str or ~key_vault_client.models.DataAction]
     """
 
     _attribute_map = {
