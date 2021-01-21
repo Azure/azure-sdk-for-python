@@ -118,7 +118,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Communication Identifier Kind.
     """
-
     Unknown = "unknown"
     CommunicationUser = "communicationUser"
     PhoneNumber = "phoneNumber"
