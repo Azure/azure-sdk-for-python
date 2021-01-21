@@ -100,7 +100,7 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
 
 
 class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
+    def __getitem__(cls, name):
         return super().__getitem__(name.upper())
 
     def __getattr__(cls, name):
@@ -124,4 +124,3 @@ class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     PhoneNumber = "phoneNumber"
     CallingApplication = "callingApplication"
     MicrosoftTeamsUser = "microsoftTeamsUser"
- 
