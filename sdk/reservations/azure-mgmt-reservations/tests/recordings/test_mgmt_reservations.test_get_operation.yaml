@@ -1,0 +1,118 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-reservations/0.9.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Capacity/operations?api-version=2020-10-01-preview
+  response:
+    body:
+      string: '{"value":[{"name":"Microsoft.Capacity/appliedreservations/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
+        All Reservations"}},{"name":"Microsoft.Capacity/calculateprice/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Calculate Reservation Price","description":"Calculate
+        any Reservation Price"}},{"name":"Microsoft.Capacity/catalogs/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Read Reservation Catalog","description":"Read
+        catalog of Reservation"}},{"name":"Microsoft.Capacity/checkoffers/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Check Subscription Offers","description":"Check
+        any Subscription Offers"}},{"name":"Microsoft.Capacity/checkscopes/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Check Subscription","description":"Check
+        any Subscription"}},{"name":"Microsoft.Capacity/operations/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Read Operation","description":"Read
+        any Operation"}},{"name":"Microsoft.Capacity/reservationorders/changedirectory/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Change reservation directory","description":"Change
+        directory of any reservation"}},{"name":"Microsoft.Capacity/reservationorders/availablescopes/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Find Available Scope","description":"Find
+        any Available Scope"}},{"name":"Microsoft.Capacity/reservationorders/reservations/availablescopes/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Find Available Scope","description":"Find
+        any Available Scope"}},{"name":"Microsoft.Capacity/validatereservationorder/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Validate Reservation","description":"Validate
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
+        All Reservations"}},{"name":"Microsoft.Capacity/reservationorders/write","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Create Reservations","description":"Create
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Update Reservations","description":"Update
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/delete","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Delete Reservations","description":"Delete
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
+        All Reservations"}},{"name":"Microsoft.Capacity/reservationorders/reservations/write","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Create Reservations","description":"Create
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Update Reservations","description":"Update
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/delete","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Delete Reservations","description":"Delete
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/revisions/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
+        All Reservations"}},{"name":"Microsoft.Capacity/register/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Registers the Capacity Resource
+        Provider.","description":"Registers the Capacity resource provider and enables
+        the creation of Capacity resources."}},{"name":"Microsoft.Capacity/commercialreservationorders/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservation Orders created
+        in any Tenant","description":"Get Reservation Orders created in any Tenant"}},{"name":"Microsoft.Capacity/tenants/register/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Register Tenant","description":"Register
+        any Tenant"}},{"name":"Microsoft.Capacity/reservationorders/return/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Return Reservation","description":"Return
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/swap/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Swap Reservation","description":"Swap
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/split/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Split Reservation","description":"Split
+        any Reservation"}},{"name":"Microsoft.Capacity/unregister/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Unregister Tenant","description":"Unregister
+        any Tenant"}},{"name":"Microsoft.Capacity/reservationorders/merge/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Merge Reservation","description":"Merge
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/calculaterefund/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Compute price for refund","description":"Computes
+        the refund amount and price of new purchase and returns policy Errors."}},{"name":"Microsoft.Capacity/calculateexchange/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Compute price for exchange","description":"Computes
+        the exchange amount and price of new purchase and returns policy Errors."}},{"name":"Microsoft.Capacity/exchange/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Exchange Reservation","description":"Exchange
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/splitoperationresults/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Poll Reservation split operation","description":"Poll
+        any split operation"}},{"name":"Microsoft.Capacity/reservationorders/mergeoperationresults/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Poll Reservation merge operation","description":"Poll
+        any merge operation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/archive/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Archive Reservation","description":"Archive
+        a reservation which is in a terminal state like Expired, Split etc."}},{"name":"Microsoft.Capacity/reservationorders/reservations/unarchive/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Unarchive a previously archived
+        Reservation","description":"Unarchive a Reservation which was previously archived"}}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '7376'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 21 Jan 2021 02:22:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,65 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-reservations/0.9.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits?api-version=2020-10-25
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardDFamily","properties":{"currentValue":0,"limit":100,"name":{"value":"standardDFamily","localizedValue":"Standard
+        D Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardDv2Family","properties":{"currentValue":0,"limit":104,"name":{"value":"standardDv2Family","localizedValue":"Standard
+        Dv2 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardDv3Family","properties":{"currentValue":0,"limit":100,"name":{"value":"standardDv3Family","localizedValue":"Standard
+        Dv3 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardDSv2Family","properties":{"currentValue":0,"limit":100,"name":{"value":"standardDSv2Family","localizedValue":"Standard
+        DSv2 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardDSv3Family","properties":{"currentValue":0,"limit":100,"name":{"value":"standardDSv3Family","localizedValue":"Standard
+        DSv3 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardFSv2Family","properties":{"currentValue":0,"limit":100,"name":{"value":"standardFSv2Family","localizedValue":"Standard
+        FSv2 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardNCFamily","properties":{"currentValue":0,"limit":100,"name":{"value":"standardNCFamily","localizedValue":"Standard
+        NC Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardNCSv2Family","properties":{"currentValue":0,"limit":0,"name":{"value":"standardNCSv2Family","localizedValue":"Standard
+        NCSv2 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardNCSv3Family","properties":{"currentValue":0,"limit":0,"name":{"value":"standardNCSv3Family","localizedValue":"Standard
+        NCSv3 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardNDSFamily","properties":{"currentValue":0,"limit":0,"name":{"value":"standardNDSFamily","localizedValue":"Standard
+        NDS Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardNDSv2Family","properties":{"currentValue":0,"limit":0,"name":{"value":"standardNDSv2Family","localizedValue":"Standard
+        NDSv2 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardNVFamily","properties":{"currentValue":0,"limit":100,"name":{"value":"standardNVFamily","localizedValue":"Standard
+        NV Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardMSFamily","properties":{"currentValue":0,"limit":0,"name":{"value":"standardMSFamily","localizedValue":"Standard
+        MS Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardNVSv3Family","properties":{"currentValue":0,"limit":0,"name":{"value":"standardNVSv3Family","localizedValue":"Standard
+        NVSv3 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardHBrsv2Family","properties":{"currentValue":0,"limit":0,"name":{"value":"standardHBrsv2Family","localizedValue":"Standard
+        HBrsv2 Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"standardHCSFamily","properties":{"currentValue":0,"limit":0,"name":{"value":"standardHCSFamily","localizedValue":"Standard
+        HCS Family Cluster Dedicated vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"Standard
+        NCASv3_T4 Family","properties":{"currentValue":0,"limit":0,"name":{"value":"Standard
+        NCASv3_T4 Family","localizedValue":"Standard  NCASv3_T4  Family Cluster Dedicated
+        vCPUs"},"properties":{},"resourceType":"dedicated","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimits","name":"TotalLowPriorityCores","properties":{"currentValue":0,"limit":300,"name":{"value":"TotalLowPriorityCores","localizedValue":"Total
+        Cluster Low Priority Regional vCPUs"},"properties":{},"resourceType":"lowPriority","unit":"Count"},"type":"Microsoft.Capacity/ServiceLimits"}]}'
+    headers:
+      cache-control:
+      - no-store, must-revalidate, no-cache
+      content-length:
+      - '8044'
+      content-type:
+      - application/json
+      date:
+      - Thu, 21 Jan 2021 02:22:33 GMT
+      ms-requestid:
+      - PYBk_Z3mHE-WvLXCmf1CyQ.0
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
