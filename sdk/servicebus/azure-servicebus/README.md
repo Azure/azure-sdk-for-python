@@ -1,7 +1,7 @@
 # Microsoft Azure Service Bus SDK for Python
 
-> **NOTE**: Starting with the GA release of version 7.0.0 (currently in preview), this package will be deprecated.
-> Users can get a head-start on transitioning by installing or upgrading via `pip install azure-servicebus --pre` and reviewing our [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/migration_guide.md)
+> **NOTE**: With the GA release of version 7.0.0, this package has been deprecated.
+> Users can transition to the current version by installing or upgrading via `pip install azure-servicebus` and reviewing our [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/migration_guide.md)
 
 This is the Microsoft Azure Service Bus Client Library.
 This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
