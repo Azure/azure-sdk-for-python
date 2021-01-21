@@ -182,25 +182,25 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :keyword event_time: Optional.The time (in UTC) of the event. If not provided,
      it will be the time (in UTC) the event was generated.
     :type event_time: Optional[~datetime.datetime]
-    :ivar subject: Required. A resource path relative to the topic path.
+    :ivar subject: A resource path relative to the topic path.
     :vartype subject: str
-    :ivar event_type: Required. The type of the event that occurred.
+    :ivar event_type: The type of the event that occurred.
     :vartype event_type: str
-    :ivar data: Required. Event data specific to the event type.
+    :ivar data: Event data specific to the event type.
     :vartype data: object
-    :ivar data_version: Required. The schema version of the data object.
-        If not provided, will be stamped with an empty value.
+    :ivar data_version: The schema version of the data object.
+     If not provided, will be stamped with an empty value.
     :vartype data_version: str
     :ivar topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
     :vartype topic: str
     :ivar metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
-        If not provided, EventGrid will stamp onto event.
+     If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
     :ivar data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
     :vartype data_version: str
-    :ivar id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
+    :ivar id: An identifier for the event. In not provided, a random UUID will be generated and used.
     :vartype id: Optional[str]
-    :ivar event_time: Optional.The time (in UTC) of the event. If not provided,
+    :ivar event_time: The time (in UTC) of the event. If not provided,
      it will be the time (in UTC) the event was generated.
     :vartype event_time: Optional[~datetime.datetime]
     """
