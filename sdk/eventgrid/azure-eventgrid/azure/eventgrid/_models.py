@@ -55,19 +55,21 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :param source: Required. Identifies the context in which an event happened. The combination of id and source must
         be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :type source: str
-    :param data: Event data specific to the event type.
-    :type data: object
-    :keyword type: Required. Type of event related to the originating occurrence.
+    :param type: Required. Type of event related to the originating occurrence.
     :type type: str
-    :keyword time: The time (in UTC) the event was generated, in RFC3339 format.
+    :param data: Required. Event data specific to the event type.
+    :type data: object
+    :keyword time: Optional. The time (in UTC) the event was generated, in RFC3339 format.
     :type time: ~datetime.datetime
-    :keyword dataschema: Identifies the schema that data adheres to.
+    :keyword dataschema: Optional. Identifies the schema that data adheres to.
     :type dataschema: str
-    :keyword datacontenttype: Content type of data value.
+    :keyword datacontenttype: Optional. Content type of data value.
     :type datacontenttype: str
-    :keyword subject: This describes the subject of the event in the context of the event producer
+    :keyword subject: Optional. This describes the subject of the event in the context of the event producer
      (identified by source).
     :type subject: str
+    :keyword specversion: Optional. The version of the CloudEvent spec. Defaults to "1.0"
+    :type specversion: str
     :keyword id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
@@ -87,6 +89,8 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :ivar subject: This describes the subject of the event in the context of the event producer
      (identified by source).
     :vartype subject: str
+    :ivar specversion: Optional. The version of the CloudEvent spec. Defaults to "1.0"
+    :vartype specversion: str
     :ivar id: An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :vartype id: Optional[str]
@@ -164,12 +168,14 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :param data_version: Required. The schema version of the data object.
         If not provided, will be stamped with an empty value.
     :type data_version: str
-    :keyword topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
+    :keyword topic: Optional. The resource path of the event source. If not provided, Event Grid will
+        stamp onto the event.
     :type topic: str
-    :keyword metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema
-     exactly. If not provided, EventGrid will stamp onto event.
+    :keyword metadata_version: Optional. The schema version of the event metadata. If provided, 
+        must match Event Grid Schema exactly. If not provided, EventGrid will stamp onto event.
     :type metadata_version: str
-    :keyword data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
+    :keyword data_version: Optional. The schema version of the data object. If not provided,
+        will be stamped with an empty value.
     :type data_version: str
     :keyword id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
     :type id: Optional[str]
