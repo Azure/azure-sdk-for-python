@@ -60,7 +60,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             detection_configuration_id=self.anomaly_detection_configuration_id,
             incident_id=self.incident_id,
         ))
-        assert len(results) == 0
+        assert len(results) > 0
 
     def test_list_metric_enriched_series_data(self):
         series_identity = {"city": "Los Angeles"}

@@ -84,7 +84,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
             tolist = []
             async for result in results:
                 tolist.append(result)
-            assert len(tolist) == 0
+            assert len(tolist) > 0
 
     @AzureTestCase.await_prepared_test
     async def test_list_metric_enriched_series_data(self):
