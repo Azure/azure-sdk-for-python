@@ -59,19 +59,19 @@ class MicrosoftTeamsUserIdentifier(object):
         self.is_anonymous = is_anonymous
 
 class CommunicationIdentifierModel(msrest.serialization.Model):
-    """Test.
+    """Communication Identifier Model.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kind: Required. Test.
-    :type kind: str
-    :param id: Test.
+    :param kind: Required. Kind of Communication Identifier.
+    :type kind: CommunicationIdentifierKind
+    :param id: identifies the Communication Identitity.
     :type id: str
-    :param phone_number: Test.
+    :param phone_number: phone number in case the identity is phone number.
     :type phone_number: str
-    :param is_anonymous: Test.
+    :param is_anonymous: is the Microsoft Teams user is anaynimous.
     :type is_anonymous: bool
-    :param microsoft_teams_user_id: Test.
+    :param microsoft_teams_user_id: Microsoft Teams user id.
     :type microsoft_teams_user_id: str
     """
 
