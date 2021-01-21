@@ -57,10 +57,10 @@ class CommunicationUserIdentifierSerializer(object):
         :rasies: ValueError
         """
 
-        id, kind = identifierModel.id, identifierModel.kind
+        identifier, kind = identifierModel.id, identifierModel.kind
 
         if kind == CommunicationIdentifierKind.CommunicationUser:
-            if not id:
+            if not identifier:
                 raise ValueError("CommunictionUser must have a valid id")
             return CommunicationUserIdentifier(id)
         if kind == CommunicationIdentifierKind.PhoneNumber:
@@ -77,7 +77,7 @@ class CommunicationUserIdentifierSerializer(object):
                 is_anonymous=identifierModel.is_anonymous
             )
 
-        if not id:
+        if not identifier:
             raise ValueError("UnknownIdentifier must have a valid id")
 
-        return UnknownIdentifier(id)
+        return UnknownIdentifier(identifier)
