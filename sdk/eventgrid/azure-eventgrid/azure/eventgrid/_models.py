@@ -57,29 +57,48 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :type source: str
     :param data: Event data specific to the event type.
     :type data: object
-    :param type: Required. Type of event related to the originating occurrence.
+    :keyword type: Required. Type of event related to the originating occurrence.
     :type type: str
-    :param time: The time (in UTC) the event was generated, in RFC3339 format.
+    :keyword time: The time (in UTC) the event was generated, in RFC3339 format.
     :type time: ~datetime.datetime
-    :param dataschema: Identifies the schema that data adheres to.
+    :keyword dataschema: Identifies the schema that data adheres to.
     :type dataschema: str
-    :param datacontenttype: Content type of data value.
+    :keyword datacontenttype: Content type of data value.
     :type datacontenttype: str
-    :param subject: This describes the subject of the event in the context of the event producer
+    :keyword subject: This describes the subject of the event in the context of the event producer
      (identified by source).
     :type subject: str
-    :param id: Optional. An identifier for the event. The combination of id and source must be
+    :keyword id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
+    :ivar source: Required. Identifies the context in which an event happened. The combination of id and source must
+        be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
+    :vartype source: str
+    :ivar data: Event data specific to the event type.
+    :vartype data: object
+    :ivar type: Required. Type of event related to the originating occurrence.
+    :vartype type: str
+    :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
+    :vartype time: ~datetime.datetime
+    :ivar dataschema: Identifies the schema that data adheres to.
+    :vartype dataschema: str
+    :ivar datacontenttype: Content type of data value.
+    :vartype datacontenttype: str
+    :ivar subject: This describes the subject of the event in the context of the event producer
+     (identified by source).
+    :vartype subject: str
+    :ivar id: Optional. An identifier for the event. The combination of id and source must be
+     unique for each distinct event. If not provided, a random UUID will be generated and used.
+    :vartype id: Optional[str]
     """
-    def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
-        # type: (str, str, Any) -> None
+    def __init__(self, source, type, data, **kwargs): # pylint: disable=redefined-builtin
+        # type: (str, str, object, Any) -> None
         self.source = source
         self.type = type
         self.specversion = kwargs.pop("specversion", "1.0")
         self.id = kwargs.pop("id", str(uuid.uuid4()))
         self.time = kwargs.pop("time", dt.datetime.now(UTC()).isoformat())
-        self.data = kwargs.pop("data", None)
+        self.data = data or None
         self.datacontenttype = kwargs.pop("datacontenttype", None)
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
@@ -145,18 +164,39 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :param data_version: Required. The schema version of the data object.
         If not provided, will be stamped with an empty value.
     :type data_version: str
-    :param topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
+    :keyword topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
     :type topic: str
+    :keyword metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
+        If not provided, EventGrid will stamp onto event.
+    :type metadata_version: str
+    :keyword data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
+    :type data_version: str
+    :keyword id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
+    :type id: Optional[str]
+    :keyword event_time: Optional.The time (in UTC) of the event. If not provided,
+     it will be the time (in UTC) the event was generated.
+    :type event_time: Optional[~datetime.datetime]
+    :ivar subject: Required. A resource path relative to the topic path.
+    :vartype subject: str
+    :ivar event_type: Required. The type of the event that occurred.
+    :vartype event_type: str
+    :ivar data: Required. Event data specific to the event type.
+    :vartype data: object
+    :ivar data_version: Required. The schema version of the data object.
+        If not provided, will be stamped with an empty value.
+    :vartype data_version: str
+    :ivar topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
+    :vartype topic: str
     :ivar metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
         If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
-    :param data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
-    :type data_version: str
-    :param id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
-    :type id: Optional[str]
-    :param event_time: Optional.The time (in UTC) of the event. If not provided,
+    :ivar data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
+    :vartype data_version: str
+    :ivar id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
+    :vartype id: Optional[str]
+    :ivar event_time: Optional.The time (in UTC) of the event. If not provided,
      it will be the time (in UTC) the event was generated.
-    :type event_time: Optional[~datetime.datetime]
+    :vartype event_time: Optional[~datetime.datetime]
     """
 
     _validation = {
