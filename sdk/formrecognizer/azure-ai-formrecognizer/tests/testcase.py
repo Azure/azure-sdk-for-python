@@ -12,6 +12,7 @@ import time
 import six
 import pytest
 import logging
+from urllib.parse import unquote
 from collections import namedtuple
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from azure.ai.formrecognizer._helpers import (
@@ -614,6 +615,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
             blob_sas_url,
             "blob_sas_url"
         )
+        blob_sas_url = unquote(blob_sas_url)
         return blob_sas_url
 
     def get_training_parameters(self, client):
@@ -641,6 +643,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
             container_sas_url = "containersasurl"
             blob_sas_url = "blob_sas_url"
 
+        container_sas_url = unquote(container_sas_url)
         if self.need_blob_sas_url:
             return {"client": client,
                     "container_sas_url": container_sas_url,
