@@ -13,14 +13,14 @@ interactions:
       string: '{"feedbackId":"feedback_id","createdTime":"2020-10-21T20:53:05.91Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Mumbai","category":"Shoes
         Handbags & Sunglasses"}},"feedbackType":"Anomaly","startTime":"2020-10-01T00:00:00Z","endTime":"2020-10-01T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}}'
     headers:
-      apim-request-id: 80ed6d98-3f8f-463d-861f-6d2a432fd3ce
+      apim-request-id: c7e844c3-0a78-4e75-93e6-c678fbc8929d
       content-length: '927'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:40:53 GMT
+      date: Fri, 22 Jan 2021 01:08:01 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '44'
-      x-request-id: 80ed6d98-3f8f-463d-861f-6d2a432fd3ce
+      x-envoy-upstream-service-time: '33'
+      x-request-id: c7e844c3-0a78-4e75-93e6-c678fbc8929d
     status:
       code: 200
       message: OK

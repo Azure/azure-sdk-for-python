@@ -31,8 +31,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    def test_list_dimension_values(self):
-        results = list(self.client.list_dimension_values(
+    def test_list_anomaly_dimension_values(self):
+        results = list(self.client.list_anomaly_dimension_values(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             dimension_name=self.dimension_name,
             start_time=datetime.datetime(2020, 1, 1),
@@ -60,7 +60,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             detection_configuration_id=self.anomaly_detection_configuration_id,
             incident_id=self.incident_id,
         ))
-        assert len(results) == 0
+        assert len(results) > 0
 
     def test_list_metric_enriched_series_data(self):
         series_identity = {"city": "Los Angeles"}

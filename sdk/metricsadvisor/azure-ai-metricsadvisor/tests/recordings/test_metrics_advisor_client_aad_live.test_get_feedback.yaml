@@ -18,21 +18,21 @@ interactions:
         Handbags & Sunglasses"}},"feedbackType":"Anomaly","startTime":"2020-10-01T00:00:00Z","endTime":"2020-10-01T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}}'
     headers:
       apim-request-id:
-      - 763d729b-cc94-43f9-8bca-191fa8f9f7a1
+      - bd780301-9a2e-429c-bc42-72eb26827e59
       content-length:
       - '927'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 26 Dec 2020 19:33:36 GMT
+      - Fri, 22 Jan 2021 01:00:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '86'
+      - '53'
       x-request-id:
-      - 763d729b-cc94-43f9-8bca-191fa8f9f7a1
+      - bd780301-9a2e-429c-bc42-72eb26827e59
     status:
       code: 200
       message: OK

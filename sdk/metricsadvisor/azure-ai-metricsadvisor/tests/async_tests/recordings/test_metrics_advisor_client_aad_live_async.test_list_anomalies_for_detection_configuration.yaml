@@ -835,14 +835,14 @@ interactions:
         Accessories"},"property":{"anomalySeverity":"Low"}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Moscow","category":"Handmade"},"property":{"anomalySeverity":"Medium"}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Madrid","category":"Office
         Products"},"property":{"anomalySeverity":"Medium"}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Guangzhou","category":"Handmade"},"property":{"anomalySeverity":"Low"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query?$top=1000&$skip=1000"}'
     headers:
-      apim-request-id: 3f26e1bf-2545-41b3-ad67-0daf5bdafc0f
+      apim-request-id: 498e8c75-bbb6-461f-bf58-be2cbd7543b0
       content-length: '138739'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:40:55 GMT
+      date: Fri, 22 Jan 2021 01:08:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
       x-envoy-upstream-service-time: '133'
-      x-request-id: 3f26e1bf-2545-41b3-ad67-0daf5bdafc0f
+      x-request-id: 498e8c75-bbb6-461f-bf58-be2cbd7543b0
     status:
       code: 200
       message: OK
@@ -1112,14 +1112,14 @@ interactions:
         Angeles","category":"Shoes Handbags & Sunglasses"},"property":{"anomalySeverity":"High"}},{"timestamp":"2020-09-22T00:00:00Z","dimension":{"dimension_name":"Karachi","category":"Shoes
         Handbags & Sunglasses"},"property":{"anomalySeverity":"High"}}],"@nextLink":null}'
     headers:
-      apim-request-id: 51782818-ec28-4cfc-be7c-0d8e8999a9a4
+      apim-request-id: fac32ce8-4b3a-4766-9678-09b707e30ef8
       content-length: '39554'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:40:55 GMT
+      date: Fri, 22 Jan 2021 01:08:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '155'
-      x-request-id: 51782818-ec28-4cfc-be7c-0d8e8999a9a4
+      x-envoy-upstream-service-time: '78'
+      x-request-id: fac32ce8-4b3a-4766-9678-09b707e30ef8
     status:
       code: 200
       message: OK
