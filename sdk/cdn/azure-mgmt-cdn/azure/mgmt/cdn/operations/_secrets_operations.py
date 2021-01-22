@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class OriginGroupsOperations(object):
-    """OriginGroupsOperations operations.
+class SecretsOperations(object):
+    """SecretsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,28 +47,25 @@ class OriginGroupsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list_by_endpoint(
+    def list_by_profile(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        endpoint_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.OriginGroupListResult"]
-        """Lists all of the existing origin groups within an endpoint.
+        # type: (...) -> Iterable["_models.SecretListResult"]
+        """Lists existing AzureFrontDoor secrets.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
-        :type endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OriginGroupListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.OriginGroupListResult]
+        :return: An iterator like instance of either SecretListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -83,11 +80,10 @@ class OriginGroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_endpoint.metadata['url']  # type: ignore
+                url = self.list_by_profile.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-                    'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -103,7 +99,7 @@ class OriginGroupsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('OriginGroupListResult', pipeline_response)
+            deserialized = self._deserialize('SecretListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -116,7 +112,7 @@ class OriginGroupsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize(_models.AfdErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -125,33 +121,30 @@ class OriginGroupsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_endpoint.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups'}  # type: ignore
+    list_by_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/secrets'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        endpoint_name,  # type: str
-        origin_group_name,  # type: str
+        secret_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.OriginGroup"
-        """Gets an existing origin group within an endpoint.
+        # type: (...) -> "_models.Secret"
+        """Gets an existing Secret within a profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
-        :type endpoint_name: str
-        :param origin_group_name: Name of the origin group which is unique within the endpoint.
-        :type origin_group_name: str
+        :param secret_name: Name of the Secret under the profile.
+        :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OriginGroup, or the result of cls(response)
-        :rtype: ~azure.mgmt.cdn.models.OriginGroup
+        :return: Secret, or the result of cls(response)
+        :rtype: ~azure.mgmt.cdn.models.Secret
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -164,8 +157,7 @@ class OriginGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -184,28 +176,27 @@ class OriginGroupsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('OriginGroup', pipeline_response)
+        deserialized = self._deserialize('Secret', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/secrets/{secretName}'}  # type: ignore
 
     def _create_initial(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        endpoint_name,  # type: str
-        origin_group_name,  # type: str
-        origin_group,  # type: "_models.OriginGroup"
+        secret_name,  # type: str
+        secret,  # type: "_models.Secret"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.OriginGroup"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
+        # type: (...) -> "_models.Secret"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,8 +210,7 @@ class OriginGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -235,66 +225,60 @@ class OriginGroupsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(origin_group, 'OriginGroup')
+        body_content = self._serialize.body(secret, 'Secret')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('OriginGroup', pipeline_response)
+            deserialized = self._deserialize('Secret', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('OriginGroup', pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('OriginGroup', pipeline_response)
+            deserialized = self._deserialize('Secret', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/secrets/{secretName}'}  # type: ignore
 
     def begin_create(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        endpoint_name,  # type: str
-        origin_group_name,  # type: str
-        origin_group,  # type: "_models.OriginGroup"
+        secret_name,  # type: str
+        secret,  # type: "_models.Secret"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.OriginGroup"]
-        """Creates a new origin group within the specified endpoint.
+        # type: (...) -> LROPoller["_models.Secret"]
+        """Creates a new Secret within the specified profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
-        :type endpoint_name: str
-        :param origin_group_name: Name of the origin group which is unique within the endpoint.
-        :type origin_group_name: str
-        :param origin_group: Origin group properties.
-        :type origin_group: ~azure.mgmt.cdn.models.OriginGroup
+        :param secret_name: Name of the Secret under the profile.
+        :type secret_name: str
+        :param secret: The Secret properties.
+        :type secret: ~azure.mgmt.cdn.models.Secret
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either OriginGroup or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.OriginGroup]
+        :return: An instance of LROPoller that returns either Secret or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Secret]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -304,9 +288,8 @@ class OriginGroupsOperations(object):
             raw_result = self._create_initial(
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
-                endpoint_name=endpoint_name,
-                origin_group_name=origin_group_name,
-                origin_group=origin_group,
+                secret_name=secret_name,
+                secret=secret,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -315,7 +298,7 @@ class OriginGroupsOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OriginGroup', pipeline_response)
+            deserialized = self._deserialize('Secret', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -324,12 +307,11 @@ class OriginGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -341,19 +323,18 @@ class OriginGroupsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/secrets/{secretName}'}  # type: ignore
 
     def _update_initial(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        endpoint_name,  # type: str
-        origin_group_name,  # type: str
-        origin_group_update_properties,  # type: "_models.OriginGroupUpdateParameters"
+        secret_name,  # type: str
+        secret_properties,  # type: "_models.SecretProperties"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.OriginGroup"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
+        # type: (...) -> "_models.Secret"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -367,8 +348,7 @@ class OriginGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -383,7 +363,7 @@ class OriginGroupsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(origin_group_update_properties, 'OriginGroupUpdateParameters')
+        body_content = self._serialize.body(secret_properties, 'SecretProperties')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -391,55 +371,52 @@ class OriginGroupsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('OriginGroup', pipeline_response)
+            deserialized = self._deserialize('Secret', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('OriginGroup', pipeline_response)
+            deserialized = self._deserialize('Secret', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/secrets/{secretName}'}  # type: ignore
 
     def begin_update(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        endpoint_name,  # type: str
-        origin_group_name,  # type: str
-        origin_group_update_properties,  # type: "_models.OriginGroupUpdateParameters"
+        secret_name,  # type: str
+        secret_properties,  # type: "_models.SecretProperties"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.OriginGroup"]
-        """Updates an existing origin group within an endpoint.
+        # type: (...) -> LROPoller["_models.Secret"]
+        """Updates an existing Secret within a profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
-        :type endpoint_name: str
-        :param origin_group_name: Name of the origin group which is unique within the endpoint.
-        :type origin_group_name: str
-        :param origin_group_update_properties: Origin group properties.
-        :type origin_group_update_properties: ~azure.mgmt.cdn.models.OriginGroupUpdateParameters
+        :param secret_name: Name of the Secret under the profile.
+        :type secret_name: str
+        :param secret_properties: Secret properties.
+        :type secret_properties: ~azure.mgmt.cdn.models.SecretProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either OriginGroup or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.OriginGroup]
+        :return: An instance of LROPoller that returns either Secret or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Secret]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -449,9 +426,8 @@ class OriginGroupsOperations(object):
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
-                endpoint_name=endpoint_name,
-                origin_group_name=origin_group_name,
-                origin_group_update_properties=origin_group_update_properties,
+                secret_name=secret_name,
+                secret_properties=secret_properties,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -460,7 +436,7 @@ class OriginGroupsOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OriginGroup', pipeline_response)
+            deserialized = self._deserialize('Secret', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -469,12 +445,11 @@ class OriginGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -486,14 +461,13 @@ class OriginGroupsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/secrets/{secretName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        endpoint_name,  # type: str
-        origin_group_name,  # type: str
+        secret_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -510,8 +484,7 @@ class OriginGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -528,35 +501,32 @@ class OriginGroupsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/secrets/{secretName}'}  # type: ignore
 
     def begin_delete(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        endpoint_name,  # type: str
-        origin_group_name,  # type: str
+        secret_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Deletes an existing origin group within an endpoint.
+        """Deletes an existing Secret within profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
-        :type endpoint_name: str
-        :param origin_group_name: Name of the origin group which is unique within the endpoint.
-        :type origin_group_name: str
+        :param secret_name: Name of the Secret under the profile.
+        :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -578,8 +548,7 @@ class OriginGroupsOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
-                endpoint_name=endpoint_name,
-                origin_group_name=origin_group_name,
+                secret_name=secret_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -594,12 +563,11 @@ class OriginGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -611,4 +579,4 @@ class OriginGroupsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/secrets/{secretName}'}  # type: ignore

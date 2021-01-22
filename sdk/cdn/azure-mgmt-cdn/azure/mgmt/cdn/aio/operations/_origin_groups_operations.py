@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class OriginGroupsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         **kwargs
-    ) -> AsyncIterable["models.OriginGroupListResult"]:
+    ) -> AsyncIterable["_models.OriginGroupListResult"]:
         """Lists all of the existing origin groups within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -63,12 +63,12 @@ class OriginGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.OriginGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -111,7 +111,7 @@ class OriginGroupsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -129,7 +129,7 @@ class OriginGroupsOperations:
         endpoint_name: str,
         origin_group_name: str,
         **kwargs
-    ) -> "models.OriginGroup":
+    ) -> "_models.OriginGroup":
         """Gets an existing origin group within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -145,12 +145,12 @@ class OriginGroupsOperations:
         :rtype: ~azure.mgmt.cdn.models.OriginGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -178,7 +178,7 @@ class OriginGroupsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('OriginGroup', pipeline_response)
@@ -195,15 +195,15 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group: "models.OriginGroup",
+        origin_group: "_models.OriginGroup",
         **kwargs
-    ) -> "models.OriginGroup":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
+    ) -> "_models.OriginGroup":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -236,7 +236,7 @@ class OriginGroupsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -260,9 +260,9 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group: "models.OriginGroup",
+        origin_group: "_models.OriginGroup",
         **kwargs
-    ) -> AsyncLROPoller["models.OriginGroup"]:
+    ) -> AsyncLROPoller["_models.OriginGroup"]:
         """Creates a new origin group within the specified endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -286,7 +286,7 @@ class OriginGroupsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -313,7 +313,15 @@ class OriginGroupsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -333,15 +341,15 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group_update_properties: "models.OriginGroupUpdateParameters",
+        origin_group_update_properties: "_models.OriginGroupUpdateParameters",
         **kwargs
-    ) -> "models.OriginGroup":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
+    ) -> "_models.OriginGroup":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -374,7 +382,7 @@ class OriginGroupsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -395,9 +403,9 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group_update_properties: "models.OriginGroupUpdateParameters",
+        origin_group_update_properties: "_models.OriginGroupUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.OriginGroup"]:
+    ) -> AsyncLROPoller["_models.OriginGroup"]:
         """Updates an existing origin group within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -421,7 +429,7 @@ class OriginGroupsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -448,7 +456,15 @@ class OriginGroupsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -475,7 +491,7 @@ class OriginGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -503,7 +519,7 @@ class OriginGroupsOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -563,7 +579,15 @@ class OriginGroupsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
