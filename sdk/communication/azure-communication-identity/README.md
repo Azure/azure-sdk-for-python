@@ -43,6 +43,13 @@ identity_client = CommunicationIdentityClient.from_connection_string(connection_
 
 ```
 
+# Examples
+The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
+
+[Create/delete Azure Communication Service identities][identitysamples] 
+
+[Create/revoke scoped user access tokens][identitysamples]
+
 # Troubleshooting
 The Azure Communication Service Identity client will raise exceptions defined in [Azure Core][azure_core].
 
