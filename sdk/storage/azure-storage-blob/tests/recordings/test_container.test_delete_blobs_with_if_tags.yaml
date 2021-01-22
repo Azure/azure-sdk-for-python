@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://test_delete_blobs_with_if_tags.blob.core.windows.net/containera875126b?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/containera875126b?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
@@ -64,7 +64,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://test_delete_blobs_with_if_tags.blob.core.windows.net/containera875126b/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/containera875126b/blob1
   response:
     body:
       string: ''
@@ -116,7 +116,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://test_delete_blobs_with_if_tags.blob.core.windows.net/containera875126b/blob2
+    uri: https://storagenamestorname.blob.core.windows.net/containera875126b/blob2
   response:
     body:
       string: ''
@@ -168,7 +168,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://test_delete_blobs_with_if_tags.blob.core.windows.net/containera875126b/blob3
+    uri: https://storagenamestorname.blob.core.windows.net/containera875126b/blob3
   response:
     body:
       string: ''
@@ -225,7 +225,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: POST
-    uri: https://test_delete_blobs_with_if_tags.blob.core.windows.net/containera875126b?restype=container&comp=batch
+    uri: https://storagenamestorname.blob.core.windows.net/containera875126b?restype=container&comp=batch
   response:
     body:
       string: "--batchresponse_7014cbcb-1f39-42fd-bc7f-7cc62da207f0\r\nContent-Type:
@@ -295,7 +295,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: POST
-    uri: https://test_delete_blobs_with_if_tags.blob.core.windows.net/containera875126b?restype=container&comp=batch
+    uri: https://storagenamestorname.blob.core.windows.net/containera875126b?restype=container&comp=batch
   response:
     body:
       string: "--batchresponse_ed7e09dc-7edd-4e96-988a-00e37f5ec94f\r\nContent-Type:
