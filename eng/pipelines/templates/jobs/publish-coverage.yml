@@ -5,10 +5,14 @@ parameters:
   - name: Artifacts
     type: object
     default: []
+  - name: DependsOn
+    type: string
+    default: ''
 
 
 jobs:
   - job: Publish Code Coverage
+    dependsOn: ${{parameters.DependsOn}}
 
     steps:
       - script: |
