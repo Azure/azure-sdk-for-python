@@ -1077,7 +1077,9 @@ class ContainerClient(StorageAccountHostsMixin):
         if_tags_match_condition = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
-                       'timeout': '&timeout=' + str(timeout) if timeout else ""
+                       'timeout': '&timeout=' + str(timeout) if timeout else "",
+                       'path': self.container_name,
+                       'restype': 'restype=container&'
                        })
 
         reqs = []
@@ -1259,7 +1261,9 @@ class ContainerClient(StorageAccountHostsMixin):
         if_tags = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
-                       'timeout': '&timeout=' + str(timeout) if timeout else ""
+                       'timeout': '&timeout=' + str(timeout) if timeout else "",
+                       'path': self.container_name,
+                       'restype': 'restype=container&'
                        })
 
         reqs = []
