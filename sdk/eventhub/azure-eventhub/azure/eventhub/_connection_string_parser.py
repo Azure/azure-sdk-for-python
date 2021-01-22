@@ -71,7 +71,6 @@ def parse_connection_string(conn_str):
     :rtype: ~azure.eventhub.EventHubConnectionStringProperties
     """
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    print(conn_settings)
     if any(len(tup) != 2 for tup in conn_settings):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict(conn_settings)
