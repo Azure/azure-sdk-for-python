@@ -85,7 +85,7 @@ class CommunicationIdentityClient:
         """create a single Communication user
 
         return: CommunicationUserIdentifier
-        rtype: ~azure.communication.administration.CommunicationUserIdentifier
+        rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
         return await self._identity_service_client.communication_identity.create(
             cls=lambda pr, u, e: CommunicationUserIdentifier(u.id),
@@ -102,7 +102,7 @@ class CommunicationIdentityClient:
 
         :param communication_user:
             Azure Communication User to delete
-        :type communication_user: ~azure.communication.administration.CommunicationUserIdentifier
+        :type communication_user: ~azure.communication.identity.CommunicationUserIdentifier
         :return: None
         :rtype: None
         """
@@ -120,12 +120,12 @@ class CommunicationIdentityClient:
         """Generates a new token for an identity.
 
         :param user: Azure Communication User
-        :type user: ~azure.communication.administration.CommunicationUserIdentifier
+        :type user: ~azure.communication.identity.CommunicationUserIdentifier
         :param scopes:
             List of scopes to be added to the token.
         :type scopes: list[str]
         :return: CommunicationIdentityToken
-        :rtype: ~azure.communication.administration.CommunicationIdentityToken
+        :rtype: ~azure.communication.identity.CommunicationIdentityToken
         """
         return await self._identity_service_client.communication_identity.issue_token(
             user.identifier,
@@ -143,7 +143,7 @@ class CommunicationIdentityClient:
         """Schedule revocation of all tokens of an identity.
 
         :param user: Azure Communication User.
-        :type user: ~azure.communication.administration.CommunicationUserIdentifier
+        :type user: ~azure.communication.identity.CommunicationUserIdentifier
         :param issued_before: All tokens that are issued prior to this time should get revoked.
         :type issued_before: ~datetime.datetime
         :return: None
