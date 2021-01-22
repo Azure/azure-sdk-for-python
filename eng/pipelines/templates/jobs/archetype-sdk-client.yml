@@ -39,31 +39,31 @@ parameters:
         Pool: $(LinuxPool)
         OSVmImage:
         PythonVersion: '2.7'
-        CoverageArg: '--disable-cov'
+        CoverageArg: '--disablecov'
         RunForPR: true
       Linux_Python35:
         Pool: $(LinuxPool)
         OSVmImage:
         PythonVersion: '3.5'
-        CoverageArg: '--disable-cov'
+        CoverageArg: '--disablecov'
         RunForPR: false
       Linux_Python38:
         Pool: $(LinuxPool)
         OSVmImage:
         PythonVersion: '3.8'
-        CoverageArg: '--disable-cov'
+        CoverageArg: '--disablecov'
         RunForPR: true
       Windows_Python35:
         Pool: $(WindowsPool)
         OSVmImage:
         PythonVersion: '3.5'
-        CoverageArg: '--disable-cov'
+        CoverageArg: '--disablecov'
         RunForPR: true
       MacOS_Python27:
         Pool:
         OSVmImage: 'macOS-10.15'
         PythonVersion: '2.7'
-        CoverageArg: '--disable-cov'
+        CoverageArg: '--disablecov'
         RunForPR: false
       Linux_pypy3:
         Pool: $(LinuxPool)
