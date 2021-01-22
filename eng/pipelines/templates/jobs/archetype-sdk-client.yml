@@ -233,7 +233,7 @@ jobs:
       - 'Build'
 
     pool:
-      vmImage: ${{ parameters.LinuxPool }}
+      name: ${{ parameters.LinuxPool }}
 
     steps:
     - template: ../steps/test_regression.yml

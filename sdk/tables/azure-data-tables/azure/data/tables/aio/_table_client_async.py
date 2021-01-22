@@ -547,7 +547,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Getting an entity from PartitionKey and RowKey
         """
         try:
-            entity = await self._client.table.query_entities_with_partition_and_row_key(
+            entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,

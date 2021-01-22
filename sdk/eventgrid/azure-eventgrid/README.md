@@ -35,7 +35,7 @@ az eventgrid domain --create --location <location> --resource-group <resource-gr
 
 ### Authenticate the client
 In order to interact with the Event Grid service, you will need to create an instance of a client.
-A **topic_hostname** and **credential** are necessary to instantiate the client object.
+An **endpoint** and **credential** are necessary to instantiate the client object.
 
 #### Looking up the endpoint
 You can find the endpoint and the hostname on the Azure portal.
@@ -49,9 +49,9 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
 
-topic_hostname = "https://<name>.<region>.eventgrid.azure.net"
+endpoint = "https://<name>.<region>.eventgrid.azure.net"
 credential = AzureKeyCredential("<api_key>")
-eg_publisher_client = EventGridPublisherClient(topic_hostname, credential)
+eg_publisher_client = EventGridPublisherClient(endpoint, credential)
 ```
 
 ## Key concepts
@@ -62,8 +62,8 @@ Information about the key concepts on Event Grid, see [Concepts in Azure Event G
 `EventGridPublisherClient` provides operations to send event data to topic hostname specified during client initialization.
 Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can be sent.
 
-### EventGridConsumer
-`EventGridConsumer` is used to desrialize an event received.
+### EventGridDeserializer
+`EventGridDeserializer` is used to desrialize an event received.
 
 ## Examples
 
@@ -84,19 +84,19 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
 key = os.environ["EG_ACCESS_KEY"]
-topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 
 event = EventGridEvent(
-    subject="Door1",
     data={"team": "azure-sdk"},
+    subject="Door1",
     event_type="Azure.Sdk.Demo",
     data_version="2.0"
 )
 
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(topic_hostname, credential)
+client = EventGridPublisherClient(endpoint, credential)
 
-client.send(event)
+client.send_events(event)
 ```
 
 ### Send a Cloud Event
@@ -109,7 +109,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, CloudEvent
 
 key = os.environ["CLOUD_ACCESS_KEY"]
-topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
+endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
 
 event = CloudEvent(
     type="Azure.Sdk.Sample",
@@ -118,9 +118,9 @@ event = CloudEvent(
 )
 
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(topic_hostname, credential)
+client = EventGridPublisherClient(endpoint, credential)
 
-client.send(event)
+client.send_events(event)
 ```
 
 ### Consume an Event Grid Event
@@ -129,9 +129,9 @@ This example demonstrates consuming and deserializing an eventgrid event.
 
 ```Python
 import os
-from azure.eventgrid import EventGridConsumer
+from azure.eventgrid import EventGridDeserializer
 
-consumer = EventGridConsumer()
+consumer = EventGridDeserializer()
 
 eg_storage_dict = {
     "id":"bbab625-dc56-4b22-abeb-afcc72e5290c",
@@ -146,7 +146,7 @@ eg_storage_dict = {
     "topic":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.EventGrid/topics/eventgridegsub"
 }
 
-deserialized_event = consumer.decode_eventgrid_event(eg_storage_dict)
+deserialized_event = consumer.deserialize_eventgrid_events(eg_storage_dict)
 
 # both allow access to raw properties as strings
 time_string = deserialized_event.event_time
@@ -158,9 +158,9 @@ This example demonstrates consuming and deserializing a cloud event.
 
 ```Python
 import os
-from azure.eventgrid import EventGridConsumer
+from azure.eventgrid import EventGridDeserializer
 
-consumer = EventGridConsumer()
+consumer = EventGridDeserializer()
 
 cloud_storage_dict = {
     "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
@@ -173,7 +173,7 @@ cloud_storage_dict = {
     "specversion":"1.0"
 }
 
-deserialized_event = consumer.decode_cloud_event(cloud_storage_dict)
+deserialized_event = consumer.deserialize_cloud_events(cloud_storage_dict)
 
 # both allow access to raw properties as strings
 time_string = deserialized_event.time

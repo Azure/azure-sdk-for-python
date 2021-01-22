@@ -7,6 +7,7 @@ from ._generated.models import (
     ChatThreadInfo,
 )
 from ._shared.user_credential import CommunicationTokenCredential
+from ._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from ._models import (
     ChatThreadMember,
     ChatMessage,
@@ -25,6 +26,7 @@ __all__ = [
     'ChatThread',
     'ChatThreadInfo',
     'CommunicationTokenCredential',
+    'CommunicationTokenRefreshOptions',
     'ChatThreadMember',
     'CommunicationUserIdentifier',
 ]

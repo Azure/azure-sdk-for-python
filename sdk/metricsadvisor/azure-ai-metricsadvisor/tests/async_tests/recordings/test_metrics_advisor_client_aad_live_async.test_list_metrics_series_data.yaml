@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
+      "series": [{"dimension_name": "Los Angeles", "category": "Homemade"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '141'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/data/query
+  response:
+    body:
+      string: '{"value":[{"id":{"metricId":"metric_id","dimension":{"dimension_name":"Los
+        Angeles","category":"Homemade"}},"timestampList":[],"valueList":[]}]}'
+    headers:
+      apim-request-id: 1ec12fa0-7148-43db-b2c7-21e1a889ac32
+      content-length: '161'
+      content-type: application/json; charset=utf-8
+      date: Fri, 22 Jan 2021 01:08:58 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '240'
+      x-request-id: 1ec12fa0-7148-43db-b2c7-21e1a889ac32
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/metrics/27e3015f-04fd-44ba-a20b-bc529a0aebae/data/query
+version: 1

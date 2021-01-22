@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class CustomDomainsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         **kwargs
-    ) -> AsyncIterable["models.CustomDomainListResult"]:
+    ) -> AsyncIterable["_models.CustomDomainListResult"]:
         """Lists all of the existing custom domains within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -63,12 +63,12 @@ class CustomDomainsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.CustomDomainListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomDomainListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomainListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -111,7 +111,7 @@ class CustomDomainsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -129,7 +129,7 @@ class CustomDomainsOperations:
         endpoint_name: str,
         custom_domain_name: str,
         **kwargs
-    ) -> "models.CustomDomain":
+    ) -> "_models.CustomDomain":
         """Gets an existing custom domain within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -145,12 +145,12 @@ class CustomDomainsOperations:
         :rtype: ~azure.mgmt.cdn.models.CustomDomain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomDomain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -178,7 +178,7 @@ class CustomDomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CustomDomain', pipeline_response)
@@ -195,17 +195,15 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        host_name: Optional[str] = None,
+        custom_domain_properties: "_models.CustomDomainParameters",
         **kwargs
-    ) -> "models.CustomDomain":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomDomain"]
+    ) -> "_models.CustomDomain":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _custom_domain_properties = models.CustomDomainParameters(host_name=host_name)
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -230,7 +228,7 @@ class CustomDomainsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_custom_domain_properties, 'CustomDomainParameters')
+        body_content = self._serialize.body(custom_domain_properties, 'CustomDomainParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -238,7 +236,7 @@ class CustomDomainsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -262,9 +260,9 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        host_name: Optional[str] = None,
+        custom_domain_properties: "_models.CustomDomainParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.CustomDomain"]:
+    ) -> AsyncLROPoller["_models.CustomDomain"]:
         """Creates a new custom domain within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -275,8 +273,8 @@ class CustomDomainsOperations:
         :type endpoint_name: str
         :param custom_domain_name: Name of the custom domain within an endpoint.
         :type custom_domain_name: str
-        :param host_name: The host name of the custom domain. Must be a domain name.
-        :type host_name: str
+        :param custom_domain_properties: Properties required to create a new custom domain.
+        :type custom_domain_properties: ~azure.mgmt.cdn.models.CustomDomainParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -288,7 +286,7 @@ class CustomDomainsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomDomain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -300,7 +298,7 @@ class CustomDomainsOperations:
                 profile_name=profile_name,
                 endpoint_name=endpoint_name,
                 custom_domain_name=custom_domain_name,
-                host_name=host_name,
+                custom_domain_properties=custom_domain_properties,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -315,7 +313,15 @@ class CustomDomainsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -336,13 +342,13 @@ class CustomDomainsOperations:
         endpoint_name: str,
         custom_domain_name: str,
         **kwargs
-    ) -> Optional["models.CustomDomain"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CustomDomain"]]
+    ) -> Optional["_models.CustomDomain"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CustomDomain"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -370,7 +376,7 @@ class CustomDomainsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -390,7 +396,7 @@ class CustomDomainsOperations:
         endpoint_name: str,
         custom_domain_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.CustomDomain"]:
+    ) -> AsyncLROPoller["_models.CustomDomain"]:
         """Deletes an existing custom domain within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -412,7 +418,7 @@ class CustomDomainsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomDomain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -438,7 +444,15 @@ class CustomDomainsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -459,7 +473,7 @@ class CustomDomainsOperations:
         endpoint_name: str,
         custom_domain_name: str,
         **kwargs
-    ) -> Optional["models.CustomDomain"]:
+    ) -> Optional["_models.CustomDomain"]:
         """Disable https delivery of the custom domain.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -475,12 +489,12 @@ class CustomDomainsOperations:
         :rtype: ~azure.mgmt.cdn.models.CustomDomain or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CustomDomain"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CustomDomain"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -508,7 +522,7 @@ class CustomDomainsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -527,9 +541,9 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        custom_domain_https_parameters: Optional["models.CustomDomainHttpsParameters"] = None,
+        custom_domain_https_parameters: Optional["_models.CustomDomainHttpsParameters"] = None,
         **kwargs
-    ) -> Optional["models.CustomDomain"]:
+    ) -> Optional["_models.CustomDomain"]:
         """Enable https delivery of the custom domain.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -549,12 +563,12 @@ class CustomDomainsOperations:
         :rtype: ~azure.mgmt.cdn.models.CustomDomain or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CustomDomain"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CustomDomain"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -590,7 +604,7 @@ class CustomDomainsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
