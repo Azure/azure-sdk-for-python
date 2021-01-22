@@ -38,7 +38,7 @@ dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
 def install_coverage():
     install_cmd_arry = [sys.executable, "-m", "pip", "install", "coverage"]
-    run_check_call(install_cmd_arry)
+    run_check_call(install_cmd_arry, root_dir)
 
 
 def collect_tox_coverage_files():#targeted_packages):
