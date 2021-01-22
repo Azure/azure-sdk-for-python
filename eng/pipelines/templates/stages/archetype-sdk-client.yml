@@ -61,6 +61,15 @@ stages:
         WindowsPool: ${{ parameters.WindowsPool }}
         LinuxPool: ${{ parameters.LinuxPool }}
 
+  - stage: Publish Coverage
+    jobs:
+    - template: ../jobs/publish-coverage.yml
+      parameters:
+        DependsOn: Build
+        condition: succeededOrFailed()
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        Artifacts: ${{ parameters.Artifacts }}
+
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
     - template: archetype-python-release.yml
