@@ -1,6 +1,6 @@
 trigger: none
 
-jobs:
+extends:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: false
