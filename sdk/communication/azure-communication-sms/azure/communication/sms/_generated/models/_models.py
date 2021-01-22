@@ -110,7 +110,7 @@ class SendSmsResponseItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param to: Required. The recipients' phone number in E.164 format.
+    :param to: Required. The recipients's phone number in E.164 format.
     :type to: str
     :param message_id: The identifier of the outgoing SMS message. Only present if message
      processed.

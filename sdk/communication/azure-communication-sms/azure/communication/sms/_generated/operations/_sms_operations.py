@@ -49,7 +49,6 @@ class SmsOperations(object):
         send_message_request,  # type: "_models.SendMessageRequest"
         repeatability_request_id=None,  # type: Optional[str]
         repeatability_first_sent=None,  # type: Optional[str]
-        repeatability_result=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.SendSmsResponse"]
@@ -70,10 +69,6 @@ class SmsOperations(object):
          repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
          was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
         :type repeatability_first_sent: str
-        :param repeatability_result: MUST be returned to clients for a request that is repeatable. This
-         response header in the result of a repeatable request with one of the case-insensitive values
-         accepted or rejected.
-        :type repeatability_result: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SendSmsResponse or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.sms.models.SendSmsResponse]
@@ -95,8 +90,6 @@ class SmsOperations(object):
                 header_parameters['repeatability-request-id'] = self._serialize.header("repeatability_request_id", repeatability_request_id, 'str')
             if repeatability_first_sent is not None:
                 header_parameters['repeatability-first-sent'] = self._serialize.header("repeatability_first_sent", repeatability_first_sent, 'str')
-            if repeatability_result is not None:
-                header_parameters['repeatability-result'] = self._serialize.header("repeatability_result", repeatability_result, 'str')
             header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 

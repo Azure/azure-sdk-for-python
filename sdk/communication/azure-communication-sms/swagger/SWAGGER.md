@@ -15,7 +15,7 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-input-file: swagger.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/users/shamkh/featureSendSmsChanges/specification/communication/data-plane/Microsoft.CommunicationServicesSms/stable/2021-03-07/communicationservicessms.json
 output-folder: ../azure/communication/sms/_generated
 namespace: azure.communication.sms
 no-namespace-folders: true
