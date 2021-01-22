@@ -7,6 +7,30 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AFDDomain
+    from ._models_py3 import AFDDomainHttpsParameters
+    from ._models_py3 import AFDDomainListResult
+    from ._models_py3 import AFDDomainProperties
+    from ._models_py3 import AFDDomainUpdateParameters
+    from ._models_py3 import AFDDomainUpdatePropertiesParameters
+    from ._models_py3 import AFDEndpoint
+    from ._models_py3 import AFDEndpointListResult
+    from ._models_py3 import AFDEndpointProperties
+    from ._models_py3 import AFDEndpointPropertiesUpdateParameters
+    from ._models_py3 import AFDEndpointUpdateParameters
+    from ._models_py3 import AFDOrigin
+    from ._models_py3 import AFDOriginGroup
+    from ._models_py3 import AFDOriginGroupListResult
+    from ._models_py3 import AFDOriginGroupProperties
+    from ._models_py3 import AFDOriginGroupUpdateParameters
+    from ._models_py3 import AFDOriginGroupUpdatePropertiesParameters
+    from ._models_py3 import AFDOriginListResult
+    from ._models_py3 import AFDOriginProperties
+    from ._models_py3 import AFDOriginUpdateParameters
+    from ._models_py3 import AFDOriginUpdatePropertiesParameters
+    from ._models_py3 import AFDStateProperties
+    from ._models_py3 import AfdErrorResponse
+    from ._models_py3 import AfdPurgeParameters
     from ._models_py3 import CacheExpirationActionParameters
     from ._models_py3 import CacheKeyQueryStringActionParameters
     from ._models_py3 import CdnCertificateSourceParameters
@@ -15,9 +39,17 @@ try:
     from ._models_py3 import CdnWebApplicationFirewallPolicy
     from ._models_py3 import CdnWebApplicationFirewallPolicyList
     from ._models_py3 import CdnWebApplicationFirewallPolicyPatchParameters
+    from ._models_py3 import Certificate
     from ._models_py3 import CheckNameAvailabilityInput
     from ._models_py3 import CheckNameAvailabilityOutput
     from ._models_py3 import CidrIpAddress
+    from ._models_py3 import Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems
+    from ._models_py3 import Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems
+    from ._models_py3 import ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems
+    from ._models_py3 import CompressionSettings
+    from ._models_py3 import ContinentsResponse
+    from ._models_py3 import ContinentsResponseContinentsItem
+    from ._models_py3 import ContinentsResponseCountryOrRegionsItem
     from ._models_py3 import CookiesMatchConditionParameters
     from ._models_py3 import CustomDomain
     from ._models_py3 import CustomDomainHttpsParameters
@@ -25,6 +57,8 @@ try:
     from ._models_py3 import CustomDomainParameters
     from ._models_py3 import CustomRule
     from ._models_py3 import CustomRuleList
+    from ._models_py3 import CustomerCertificate
+    from ._models_py3 import CustomerCertificateParameters
     from ._models_py3 import DeepCreatedOrigin
     from ._models_py3 import DeepCreatedOriginGroup
     from ._models_py3 import DeliveryRule
@@ -48,6 +82,7 @@ try:
     from ._models_py3 import DeliveryRuleUrlFileExtensionCondition
     from ._models_py3 import DeliveryRuleUrlFileNameCondition
     from ._models_py3 import DeliveryRuleUrlPathCondition
+    from ._models_py3 import DomainValidationProperties
     from ._models_py3 import EdgeNode
     from ._models_py3 import EdgenodeResult
     from ._models_py3 import Endpoint
@@ -67,7 +102,10 @@ try:
     from ._models_py3 import IsDeviceMatchConditionParameters
     from ._models_py3 import KeyVaultCertificateSourceParameters
     from ._models_py3 import KeyVaultSigningKeyParameters
+    from ._models_py3 import LoadBalancingSettingsParameters
     from ._models_py3 import LoadParameters
+    from ._models_py3 import ManagedCertificate
+    from ._models_py3 import ManagedCertificateParameters
     from ._models_py3 import ManagedRuleDefinition
     from ._models_py3 import ManagedRuleGroupDefinition
     from ._models_py3 import ManagedRuleGroupOverride
@@ -77,12 +115,17 @@ try:
     from ._models_py3 import ManagedRuleSetDefinitionList
     from ._models_py3 import ManagedRuleSetList
     from ._models_py3 import MatchCondition
+    from ._models_py3 import MetricsResponse
+    from ._models_py3 import MetricsResponseSeriesItem
+    from ._models_py3 import MetricsResponseSeriesPropertiesItemsItem
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationsListResult
     from ._models_py3 import Origin
     from ._models_py3 import OriginGroup
     from ._models_py3 import OriginGroupListResult
+    from ._models_py3 import OriginGroupOverrideAction
+    from ._models_py3 import OriginGroupOverrideActionParameters
     from ._models_py3 import OriginGroupProperties
     from ._models_py3 import OriginGroupUpdateParameters
     from ._models_py3 import OriginGroupUpdatePropertiesParameters
@@ -98,6 +141,10 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import PurgeParameters
     from ._models_py3 import QueryStringMatchConditionParameters
+    from ._models_py3 import RankingsResponse
+    from ._models_py3 import RankingsResponseTablesItem
+    from ._models_py3 import RankingsResponseTablesPropertiesItemsItem
+    from ._models_py3 import RankingsResponseTablesPropertiesItemsMetricsItem
     from ._models_py3 import RateLimitRule
     from ._models_py3 import RateLimitRuleList
     from ._models_py3 import RemoteAddressMatchConditionParameters
@@ -110,10 +157,39 @@ try:
     from ._models_py3 import ResourceReference
     from ._models_py3 import ResourceUsage
     from ._models_py3 import ResourceUsageListResult
+    from ._models_py3 import ResourcesResponse
+    from ._models_py3 import ResourcesResponseCustomDomainsItem
+    from ._models_py3 import ResourcesResponseEndpointsItem
+    from ._models_py3 import ResourcesResponseEndpointsPropertiesItemsItem
     from ._models_py3 import ResponseBasedOriginErrorDetectionParameters
+    from ._models_py3 import Route
+    from ._models_py3 import RouteListResult
+    from ._models_py3 import RouteProperties
+    from ._models_py3 import RouteUpdateParameters
+    from ._models_py3 import RouteUpdatePropertiesParameters
+    from ._models_py3 import Rule
+    from ._models_py3 import RuleListResult
+    from ._models_py3 import RuleProperties
+    from ._models_py3 import RuleSet
+    from ._models_py3 import RuleSetListResult
+    from ._models_py3 import RuleSetProperties
+    from ._models_py3 import RuleUpdateParameters
+    from ._models_py3 import RuleUpdatePropertiesParameters
+    from ._models_py3 import Secret
+    from ._models_py3 import SecretListResult
+    from ._models_py3 import SecretParameters
+    from ._models_py3 import SecretProperties
+    from ._models_py3 import SecurityPolicy
+    from ._models_py3 import SecurityPolicyListResult
+    from ._models_py3 import SecurityPolicyParameters
+    from ._models_py3 import SecurityPolicyProperties
+    from ._models_py3 import SecurityPolicyWebApplicationFirewallAssociation
+    from ._models_py3 import SecurityPolicyWebApplicationFirewallParameters
+    from ._models_py3 import SharedPrivateLinkResourceProperties
     from ._models_py3 import Sku
     from ._models_py3 import SsoUri
     from ._models_py3 import SupportedOptimizationTypesListResult
+    from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
     from ._models_py3 import UrlFileExtensionMatchConditionParameters
     from ._models_py3 import UrlFileNameMatchConditionParameters
@@ -125,13 +201,49 @@ try:
     from ._models_py3 import UrlSigningAction
     from ._models_py3 import UrlSigningActionParameters
     from ._models_py3 import UrlSigningKey
+    from ._models_py3 import UrlSigningKeyParameters
     from ._models_py3 import UrlSigningParamIdentifier
+    from ._models_py3 import Usage
+    from ._models_py3 import UsageName
+    from ._models_py3 import UsagesListResult
     from ._models_py3 import UserManagedHttpsParameters
     from ._models_py3 import ValidateCustomDomainInput
     from ._models_py3 import ValidateCustomDomainOutput
     from ._models_py3 import ValidateProbeInput
     from ._models_py3 import ValidateProbeOutput
+    from ._models_py3 import ValidateSecretInput
+    from ._models_py3 import ValidateSecretOutput
+    from ._models_py3 import ValidationToken
+    from ._models_py3 import WafMetricsResponse
+    from ._models_py3 import WafMetricsResponseSeriesItem
+    from ._models_py3 import WafMetricsResponseSeriesPropertiesItemsItem
+    from ._models_py3 import WafRankingsResponse
+    from ._models_py3 import WafRankingsResponseDataItem
 except (SyntaxError, ImportError):
+    from ._models import AFDDomain  # type: ignore
+    from ._models import AFDDomainHttpsParameters  # type: ignore
+    from ._models import AFDDomainListResult  # type: ignore
+    from ._models import AFDDomainProperties  # type: ignore
+    from ._models import AFDDomainUpdateParameters  # type: ignore
+    from ._models import AFDDomainUpdatePropertiesParameters  # type: ignore
+    from ._models import AFDEndpoint  # type: ignore
+    from ._models import AFDEndpointListResult  # type: ignore
+    from ._models import AFDEndpointProperties  # type: ignore
+    from ._models import AFDEndpointPropertiesUpdateParameters  # type: ignore
+    from ._models import AFDEndpointUpdateParameters  # type: ignore
+    from ._models import AFDOrigin  # type: ignore
+    from ._models import AFDOriginGroup  # type: ignore
+    from ._models import AFDOriginGroupListResult  # type: ignore
+    from ._models import AFDOriginGroupProperties  # type: ignore
+    from ._models import AFDOriginGroupUpdateParameters  # type: ignore
+    from ._models import AFDOriginGroupUpdatePropertiesParameters  # type: ignore
+    from ._models import AFDOriginListResult  # type: ignore
+    from ._models import AFDOriginProperties  # type: ignore
+    from ._models import AFDOriginUpdateParameters  # type: ignore
+    from ._models import AFDOriginUpdatePropertiesParameters  # type: ignore
+    from ._models import AFDStateProperties  # type: ignore
+    from ._models import AfdErrorResponse  # type: ignore
+    from ._models import AfdPurgeParameters  # type: ignore
     from ._models import CacheExpirationActionParameters  # type: ignore
     from ._models import CacheKeyQueryStringActionParameters  # type: ignore
     from ._models import CdnCertificateSourceParameters  # type: ignore
@@ -140,9 +252,17 @@ except (SyntaxError, ImportError):
     from ._models import CdnWebApplicationFirewallPolicy  # type: ignore
     from ._models import CdnWebApplicationFirewallPolicyList  # type: ignore
     from ._models import CdnWebApplicationFirewallPolicyPatchParameters  # type: ignore
+    from ._models import Certificate  # type: ignore
     from ._models import CheckNameAvailabilityInput  # type: ignore
     from ._models import CheckNameAvailabilityOutput  # type: ignore
     from ._models import CidrIpAddress  # type: ignore
+    from ._models import Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems  # type: ignore
+    from ._models import Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems  # type: ignore
+    from ._models import ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems  # type: ignore
+    from ._models import CompressionSettings  # type: ignore
+    from ._models import ContinentsResponse  # type: ignore
+    from ._models import ContinentsResponseContinentsItem  # type: ignore
+    from ._models import ContinentsResponseCountryOrRegionsItem  # type: ignore
     from ._models import CookiesMatchConditionParameters  # type: ignore
     from ._models import CustomDomain  # type: ignore
     from ._models import CustomDomainHttpsParameters  # type: ignore
@@ -150,6 +270,8 @@ except (SyntaxError, ImportError):
     from ._models import CustomDomainParameters  # type: ignore
     from ._models import CustomRule  # type: ignore
     from ._models import CustomRuleList  # type: ignore
+    from ._models import CustomerCertificate  # type: ignore
+    from ._models import CustomerCertificateParameters  # type: ignore
     from ._models import DeepCreatedOrigin  # type: ignore
     from ._models import DeepCreatedOriginGroup  # type: ignore
     from ._models import DeliveryRule  # type: ignore
@@ -173,6 +295,7 @@ except (SyntaxError, ImportError):
     from ._models import DeliveryRuleUrlFileExtensionCondition  # type: ignore
     from ._models import DeliveryRuleUrlFileNameCondition  # type: ignore
     from ._models import DeliveryRuleUrlPathCondition  # type: ignore
+    from ._models import DomainValidationProperties  # type: ignore
     from ._models import EdgeNode  # type: ignore
     from ._models import EdgenodeResult  # type: ignore
     from ._models import Endpoint  # type: ignore
@@ -192,7 +315,10 @@ except (SyntaxError, ImportError):
     from ._models import IsDeviceMatchConditionParameters  # type: ignore
     from ._models import KeyVaultCertificateSourceParameters  # type: ignore
     from ._models import KeyVaultSigningKeyParameters  # type: ignore
+    from ._models import LoadBalancingSettingsParameters  # type: ignore
     from ._models import LoadParameters  # type: ignore
+    from ._models import ManagedCertificate  # type: ignore
+    from ._models import ManagedCertificateParameters  # type: ignore
     from ._models import ManagedRuleDefinition  # type: ignore
     from ._models import ManagedRuleGroupDefinition  # type: ignore
     from ._models import ManagedRuleGroupOverride  # type: ignore
@@ -202,12 +328,17 @@ except (SyntaxError, ImportError):
     from ._models import ManagedRuleSetDefinitionList  # type: ignore
     from ._models import ManagedRuleSetList  # type: ignore
     from ._models import MatchCondition  # type: ignore
+    from ._models import MetricsResponse  # type: ignore
+    from ._models import MetricsResponseSeriesItem  # type: ignore
+    from ._models import MetricsResponseSeriesPropertiesItemsItem  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationsListResult  # type: ignore
     from ._models import Origin  # type: ignore
     from ._models import OriginGroup  # type: ignore
     from ._models import OriginGroupListResult  # type: ignore
+    from ._models import OriginGroupOverrideAction  # type: ignore
+    from ._models import OriginGroupOverrideActionParameters  # type: ignore
     from ._models import OriginGroupProperties  # type: ignore
     from ._models import OriginGroupUpdateParameters  # type: ignore
     from ._models import OriginGroupUpdatePropertiesParameters  # type: ignore
@@ -223,6 +354,10 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource  # type: ignore
     from ._models import PurgeParameters  # type: ignore
     from ._models import QueryStringMatchConditionParameters  # type: ignore
+    from ._models import RankingsResponse  # type: ignore
+    from ._models import RankingsResponseTablesItem  # type: ignore
+    from ._models import RankingsResponseTablesPropertiesItemsItem  # type: ignore
+    from ._models import RankingsResponseTablesPropertiesItemsMetricsItem  # type: ignore
     from ._models import RateLimitRule  # type: ignore
     from ._models import RateLimitRuleList  # type: ignore
     from ._models import RemoteAddressMatchConditionParameters  # type: ignore
@@ -235,10 +370,39 @@ except (SyntaxError, ImportError):
     from ._models import ResourceReference  # type: ignore
     from ._models import ResourceUsage  # type: ignore
     from ._models import ResourceUsageListResult  # type: ignore
+    from ._models import ResourcesResponse  # type: ignore
+    from ._models import ResourcesResponseCustomDomainsItem  # type: ignore
+    from ._models import ResourcesResponseEndpointsItem  # type: ignore
+    from ._models import ResourcesResponseEndpointsPropertiesItemsItem  # type: ignore
     from ._models import ResponseBasedOriginErrorDetectionParameters  # type: ignore
+    from ._models import Route  # type: ignore
+    from ._models import RouteListResult  # type: ignore
+    from ._models import RouteProperties  # type: ignore
+    from ._models import RouteUpdateParameters  # type: ignore
+    from ._models import RouteUpdatePropertiesParameters  # type: ignore
+    from ._models import Rule  # type: ignore
+    from ._models import RuleListResult  # type: ignore
+    from ._models import RuleProperties  # type: ignore
+    from ._models import RuleSet  # type: ignore
+    from ._models import RuleSetListResult  # type: ignore
+    from ._models import RuleSetProperties  # type: ignore
+    from ._models import RuleUpdateParameters  # type: ignore
+    from ._models import RuleUpdatePropertiesParameters  # type: ignore
+    from ._models import Secret  # type: ignore
+    from ._models import SecretListResult  # type: ignore
+    from ._models import SecretParameters  # type: ignore
+    from ._models import SecretProperties  # type: ignore
+    from ._models import SecurityPolicy  # type: ignore
+    from ._models import SecurityPolicyListResult  # type: ignore
+    from ._models import SecurityPolicyParameters  # type: ignore
+    from ._models import SecurityPolicyProperties  # type: ignore
+    from ._models import SecurityPolicyWebApplicationFirewallAssociation  # type: ignore
+    from ._models import SecurityPolicyWebApplicationFirewallParameters  # type: ignore
+    from ._models import SharedPrivateLinkResourceProperties  # type: ignore
     from ._models import Sku  # type: ignore
     from ._models import SsoUri  # type: ignore
     from ._models import SupportedOptimizationTypesListResult  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import UrlFileExtensionMatchConditionParameters  # type: ignore
     from ._models import UrlFileNameMatchConditionParameters  # type: ignore
@@ -250,15 +414,31 @@ except (SyntaxError, ImportError):
     from ._models import UrlSigningAction  # type: ignore
     from ._models import UrlSigningActionParameters  # type: ignore
     from ._models import UrlSigningKey  # type: ignore
+    from ._models import UrlSigningKeyParameters  # type: ignore
     from ._models import UrlSigningParamIdentifier  # type: ignore
+    from ._models import Usage  # type: ignore
+    from ._models import UsageName  # type: ignore
+    from ._models import UsagesListResult  # type: ignore
     from ._models import UserManagedHttpsParameters  # type: ignore
     from ._models import ValidateCustomDomainInput  # type: ignore
     from ._models import ValidateCustomDomainOutput  # type: ignore
     from ._models import ValidateProbeInput  # type: ignore
     from ._models import ValidateProbeOutput  # type: ignore
+    from ._models import ValidateSecretInput  # type: ignore
+    from ._models import ValidateSecretOutput  # type: ignore
+    from ._models import ValidationToken  # type: ignore
+    from ._models import WafMetricsResponse  # type: ignore
+    from ._models import WafMetricsResponseSeriesItem  # type: ignore
+    from ._models import WafMetricsResponseSeriesPropertiesItemsItem  # type: ignore
+    from ._models import WafRankingsResponse  # type: ignore
+    from ._models import WafRankingsResponseDataItem  # type: ignore
 
 from ._cdn_management_client_enums import (
+    AFDEndpointProtocols,
     ActionType,
+    AfdCertificateType,
+    AfdMinimumTlsVersion,
+    AfdProvisioningState,
     Algorithm,
     CacheBehavior,
     CacheType,
@@ -270,18 +450,40 @@ from ._cdn_management_client_enums import (
     CustomHttpsProvisioningSubstate,
     CustomRuleEnabledState,
     DeleteRule,
-    DeliveryRuleActionName,
+    DeliveryRuleActionEnum,
+    DeploymentStatus,
     DestinationProtocol,
+    DomainValidationState,
+    EnabledState,
     EndpointResourceState,
-    Enum16,
+    Enum31,
+    Enum35,
+    Enum37,
+    Enum38,
+    Enum39,
+    Enum40,
+    Enum42,
+    Enum43,
+    Enum44,
+    Enum47,
+    ForwardingProtocol,
     GeoFilterActions,
+    Get4ItemsItem,
+    Get5ItemsItem,
+    Get8ItemsItem,
     HeaderAction,
     HealthProbeRequestType,
     HttpVersionOperator,
+    HttpsRedirect,
+    IdentityType,
     IsDeviceMatchConditionParametersMatchValuesItem,
     IsDeviceOperator,
+    LinkToDefaultDomain,
     ManagedRuleEnabledState,
+    MatchProcessingBehavior,
     MatchVariable,
+    MetricsResponseGranularity,
+    MetricsResponseSeriesItemUnit,
     MinimumTlsVersion,
     Operator,
     OptimizationType,
@@ -309,16 +511,47 @@ from ._cdn_management_client_enums import (
     RequestSchemeMatchConditionParametersMatchValuesItem,
     RequestUriOperator,
     ResponseBasedDetectedErrorTypes,
+    SecretType,
+    SecurityPolicyType,
+    SharedPrivateLinkResourceStatus,
     SkuName,
+    Status,
     Transform,
     TransformType,
     UpdateRule,
     UrlFileExtensionOperator,
     UrlFileNameOperator,
     UrlPathOperator,
+    UsageUnit,
+    ValidateSecretType,
+    WafMetricsResponseGranularity,
 )
 
 __all__ = [
+    'AFDDomain',
+    'AFDDomainHttpsParameters',
+    'AFDDomainListResult',
+    'AFDDomainProperties',
+    'AFDDomainUpdateParameters',
+    'AFDDomainUpdatePropertiesParameters',
+    'AFDEndpoint',
+    'AFDEndpointListResult',
+    'AFDEndpointProperties',
+    'AFDEndpointPropertiesUpdateParameters',
+    'AFDEndpointUpdateParameters',
+    'AFDOrigin',
+    'AFDOriginGroup',
+    'AFDOriginGroupListResult',
+    'AFDOriginGroupProperties',
+    'AFDOriginGroupUpdateParameters',
+    'AFDOriginGroupUpdatePropertiesParameters',
+    'AFDOriginListResult',
+    'AFDOriginProperties',
+    'AFDOriginUpdateParameters',
+    'AFDOriginUpdatePropertiesParameters',
+    'AFDStateProperties',
+    'AfdErrorResponse',
+    'AfdPurgeParameters',
     'CacheExpirationActionParameters',
     'CacheKeyQueryStringActionParameters',
     'CdnCertificateSourceParameters',
@@ -327,9 +560,17 @@ __all__ = [
     'CdnWebApplicationFirewallPolicy',
     'CdnWebApplicationFirewallPolicyList',
     'CdnWebApplicationFirewallPolicyPatchParameters',
+    'Certificate',
     'CheckNameAvailabilityInput',
     'CheckNameAvailabilityOutput',
     'CidrIpAddress',
+    'Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems',
+    'Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems',
+    'ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems',
+    'CompressionSettings',
+    'ContinentsResponse',
+    'ContinentsResponseContinentsItem',
+    'ContinentsResponseCountryOrRegionsItem',
     'CookiesMatchConditionParameters',
     'CustomDomain',
     'CustomDomainHttpsParameters',
@@ -337,6 +578,8 @@ __all__ = [
     'CustomDomainParameters',
     'CustomRule',
     'CustomRuleList',
+    'CustomerCertificate',
+    'CustomerCertificateParameters',
     'DeepCreatedOrigin',
     'DeepCreatedOriginGroup',
     'DeliveryRule',
@@ -360,6 +603,7 @@ __all__ = [
     'DeliveryRuleUrlFileExtensionCondition',
     'DeliveryRuleUrlFileNameCondition',
     'DeliveryRuleUrlPathCondition',
+    'DomainValidationProperties',
     'EdgeNode',
     'EdgenodeResult',
     'Endpoint',
@@ -379,7 +623,10 @@ __all__ = [
     'IsDeviceMatchConditionParameters',
     'KeyVaultCertificateSourceParameters',
     'KeyVaultSigningKeyParameters',
+    'LoadBalancingSettingsParameters',
     'LoadParameters',
+    'ManagedCertificate',
+    'ManagedCertificateParameters',
     'ManagedRuleDefinition',
     'ManagedRuleGroupDefinition',
     'ManagedRuleGroupOverride',
@@ -389,12 +636,17 @@ __all__ = [
     'ManagedRuleSetDefinitionList',
     'ManagedRuleSetList',
     'MatchCondition',
+    'MetricsResponse',
+    'MetricsResponseSeriesItem',
+    'MetricsResponseSeriesPropertiesItemsItem',
     'Operation',
     'OperationDisplay',
     'OperationsListResult',
     'Origin',
     'OriginGroup',
     'OriginGroupListResult',
+    'OriginGroupOverrideAction',
+    'OriginGroupOverrideActionParameters',
     'OriginGroupProperties',
     'OriginGroupUpdateParameters',
     'OriginGroupUpdatePropertiesParameters',
@@ -410,6 +662,10 @@ __all__ = [
     'ProxyResource',
     'PurgeParameters',
     'QueryStringMatchConditionParameters',
+    'RankingsResponse',
+    'RankingsResponseTablesItem',
+    'RankingsResponseTablesPropertiesItemsItem',
+    'RankingsResponseTablesPropertiesItemsMetricsItem',
     'RateLimitRule',
     'RateLimitRuleList',
     'RemoteAddressMatchConditionParameters',
@@ -422,10 +678,39 @@ __all__ = [
     'ResourceReference',
     'ResourceUsage',
     'ResourceUsageListResult',
+    'ResourcesResponse',
+    'ResourcesResponseCustomDomainsItem',
+    'ResourcesResponseEndpointsItem',
+    'ResourcesResponseEndpointsPropertiesItemsItem',
     'ResponseBasedOriginErrorDetectionParameters',
+    'Route',
+    'RouteListResult',
+    'RouteProperties',
+    'RouteUpdateParameters',
+    'RouteUpdatePropertiesParameters',
+    'Rule',
+    'RuleListResult',
+    'RuleProperties',
+    'RuleSet',
+    'RuleSetListResult',
+    'RuleSetProperties',
+    'RuleUpdateParameters',
+    'RuleUpdatePropertiesParameters',
+    'Secret',
+    'SecretListResult',
+    'SecretParameters',
+    'SecretProperties',
+    'SecurityPolicy',
+    'SecurityPolicyListResult',
+    'SecurityPolicyParameters',
+    'SecurityPolicyProperties',
+    'SecurityPolicyWebApplicationFirewallAssociation',
+    'SecurityPolicyWebApplicationFirewallParameters',
+    'SharedPrivateLinkResourceProperties',
     'Sku',
     'SsoUri',
     'SupportedOptimizationTypesListResult',
+    'SystemData',
     'TrackedResource',
     'UrlFileExtensionMatchConditionParameters',
     'UrlFileNameMatchConditionParameters',
@@ -437,13 +722,29 @@ __all__ = [
     'UrlSigningAction',
     'UrlSigningActionParameters',
     'UrlSigningKey',
+    'UrlSigningKeyParameters',
     'UrlSigningParamIdentifier',
+    'Usage',
+    'UsageName',
+    'UsagesListResult',
     'UserManagedHttpsParameters',
     'ValidateCustomDomainInput',
     'ValidateCustomDomainOutput',
     'ValidateProbeInput',
     'ValidateProbeOutput',
+    'ValidateSecretInput',
+    'ValidateSecretOutput',
+    'ValidationToken',
+    'WafMetricsResponse',
+    'WafMetricsResponseSeriesItem',
+    'WafMetricsResponseSeriesPropertiesItemsItem',
+    'WafRankingsResponse',
+    'WafRankingsResponseDataItem',
+    'AFDEndpointProtocols',
     'ActionType',
+    'AfdCertificateType',
+    'AfdMinimumTlsVersion',
+    'AfdProvisioningState',
     'Algorithm',
     'CacheBehavior',
     'CacheType',
@@ -455,18 +756,40 @@ __all__ = [
     'CustomHttpsProvisioningSubstate',
     'CustomRuleEnabledState',
     'DeleteRule',
-    'DeliveryRuleActionName',
+    'DeliveryRuleActionEnum',
+    'DeploymentStatus',
     'DestinationProtocol',
+    'DomainValidationState',
+    'EnabledState',
     'EndpointResourceState',
-    'Enum16',
+    'Enum31',
+    'Enum35',
+    'Enum37',
+    'Enum38',
+    'Enum39',
+    'Enum40',
+    'Enum42',
+    'Enum43',
+    'Enum44',
+    'Enum47',
+    'ForwardingProtocol',
     'GeoFilterActions',
+    'Get4ItemsItem',
+    'Get5ItemsItem',
+    'Get8ItemsItem',
     'HeaderAction',
     'HealthProbeRequestType',
     'HttpVersionOperator',
+    'HttpsRedirect',
+    'IdentityType',
     'IsDeviceMatchConditionParametersMatchValuesItem',
     'IsDeviceOperator',
+    'LinkToDefaultDomain',
     'ManagedRuleEnabledState',
+    'MatchProcessingBehavior',
     'MatchVariable',
+    'MetricsResponseGranularity',
+    'MetricsResponseSeriesItemUnit',
     'MinimumTlsVersion',
     'Operator',
     'OptimizationType',
@@ -494,11 +817,18 @@ __all__ = [
     'RequestSchemeMatchConditionParametersMatchValuesItem',
     'RequestUriOperator',
     'ResponseBasedDetectedErrorTypes',
+    'SecretType',
+    'SecurityPolicyType',
+    'SharedPrivateLinkResourceStatus',
     'SkuName',
+    'Status',
     'Transform',
     'TransformType',
     'UpdateRule',
     'UrlFileExtensionOperator',
     'UrlFileNameOperator',
     'UrlPathOperator',
+    'UsageUnit',
+    'ValidateSecretType',
+    'WafMetricsResponseGranularity',
 ]

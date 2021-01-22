@@ -21,8 +21,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class OriginsOperations:
-    """OriginsOperations async operations.
+class AFDEndpointsOperations:
+    """AFDEndpointsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -43,27 +43,24 @@ class OriginsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    def list_by_endpoint(
+    def list_by_profile(
         self,
         resource_group_name: str,
         profile_name: str,
-        endpoint_name: str,
         **kwargs
-    ) -> AsyncIterable["_models.OriginListResult"]:
-        """Lists all of the existing origins within an endpoint.
+    ) -> AsyncIterable["_models.AFDEndpointListResult"]:
+        """Lists existing AzureFrontDoor endpoints.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
-        :type endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OriginListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.OriginListResult]
+        :return: An iterator like instance of either AFDEndpointListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.AFDEndpointListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OriginListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AFDEndpointListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -78,11 +75,10 @@ class OriginsOperations:
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_endpoint.metadata['url']  # type: ignore
+                url = self.list_by_profile.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-                    'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -98,7 +94,7 @@ class OriginsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('OriginListResult', pipeline_response)
+            deserialized = self._deserialize('AFDEndpointListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -111,7 +107,7 @@ class OriginsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize(_models.AfdErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -120,17 +116,17 @@ class OriginsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_endpoint.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins'}  # type: ignore
+    list_by_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints'}  # type: ignore
 
     async def get(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        origin_name: str,
         **kwargs
-    ) -> "_models.Origin":
-        """Gets an existing origin within an endpoint.
+    ) -> "_models.AFDEndpoint":
+        """Gets an existing AzureFrontDoor endpoint with the specified endpoint name under the specified
+        subscription, resource group and profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -138,14 +134,12 @@ class OriginsOperations:
         :type profile_name: str
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
         :type endpoint_name: str
-        :param origin_name: Name of the origin which is unique within the endpoint.
-        :type origin_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Origin, or the result of cls(response)
-        :rtype: ~azure.mgmt.cdn.models.Origin
+        :return: AFDEndpoint, or the result of cls(response)
+        :rtype: ~azure.mgmt.cdn.models.AFDEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Origin"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AFDEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -159,7 +153,6 @@ class OriginsOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originName': self._serialize.url("origin_name", origin_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -178,27 +171,26 @@ class OriginsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Origin', pipeline_response)
+        deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}'}  # type: ignore
 
     async def _create_initial(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        origin_name: str,
-        origin: "_models.Origin",
+        endpoint: "_models.AFDEndpoint",
         **kwargs
-    ) -> "_models.Origin":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Origin"]
+    ) -> "_models.AFDEndpoint":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AFDEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -213,7 +205,6 @@ class OriginsOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originName': self._serialize.url("origin_name", origin_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -228,42 +219,39 @@ class OriginsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(origin, 'Origin')
+        body_content = self._serialize.body(endpoint, 'AFDEndpoint')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Origin', pipeline_response)
+            deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Origin', pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('Origin', pipeline_response)
+            deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'}  # type: ignore
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}'}  # type: ignore
 
     async def begin_create(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        origin_name: str,
-        origin: "_models.Origin",
+        endpoint: "_models.AFDEndpoint",
         **kwargs
-    ) -> AsyncLROPoller["_models.Origin"]:
-        """Creates a new origin within the specified endpoint.
+    ) -> AsyncLROPoller["_models.AFDEndpoint"]:
+        """Creates a new AzureFrontDoor endpoint with the specified endpoint name under the specified
+        subscription, resource group and profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -271,22 +259,20 @@ class OriginsOperations:
         :type profile_name: str
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
         :type endpoint_name: str
-        :param origin_name: Name of the origin that is unique within the endpoint.
-        :type origin_name: str
-        :param origin: Origin properties.
-        :type origin: ~azure.mgmt.cdn.models.Origin
+        :param endpoint: Endpoint properties.
+        :type endpoint: ~azure.mgmt.cdn.models.AFDEndpoint
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Origin or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
+        :return: An instance of AsyncLROPoller that returns either AFDEndpoint or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Origin"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AFDEndpoint"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -297,8 +283,7 @@ class OriginsOperations:
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
                 endpoint_name=endpoint_name,
-                origin_name=origin_name,
-                origin=origin,
+                endpoint=endpoint,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -307,7 +292,7 @@ class OriginsOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Origin', pipeline_response)
+            deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -317,11 +302,10 @@ class OriginsOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originName': self._serialize.url("origin_name", origin_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -333,18 +317,17 @@ class OriginsOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'}  # type: ignore
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}'}  # type: ignore
 
     async def _update_initial(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        origin_name: str,
-        origin_update_properties: "_models.OriginUpdateParameters",
+        endpoint_update_properties: "_models.AFDEndpointUpdateParameters",
         **kwargs
-    ) -> "_models.Origin":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Origin"]
+    ) -> "_models.AFDEndpoint":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AFDEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -359,7 +342,6 @@ class OriginsOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originName': self._serialize.url("origin_name", origin_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -374,7 +356,7 @@ class OriginsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(origin_update_properties, 'OriginUpdateParameters')
+        body_content = self._serialize.body(endpoint_update_properties, 'AFDEndpointUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -382,31 +364,33 @@ class OriginsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Origin', pipeline_response)
+            deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('Origin', pipeline_response)
+            deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}'}  # type: ignore
 
     async def begin_update(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        origin_name: str,
-        origin_update_properties: "_models.OriginUpdateParameters",
+        endpoint_update_properties: "_models.AFDEndpointUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["_models.Origin"]:
-        """Updates an existing origin within an endpoint.
+    ) -> AsyncLROPoller["_models.AFDEndpoint"]:
+        """Updates an existing AzureFrontDoor endpoint with the specified endpoint name under the
+        specified subscription, resource group and profile. Only tags can be updated after creating an
+        endpoint. To update origins, use the Update Origin operation. To update origin groups, use the
+        Update Origin group operation. To update domains, use the Update Custom Domain operation.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -414,22 +398,20 @@ class OriginsOperations:
         :type profile_name: str
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
         :type endpoint_name: str
-        :param origin_name: Name of the origin which is unique within the endpoint.
-        :type origin_name: str
-        :param origin_update_properties: Origin properties.
-        :type origin_update_properties: ~azure.mgmt.cdn.models.OriginUpdateParameters
+        :param endpoint_update_properties: Endpoint update properties.
+        :type endpoint_update_properties: ~azure.mgmt.cdn.models.AFDEndpointUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Origin or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
+        :return: An instance of AsyncLROPoller that returns either AFDEndpoint or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Origin"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AFDEndpoint"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -440,8 +422,7 @@ class OriginsOperations:
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
                 endpoint_name=endpoint_name,
-                origin_name=origin_name,
-                origin_update_properties=origin_update_properties,
+                endpoint_update_properties=endpoint_update_properties,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -450,7 +431,7 @@ class OriginsOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Origin', pipeline_response)
+            deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -460,11 +441,10 @@ class OriginsOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originName': self._serialize.url("origin_name", origin_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -476,14 +456,13 @@ class OriginsOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}'}  # type: ignore
 
     async def _delete_initial(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        origin_name: str,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -500,7 +479,6 @@ class OriginsOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originName': self._serialize.url("origin_name", origin_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -517,25 +495,25 @@ class OriginsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}'}  # type: ignore
 
     async def begin_delete(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        origin_name: str,
         **kwargs
     ) -> AsyncLROPoller[None]:
-        """Deletes an existing origin within an endpoint.
+        """Deletes an existing AzureFrontDoor endpoint with the specified endpoint name under the
+        specified subscription, resource group and profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -543,8 +521,6 @@ class OriginsOperations:
         :type profile_name: str
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
         :type endpoint_name: str
-        :param origin_name: Name of the origin which is unique within the endpoint.
-        :type origin_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -567,7 +543,6 @@ class OriginsOperations:
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
                 endpoint_name=endpoint_name,
-                origin_name=origin_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -583,11 +558,10 @@ class OriginsOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'originName': self._serialize.url("origin_name", origin_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -599,4 +573,282 @@ class OriginsOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}'}  # type: ignore
+
+    async def _purge_content_initial(
+        self,
+        resource_group_name: str,
+        profile_name: str,
+        endpoint_name: str,
+        contents: "_models.AfdPurgeParameters",
+        **kwargs
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-09-01"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._purge_content_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(contents, 'AfdPurgeParameters')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.AfdErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _purge_content_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}/purge'}  # type: ignore
+
+    async def begin_purge_content(
+        self,
+        resource_group_name: str,
+        profile_name: str,
+        endpoint_name: str,
+        contents: "_models.AfdPurgeParameters",
+        **kwargs
+    ) -> AsyncLROPoller[None]:
+        """Removes a content from AzureFrontDoor.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :type profile_name: str
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
+        :param contents: The list of paths to the content and the list of linked domains to be purged.
+         Path can be a full URL, e.g. '/pictures/city.png' which removes a single file, or a directory
+         with a wildcard, e.g. '/pictures/*' which removes all folders and files in the directory.
+        :type contents: ~azure.mgmt.cdn.models.AfdPurgeParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._purge_content_initial(
+                resource_group_name=resource_group_name,
+                profile_name=profile_name,
+                endpoint_name=endpoint_name,
+                contents=contents,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_purge_content.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}/purge'}  # type: ignore
+
+    def list_resource_usage(
+        self,
+        resource_group_name: str,
+        profile_name: str,
+        endpoint_name: str,
+        **kwargs
+    ) -> AsyncIterable["_models.UsagesListResult"]:
+        """Checks the quota and actual usage of endpoints under the given CDN profile.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :type profile_name: str
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either UsagesListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.UsagesListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsagesListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-09-01"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_resource_usage.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+                    'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize('UsagesListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._deserialize(_models.AfdErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_resource_usage.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}/usages'}  # type: ignore
+
+    async def validate_custom_domain(
+        self,
+        resource_group_name: str,
+        profile_name: str,
+        endpoint_name: str,
+        custom_domain_properties: "_models.ValidateCustomDomainInput",
+        **kwargs
+    ) -> "_models.ValidateCustomDomainOutput":
+        """Validates the custom domain mapping to ensure it maps to the correct CDN endpoint in DNS.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :type profile_name: str
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
+        :param custom_domain_properties: Custom domain to be validated.
+        :type custom_domain_properties: ~azure.mgmt.cdn.models.ValidateCustomDomainInput
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ValidateCustomDomainOutput, or the result of cls(response)
+        :rtype: ~azure.mgmt.cdn.models.ValidateCustomDomainOutput
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidateCustomDomainOutput"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-09-01"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.validate_custom_domain.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(custom_domain_properties, 'ValidateCustomDomainInput')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.AfdErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ValidateCustomDomainOutput', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    validate_custom_domain.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/afdEndpoints/{endpointName}/validateCustomDomain'}  # type: ignore
