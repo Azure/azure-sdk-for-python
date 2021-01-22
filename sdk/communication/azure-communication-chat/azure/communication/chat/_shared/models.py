@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: skip-file
+
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
