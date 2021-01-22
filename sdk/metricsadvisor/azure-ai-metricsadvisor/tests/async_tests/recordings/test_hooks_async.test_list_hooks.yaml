@@ -13,14 +13,14 @@ interactions:
       string: '{"value":[{"hookId":"65fa0aa4-9b71-451c-a04c-cc74cb413ad7","hookName":"myhook","hookType":"Email","externalLink":"external
         link","description":"","admins":["krpratic@microsoft.com"],"hookParameter":{"toList":["krista.pratico@gmail.com"]}}],"@nextLink":null}'
     headers:
-      apim-request-id: a6ee3d98-26ba-4b6d-a2db-d674048b468e
+      apim-request-id: be9b0861-3357-4a56-837f-54dd504e45ab
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:40:29 GMT
+      date: Fri, 22 Jan 2021 01:07:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '130'
-      x-request-id: a6ee3d98-26ba-4b6d-a2db-d674048b468e
+      x-envoy-upstream-service-time: '102'
+      x-request-id: be9b0861-3357-4a56-837f-54dd504e45ab
     status:
       code: 200
       message: OK

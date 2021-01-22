@@ -31,14 +31,14 @@ interactions:
         & Scientific"}},{"metricId":"metric_id","dimension":{"dimension_name":"Buenos
         Aires","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=20"}'
     headers:
-      apim-request-id: 94a1800d-ba9d-434e-86eb-1acc946e9a2f
+      apim-request-id: e06d0395-80bc-4707-bd95-14663b3a4968
       content-length: '2487'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:32 GMT
+      date: Fri, 22 Jan 2021 01:08:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '59'
-      x-request-id: 94a1800d-ba9d-434e-86eb-1acc946e9a2f
+      x-envoy-upstream-service-time: '798'
+      x-request-id: e06d0395-80bc-4707-bd95-14663b3a4968
     status:
       code: 200
       message: OK
@@ -70,14 +70,14 @@ interactions:
         & Advertising Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Bogota","category":"Jewelry"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hyderabad","category":"Jewelry"}},{"metricId":"metric_id","dimension":{"dimension_name":"Guangzhou","category":"Historical
         & Advertising Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Santiago","category":"Beauty"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=40"}'
     headers:
-      apim-request-id: 5866993c-1d09-407c-9e9b-a75da87fedaf
+      apim-request-id: 42a13e7c-6a28-40c5-8968-5b46ecbb30a3
       content-length: '2432'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:32 GMT
+      date: Fri, 22 Jan 2021 01:08:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '59'
-      x-request-id: 5866993c-1d09-407c-9e9b-a75da87fedaf
+      x-envoy-upstream-service-time: '45'
+      x-request-id: 42a13e7c-6a28-40c5-8968-5b46ecbb30a3
     status:
       code: 200
       message: OK
@@ -112,14 +112,14 @@ interactions:
         & Advertising Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"London","category":"Industrial
         & Scientific"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=60"}'
     headers:
-      apim-request-id: 2dbb7df6-1803-4c0f-bfd6-435ec3e669a3
+      apim-request-id: 44d4ea1a-66c5-499a-b00d-6034ea5f3c59
       content-length: '2479'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:32 GMT
+      date: Fri, 22 Jan 2021 01:08:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '52'
-      x-request-id: 2dbb7df6-1803-4c0f-bfd6-435ec3e669a3
+      x-envoy-upstream-service-time: '48'
+      x-request-id: 44d4ea1a-66c5-499a-b00d-6034ea5f3c59
     status:
       code: 200
       message: OK
@@ -156,14 +156,14 @@ interactions:
         & Gourmet Food"}},{"metricId":"metric_id","dimension":{"dimension_name":"Taipei","category":"Electronics
         (Consumer)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=80"}'
     headers:
-      apim-request-id: 574b0132-e885-4a3b-b307-9a67bcacd5d9
+      apim-request-id: 88373aab-198e-4edf-bb71-6dba3e3451c9
       content-length: '2517'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:32 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '70'
-      x-request-id: 574b0132-e885-4a3b-b307-9a67bcacd5d9
+      x-envoy-upstream-service-time: '48'
+      x-request-id: 88373aab-198e-4edf-bb71-6dba3e3451c9
     status:
       code: 200
       message: OK
@@ -203,14 +203,14 @@ interactions:
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Dhaka","category":"Cell
         Phones"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=100"}'
     headers:
-      apim-request-id: bfa2fbe6-8df5-496f-8e00-a7d6fff0fc2b
+      apim-request-id: b0bfd44a-ec96-42fa-9a54-379a6e14e821
       content-length: '2501'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:32 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '61'
-      x-request-id: bfa2fbe6-8df5-496f-8e00-a7d6fff0fc2b
+      x-envoy-upstream-service-time: '45'
+      x-request-id: b0bfd44a-ec96-42fa-9a54-379a6e14e821
     status:
       code: 200
       message: OK
@@ -245,14 +245,14 @@ interactions:
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tokyo","category":"Books"}},{"metricId":"metric_id","dimension":{"dimension_name":"Santiago","category":"Handmade"}},{"metricId":"metric_id","dimension":{"dimension_name":"Buenos
         Aires","category":"Device Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=120"}'
     headers:
-      apim-request-id: 88eb3b2f-f9b9-4e18-8d2a-2c7c32d3fe2f
+      apim-request-id: 99043bff-89ed-491d-9a14-b577d485162d
       content-length: '2455'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:32 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '63'
-      x-request-id: 88eb3b2f-f9b9-4e18-8d2a-2c7c32d3fe2f
+      x-envoy-upstream-service-time: '49'
+      x-request-id: 99043bff-89ed-491d-9a14-b577d485162d
     status:
       code: 200
       message: OK
@@ -287,14 +287,14 @@ interactions:
         & Computer Games"}},{"metricId":"metric_id","dimension":{"dimension_name":"Sao
         Paulo","category":"Electronics (Consumer)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kolkata","category":"Books"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=140"}'
     headers:
-      apim-request-id: 4aac3137-cd25-4510-a511-cbfac1db50a9
+      apim-request-id: 5f10de07-b665-4b55-af9c-9126ba259cd7
       content-length: '2456'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:32 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '69'
-      x-request-id: 4aac3137-cd25-4510-a511-cbfac1db50a9
+      x-envoy-upstream-service-time: '44'
+      x-request-id: 5f10de07-b665-4b55-af9c-9126ba259cd7
     status:
       code: 200
       message: OK
@@ -332,14 +332,14 @@ interactions:
         & Scientific"}},{"metricId":"metric_id","dimension":{"dimension_name":"Bogota","category":"Industrial
         & Scientific"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lagos","category":"Handmade"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=160"}'
     headers:
-      apim-request-id: 413304a2-1aee-4218-b084-5f40211ad613
+      apim-request-id: 019a4c74-e432-4108-ab8b-ceeb73d3111c
       content-length: '2478'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:32 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '54'
-      x-request-id: 413304a2-1aee-4218-b084-5f40211ad613
+      x-envoy-upstream-service-time: '49'
+      x-request-id: 019a4c74-e432-4108-ab8b-ceeb73d3111c
     status:
       code: 200
       message: OK
@@ -377,14 +377,14 @@ interactions:
         & Computer Games"}},{"metricId":"metric_id","dimension":{"dimension_name":"Bangkok","category":"Handmade"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hong
         Kong","category":"Outdoors"}},{"metricId":"metric_id","dimension":{"dimension_name":"Manila","category":"Handmade"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=180"}'
     headers:
-      apim-request-id: 0b48801b-4158-4186-bb6c-59d76e47063f
+      apim-request-id: 29c248a6-86fd-4169-ba7e-d65322f22abd
       content-length: '2480'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '76'
-      x-request-id: 0b48801b-4158-4186-bb6c-59d76e47063f
+      x-envoy-upstream-service-time: '49'
+      x-request-id: 29c248a6-86fd-4169-ba7e-d65322f22abd
     status:
       code: 200
       message: OK
@@ -424,14 +424,14 @@ interactions:
         Phones"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lima","category":"Musical
         Instruments"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=200"}'
     headers:
-      apim-request-id: 8aa77ff2-0c0c-4c3f-93cc-bd24e88ac5da
+      apim-request-id: 16310f75-791c-4558-b6df-faccf983b4ff
       content-length: '2483'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '71'
-      x-request-id: 8aa77ff2-0c0c-4c3f-93cc-bd24e88ac5da
+      x-envoy-upstream-service-time: '46'
+      x-request-id: 16310f75-791c-4558-b6df-faccf983b4ff
     status:
       code: 200
       message: OK
@@ -467,14 +467,14 @@ interactions:
         York","category":"Automotive & Powersports"}},{"metricId":"metric_id","dimension":{"dimension_name":"Beijing","category":"Historical
         & Advertising Collectibles"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=220"}'
     headers:
-      apim-request-id: a8fb9c5d-6517-47ab-9390-acc7f3386472
+      apim-request-id: 6b6b94c2-57b4-4ee6-843a-b5a4bdb7d5db
       content-length: '2483'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '68'
-      x-request-id: a8fb9c5d-6517-47ab-9390-acc7f3386472
+      x-envoy-upstream-service-time: '46'
+      x-request-id: 6b6b94c2-57b4-4ee6-843a-b5a4bdb7d5db
     status:
       code: 200
       message: OK
@@ -508,14 +508,14 @@ interactions:
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kolkata","category":"Jewelry"}},{"metricId":"metric_id","dimension":{"dimension_name":"Delhi","category":"Industrial
         & Scientific"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=240"}'
     headers:
-      apim-request-id: 6375b7a6-d4f4-4604-9809-fe1223db4e46
+      apim-request-id: 9899cc57-de5f-4df1-8b24-d2b7b97ff01a
       content-length: '2424'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '57'
-      x-request-id: 6375b7a6-d4f4-4604-9809-fe1223db4e46
+      x-envoy-upstream-service-time: '47'
+      x-request-id: 9899cc57-de5f-4df1-8b24-d2b7b97ff01a
     status:
       code: 200
       message: OK
@@ -550,14 +550,14 @@ interactions:
         Angeles","category":"Personal Computers"}},{"metricId":"metric_id","dimension":{"dimension_name":"Manila","category":"Electronics
         (Consumer)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lahore","category":"Beauty"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=260"}'
     headers:
-      apim-request-id: 5dfd1ff3-e254-45f2-a06e-6bd05124421a
+      apim-request-id: 8fb6a3dc-06a3-4336-b23d-68b4637b2a7d
       content-length: '2429'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '50'
-      x-request-id: 5dfd1ff3-e254-45f2-a06e-6bd05124421a
+      x-envoy-upstream-service-time: '47'
+      x-request-id: 8fb6a3dc-06a3-4336-b23d-68b4637b2a7d
     status:
       code: 200
       message: OK
@@ -594,14 +594,14 @@ interactions:
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Dallas","category":"Handmade"}},{"metricId":"metric_id","dimension":{"dimension_name":"Delhi","category":"Shoes
         Handbags & Sunglasses"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=280"}'
     headers:
-      apim-request-id: 85ee04e2-dc33-4def-81cf-03d62dccbd3a
+      apim-request-id: 73d76a88-18ec-4d07-aa20-e6c07c7c3f6b
       content-length: '2461'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '63'
-      x-request-id: 85ee04e2-dc33-4def-81cf-03d62dccbd3a
+      x-envoy-upstream-service-time: '52'
+      x-request-id: 73d76a88-18ec-4d07-aa20-e6c07c7c3f6b
     status:
       code: 200
       message: OK
@@ -641,14 +641,14 @@ interactions:
         (Consumer)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Dallas","category":"Books"}},{"metricId":"metric_id","dimension":{"dimension_name":"Rio
         de Janeiro","category":"Books"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=300"}'
     headers:
-      apim-request-id: 3857acfe-bfb2-46bb-9882-ee4a2036b49a
+      apim-request-id: a5e37fdc-2dd1-4f94-b38b-40d5c0712af9
       content-length: '2491'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '68'
-      x-request-id: 3857acfe-bfb2-46bb-9882-ee4a2036b49a
+      x-envoy-upstream-service-time: '51'
+      x-request-id: a5e37fdc-2dd1-4f94-b38b-40d5c0712af9
     status:
       code: 200
       message: OK
@@ -687,14 +687,14 @@ interactions:
         & Advertising Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Jakarta","category":"Music"}},{"metricId":"metric_id","dimension":{"dimension_name":"Paris","category":"Outdoors"}},{"metricId":"metric_id","dimension":{"dimension_name":"Philadelphia","category":"Jewelry"}},{"metricId":"metric_id","dimension":{"dimension_name":"Paris","category":"Musical
         Instruments"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=320"}'
     headers:
-      apim-request-id: 0c2ceee3-4add-4d12-b666-9067bd5ed725
+      apim-request-id: ac17a0de-df74-4502-ad3d-1bb4b7229135
       content-length: '2541'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '66'
-      x-request-id: 0c2ceee3-4add-4d12-b666-9067bd5ed725
+      x-envoy-upstream-service-time: '62'
+      x-request-id: ac17a0de-df74-4502-ad3d-1bb4b7229135
     status:
       code: 200
       message: OK
@@ -729,14 +729,14 @@ interactions:
         (Accessories)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kinshasa","category":"Shoes
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Bangkok","category":"Beauty"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=340"}'
     headers:
-      apim-request-id: 9827cfd6-7829-45f5-8932-2858a759d987
+      apim-request-id: 0f2f30e0-bbcd-41e9-9010-d7d823b1fd82
       content-length: '2452'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '57'
-      x-request-id: 9827cfd6-7829-45f5-8932-2858a759d987
+      x-envoy-upstream-service-time: '59'
+      x-request-id: 0f2f30e0-bbcd-41e9-9010-d7d823b1fd82
     status:
       code: 200
       message: OK
@@ -775,14 +775,14 @@ interactions:
         & Gourmet Food"}},{"metricId":"metric_id","dimension":{"dimension_name":"New
         York","category":"Luggage & Travel Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=360"}'
     headers:
-      apim-request-id: 9b7984ff-7d4f-45d6-8bdb-79189e4a110b
+      apim-request-id: 21d23c69-3596-4f9e-897c-4d4a4db5e575
       content-length: '2502'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:33 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '59'
-      x-request-id: 9b7984ff-7d4f-45d6-8bdb-79189e4a110b
+      x-envoy-upstream-service-time: '76'
+      x-request-id: 21d23c69-3596-4f9e-897c-4d4a4db5e575
     status:
       code: 200
       message: OK
@@ -823,14 +823,14 @@ interactions:
         (Consumer)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hong
         Kong","category":"Electronics (Consumer)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=380"}'
     headers:
-      apim-request-id: 014f60ef-a44b-4b23-bae5-ea6c2790b445
+      apim-request-id: 6417d99f-156f-4966-9429-9cf6f1a53f8a
       content-length: '2520'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '71'
-      x-request-id: 014f60ef-a44b-4b23-bae5-ea6c2790b445
+      x-envoy-upstream-service-time: '56'
+      x-request-id: 6417d99f-156f-4966-9429-9cf6f1a53f8a
     status:
       code: 200
       message: OK
@@ -868,14 +868,14 @@ interactions:
         & Garden"}},{"metricId":"metric_id","dimension":{"dimension_name":"Guangzhou","category":"Industrial
         & Scientific"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=400"}'
     headers:
-      apim-request-id: 373c1f72-9c10-46b6-81b7-f4f6d194bcea
+      apim-request-id: 349e39dc-3aee-4f05-b7ee-bb795bbe4933
       content-length: '2453'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '56'
-      x-request-id: 373c1f72-9c10-46b6-81b7-f4f6d194bcea
+      x-envoy-upstream-service-time: '47'
+      x-request-id: 349e39dc-3aee-4f05-b7ee-bb795bbe4933
     status:
       code: 200
       message: OK
@@ -913,14 +913,14 @@ interactions:
         & Powersports"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chennai","category":"Beauty"}},{"metricId":"metric_id","dimension":{"dimension_name":"Los
         Angeles","category":"Music"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=420"}'
     headers:
-      apim-request-id: 74e5258d-c7f2-4a5d-bd63-a195b68ca740
+      apim-request-id: 1a524428-d248-426d-9d23-c911720f4ffc
       content-length: '2493'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '67'
-      x-request-id: 74e5258d-c7f2-4a5d-bd63-a195b68ca740
+      x-envoy-upstream-service-time: '55'
+      x-request-id: 1a524428-d248-426d-9d23-c911720f4ffc
     status:
       code: 200
       message: OK
@@ -957,14 +957,14 @@ interactions:
         Phones"}},{"metricId":"metric_id","dimension":{"dimension_name":"Jakarta","category":"Home
         & Garden"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=440"}'
     headers:
-      apim-request-id: 82f0ca1c-19e4-44cb-a4a2-aee9a4981fb8
+      apim-request-id: abfae56b-ef95-469f-b329-7c35f748e03e
       content-length: '2480'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '60'
-      x-request-id: 82f0ca1c-19e4-44cb-a4a2-aee9a4981fb8
+      x-envoy-upstream-service-time: '47'
+      x-request-id: abfae56b-ef95-469f-b329-7c35f748e03e
     status:
       code: 200
       message: OK
@@ -1000,14 +1000,14 @@ interactions:
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tokyo","category":"Musical
         Instruments"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=460"}'
     headers:
-      apim-request-id: dcea57fe-1454-4fb5-b51c-560e177b8eb5
+      apim-request-id: 227a9939-77e6-427d-ba9c-5209b4dde893
       content-length: '2466'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '62'
-      x-request-id: dcea57fe-1454-4fb5-b51c-560e177b8eb5
+      x-envoy-upstream-service-time: '52'
+      x-request-id: 227a9939-77e6-427d-ba9c-5209b4dde893
     status:
       code: 200
       message: OK
@@ -1046,14 +1046,14 @@ interactions:
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Wuhan","category":"Cell
         Phones"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=480"}'
     headers:
-      apim-request-id: f588bd90-30ab-44bc-b7ef-daadc367a681
+      apim-request-id: 1f6cc42e-2357-4782-950e-ae5fb4eebafb
       content-length: '2490'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '73'
-      x-request-id: f588bd90-30ab-44bc-b7ef-daadc367a681
+      x-envoy-upstream-service-time: '50'
+      x-request-id: 1f6cc42e-2357-4782-950e-ae5fb4eebafb
     status:
       code: 200
       message: OK
@@ -1084,14 +1084,14 @@ interactions:
         & Gourmet Food"}},{"metricId":"metric_id","dimension":{"dimension_name":"Shanghai","category":"Jewelry"}},{"metricId":"metric_id","dimension":{"dimension_name":"Manila","category":"Device
         Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=500"}'
     headers:
-      apim-request-id: 7e41b0ba-2c5c-44d6-9a4b-7622117e1177
+      apim-request-id: 2feef3a9-1fda-4071-a296-79c27e2470a7
       content-length: '2386'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '102'
-      x-request-id: 7e41b0ba-2c5c-44d6-9a4b-7622117e1177
+      x-envoy-upstream-service-time: '61'
+      x-request-id: 2feef3a9-1fda-4071-a296-79c27e2470a7
     status:
       code: 200
       message: OK
@@ -1129,14 +1129,14 @@ interactions:
         City","category":"Music"}},{"metricId":"metric_id","dimension":{"dimension_name":"Houston","category":"Health
         & Personal Care"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=520"}'
     headers:
-      apim-request-id: f63c06bf-ccb0-411a-998a-308dec9cfdd2
+      apim-request-id: 15f2b51f-c1d9-4d64-9c1c-f8eab5e26590
       content-length: '2482'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '62'
-      x-request-id: f63c06bf-ccb0-411a-998a-308dec9cfdd2
+      x-envoy-upstream-service-time: '61'
+      x-request-id: 15f2b51f-c1d9-4d64-9c1c-f8eab5e26590
     status:
       code: 200
       message: OK
@@ -1170,14 +1170,14 @@ interactions:
         (Accessories)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kolkata","category":"Historical
         & Advertising Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chengdu","category":"Outdoors"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kolkata","category":"Beauty"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tianjin","category":"Books"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=540"}'
     headers:
-      apim-request-id: 5fc9968e-33ad-4b28-845e-210deecb0b5d
+      apim-request-id: 1b1a53b9-af16-4b59-b17e-e5a95455529e
       content-length: '2449'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '72'
-      x-request-id: 5fc9968e-33ad-4b28-845e-210deecb0b5d
+      x-envoy-upstream-service-time: '55'
+      x-request-id: 1b1a53b9-af16-4b59-b17e-e5a95455529e
     status:
       code: 200
       message: OK
@@ -1213,14 +1213,14 @@ interactions:
         & Garden"}},{"metricId":"metric_id","dimension":{"dimension_name":"Shenzhen","category":"Music"}},{"metricId":"metric_id","dimension":{"dimension_name":"Madrid","category":"Home
         & Garden"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=560"}'
     headers:
-      apim-request-id: 97878be0-2c19-4cb1-a3ab-2e04582d5080
+      apim-request-id: c2055036-f233-48cb-b93a-671bdc361509
       content-length: '2438'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:34 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '59'
-      x-request-id: 97878be0-2c19-4cb1-a3ab-2e04582d5080
+      x-envoy-upstream-service-time: '55'
+      x-request-id: c2055036-f233-48cb-b93a-671bdc361509
     status:
       code: 200
       message: OK
@@ -1257,14 +1257,14 @@ interactions:
         (Consumer)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Cairo","category":"Automotive
         & Powersports"}},{"metricId":"metric_id","dimension":{"dimension_name":"Santiago","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=580"}'
     headers:
-      apim-request-id: 285d883c-0e38-4cfb-8d35-16daf7578b0a
+      apim-request-id: a23e55ae-8c09-4bb0-926a-acbcf2095cbd
       content-length: '2486'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '54'
-      x-request-id: 285d883c-0e38-4cfb-8d35-16daf7578b0a
+      x-envoy-upstream-service-time: '50'
+      x-request-id: a23e55ae-8c09-4bb0-926a-acbcf2095cbd
     status:
       code: 200
       message: OK
@@ -1302,14 +1302,14 @@ interactions:
         Instruments"}},{"metricId":"metric_id","dimension":{"dimension_name":"Osaka","category":"Electronics
         (Consumer)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=600"}'
     headers:
-      apim-request-id: 54f89a1f-5adf-4147-b78b-037de002a38c
+      apim-request-id: 32e10374-5f1b-4c4b-8df2-e7e062685ffd
       content-length: '2476'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '62'
-      x-request-id: 54f89a1f-5adf-4147-b78b-037de002a38c
+      x-envoy-upstream-service-time: '48'
+      x-request-id: 32e10374-5f1b-4c4b-8df2-e7e062685ffd
     status:
       code: 200
       message: OK
@@ -1342,14 +1342,14 @@ interactions:
         Aires","category":"Home & Garden"}},{"metricId":"metric_id","dimension":{"dimension_name":"Rio
         de Janeiro","category":"Musical Instruments"}},{"metricId":"metric_id","dimension":{"dimension_name":"Osaka","category":"Books"}},{"metricId":"metric_id","dimension":{"dimension_name":"Beijing","category":"Music"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chicago","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=620"}'
     headers:
-      apim-request-id: 746fe5e1-9385-413c-a020-f7d907ac44d8
+      apim-request-id: 0b6cc0aa-605d-43dc-8a27-e0832bfde732
       content-length: '2402'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '49'
-      x-request-id: 746fe5e1-9385-413c-a020-f7d907ac44d8
+      x-envoy-upstream-service-time: '62'
+      x-request-id: 0b6cc0aa-605d-43dc-8a27-e0832bfde732
     status:
       code: 200
       message: OK
@@ -1388,14 +1388,14 @@ interactions:
         Computers"}},{"metricId":"metric_id","dimension":{"dimension_name":"Madrid","category":"Grocery
         & Gourmet Food"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=640"}'
     headers:
-      apim-request-id: d462bfc3-01ae-4dc8-9a8f-037503bebc54
+      apim-request-id: 435ba808-eaed-4dbb-888a-c0f97d2f09d9
       content-length: '2503'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '56'
-      x-request-id: d462bfc3-01ae-4dc8-9a8f-037503bebc54
+      x-envoy-upstream-service-time: '54'
+      x-request-id: 435ba808-eaed-4dbb-888a-c0f97d2f09d9
     status:
       code: 200
       message: OK
@@ -1430,14 +1430,14 @@ interactions:
         Kong","category":"Office Products"}},{"metricId":"metric_id","dimension":{"dimension_name":"Karachi","category":"Electronics
         (Consumer)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=660"}'
     headers:
-      apim-request-id: bab8d2aa-a14e-4b1e-83db-be6d21d979ba
+      apim-request-id: 3a41a15c-c4b4-40ab-8e19-a57fd9b3f8c5
       content-length: '2395'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '56'
-      x-request-id: bab8d2aa-a14e-4b1e-83db-be6d21d979ba
+      x-envoy-upstream-service-time: '55'
+      x-request-id: 3a41a15c-c4b4-40ab-8e19-a57fd9b3f8c5
     status:
       code: 200
       message: OK
@@ -1474,14 +1474,14 @@ interactions:
         de Janeiro","category":"Home & Garden"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tianjin","category":"Luggage
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Shanghai","category":"Music"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=680"}'
     headers:
-      apim-request-id: b7042c45-e6e5-436a-8a7d-5597b74c872e
+      apim-request-id: e26a6ba7-b855-4eff-9bbb-60e378858910
       content-length: '2531'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '57'
-      x-request-id: b7042c45-e6e5-436a-8a7d-5597b74c872e
+      x-envoy-upstream-service-time: '53'
+      x-request-id: e26a6ba7-b855-4eff-9bbb-60e378858910
     status:
       code: 200
       message: OK
@@ -1519,14 +1519,14 @@ interactions:
         (Accessories)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Manila","category":"Home
         & Garden"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=700"}'
     headers:
-      apim-request-id: 6fdb5c6e-9ee0-420f-93eb-68f97a6fd060
+      apim-request-id: 1a56b584-dd12-41eb-b5e2-3c887c39a480
       content-length: '2496'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '138'
-      x-request-id: 6fdb5c6e-9ee0-420f-93eb-68f97a6fd060
+      x-envoy-upstream-service-time: '60'
+      x-request-id: 1a56b584-dd12-41eb-b5e2-3c887c39a480
     status:
       code: 200
       message: OK
@@ -1565,14 +1565,14 @@ interactions:
         Phones"}},{"metricId":"metric_id","dimension":{"dimension_name":"Seoul","category":"Electronics
         (Accessories)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=720"}'
     headers:
-      apim-request-id: 45f37310-807c-44cd-b9b7-6c10feca6ce8
+      apim-request-id: 844b2054-afb1-4a08-8378-5374912cf452
       content-length: '2530'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '92'
-      x-request-id: 45f37310-807c-44cd-b9b7-6c10feca6ce8
+      x-envoy-upstream-service-time: '48'
+      x-request-id: 844b2054-afb1-4a08-8378-5374912cf452
     status:
       code: 200
       message: OK
@@ -1606,14 +1606,14 @@ interactions:
         (Consumer)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Houston","category":"Grocery
         & Gourmet Food"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=740"}'
     headers:
-      apim-request-id: 48c627df-22ea-44ea-92a5-4934cf07ef38
+      apim-request-id: 90721ff0-9175-4245-9282-d54d7af53a73
       content-length: '2420'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:35 GMT
+      date: Fri, 22 Jan 2021 01:08:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '105'
-      x-request-id: 48c627df-22ea-44ea-92a5-4934cf07ef38
+      x-envoy-upstream-service-time: '49'
+      x-request-id: 90721ff0-9175-4245-9282-d54d7af53a73
     status:
       code: 200
       message: OK
@@ -1647,14 +1647,14 @@ interactions:
         Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Sao
         Paulo","category":"Office Products"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=760"}'
     headers:
-      apim-request-id: c73a0a17-6724-4272-bfd1-060324d5a223
+      apim-request-id: 6331657c-3766-4167-83be-72abee236b18
       content-length: '2420'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:36 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '105'
-      x-request-id: c73a0a17-6724-4272-bfd1-060324d5a223
+      x-envoy-upstream-service-time: '57'
+      x-request-id: 6331657c-3766-4167-83be-72abee236b18
     status:
       code: 200
       message: OK
@@ -1691,14 +1691,14 @@ interactions:
         Phones"}},{"metricId":"metric_id","dimension":{"dimension_name":"Moscow","category":"Grocery
         & Gourmet Food"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=780"}'
     headers:
-      apim-request-id: 4c24da13-826c-4351-9a54-b53feee59256
+      apim-request-id: 9f5138e8-637c-4606-9860-95e112d58f3c
       content-length: '2477'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:36 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '101'
-      x-request-id: 4c24da13-826c-4351-9a54-b53feee59256
+      x-envoy-upstream-service-time: '48'
+      x-request-id: 9f5138e8-637c-4606-9860-95e112d58f3c
     status:
       code: 200
       message: OK
@@ -1739,14 +1739,14 @@ interactions:
         & Photo"}},{"metricId":"metric_id","dimension":{"dimension_name":"Miami","category":"Grocery
         & Gourmet Food"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=800"}'
     headers:
-      apim-request-id: beb1395d-b98a-49ba-8441-87b3a2416531
+      apim-request-id: 475c63db-1433-4690-bf3e-5bd06b140db1
       content-length: '2490'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:36 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '80'
-      x-request-id: beb1395d-b98a-49ba-8441-87b3a2416531
+      x-envoy-upstream-service-time: '53'
+      x-request-id: 475c63db-1433-4690-bf3e-5bd06b140db1
     status:
       code: 200
       message: OK
@@ -1785,14 +1785,14 @@ interactions:
         & Scientific"}},{"metricId":"metric_id","dimension":{"dimension_name":"Madrid","category":"Books"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lima","category":"Software
         & Computer Games"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hyderabad","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=820"}'
     headers:
-      apim-request-id: d0d52f84-b395-46f4-870e-d666e5581036
+      apim-request-id: e7d9bd29-bda7-459a-9e1e-792027cffe4d
       content-length: '2481'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:36 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '93'
-      x-request-id: d0d52f84-b395-46f4-870e-d666e5581036
+      x-envoy-upstream-service-time: '55'
+      x-request-id: e7d9bd29-bda7-459a-9e1e-792027cffe4d
     status:
       code: 200
       message: OK
@@ -1831,14 +1831,14 @@ interactions:
         Horizonte","category":"Historical & Advertising Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Karachi","category":"Luggage
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Dhaka","category":"Music"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=840"}'
     headers:
-      apim-request-id: c733b57a-1a1a-4194-aa7b-e42b47a61f78
+      apim-request-id: 2c8799f8-cb4c-46ac-bdb2-76987786641a
       content-length: '2486'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:36 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '75'
-      x-request-id: c733b57a-1a1a-4194-aa7b-e42b47a61f78
+      x-envoy-upstream-service-time: '47'
+      x-request-id: 2c8799f8-cb4c-46ac-bdb2-76987786641a
     status:
       code: 200
       message: OK
@@ -1874,14 +1874,14 @@ interactions:
         de Janeiro","category":"Handmade"}},{"metricId":"metric_id","dimension":{"dimension_name":"Madrid","category":"Musical
         Instruments"}},{"metricId":"metric_id","dimension":{"dimension_name":"Shenzhen","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=860"}'
     headers:
-      apim-request-id: 93092542-ed48-49fb-9ebc-913866d33c14
+      apim-request-id: 0ab5f594-0db4-4d4c-9286-50f3b3745947
       content-length: '2491'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:36 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '92'
-      x-request-id: 93092542-ed48-49fb-9ebc-913866d33c14
+      x-envoy-upstream-service-time: '59'
+      x-request-id: 0ab5f594-0db4-4d4c-9286-50f3b3745947
     status:
       code: 200
       message: OK
@@ -1921,14 +1921,14 @@ interactions:
         Aires","category":"Grocery & Gourmet Food"}},{"metricId":"metric_id","dimension":{"dimension_name":"New
         York","category":"Home & Garden"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=880"}'
     headers:
-      apim-request-id: 528b4716-0763-4e38-aabe-1866d7064c3c
+      apim-request-id: 59c5dfc8-b38b-4b6e-84c8-423c917e8ee7
       content-length: '2508'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:36 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '120'
-      x-request-id: 528b4716-0763-4e38-aabe-1866d7064c3c
+      x-envoy-upstream-service-time: '61'
+      x-request-id: 59c5dfc8-b38b-4b6e-84c8-423c917e8ee7
     status:
       code: 200
       message: OK
@@ -1966,14 +1966,14 @@ interactions:
         Kong","category":"Musical Instruments"}},{"metricId":"metric_id","dimension":{"dimension_name":"London","category":"Shoes
         Handbags & Sunglasses"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=900"}'
     headers:
-      apim-request-id: a4e395e3-fdbc-42cc-9a07-3baf627163e3
+      apim-request-id: f7079876-ee2a-4415-93d8-6b7e05cadada
       content-length: '2540'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:38 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '124'
-      x-request-id: a4e395e3-fdbc-42cc-9a07-3baf627163e3
+      x-envoy-upstream-service-time: '53'
+      x-request-id: f7079876-ee2a-4415-93d8-6b7e05cadada
     status:
       code: 200
       message: OK
@@ -2011,14 +2011,14 @@ interactions:
         (Accessories)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hyderabad","category":"Music"}},{"metricId":"metric_id","dimension":{"dimension_name":"Los
         Angeles","category":"Electronics (Accessories)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=920"}'
     headers:
-      apim-request-id: ed121faa-7a2e-4b7c-b83d-be88f32a9e2a
+      apim-request-id: 0172ba64-f474-44fa-9831-abce15253e8a
       content-length: '2474'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:38 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '97'
-      x-request-id: ed121faa-7a2e-4b7c-b83d-be88f32a9e2a
+      x-envoy-upstream-service-time: '58'
+      x-request-id: 0172ba64-f474-44fa-9831-abce15253e8a
     status:
       code: 200
       message: OK
@@ -2052,14 +2052,14 @@ interactions:
         Chi Minh City","category":"Outdoors"}},{"metricId":"metric_id","dimension":{"dimension_name":"Dhaka","category":"Musical
         Instruments"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=940"}'
     headers:
-      apim-request-id: ca9fa57c-87fe-4c12-a88c-079d2928d2da
+      apim-request-id: 1ced8894-4ce1-4ceb-87e0-c2a29c874b56
       content-length: '2422'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:38 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '83'
-      x-request-id: ca9fa57c-87fe-4c12-a88c-079d2928d2da
+      x-envoy-upstream-service-time: '54'
+      x-request-id: 1ced8894-4ce1-4ceb-87e0-c2a29c874b56
     status:
       code: 200
       message: OK
@@ -2093,14 +2093,14 @@ interactions:
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Karachi","category":"Industrial
         & Scientific"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lahore","category":"Jewelry"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=960"}'
     headers:
-      apim-request-id: 12feade8-7f5f-4318-9438-1f661dfdf266
+      apim-request-id: e2725552-a58e-4587-a5f0-8dbcdd64a752
       content-length: '2461'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:38 GMT
+      date: Fri, 22 Jan 2021 01:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '85'
-      x-request-id: 12feade8-7f5f-4318-9438-1f661dfdf266
+      x-envoy-upstream-service-time: '67'
+      x-request-id: e2725552-a58e-4587-a5f0-8dbcdd64a752
     status:
       code: 200
       message: OK
@@ -2140,14 +2140,14 @@ interactions:
         & Photo"}},{"metricId":"metric_id","dimension":{"dimension_name":"Beijing","category":"Device
         Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=980"}'
     headers:
-      apim-request-id: f691a32a-b399-401d-8e5e-f1249a15ca18
+      apim-request-id: 7cfcf587-771c-4115-89d3-b3a55a7a4ca6
       content-length: '2449'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:38 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '105'
-      x-request-id: f691a32a-b399-401d-8e5e-f1249a15ca18
+      x-envoy-upstream-service-time: '50'
+      x-request-id: 7cfcf587-771c-4115-89d3-b3a55a7a4ca6
     status:
       code: 200
       message: OK
@@ -2187,14 +2187,14 @@ interactions:
         Horizonte","category":"Camera & Photo"}},{"metricId":"metric_id","dimension":{"dimension_name":"Belo
         Horizonte","category":"Device Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1000"}'
     headers:
-      apim-request-id: 030e1f2e-84ae-4f77-a2c9-9751e83e631f
+      apim-request-id: 4fba9371-d68d-4d4c-8168-171384746bbe
       content-length: '2515'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:38 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '103'
-      x-request-id: 030e1f2e-84ae-4f77-a2c9-9751e83e631f
+      x-envoy-upstream-service-time: '54'
+      x-request-id: 4fba9371-d68d-4d4c-8168-171384746bbe
     status:
       code: 200
       message: OK
@@ -2234,14 +2234,14 @@ interactions:
         Coins"}},{"metricId":"metric_id","dimension":{"dimension_name":"Bengaluru","category":"Outdoors"}},{"metricId":"metric_id","dimension":{"dimension_name":"Luanda","category":"Shoes
         Handbags & Sunglasses"}},{"metricId":"metric_id","dimension":{"dimension_name":"Haora","category":"Outdoors"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1020"}'
     headers:
-      apim-request-id: 38e6e93b-7bdb-47cb-ba54-9d0953bdc916
+      apim-request-id: 09161a3f-9460-4a86-a3c0-02dfa0ea247a
       content-length: '2539'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:38 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '95'
-      x-request-id: 38e6e93b-7bdb-47cb-ba54-9d0953bdc916
+      x-envoy-upstream-service-time: '54'
+      x-request-id: 09161a3f-9460-4a86-a3c0-02dfa0ea247a
     status:
       code: 200
       message: OK
@@ -2282,14 +2282,14 @@ interactions:
         Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lima","category":"Camera
         & Photo"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1040"}'
     headers:
-      apim-request-id: c5e02073-4c98-4aba-8257-448ab40b9f68
+      apim-request-id: 7e14c285-8d1f-4c1d-a3db-c0b4612bc395
       content-length: '2460'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '106'
-      x-request-id: c5e02073-4c98-4aba-8257-448ab40b9f68
+      x-envoy-upstream-service-time: '51'
+      x-request-id: 7e14c285-8d1f-4c1d-a3db-c0b4612bc395
     status:
       code: 200
       message: OK
@@ -2331,14 +2331,14 @@ interactions:
         Art"}},{"metricId":"metric_id","dimension":{"dimension_name":"Mexico City","category":"Collectible
         Coins"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1060"}'
     headers:
-      apim-request-id: e0b7729f-e688-4fd7-ba7e-ebf8a59cfb27
+      apim-request-id: e7e8d35d-023e-478d-87c4-0140785e554e
       content-length: '2521'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '77'
-      x-request-id: e0b7729f-e688-4fd7-ba7e-ebf8a59cfb27
+      x-envoy-upstream-service-time: '55'
+      x-request-id: e7e8d35d-023e-478d-87c4-0140785e554e
     status:
       code: 200
       message: OK
@@ -2380,14 +2380,14 @@ interactions:
         Coins"}},{"metricId":"metric_id","dimension":{"dimension_name":"Rio de Janeiro","category":"Luggage
         & Travel Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1080"}'
     headers:
-      apim-request-id: 0cddbe66-84c6-4aaf-aacf-5c94fc8c76b8
+      apim-request-id: cd396f22-94f5-4cc0-8705-56e33e2255ae
       content-length: '2560'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '74'
-      x-request-id: 0cddbe66-84c6-4aaf-aacf-5c94fc8c76b8
+      x-envoy-upstream-service-time: '55'
+      x-request-id: cd396f22-94f5-4cc0-8705-56e33e2255ae
     status:
       code: 200
       message: OK
@@ -2429,14 +2429,14 @@ interactions:
         & Photo"}},{"metricId":"metric_id","dimension":{"dimension_name":"Paris","category":"Camera
         & Photo"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1100"}'
     headers:
-      apim-request-id: b8705314-9cb0-41b9-8d04-0cf705529b75
+      apim-request-id: 5249cce4-123b-4a11-a1df-f0b616ca3300
       content-length: '2437'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '68'
-      x-request-id: b8705314-9cb0-41b9-8d04-0cf705529b75
+      x-envoy-upstream-service-time: '62'
+      x-request-id: 5249cce4-123b-4a11-a1df-f0b616ca3300
     status:
       code: 200
       message: OK
@@ -2478,14 +2478,14 @@ interactions:
         Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chittagong","category":"Shoes
         Handbags & Sunglasses"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1120"}'
     headers:
-      apim-request-id: 3036753a-e1ef-4ed0-8873-9e9d87cf2ee6
+      apim-request-id: 7457fd7e-bfe8-41c0-b479-7c35eecf307f
       content-length: '2495'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '62'
-      x-request-id: 3036753a-e1ef-4ed0-8873-9e9d87cf2ee6
+      x-envoy-upstream-service-time: '57'
+      x-request-id: 7457fd7e-bfe8-41c0-b479-7c35eecf307f
     status:
       code: 200
       message: OK
@@ -2527,14 +2527,14 @@ interactions:
         Coins"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hyderabad","category":"Collectible
         Coins"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1140"}'
     headers:
-      apim-request-id: c4ad907c-96f3-498d-88af-8cf136ce3dad
+      apim-request-id: 86046073-1f01-4f65-b807-dce463a0920c
       content-length: '2461'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '91'
-      x-request-id: c4ad907c-96f3-498d-88af-8cf136ce3dad
+      x-envoy-upstream-service-time: '49'
+      x-request-id: 86046073-1f01-4f65-b807-dce463a0920c
     status:
       code: 200
       message: OK
@@ -2576,14 +2576,14 @@ interactions:
         Art"}},{"metricId":"metric_id","dimension":{"dimension_name":"Bogota","category":"Luggage
         & Travel Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1160"}'
     headers:
-      apim-request-id: 1ce5931f-ddf8-4126-996f-fd172f5aacbd
+      apim-request-id: e2683823-2776-471c-8b20-071f4858353e
       content-length: '2499'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '97'
-      x-request-id: 1ce5931f-ddf8-4126-996f-fd172f5aacbd
+      x-envoy-upstream-service-time: '57'
+      x-request-id: e2683823-2776-471c-8b20-071f4858353e
     status:
       code: 200
       message: OK
@@ -2623,14 +2623,14 @@ interactions:
         Paulo","category":"Device Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Bengaluru","category":"Device
         Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1180"}'
     headers:
-      apim-request-id: 53a9dd62-9a20-471a-b8be-02374f033f43
+      apim-request-id: 65896332-9058-452e-9261-88104e6626b8
       content-length: '2497'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '82'
-      x-request-id: 53a9dd62-9a20-471a-b8be-02374f033f43
+      x-envoy-upstream-service-time: '60'
+      x-request-id: 65896332-9058-452e-9261-88104e6626b8
     status:
       code: 200
       message: OK
@@ -2668,14 +2668,14 @@ interactions:
         & Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Wuhan","category":"Device
         Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1200"}'
     headers:
-      apim-request-id: ebf721ae-b971-4d01-901d-a67ed989ec84
+      apim-request-id: 1cd340c4-6624-4fe1-af03-bcd7ca1a8c87
       content-length: '2479'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:39 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '82'
-      x-request-id: ebf721ae-b971-4d01-901d-a67ed989ec84
+      x-envoy-upstream-service-time: '46'
+      x-request-id: 1cd340c4-6624-4fe1-af03-bcd7ca1a8c87
     status:
       code: 200
       message: OK
@@ -2711,14 +2711,14 @@ interactions:
         Instruments"}},{"metricId":"metric_id","dimension":{"dimension_name":"__SUM__","category":"Electronics
         (Accessories)"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1220"}'
     headers:
-      apim-request-id: 8097ecb1-d8a7-44e1-8505-4cc84d0ae38f
+      apim-request-id: 8840b131-c958-46e9-9695-72924d7274c0
       content-length: '2483'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '80'
-      x-request-id: 8097ecb1-d8a7-44e1-8505-4cc84d0ae38f
+      x-envoy-upstream-service-time: '61'
+      x-request-id: 8840b131-c958-46e9-9695-72924d7274c0
     status:
       code: 200
       message: OK
@@ -2746,14 +2746,14 @@ interactions:
         Paulo","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Santiago","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"London","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Shanghai","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tokyo","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"__SUM__","category":"Home
         & Garden"}},{"metricId":"metric_id","dimension":{"dimension_name":"Cairo","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chongqing","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Luanda","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1240"}'
     headers:
-      apim-request-id: 028aae17-96a2-45af-a0b9-2b70b2086d2d
+      apim-request-id: 32ac1c63-e4f8-4e37-b15a-cb0301d3e5d2
       content-length: '2323'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '71'
-      x-request-id: 028aae17-96a2-45af-a0b9-2b70b2086d2d
+      x-envoy-upstream-service-time: '56'
+      x-request-id: 32ac1c63-e4f8-4e37-b15a-cb0301d3e5d2
     status:
       code: 200
       message: OK
@@ -2781,14 +2781,14 @@ interactions:
         & Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tehran","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Rio
         de Janeiro","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lima","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Mumbai","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kinshasa","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1260"}'
     headers:
-      apim-request-id: 0474421f-dc48-4ecc-a20f-5ffdf19df1fc
+      apim-request-id: 4401e640-a852-44ca-a439-d59526e5310a
       content-length: '2345'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '79'
-      x-request-id: 0474421f-dc48-4ecc-a20f-5ffdf19df1fc
+      x-envoy-upstream-service-time: '61'
+      x-request-id: 4401e640-a852-44ca-a439-d59526e5310a
     status:
       code: 200
       message: OK
@@ -2817,14 +2817,14 @@ interactions:
         Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Haora","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tianjin","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"__SUM__","category":"Outdoors"}},{"metricId":"metric_id","dimension":{"dimension_name":"Shenyang","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Karachi","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chengdu","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Los
         Angeles","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Philadelphia","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1280"}'
     headers:
-      apim-request-id: f36d4976-8684-4792-b636-7ed8276406c3
+      apim-request-id: da9f4674-3ba6-47fb-a5c4-4ed0efe3c2dd
       content-length: '2338'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '74'
-      x-request-id: f36d4976-8684-4792-b636-7ed8276406c3
+      x-envoy-upstream-service-time: '53'
+      x-request-id: da9f4674-3ba6-47fb-a5c4-4ed0efe3c2dd
     status:
       code: 200
       message: OK
@@ -2852,14 +2852,14 @@ interactions:
         & Gourmet Food"}},{"metricId":"metric_id","dimension":{"dimension_name":"Kolkata","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Beijing","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Manila","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Guangzhou","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Chennai","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Istanbul","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lahore","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"__SUM__","category":"Luggage
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"__SUM__","category":"Handmade"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1300"}'
     headers:
-      apim-request-id: 0c137611-fe70-46b2-bdfe-2432090e799d
+      apim-request-id: 0708246e-e5d1-4a59-972c-7cd9bc84cd40
       content-length: '2349'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '67'
-      x-request-id: 0c137611-fe70-46b2-bdfe-2432090e799d
+      x-envoy-upstream-service-time: '48'
+      x-request-id: 0708246e-e5d1-4a59-972c-7cd9bc84cd40
     status:
       code: 200
       message: OK
@@ -2889,14 +2889,14 @@ interactions:
         Horizonte","category":"Luggage & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Tokyo","category":"Fine
         Art"}},{"metricId":"metric_id","dimension":{"dimension_name":"Riyadh","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1320"}'
     headers:
-      apim-request-id: 9f348d11-e537-4f36-a4cb-75244668e6c5
+      apim-request-id: 577a0a95-bdda-4f19-96cd-00bcd4e52eeb
       content-length: '2331'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '51'
-      x-request-id: 9f348d11-e537-4f36-a4cb-75244668e6c5
+      x-envoy-upstream-service-time: '61'
+      x-request-id: 577a0a95-bdda-4f19-96cd-00bcd4e52eeb
     status:
       code: 200
       message: OK
@@ -2929,14 +2929,14 @@ interactions:
         & Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"New
         York","category":"Sports"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1340"}'
     headers:
-      apim-request-id: c5d62446-27b9-4634-bf54-1382e9e2fa2b
+      apim-request-id: 1635ebd2-1ec7-420a-b2ed-75f71eda7f44
       content-length: '2399'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '58'
-      x-request-id: c5d62446-27b9-4634-bf54-1382e9e2fa2b
+      x-envoy-upstream-service-time: '48'
+      x-request-id: 1635ebd2-1ec7-420a-b2ed-75f71eda7f44
     status:
       code: 200
       message: OK
@@ -2972,14 +2972,14 @@ interactions:
         Computers"}},{"metricId":"metric_id","dimension":{"dimension_name":"Manila","category":"Baby
         Products (Excluding Apparel)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Hanoi","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Xi''an","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Melbourne","category":"__SUM__"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1360"}'
     headers:
-      apim-request-id: b9a70ecd-dcca-4389-81a8-f1f36763c6a9
+      apim-request-id: a7fd73a0-3de6-4403-89c3-d928837c251b
       content-length: '2462'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '48'
-      x-request-id: b9a70ecd-dcca-4389-81a8-f1f36763c6a9
+      x-envoy-upstream-service-time: '66'
+      x-request-id: a7fd73a0-3de6-4403-89c3-d928837c251b
     status:
       code: 200
       message: OK
@@ -3017,14 +3017,14 @@ interactions:
         Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Delhi","category":"Sports"}},{"metricId":"metric_id","dimension":{"dimension_name":"Rio
         de Janeiro","category":"Fine Art"}},{"metricId":"metric_id","dimension":{"dimension_name":"Cairo","category":"Sports"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1380"}'
     headers:
-      apim-request-id: 907b8f7a-f111-402b-9b2e-cc3f2f817a6f
+      apim-request-id: 1680682d-844e-4e6a-9493-aa5fed9f4df3
       content-length: '2397'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:40 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '42'
-      x-request-id: 907b8f7a-f111-402b-9b2e-cc3f2f817a6f
+      x-envoy-upstream-service-time: '50'
+      x-request-id: 1680682d-844e-4e6a-9493-aa5fed9f4df3
     status:
       code: 200
       message: OK
@@ -3064,14 +3064,14 @@ interactions:
         & Travel Accessories"}},{"metricId":"metric_id","dimension":{"dimension_name":"Lima","category":"Luggage
         & Travel Accessories"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/series/query?$top=20&$skip=1400"}'
     headers:
-      apim-request-id: 76e8792b-d10d-4205-9267-d3c8226b60de
+      apim-request-id: c092f8f3-1163-4912-a35e-e48483b827a4
       content-length: '2608'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:41 GMT
+      date: Fri, 22 Jan 2021 01:08:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '53'
-      x-request-id: 76e8792b-d10d-4205-9267-d3c8226b60de
+      x-envoy-upstream-service-time: '54'
+      x-request-id: c092f8f3-1163-4912-a35e-e48483b827a4
     status:
       code: 200
       message: OK
@@ -3096,14 +3096,14 @@ interactions:
         Horizonte","category":"Sports Collectibles"}},{"metricId":"metric_id","dimension":{"dimension_name":"Monterrey","category":"__SUM__"}},{"metricId":"metric_id","dimension":{"dimension_name":"Wuhan","category":"Baby
         Products (Excluding Apparel)"}},{"metricId":"metric_id","dimension":{"dimension_name":"Ankara","category":"__SUM__"}}],"@nextLink":null}'
     headers:
-      apim-request-id: 88488a67-133d-4148-aeb5-c818474ef1b0
+      apim-request-id: 4ac6377a-cdac-454f-a311-ffb023c99c9d
       content-length: '604'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:41 GMT
+      date: Fri, 22 Jan 2021 01:08:58 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '51'
-      x-request-id: 88488a67-133d-4148-aeb5-c818474ef1b0
+      x-envoy-upstream-service-time: '52'
+      x-request-id: 4ac6377a-cdac-454f-a311-ffb023c99c9d
     status:
       code: 200
       message: OK
