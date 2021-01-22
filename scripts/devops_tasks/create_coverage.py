@@ -43,7 +43,7 @@ def collect_tox_coverage_files():#targeted_packages):
     coverage_files = []
     for _, _, files in os.walk(coverage_dir):
         for f in files:
-            if re.match(".coverage_*", files):
+            if re.match(".coverage_*", f):
                 coverage_files.append(f)
 
     logging.info(".coverage files: {}".format(coverage_files))
