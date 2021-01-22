@@ -1,6 +1,10 @@
 parameters:
-  ServiceDirectory: ''
-  MaxParallel: 0
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: MaxParallel
+    type: integer
+    default: 0
   BeforeTestSteps: []
   AfterTestSteps: []
   BuildTargetingString: 'azure-*'
