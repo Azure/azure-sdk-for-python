@@ -62,10 +62,10 @@ stages:
         LinuxPool: ${{ parameters.LinuxPool }}
 
   - stage: Publish_Coverage
+    dependsOn: Build
     jobs:
     - template: ../jobs/publish-coverage.yml
       parameters:
-        DependsOn: Build
         # condition: succeededOrFailed()
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}

@@ -15,7 +15,6 @@ parameters:
 
 jobs:
   - job: Publish_Code_Coverage
-    dependsOn: ${{parameters.DependsOn}}
 
     steps:
       - script: |
