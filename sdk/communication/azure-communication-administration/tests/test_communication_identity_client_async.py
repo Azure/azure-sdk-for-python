@@ -29,6 +29,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
     
+    
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     async def test_create_user_from_managed_identity(self, connection_string):
