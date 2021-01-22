@@ -32,7 +32,7 @@ from tox_harness import prep_and_run_tox
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-coverage_dir = os.path.join(root_dir, "_all_coverage/")
+coverage_dir = os.path.join(root_dir, "_all_coverage_files/")
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
 
