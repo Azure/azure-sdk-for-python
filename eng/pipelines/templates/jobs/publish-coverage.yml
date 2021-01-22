@@ -7,7 +7,7 @@ parameters:
     default: []
 
 
-steps:
+jobs:
   - script: |
       codecov -t $(codecov-python-repository-token)
     displayName: 'Publish Code Cov'

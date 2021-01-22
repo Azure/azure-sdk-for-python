@@ -63,7 +63,7 @@ stages:
 
   - stage: Publish Coverage
     jobs:
-    - template: ../steps/publish-coverage.yml
+    - template: ../jobs/publish-coverage.yml
       parameters:
         DependsOn: Build
         condition: succeededOrFailed()
