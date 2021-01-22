@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer218e14e8?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer218e14e8?restype=container
   response:
     body:
       string: ''
@@ -48,7 +48,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer218e14e8/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer218e14e8/blob1
   response:
     body:
       string: ''
@@ -88,7 +88,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer218e14e8/blob2
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer218e14e8/blob2
   response:
     body:
       string: ''
@@ -128,7 +128,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer218e14e8/blob3
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer218e14e8/blob3
   response:
     body:
       string: ''
@@ -171,7 +171,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: POST
-    uri: https://storagename.blob.core.windows.net/acontainer218e14e8?restype=container&comp=batch
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer218e14e8?restype=container&comp=batch
   response:
     body:
       string: "--batchresponse_d2fedee9-aa6f-4b16-a1ed-c2023e4cb863\r\nContent-Type:
@@ -231,7 +231,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: POST
-    uri: https://storagename.blob.core.windows.net/acontainer218e14e8?restype=container&comp=batch
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer218e14e8?restype=container&comp=batch
   response:
     body:
       string: "--batchresponse_f89cbd1f-4b0a-47e1-805d-78569f562476\r\nContent-Type:
