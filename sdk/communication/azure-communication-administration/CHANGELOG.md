@@ -3,6 +3,7 @@
 ## 1.0.0b4 (Unreleased)
 
 ### Breaking Changes
+- CommunicationIdentityClient is moved to a new package: "azure.communication.identity"
 
 ##### `PhoneNumberAdministrationClient`
 -  `begin_reserve_phone_numbers` now takes `display_name`, `description`, `phone_plan_ids`, 

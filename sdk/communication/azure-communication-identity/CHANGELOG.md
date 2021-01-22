@@ -4,7 +4,6 @@
 
 ### Added
 - Added CommunicationIdentityClient (originally was part of the azure.communication.administration package).
-- Added support for Azure Active Directory authentication for the Identity client
 
 <!-- LINKS -->
 [read_me]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity/README.md
