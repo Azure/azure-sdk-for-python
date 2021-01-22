@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+from typing import Optional
+
+from . import PathProperties
+from ._deserialize import deserialize_path_properties
 
 try:
     from urllib.parse import urlparse, quote
@@ -463,14 +467,13 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: List the paths in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        command = functools.partial(
-            self._client.file_system.list_paths,
+        return self._client.file_system.list_paths(
+            recursive=recursive,
+            max_results=max_results,
             path=path,
             timeout=timeout,
+            cls=deserialize_path_properties,
             **kwargs)
-        return ItemPaged(
-            command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          metadata=None,  # type: Optional[Dict[str, str]]
