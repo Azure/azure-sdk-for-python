@@ -11,7 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2020-07-20-preview2
   response:
@@ -47,7 +47,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
   response:
