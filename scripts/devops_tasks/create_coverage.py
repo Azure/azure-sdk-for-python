@@ -39,7 +39,7 @@ dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 def install_coverage():
     install_cmd_arry = [sys.executable, "-m", "pip", "install", "coverage"]
     run_check_call(install_cmd_arry)
-x
+
 
 def collect_tox_coverage_files():#targeted_packages):
 
@@ -63,7 +63,7 @@ def collect_tox_coverage_files():#targeted_packages):
         # merge them with coverage combine and copy to root
         run_check_call(cov_cmd_array, coverage_dir)
 
-        logging.info("after running coverage combine: ")
+        logging.info("after running coverage combine")
 
         generate_coverage_xml()
 
