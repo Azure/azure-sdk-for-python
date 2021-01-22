@@ -835,14 +835,14 @@ interactions:
         Accessories"},"property":{"anomalySeverity":"Low"}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Moscow","category":"Handmade"},"property":{"anomalySeverity":"Medium"}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Madrid","category":"Office
         Products"},"property":{"anomalySeverity":"Medium"}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Guangzhou","category":"Handmade"},"property":{"anomalySeverity":"Low"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query?$top=1000&$skip=1000"}'
     headers:
-      apim-request-id: 9f078235-065b-4d5c-a15e-0a1c381e3e5a
+      apim-request-id: f51d55ac-89a5-40f0-95e6-d314a107a300
       content-length: '138739'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:45 GMT
+      date: Fri, 22 Jan 2021 01:09:01 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '342'
-      x-request-id: 9f078235-065b-4d5c-a15e-0a1c381e3e5a
+      x-envoy-upstream-service-time: '178'
+      x-request-id: f51d55ac-89a5-40f0-95e6-d314a107a300
     status:
       code: 200
       message: OK
@@ -1112,14 +1112,14 @@ interactions:
         Angeles","category":"Shoes Handbags & Sunglasses"},"property":{"anomalySeverity":"High"}},{"timestamp":"2020-09-22T00:00:00Z","dimension":{"dimension_name":"Karachi","category":"Shoes
         Handbags & Sunglasses"},"property":{"anomalySeverity":"High"}}],"@nextLink":null}'
     headers:
-      apim-request-id: 8cdda50d-49da-49b3-9e14-5f6139150bc9
+      apim-request-id: 5b818a0c-90a4-4f1c-951c-f5a86e01963a
       content-length: '39554'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:46 GMT
+      date: Fri, 22 Jan 2021 01:09:01 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '197'
-      x-request-id: 8cdda50d-49da-49b3-9e14-5f6139150bc9
+      x-envoy-upstream-service-time: '151'
+      x-request-id: 5b818a0c-90a4-4f1c-951c-f5a86e01963a
     status:
       code: 200
       message: OK

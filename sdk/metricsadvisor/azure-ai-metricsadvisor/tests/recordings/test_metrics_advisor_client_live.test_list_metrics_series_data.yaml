@@ -23,21 +23,21 @@ interactions:
         Angeles","category":"Homemade"}},"timestampList":[],"valueList":[]}]}'
     headers:
       apim-request-id:
-      - 2566231b-0b95-43c8-bf7a-8642e9171235
+      - 5a006071-82b9-4712-854f-ccf7e77938c6
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 26 Dec 2020 19:35:57 GMT
+      - Fri, 22 Jan 2021 01:03:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '750'
+      - '422'
       x-request-id:
-      - 2566231b-0b95-43c8-bf7a-8642e9171235
+      - 5a006071-82b9-4712-854f-ccf7e77938c6
     status:
       code: 200
       message: OK

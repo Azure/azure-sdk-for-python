@@ -18,14 +18,14 @@ interactions:
       string: '{"value":[{"id":{"metricId":"metric_id","dimension":{"dimension_name":"Los
         Angeles","category":"Homemade"}},"timestampList":[],"valueList":[]}]}'
     headers:
-      apim-request-id: e8b1287c-e8f1-4daf-bb67-a856c5b20cf7
+      apim-request-id: 1ec12fa0-7148-43db-b2c7-21e1a889ac32
       content-length: '161'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:42 GMT
+      date: Fri, 22 Jan 2021 01:08:58 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '290'
-      x-request-id: e8b1287c-e8f1-4daf-bb67-a856c5b20cf7
+      x-envoy-upstream-service-time: '240'
+      x-request-id: 1ec12fa0-7148-43db-b2c7-21e1a889ac32
     status:
       code: 200
       message: OK

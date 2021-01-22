@@ -498,7 +498,7 @@ class MetricsAdvisorClient(object):
         return self._list_anomalies_for_alert(**kwargs)
 
     @distributed_trace
-    def list_dimension_values(
+    def list_anomaly_dimension_values(
             self, detection_configuration_id,
             dimension_name,
             start_time,
@@ -523,8 +523,8 @@ class MetricsAdvisorClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_queries_async.py
-                :start-after: [START list_dimension_values_async]
-                :end-before: [END list_dimension_values_async]
+                :start-after: [START list_anomaly_dimension_values_async]
+                :end-before: [END list_anomaly_dimension_values_async]
                 :language: python
                 :dedent: 4
                 :caption: Query dimension values.

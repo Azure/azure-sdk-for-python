@@ -14,14 +14,14 @@ interactions:
         on category = Electronics (Consumer) | dimension_name = Karachi contributes
         the most to current incident."}]}'
     headers:
-      apim-request-id: c4e2a911-f194-4d76-a791-cf5d81ff34d6
+      apim-request-id: 7f2af741-5563-4ccc-9baa-a61ea1e4fb27
       content-length: '259'
       content-type: application/json; charset=utf-8
-      date: Thu, 21 Jan 2021 17:39:09 GMT
+      date: Fri, 22 Jan 2021 01:10:08 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '411'
-      x-request-id: c4e2a911-f194-4d76-a791-cf5d81ff34d6
+      x-envoy-upstream-service-time: '309'
+      x-request-id: 7f2af741-5563-4ccc-9baa-a61ea1e4fb27
     status:
       code: 200
       message: OK
