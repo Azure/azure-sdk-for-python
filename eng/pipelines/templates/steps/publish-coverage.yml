@@ -33,6 +33,18 @@ steps:
   - pwsh: |
       Get-ChildItem _all_coverage_files
 
+
+  - task: PythonScript@0
+      displayName: 'Create Coverage Report'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/create_coverage.py'
+        # arguments: >-
+        #   "${{ parameters.BuildTargetingString }}"
+        #   --service="${{ parameters.ServiceDirectory }}"
+        #   --toxenv="samples"
+      env: ${{ parameters.EnvVars }}
+
+
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
