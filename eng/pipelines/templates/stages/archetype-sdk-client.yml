@@ -61,7 +61,7 @@ stages:
         WindowsPool: ${{ parameters.WindowsPool }}
         LinuxPool: ${{ parameters.LinuxPool }}
 
-  - stage: Publish Coverage
+  - stage: Publish_Coverage
     jobs:
     - template: ../jobs/publish-coverage.yml
       parameters:
