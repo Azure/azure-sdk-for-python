@@ -22,12 +22,12 @@ steps:
       New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
     displayName: 'Create all coverages directory'
     continueOnError: true
-    condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
+    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
 
   - task: DownloadPipelineArtifact@2
     inputs:
       source: current
-      patterns: '.coverage_**'
+      # patterns: '**' # Download everything
       path: '$(Build.SourcesDirectory)/_all_coverage_files'
 
   - pwsh: |
