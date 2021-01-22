@@ -1266,7 +1266,8 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
