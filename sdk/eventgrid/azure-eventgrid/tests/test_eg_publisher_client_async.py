@@ -198,6 +198,18 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         }
         await client.send_events(cloud_event1)
 
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @pytest.mark.asyncio
+    async def test_send_cloud_event_data_none(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = None,
+                type="Sample.Cloud.Event"
+                )
+        await client.send_events(cloud_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')

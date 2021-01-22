@@ -11,6 +11,7 @@
   - The `send` method in the `EventGridPubliserClient` is now replaced by the `send_events`.
   - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
   - `data` in the events now return raw JSONs. For strongly typed model, `system_event_data` must be used.
+  - `data` is now a required param for `CloudEvent`.
   
   **Features**
   - Introduced `system_event_data` to consume data as strongly typed models.

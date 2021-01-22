@@ -2,6 +2,10 @@
 
 ## 1.0.0b3 (Unreleased)
 
+**New Features**
+
+- AAD support authentication    #15922
+- `MetricsAdvisorKeyCredential` support for rotating the subscription and api keys to update long-lived clients
 
 ## 1.0.0b2 (2020-11-10)
 

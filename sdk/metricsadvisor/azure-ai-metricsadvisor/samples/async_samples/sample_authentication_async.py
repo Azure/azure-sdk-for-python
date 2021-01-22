@@ -54,9 +54,33 @@ async def authentication_administration_client_with_metrics_advisor_credential_a
     # [END administration_client_with_metrics_advisor_credential_async]
 
 
+async def authentication_client_with_aad_async():
+    # [START authentication_client_with_aad_async]
+    from azure.identity.aio import DefaultAzureCredential
+    from azure.ai.metricsadvisor.aio import MetricsAdvisorClient
+
+    service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
+    credential = DefaultAzureCredential()
+    client = MetricsAdvisorClient(service_endpoint, credential)
+    # [END authentication_client_with_aad_async]
+
+
+async def authentication_administration_client_with_aad_async():
+    # [START authentication_administration_client_with_aad_async]
+    from azure.identity.aio import DefaultAzureCredential
+    from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
+
+    service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
+    credential = DefaultAzureCredential()
+    client = MetricsAdvisorAdministrationClient(service_endpoint, credential)
+    # [END authentication_administration_client_with_aad_async]
+
+
 async def main():
     await authentication_client_with_metrics_advisor_credential_async()
     await authentication_administration_client_with_metrics_advisor_credential_async()
+    await authentication_client_with_aad_async()
+    await authentication_administration_client_with_aad_async()
 
 
 if __name__ == '__main__':

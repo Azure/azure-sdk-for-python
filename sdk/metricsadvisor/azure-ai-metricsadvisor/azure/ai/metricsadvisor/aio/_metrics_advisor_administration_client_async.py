@@ -18,6 +18,7 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
@@ -65,8 +66,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
-        Requires both subscription key and API key.
-    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
+        which requires both subscription key and API key. Or an object which can provide an access
+        token for the vault, such as a credential from :mod:`azure.identity`
+    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
 
     .. admonition:: Example:
 
@@ -89,12 +91,27 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         self._endpoint = endpoint
 
-        self._client = _ClientAsync(
-            endpoint=endpoint,
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-            **kwargs
-        )
+        if isinstance(credential, MetricsAdvisorKeyCredential):
+            self._client = _ClientAsync(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
+                **kwargs
+            )
+        else:
+            if hasattr(credential, "get_token"):
+                credential_scopes = kwargs.pop('credential_scopes',
+                                               ['https://cognitiveservices.azure.com/.default'])
+                credential_policy = AsyncBearerTokenCredentialPolicy(credential, *credential_scopes)
+            else:
+                raise TypeError("Please provide an instance from azure-identity "
+                                "or a class that implement the 'get_token protocol")
+            self._client = _ClientAsync(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=credential_policy,
+                **kwargs
+            )
 
     def __repr__(self):
         # type: () -> str
