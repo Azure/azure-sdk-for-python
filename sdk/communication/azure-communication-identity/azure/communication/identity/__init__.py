@@ -13,7 +13,6 @@ from ._generated.models import (
 
 from ._shared.models import CommunicationUserIdentifier
 
-
 __all__ = [
     'CommunicationIdentityClient',
 
