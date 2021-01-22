@@ -8,51 +8,54 @@ parameters:
 
 
 jobs:
-  - script: |
-      codecov -t $(codecov-python-repository-token)
-    displayName: 'Publish Code Cov'
-    continueOnError: true
-    condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
+  - job: Publish Code Coverage
 
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish .coverage files'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)/_coverage'
-      artifactType: 'pipeline'
+    steps:
+      - script: |
+          codecov -t $(codecov-python-repository-token)
+        displayName: 'Publish Code Cov'
+        continueOnError: true
+        condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
 
-  # Download all existing artifacts (most of the time, it's whatever was uploaded before)
-  - pwsh: |
-      New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
-    displayName: 'Create all coverages directory'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish .coverage files'
+        continueOnError: true
+        condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+        inputs:
+          targetPath: '$(Build.SourcesDirectory)/_coverage'
+          artifactType: 'pipeline'
 
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      source: current
-      # patterns: '**' # Download everything
-      path: '$(Build.SourcesDirectory)/_all_coverage_files'
+      # Download all existing artifacts (most of the time, it's whatever was uploaded before)
+      - pwsh: |
+          New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
+        displayName: 'Create all coverages directory'
+        continueOnError: true
+        condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
 
-  - pwsh: |
-      Get-ChildItem $(Build.SourcesDirectory)/_all_coverage_files/ -Recurse
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          source: current
+          # patterns: '**' # Download everything
+          path: '$(Build.SourcesDirectory)/_all_coverage_files'
 
-  - task: PythonScript@0
-    displayName: 'Create Coverage Report'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/create_coverage.py'
-      # arguments: >-
-      #   "${{ parameters.BuildTargetingString }}"
-      #   --service="${{ parameters.ServiceDirectory }}"
-      #   --toxenv="samples"
-      env: ${{ parameters.EnvVars }}
+      - pwsh: |
+          Get-ChildItem $(Build.SourcesDirectory)/_all_coverage_files/ -Recurse
+
+      - task: PythonScript@0
+        displayName: 'Create Coverage Report'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/create_coverage.py'
+          # arguments: >-
+          #   "${{ parameters.BuildTargetingString }}"
+          #   --service="${{ parameters.ServiceDirectory }}"
+          #   --toxenv="samples"
+          env: ${{ parameters.EnvVars }}
 
 
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage to DevOps'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish Code Coverage to DevOps'
+        continueOnError: true
+        condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
