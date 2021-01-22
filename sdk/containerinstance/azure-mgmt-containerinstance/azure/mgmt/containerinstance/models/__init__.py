@@ -15,6 +15,7 @@ try:
     from ._models_py3 import Capabilities
     from ._models_py3 import CapabilitiesCapabilities
     from ._models_py3 import Container
+    from ._models_py3 import ContainerAttachResponse
     from ._models_py3 import ContainerExec
     from ._models_py3 import ContainerExecRequest
     from ._models_py3 import ContainerExecRequestTerminalSize
@@ -36,6 +37,7 @@ try:
     from ._models_py3 import Event
     from ._models_py3 import GitRepoVolume
     from ._models_py3 import GpuResource
+    from ._models_py3 import HttpHeaders
     from ._models_py3 import ImageRegistryCredential
     from ._models_py3 import InitContainerDefinition
     from ._models_py3 import InitContainerPropertiesDefinitionInstanceView
@@ -59,6 +61,7 @@ except (SyntaxError, ImportError):
     from ._models import Capabilities
     from ._models import CapabilitiesCapabilities
     from ._models import Container
+    from ._models import ContainerAttachResponse
     from ._models import ContainerExec
     from ._models import ContainerExecRequest
     from ._models import ContainerExecRequestTerminalSize
@@ -80,6 +83,7 @@ except (SyntaxError, ImportError):
     from ._models import Event
     from ._models import GitRepoVolume
     from ._models import GpuResource
+    from ._models import HttpHeaders
     from ._models import ImageRegistryCredential
     from ._models import InitContainerDefinition
     from ._models import InitContainerPropertiesDefinitionInstanceView
@@ -122,6 +126,7 @@ __all__ = [
     'Capabilities',
     'CapabilitiesCapabilities',
     'Container',
+    'ContainerAttachResponse',
     'ContainerExec',
     'ContainerExecRequest',
     'ContainerExecRequestTerminalSize',
@@ -143,6 +148,7 @@ __all__ = [
     'Event',
     'GitRepoVolume',
     'GpuResource',
+    'HttpHeaders',
     'ImageRegistryCredential',
     'InitContainerDefinition',
     'InitContainerPropertiesDefinitionInstanceView',

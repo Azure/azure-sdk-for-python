@@ -294,6 +294,27 @@ class Container(Model):
         self.readiness_probe = kwargs.get('readiness_probe', None)
 
 
+class ContainerAttachResponse(Model):
+    """The information for the output stream from container attach.
+
+    :param web_socket_uri: The uri for the output stream from the attach.
+    :type web_socket_uri: str
+    :param password: The password to the output stream from the attach. Send
+     as an Authorization header value when connecting to the websocketUri.
+    :type password: str
+    """
+
+    _attribute_map = {
+        'web_socket_uri': {'key': 'webSocketUri', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerAttachResponse, self).__init__(**kwargs)
+        self.web_socket_uri = kwargs.get('web_socket_uri', None)
+        self.password = kwargs.get('password', None)
+
+
 class ContainerExec(Model):
     """The container execution command, for liveness or readiness probe.
 
@@ -689,6 +710,8 @@ class ContainerHttpGet(Model):
     :type port: int
     :param scheme: The scheme. Possible values include: 'http', 'https'
     :type scheme: str or ~azure.mgmt.containerinstance.models.Scheme
+    :param http_headers: The HTTP headers.
+    :type http_headers: ~azure.mgmt.containerinstance.models.HttpHeaders
     """
 
     _validation = {
@@ -699,6 +722,7 @@ class ContainerHttpGet(Model):
         'path': {'key': 'path', 'type': 'str'},
         'port': {'key': 'port', 'type': 'int'},
         'scheme': {'key': 'scheme', 'type': 'str'},
+        'http_headers': {'key': 'httpHeaders', 'type': 'HttpHeaders'},
     }
 
     def __init__(self, **kwargs):
@@ -706,6 +730,7 @@ class ContainerHttpGet(Model):
         self.path = kwargs.get('path', None)
         self.port = kwargs.get('port', None)
         self.scheme = kwargs.get('scheme', None)
+        self.http_headers = kwargs.get('http_headers', None)
 
 
 class ContainerPort(Model):
@@ -1066,6 +1091,26 @@ class GpuResource(Model):
         self.sku = kwargs.get('sku', None)
 
 
+class HttpHeaders(Model):
+    """The HTTP headers.
+
+    :param name: The header name.
+    :type name: str
+    :param value: The header value.
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HttpHeaders, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
 class ImageRegistryCredential(Model):
     """Image registry credential.
 
@@ -1251,6 +1296,8 @@ class LogAnalytics(Model):
      ~azure.mgmt.containerinstance.models.LogAnalyticsLogType
     :param metadata: Metadata for log analytics.
     :type metadata: dict[str, str]
+    :param workspace_resource_id: The workspace resource id for log analytics
+    :type workspace_resource_id: dict[str, str]
     """
 
     _validation = {
@@ -1263,6 +1310,7 @@ class LogAnalytics(Model):
         'workspace_key': {'key': 'workspaceKey', 'type': 'str'},
         'log_type': {'key': 'logType', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -1271,6 +1319,7 @@ class LogAnalytics(Model):
         self.workspace_key = kwargs.get('workspace_key', None)
         self.log_type = kwargs.get('log_type', None)
         self.metadata = kwargs.get('metadata', None)
+        self.workspace_resource_id = kwargs.get('workspace_resource_id', None)
 
 
 class Logs(Model):
