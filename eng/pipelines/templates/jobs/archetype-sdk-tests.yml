@@ -76,6 +76,7 @@ parameters:
       AzureCloud:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
 
+
 jobs:
   - ${{ each cloudConfig in parameters.CloudConfigurations }}:
     - job: ${{ parameters.JobName }}
