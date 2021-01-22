@@ -11,11 +11,8 @@ from ._generated.models import (
     CommunicationIdentityToken
 )
 
-from ._shared.models import (
-    CommunicationUserIdentifier,
-    PhoneNumberIdentifier,
-    UnknownIdentifier
-)
+from ._shared.models import CommunicationUserIdentifier
+
 
 __all__ = [
     'CommunicationIdentityClient',
@@ -25,7 +22,5 @@ __all__ = [
     'CommunicationIdentityToken',
 
     # from _shared
-    'CommunicationUserIdentifier',
-    'PhoneNumberIdentifier',
-    'UnknownIdentifier'
+    'CommunicationUserIdentifier'
 ]
