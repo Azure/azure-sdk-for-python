@@ -84,7 +84,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
             :class:`KeyVaultRoleScope` defines common broad scopes. Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
-        :param role_assignment_name: the assignment's name. Must be a UUID.
+        :param role_assignment_name: the assignment's name.
         :type role_assignment_name: str or uuid.UUID
         :rtype: KeyVaultRoleAssignment
         """
@@ -161,7 +161,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
         :type role_scope: str or KeyVaultRoleScope
-        :param role_definition_name: the role definition's name. Must be a UUID.
+        :param role_definition_name: the role definition's name.
         :type role_definition_name: str or uuid.UUID
         :rtype: KeyVaultRoleDefinition
         """
