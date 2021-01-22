@@ -1,14 +1,23 @@
 # Release History
 
-## 5.2.2 (Unreleased)
+## 5.3.0 (Unreleased)
 
+**New Features**
+- The `EventHubConsumerClient` and `EventHubProducerClient` constructor now accepts optional `custom_endpoint_address` argument
+which allows for specifying a custom endpoint to use when communicating with the Event Hubs service,
+and is useful when your network does not allow communicating to the standard Event Hubs endpoint.
+- The `EventHubConsumerClient` and `EventHubProducerClient` constructor now accepts optional `connection_verify` argument
+which allows for specifying a custom SSL certificate.
+
+**Notes**
+- Updated uAMQP dependency to 1.2.14
 
 ## 5.2.1 (2021-01-11)
 
 **Bug fixes**
 
-* Updated `azure.eventhub.extension.__init__.py` to be compatible with pkgutil-style namespace (PR #13210, thanks @pjachowi).
-* Updated uAMQP dependency to 1.2.13
+- Updated `azure.eventhub.extension.__init__.py` to be compatible with pkgutil-style namespace (PR #13210, thanks @pjachowi).
+- Updated uAMQP dependency to 1.2.13
   - Added support for Python 3.9.
   - Fixed bug that macOS was unable to detect network error (#15473).
   - Fixed bug that `uamqp.ReceiveClient` and `uamqp.ReceiveClientAsync` receive messages during connection establishment (#15555).

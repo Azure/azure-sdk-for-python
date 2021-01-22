@@ -106,6 +106,9 @@ class EventHubConsumerClient(ClientBaseAsync):
      too few partitions, this client will steal one partition from other clients for every load-balancing
      evaluation regardless of the load balancing strategy.
      Greedy strategy is used by default.
+    :keyword str custom_endpoint_address: The custom endpoint address to connect to. Default is None.
+    :keyword str connection_verify: Custom SSL certificate verification. It could be set to the path to a CA_BUNDLE
+     file. Default is None in which case `certifi.where()` will be used.
     :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
 
     .. admonition:: Example:
@@ -254,6 +257,9 @@ class EventHubConsumerClient(ClientBaseAsync):
          evaluation regardless of the load balancing strategy.
          Greedy strategy is used by default.
         :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
+        :keyword str custom_endpoint_address: The custom endpoint address to connect to. Default is None.
+        :keyword str connection_verify: Custom SSL certificate verification. It could be set to the path to a CA_BUNDLE
+         file. Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.eventhub.aio.EventHubConsumerClient
 
         .. admonition:: Example:
