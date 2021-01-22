@@ -1,6 +1,5 @@
 parameters:
   ServiceDirectory: ''
-  EnvVars: {}
   MaxParallel: 0
   BeforeTestSteps: []
   AfterTestSteps: []
@@ -39,6 +38,9 @@ parameters:
   CloudConfigurations:
     AzureCloud:
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+  - name: EnvVars
+    type: object
+    default: {}
 
 stages:
   - stage: Build
