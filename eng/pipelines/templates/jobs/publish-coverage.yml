@@ -14,7 +14,7 @@ parameters:
 
 
 jobs:
-  - job: Publish Code Coverage
+  - job: Publish_Code_Coverage
     dependsOn: ${{parameters.DependsOn}}
 
     steps:
@@ -67,7 +67,7 @@ jobs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
 
-  - job: Show all coverage files
+  - job: Show_all_coverage_files
 
     steps:
     - pwsh: |
