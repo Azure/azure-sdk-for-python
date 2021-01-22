@@ -114,7 +114,7 @@ class TooManyRedirectsError(HttpResponseError):
 
 ### Configurations
 
-When calling the methods, some properties can be configured by passing as kwargs arguments.
+When calling the methods, some properties can be configured by passing in as kwargs arguments.
 
 | Parameters | Description |
 | --- | --- |
