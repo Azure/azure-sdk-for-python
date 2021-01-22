@@ -1474,7 +1474,8 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
                     'blob3',
                 )
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
