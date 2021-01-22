@@ -18,7 +18,7 @@ steps:
       artifactType: 'pipeline'
 
   # Download all existing artifacts (most of the time, it's whatever was uploaded before)
-  - script: |
+  - pwsh: |
       New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
     displayName: 'Create all coverages directory'
     continueOnError: true
@@ -30,7 +30,7 @@ steps:
       patterns: '.coverage_**'
       path: '$(Build.SourcesDirectory)/_all_coverage_files'
 
-  - script: |
+  - pwsh: |
       Get-ChildItem _all_coverage_files
 
   - task: PublishCodeCoverageResults@1
