@@ -55,6 +55,14 @@ steps:
 
   - ${{ parameters.AfterTestSteps }}
 
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish .coverage files'
+    continueOnError: true
+    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/_coverage'
+      artifactType: 'pipeline'
+
   - task: PublishTestResults@2
     condition: always()
     inputs:
