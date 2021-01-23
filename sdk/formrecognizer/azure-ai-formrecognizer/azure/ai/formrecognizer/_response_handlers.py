@@ -20,7 +20,7 @@ from ._models import (
 )
 
 
-def prepare_prebuilt_models(response, prebuilt_type):
+def prepare_prebuilt_models(response, prebuilt_type=False):
     prebuilt_models = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
