@@ -25,7 +25,7 @@ class CommunicationIdentityClient(object):
 
     :ivar communication_identity: CommunicationIdentityOperations operations
     :vartype communication_identity: azure.communication.identity.operations.CommunicationIdentityOperations
-    :param endpoint: Auth and Identity endpoint.
+    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
     :type endpoint: str
     """
 
