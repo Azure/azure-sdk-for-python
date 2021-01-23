@@ -15,7 +15,7 @@ import pytest
 
 from helpers import build_aad_response, mock_response
 from helpers_async import get_completed_future
-from test_certificate_credential import CERT_PATH
+from test_certificate_credential import PEM_CERT_PATH
 
 pytestmark = pytest.mark.asyncio
 
@@ -226,7 +226,7 @@ async def test_retries_token_requests():
     transport.send.reset_mock()
 
     with pytest.raises(ServiceRequestError, match=message):
-        await client.obtain_token_by_client_certificate("", AadClientCertificate(open(CERT_PATH, "rb").read()))
+        await client.obtain_token_by_client_certificate("", AadClientCertificate(open(PEM_CERT_PATH, "rb").read()))
     assert transport.send.call_count > 1
     transport.send.reset_mock()
 
