@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
 from typing import Optional
 
 from ._deserialize import deserialize_path_properties
