@@ -13,6 +13,7 @@ from ._helpers import (
     adjust_confidence,
     get_element
 )
+from ._prebuilt_names import SCHEMA
 
 
 def get_bounding_box(field):
@@ -35,7 +36,7 @@ def resolve_element(element, read_result):
     raise ValueError("Failed to parse element reference.")
 
 
-def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
+def get_field_value(field, value, read_result, prebuilt=False):  # pylint: disable=too-many-return-statements
     if value is None:
         return value
     if value.type == "string":
@@ -52,12 +53,12 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
         return value.value_time
     if value.type == "array":
         return [
-            FormField._from_generated(field, value, read_result)
+            FormField._from_generated(field, value, read_result, prebuilt)
             for value in value.value_array
         ]
     if value.type == "object":
         return {
-            key: FormField._from_generated(key, value, read_result)
+            key: FormField._from_generated(key, value, read_result, prebuilt)
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
@@ -203,7 +204,7 @@ class RecognizedForm(object):
         self.pages = kwargs.get("pages", None)
         self.model_id = kwargs.get('model_id', None)
         self.form_type_confidence = kwargs.get('form_type_confidence', None)
-        self._prebuilt = kwargs.get("prebuilt", True)
+        self._prebuilt = kwargs.get("_prebuilt", False)
 
     def __repr__(self):
         return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
@@ -218,11 +219,16 @@ class RecognizedForm(object):
             )[:1024]
 
     def __getattr__(self, attr):
-        if self._prebuilt and attr not in ["fields", "form_type", "page_range", "pages", "model_id", "form_type_confidence"]:
+        if attr in self.__dict__:
+            return self.__getattribute__(attr)
+        if self._prebuilt and attr in SCHEMA[self._prebuilt]:
             if attr in self.fields:
                 field = self.fields[attr]
                 return field
-        raise AttributeError
+            elif attr in SCHEMA[self._prebuilt] and SCHEMA[self._prebuilt][attr] == "list":
+                return FormField(value=[])
+            return FormField()
+        raise AttributeError("'RecognizedForm' object has no attribute '{}'".format(attr))
 
 
 class FormField(object):
@@ -253,16 +259,18 @@ class FormField(object):
         self.name = kwargs.get("name", None)
         self.value = kwargs.get("value", None)
         self.confidence = kwargs.get("confidence", None)
+        self._prebuilt = kwargs.get("_prebuilt", False)
 
     @classmethod
-    def _from_generated(cls, field, value, read_result):
+    def _from_generated(cls, field, value, read_result, prebuilt=False):
         return cls(
             value_type=adjust_value_type(value.type) if value else None,
             label_data=None,  # not returned with receipt/supervised
             value_data=FieldData._from_generated(value, read_result),
-            value=get_field_value(field, value, read_result),
+            value=get_field_value(field, value, read_result, prebuilt),
             name=field,
             confidence=adjust_confidence(value.confidence) if value else None,
+            _prebuilt=prebuilt
         )
 
     @classmethod
@@ -288,9 +296,15 @@ class FormField(object):
             )[:1024]
 
     def __getattr__(self, attr):
-        if self.value_type == "dictionary" and attr not in ["value_type", "value_data", "value", "label_data", "name", "confidence"]:
-            if attr in self.value:
-                return self.value[attr]
+        if attr in self.__dict__:
+            return self.__getattribute__(attr)
+        if self._prebuilt and self.value_type == "dictionary":
+            values = [value.keys() for value in SCHEMA[self._prebuilt].values() if isinstance(value, dict)]
+            if values and attr in list(values[0]):
+                if attr in self.value:
+                    return self.value[attr]
+                return FormField()
+        raise AttributeError("'FormField' object has no attribute '{}'".format(attr))
 
 
 class FieldData(object):

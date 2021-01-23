@@ -62,9 +62,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def _prebuilt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
-        return prepare_prebuilt_models(analyze_result)
+    def _prebuilt_callback(self, response, prebuilt_type):
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, response)
+        return prepare_prebuilt_models(analyze_result, prebuilt_type)
 
     @distributed_trace_async
     async def begin_recognize_receipts(
@@ -131,7 +131,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             file_stream=receipt,
             content_type=content_type,
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._prebuilt_callback),
+            cls=kwargs.pop("cls", lambda response, _, headers: self._prebuilt_callback(response, "Receipt")),
             polling=True,
             **kwargs
         )
@@ -190,7 +190,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._prebuilt_callback),
+            cls=kwargs.pop("cls", lambda response, _, headers: self._prebuilt_callback(response, "Receipt")),
             polling=True,
             **kwargs
         )
@@ -253,7 +253,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 file_stream=business_card,
                 content_type=content_type,
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop("cls", lambda response, _, headers: self._prebuilt_callback(response, "BusinessCard")),
                 polling=True,
                 **kwargs
             )
@@ -301,7 +301,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             return await self._client.begin_analyze_business_card_async(  # type: ignore
                 file_stream={"source": business_card_url},
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop("cls", lambda response, _, headers: self._prebuilt_callback(response, "BusinessCard")),
                 polling=True,
                 **kwargs
             )
@@ -370,7 +370,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 file_stream=invoice,
                 content_type=content_type,
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop("cls", lambda response, _, headers: self._prebuilt_callback(response, "Invoice")),
                 polling=True,
                 **kwargs
             )
@@ -417,7 +417,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             return await self._client.begin_analyze_invoice_async(  # type: ignore
                 file_stream={"source": invoice_url},
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop("cls", lambda response, _, headers: self._prebuilt_callback(response, "Invoice")),
                 polling=True,
                 **kwargs
             )

@@ -20,7 +20,7 @@ from ._models import (
 )
 
 
-def prepare_prebuilt_models(response):
+def prepare_prebuilt_models(response, prebuilt_type):
     prebuilt_models = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
@@ -36,11 +36,12 @@ def prepare_prebuilt_models(response):
             pages=form_page[page.page_range[0]-1:page.page_range[1]],
             form_type=page.doc_type,
             fields={
-                key: FormField._from_generated(key, value, read_result)
+                key: FormField._from_generated(key, value, read_result, prebuilt=prebuilt_type)
                 for key, value in page.fields.items()
             } if page.fields else None,
             form_type_confidence=doc_type_confidence,
-            model_id=model_id
+            model_id=model_id,
+            _prebuilt=prebuilt_type
         )
 
         prebuilt_models.append(prebuilt_model)
