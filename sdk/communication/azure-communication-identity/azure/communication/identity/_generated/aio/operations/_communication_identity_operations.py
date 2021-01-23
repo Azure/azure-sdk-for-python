@@ -39,7 +39,7 @@ class CommunicationIdentityOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def create_identity(
+    async def create(
         self,
         create_token_with_scopes: Optional[List[Union[str, "_models.CommunicationTokenScope"]]] = None,
         **kwargs
@@ -67,7 +67,7 @@ class CommunicationIdentityOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_identity.metadata['url']  # type: ignore
+        url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -92,9 +92,10 @@ class CommunicationIdentityOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(_models.CommunicationErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CommunicationIdentityAccessTokenResult', pipeline_response)
 
@@ -102,9 +103,9 @@ class CommunicationIdentityOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_identity.metadata = {'url': '/identities'}  # type: ignore
+    create.metadata = {'url': '/identities'}  # type: ignore
 
-    async def delete_identity(
+    async def delete(
         self,
         id: str,
         **kwargs
@@ -126,9 +127,10 @@ class CommunicationIdentityOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2021-03-07"
+        accept = "application/json"
 
         # Construct URL
-        url = self.delete_identity.metadata['url']  # type: ignore
+        url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'id': self._serialize.url("id", id, 'str'),
@@ -141,6 +143,7 @@ class CommunicationIdentityOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -148,12 +151,13 @@ class CommunicationIdentityOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(_models.CommunicationErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_identity.metadata = {'url': '/identities/{id}'}  # type: ignore
+    delete.metadata = {'url': '/identities/{id}'}  # type: ignore
 
     async def revoke_access_tokens(
         self,
@@ -177,6 +181,7 @@ class CommunicationIdentityOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2021-03-07"
+        accept = "application/json"
 
         # Construct URL
         url = self.revoke_access_tokens.metadata['url']  # type: ignore
@@ -192,6 +197,7 @@ class CommunicationIdentityOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -199,7 +205,8 @@ class CommunicationIdentityOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(_models.CommunicationErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -262,7 +269,8 @@ class CommunicationIdentityOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(_models.CommunicationErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CommunicationUserToken', pipeline_response)
 

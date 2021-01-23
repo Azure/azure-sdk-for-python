@@ -9,7 +9,85 @@
 import datetime
 from typing import List, Optional, Union
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+
+class CommunicationError(msrest.serialization.Model):
+    """The Communication Services error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code.
+    :type code: str
+    :param message: Required. The error message.
+    :type message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: Further details about specific errors that led to this error.
+    :vartype details: list[~azure.communication.identity.models.CommunicationError]
+    :param inner_error: The Communication Services error.
+    :type inner_error: ~azure.communication.identity.models.CommunicationError
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CommunicationError]'},
+        'inner_error': {'key': 'innerError', 'type': 'CommunicationError'},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        inner_error: Optional["CommunicationError"] = None,
+        **kwargs
+    ):
+        super(CommunicationError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = None
+        self.details = None
+        self.inner_error = inner_error
+
+
+class CommunicationErrorResponse(msrest.serialization.Model):
+    """The Communication Services error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required. The Communication Services error.
+    :type error: ~azure.communication.identity.models.CommunicationError
+    """
+
+    _validation = {
+        'error': {'required': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'CommunicationError'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: "CommunicationError",
+        **kwargs
+    ):
+        super(CommunicationErrorResponse, self).__init__(**kwargs)
+        self.error = error
 
 
 class CommunicationIdentity(msrest.serialization.Model):
