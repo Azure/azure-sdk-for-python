@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-from typing import TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -15,6 +15,7 @@ from .._internal import validate_tenant_id
 from .._internal.client_credential_base import ClientCredentialBase
 
 if TYPE_CHECKING:
+    # pylint:disable=ungrouped-imports
     from typing import Any, Optional, Union
 
 
@@ -28,13 +29,13 @@ class CertificateCredential(ClientCredentialBase):
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
     :param str client_id: the service principal's client ID
-    :param str certificate_path: path to a PEM-encoded certificate file including the private key. If not provided,
-        **certificate_data** is required.
+    :param str certificate_path: Optional path to a certificate file in PEM or PKCS12 format, including the private
+        key. If not provided, **certificate_data** is required.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword bytes certificate_data: the bytes of a certificate in PEM format, including the private key
+    :keyword bytes certificate_data: the bytes of a certificate in PEM or PKCS12 format, including the private key
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
         requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
@@ -76,6 +77,28 @@ def extract_cert_chain(pem_bytes):
     return b"".join(chain.splitlines())
 
 
+def pkcs12_to_pem(certificate_bytes, password):
+    # type: (bytes, Optional[bytes]) -> bytes
+    """Convert a cert in PKCS12 format to PEM format as required by MSAL"""
+    from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
+
+    private_key, cert, additional_certs = pkcs12.load_key_and_certificates(
+        certificate_bytes, password, backend=default_backend()
+    )
+    if not private_key:
+        raise ValueError("The certificate must include its private key")
+    if not cert:
+        # mentioning PEM here because we raise this error when certificate_bytes is garbage
+        raise ValueError("Failed to deserialize certificate in PEM or PKCS12 format")
+
+    # This serializes the private key without any encryption it may have had. Doing so doesn't violate security
+    # boundaries because this representation of the key is kept in memory. If the given key was encrypted, we
+    # already have it and its password in memory.
+    key_bytes = private_key.private_bytes(Encoding.PEM, PrivateFormat.PKCS8, NoEncryption())
+    pem_sections = [key_bytes] + [c.public_bytes(Encoding.PEM) for c in [cert] + additional_certs]
+    return b"".join(pem_sections)
+
+
 def get_client_credential(certificate_path, password=None, certificate_data=None, send_certificate_chain=False, **_):
     # type: (Optional[str], Optional[Union[bytes, str]], Optional[bytes], bool, **Any) -> dict
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
@@ -88,10 +111,16 @@ def get_client_credential(certificate_path, password=None, certificate_data=None
     elif not certificate_data:
         raise ValueError('CertificateCredential requires a value for either "certificate_path" or "certificate_data"')
 
-    if isinstance(password, six.text_type):
-        password = password.encode(encoding="utf-8")
+    if password:
+        # if password is already bytes, this won't change its encoding
+        password = six.ensure_binary(password, "utf-8")
+    password = cast("Optional[bytes]", password)
 
-    private_key = serialization.load_pem_private_key(certificate_data, password=password, backend=default_backend())
+    if not certificate_data.startswith(b"-----"):
+        certificate_data = pkcs12_to_pem(certificate_data, password)
+        password = None  # pkcs12_to_pem removed private key encryption
+
+    private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
     if not isinstance(private_key, RSAPrivateKey):
         raise ValueError("CertificateCredential requires an RSA private key because it uses RS256 for signing")
 
