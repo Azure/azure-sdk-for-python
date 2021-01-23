@@ -225,7 +225,7 @@ class RecognizedForm(object):
             if attr in self.fields:
                 field = self.fields[attr]
                 return field
-            elif attr in SCHEMA[self._prebuilt] and SCHEMA[self._prebuilt][attr] == "list":
+            if attr in SCHEMA[self._prebuilt] and SCHEMA[self._prebuilt][attr] == "list":
                 return FormField(value=[])
             return FormField()
         raise AttributeError("'RecognizedForm' object has no attribute '{}'".format(attr))
