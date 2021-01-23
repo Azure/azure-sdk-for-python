@@ -15,7 +15,7 @@ autorest ./SWAGGER.md
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/8818a603b78a1355ba1647ab9cd4e3354cdc4b69/specification/communication/data-plane/Microsoft.CommunicationServicesIdentity/preview/2020-07-20-preview2/CommunicationIdentity.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/14bfbf5d0ff8f0dc1358e6e60362e99d0a649ba7/specification/communication/data-plane/Microsoft.CommunicationServicesIdentity/stable/2021-03-07/CommunicationIdentity.json
 output-folder: ../azure/communication/identity/_generated/
 namespace: azure.communication.identity
 license-header: MICROSOFT_MIT_NO_VERSION
@@ -25,3 +25,20 @@ clear-output-folder: true
 v3: true
 python: true
 ```
+
+### Rename CommunicationIdentityAccessToken to CommunicationUserToken
+
+``` yaml
+directive:
+    - rename-model:
+        from: CommunicationIdentityAccessToken
+        to: CommunicationUserToken
+```
+
+### Rename CommunicationIdentityTokenScope to CommunicationTokenScope
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions.CommunicationIdentityTokenScope
+    transform: >
+      $["x-ms-enum"].name = "CommunicationTokenScope";
