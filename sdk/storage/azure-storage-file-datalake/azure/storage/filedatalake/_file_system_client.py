@@ -6,7 +6,6 @@
 import functools
 from typing import Optional
 
-from . import PathProperties
 from ._deserialize import deserialize_path_properties
 
 try:
@@ -22,7 +21,6 @@ from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
 from ._models import LocationMode, FileSystemProperties, PublicAccess
-from ._list_paths_helper import PathPropertiesPaged
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient

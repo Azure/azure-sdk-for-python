@@ -22,7 +22,6 @@ from azure.storage.blob.aio import ContainerClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_lease_async import DataLakeLeaseClient
-from .. import PathProperties
 from .._deserialize import deserialize_path_properties
 from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
