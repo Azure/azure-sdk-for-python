@@ -5,8 +5,6 @@
 # --------------------------------------------------------------------------
 from typing import Optional
 
-from ._deserialize import deserialize_path_properties
-
 try:
     from urllib.parse import urlparse, quote
 except ImportError:
@@ -24,6 +22,7 @@ from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
+from ._deserialize import deserialize_path_properties
 
 
 class FileSystemClient(StorageAccountHostsMixin):
