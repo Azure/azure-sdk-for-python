@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 
-import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
