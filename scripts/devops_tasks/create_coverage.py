@@ -65,6 +65,11 @@ def collect_tox_coverage_files():#targeted_packages):
 
         logging.info("after running coverage combine")
 
+        for root, _, files in os.walk(root_dir):
+            for f in files:
+                if re.match("*.coverage*", f):
+                    print(os.path.join(root, f))
+
         # generate_coverage_xml()
 
     # clean_coverage(coverage_dir)
