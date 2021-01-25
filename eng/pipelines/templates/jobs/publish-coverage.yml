@@ -44,9 +44,6 @@ jobs:
           # env: ${{ parameters.EnvVars }}
 
       - pwsh: |
-          Get-ChildItem -Recurse -Path $(Build.SourcesDirectory)\_all_coverage_files\
-
-      - pwsh: |
           Get-Content $(Build.SourcesDirectory)\.coverage
 
       - task: PublishCodeCoverageResults@1
