@@ -34,10 +34,10 @@ class SmsSamples(object):
             try:
                 # calling send() with constructed request object
                 smsresponse = await sms_client.send(
-                    from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
-                    to_phone_numbers=[PhoneNumberIdentifier("<to-phone-number>")],
+                    from_phone_number="<leased-phone-number>",
+                    to_phone_numbers=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
                     message="Hello World via SMS",
-                    send_sms_options=SendSmsOptions(enable_delivery_report=True)) # optional property
+                    send_sms_options=SendSmsOptions(enable_delivery_report=True, tag="custom-tag")) # optional property
             except Exception:
                 print(Exception)
                 pass
