@@ -44,11 +44,13 @@ try:
     from ._models_py3 import ComputeProfile
     from ._models_py3 import ConnectivityEndpoint
     from ._models_py3 import DataDisksGroups
+    from ._models_py3 import Dimension
     from ._models_py3 import DiskBillingMeters
     from ._models_py3 import DiskEncryptionProperties
     from ._models_py3 import EncryptionInTransitProperties
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Errors
+    from ._models_py3 import ExcludedServicesConfig
     from ._models_py3 import ExecuteScriptActionParameters
     from ._models_py3 import Extension
     from ._models_py3 import GatewaySettings
@@ -57,9 +59,11 @@ try:
     from ._models_py3 import KafkaRestProperties
     from ._models_py3 import LinuxOperatingSystemProfile
     from ._models_py3 import LocalizedName
+    from ._models_py3 import MetricSpecifications
     from ._models_py3 import NetworkProperties
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationProperties
     from ._models_py3 import OperationResource
     from ._models_py3 import OsProfile
     from ._models_py3 import ProxyResource
@@ -75,6 +79,7 @@ try:
     from ._models_py3 import ScriptActionExecutionSummary
     from ._models_py3 import ScriptActionPersistedGetResponseSpec
     from ._models_py3 import SecurityProfile
+    from ._models_py3 import ServiceSpecification
     from ._models_py3 import SshProfile
     from ._models_py3 import SshPublicKey
     from ._models_py3 import StorageAccount
@@ -88,6 +93,7 @@ try:
     from ._models_py3 import VirtualNetworkProfile
     from ._models_py3 import VmSizeCompatibilityFilter
     from ._models_py3 import VmSizeCompatibilityFilterV2
+    from ._models_py3 import VmSizeProperty
     from ._models_py3 import VmSizesCapability
 except (SyntaxError, ImportError):
     from ._models import Application
@@ -124,11 +130,13 @@ except (SyntaxError, ImportError):
     from ._models import ComputeProfile
     from ._models import ConnectivityEndpoint
     from ._models import DataDisksGroups
+    from ._models import Dimension
     from ._models import DiskBillingMeters
     from ._models import DiskEncryptionProperties
     from ._models import EncryptionInTransitProperties
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Errors
+    from ._models import ExcludedServicesConfig
     from ._models import ExecuteScriptActionParameters
     from ._models import Extension
     from ._models import GatewaySettings
@@ -137,9 +145,11 @@ except (SyntaxError, ImportError):
     from ._models import KafkaRestProperties
     from ._models import LinuxOperatingSystemProfile
     from ._models import LocalizedName
+    from ._models import MetricSpecifications
     from ._models import NetworkProperties
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import OperationProperties
     from ._models import OperationResource
     from ._models import OsProfile
     from ._models import ProxyResource
@@ -155,6 +165,7 @@ except (SyntaxError, ImportError):
     from ._models import ScriptActionExecutionSummary
     from ._models import ScriptActionPersistedGetResponseSpec
     from ._models import SecurityProfile
+    from ._models import ServiceSpecification
     from ._models import SshProfile
     from ._models import SshPublicKey
     from ._models import StorageAccount
@@ -168,6 +179,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualNetworkProfile
     from ._models import VmSizeCompatibilityFilter
     from ._models import VmSizeCompatibilityFilterV2
+    from ._models import VmSizeProperty
     from ._models import VmSizesCapability
 from ._paged_models import ApplicationPaged
 from ._paged_models import ClusterPaged
@@ -222,11 +234,13 @@ __all__ = [
     'ComputeProfile',
     'ConnectivityEndpoint',
     'DataDisksGroups',
+    'Dimension',
     'DiskBillingMeters',
     'DiskEncryptionProperties',
     'EncryptionInTransitProperties',
     'ErrorResponse', 'ErrorResponseException',
     'Errors',
+    'ExcludedServicesConfig',
     'ExecuteScriptActionParameters',
     'Extension',
     'GatewaySettings',
@@ -235,9 +249,11 @@ __all__ = [
     'KafkaRestProperties',
     'LinuxOperatingSystemProfile',
     'LocalizedName',
+    'MetricSpecifications',
     'NetworkProperties',
     'Operation',
     'OperationDisplay',
+    'OperationProperties',
     'OperationResource',
     'OsProfile',
     'ProxyResource',
@@ -253,6 +269,7 @@ __all__ = [
     'ScriptActionExecutionSummary',
     'ScriptActionPersistedGetResponseSpec',
     'SecurityProfile',
+    'ServiceSpecification',
     'SshProfile',
     'SshPublicKey',
     'StorageAccount',
@@ -266,6 +283,7 @@ __all__ = [
     'VirtualNetworkProfile',
     'VmSizeCompatibilityFilter',
     'VmSizeCompatibilityFilterV2',
+    'VmSizeProperty',
     'VmSizesCapability',
     'ClusterPaged',
     'ApplicationPaged',

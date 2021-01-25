@@ -1,5 +1,21 @@
 # Release History
 
+## 2.2.0 (2021-01-25)
+
+**Features**
+
+  - Model ClusterIdentityUserAssignedIdentitiesValue has a new parameter tenant_id
+  - Model Operation has a new parameter properties
+  - Model Role has a new parameter encrypt_data_disks
+  - Model OperationDisplay has a new parameter description
+  - Model BillingResponseListResult has a new parameter vm_sizes_with_encryption_at_host
+  - Model BillingResponseListResult has a new parameter vm_size_properties
+  - Model ConnectivityEndpoint has a new parameter private_ip_address
+  - Model ClusterGetProperties has a new parameter storage_profile
+  - Model ClusterGetProperties has a new parameter excluded_services_config
+  - Model ClusterGetProperties has a new parameter cluster_hdp_version
+  - Model ApplicationGetEndpoint has a new parameter private_ip_address
+
 ## 2.1.0 (2020-12-21)
 
 **Features**

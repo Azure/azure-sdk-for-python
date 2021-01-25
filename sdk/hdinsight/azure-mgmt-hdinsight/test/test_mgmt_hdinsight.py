@@ -427,8 +427,9 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertEqual(len(application_match), 1)
 
         # sleep for robust
-        import time
-        time.sleep(120)
+        if self.is_live:
+            import time
+            time.sleep(300)
 
         self.hdinsight_client.applications.delete(resource_group.name, cluster_name, application_name).wait()
         application_list = list(self.hdinsight_client.applications.list_by_cluster(resource_group.name, cluster_name))

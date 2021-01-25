@@ -128,12 +128,15 @@ class ApplicationGetEndpoint(Model):
     :type destination_port: int
     :param public_port: The public port to connect to.
     :type public_port: int
+    :param private_ip_address: The private ip address of the endpoint.
+    :type private_ip_address: str
     """
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'destination_port': {'key': 'destinationPort', 'type': 'int'},
         'public_port': {'key': 'publicPort', 'type': 'int'},
+        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -141,6 +144,7 @@ class ApplicationGetEndpoint(Model):
         self.location = kwargs.get('location', None)
         self.destination_port = kwargs.get('destination_port', None)
         self.public_port = kwargs.get('public_port', None)
+        self.private_ip_address = kwargs.get('private_ip_address', None)
 
 
 class ApplicationGetHttpsEndpoint(Model):
@@ -426,29 +430,46 @@ class BillingResponseListResult(Model):
     """The response for the operation to get regional billingSpecs for a
     subscription.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param vm_sizes: The virtual machine sizes to include or exclude.
     :type vm_sizes: list[str]
+    :param vm_sizes_with_encryption_at_host: The vm sizes which enable
+     encryption at host.
+    :type vm_sizes_with_encryption_at_host: list[str]
     :param vm_size_filters: The virtual machine filtering mode. Effectively
      this can enabling or disabling the virtual machine sizes in a particular
      set.
     :type vm_size_filters:
      list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilterV2]
+    :ivar vm_size_properties: The vm size properties.
+    :vartype vm_size_properties:
+     list[~azure.mgmt.hdinsight.models.VmSizeProperty]
     :param billing_resources: The billing and managed disk billing resources
      for a region.
     :type billing_resources:
      list[~azure.mgmt.hdinsight.models.BillingResources]
     """
 
+    _validation = {
+        'vm_size_properties': {'readonly': True},
+    }
+
     _attribute_map = {
         'vm_sizes': {'key': 'vmSizes', 'type': '[str]'},
+        'vm_sizes_with_encryption_at_host': {'key': 'vmSizesWithEncryptionAtHost', 'type': '[str]'},
         'vm_size_filters': {'key': 'vmSizeFilters', 'type': '[VmSizeCompatibilityFilterV2]'},
+        'vm_size_properties': {'key': 'vmSizeProperties', 'type': '[VmSizeProperty]'},
         'billing_resources': {'key': 'billingResources', 'type': '[BillingResources]'},
     }
 
     def __init__(self, **kwargs):
         super(BillingResponseListResult, self).__init__(**kwargs)
         self.vm_sizes = kwargs.get('vm_sizes', None)
+        self.vm_sizes_with_encryption_at_host = kwargs.get('vm_sizes_with_encryption_at_host', None)
         self.vm_size_filters = kwargs.get('vm_size_filters', None)
+        self.vm_size_properties = None
         self.billing_resources = kwargs.get('billing_resources', None)
 
 
@@ -781,6 +802,8 @@ class ClusterGetProperties(Model):
 
     :param cluster_version: The version of the cluster.
     :type cluster_version: str
+    :param cluster_hdp_version: The hdp version of the cluster.
+    :type cluster_hdp_version: str
     :param os_type: The type of operating system. Possible values include:
      'Windows', 'Linux'
     :type os_type: str or ~azure.mgmt.hdinsight.models.OSType
@@ -821,8 +844,13 @@ class ClusterGetProperties(Model):
      properties.
     :type encryption_in_transit_properties:
      ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
+    :param storage_profile: The storage profile.
+    :type storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
     :param min_supported_tls_version: The minimal supported tls version.
     :type min_supported_tls_version: str
+    :param excluded_services_config: The excluded services config.
+    :type excluded_services_config:
+     ~azure.mgmt.hdinsight.models.ExcludedServicesConfig
     :param network_properties: The network properties.
     :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
     :param compute_isolation_properties: The compute isolation properties.
@@ -836,6 +864,7 @@ class ClusterGetProperties(Model):
 
     _attribute_map = {
         'cluster_version': {'key': 'clusterVersion', 'type': 'str'},
+        'cluster_hdp_version': {'key': 'clusterHdpVersion', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'OSType'},
         'tier': {'key': 'tier', 'type': 'Tier'},
         'cluster_id': {'key': 'clusterId', 'type': 'str'},
@@ -851,7 +880,9 @@ class ClusterGetProperties(Model):
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
+        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
+        'excluded_services_config': {'key': 'excludedServicesConfig', 'type': 'ExcludedServicesConfig'},
         'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
         'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
     }
@@ -859,6 +890,7 @@ class ClusterGetProperties(Model):
     def __init__(self, **kwargs):
         super(ClusterGetProperties, self).__init__(**kwargs)
         self.cluster_version = kwargs.get('cluster_version', None)
+        self.cluster_hdp_version = kwargs.get('cluster_hdp_version', None)
         self.os_type = kwargs.get('os_type', None)
         self.tier = kwargs.get('tier', None)
         self.cluster_id = kwargs.get('cluster_id', None)
@@ -874,7 +906,9 @@ class ClusterGetProperties(Model):
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
         self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
         self.encryption_in_transit_properties = kwargs.get('encryption_in_transit_properties', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
         self.min_supported_tls_version = kwargs.get('min_supported_tls_version', None)
+        self.excluded_services_config = kwargs.get('excluded_services_config', None)
         self.network_properties = kwargs.get('network_properties', None)
         self.compute_isolation_properties = kwargs.get('compute_isolation_properties', None)
 
@@ -934,6 +968,8 @@ class ClusterIdentityUserAssignedIdentitiesValue(Model):
     :vartype principal_id: str
     :ivar client_id: The client id of user assigned identity.
     :vartype client_id: str
+    :param tenant_id: The tenant id of user assigned identity.
+    :type tenant_id: str
     """
 
     _validation = {
@@ -944,12 +980,14 @@ class ClusterIdentityUserAssignedIdentitiesValue(Model):
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ClusterIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
+        self.tenant_id = kwargs.get('tenant_id', None)
 
 
 class ClusterListPersistedScriptActionsResult(Model):
@@ -1130,6 +1168,8 @@ class ConnectivityEndpoint(Model):
     :type location: str
     :param port: The port to connect to.
     :type port: int
+    :param private_ip_address: The private ip address of the endpoint.
+    :type private_ip_address: str
     """
 
     _attribute_map = {
@@ -1137,6 +1177,7 @@ class ConnectivityEndpoint(Model):
         'protocol': {'key': 'protocol', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'port': {'key': 'port', 'type': 'int'},
+        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1145,6 +1186,7 @@ class ConnectivityEndpoint(Model):
         self.protocol = kwargs.get('protocol', None)
         self.location = kwargs.get('location', None)
         self.port = kwargs.get('port', None)
+        self.private_ip_address = kwargs.get('private_ip_address', None)
 
 
 class DataDisksGroups(Model):
@@ -1178,6 +1220,35 @@ class DataDisksGroups(Model):
         self.disks_per_node = kwargs.get('disks_per_node', None)
         self.storage_account_type = None
         self.disk_size_gb = None
+
+
+class Dimension(Model):
+    """The definition of Dimension.
+
+    :param name: The name of the dimension.
+    :type name: str
+    :param display_name: The display name of the dimension.
+    :type display_name: str
+    :param internal_name: The display name of the dimension.
+    :type internal_name: str
+    :param to_be_exported_for_shoebox: The flag indicates whether the metric
+     will be exported for shoebox or not.
+    :type to_be_exported_for_shoebox: bool
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'internal_name': {'key': 'internalName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Dimension, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.internal_name = kwargs.get('internal_name', None)
+        self.to_be_exported_for_shoebox = kwargs.get('to_be_exported_for_shoebox', None)
 
 
 class DiskBillingMeters(Model):
@@ -1314,6 +1385,26 @@ class Errors(Model):
         super(Errors, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
+
+
+class ExcludedServicesConfig(Model):
+    """The configuration that services will be excluded when creating cluster.
+
+    :param excluded_services_config_id: The config id of excluded services.
+    :type excluded_services_config_id: str
+    :param excluded_services_list: The list of excluded services.
+    :type excluded_services_list: str
+    """
+
+    _attribute_map = {
+        'excluded_services_config_id': {'key': 'excludedServicesConfigId', 'type': 'str'},
+        'excluded_services_list': {'key': 'excludedServicesList', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ExcludedServicesConfig, self).__init__(**kwargs)
+        self.excluded_services_config_id = kwargs.get('excluded_services_config_id', None)
+        self.excluded_services_list = kwargs.get('excluded_services_list', None)
 
 
 class ExecuteScriptActionParameters(Model):
@@ -1501,6 +1592,94 @@ class LocalizedName(Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class MetricSpecifications(Model):
+    """The details of metric specifications.
+
+    :param name: The name of the metric specification.
+    :type name: str
+    :param display_name: The display name of the metric specification.
+    :type display_name: str
+    :param display_description: The display description of the metric
+     specification.
+    :type display_description: str
+    :param unit: The unit of the metric specification.
+    :type unit: str
+    :param aggregation_type: The aggregation type of the metric specification.
+    :type aggregation_type: str
+    :param supported_aggregation_types: The supported aggregation types of the
+     metric specification.
+    :type supported_aggregation_types: list[str]
+    :param supported_time_grain_types: The supported time grain types of the
+     metric specification.
+    :type supported_time_grain_types: list[str]
+    :param enable_regional_mdm_account: The flag indicates whether enable
+     regional mdm account or not.
+    :type enable_regional_mdm_account: bool
+    :param source_mdm_account: The source mdm account.
+    :type source_mdm_account: str
+    :param source_mdm_namespace: The source mdm namespace.
+    :type source_mdm_namespace: str
+    :param metric_filter_pattern: The metric filter pattern.
+    :type metric_filter_pattern: str
+    :param fill_gap_with_zero: The flag indicates whether filling gap with
+     zero.
+    :type fill_gap_with_zero: bool
+    :param category: The category of the metric.
+    :type category: str
+    :param resource_id_dimension_name_override: The override name of resource
+     id dimension name.
+    :type resource_id_dimension_name_override: str
+    :param is_internal: The flag indicates whether the metric is internal or
+     not.
+    :type is_internal: bool
+    :param delegate_metric_name_override: The override name of delegate
+     metric.
+    :type delegate_metric_name_override: str
+    :param dimensions: The dimensions of the metric specification.
+    :type dimensions: list[~azure.mgmt.hdinsight.models.Dimension]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
+        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+        'metric_filter_pattern': {'key': 'metricFilterPattern', 'type': 'str'},
+        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
+        'category': {'key': 'category', 'type': 'str'},
+        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
+        'is_internal': {'key': 'isInternal', 'type': 'bool'},
+        'delegate_metric_name_override': {'key': 'delegateMetricNameOverride', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MetricSpecifications, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
+        self.source_mdm_account = kwargs.get('source_mdm_account', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
+        self.metric_filter_pattern = kwargs.get('metric_filter_pattern', None)
+        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
+        self.category = kwargs.get('category', None)
+        self.resource_id_dimension_name_override = kwargs.get('resource_id_dimension_name_override', None)
+        self.is_internal = kwargs.get('is_internal', None)
+        self.delegate_metric_name_override = kwargs.get('delegate_metric_name_override', None)
+        self.dimensions = kwargs.get('dimensions', None)
+
+
 class NetworkProperties(Model):
     """The network properties.
 
@@ -1531,17 +1710,21 @@ class Operation(Model):
     :type name: str
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.hdinsight.models.OperationDisplay
+    :param properties: The operation properties.
+    :type properties: ~azure.mgmt.hdinsight.models.OperationProperties
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'properties': {'key': 'properties', 'type': 'OperationProperties'},
     }
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class OperationDisplay(Model):
@@ -1554,12 +1737,15 @@ class OperationDisplay(Model):
     :type resource: str
     :param operation: The operation type: read, write, delete, etc.
     :type operation: str
+    :param description: Localized friendly description for the operation
+    :type description: str
     """
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1567,6 +1753,24 @@ class OperationDisplay(Model):
         self.provider = kwargs.get('provider', None)
         self.resource = kwargs.get('resource', None)
         self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)
+
+
+class OperationProperties(Model):
+    """The details of operation.
+
+    :param service_specification: The specification of the service.
+    :type service_specification:
+     ~azure.mgmt.hdinsight.models.ServiceSpecification
+    """
+
+    _attribute_map = {
+        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationProperties, self).__init__(**kwargs)
+        self.service_specification = kwargs.get('service_specification', None)
 
 
 class OperationResource(Model):
@@ -1712,6 +1916,8 @@ class Role(Model):
      list[~azure.mgmt.hdinsight.models.DataDisksGroups]
     :param script_actions: The list of script actions on the role.
     :type script_actions: list[~azure.mgmt.hdinsight.models.ScriptAction]
+    :param encrypt_data_disks: Indicates whether encrypt the data disks.
+    :type encrypt_data_disks: bool
     """
 
     _attribute_map = {
@@ -1724,6 +1930,7 @@ class Role(Model):
         'virtual_network_profile': {'key': 'virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
         'data_disks_groups': {'key': 'dataDisksGroups', 'type': '[DataDisksGroups]'},
         'script_actions': {'key': 'scriptActions', 'type': '[ScriptAction]'},
+        'encrypt_data_disks': {'key': 'encryptDataDisks', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -1737,6 +1944,7 @@ class Role(Model):
         self.virtual_network_profile = kwargs.get('virtual_network_profile', None)
         self.data_disks_groups = kwargs.get('data_disks_groups', None)
         self.script_actions = kwargs.get('script_actions', None)
+        self.encrypt_data_disks = kwargs.get('encrypt_data_disks', None)
 
 
 class RuntimeScriptAction(Model):
@@ -2005,6 +2213,23 @@ class SecurityProfile(Model):
         self.cluster_users_group_dns = kwargs.get('cluster_users_group_dns', None)
         self.aadds_resource_id = kwargs.get('aadds_resource_id', None)
         self.msi_resource_id = kwargs.get('msi_resource_id', None)
+
+
+class ServiceSpecification(Model):
+    """The specification of the service.
+
+    :param metric_specifications: The metric specifications.
+    :type metric_specifications:
+     list[~azure.mgmt.hdinsight.models.MetricSpecifications]
+    """
+
+    _attribute_map = {
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecifications]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = kwargs.get('metric_specifications', None)
 
 
 class SshProfile(Model):
@@ -2280,7 +2505,7 @@ class VmSizeCompatibilityFilterV2(Model):
 
     :param filter_mode: The filtering mode. Effectively this can enabling or
      disabling the VM sizes in a particular set. Possible values include:
-     'Exclude', 'Include'
+     'Exclude', 'Include', 'Recommend', 'Default'
     :type filter_mode: str or ~azure.mgmt.hdinsight.models.FilterMode
     :param regions: The list of regions under the effect of the filter.
     :type regions: list[str]
@@ -2317,6 +2542,62 @@ class VmSizeCompatibilityFilterV2(Model):
         self.cluster_versions = kwargs.get('cluster_versions', None)
         self.os_type = kwargs.get('os_type', None)
         self.vm_sizes = kwargs.get('vm_sizes', None)
+
+
+class VmSizeProperty(Model):
+    """The vm size property.
+
+    :param name: The vm size name.
+    :type name: str
+    :param cores: The number of cores that the vm size has.
+    :type cores: int
+    :param data_disk_storage_tier: The data disk storage tier of the vm size.
+    :type data_disk_storage_tier: str
+    :param label: The label of the vm size.
+    :type label: str
+    :param max_data_disk_count: The max data disk count of the vm size.
+    :type max_data_disk_count: long
+    :param memory_in_mb: The memory whose unit is MB of the vm size.
+    :type memory_in_mb: long
+    :param supported_by_virtual_machines: This indicates this vm size is
+     supported by virtual machines or not
+    :type supported_by_virtual_machines: bool
+    :param supported_by_web_worker_roles: The indicates this vm size is
+     supported by web worker roles or not
+    :type supported_by_web_worker_roles: bool
+    :param virtual_machine_resource_disk_size_in_mb: The virtual machine
+     resource disk size whose unit is MB of the vm size.
+    :type virtual_machine_resource_disk_size_in_mb: long
+    :param web_worker_resource_disk_size_in_mb: The web worker resource disk
+     size whose unit is MB of the vm size.
+    :type web_worker_resource_disk_size_in_mb: long
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'cores': {'key': 'cores', 'type': 'int'},
+        'data_disk_storage_tier': {'key': 'dataDiskStorageTier', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+        'max_data_disk_count': {'key': 'maxDataDiskCount', 'type': 'long'},
+        'memory_in_mb': {'key': 'memoryInMb', 'type': 'long'},
+        'supported_by_virtual_machines': {'key': 'supportedByVirtualMachines', 'type': 'bool'},
+        'supported_by_web_worker_roles': {'key': 'supportedByWebWorkerRoles', 'type': 'bool'},
+        'virtual_machine_resource_disk_size_in_mb': {'key': 'virtualMachineResourceDiskSizeInMb', 'type': 'long'},
+        'web_worker_resource_disk_size_in_mb': {'key': 'webWorkerResourceDiskSizeInMb', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VmSizeProperty, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.cores = kwargs.get('cores', None)
+        self.data_disk_storage_tier = kwargs.get('data_disk_storage_tier', None)
+        self.label = kwargs.get('label', None)
+        self.max_data_disk_count = kwargs.get('max_data_disk_count', None)
+        self.memory_in_mb = kwargs.get('memory_in_mb', None)
+        self.supported_by_virtual_machines = kwargs.get('supported_by_virtual_machines', None)
+        self.supported_by_web_worker_roles = kwargs.get('supported_by_web_worker_roles', None)
+        self.virtual_machine_resource_disk_size_in_mb = kwargs.get('virtual_machine_resource_disk_size_in_mb', None)
+        self.web_worker_resource_disk_size_in_mb = kwargs.get('web_worker_resource_disk_size_in_mb', None)
 
 
 class VmSizesCapability(Model):
