@@ -92,7 +92,7 @@ def collect_tox_coverage_files():#targeted_packages):
     # logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
 
     # if len(coverage_files):
-    #     cov_cmd_array = [sys.executable, "-m", "coverage", "combine", "--append"]
+    #     cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
     #     cov_cmd_array.extend(coverage_files)
 
     #     # merge them with coverage combine and copy to root
@@ -125,7 +125,7 @@ def combine_coverage_files(coverage_files):
     if os.path.isfile(tox_ini_file):
         # for every individual coverage file, run coverage combine to combine path
         for coverage_file in coverage_files:
-            cov_cmd_array = [sys.executable, "-m", "coverage", "combine", "--append"]
+            cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
             # tox.ini file has coverage paths to combine
             # Pas tox.ini as coverage config file
             cov_cmd_array.extend([config_file_flag, coverage_file])
