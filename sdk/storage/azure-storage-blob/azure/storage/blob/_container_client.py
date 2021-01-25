@@ -474,7 +474,7 @@ class ContainerClient(StorageAccountHostsMixin):
             return True
         except HttpResponseError as error:
             try:
-                val = process_storage_error(error)
+                process_storage_error(error)
             except ResourceNotFoundError:
                 return False
 
