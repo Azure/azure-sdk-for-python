@@ -60,7 +60,7 @@ def find_released_packages(setup_py_path, dependency_type):
     # this method returns list of required available package on PyPI in format <package-name>==<version>
 
     # parse setup.py and find install requires
-    requires = [r for r in get_install_requires(setup_py_path) if r.startswith('azure') and '-nspkg' not in r]
+    requires = [r for r in get_install_requires(setup_py_path) if '-nspkg' not in r]
 
     # Get available version on PyPI for each required package
     avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type), requires) if x]
