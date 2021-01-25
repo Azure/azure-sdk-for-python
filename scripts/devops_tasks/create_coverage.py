@@ -61,7 +61,7 @@ def collect_tox_coverage_files():#targeted_packages):
         cov_cmd_array.extend(coverage_files)
 
         # merge them with coverage combine and copy to root
-        run_check_call(cov_cmd_array, coverage_dir)
+        run_check_call(cov_cmd_array, root_dir)
 
         logging.info("after running coverage combine")
 
@@ -70,7 +70,7 @@ def collect_tox_coverage_files():#targeted_packages):
                 if re.match(".coverage*", f):
                     print(os.path.join(root, f))
 
-        # generate_coverage_xml()
+        generate_coverage_xml()
 
     # clean_coverage(coverage_dir)
 
