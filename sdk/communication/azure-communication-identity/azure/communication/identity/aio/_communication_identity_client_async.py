@@ -104,8 +104,8 @@ class CommunicationIdentityClient:
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
         :return: A tuple of a CommunicationUserIdentifier and a CommunicationUserToken.
-        :rtype: tuple of (~azure.communication.identity.CommunicationUserIdentifier,
-            ~azure.communication.identity.CommunicationUserToken)
+        :rtype: tuple of (~azure.communication.identity.CommunicationUserIdentifier, \
+~azure.communication.identity.CommunicationUserToken)
         """
         return await self._identity_service_client.communication_identity.create(
             create_token_with_scopes=scopes,
