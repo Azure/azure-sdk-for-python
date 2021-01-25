@@ -75,6 +75,7 @@ class TextAnalyticsClientOperationsMixin:
 
     _analyze_initial.metadata = {'url': '/analyze'}  # type: ignore
 
+
     async def begin_analyze(
         self,
         body: Optional["_models.AnalyzeBatchInput"] = None,
@@ -89,8 +90,8 @@ class TextAnalyticsClientOperationsMixin:
         :type body: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -213,6 +214,7 @@ class TextAnalyticsClientOperationsMixin:
         return deserialized
     analyze_status.metadata = {'url': '/analyze/jobs/{jobId}'}  # type: ignore
 
+
     async def health_status(
         self,
         job_id: str,
@@ -288,6 +290,7 @@ class TextAnalyticsClientOperationsMixin:
         return deserialized
     health_status.metadata = {'url': '/entities/health/jobs/{jobId}'}  # type: ignore
 
+
     async def _cancel_health_job_initial(
         self,
         job_id: str,
@@ -334,6 +337,7 @@ class TextAnalyticsClientOperationsMixin:
 
     _cancel_health_job_initial.metadata = {'url': '/entities/health/jobs/{jobId}'}  # type: ignore
 
+
     async def begin_cancel_health_job(
         self,
         job_id: str,
@@ -347,8 +351,8 @@ class TextAnalyticsClientOperationsMixin:
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -454,6 +458,7 @@ class TextAnalyticsClientOperationsMixin:
 
     _health_initial.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
+
     async def begin_health(
         self,
         documents: List["_models.MultiLanguageInput"],
@@ -477,8 +482,8 @@ class TextAnalyticsClientOperationsMixin:
         :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -612,6 +617,7 @@ class TextAnalyticsClientOperationsMixin:
         return deserialized
     entities_recognition_general.metadata = {'url': '/entities/recognition/general'}  # type: ignore
 
+
     async def entities_recognition_pii(
         self,
         documents: List["_models.MultiLanguageInput"],
@@ -705,6 +711,7 @@ class TextAnalyticsClientOperationsMixin:
         return deserialized
     entities_recognition_pii.metadata = {'url': '/entities/recognition/pii'}  # type: ignore
 
+
     async def entities_linking(
         self,
         documents: List["_models.MultiLanguageInput"],
@@ -790,6 +797,7 @@ class TextAnalyticsClientOperationsMixin:
         return deserialized
     entities_linking.metadata = {'url': '/entities/linking'}  # type: ignore
 
+
     async def key_phrases(
         self,
         documents: List["_models.MultiLanguageInput"],
@@ -867,6 +875,7 @@ class TextAnalyticsClientOperationsMixin:
 
         return deserialized
     key_phrases.metadata = {'url': '/keyPhrases'}  # type: ignore
+
 
     async def languages(
         self,
@@ -946,6 +955,7 @@ class TextAnalyticsClientOperationsMixin:
 
         return deserialized
     languages.metadata = {'url': '/languages'}  # type: ignore
+
 
     async def sentiment(
         self,
@@ -1037,3 +1047,4 @@ class TextAnalyticsClientOperationsMixin:
 
         return deserialized
     sentiment.metadata = {'url': '/sentiment'}  # type: ignore
+

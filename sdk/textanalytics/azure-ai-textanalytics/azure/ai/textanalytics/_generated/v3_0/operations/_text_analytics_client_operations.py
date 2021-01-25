@@ -100,6 +100,7 @@ class TextAnalyticsClientOperationsMixin(object):
         return deserialized
     entities_recognition_general.metadata = {'url': '/entities/recognition/general'}  # type: ignore
 
+
     def entities_linking(
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
@@ -176,6 +177,7 @@ class TextAnalyticsClientOperationsMixin(object):
         return deserialized
     entities_linking.metadata = {'url': '/entities/linking'}  # type: ignore
 
+
     def key_phrases(
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
@@ -251,6 +253,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         return deserialized
     key_phrases.metadata = {'url': '/keyPhrases'}  # type: ignore
+
 
     def languages(
         self,
@@ -329,6 +332,7 @@ class TextAnalyticsClientOperationsMixin(object):
         return deserialized
     languages.metadata = {'url': '/languages'}  # type: ignore
 
+
     def sentiment(
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
@@ -405,3 +409,4 @@ class TextAnalyticsClientOperationsMixin(object):
 
         return deserialized
     sentiment.metadata = {'url': '/sentiment'}  # type: ignore
+
