@@ -9,7 +9,7 @@ import functools
 from urllib.parse import urlparse, parse_qsl
 
 from ._models import RequestStatistics
-from ._async_paging import AnalyzeHealthcareResultAsync, AnalyzeResultAsync
+from ._async_paging import AnalyzeHealthcareResultAsync, AnalyzeItemPagedAsync
 from ._response_handlers import healthcare_result, analyze_result
 
 
@@ -50,7 +50,7 @@ def healthcare_paged_result(doc_id_order, health_status_callback, response, obj,
 
 
 def analyze_paged_result(doc_id_order, analyze_status_callback, response, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
-    return AnalyzeResultAsync(
+    return AnalyzeItemPagedAsync(
         functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
         functools.partial(analyze_extract_page_data_async, doc_id_order, obj, response_headers),
         statistics=RequestStatistics._from_generated(obj.statistics) \

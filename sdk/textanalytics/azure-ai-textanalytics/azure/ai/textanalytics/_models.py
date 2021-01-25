@@ -204,7 +204,7 @@ class AnalyzeHealthcareResultItem(DictMixin):
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AnalyzeHealthcareResult.
+        results. Always False for an instance of a HealthcareItemPaged.
     """
 
     def __init__(self, **kwargs):

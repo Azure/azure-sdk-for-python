@@ -5,16 +5,27 @@
 # ------------------------------------
 
 from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 
 
-class AnalyzeHealthcareResult(ItemPaged):
+class HealthcareItemPaged(ItemPaged):
     def __init__(self, *args, **kwargs):
+        super(HealthcareItemPaged, self).__init__(*args, **kwargs)
         self.model_version = kwargs.pop('model_version')
         self.statistics = kwargs.pop('statistics')
-        super(AnalyzeHealthcareResult, self).__init__(*args, **kwargs)
 
-
-class AnalyzeResult(ItemPaged):
+class AsyncHealthcareItemPaged(AsyncItemPaged):
     def __init__(self, *args, **kwargs):
+        super(AsyncHealthcareItemPaged, self).__init__(*args, **kwargs)
+        self.model_version = kwargs.pop('model_version')
         self.statistics = kwargs.pop('statistics')
-        super(AnalyzeResult, self).__init__(*args, **kwargs)
+
+class AnalyzeItemPaged(ItemPaged):
+    def __init__(self, *args, **kwargs):
+        super(AnalyzeItemPaged, self).__init__(*args, **kwargs)
+        self.statistics = kwargs.pop('statistics')
+
+class AsyncAnalyzeItemPaged(AsyncItemPaged):
+    def __init__(self, *args, **kwargs):
+        super(AsyncAnalyzeItemPaged, self).__init__(*args, **kwargs)
+        self.statistics = kwargs.pop('statistics')

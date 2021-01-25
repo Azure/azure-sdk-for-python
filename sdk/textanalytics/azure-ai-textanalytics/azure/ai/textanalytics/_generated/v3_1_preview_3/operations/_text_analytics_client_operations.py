@@ -8,6 +8,8 @@
 from typing import TYPE_CHECKING
 import warnings
 
+from ...._paging import AnalyzeItemPaged, HealthcareItemPaged
+from ...._polling import TextAnalyticsLROPoller
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -18,7 +20,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -30,8 +32,8 @@ class TextAnalyticsClientOperationsMixin(object):
         body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        # type: (...) -> Optional["_models.AnalyzeJobState"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AnalyzeJobState"]]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -68,16 +70,22 @@ class TextAnalyticsClientOperationsMixin(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
+        return deserialized
     _analyze_initial.metadata = {'url': '/analyze'}  # type: ignore
 
     def begin_analyze(
@@ -85,7 +93,7 @@ class TextAnalyticsClientOperationsMixin(object):
         body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> TextAnalyticsLROPoller[AnalyzeItemPaged["_models.AnalyzeJobState"]]
         """Submit analysis job.
 
         Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -95,16 +103,86 @@ class TextAnalyticsClientOperationsMixin(object):
         :type body: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of TextAnalyticsLROPoller that returns an iterator like instance of either AnalyzeJobState or the result of cls(response)
+        :rtype: ~...._polling.TextAnalyticsLROPoller[~...._paging.AnalyzeItemPaged[~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeJobState]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeJobState"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        content_type = "application/json"
+        accept = "application/json, text/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.analyze.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                if body is not None:
+                    body_content = self._serialize.body(body, 'AnalyzeBatchInput')
+                else:
+                    body_content = None
+                body_content_kwargs['content'] = body_content
+                request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                if body is not None:
+                    body_content = self._serialize.body(body, 'AnalyzeBatchInput')
+                else:
+                    body_content = None
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+            list_of_elem = deserialized.tasks
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeJobState"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -119,11 +197,16 @@ class TextAnalyticsClientOperationsMixin(object):
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
-
         def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
+            def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                else:
+                    return get_next(next_link)
 
+            return AnalyzeItemPaged(
+                internal_get_next, extract_data
+            )
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -132,14 +215,14 @@ class TextAnalyticsClientOperationsMixin(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return TextAnalyticsLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return TextAnalyticsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_analyze.metadata = {'url': '/analyze'}  # type: ignore
 
     def analyze_status(
@@ -357,8 +440,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -412,8 +495,8 @@ class TextAnalyticsClientOperationsMixin(object):
         string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        # type: (...) -> Optional["_models.HealthcareJobState"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.HealthcareJobState"]]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -453,16 +536,22 @@ class TextAnalyticsClientOperationsMixin(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
+        return deserialized
     _health_initial.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
     def begin_health(
@@ -472,7 +561,7 @@ class TextAnalyticsClientOperationsMixin(object):
         string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> TextAnalyticsLROPoller[HealthcareItemPaged["_models.HealthcareJobState"]]
         """Submit healthcare analysis job.
 
         Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions,
@@ -489,16 +578,85 @@ class TextAnalyticsClientOperationsMixin(object):
         :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of TextAnalyticsLROPoller that returns an iterator like instance of either HealthcareJobState or the result of cls(response)
+        :rtype: ~...._polling.TextAnalyticsLROPoller[~...._paging.HealthcareItemPaged[~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthcareJobState"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        _input = _models.MultiLanguageBatchInput(documents=documents)
+        content_type = "application/json"
+        accept = "application/json, text/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.health.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if model_version is not None:
+                    query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
+                if string_index_type is not None:
+                    query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
+
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
+                body_content_kwargs['content'] = body_content
+                request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+            list_of_elem = deserialized.results
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthcareJobState"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -515,11 +673,16 @@ class TextAnalyticsClientOperationsMixin(object):
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
-
         def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
+            def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                else:
+                    return get_next(next_link)
 
+            return HealthcareItemPaged(
+                internal_get_next, extract_data
+            )
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -528,14 +691,14 @@ class TextAnalyticsClientOperationsMixin(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return TextAnalyticsLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return TextAnalyticsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_health.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
     def entities_recognition_general(

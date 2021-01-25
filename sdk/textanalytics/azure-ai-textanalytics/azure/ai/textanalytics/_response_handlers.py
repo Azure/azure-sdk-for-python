@@ -36,7 +36,7 @@ from ._models import (
     KeyPhraseExtractionTaskResult,
     RequestStatistics
 )
-from ._paging import AnalyzeHealthcareResult, AnalyzeResult
+from ._paging import HealthcareItemPaged, AnalyzeItemPaged
 
 class CSODataV4Format(ODataV4Format):
 
@@ -244,7 +244,7 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_
 
 
 def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
-    return AnalyzeHealthcareResult(
+    return HealthcareItemPaged(
         functools.partial(lro_get_next_page, health_status_callback, obj, show_stats=show_stats),
         functools.partial(healthcare_extract_page_data, doc_id_order, obj, response_headers),
         model_version=obj.results.model_version,
@@ -252,7 +252,7 @@ def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, respon
     )
 
 def analyze_paged_result(doc_id_order, analyze_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
-    return AnalyzeResult(
+    return AnalyzeItemPaged(
         functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
         functools.partial(analyze_extract_page_data, doc_id_order, obj, response_headers),
         statistics=RequestStatistics._from_generated(obj.statistics) \

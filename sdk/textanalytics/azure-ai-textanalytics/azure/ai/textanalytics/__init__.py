@@ -42,7 +42,7 @@ from ._models import (
     TextAnalysisResult,
     RequestStatistics
 )
-from._paging import AnalyzeHealthcareResult
+from._paging import HealthcareItemPaged
 
 __all__ = [
     'TextAnalyticsApiVersion',
@@ -72,7 +72,7 @@ __all__ = [
     'PiiEntity',
     'PiiEntityDomainType',
     'AnalyzeHealthcareResultItem',
-    'AnalyzeHealthcareResult',
+    'HealthcareItemPaged',
     'HealthcareEntity',
     'HealthcareRelation',
     'HealthcareEntityLink',
