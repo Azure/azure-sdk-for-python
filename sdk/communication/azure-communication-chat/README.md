@@ -291,7 +291,7 @@ Use `list_participants` to retrieve the participants of the thread.
 An iterator of `[ChatThreadParticipant]` is the response returned from listing participants
 
 ```python
-chat_thread_participants = chat_thread_client.list_participants()
+chat_thread_participants = chat_thread_client.list_participants(results_per_page=5, skip=5)
 for chat_thread_participant in chat_thread_participants:
     print(chat_thread_participant)
 ```
@@ -353,7 +353,7 @@ chat_thread_client.send_read_receipt(message_id)
 An iterator of `[ChatMessageReadReceipt]` is the response returned from listing read receipts
 
 ```python
-read_receipts = chat_thread_client.list_read_receipts()
+read_receipts = chat_thread_client.list_read_receipts(results_per_page=5, skip=5)
 for read_receipt in read_receipts:
     print(read_receipt)
     print(read_receipt.sender)

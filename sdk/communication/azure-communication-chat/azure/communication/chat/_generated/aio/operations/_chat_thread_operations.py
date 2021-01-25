@@ -44,7 +44,7 @@ class ChatThreadOperations:
     def list_chat_read_receipts(
         self,
         chat_thread_id: str,
-        maxpagesize: Optional[int] = None,
+        max_page_size: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.ChatMessageReadReceiptsCollection"]:
@@ -54,8 +54,8 @@ class ChatThreadOperations:
 
         :param chat_thread_id: Thread id to get the chat message read receipts for.
         :type chat_thread_id: str
-        :param maxpagesize: The maximum number of chat message read receipts to be returned per page.
-        :type maxpagesize: int
+        :param max_page_size: The maximum number of chat message read receipts to be returned per page.
+        :type max_page_size: int
         :param skip: Skips chat message read receipts up to a specified position in response.
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -91,8 +91,8 @@ class ChatThreadOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if maxpagesize is not None:
-                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
+                if max_page_size is not None:
+                    query_parameters['maxPageSize'] = self._serialize.query("max_page_size", max_page_size, 'int')
                 if skip is not None:
                     query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -190,7 +190,7 @@ class ChatThreadOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -271,7 +271,7 @@ class ChatThreadOperations:
     def list_chat_messages(
         self,
         chat_thread_id: str,
-        maxpagesize: Optional[int] = None,
+        max_page_size: Optional[int] = None,
         start_time: Optional[datetime.datetime] = None,
         **kwargs
     ) -> AsyncIterable["_models.ChatMessagesCollection"]:
@@ -281,8 +281,8 @@ class ChatThreadOperations:
 
         :param chat_thread_id: The thread id of the message.
         :type chat_thread_id: str
-        :param maxpagesize: The maximum number of messages to be returned per page.
-        :type maxpagesize: int
+        :param max_page_size: The maximum number of messages to be returned per page.
+        :type max_page_size: int
         :param start_time: The earliest point in time to get messages up to. The timestamp should be in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type start_time: ~datetime.datetime
@@ -319,8 +319,8 @@ class ChatThreadOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if maxpagesize is not None:
-                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
+                if max_page_size is not None:
+                    query_parameters['maxPageSize'] = self._serialize.query("max_page_size", max_page_size, 'int')
                 if start_time is not None:
                     query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -619,7 +619,7 @@ class ChatThreadOperations:
     def list_chat_participants(
         self,
         chat_thread_id: str,
-        maxpagesize: Optional[int] = None,
+        max_page_size: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.ChatParticipantsCollection"]:
@@ -629,8 +629,8 @@ class ChatThreadOperations:
 
         :param chat_thread_id: Thread id to get participants for.
         :type chat_thread_id: str
-        :param maxpagesize: The maximum number of participants to be returned per page.
-        :type maxpagesize: int
+        :param max_page_size: The maximum number of participants to be returned per page.
+        :type max_page_size: int
         :param skip: Skips participants up to a specified position in response.
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -666,8 +666,8 @@ class ChatThreadOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if maxpagesize is not None:
-                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
+                if max_page_size is not None:
+                    query_parameters['maxPageSize'] = self._serialize.query("max_page_size", max_page_size, 'int')
                 if skip is not None:
                     query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -707,6 +707,68 @@ class ChatThreadOperations:
             get_next, extract_data
         )
     list_chat_participants.metadata = {'url': '/chat/threads/{chatThreadId}/participants'}  # type: ignore
+
+    async def remove_chat_participant(
+        self,
+        chat_thread_id: str,
+        chat_participant_id: str,
+        **kwargs
+    ) -> None:
+        """Remove a participant from a thread.
+
+        Remove a participant from a thread.
+
+        :param chat_thread_id: Thread id to remove the participant from.
+        :type chat_thread_id: str
+        :param chat_participant_id: Id of the thread participant to remove from the thread.
+        :type chat_participant_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.Error, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-11-01-preview3"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.remove_chat_participant.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
+            'chatParticipantId': self._serialize.url("chat_participant_id", chat_participant_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    remove_chat_participant.metadata = {'url': '/chat/threads/{chatThreadId}/participants/{chatParticipantId}'}  # type: ignore
 
     async def add_chat_participants(
         self,
@@ -775,69 +837,7 @@ class ChatThreadOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    add_chat_participants.metadata = {'url': '/chat/threads/{chatThreadId}/participants'}  # type: ignore
-
-    async def remove_chat_participant(
-        self,
-        chat_thread_id: str,
-        chat_participant_id: str,
-        **kwargs
-    ) -> None:
-        """Remove a participant from a thread.
-
-        Remove a participant from a thread.
-
-        :param chat_thread_id: Thread id to remove the participant from.
-        :type chat_thread_id: str
-        :param chat_participant_id: Id of the thread participant to remove from the thread.
-        :type chat_participant_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview3"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.remove_chat_participant.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
-            'chatParticipantId': self._serialize.url("chat_participant_id", chat_participant_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    remove_chat_participant.metadata = {'url': '/chat/threads/{chatThreadId}/participants/{chatParticipantId}'}  # type: ignore
+    add_chat_participants.metadata = {'url': '/chat/threads/{chatThreadId}/participants/:add'}  # type: ignore
 
     async def update_chat_thread(
         self,
