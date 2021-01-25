@@ -29,7 +29,7 @@ from enum import EnumMeta
 
 class CaseInsensitiveEnumMeta(EnumMeta):
     """Enum metaclass to allow for interoperability with case-insensitive strings.
-    
+
     Consuming this metaclass in an SDK should be done in the following manner:
 
     .. code-block:: python
@@ -44,7 +44,7 @@ class CaseInsensitiveEnumMeta(EnumMeta):
 
     """
 
-    def __getitem__(self, name):
+    def __getitem__(cls, name):
         return super().__getitem__(name.upper())
 
     def __getattr__(cls, name):

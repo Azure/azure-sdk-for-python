@@ -1,6 +1,10 @@
 # Release History
 
-## 1.10.1 (Unreleased)
+## 1.11.0 (Unreleased)
+
+### Features
+
+- Added `CaseInsensitiveEnumMeta` class for case-insensitive enums.
 
 
 ## 1.10.0 (2021-01-11)
