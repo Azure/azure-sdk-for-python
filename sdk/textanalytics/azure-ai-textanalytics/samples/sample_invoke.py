@@ -58,13 +58,11 @@ class InvokeSample(object):
         request.set_json_body({
             "documents": documents
         })
-
-        # Note on version 2:
-        # - This does not set "content-type", likely it should
-
-
         try:
-            response = text_analytics_client.invoke(request)  # type: HttpResponse
+            pipeline_response = text_analytics_client.invoke(request)  # type: PipelineResponse
+            response = pipeline_response.http_response
+            if response.status_code < 200 or response.status_code >= 400:
+                raise HttpResponseError(response=response)
             print(response.text())
         except HttpResponseError as err:
             print(err)
