@@ -44,7 +44,7 @@ jobs:
           # env: ${{ parameters.EnvVars }}
 
       - pwsh: |
-          Get-ChildItem -Recurse
+          Get-ChildItem -Recurse -Path $(Build.SourcesDirectory)\_all_coverage_files\
 
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
@@ -58,4 +58,4 @@ jobs:
 
     steps:
     - pwsh: |
-          Get-ChildItem -Recurse
+          Get-ChildItem -Recurse -Path $(Build.SourcesDirectory)\_coverage\

@@ -55,6 +55,10 @@ steps:
 
   - ${{ parameters.AfterTestSteps }}
 
+  - pwsh: |
+      Get-Content -Path $(Build.SourcesDirectory)\_coverage\*
+    displayName: 'Show .coverage files'
+
   - task: PublishPipelineArtifact@1
     displayName: 'Publish .coverage files'
     continueOnError: true
