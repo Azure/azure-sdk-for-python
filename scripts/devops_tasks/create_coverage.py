@@ -37,7 +37,7 @@ dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
 
 def install_coverage():
-    install_cmd_arry = [sys.executable, "-m", "pip", "install", "coverage"]
+    install_cmd_arry = [sys.executable, "-m", "pip", "install", "coverage==4.5.4"]
     run_check_call(install_cmd_arry, root_dir)
 
 
