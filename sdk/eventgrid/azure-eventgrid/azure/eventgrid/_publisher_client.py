@@ -134,3 +134,18 @@ class EventGridPublisherClient(object):
             self._client.publish_custom_event_events(self._endpoint, cast(List, serialized_events), **kwargs)
         else:
             raise ValueError("Event schema is not correct.")
+
+    def close(self):
+        # type: () -> None
+        """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session.
+        """
+        return self._client.close()
+
+    def __enter__(self):
+        # type: () -> EventGridPublisherClient
+        self._client.__enter__()  # pylint:disable=no-member
+        return self
+
+    def __exit__(self, *args):
+        # type: (*Any) -> None
+        self._client.__exit__(*args)  # pylint:disable=no-member
