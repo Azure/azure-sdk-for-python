@@ -23,7 +23,7 @@ steps:
   - pwsh: |
       REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /f /v LongPathsEnabled /t REG_DWORD /d 1
     displayName: Enable Windows Longpath
-    condition: and(succeededOrFailed(), contains(variables['Agent.OS'], 'windows')
+    condition: and(succeededOrFailed(), contains(variables['Agent.OS'], 'windows'))
 
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
