@@ -33,6 +33,7 @@ class PublicNetworkAccessType(str, Enum):
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"  #: Batch account has a system assigned identity with it.
+    user_assigned = "UserAssigned"  #: Batch account has user assigned identities with it.
     none = "None"  #: Batch account has no identity associated with it. Setting `None` in update account will remove existing identities.
 
 
@@ -118,6 +119,12 @@ class DiskEncryptionTarget(str, Enum):
     temporary_disk = "TemporaryDisk"  #: The temporary disk on the compute node is encrypted. On Linux this encryption applies to other partitions (such as those on mounted data disks) when encryption occurs at boot time.
 
 
+class NodePlacementPolicyType(str, Enum):
+
+    regional = "Regional"  #: All nodes in the pool will be allocated in the same region.
+    zonal = "Zonal"  #: Nodes in the pool will be spread across different zones with best effort balancing.
+
+
 class ComputeNodeDeallocationOption(str, Enum):
 
     requeue = "Requeue"  #: Terminate running task processes and requeue the tasks. The tasks will run again when a node is available. Remove nodes as soon as tasks have been terminated.
@@ -154,7 +161,7 @@ class IPAddressProvisioningType(str, Enum):
 class ComputeNodeFillType(str, Enum):
 
     spread = "Spread"  #: Tasks should be assigned evenly across all nodes in the pool.
-    pack = "Pack"  #: As many tasks as possible (maxTasksPerNode) should be assigned to each node in the pool before any tasks are assigned to the next node in the pool.
+    pack = "Pack"  #: As many tasks as possible (taskSlotsPerNode) should be assigned to each node in the pool before any tasks are assigned to the next node in the pool.
 
 
 class ElevationLevel(str, Enum):
@@ -194,14 +201,10 @@ class CertificateVisibility(str, Enum):
     remote_user = "RemoteUser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
 
 
-class ContainerType(str, Enum):
+class PoolIdentityType(str, Enum):
 
-    docker_compatible = "DockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
-
-
-class ResourceType(str, Enum):
-
-    batch_accounts = "Microsoft.Batch/batchAccounts"  #: The Batch account resource type.
+    user_assigned = "UserAssigned"  #: Batch pool has user assigned identities with it.
+    none = "None"  #: Batch pool has no identity associated with it. Setting `None` in update pool will remove existing identities.
 
 
 class NameAvailabilityReason(str, Enum):

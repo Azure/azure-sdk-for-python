@@ -27,7 +27,7 @@ class CertificateOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2020-05-01".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2021-01-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class CertificateOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-05-01"
+        self.api_version = "2021-01-01"
 
         self.config = config
 
@@ -131,9 +131,41 @@ class CertificateOperations(object):
         return deserialized
     list_by_batch_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates'}
 
-
-    def _create_initial(
+    def create(
             self, resource_group_name, account_name, certificate_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new certificate inside the specified account.
+
+        :param resource_group_name: The name of the resource group that
+         contains the Batch account.
+        :type resource_group_name: str
+        :param account_name: The name of the Batch account.
+        :type account_name: str
+        :param certificate_name: The identifier for the certificate. This must
+         be made up of algorithm and thumbprint separated by a dash, and must
+         match the certificate data in the request. For example SHA1-a3d1c5.
+        :type certificate_name: str
+        :param parameters: Additional parameters for certificate creation.
+        :type parameters:
+         ~azure.mgmt.batch.models.CertificateCreateOrUpdateParameters
+        :param if_match: The entity state (ETag) version of the certificate to
+         update. A value of "*" can be used to apply the operation only if the
+         certificate already exists. If omitted, this operation will always be
+         applied.
+        :type if_match: str
+        :param if_none_match: Set to '*' to allow a new certificate to be
+         created, but to prevent updating an existing certificate. Other values
+         will be ignored.
+        :type if_none_match: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Certificate or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.Certificate or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -175,9 +207,8 @@ class CertificateOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        deserialized = None
         header_dict = {}
-
+        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('Certificate', response)
             header_dict = {
@@ -190,77 +221,6 @@ class CertificateOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def create(
-            self, resource_group_name, account_name, certificate_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a new certificate inside the specified account.
-
-        :param resource_group_name: The name of the resource group that
-         contains the Batch account.
-        :type resource_group_name: str
-        :param account_name: The name of the Batch account.
-        :type account_name: str
-        :param certificate_name: The identifier for the certificate. This must
-         be made up of algorithm and thumbprint separated by a dash, and must
-         match the certificate data in the request. For example SHA1-a3d1c5.
-        :type certificate_name: str
-        :param parameters: Additional parameters for certificate creation.
-        :type parameters:
-         ~azure.mgmt.batch.models.CertificateCreateOrUpdateParameters
-        :param if_match: The entity state (ETag) version of the certificate to
-         update. A value of "*" can be used to apply the operation only if the
-         certificate already exists. If omitted, this operation will always be
-         applied.
-        :type if_match: str
-        :param if_none_match: Set to '*' to allow a new certificate to be
-         created, but to prevent updating an existing certificate. Other values
-         will be ignored.
-        :type if_none_match: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Certificate or
-         ClientRawResponse<Certificate> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batch.models.Certificate]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.batch.models.Certificate]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._create_initial(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            certificate_name=certificate_name,
-            parameters=parameters,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            header_dict = {
-                'ETag': 'str',
-            }
-            deserialized = self._deserialize('Certificate', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                client_raw_response.add_headers(header_dict)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'}
 
     def update(
