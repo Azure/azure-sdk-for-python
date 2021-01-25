@@ -56,8 +56,12 @@ steps:
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |
-      Get-Content -Path $(Build.SourcesDirectory)\_coverage\*
+      Get-ChildItem .\_coverage\ |
+      Foreach-Object {
+        Get-Content $_
+      }
     displayName: 'Show .coverage files'
+    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish .coverage files'
