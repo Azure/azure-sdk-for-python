@@ -6,11 +6,11 @@
 
 from ._publisher_client import EventGridPublisherClient
 from ._consumer import EventGridDeserializer
-from ._helpers import generate_shared_access_signature
+from ._helpers import generate_sas
 from ._models import CloudEvent, CustomEvent, EventGridEvent
 from ._version import VERSION
 
 __all__ = ['EventGridPublisherClient', 'EventGridDeserializer',
-            'CloudEvent', 'CustomEvent', 'EventGridEvent', 'generate_shared_access_signature'
+            'CloudEvent', 'CustomEvent', 'EventGridEvent', 'generate_sas'
             ]
 __version__ = VERSION

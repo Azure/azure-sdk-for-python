@@ -17,7 +17,7 @@ from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.eventgrid import CloudEvent, EventGridEvent, CustomEvent, generate_shared_access_signature
+from azure.eventgrid import CloudEvent, EventGridEvent, CustomEvent, generate_sas
 from azure.eventgrid.aio import EventGridPublisherClient
 
 from eventgrid_preparer import (
@@ -216,7 +216,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     async def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
-        signature = generate_shared_access_signature(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
+        signature = generate_sas(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
         credential = AzureSasCredential(signature)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
