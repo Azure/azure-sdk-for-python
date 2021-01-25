@@ -189,6 +189,33 @@ class TestChatThreadClient(unittest.TestCase):
             assert len(l) == 1
             l[0].user.id = participant_id
 
+    def test_list_participants_with_results_per_page(self):
+        thread_id = "19:81181a8abbf54b5695f87a0042ddcba9@thread.v2"
+        participant_id_1 = "8:acs:9b665d53-8164-4923-ad5d-5e983b07d2e7_00000006-5399-552c-b274-5a3a0d0000dc"
+        participant_id_2 = "8:acs:9b665d53-8164-4923-ad5d-5e983b07d2e7_00000006-9d32-35c9-557d-5a3a0d0002f1"
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=200, json_payload={
+                "value": [
+                    {"id": participant_id_1},
+                    {"id": participant_id_2}
+                ]})
+
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id,
+                                              transport=Mock(send=mock_send))
+
+        chat_thread_participants = None
+        try:
+            chat_thread_participants = chat_thread_client.list_participants(results_per_page=2)
+        except:
+            raised = True
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        for chat_thread_participant_page in chat_thread_participants.by_page():
+            l = list(chat_thread_participant_page)
+            assert len(l) == 2
+
     def test_add_participant(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
@@ -269,7 +296,7 @@ class TestChatThreadClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=201)
+            return mock_response(status_code=200)
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         try:
@@ -298,6 +325,31 @@ class TestChatThreadClient(unittest.TestCase):
         for read_receipt_page in read_receipts.by_page():
             l = list(read_receipt_page)
             assert len(l) == 1
+
+    def test_list_read_receipts_with_results_per_page(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        message_id_1="1596823919339"
+        message_id_2="1596823919340"
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=200, json_payload={
+                "value": [
+                    {"chatMessageId": message_id_1},
+                    {"chatMessageId": message_id_2}
+                ]})
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
+
+        read_receipts = None
+        try:
+            read_receipts = chat_thread_client.list_read_receipts(results_per_page=2)
+        except:
+            raised = True
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        for read_receipt_page in read_receipts.by_page():
+            l = list(read_receipt_page)
+            assert len(l) == 2
 
 
 if __name__ == '__main__':

@@ -202,6 +202,36 @@ async def test_list_participants():
     assert len(items) == 1
 
 @pytest.mark.asyncio
+async def test_list_participants_with_results_per_page():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    participant_id_1 = "8:acs:9b665d53-8164-4923-ad5d-5e983b07d2e7_00000006-5399-552c-b274-5a3a0d0000dc"
+    participant_id_2 = "8:acs:9b665d53-8164-4923-ad5d-5e983b07d2e7_00000006-9d32-35c9-557d-5a3a0d0002f1"
+    raised = False
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=200, json_payload={
+                "value": [
+                    {"id": participant_id_1},
+                    {"id": participant_id_2}
+                ]})
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    chat_thread_participants = None
+    try:
+        chat_thread_participants = chat_thread_client.list_participants(results_per_page=2)
+    except:
+        raised = True
+
+    assert raised == False
+
+    items = []
+    async for item in chat_thread_participants:
+        items.append(item)
+
+    assert len(items) == 2
+
+
+@pytest.mark.asyncio
 async def test_add_participant():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
@@ -286,7 +316,7 @@ async def test_send_read_receipt():
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=201)
+        return mock_response(status_code=200)
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     try:
@@ -309,6 +339,62 @@ async def test_list_read_receipts():
     read_receipts = None
     try:
         read_receipts = chat_thread_client.list_read_receipts()
+    except:
+        raised = True
+
+    assert raised == False
+
+    items = []
+    async for item in read_receipts:
+        items.append(item)
+
+    assert len(items) == 1
+
+@pytest.mark.asyncio
+async def test_list_read_receipts_with_results_per_page():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    message_id_1 = "1596823919339"
+    message_id_2 = "1596823919340"
+    raised = False
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=200, json_payload={
+            "value": [
+                {"chatMessageId": message_id_1},
+                {"chatMessageId": message_id_2}
+            ]})
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    read_receipts = None
+    try:
+        read_receipts = chat_thread_client.list_read_receipts(results_per_page=2)
+    except:
+        raised = True
+
+    assert raised == False
+
+    items = []
+    async for item in read_receipts:
+        items.append(item)
+
+    assert len(items) == 2
+
+@pytest.mark.asyncio
+async def test_list_read_receipts_with_results_per_page_and_skip():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    message_id_1 = "1596823919339"
+    raised = False
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=200, json_payload={
+            "value": [
+                {"chatMessageId": message_id_1}
+            ]})
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    read_receipts = None
+    try:
+        read_receipts = chat_thread_client.list_read_receipts(results_per_page=1, skip=1)
     except:
         raised = True
 
