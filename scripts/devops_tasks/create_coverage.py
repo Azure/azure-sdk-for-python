@@ -70,7 +70,7 @@ def collect_tox_coverage_files():#targeted_packages):
                 if re.match(".coverage*", f):
                     print(os.path.join(root, f))
 
-        generate_coverage_xml()
+        # generate_coverage_xml()
 
     # clean_coverage(coverage_dir)
 
@@ -136,6 +136,37 @@ def combine_coverage_files(coverage_files):
         logging.error("tox.ini is not found in path {}".format(root_dir))
 
 
+def fix_dot_coverage_file():
+    # Change the location of files before "/sdk/" to be the current machine
+
+    replacement = os.getcwd()
+    replacement = replacement.replace('\\', '/') + '/'
+    print(replacement)
+
+    dot_coverage = os.path.join(root_dir, ".coverage")
+    print(dot_coverage)
+
+    out = None
+    with open('.coverage') as cov_file:
+        line = cov_file.read()
+        sdks = [m.start() for m in re.finditer("/sdk/", line)]
+        # print(sdks)
+        file_starts = [m.start() for m in re.finditer('"/', line)]
+        # print(file_starts)
+        print(len(sdks), len(file_starts))
+
+        str_to_replace = line[file_starts[0]+1 : sdks[0]] + '/'
+        print(str_to_replace)
+
+        out = line.replace(str_to_replace, replacement)
+        out = out.replace('\\', '/')
+
+    if out:
+        with open('.coverage', 'w') as cov_file:
+            cov_file.write(out)
+
 
 if __name__ == "__main__":
     collect_tox_coverage_files()
+    fix_dot_coverage_file()
+    generate_coverage_xml()
