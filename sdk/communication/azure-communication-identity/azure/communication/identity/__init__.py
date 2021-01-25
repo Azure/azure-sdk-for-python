@@ -7,7 +7,7 @@
 from ._communication_identity_client import CommunicationIdentityClient
 
 from ._generated.models import (
-    CommunicationTokenRequest,
+    CommunicationIdentityAccessTokenRequest,
     CommunicationUserToken
 )
 
@@ -18,7 +18,7 @@ __all__ = [
     'CommunicationIdentityClient',
 
     # from _identity
-    'CommunicationTokenRequest',
+    'CommunicationIdentityAccessTokenRequest',
     'CommunicationUserToken',
 
     # from _shared
