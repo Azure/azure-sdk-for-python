@@ -88,7 +88,7 @@ class CommunicationIdentityClient(object):
         return self._identity_service_client.communication_identity.create(
             cls=lambda pr, u, e: CommunicationUserIdentifier(u.id),
             **kwargs)
-    
+
     @distributed_trace
     def create_user_with_token(
             self,
@@ -101,7 +101,8 @@ class CommunicationIdentityClient(object):
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
         :return: A CommunicationUser and a CommunicationIdentityToken tuple.
-        :rtype: tuple of (~azure.communication.identity.CommunicationUser, ~azure.communication.identity.CommunicationIdentityToken)
+        :rtype: tuple of (~azure.communication.identity.CommunicationUser, \
+~azure.communication.identity.CommunicationIdentityToken)
         """
         return self._identity_service_client.communication_identity.create(
             cls=lambda pr, u, e: CommunicationUserIdentifier(u.id),
