@@ -112,8 +112,7 @@ def generate_coverage_xml():
     if os.path.exists(coverage_dir):
         logging.info("Generating coverage XML")
         commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"']
-        err = run_check_call(commands, root_dir, always_exit = False)
-        raise err
+        run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
 
