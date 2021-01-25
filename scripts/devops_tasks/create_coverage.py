@@ -57,7 +57,7 @@ def collect_tox_coverage_files():#targeted_packages):
     logging.info(".coverage files: {}".format(coverage_files))
 
     if len(coverage_files):
-        cov_cmd_array = [sys.executable, "-m", "coverage", "combine", "--append"]
+        cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
         cov_cmd_array.extend(coverage_files)
 
         # merge them with coverage combine and copy to root
@@ -67,7 +67,7 @@ def collect_tox_coverage_files():#targeted_packages):
 
         for root, _, files in os.walk(root_dir):
             for f in files:
-                if re.match("*.coverage*", f):
+                if re.match(".coverage*", f):
                     print(os.path.join(root, f))
 
         # generate_coverage_xml()

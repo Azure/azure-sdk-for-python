@@ -45,7 +45,7 @@ jobs:
           path: '$(Build.SourcesDirectory)/_all_coverage_files'
 
       - pwsh: |
-          Get-ChildItem $(Build.SourcesDirectory)/_all_coverage_files/ -Recurse
+          Get-ChildItem $(Build.SourcesDirectory)/ -Recurse
 
       - task: PythonScript@0
         displayName: 'Create Coverage Report'
@@ -72,4 +72,4 @@ jobs:
 
     steps:
     - pwsh: |
-          Get-ChildItem $(Build.SourcesDirectory)/_all_coverage_files/ -Recurse
+          Get-ChildItem -Recurse
