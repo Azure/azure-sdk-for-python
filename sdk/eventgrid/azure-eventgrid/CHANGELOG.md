@@ -11,7 +11,7 @@
   - The `send` method in the `EventGridPubliserClient` is now replaced by the `send_events`.
   - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
   - `data` is now a required param for `CloudEvent`.
-  - `generate_shared_access_signature` is now renamed to `generate_sas`
+  - `azure.eventgrid.generate_shared_access_signature` method is now renamed to `generate_sas`.
   
   **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.
