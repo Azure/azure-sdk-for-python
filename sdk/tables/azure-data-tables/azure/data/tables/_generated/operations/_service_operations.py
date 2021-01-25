@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -35,7 +35,7 @@ class ServiceOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -45,7 +45,7 @@ class ServiceOperations(object):
 
     def set_properties(
         self,
-        table_service_properties,  # type: "models.TableServiceProperties"
+        table_service_properties,  # type: "_models.TableServiceProperties"
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -107,7 +107,7 @@ class ServiceOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -126,7 +126,7 @@ class ServiceOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableServiceProperties"
+        # type: (...) -> "_models.TableServiceProperties"
         """Gets the properties of an account's Table service, including properties for Analytics and CORS
         (Cross-Origin Resource Sharing) rules.
 
@@ -140,7 +140,7 @@ class ServiceOperations(object):
         :rtype: ~azure.data.tables.models.TableServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TableServiceProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TableServiceProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -176,7 +176,7 @@ class ServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -197,7 +197,7 @@ class ServiceOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableServiceStats"
+        # type: (...) -> "_models.TableServiceStats"
         """Retrieves statistics related to replication for the Table service. It is only available on the
         secondary location endpoint when read-access geo-redundant replication is enabled for the
         account.
@@ -212,7 +212,7 @@ class ServiceOperations(object):
         :rtype: ~azure.data.tables.models.TableServiceStats
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TableServiceStats"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TableServiceStats"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -248,7 +248,7 @@ class ServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

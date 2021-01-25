@@ -75,9 +75,11 @@ class TestAzureTraceExporter(unittest.TestCase):
             test_span.start()
             test_span.end()
             transmit.return_value = ExportResult.FAILED_RETRYABLE
-            exporter.export([test_span])
-        self.assertEqual(len(os.listdir(exporter.storage._path)), 1)
-        self.assertIsNone(exporter.storage.get())
+            storage_mock = mock.Mock()
+            exporter.storage.put = storage_mock
+            result = exporter.export([test_span])
+        self.assertEqual(result, SpanExportResult.FAILURE)
+        self.assertEqual(storage_mock.call_count, 1)
 
     def test_export_success(self):
         exporter = self._exporter

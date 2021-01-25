@@ -22,6 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
+from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
@@ -77,7 +78,14 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             loop=loop,
             **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        self._configure_policies(**kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            loop=loop,
+            **kwargs
+        )
         self._loop = loop
 
     @classmethod
@@ -539,7 +547,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Getting an entity from PartitionKey and RowKey
         """
         try:
-            entity = await self._client.table.query_entities_with_partition_and_row_key(
+            entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,

@@ -34,10 +34,13 @@ class FormRecognizerClientBase(object):
         http_logging_policy.allowed_header_names.update(
             {
                 "Operation-Location",
+                "Location",
                 "x-envoy-upstream-service-time",
                 "apim-request-id",
                 "Strict-Transport-Security",
-                "x-content-type-options"
+                "x-content-type-options",
+                "ms-azure-ai-errorcode",
+                "x-ms-cs-error-code"
             }
         )
         http_logging_policy.allowed_query_params.update(
@@ -46,7 +49,8 @@ class FormRecognizerClientBase(object):
                 "locale",
                 "language",
                 "includeKeys",
-                "op"
+                "op",
+                "pages"
             }
         )
 

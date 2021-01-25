@@ -13,8 +13,8 @@ from azure.communication.chat import (
     ChatThreadClient,
     ChatMessagePriority,
     ChatThreadMember,
-    CommunicationUser,
-    CommunicationUserCredential
+    CommunicationUserIdentifier,
+    CommunicationTokenCredential
 )
 from unittest_helpers import mock_response
 
@@ -25,7 +25,7 @@ except ImportError:  # python < 3.3
 
 class TestChatThreadClient(unittest.TestCase):
     @classmethod
-    @patch('azure.communication.chat.CommunicationUserCredential')
+    @patch('azure.communication.chat.CommunicationTokenCredential')
     def setUpClass(cls, credential):
         credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
         TestChatThreadClient.credential = credential
@@ -199,7 +199,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         new_member = ChatThreadMember(
-                user=CommunicationUser(new_member_id),
+                user=CommunicationUserIdentifier(new_member_id),
                 display_name='name',
                 share_history_time=datetime.utcnow())
         members = [new_member]
@@ -221,7 +221,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         try:
-            chat_thread_client.remove_member(CommunicationUser(member_id))
+            chat_thread_client.remove_member(CommunicationUserIdentifier(member_id))
         except:
             raised = True
 

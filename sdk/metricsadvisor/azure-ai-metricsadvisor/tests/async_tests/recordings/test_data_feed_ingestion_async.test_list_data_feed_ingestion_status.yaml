@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionStatus/query
   response:
@@ -18,14 +18,14 @@ interactions:
         than one value read on the same dimension combination. Please review your
         query. "},{"timestamp":"2020-09-13T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-12T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-11T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-10T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-09T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-08T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-07T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-06T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-05T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-04T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-03T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-02T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-09-01T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-31T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-30T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-29T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-28T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-27T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-26T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-25T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-24T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-23T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-22T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-21T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-20T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-19T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-18T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-17T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-16T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-15T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-14T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-13T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-12T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-11T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-10T00:00:00Z","status":"Succeeded","message":""},{"timestamp":"2020-08-09T00:00:00Z","status":"Succeeded","message":""}],"@nextLink":null}'
     headers:
-      apim-request-id: cba17b07-79af-40a6-934c-1a569111771c
+      apim-request-id: e98f18cc-ecd3-40ed-9629-365728a3805b
       content-length: '2809'
       content-type: application/json; charset=utf-8
-      date: Mon, 26 Oct 2020 17:46:03 GMT
+      date: Fri, 22 Jan 2021 01:05:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '263'
-      x-request-id: cba17b07-79af-40a6-934c-1a569111771c
+      x-envoy-upstream-service-time: '206'
+      x-request-id: e98f18cc-ecd3-40ed-9629-365728a3805b
     status:
       code: 200
       message: OK

@@ -3,27 +3,27 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-class CommunicationUser(object):
+class CommunicationUserIdentifier(object):
     """
     Represents a user in Azure Communication Service.
     :ivar identifier: Communication user identifier.
     :vartype identifier: str
-    :param identifier: Identifier to initialize CommunicationUser.
+    :param identifier: Identifier to initialize CommunicationUserIdentifier.
     :type identifier: str
     """
     def __init__(self, identifier):
         self.identifier = identifier
 
-class PhoneNumber(object):
+class PhoneNumberIdentifier(object):
     """
     Represents a phone number.
     :ivar value: Value for a phone number.
     :vartype value: str
-    :param value: Value to initialize PhoneNumber.
+    :param value: Value to initialize PhoneNumberIdentifier.
     :type value: str
     """
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, phone_number):
+        self.phone_number = phone_number
 
 class UnknownIdentifier(object):
     """

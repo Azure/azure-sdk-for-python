@@ -9,8 +9,7 @@ from azure.communication.sms._generated.models import SendMessageRequest
 from azure.communication.sms._generated.models import SendSmsResponse
 
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
-from .._shared.policy import HMACCredentialsPolicy
-from .._shared.utils import parse_connection_str
+from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 
 class SmsClient(object):
@@ -41,7 +40,7 @@ class SmsClient(object):
                 "invalid credential from connection string.")
 
         self._endpoint = endpoint
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential)
+        self._authentication_policy = get_authentication_policy(endpoint, credential)
 
         self._sms_service_client = AzureCommunicationSMSService(
             self._endpoint,
@@ -74,17 +73,17 @@ class SmsClient(object):
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace_async()
-    async def send(self, from_phone_number,  # type: ~azure.communication.sms.PhoneNumber
-             to_phone_numbers, # type: list[~azure.communication.sms.PhoneNumber]
+    async def send(self, from_phone_number,  # type: ~azure.communication.sms.PhoneNumberIdentifier
+             to_phone_numbers, # type: list[~azure.communication.sms.PhoneNumberIdentifier]
              message,  # type: str
              **kwargs  # type: Any
              ):  # type: (...) -> SendSmsResponse
         """Sends SMSs to phone numbers.
 
         :param from_phone_number: the sender of the SMS.
-        :type from_phone_number: ~azure.communication.sms.PhoneNumber
+        :type from_phone_number: ~azure.communication.sms.PhoneNumberIdentifier
         :param to_phone_numbers: the list of recipients of the SMS.
-        :type to_phone_numbers: list[~azure.communication.sms.PhoneNumber]
+        :type to_phone_numbers: list[~azure.communication.sms.PhoneNumberIdentifier]
         :param str message: The message in the SMS
         :keyword send_sms_options: the options object to configure delivery reporting.
         :type send_sms_options: ~azure.communication.sms.models.SendSmsOptions

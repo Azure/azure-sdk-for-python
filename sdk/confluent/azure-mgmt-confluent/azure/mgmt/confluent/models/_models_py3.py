@@ -15,9 +15,17 @@ import msrest.serialization
 from ._confluent_management_client_enums import *
 
 
-class ConfluentAgreementProperties(msrest.serialization.Model):
-    """Terms properties for Marketplace and Confluent.
+class ConfluentAgreementResource(msrest.serialization.Model):
+    """Confluent Agreements Resource.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: ARM id of the resource.
+    :vartype id: str
+    :ivar name: Name of the agreement.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     :param publisher: Publisher identifier string.
     :type publisher: str
     :param product: Product identifier string.
@@ -37,15 +45,24 @@ class ConfluentAgreementProperties(msrest.serialization.Model):
     :type accepted: bool
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'plan': {'key': 'plan', 'type': 'str'},
-        'license_text_link': {'key': 'licenseTextLink', 'type': 'str'},
-        'privacy_policy_link': {'key': 'privacyPolicyLink', 'type': 'str'},
-        'retrieve_datetime': {'key': 'retrieveDatetime', 'type': 'iso-8601'},
-        'signature': {'key': 'signature', 'type': 'str'},
-        'accepted': {'key': 'accepted', 'type': 'bool'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'publisher': {'key': 'properties.publisher', 'type': 'str'},
+        'product': {'key': 'properties.product', 'type': 'str'},
+        'plan': {'key': 'properties.plan', 'type': 'str'},
+        'license_text_link': {'key': 'properties.licenseTextLink', 'type': 'str'},
+        'privacy_policy_link': {'key': 'properties.privacyPolicyLink', 'type': 'str'},
+        'retrieve_datetime': {'key': 'properties.retrieveDatetime', 'type': 'iso-8601'},
+        'signature': {'key': 'properties.signature', 'type': 'str'},
+        'accepted': {'key': 'properties.accepted', 'type': 'bool'},
     }
 
     def __init__(
@@ -61,7 +78,10 @@ class ConfluentAgreementProperties(msrest.serialization.Model):
         accepted: Optional[bool] = None,
         **kwargs
     ):
-        super(ConfluentAgreementProperties, self).__init__(**kwargs)
+        super(ConfluentAgreementResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.publisher = publisher
         self.product = product
         self.plan = plan
@@ -72,49 +92,8 @@ class ConfluentAgreementProperties(msrest.serialization.Model):
         self.accepted = accepted
 
 
-class ConfluentAgreementResource(msrest.serialization.Model):
-    """Agreement Terms definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The ARM id of the resource.
-    :vartype id: str
-    :ivar name: The name of the agreement.
-    :vartype name: str
-    :ivar type: The type of the agreement.
-    :vartype type: str
-    :param properties: Represents the properties of the resource.
-    :type properties: ~azure.mgmt.confluent.models.ConfluentAgreementProperties
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ConfluentAgreementProperties'},
-    }
-
-    def __init__(
-        self,
-        *,
-        properties: Optional["ConfluentAgreementProperties"] = None,
-        **kwargs
-    ):
-        super(ConfluentAgreementResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.properties = properties
-
-
 class ConfluentAgreementResourceListResponse(msrest.serialization.Model):
-    """Response of a agreements operation.
+    """Response of a list operation.
 
     :param value: Results of a list operation.
     :type value: list[~azure.mgmt.confluent.models.ConfluentAgreementResource]
@@ -304,11 +283,14 @@ class OperationResult(msrest.serialization.Model):
     :type name: str
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.confluent.models.OperationDisplay
+    :param is_data_action: Indicates whether the operation is a data action.
+    :type is_data_action: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
     def __init__(
@@ -316,11 +298,13 @@ class OperationResult(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         display: Optional["OperationDisplay"] = None,
+        is_data_action: Optional[bool] = None,
         **kwargs
     ):
         super(OperationResult, self).__init__(**kwargs)
         self.name = name
         self.display = display
+        self.is_data_action = is_data_action
 
 
 class OrganizationResource(msrest.serialization.Model):
@@ -591,7 +575,7 @@ class UserDetail(msrest.serialization.Model):
     _validation = {
         'first_name': {'max_length': 50, 'min_length': 0},
         'last_name': {'max_length': 50, 'min_length': 0},
-        'email_address': {'pattern': r'^\S+@\S+\.\S+$'},
+        'email_address': {'pattern': r'\S+@\S+\.\S+'},
     }
 
     _attribute_map = {
@@ -628,7 +612,7 @@ class OrganizationResourcePropertiesUserDetail(UserDetail):
     _validation = {
         'first_name': {'max_length': 50, 'min_length': 0},
         'last_name': {'max_length': 50, 'min_length': 0},
-        'email_address': {'pattern': r'^\S+@\S+\.\S+$'},
+        'email_address': {'pattern': r'\S+@\S+\.\S+'},
     }
 
     _attribute_map = {

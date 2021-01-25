@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0 (2020-12-25)
+
+**Breaking changes**
+
+- Client name changed from MonitorClient to MonitorManagementClient
+
 ## 1.0.1 (2020-09-18)
 
 **Bug fix**

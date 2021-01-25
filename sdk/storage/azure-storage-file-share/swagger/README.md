@@ -3,18 +3,15 @@
 > see https://aka.ms/autorest
 
 ### Setup
+Install Autorest v3
 ```ps
-cd C:\work
-git clone --recursive https://github.com/Azure/autorest.python.git
-cd autorest.python
-git checkout azure-core
-npm install
+npm install -g autorest
 ```
 
 ### Generation
 ```ps
 cd <swagger-folder>
-autorest --use=C:/work/autorest.python --version=2.0.4280
+autorest --v3 --python
 ```
 
 ### Settings
