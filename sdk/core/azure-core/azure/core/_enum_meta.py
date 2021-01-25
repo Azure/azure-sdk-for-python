@@ -45,7 +45,7 @@ class CaseInsensitiveEnumMeta(EnumMeta):
     """
 
     def __getitem__(cls, name):
-        return super().__getitem__(name.upper())
+        return super(CaseInsensitiveEnumMeta, cls).__getitem__(name.upper())
 
     def __getattr__(cls, name):
         """Return the enum member matching `name`
