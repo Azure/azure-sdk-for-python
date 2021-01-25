@@ -57,6 +57,8 @@ jobs:
           #   --toxenv="samples"
           # env: ${{ parameters.EnvVars }}
 
+      - pwsh: |
+          python -m coverage xml -i --omit "*test*,*example*"
 
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'

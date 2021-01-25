@@ -65,7 +65,7 @@ def collect_tox_coverage_files():#targeted_packages):
 
         logging.info("after running coverage combine")
 
-        generate_coverage_xml()
+        # generate_coverage_xml()
 
     # clean_coverage(coverage_dir)
 
