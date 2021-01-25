@@ -39,7 +39,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        await client.send_events(eg_event)
+        await client.send(eg_event)
 
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -60,7 +60,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        await client.send_events([eg_event1, eg_event2])
+        await client.send([eg_event1, eg_event2])
 
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -75,7 +75,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        await client.send_events(eg_event)
+        await client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -90,7 +90,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data_version="2.0"
                 )
         with pytest.raises(TypeError, match="Data in EventGridEvent cannot be bytes*"):
-            await client.send_events(eg_event)
+            await client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -105,7 +105,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 "data_version":"2.0"
         }
         with pytest.raises(TypeError, match="Data in EventGridEvent cannot be bytes*"):
-            await client.send_events(eg_event)
+            await client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -118,7 +118,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = {"sample": "cloudevent"},
                 type="Sample.Cloud.Event"
                 )
-        await client.send_events(cloud_event)
+        await client.send(cloud_event)
 
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -132,7 +132,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        await client.send_events(cloud_event)
+        await client.send(cloud_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -145,7 +145,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = b"cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        await client.send_events(cloud_event)
+        await client.send(cloud_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -158,7 +158,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        await client.send_events([cloud_event])
+        await client.send([cloud_event])
 
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -176,7 +176,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     'extension':'hello'
                     }
                 )
-        await client.send_events([cloud_event])
+        await client.send([cloud_event])
         internal = cloud_event._to_generated().serialize()
         assert 'reason_code' in internal
         assert 'extension' in internal
@@ -196,7 +196,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 "data": "cloudevent",
                 "type": "Sample.Cloud.Event"
         }
-        await client.send_events(cloud_event1)
+        await client.send(cloud_event1)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -209,7 +209,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = None,
                 type="Sample.Cloud.Event"
                 )
-        await client.send_events(cloud_event)
+        await client.send(cloud_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -225,7 +225,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        await client.send_events(eg_event)
+        await client.send(eg_event)
 
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -244,7 +244,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customData": "sample data"
                     }
                 )
-        await client.send_events(custom_event)
+        await client.send(custom_event)
 
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -273,4 +273,4 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customData": "sample data 2"
                     }
                 )
-        await client.send_events([custom_event1, custom_event2])
+        await client.send([custom_event1, custom_event2])

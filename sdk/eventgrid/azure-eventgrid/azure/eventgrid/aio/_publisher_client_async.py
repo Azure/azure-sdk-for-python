@@ -98,7 +98,7 @@ class EventGridPublisherClient():
         return policies
 
     @distributed_trace_async
-    async def send_events(
+    async def send(
         self,
         events: SendType,
         **kwargs: Any) -> None:

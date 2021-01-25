@@ -8,7 +8,6 @@
   - `decode_cloud_event` is renamed to `deserialize_cloud_events`.
   - `decode_eventgrid_event` is renamed to `deserialize_eventgrid_events`.
   - The system events now exist in the `azure.eventgrid.systemevents` namespace instead of `azure.eventgrid.models` namespace.
-  - The `send` method in the `EventGridPubliserClient` is now replaced by the `send_events`.
   - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
   - `data` is now a required param for `CloudEvent`.
   
