@@ -17,19 +17,19 @@ jobs:
   - job: Publish_Code_Coverage
 
     steps:
-      - script: |
-          codecov -t $(codecov-python-repository-token)
-        displayName: 'Publish Code Cov'
-        continueOnError: true
-        condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
+      # - script: |
+      #     codecov -t $(codecov-python-repository-token)
+      #   displayName: 'Publish Code Cov'
+      #   continueOnError: true
+      #   condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
 
-      - task: PublishPipelineArtifact@1
-        displayName: 'Publish .coverage files'
-        continueOnError: true
-        condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
-        inputs:
-          targetPath: '$(Build.SourcesDirectory)/_coverage'
-          artifactType: 'pipeline'
+      # - task: PublishPipelineArtifact@1
+      #   displayName: 'Publish .coverage files'
+      #   continueOnError: true
+      #   condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+      #   inputs:
+      #     targetPath: '$(Build.SourcesDirectory)/_coverage'
+      #     artifactType: 'pipeline'
 
       # Download all existing artifacts (most of the time, it's whatever was uploaded before)
       - pwsh: |
