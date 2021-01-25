@@ -32,7 +32,7 @@ from .._helpers import (
     _eventgrid_data_typecheck
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
-from .._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent as InternalEventGridEvent
+from .._generated.models import CloudEvent as InternalCloudEvent
 from .._version import VERSION
 
 SendType = Union[
@@ -104,8 +104,11 @@ class EventGridPublisherClient():
         events: SendType,
         **kwargs: Any) -> None:
         """Sends event data to topic hostname specified during client initialization.
+        Multiple events can be published at once by seding a list of events. It is very
+        inefficient to loop the send method for each event instead of just using a list
+        and we highly recommend against it.
 
-        :param  events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.
+        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
@@ -127,11 +130,10 @@ class EventGridPublisherClient():
                 cast(List[InternalCloudEvent], events),
                 **kwargs
                 )
-        else:
-            kwargs.setdefault("content_type", "application/json; charset=utf-8")
-            if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
-                for event in events:
-                    _eventgrid_data_typecheck(event)
-            elif isinstance(events[0], CustomEvent):
-                events = [dict(e) for e in events] # type: ignore
-            return await self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
+        kwargs.setdefault("content_type", "application/json; charset=utf-8")
+        if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+            for event in events:
+                _eventgrid_data_typecheck(event)
+        elif isinstance(events[0], CustomEvent):
+            events = [dict(e) for e in events] # type: ignore
+        return await self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
