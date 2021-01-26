@@ -9,4 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0"
+from ._configuration import ServiceBusManagementClientConfiguration
+from ._service_bus_management_client import ServiceBusManagementClient
+__all__ = ['ServiceBusManagementClient', 'ServiceBusManagementClientConfiguration']
+
+from .version import VERSION
+
+__version__ = VERSION
+

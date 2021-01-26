@@ -9,4 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0"
+from ._operations import Operations
+from ._namespaces_operations import NamespacesOperations
+from ._queues_operations import QueuesOperations
+from ._topics_operations import TopicsOperations
+from ._subscriptions_operations import SubscriptionsOperations
+
+__all__ = [
+    'Operations',
+    'NamespacesOperations',
+    'QueuesOperations',
+    'TopicsOperations',
+    'SubscriptionsOperations',
+]

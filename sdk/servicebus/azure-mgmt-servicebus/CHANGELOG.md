@@ -1,5 +1,9 @@
 # Release History
 
+## 2.0.0 (2021-01-26)
+
+- Upgrade to MultiAPI
+
 ## 1.0.0 (2020-09-16)
 
 **Features**
