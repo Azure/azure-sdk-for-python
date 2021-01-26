@@ -392,10 +392,10 @@ class TableSasPermissions(object):
         """
         if not _str:
             _str = ""
-        self.read = kwargs.pop("read", None) or ("r" in _str)
-        self.add = kwargs.pop("add", None) or ("a" in _str)
-        self.update = kwargs.pop("update", None) or ("u" in _str)
-        self.delete = kwargs.pop("delete", None) or ("d" in _str)
+        self.READ = kwargs.pop("read", None) or ("r" in _str)
+        self.ADD = kwargs.pop("add", None) or ("a" in _str)
+        self.UPDATE = kwargs.pop("update", None) or ("u" in _str)
+        self.DELETE = kwargs.pop("delete", None) or ("d" in _str)
 
     def __or__(self, other):
         return TableSasPermissions(_str=str(self) + str(other))
@@ -441,10 +441,10 @@ class TableSasPermissions(object):
         return parsed
 
 
-TableSasPermissions.READ = TableSasPermissions(**dict(read=True))
-TableSasPermissions.ADD = TableSasPermissions(**dict(add=True))
-TableSasPermissions.UPDATE = TableSasPermissions(**dict(update=True))
-TableSasPermissions.DELETE = TableSasPermissions(**dict(delete=True))
+TableSasPermissions.READ = TableSasPermissions(read=True)
+TableSasPermissions.ADD = TableSasPermissions(add=True)
+TableSasPermissions.UPDATE = TableSasPermissions(update=True)
+TableSasPermissions.DELETE = TableSasPermissions(delete=True)
 
 
 def service_stats_deserialize(generated):
