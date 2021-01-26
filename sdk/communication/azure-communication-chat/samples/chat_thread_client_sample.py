@@ -27,7 +27,7 @@ import os
 
 
 class ChatThreadClientSamples(object):
-    from azure.communication.administration import CommunicationIdentityClient
+    from azure.communication.identity import CommunicationIdentityClient
     connection_string = os.environ.get("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING", None)
     if not connection_string:
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING env before run this sample.")
