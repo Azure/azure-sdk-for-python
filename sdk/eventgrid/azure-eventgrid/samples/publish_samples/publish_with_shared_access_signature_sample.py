@@ -21,13 +21,13 @@ import time
 
 from datetime import datetime, timedelta
 from azure.core.credentials import AzureSasCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent, generate_shared_access_signature
+from azure.eventgrid import EventGridPublisherClient, CloudEvent, generate_sas
 
 key = os.environ["CLOUD_ACCESS_KEY"]
 endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
 expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
 
-signature = generate_shared_access_signature(endpoint, key, expiration_date_utc)
+signature = generate_sas(endpoint, key, expiration_date_utc)
 
 # authenticate client
 credential = AzureSasCredential(signature)

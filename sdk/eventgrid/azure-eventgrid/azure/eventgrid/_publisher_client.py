@@ -135,3 +135,18 @@ class EventGridPublisherClient(object):
         elif isinstance(events[0], CustomEvent):
             events = [dict(e) for e in events] # type: ignore
         return self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
+
+    def close(self):
+        # type: () -> None
+        """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session.
+        """
+        return self._client.close()
+
+    def __enter__(self):
+        # type: () -> EventGridPublisherClient
+        self._client.__enter__()  # pylint:disable=no-member
+        return self
+
+    def __exit__(self, *args):
+        # type: (*Any) -> None
+        self._client.__exit__(*args)  # pylint:disable=no-member

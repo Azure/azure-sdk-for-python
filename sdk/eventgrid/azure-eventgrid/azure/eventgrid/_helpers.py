@@ -20,7 +20,7 @@ from . import _constants as constants
 if TYPE_CHECKING:
     from datetime import datetime
 
-def generate_shared_access_signature(endpoint, shared_access_key, expiration_date_utc, **kwargs):
+def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
     """ Helper method to generate shared access signature given hostname, key, and expiration date.
         :param str endpoint: The topic endpoint to send the events to.
