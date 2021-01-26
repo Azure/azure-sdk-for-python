@@ -255,7 +255,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs.pop("string_index_type", None),
         )
         if string_index_type:
-            kwargs.update({"string_index_type", string_index_type})
+            kwargs.update({"string_index_type": string_index_type})
 
         try:
             return self._client.entities_recognition_general(
@@ -341,7 +341,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs.pop("string_index_type", None)
         )
         if string_index_type:
-            kwargs.update({"string_index_type", string_index_type})
+            kwargs.update({"string_index_type": string_index_type})
 
         try:
             return self._client.entities_recognition_pii(
