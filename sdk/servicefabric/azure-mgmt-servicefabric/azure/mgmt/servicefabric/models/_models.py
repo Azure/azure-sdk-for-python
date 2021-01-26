@@ -900,8 +900,8 @@ class ClientCertificate(Model):
     :type thumbprint: str
     :param common_name: Certificate Common name.
     :type common_name: str
-    :param issuer_thumbprint: Issuer thumbprint for the certificate. Its only
-     use ehn CommonName is used.
+    :param issuer_thumbprint: Issuer thumbprint for the certificate. Only used
+     together with CommonName.
     :type issuer_thumbprint: str
     """
 
@@ -1902,34 +1902,9 @@ class ManagedCluster(Resource):
     :ivar cluster_id: A service generated unique identifier for the cluster
      resource.
     :vartype cluster_id: str
-    :ivar cluster_state: The current state of the cluster.
-     - WaitingForNodes - Indicates that the cluster resource is created and the
-     resource provider is waiting for Service Fabric VM extension to boot up
-     and report to it.
-     - Deploying - Indicates that the Service Fabric runtime is being installed
-     on the VMs. Cluster resource will be in this state until the cluster boots
-     up and system services are up.
-     - BaselineUpgrade - Indicates that the cluster is upgrading to establishes
-     the cluster version. This upgrade is automatically initiated when the
-     cluster boots up for the first time.
-     - UpdatingUserConfiguration - Indicates that the cluster is being upgraded
-     with the user provided configuration.
-     - UpdatingUserCertificate - Indicates that the cluster is being upgraded
-     with the user provided certificate.
-     - UpdatingInfrastructure - Indicates that the cluster is being upgraded
-     with the latest Service Fabric runtime version. This happens only when the
-     **upgradeMode** is set to 'Automatic'.
-     - EnforcingClusterVersion - Indicates that cluster is on a different
-     version than expected and the cluster is being upgraded to the expected
-     version.
-     - UpgradeServiceUnreachable - Indicates that the system service in the
-     cluster is no longer polling the Resource Provider. Clusters in this state
-     cannot be managed by the Resource Provider.
-     - AutoScale - Indicates that the ReliabilityLevel of the cluster is being
-     adjusted.
-     - Ready - Indicates that the cluster is in a stable state.
-     . Possible values include: 'WaitingForNodes', 'Deploying',
-     'BaselineUpgrade', 'UpdatingUserConfiguration', 'UpdatingUserCertificate',
+    :ivar cluster_state: The current state of the cluster. Possible values
+     include: 'WaitingForNodes', 'Deploying', 'BaselineUpgrade',
+     'UpdatingUserConfiguration', 'UpdatingUserCertificate',
      'UpdatingInfrastructure', 'EnforcingClusterVersion',
      'UpgradeServiceUnreachable', 'AutoScale', 'Ready'
     :vartype cluster_state: str or ~azure.mgmt.servicefabric.models.enum
@@ -1958,9 +1933,6 @@ class ManagedCluster(Resource):
      the cluster.
     :type fabric_settings:
      list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
-    :param use_test_extension: Use service fabric test vm extension, by
-     default it's false.
-    :type use_test_extension: bool
     :ivar provisioning_state: The provisioning state of the managed cluster
      resource. Possible values include: 'None', 'Creating', 'Created',
      'Updating', 'Succeeded', 'Failed', 'Canceled', 'Deleting', 'Deleted',
@@ -1972,21 +1944,8 @@ class ManagedCluster(Resource):
      clusters use [ClusterVersion API](./ClusterVersion.md). To get the list of
      available version for existing clusters use **availableClusterVersions**.
     :type cluster_code_version: str
-    :param cluster_upgrade_mode: The upgrade mode of the cluster when new
-     Service Fabric runtime version is available.
-     - Automatic - The cluster will be automatically upgraded to the latest
-     Service Fabric runtime version as soon as it is available.
-     - Manual - The cluster will not be automatically upgraded to the latest
-     Service Fabric runtime version. The cluster is upgraded by setting the
-     **clusterCodeVersion** property in the cluster resource.
-     . Possible values include: 'Automatic', 'Manual'
-    :type cluster_upgrade_mode: str or ~azure.mgmt.servicefabric.models.enum
-    :param cluster_upgrade_description: Describes the policy used when
-     upgrading the cluster.
-    :type cluster_upgrade_description:
-     ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
-    :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
-    :type reverse_proxy_endpoint_port: int
+    :param addon_features: client certificates for the cluster.
+    :type addon_features: list[str]
     :param sku: The sku of the managed cluster
     :type sku: ~azure.mgmt.servicefabric.models.Sku
     """
@@ -2026,12 +1985,9 @@ class ManagedCluster(Resource):
         'clients': {'key': 'properties.clients', 'type': '[ClientCertificate]'},
         'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
-        'use_test_extension': {'key': 'properties.useTestExtension', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
-        'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
-        'cluster_upgrade_description': {'key': 'properties.clusterUpgradeDescription', 'type': 'ClusterUpgradePolicy'},
-        'reverse_proxy_endpoint_port': {'key': 'properties.reverseProxyEndpointPort', 'type': 'int'},
+        'addon_features': {'key': 'properties.addonFeatures', 'type': '[str]'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
@@ -2050,12 +2006,9 @@ class ManagedCluster(Resource):
         self.clients = kwargs.get('clients', None)
         self.azure_active_directory = kwargs.get('azure_active_directory', None)
         self.fabric_settings = kwargs.get('fabric_settings', None)
-        self.use_test_extension = kwargs.get('use_test_extension', None)
         self.provisioning_state = None
         self.cluster_code_version = kwargs.get('cluster_code_version', None)
-        self.cluster_upgrade_mode = kwargs.get('cluster_upgrade_mode', None)
-        self.cluster_upgrade_description = kwargs.get('cluster_upgrade_description', None)
-        self.reverse_proxy_endpoint_port = kwargs.get('reverse_proxy_endpoint_port', None)
+        self.addon_features = kwargs.get('addon_features', None)
         self.sku = kwargs.get('sku', None)
 
 
@@ -2068,7 +2021,7 @@ class ManagedClusterUpdateParameters(Model):
     :param http_gateway_connection_port: The port used for http connections to
      the cluster.
     :type http_gateway_connection_port: int
-    :param load_balancing_rules: Describes a load balancing rule.
+    :param load_balancing_rules: Describes load balancing rules.
     :type load_balancing_rules:
      list[~azure.mgmt.servicefabric.models.LoadBalancingRule]
     :param clients: client certificates for the cluster.
@@ -2086,21 +2039,8 @@ class ManagedClusterUpdateParameters(Model):
      clusters use [ClusterVersion API](./ClusterVersion.md). To get the list of
      available version for existing clusters use **availableClusterVersions**.
     :type cluster_code_version: str
-    :param cluster_upgrade_mode: The upgrade mode of the cluster when new
-     Service Fabric runtime version is available.
-     - Automatic - The cluster will be automatically upgraded to the latest
-     Service Fabric runtime version as soon as it is available.
-     - Manual - The cluster will not be automatically upgraded to the latest
-     Service Fabric runtime version. The cluster is upgraded by setting the
-     **clusterCodeVersion** property in the cluster resource.
-     . Possible values include: 'Automatic', 'Manual'
-    :type cluster_upgrade_mode: str or ~azure.mgmt.servicefabric.models.enum
-    :param cluster_upgrade_description: Describes the policy used when
-     upgrading the cluster.
-    :type cluster_upgrade_description:
-     ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
-    :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
-    :type reverse_proxy_endpoint_port: int
+    :param addon_features: client certificates for the cluster.
+    :type addon_features: list[str]
     :param tags: Managed cluster update parameters
     :type tags: dict[str, str]
     """
@@ -2113,9 +2053,7 @@ class ManagedClusterUpdateParameters(Model):
         'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
-        'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
-        'cluster_upgrade_description': {'key': 'properties.clusterUpgradeDescription', 'type': 'ClusterUpgradePolicy'},
-        'reverse_proxy_endpoint_port': {'key': 'properties.reverseProxyEndpointPort', 'type': 'int'},
+        'addon_features': {'key': 'properties.addonFeatures', 'type': '[str]'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -2128,9 +2066,7 @@ class ManagedClusterUpdateParameters(Model):
         self.azure_active_directory = kwargs.get('azure_active_directory', None)
         self.fabric_settings = kwargs.get('fabric_settings', None)
         self.cluster_code_version = kwargs.get('cluster_code_version', None)
-        self.cluster_upgrade_mode = kwargs.get('cluster_upgrade_mode', None)
-        self.cluster_upgrade_description = kwargs.get('cluster_upgrade_description', None)
-        self.reverse_proxy_endpoint_port = kwargs.get('reverse_proxy_endpoint_port', None)
+        self.addon_features = kwargs.get('addon_features', None)
         self.tags = kwargs.get('tags', None)
 
 
@@ -2326,8 +2262,6 @@ class NodeType(ManagedProxyResource):
      cannot be deleted or changed for existing clusters.
     :type is_primary: bool
     :param vm_instance_count: Required. The number of nodes in the node type.
-     This count should match the capacity property in the corresponding
-     VirtualMachineScaleSet resource.
     :type vm_instance_count: int
     :param data_disk_size_gb: Required. Disk size for each vm in the node type
      in GBs.
@@ -2547,9 +2481,7 @@ class NodeTypeDescription(Model):
 class NodeTypeUpdateParameters(Model):
     """Node type update request.
 
-    :param vm_instance_count: The number of nodes in the node type. This count
-     should match the capacity property in the corresponding
-     VirtualMachineScaleSet resource.
+    :param vm_instance_count: The number of nodes in the node type.
     :type vm_instance_count: int
     :param placement_properties: The placement tags applied to nodes in the
      node type, which can be used to indicate where certain services (workload)
@@ -3310,9 +3242,8 @@ class Sku(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Sku Name. Basic will hav a minimum of 3 seed nodes
-     and Standard a minimum of 5. Basic only allows 1 node type. Possible
-     values include: 'Basic', 'Standard'
+    :param name: Required. Sku Name. Possible values include: 'Basic',
+     'Standard'
     :type name: str or ~azure.mgmt.servicefabric.models.enum
     """
 
@@ -3837,10 +3768,6 @@ class VMSSExtension(Model):
 
     :param name: Required. The name of the extension.
     :type name: str
-    :param force_update_tag: If a value is provided and is different from the
-     previous value, the extension handler will be forced to update even if the
-     extension configuration has not changed.
-    :type force_update_tag: str
     :param publisher: Required. The name of the extension handler publisher.
     :type publisher: str
     :param type: Required. Specifies the type of the extension; an example is
@@ -3860,12 +3787,16 @@ class VMSSExtension(Model):
      protectedSettings or protectedSettingsFromKeyVault or no protected
      settings at all.
     :type protected_settings: object
-    :ivar provisioning_state: The provisioning state, which only appears in
-     the response.
-    :vartype provisioning_state: str
+    :param force_update_tag: If a value is provided and is different from the
+     previous value, the extension handler will be forced to update even if the
+     extension configuration has not changed.
+    :type force_update_tag: str
     :param provision_after_extensions: Collection of extension names after
      which this extension needs to be provisioned.
     :type provision_after_extensions: list[str]
+    :ivar provisioning_state: The provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -3878,26 +3809,26 @@ class VMSSExtension(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
         'type': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(VMSSExtension, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.force_update_tag = kwargs.get('force_update_tag', None)
         self.publisher = kwargs.get('publisher', None)
         self.type = kwargs.get('type', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
-        self.provisioning_state = None
+        self.force_update_tag = kwargs.get('force_update_tag', None)
         self.provision_after_extensions = kwargs.get('provision_after_extensions', None)
+        self.provisioning_state = None
