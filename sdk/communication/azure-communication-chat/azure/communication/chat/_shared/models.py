@@ -51,14 +51,17 @@ class MicrosoftTeamsUserIdentifier(object):
     :vartype user_id: str
     :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
     :type user_id: str
+    :ivar cloud: Cloud environment that this identifier belongs to
+    :vartype cloud: CloudEnvironment
     :ivar is_anonymous: set this to true if the user is anonymous for example when joining a meeting with a share link
     :vartype is_anonymous: bool
     :param is_anonymous: Value to initialize MicrosoftTeamsUserIdentifier.
     :type is_anonymous: bool
     """
-    def __init__(self, user_id, is_anonymous=False):
+    def __init__(self, user_id, cloud=CloudEnvironment.Public, is_anonymous=False):
         self.user_id = user_id
         self.is_anonymous = is_anonymous
+        self.cloud = cloud
 
 class CommunicationIdentifierModel(msrest.serialization.Model):
     """Communication Identifier Model.
@@ -100,7 +103,6 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
         self.is_anonymous = kwargs.get('is_anonymous', None)
         self.microsoft_teams_user_id = kwargs.get('microsoft_teams_user_id', None)
 
-
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(cls, name):
         return super().__getitem__(name.upper())
@@ -125,3 +127,12 @@ class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     PhoneNumber = "PHONEnUMBER"
     CallingApplication = "CALLINGAPPLICATION"
     MicrosoftTeamsUser = "MICROSOFTTEAMSuSER"
+
+class CloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """
+    The cloud enviornment that the identifier belongs to
+    """
+    
+    Public = "PUBLIC"
+    Dod = "DOD"
+    Gcch = "GCCH"
