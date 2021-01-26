@@ -104,10 +104,28 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             credential=credential,
             **kwargs
         )
+        self._api_version = kwargs.get("api_version")
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
         self._deserialize = _get_deserialize()
+
+    def _check_string_index_type_arg(self, string_index_type):
+        if self._api_version == "v3.0":
+            if string_index_type:
+                raise ValueError(
+                    "'string_index_type' is only available for API version v3.1-preview and up"
+                )
+
+            else:
+                return None
+
+        elif not string_index_type:
+            return self._string_code_unit
+
+        else:
+            return string_index_type
+
 
     @distributed_trace
     def detect_language(  # type: ignore
@@ -208,8 +226,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
-        :keyword str string_index_type: Specifies the method used to interpret string offsets.  
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'. 
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
@@ -232,13 +250,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+        string_index_type = self._check_string_index_type_arg(kwargs.pop("string_index_type"))
+        if string_index_type:
+            kwargs.update("string_index_type", string_index_type)
+
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", entities_result),
                 **kwargs
             )
@@ -289,8 +309,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
-        :keyword str string_index_type: Specifies the method used to interpret string offsets.  
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'. 
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
@@ -314,14 +334,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+        string_index_type = self._check_string_index_type_arg(kwargs.pop("string_index_type"))
+        if string_index_type:
+            kwargs.update("string_index_type", string_index_type)
+
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
-                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
