@@ -4,7 +4,7 @@ from azure.mgmt.botservice.models import (
     Bot,
     BotProperties,
     ErrorException,
-    sku
+    Sku
 )
 
 class BotServiceConnectionsTestCase(AzureMgmtTestCase):
@@ -30,7 +30,7 @@ class BotServiceConnectionsTestCase(AzureMgmtTestCase):
             resource_name = self.resource_name,
             parameters = Bot(
                 location= location,
-                sku = sku.Sku(name=sku_name),
+                sku = Sku(name=sku_name),
                 kind= kind,
                 properties= BotProperties(
                     display_name = display_name,
