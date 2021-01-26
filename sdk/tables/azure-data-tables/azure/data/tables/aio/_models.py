@@ -76,6 +76,8 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
     :keyword str continuation_token: An opaque continuation token.
     :keyword str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
+    :keyword callable entity_hook: A custom entity type for deserialization entities returned
+        from the service
     """
 
     def __init__(self, command, table, **kwargs):
@@ -92,6 +94,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
         self.location_mode = None
+        self.entity_hook = kwargs.pop("entity_hook", _convert_to_entity)
 
     async def _get_next_cb(self, continuation_token, **kwargs):
         next_partition_key, next_row_key = _extract_continuation_token(
@@ -114,7 +117,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [_convert_to_entity(t) for t in self._response.value]
+        props_list = [self.entity_hook(t) for t in self._response.value]
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {

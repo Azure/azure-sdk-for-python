@@ -445,6 +445,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
         :keyword select: Specify desired properties of an entity to return certain entities
+        :keywork entity_hook: Callable for custom deserialization
         :paramtype select: str or list[str]
         :return: Query of table entities
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
@@ -459,6 +460,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
+        entity_hook = kwargs.pop('entity_hook', None)
+        page_iterator_class = TableEntityPropertiesPaged
+        if entity_hook:
+            page_iterator_class = functools.partial(TableEntityPropertiesPaged, entity_hook=entity_hook)
+
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
@@ -470,7 +476,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             table=self.table_name,
             results_per_page=top,
             select=user_select,
-            page_iterator_class=TableEntityPropertiesPaged,
+            page_iterator_class=page_iterator_class,
         )
 
     @distributed_trace
@@ -485,6 +491,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
         :keyword select: Specify desired properties of an entity to return certain entities
+        :keywork entity_hook: Callable for custom deserialization
         :paramtype select: str or list[str]
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
@@ -500,6 +507,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
+        entity_hook = kwargs.pop("entity_hook", None)
+        page_iterator_class = TableEntityPropertiesPaged
+        if entity_hook:
+            page_iterator_class = functools.partial(TableEntityPropertiesPaged, entity_hook=entity_hook)
+
         parameters = kwargs.pop("parameters", None)
         filter = self._parameter_filter_substitution(
             parameters, filter
@@ -516,7 +528,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             results_per_page=top,
             filter=filter,
             select=user_select,
-            page_iterator_class=TableEntityPropertiesPaged,
+            page_iterator_class=page_iterator_class,
         )
 
     @distributed_trace_async
@@ -534,6 +546,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :param row_key: The row key of the entity.
         :type row_key: str
         :return: Dictionary mapping operation metadata returned from the service
+        :keywork entity_hook: Callable for custom deserialization
         :rtype: ~azure.data.tables.TableEntity
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -546,6 +559,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Getting an entity from PartitionKey and RowKey
         """
+        entity_hook = kwargs.pop('entity_hook', None)
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
@@ -553,6 +567,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 row_key=row_key,
                 **kwargs
             )
+            if entity_hook:
+                return entity_hook(entity)
 
             properties = _convert_to_entity(entity)
             return properties

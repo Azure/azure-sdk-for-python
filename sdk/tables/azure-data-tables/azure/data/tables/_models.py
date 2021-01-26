@@ -323,7 +323,7 @@ class TableEntityPropertiesPaged(PageIterator):
     :keyword str continuation_token: An opaque continuation token.
     :keyword str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
-    :keyword callabel entity_hook: A custom entity type for deserialization entities returned
+    :keyword callable entity_hook: A custom entity type for deserialization entities returned
         from the service
     """
 
@@ -341,7 +341,7 @@ class TableEntityPropertiesPaged(PageIterator):
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
         self.location_mode = None
-        self.entity_hook = kwargs.get("entity_hook", None)
+        self.entity_hook = kwargs.pop("entity_hook", _convert_to_entity)
 
     def _get_next_cb(self, continuation_token, **kwargs):
         next_partition_key, next_row_key = _extract_continuation_token(
@@ -362,14 +362,9 @@ class TableEntityPropertiesPaged(PageIterator):
         except HttpResponseError as error:
             _process_table_error(error)
 
-    def _get_props_list(self):
-        if self.entity_hook:
-            return [self.entity_hook(t) for t in self._response.value]
-        return [_convert_to_entity(t) for t in self._response.value]
-
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = self._get_props_list()
+        props_list = [self.entity_hook(t) for t in self._response.value] #self._get_props_list()
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {

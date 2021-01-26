@@ -7,32 +7,19 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from base64 import b64encode
-from datetime import datetime, timedelta
-from dateutil.tz import tzutc, tzoffset
-from enum import Enum
-from math import isnan
-import uuid
+from datetime import datetime
+
+from azure.data.tables.aio import (
+    TableServiceClient,
+    TableClient
+)
 
 from azure.data.tables import (
-    TableServiceClient,
-    TableClient,
-    generate_table_sas,
     TableEntity,
-    EntityProperty,
     EdmType,
-    TableSasPermissions,
-    AccessPolicy,
-    UpdateMode
 )
 
-from azure.core import MatchConditions
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError,
-    ResourceModifiedError,
-)
+from azure.core.exceptions import ResourceExistsError
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import TablesPreparer, CosmosPreparer
@@ -128,10 +115,9 @@ def modify_returned_class(entity):
 
     return entity
 
-
 class StorageTableEntityTest(TableTestCase):
 
-    def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table'):
+    async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table'):
         table_name = self.get_resource_name('uttable')
         ts = TableServiceClient(
             self.account_url(tables_storage_account_name, url),
@@ -141,12 +127,12 @@ class StorageTableEntityTest(TableTestCase):
         table = ts.get_table_client(table_name)
         if self.is_live:
             try:
-                ts.create_table(table_name)
+                await ts.create_table(table_name)
             except ResourceExistsError:
                 pass
         return table
 
-    def _tear_down(self, tables_storage_account_name, tables_primary_storage_account_key, url='table'):
+    async def _tear_down(self, tables_storage_account_name, tables_primary_storage_account_key, url='table'):
         table_name = self.get_resource_name('uttable')
         ts = TableServiceClient(
             self.account_url(tables_storage_account_name, url),
@@ -155,14 +141,14 @@ class StorageTableEntityTest(TableTestCase):
         )
         if self.is_live:
             try:
-                ts.delete_table(table_name)
+                await ts.delete_table(table_name)
             except:
                 pass
 
 
     @TablesPreparer()
-    def test_custom_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
-        table_client = self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+    async def test_custom_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_client = await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
 
         entity = {
             u"PartitionKey": u"pk",
@@ -170,9 +156,9 @@ class StorageTableEntityTest(TableTestCase):
             u"Birthday": u"2020-01-01T12:59:59.0123456Z"
         }
         try:
-            with table_client as tc:
-                tc.create_entity(entity)
-                entity = tc.get_entity(
+            async with table_client as tc:
+                await tc.create_entity(entity)
+                entity = await tc.get_entity(
                     partition_key=entity[u'PartitionKey'],
                     row_key=entity[u'RowKey'],
                     entity_hook=MyEntity
@@ -184,12 +170,12 @@ class StorageTableEntityTest(TableTestCase):
                 assert entity.properties['Birthday'] == datetime(2020, 1, 1, 12, 59, 59)
 
         finally:
-            self._tear_down(tables_storage_account_name, tables_primary_storage_account_key)
+            await self._tear_down(tables_storage_account_name, tables_primary_storage_account_key)
 
 
     @TablesPreparer()
-    def test_custom_entity_list(self, tables_storage_account_name, tables_primary_storage_account_key):
-        table_client = self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+    async def test_custom_entity_list(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_client = await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
 
         entity = {
             u"PartitionKey": u"pk",
@@ -202,15 +188,16 @@ class StorageTableEntityTest(TableTestCase):
             u"Birthday": u"2021-02-02T12:59:59.0123456Z"
         }
         try:
-            with table_client as tc:
-                tc.create_entity(entity)
-                tc.create_entity(entity2)
+            async with table_client as tc:
+                await tc.create_entity(entity)
+                await tc.create_entity(entity2)
+
                 entities = tc.list_entities(
                     entity_hook=MyEntity
                 )
 
                 length = 0
-                for entity in entities:
+                async for entity in entities:
                     assert isinstance(entity.properties['Birthday'], datetime)
                     assert 'milliseconds' in entity.keys()
                     assert entity.properties['milliseconds'] == .0123456
@@ -219,12 +206,12 @@ class StorageTableEntityTest(TableTestCase):
                 assert length == 2
 
         finally:
-            self._tear_down(tables_storage_account_name, tables_primary_storage_account_key)
+            await self._tear_down(tables_storage_account_name, tables_primary_storage_account_key)
 
 
     @TablesPreparer()
-    def test_custom_entity_query(self, tables_storage_account_name, tables_primary_storage_account_key):
-        table_client = self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+    async def test_custom_entity_query(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_client = await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
 
         entity = {
             u"PartitionKey": u"pk",
@@ -239,9 +226,9 @@ class StorageTableEntityTest(TableTestCase):
             u"Value": 30
         }
         try:
-            with table_client as tc:
-                tc.create_entity(entity)
-                tc.create_entity(entity2)
+            async with table_client as tc:
+                await tc.create_entity(entity)
+                await tc.create_entity(entity2)
 
                 f = "Value lt @value"
                 params = {
@@ -254,7 +241,7 @@ class StorageTableEntityTest(TableTestCase):
                 )
 
                 length = 0
-                for entity in entities:
+                async for entity in entities:
                     assert isinstance(entity.properties['Birthday'], datetime)
                     assert 'milliseconds' in entity.keys()
                     assert entity.properties['milliseconds'] == .0123456
@@ -263,12 +250,12 @@ class StorageTableEntityTest(TableTestCase):
                 assert length == 1
 
         finally:
-            self._tear_down(tables_storage_account_name, tables_primary_storage_account_key)
+            await self._tear_down(tables_storage_account_name, tables_primary_storage_account_key)
 
 
 class CosmosTableEntityTest(TableTestCase):
 
-    def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='cosmos'):
+    async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='cosmos'):
         table_name = self.get_resource_name('uttable')
         ts = TableServiceClient(
             self.account_url(tables_storage_account_name, url),
@@ -278,12 +265,12 @@ class CosmosTableEntityTest(TableTestCase):
         table = ts.get_table_client(table_name)
         if self.is_live:
             try:
-                ts.create_table(table_name)
+                await ts.create_table(table_name)
             except ResourceExistsError:
                 pass
         return table
 
-    def _tear_down(self, tables_storage_account_name, tables_primary_storage_account_key, url='cosmos'):
+    async def _tear_down(self, tables_storage_account_name, tables_primary_storage_account_key, url='cosmos'):
         table_name = self.get_resource_name('uttable')
         ts = TableServiceClient(
             self.account_url(tables_storage_account_name, url),
@@ -292,15 +279,15 @@ class CosmosTableEntityTest(TableTestCase):
         )
         if self.is_live:
             try:
-                ts.delete_table(table_name)
+                await ts.delete_table(table_name)
             except:
                 pass
         self.sleep(SLEEP_DELAY)
 
 
     @CosmosPreparer()
-    def test_custom_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        table_client = self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+    async def test_custom_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        table_client = await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
         entity = {
             u"PartitionKey": u"pk",
@@ -308,9 +295,9 @@ class CosmosTableEntityTest(TableTestCase):
             u"Birthday": u"2020-01-01T12:59:59.0123456Z"
         }
         try:
-            with table_client as tc:
-                tc.create_entity(entity)
-                entity = tc.get_entity(
+            async with table_client as tc:
+                await tc.create_entity(entity)
+                entity = await tc.get_entity(
                     partition_key=entity[u'PartitionKey'],
                     row_key=entity[u'RowKey'],
                     entity_hook=MyEntity
@@ -322,12 +309,12 @@ class CosmosTableEntityTest(TableTestCase):
                 assert entity.properties['Birthday'] == datetime(2020, 1, 1, 12, 59, 59)
 
         finally:
-            self._tear_down(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+            await self._tear_down(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
 
     @CosmosPreparer()
-    def test_custom_entity_list(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        table_client = self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+    async def test_custom_entity_list(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        table_client = await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
         entity = {
             u"PartitionKey": u"pk",
@@ -340,15 +327,15 @@ class CosmosTableEntityTest(TableTestCase):
             u"Birthday": u"2021-02-02T12:59:59.0123456Z"
         }
         try:
-            with table_client as tc:
-                tc.create_entity(entity)
-                tc.create_entity(entity2)
+            async with table_client as tc:
+                await tc.create_entity(entity)
+                await tc.create_entity(entity2)
                 entities = tc.list_entities(
                     entity_hook=MyEntity
                 )
 
                 length = 0
-                for entity in entities:
+                async for entity in entities:
                     assert isinstance(entity.properties['Birthday'], datetime)
                     assert 'milliseconds' in entity.keys()
                     assert entity.properties['milliseconds'] == .0123456
@@ -357,12 +344,12 @@ class CosmosTableEntityTest(TableTestCase):
                 assert length == 2
 
         finally:
-            self._tear_down(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+            await self._tear_down(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
 
     @CosmosPreparer()
-    def test_custom_entity_query(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        table_client = self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+    async def test_custom_entity_query(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        table_client = await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
         entity = {
             u"PartitionKey": u"pk",
@@ -377,9 +364,9 @@ class CosmosTableEntityTest(TableTestCase):
             u"Value": 30
         }
         try:
-            with table_client as tc:
-                tc.create_entity(entity)
-                tc.create_entity(entity2)
+            async with table_client as tc:
+                await tc.create_entity(entity)
+                await tc.create_entity(entity2)
 
                 f = "Value lt @value"
                 params = {
@@ -392,7 +379,7 @@ class CosmosTableEntityTest(TableTestCase):
                 )
 
                 length = 0
-                for entity in entities:
+                async for entity in entities:
                     assert isinstance(entity.properties['Birthday'], datetime)
                     assert 'milliseconds' in entity.keys()
                     assert entity.properties['milliseconds'] == .0123456
@@ -400,4 +387,4 @@ class CosmosTableEntityTest(TableTestCase):
                 assert length == 1
 
         finally:
-            self._tear_down(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+            await self._tear_down(tables_cosmos_account_name, tables_primary_cosmos_account_key)

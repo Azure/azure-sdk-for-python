@@ -15,38 +15,34 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 26 Jan 2021 14:07:42 GMT
+      - Tue, 26 Jan 2021 15:36:51 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 14:07:42 GMT
+      - Tue, 26 Jan 2021 15:36:51 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://fake_table_account.table.core.windows.net/Tables
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable8e4f1230"}'
+      string: '{"TableName":"uttable8e4f1230","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
-      cache-control:
-      - no-cache
       content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      - application/json;odata=minimalmetadata
       date:
-      - Tue, 26 Jan 2021 14:07:40 GMT
+      - Tue, 26 Jan 2021 15:36:50 GMT
+      etag:
+      - W/"datetime'2021-01-26T15%3A36%3A51.1646728Z'"
       location:
-      - https://fake_table_account.table.core.windows.net/Tables('uttable8e4f1230')
+      - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable8e4f1230')
       server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-02-02'
     status:
       code: 201
-      message: Created
+      message: Ok
 - request:
     body: '{"PartitionKey": "pk", "PartitionKey@odata.type": "Edm.String", "RowKey":
       "rk", "RowKey@odata.type": "Edm.String", "Birthday": "2020-01-01T12:59:59.0123456Z",
@@ -65,37 +61,31 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 26 Jan 2021 14:07:42 GMT
+      - Tue, 26 Jan 2021 15:36:53 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 14:07:42 GMT
+      - Tue, 26 Jan 2021 15:36:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://fake_table_account.table.core.windows.net/uttable8e4f1230
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable8e4f1230
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable8e4f1230/@Element","odata.etag":"W/\"datetime''2021-01-26T14%3A07%3A41.0248425Z''\"","PartitionKey":"pk","RowKey":"rk","Timestamp":"2021-01-26T14:07:41.0248425Z","Birthday":"2020-01-01T12:59:59.0123456Z","Value":20}'
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable8e4f1230/$metadata#uttable8e4f1230/@Element","odata.etag":"W/\"datetime''2021-01-26T15%3A36%3A51.8670344Z''\"","PartitionKey":"pk","RowKey":"rk","Birthday":"2020-01-01T12:59:59.0123456Z","Value":20,"Timestamp":"2021-01-26T15:36:51.8670344Z"}'
     headers:
-      cache-control:
-      - no-cache
       content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      - application/json;odata=minimalmetadata
       date:
-      - Tue, 26 Jan 2021 14:07:40 GMT
+      - Tue, 26 Jan 2021 15:36:51 GMT
       etag:
-      - W/"datetime'2021-01-26T14%3A07%3A41.0248425Z'"
+      - W/"datetime'2021-01-26T15%3A36%3A51.8670344Z'"
       location:
-      - https://fake_table_account.table.core.windows.net/uttable8e4f1230(PartitionKey='pk',RowKey='rk')
+      - https://fake_cosmos_account.table.cosmos.azure.com/uttable8e4f1230(PartitionKey='pk',RowKey='rk')
       server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -117,37 +107,31 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 26 Jan 2021 14:07:42 GMT
+      - Tue, 26 Jan 2021 15:36:53 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 14:07:42 GMT
+      - Tue, 26 Jan 2021 15:36:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://fake_table_account.table.core.windows.net/uttable8e4f1230
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable8e4f1230
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable8e4f1230/@Element","odata.etag":"W/\"datetime''2021-01-26T14%3A07%3A41.1539343Z''\"","PartitionKey":"pk","RowKey":"rk1","Timestamp":"2021-01-26T14:07:41.1539343Z","Birthday":"2021-02-02T12:59:59.0123456Z","Value":30}'
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable8e4f1230/$metadata#uttable8e4f1230/@Element","odata.etag":"W/\"datetime''2021-01-26T15%3A36%3A52.0079368Z''\"","PartitionKey":"pk","RowKey":"rk1","Birthday":"2021-02-02T12:59:59.0123456Z","Value":30,"Timestamp":"2021-01-26T15:36:52.0079368Z"}'
     headers:
-      cache-control:
-      - no-cache
       content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      - application/json;odata=minimalmetadata
       date:
-      - Tue, 26 Jan 2021 14:07:41 GMT
+      - Tue, 26 Jan 2021 15:36:51 GMT
       etag:
-      - W/"datetime'2021-01-26T14%3A07%3A41.1539343Z'"
+      - W/"datetime'2021-01-26T15%3A36%3A52.0079368Z'"
       location:
-      - https://fake_table_account.table.core.windows.net/uttable8e4f1230(PartitionKey='pk',RowKey='rk1')
+      - https://fake_cosmos_account.table.cosmos.azure.com/uttable8e4f1230(PartitionKey='pk',RowKey='rk1')
       server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -163,36 +147,30 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 26 Jan 2021 14:07:42 GMT
+      - Tue, 26 Jan 2021 15:36:53 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 14:07:42 GMT
+      - Tue, 26 Jan 2021 15:36:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://fake_table_account.table.core.windows.net/uttable8e4f1230()?$filter=Value%20lt%2025
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable8e4f1230()?$filter=Value%20lt%2025
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable8e4f1230","value":[{"odata.etag":"W/\"datetime''2021-01-26T14%3A07%3A41.0248425Z''\"","PartitionKey":"pk","RowKey":"rk","Timestamp":"2021-01-26T14:07:41.0248425Z","Birthday":"2020-01-01T12:59:59.0123456Z","Value":20}]}'
+      string: '{"value":[{"odata.etag":"W/\"datetime''2021-01-26T15%3A36%3A51.8670344Z''\"","PartitionKey":"pk","RowKey":"rk","Birthday":"2020-01-01T12:59:59.0123456Z","Value":20,"Timestamp":"2021-01-26T15:36:51.8670344Z"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#uttable8e4f1230"}'
     headers:
-      cache-control:
-      - no-cache
       content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      - application/json;odata=minimalmetadata
       date:
-      - Tue, 26 Jan 2021 14:07:41 GMT
+      - Tue, 26 Jan 2021 15:36:51 GMT
       server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-02-02'
     status:
       code: 200
-      message: OK
+      message: Ok
 - request:
     body: null
     headers:
@@ -205,31 +183,25 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 26 Jan 2021 14:07:43 GMT
+      - Tue, 26 Jan 2021 15:36:53 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 14:07:43 GMT
+      - Tue, 26 Jan 2021 15:36:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://fake_table_account.table.core.windows.net/Tables('uttable8e4f1230')
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable8e4f1230')
   response:
     body:
       string: ''
     headers:
-      cache-control:
-      - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 26 Jan 2021 14:07:41 GMT
+      - Tue, 26 Jan 2021 15:36:52 GMT
       server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-02-02'
+      - Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
