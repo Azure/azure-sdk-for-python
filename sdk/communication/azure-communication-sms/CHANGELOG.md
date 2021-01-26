@@ -1,7 +1,9 @@
 # Release History
 
 ## 1.0.0b5 (Unreleased)
+### Added
 
+- Added support for Azure Active Directory authentication
 
 ## 1.0.0b4 (2020-11-16)
 - Updated `azure-communication-sms` version.

@@ -447,7 +447,7 @@ interactions:
         Products"}},"property":{"maxSeverity":"Medium","incidentStatus":"Active"}},{"incidentId":"9e5961a28fbaf1b03a8bea60c9f9283e-174d2024c00","startTime":"2020-09-28T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Lagos","category":"Handmade"}},"property":{"maxSeverity":"Medium","incidentStatus":"Active"}},{"incidentId":"9de960fd7c61cf68555cf2fbb572e80c-174d2024c00","startTime":"2020-09-28T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Tehran","category":"Home
         & Garden"}},"property":{"maxSeverity":"Medium","incidentStatus":"Active"}},{"incidentId":"51ab81b89f1fc3b8915142b8f972660b-174d2024c00","startTime":"2020-09-28T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Wuhan","category":"Home
         & Garden"}},"property":{"maxSeverity":"Medium","incidentStatus":"Active"}},{"incidentId":"79f6f1c017db07a0335bdc6bd6790e46-174d2024c00","startTime":"2020-09-28T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Shenzhen","category":"Home
-        & Garden"}},"property":{"maxSeverity":"Medium","incidentStatus":"Active"}},{"incidentId":"2583ff47fef9174e6d6bfe73415ad914-174d2024c00","startTime":"2020-09-28T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"__SUM__","category":"Electronics
+        & Garden"}},"property":{"maxSeverity":"Medium","incidentStatus":"Active"}},{"incidentId":"incident_id","startTime":"2020-09-28T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"__SUM__","category":"Electronics
         (Consumer)"}},"property":{"maxSeverity":"Low","incidentStatus":"Active"}},{"incidentId":"be035daae25f019637043c41cd1a0235-174d2024c00","startTime":"2020-09-27T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Madrid","category":"Office
         Products"}},"property":{"maxSeverity":"Low","incidentStatus":"Active"}},{"incidentId":"ccb829a409264234046436ed1c63ce6d-174d2024c00","startTime":"2020-09-27T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Lima","category":"Home
         & Garden"}},"property":{"maxSeverity":"Low","incidentStatus":"Active"}},{"incidentId":"a7031da656cbb533b5d25f5d76f310bd-174d2024c00","startTime":"2020-09-26T00:00:00Z","lastTime":"2020-09-28T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Madrid","category":"Industrial
@@ -584,14 +584,14 @@ interactions:
         Handbags & Sunglasses"}},"property":{"maxSeverity":"High","incidentStatus":"Active"}},{"incidentId":"5c537a979fd369fcb94011243d9b8c63-174b31c2400","startTime":"2020-09-22T00:00:00Z","lastTime":"2020-09-22T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Los
         Angeles","category":"Shoes Handbags & Sunglasses"}},"property":{"maxSeverity":"High","incidentStatus":"Active"}}],"@nextLink":null}'
     headers:
-      apim-request-id: e10903e5-8425-449a-9981-06f792e95db8
+      apim-request-id: db53b6c2-c03d-44bc-b61c-256b54791be4
       content-length: '183439'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:41:28 GMT
+      date: Fri, 22 Jan 2021 01:08:48 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '417'
-      x-request-id: e10903e5-8425-449a-9981-06f792e95db8
+      x-envoy-upstream-service-time: '237'
+      x-request-id: db53b6c2-c03d-44bc-b61c-256b54791be4
     status:
       code: 200
       message: OK

@@ -18,21 +18,21 @@ interactions:
         Handbags & Sunglasses"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Karachi","category":"Handmade"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active"}}],"@nextLink":null}'
     headers:
       apim-request-id:
-      - b7e69125-d3fd-4061-932d-3392d1231463
+      - 8d06d0e2-bc8c-4e97-9be4-94b0d551709f
       content-length:
       - '763'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 26 Dec 2020 19:34:44 GMT
+      - Fri, 22 Jan 2021 01:02:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '110'
+      - '89'
       x-request-id:
-      - b7e69125-d3fd-4061-932d-3392d1231463
+      - 8d06d0e2-bc8c-4e97-9be4-94b0d551709f
     status:
       code: 200
       message: OK

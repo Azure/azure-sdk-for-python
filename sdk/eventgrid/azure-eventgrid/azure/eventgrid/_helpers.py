@@ -20,14 +20,14 @@ from . import _constants as constants
 if TYPE_CHECKING:
     from datetime import datetime
 
-def generate_shared_access_signature(endpoint, shared_access_key, expiration_date_utc, **kwargs):
+def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
     """ Helper method to generate shared access signature given hostname, key, and expiration date.
         :param str endpoint: The topic endpoint to send the events to.
             Similar to <YOUR-TOPIC-NAME>.<YOUR-REGION-NAME>-1.eventgrid.azure.net
         :param str shared_access_key: The shared access key to be used for generating the token
         :param datetime.datetime expiration_date_utc: The expiration datetime in UTC for the signature.
-        :param str api_version: The API Version to include in the signature.
+        :keyword str api_version: The API Version to include in the signature.
          If not provided, the default API version will be used.
         :rtype: str
     """
