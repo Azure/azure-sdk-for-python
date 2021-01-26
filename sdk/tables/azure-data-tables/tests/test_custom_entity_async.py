@@ -317,7 +317,7 @@ class CosmosTableEntityTest(TableTestCase):
         self.sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
-    async def test_custom_entity(
+    async def test_custom_entity_cosmos(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key
     ):
         table_client = await self._set_up(
@@ -349,7 +349,7 @@ class CosmosTableEntityTest(TableTestCase):
             )
 
     @CosmosPreparer()
-    async def test_custom_entity_list(
+    async def test_custom_entity_list_cosmos(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key
     ):
         table_client = await self._set_up(
@@ -387,7 +387,7 @@ class CosmosTableEntityTest(TableTestCase):
             )
 
     @CosmosPreparer()
-    async def test_custom_entity_query(
+    async def test_custom_entity_query_cosmos(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key
     ):
         table_client = await self._set_up(

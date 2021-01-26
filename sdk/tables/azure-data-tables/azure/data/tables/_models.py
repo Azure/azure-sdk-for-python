@@ -306,7 +306,7 @@ class TablePropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [
-            TableItem._from_generated(t, **self._headers)
+            TableItem._from_generated(t, **self._headers)  # pylint:disable=protected-access
             for t in self._response.value  # pylint:disable=protected-access
         ]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
@@ -465,9 +465,9 @@ def service_stats_deserialize(generated):
 def service_properties_deserialize(generated):
     """Deserialize a ServiceProperties objects into a dict."""
     return {
-        "analytics_logging": TableAnalyticsLogging._from_generated(
+        "analytics_logging": TableAnalyticsLogging._from_generated(  # pylint: disable=protected-access
             generated.logging
-        ),  # pylint: disable=protected-access
+        ),
         "hour_metrics": Metrics._from_generated(  # pylint: disable=protected-access
             generated.hour_metrics
         ),
@@ -475,8 +475,8 @@ def service_properties_deserialize(generated):
             generated.minute_metrics
         ),
         "cors": [
-            CorsRule._from_generated(cors)
-            for cors in generated.cors  # pylint: disable=protected-access
+            CorsRule._from_generated(cors)  # pylint: disable=protected-access
+            for cors in generated.cors
         ],
     }
 

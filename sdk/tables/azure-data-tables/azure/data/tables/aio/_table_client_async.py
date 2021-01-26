@@ -690,7 +690,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Using batches to send multiple requests at once
         """
         return await self._batch_send(
-            batch._entities,
-            *batch._requests,
-            **kwargs  # pylint:disable=protected-access
+            batch._entities,  # pylint:disable=protected-access
+            *batch._requests,  # pylint:disable=protected-access
+            **kwargs
         )
