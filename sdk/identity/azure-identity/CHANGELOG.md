@@ -3,6 +3,8 @@
 ## 1.7.0b4 (Unreleased)
 
 ### Features Added
+- `CertificateCredential` accepts certificates in PKCS12 format
+  ([#13540](https://github.com/Azure/azure-sdk-for-python/issues/13540))
 
 ### Breaking Changes
 
