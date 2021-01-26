@@ -120,11 +120,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             else:
                 return None
 
-        elif not string_index_type:
-            return self._string_code_unit
-
         else:
-            return string_index_type
+            if not string_index_type:
+                return self._string_code_unit
+
+            else:
+                return string_index_type
 
 
     @distributed_trace
@@ -250,7 +251,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        string_index_type = self._check_string_index_type_arg(kwargs.pop("string_index_type"))
+        string_index_type = self._check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+        )
         if string_index_type:
             kwargs.update("string_index_type", string_index_type)
 
@@ -334,7 +337,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
-        string_index_type = self._check_string_index_type_arg(kwargs.pop("string_index_type"))
+        string_index_type = self._check_string_index_type_arg(
+            kwargs.pop("string_index_type", None)
+        )
         if string_index_type:
             kwargs.update("string_index_type", string_index_type)
 
