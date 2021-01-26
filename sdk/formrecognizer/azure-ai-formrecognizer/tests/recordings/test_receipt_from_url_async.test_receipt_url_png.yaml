@@ -9,20 +9,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 877216a5-1ef2-4738-90df-7e5e0154256f
+      apim-request-id: af91952d-7f74-491b-8d65-5eae4be29452
       content-length: '0'
-      date: Mon, 16 Nov 2020 19:14:38 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/877216a5-1ef2-4738-90df-7e5e0154256f
+      date: Tue, 26 Jan 2021 18:31:44 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/af91952d-7f74-491b-8d65-5eae4be29452
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '263'
+      x-envoy-upstream-service-time: '673'
     status:
       code: 202
       message: Accepted
@@ -31,13 +31,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/877216a5-1ef2-4738-90df-7e5e0154256f
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/af91952d-7f74-491b-8d65-5eae4be29452
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-11-16T19:14:38Z",
-        "lastUpdatedDateTime": "2020-11-16T19:14:40Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-01-26T18:31:43Z",
+        "lastUpdatedDateTime": "2021-01-26T18:31:47Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0.2511, "width": 1688, "height":
         3000, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:receipt",
         "pageRange": [1, 1], "fields": {"ReceiptType": {"type": "string", "valueString":
@@ -53,7 +53,7 @@ interactions:
         "boundingBox": [304, 1224, 506, 1224, 504, 1289, 303, 1288], "page": 1, "confidence":
         0.985}, "TransactionTime": {"type": "time", "valueTime": "13:59:00", "text":
         "13:59", "boundingBox": [518, 1225, 628, 1228, 627, 1290, 517, 1289], "page":
-        1, "confidence": 0.964}, "Items": {"type": "array", "valueArray": [{"type":
+        1, "confidence": 0.968}, "Items": {"type": "array", "valueArray": [{"type":
         "object", "valueObject": {"Name": {"type": "string", "valueString": "8GB RAM
         (Black)", "text": "8GB RAM (Black)", "boundingBox": [370.7, 1781.5, 731, 1785,
         730.3, 1854, 370, 1850.6], "page": 1, "confidence": 0.916}, "TotalPrice":
@@ -74,15 +74,15 @@ interactions:
         1203.39, "text": "1203.39", "boundingBox": [955, 2594, 1123, 2611, 1115, 2678,
         949, 2661], "page": 1, "confidence": 0.774}}}]}}'
     headers:
-      apim-request-id: 1b1296f7-e759-4a05-9a57-f2c7a9a8e2be
+      apim-request-id: 93f90c01-3dbe-4d44-9697-705aaa47fb0e
       content-length: '2561'
       content-type: application/json; charset=utf-8
-      date: Mon, 16 Nov 2020 19:14:43 GMT
+      date: Tue, 26 Jan 2021 18:31:49 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '41'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/877216a5-1ef2-4738-90df-7e5e0154256f
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/af91952d-7f74-491b-8d65-5eae4be29452
 version: 1
