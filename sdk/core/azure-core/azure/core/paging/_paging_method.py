@@ -97,23 +97,26 @@ class PagingMethodABC():
         :param optional[str] continuation_token_location: Property name on the response object that houses the
          continuation token. Defaults to `None`, as `None` is an acceptable value for a continuation token location.
          It means that there's no continuation token on the response object.
-        :return: The continuation token
+        :return: The continuation token. Can be any value, and will be passed as-is to :func:`get_next_request`.
         :rtype: any
         """
 
         raise NotImplementedError("This method needs to be implemented")
 
-class ContinueWithNextLink(PagingMethodABC):
+class ContinueWithCallback(PagingMethodABC):
 
-    def __init__(self, path_format_arguments=None, **kwargs):  # pylint: disable=unused-argument
-        """Most common paging method. Uses the continuation token as the URL for the next call.
+    def __init__(self, next_request_callback, **kwargs):  # pylint: disable=unused-argument
+        """Base paging method. Accepts the callback for the next request as an init arg.
+
+        :param callable next_request_callback: Takes the continuation token as input and
+         outputs the next request
         """
-        self._path_format_arguments = path_format_arguments or {}
+        self._next_request_callback = next_request_callback
 
     def get_next_request(self, continuation_token, initial_request, client):
         # type: (Any, HttpRequest, PipelineClient) -> HttpRequest
-        """Return the next request object for paging. Uses the continuation token
-        as the URL for the next call.
+        """Return the next request object for paging. Passes the continuation token into
+        the next request callback, and returns the resulting next request
 
         :param any continuation_token: The token used to continue paging
         :param initial_request: The initial paging request. You can use this as a foundation
@@ -122,11 +125,7 @@ class ContinueWithNextLink(PagingMethodABC):
         :return: Next request for the pager to make
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = initial_request
-        next_link = continuation_token
-        next_link = client.format_url(next_link, **self._path_format_arguments)
-        request.url = next_link
-        return request
+        return self._next_request_callback(continuation_token)
 
     def get_list_elements(self, pipeline_response, deserialized, item_name="value"):
         # type: (HttpResponse, ResponseType, str) -> Iterable[ReturnType]
@@ -166,7 +165,7 @@ class ContinueWithNextLink(PagingMethodABC):
         :param pipeline_response: The immediate response returned from the pipeline
         :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
         :param object deserialized: The deserialized pipeline_response
-        :return: The continuation token
+        :return: The continuation token. Can be any value, and will be passed as-is to :func:`get_next_request`.
         :rtype: any
         """
         if continuation_token_location:
@@ -179,22 +178,30 @@ class ContinueWithNextLink(PagingMethodABC):
             return getattr(deserialized, continuation_token_location)
         return None
 
+class ContinueWithNextLink(ContinueWithCallback):  # pylint: disable=too-many-instance-attributes
 
-class ContinueWithCallback(ContinueWithNextLink):  # pylint: disable=too-many-instance-attributes
-    def __init__(self, next_request_callback, **kwargs):
-        """Base paging method. Accepts the callback for the next request as an init arg.
-
-        :param callable next_request_callback: Takes the continuation token as input and
-         outputs the next request
+    def __init__(self, path_format_arguments=None, **kwargs):
+        """Most common paging method. Uses the continuation token as the URL for the next call.
         """
-        super(ContinueWithCallback, self).__init__(**kwargs)
-        self._next_request_callback = next_request_callback
+        def _next_request_callback(continuation_token, initial_request, client):
+            request = initial_request
+            next_link = continuation_token
+            if self._path_format_arguments:
+                next_link = client.format_url(next_link, **self._path_format_arguments)
+            else:
+                next_link = client.format_url(next_link)
+            request.url = next_link
+            return request
 
+        super(ContinueWithNextLink, self).__init__(
+            next_request_callback=_next_request_callback, **kwargs
+        )
+        self._path_format_arguments = path_format_arguments
 
     def get_next_request(self, continuation_token, initial_request, client):
         # type: (Any, HttpRequest, PipelineClient) -> HttpRequest
-        """Return the next request object for paging. Passes the continuation token into
-        the next request callback, and returns the resulting next request
+        """Return the next request object for paging. Uses the continuation token
+        as the URL for the next call.
 
         :param any continuation_token: The token used to continue paging
         :param initial_request: The initial paging request. You can use this as a foundation
@@ -203,15 +210,21 @@ class ContinueWithCallback(ContinueWithNextLink):  # pylint: disable=too-many-in
         :return: Next request for the pager to make
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        return self._next_request_callback(continuation_token)
+        return self._next_request_callback(continuation_token, initial_request, client)
 
-class ContinueWithRequestHeader(ContinueWithNextLink):
+class ContinueWithRequestHeader(ContinueWithCallback):
 
     def __init__(self, header_name, **kwargs):
         """Passes continuation token as a header parameter to next call.
         """
-        super(ContinueWithRequestHeader, self).__init__(**kwargs)
         self._header_name = header_name
+        def _next_request_callback(continuation_token, initial_request):
+            request = initial_request
+            request.headers[self._header_name] = continuation_token
+            return request
+        super(ContinueWithRequestHeader, self).__init__(
+            next_request_callback=_next_request_callback, **kwargs
+        )
 
     def get_next_request(self, continuation_token, initial_request, client):
         # type: (Any, HttpRequest, PipelineClient) -> HttpRequest
@@ -225,6 +238,4 @@ class ContinueWithRequestHeader(ContinueWithNextLink):
         :return: Next request for the pager to make
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = initial_request
-        request.headers[self._header_name] = continuation_token
-        return request
+        return self._next_request_callback(continuation_token, initial_request)

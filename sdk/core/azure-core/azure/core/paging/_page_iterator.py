@@ -66,7 +66,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
                     "You can't pass in both a paging method and a callback for get_next or extract_data. "
                     "We recommend you only pass in a paging method, since passing in callbacks is legacy."
                 )
-            if not get_next and extract_data:
+            if not (get_next and extract_data):
                 raise ValueError(
                     "If you are passing in callbacks (this is legacy), you have to pass in callbacks for both "
                     "get_next and extract_data. We recommend you just pass in a paging method instead though."
