@@ -4,7 +4,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import pytest
 import functools
 from testcase import FormRecognizerTest
 from testcase import GlobalFormRecognizerAccountPreparer
@@ -13,7 +13,7 @@ from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient, Fo
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
-
+@pytest.mark.skip
 class TestMultiapi(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @FormRecognizerClientPreparer()

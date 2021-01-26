@@ -35,7 +35,7 @@ from azure_devtools.scenario_tests.utilities import is_text_payload
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
-REGION = os.getenv('REGION', 'centraluseuap')
+REGION = os.getenv('REGION', None)
 ENDPOINT = os.getenv('ENDPOINT', 'None')
 NAME = os.getenv('NAME', 'None')
 RESOURCE_GROUP = os.getenv('RESOURCE_GROUP', 'None')
@@ -750,7 +750,7 @@ def form_recognizer_account():
                 form_recognizer_name, form_recognizer_kwargs = form_recognizer_preparer._prepare_create_resource(
                     test_case, **rg_kwargs)
                 if test_case.is_live:
-                    time.sleep(600)  # current ask until race condition bug fixed
+                    time.sleep(60)  # current ask until race condition bug fixed
                 FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
                 FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
                 FormRecognizerTest._FORM_RECOGNIZER_NAME = form_recognizer_name

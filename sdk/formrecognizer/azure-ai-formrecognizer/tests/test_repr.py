@@ -132,7 +132,7 @@ def custom_form_model_properties():
     assert repr(model) == model_repr
     return model, model_repr
 
-
+@pytest.mark.skip
 class TestRepr():
     # Not inheriting form FormRecognizerTest because that doesn't allow me to define pytest fixtures in the same file
     # Not worth moving pytest fixture definitions to conftest since all I would use is assertEqual and I can just use assert
