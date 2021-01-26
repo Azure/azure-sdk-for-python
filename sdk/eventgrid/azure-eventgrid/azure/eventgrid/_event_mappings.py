@@ -80,8 +80,10 @@ class SystemEventMappings(str, Enum):
     ResourceWriteCancelEventName = "Microsoft.Resources.ResourceWriteCancel"
     ResourceWriteFailureEventName = "Microsoft.Resources.ResourceWriteFailure"
     ResourceWriteSuccessEventName = "Microsoft.Resources.ResourceWriteSuccess"
-    ServiceBusActiveMessagesAvailableWithNoListenersEventName = "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener"
+    ServiceBusActiveMessagesAvailableWithNoListenersEventName = \
+    "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = \
+    "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener"
     StorageBlobCreatedEventName = "Microsoft.Storage.BlobCreated"
     StorageBlobDeletedEventName = "Microsoft.Storage.BlobDeleted"
     StorageBlobRenamedEventName = "Microsoft.Storage.BlobRenamed"
