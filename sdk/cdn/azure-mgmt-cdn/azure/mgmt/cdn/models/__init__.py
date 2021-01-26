@@ -145,6 +145,7 @@ try:
     from ._models_py3 import SecretProperties
     from ._models_py3 import SecurityPolicy
     from ._models_py3 import SecurityPolicyParameters
+    from ._models_py3 import SecurityPolicyProperties
     from ._models_py3 import SecurityPolicyWebApplicationFirewallAssociation
     from ._models_py3 import SecurityPolicyWebApplicationFirewallParameters
     from ._models_py3 import SharedPrivateLinkResourceProperties
@@ -318,6 +319,7 @@ except (SyntaxError, ImportError):
     from ._models import SecretProperties
     from ._models import SecurityPolicy
     from ._models import SecurityPolicyParameters
+    from ._models import SecurityPolicyProperties
     from ._models import SecurityPolicyWebApplicationFirewallAssociation
     from ._models import SecurityPolicyWebApplicationFirewallParameters
     from ._models import SharedPrivateLinkResourceProperties
@@ -423,8 +425,8 @@ from ._cdn_management_client_enums import (
     DomainValidationState,
     EnabledState,
     AFDEndpointProtocols,
-    SecretType,
     SharedPrivateLinkResourceStatus,
+    AfdQueryStringCachingBehavior,
     ForwardingProtocol,
     LinkToDefaultDomain,
     HttpsRedirect,
@@ -577,6 +579,7 @@ __all__ = [
     'SecretProperties',
     'SecurityPolicy',
     'SecurityPolicyParameters',
+    'SecurityPolicyProperties',
     'SecurityPolicyWebApplicationFirewallAssociation',
     'SecurityPolicyWebApplicationFirewallParameters',
     'SharedPrivateLinkResourceProperties',
@@ -681,8 +684,8 @@ __all__ = [
     'DomainValidationState',
     'EnabledState',
     'AFDEndpointProtocols',
-    'SecretType',
     'SharedPrivateLinkResourceStatus',
+    'AfdQueryStringCachingBehavior',
     'ForwardingProtocol',
     'LinkToDefaultDomain',
     'HttpsRedirect',

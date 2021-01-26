@@ -432,13 +432,6 @@ class AFDEndpointProtocols(str, Enum):
     https = "Https"
 
 
-class SecretType(str, Enum):
-
-    url_signing_key = "UrlSigningKey"
-    customer_certificate = "CustomerCertificate"
-    managed_certificate = "ManagedCertificate"
-
-
 class SharedPrivateLinkResourceStatus(str, Enum):
 
     pending = "Pending"
@@ -446,6 +439,13 @@ class SharedPrivateLinkResourceStatus(str, Enum):
     rejected = "Rejected"
     disconnected = "Disconnected"
     timeout = "Timeout"
+
+
+class AfdQueryStringCachingBehavior(str, Enum):
+
+    ignore_query_string = "IgnoreQueryString"
+    use_query_string = "UseQueryString"
+    not_set = "NotSet"
 
 
 class ForwardingProtocol(str, Enum):
