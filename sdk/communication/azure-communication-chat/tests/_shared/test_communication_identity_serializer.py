@@ -9,6 +9,7 @@ from azure.communication.chat._shared.models import(
     CommunicationIdentifierKind,
     CommunicationIdentifierModel,
     CommunicationUserIdentifier,
+    CommunicationCloudEnvironment,
     UnknownIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier
@@ -29,14 +30,27 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
                 kind=CommunicationIdentifierKind.PhoneNumber
             ), # missing phone number
             CommunicationIdentifierModel(
-                # id="an id",
+                id="some id",
                 microsoft_teams_user_id="teamsid",
-                kind=CommunicationIdentifierKind.MicrosoftTeamsUser
+                kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
+                cloud=CommunicationCloudEnvironment.Public
             ), # missing is_anonymous
             CommunicationIdentifierModel(
+                id="some id",
+                is_anonymous=True,
+                kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
+                cloud=CommunicationCloudEnvironment.Public
+            ), # missing microsoft_teams_user_id
+            CommunicationIdentifierModel(
+                is_anonymous=True,
+                kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
+                cloud=CommunicationCloudEnvironment.Public
+            ), # missing id
+            CommunicationIdentifierModel(
+                id="someid",
                 is_anonymous=True,
                 kind=CommunicationIdentifierKind.MicrosoftTeamsUser
-            ) # missing microsoft_teams_user_id,
+            ) # missing cloud,
         ]
 
         for model in models_with_missing_property:
@@ -107,25 +121,33 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
 
     def test_serialize_teams_user(self):
         teams_user_identifier_model = CommunicationUserIdentifierSerializer.serialize(
-            MicrosoftTeamsUserIdentifier("teamsid")
+            MicrosoftTeamsUserIdentifier("teamsid", cloud=CommunicationCloudEnvironment.Public)
         )
 
         assert teams_user_identifier_model.kind is CommunicationIdentifierKind.MicrosoftTeamsUser
         assert teams_user_identifier_model.id is "teamsid"
+        assert teams_user_identifier_model.communication_cloud_environment is CommunicationCloudEnvironment.Public
 
     def test_deserialize_teams_user(self):
         teams_user_identifier_actual = CommunicationUserIdentifierSerializer.deserialize(
             CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
                 microsoft_teams_user_id="teamsid",
-                is_anonymous=True
+                is_anonymous=True,
+                communication_cloud_environment="public"
             )
         )
 
-        teams_user_identifier_expected = MicrosoftTeamsUserIdentifier("teamsid", is_anonymous=True)
+        teams_user_identifier_expected = MicrosoftTeamsUserIdentifier(
+            "teamsid",
+            cloud=CommunicationCloudEnvironment.Public,
+            is_anonymous=True
+        )
 
         assert isinstance(teams_user_identifier_actual, MicrosoftTeamsUserIdentifier)
         assert teams_user_identifier_actual.user_id == teams_user_identifier_expected.user_id
+        assert teams_user_identifier_actual.is_anonymous== teams_user_identifier_expected.is_anonymous
+        assert teams_user_identifier_actual.cloud== teams_user_identifier_expected.cloud
        
 if __name__ == "__main__":
     unittest.main()
