@@ -16,6 +16,8 @@ if TYPE_CHECKING:
     from typing import Any
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline import PipelineResponse
+    from azure.core.pipeline.transport import HttpRequest
 
 from ._configuration import TextAnalyticsClientConfiguration
 from .operations import TextAnalyticsClientOperationsMixin
@@ -50,11 +52,12 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
 
 
     def invoke(self, request, **kwargs):
+        # type: (HttpRequest, Any) -> PipelineResponse
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
-        return self._client._pipeline.run(request, stream=False, **kwargs)
+        return self._client._pipeline.run(request, **kwargs)
 
     def close(self):
         # type: () -> None

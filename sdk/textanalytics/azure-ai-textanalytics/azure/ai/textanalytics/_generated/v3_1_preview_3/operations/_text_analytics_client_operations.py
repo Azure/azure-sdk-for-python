@@ -80,7 +80,6 @@ class TextAnalyticsClientOperationsMixin(object):
 
     _analyze_initial.metadata = {'url': '/analyze'}  # type: ignore
 
-
     def begin_analyze(
         self,
         body=None,  # type: Optional["_models.AnalyzeBatchInput"]
@@ -221,7 +220,6 @@ class TextAnalyticsClientOperationsMixin(object):
         return deserialized
     analyze_status.metadata = {'url': '/analyze/jobs/{jobId}'}  # type: ignore
 
-
     def health_status(
         self,
         job_id,  # type: str
@@ -298,7 +296,6 @@ class TextAnalyticsClientOperationsMixin(object):
         return deserialized
     health_status.metadata = {'url': '/entities/health/jobs/{jobId}'}  # type: ignore
 
-
     def _cancel_health_job_initial(
         self,
         job_id,  # type: str
@@ -345,7 +342,6 @@ class TextAnalyticsClientOperationsMixin(object):
             return cls(pipeline_response, None, response_headers)
 
     _cancel_health_job_initial.metadata = {'url': '/entities/health/jobs/{jobId}'}  # type: ignore
-
 
     def begin_cancel_health_job(
         self,
@@ -468,7 +464,6 @@ class TextAnalyticsClientOperationsMixin(object):
             return cls(pipeline_response, None, response_headers)
 
     _health_initial.metadata = {'url': '/entities/health/jobs'}  # type: ignore
-
 
     def begin_health(
         self,
@@ -630,7 +625,6 @@ class TextAnalyticsClientOperationsMixin(object):
         return deserialized
     entities_recognition_general.metadata = {'url': '/entities/recognition/general'}  # type: ignore
 
-
     def entities_recognition_pii(
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
@@ -725,7 +719,6 @@ class TextAnalyticsClientOperationsMixin(object):
         return deserialized
     entities_recognition_pii.metadata = {'url': '/entities/recognition/pii'}  # type: ignore
 
-
     def entities_linking(
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
@@ -812,7 +805,6 @@ class TextAnalyticsClientOperationsMixin(object):
         return deserialized
     entities_linking.metadata = {'url': '/entities/linking'}  # type: ignore
 
-
     def key_phrases(
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
@@ -891,7 +883,6 @@ class TextAnalyticsClientOperationsMixin(object):
 
         return deserialized
     key_phrases.metadata = {'url': '/keyPhrases'}  # type: ignore
-
 
     def languages(
         self,
@@ -972,7 +963,6 @@ class TextAnalyticsClientOperationsMixin(object):
 
         return deserialized
     languages.metadata = {'url': '/languages'}  # type: ignore
-
 
     def sentiment(
         self,
@@ -1065,4 +1055,3 @@ class TextAnalyticsClientOperationsMixin(object):
 
         return deserialized
     sentiment.metadata = {'url': '/sentiment'}  # type: ignore
-

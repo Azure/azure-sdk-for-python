@@ -9,6 +9,8 @@
 from typing import Any, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpRequest
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
@@ -46,12 +48,12 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         self._deserialize = Deserializer(client_models)
 
 
-    async def invoke(self, request, **kwargs):
+    async def invoke(self, request: HttpRequest, **kwargs: Any) -> PipelineResponse:
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
-        return await self._client._pipeline.run(request, stream=False, **kwargs)
+        return await self._client._pipeline.run(request, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()
