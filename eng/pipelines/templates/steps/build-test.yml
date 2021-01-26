@@ -20,13 +20,6 @@ steps:
   - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
 
-  - pwsh: |
-      REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /f /v LongPathsEnabled /t REG_DWORD /d 1
-      git config --system core.longpaths true
-    displayName: Enable Windows Longpath
-    condition: and(succeededOrFailed(), contains(variables['Agent.OS'], 'windows'))
-    workingDirectory: $(Build.SourcesDirectory)
-
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'

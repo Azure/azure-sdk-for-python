@@ -33,6 +33,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: eventhub
+    BuildTargetingString: azure-eventhub-checkpointstoreblob-aio
     Artifacts:
     - name: azure_eventhub
       safeName: azureeventhub
