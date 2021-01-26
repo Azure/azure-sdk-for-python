@@ -431,7 +431,7 @@ class DataExport(ProxyResource):
     :vartype type: str
     :param data_export_id: The data export rule ID.
     :type data_export_id: str
-    :param table_names: An array of tables to export, for example:
+    :param table_names: Required. An array of tables to export, for example:
      [“Heartbeat, SecurityEvent”].
     :type table_names: list[str]
     :param resource_id: Required. The destination resource ID. This can be
@@ -456,6 +456,7 @@ class DataExport(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'table_names': {'required': True},
         'resource_id': {'required': True},
         'data_export_type': {'readonly': True},
     }

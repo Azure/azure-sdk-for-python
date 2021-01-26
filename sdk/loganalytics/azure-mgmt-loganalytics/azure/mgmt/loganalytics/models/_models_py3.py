@@ -431,7 +431,7 @@ class DataExport(ProxyResource):
     :vartype type: str
     :param data_export_id: The data export rule ID.
     :type data_export_id: str
-    :param table_names: An array of tables to export, for example:
+    :param table_names: Required. An array of tables to export, for example:
      [“Heartbeat, SecurityEvent”].
     :type table_names: list[str]
     :param resource_id: Required. The destination resource ID. This can be
@@ -456,6 +456,7 @@ class DataExport(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'table_names': {'required': True},
         'resource_id': {'required': True},
         'data_export_type': {'readonly': True},
     }
@@ -474,7 +475,7 @@ class DataExport(ProxyResource):
         'last_modified_date': {'key': 'properties.lastModifiedDate', 'type': 'str'},
     }
 
-    def __init__(self, *, resource_id: str, data_export_id: str=None, table_names=None, event_hub_name: str=None, enable: bool=None, created_date: str=None, last_modified_date: str=None, **kwargs) -> None:
+    def __init__(self, *, table_names, resource_id: str, data_export_id: str=None, event_hub_name: str=None, enable: bool=None, created_date: str=None, last_modified_date: str=None, **kwargs) -> None:
         super(DataExport, self).__init__(**kwargs)
         self.data_export_id = data_export_id
         self.table_names = table_names
