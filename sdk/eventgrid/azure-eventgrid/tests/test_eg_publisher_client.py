@@ -16,7 +16,7 @@ from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, CustomEvent, generate_shared_access_signature
+from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, CustomEvent, generate_sas
 
 from eventgrid_preparer import (
     CachedEventGridTopicPreparer
@@ -110,6 +110,19 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send_events(cloud_event)
 
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    def test_send_cloud_event_data_none(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = None,
+                type="Sample.Cloud.Event"
+                )
+        client.send_events(cloud_event)
+
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -184,7 +197,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
-        signature = generate_shared_access_signature(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
+        signature = generate_sas(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
         credential = AzureSasCredential(signature)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(

@@ -13,14 +13,14 @@ interactions:
       string: '{"value":[{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Delhi","category":"Shoes
         Handbags & Sunglasses"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Karachi","category":"Handmade"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active"}}],"@nextLink":null}'
     headers:
-      apim-request-id: 55ab9f84-40f4-41e4-b81e-d467543db2e6
+      apim-request-id: 6d7ea40f-e9f2-42ef-b653-93bddc35947d
       content-length: '763'
       content-type: application/json; charset=utf-8
-      date: Sat, 26 Dec 2020 19:40:54 GMT
+      date: Fri, 22 Jan 2021 01:08:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '54'
-      x-request-id: 55ab9f84-40f4-41e4-b81e-d467543db2e6
+      x-envoy-upstream-service-time: '27'
+      x-request-id: 6d7ea40f-e9f2-42ef-b653-93bddc35947d
     status:
       code: 200
       message: OK

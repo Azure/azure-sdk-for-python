@@ -5,6 +5,11 @@
 **New Features**
 
 - AAD support authentication    #15922
+- `MetricsAdvisorKeyCredential` support for rotating the subscription and api keys to update long-lived clients
+  
+**Breaking Changes**
+
+- `list_dimension_values` has been renamed to `list_anomaly_dimension_values`
 
 ## 1.0.0b2 (2020-11-10)
 

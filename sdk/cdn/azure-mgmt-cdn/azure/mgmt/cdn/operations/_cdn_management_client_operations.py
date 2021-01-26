@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -26,28 +26,26 @@ class CdnManagementClientOperationsMixin(object):
 
     def check_name_availability(
         self,
-        name,  # type: str
+        check_name_availability_input,  # type: "_models.CheckNameAvailabilityInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckNameAvailabilityOutput"
+        # type: (...) -> "_models.CheckNameAvailabilityOutput"
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
-        :param name: The resource name to validate.
-        :type name: str
+        :param check_name_availability_input: Input to check.
+        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput, or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityOutput"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityOutput"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -64,7 +62,7 @@ class CdnManagementClientOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_check_name_availability_input, 'CheckNameAvailabilityInput')
+        body_content = self._serialize.body(check_name_availability_input, 'CheckNameAvailabilityInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -72,7 +70,7 @@ class CdnManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityOutput', pipeline_response)
@@ -85,28 +83,26 @@ class CdnManagementClientOperationsMixin(object):
 
     def check_name_availability_with_subscription(
         self,
-        name,  # type: str
+        check_name_availability_input,  # type: "_models.CheckNameAvailabilityInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckNameAvailabilityOutput"
+        # type: (...) -> "_models.CheckNameAvailabilityOutput"
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
-        :param name: The resource name to validate.
-        :type name: str
+        :param check_name_availability_input: Input to check.
+        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput, or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityOutput"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityOutput"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -127,7 +123,7 @@ class CdnManagementClientOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_check_name_availability_input, 'CheckNameAvailabilityInput')
+        body_content = self._serialize.body(check_name_availability_input, 'CheckNameAvailabilityInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -135,7 +131,7 @@ class CdnManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityOutput', pipeline_response)
@@ -148,29 +144,27 @@ class CdnManagementClientOperationsMixin(object):
 
     def validate_probe(
         self,
-        probe_url,  # type: str
+        validate_probe_input,  # type: "_models.ValidateProbeInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ValidateProbeOutput"
+        # type: (...) -> "_models.ValidateProbeOutput"
         """Check if the probe path is a valid path and the file can be accessed. Probe path is the path to
         a file hosted on the origin server to help accelerate the delivery of dynamic content via the
         CDN endpoint. This path is relative to the origin path specified in the endpoint configuration.
 
-        :param probe_url: The probe URL to validate.
-        :type probe_url: str
+        :param validate_probe_input: Input to check.
+        :type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateProbeOutput, or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ValidateProbeOutput"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidateProbeOutput"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _validate_probe_input = models.ValidateProbeInput(probe_url=probe_url)
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -191,7 +185,7 @@ class CdnManagementClientOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_validate_probe_input, 'ValidateProbeInput')
+        body_content = self._serialize.body(validate_probe_input, 'ValidateProbeInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -199,7 +193,7 @@ class CdnManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidateProbeOutput', pipeline_response)

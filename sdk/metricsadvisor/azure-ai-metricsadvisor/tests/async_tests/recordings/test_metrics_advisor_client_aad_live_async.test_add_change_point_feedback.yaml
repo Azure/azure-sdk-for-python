@@ -18,14 +18,14 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 715f2ab9-50a6-4f7b-bfae-884c3c888fdb
+      apim-request-id: c61d4ce8-7f63-43db-95d7-240f1aa06b37
       content-length: '0'
-      date: Sat, 26 Dec 2020 19:40:51 GMT
-      location: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/f8e0adf5-00fb-47be-978f-da5119f94204
+      date: Fri, 22 Jan 2021 01:07:58 GMT
+      location: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/7e0d9de2-a3f8-465d-b155-7bd6a58c9b98
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '404'
-      x-request-id: 715f2ab9-50a6-4f7b-bfae-884c3c888fdb
+      x-envoy-upstream-service-time: '304'
+      x-request-id: c61d4ce8-7f63-43db-95d7-240f1aa06b37
     status:
       code: 201
       message: Created

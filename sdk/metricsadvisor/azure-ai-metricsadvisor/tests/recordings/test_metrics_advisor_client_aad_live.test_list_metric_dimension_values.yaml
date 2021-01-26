@@ -22,21 +22,21 @@ interactions:
         Horizonte","Bengaluru","Bogota","Boston","Brasilia","Buenos Aires","Cairo","Chengdu","Chennai","Chicago","Chittagong"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20"}'
     headers:
       apim-request-id:
-      - e0181df0-61f6-4e96-82a9-d0eeae4bbfd4
+      - 00a30579-3021-4e4a-86a8-cd658b1decbf
       content-length:
       - '402'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 26 Dec 2020 19:34:25 GMT
+      - Fri, 22 Jan 2021 01:01:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '46'
+      - '60'
       x-request-id:
-      - e0181df0-61f6-4e96-82a9-d0eeae4bbfd4
+      - 00a30579-3021-4e4a-86a8-cd658b1decbf
     status:
       code: 200
       message: OK
@@ -63,21 +63,21 @@ interactions:
         Chi Minh City","Hong Kong","Houston","Hyderabad","Istanbul","Jakarta","Karachi","Khartoum","Kinshasa","Kolkata"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=40"}'
     headers:
       apim-request-id:
-      - da5a5c89-182c-4f03-9b56-9067ad138e37
+      - 052872f0-9ef1-4000-9558-a42fdc6869e4
       content-length:
       - '396'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 26 Dec 2020 19:34:26 GMT
+      - Fri, 22 Jan 2021 01:01:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '96'
+      - '43'
       x-request-id:
-      - da5a5c89-182c-4f03-9b56-9067ad138e37
+      - 052872f0-9ef1-4000-9558-a42fdc6869e4
     status:
       code: 200
       message: OK
@@ -105,21 +105,21 @@ interactions:
         Alegre"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=60"}'
     headers:
       apim-request-id:
-      - f40eb154-7fb3-49db-8f0b-eb4ac1768a65
+      - 90507fbe-d560-4460-bf64-a8f9f0a86045
       content-length:
       - '387'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 26 Dec 2020 19:34:26 GMT
+      - Fri, 22 Jan 2021 01:01:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '55'
+      - '61'
       x-request-id:
-      - f40eb154-7fb3-49db-8f0b-eb4ac1768a65
+      - 90507fbe-d560-4460-bf64-a8f9f0a86045
     status:
       code: 200
       message: OK
@@ -146,21 +146,21 @@ interactions:
         Paulo","Seoul","Shanghai","Shenyang","Shenzhen","Singapore","__SUM__","Surat","Sydney","Taipei","Tehran","Tianjin","Tokyo","Toronto"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=80"}'
     headers:
       apim-request-id:
-      - 0a05d30d-a2af-43c6-8584-f3fe32b1badd
+      - 30ad5aa2-c7a0-4d52-9f21-7278ff57d305
       content-length:
       - '393'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 26 Dec 2020 19:34:26 GMT
+      - Fri, 22 Jan 2021 01:01:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '51'
+      - '53'
       x-request-id:
-      - 0a05d30d-a2af-43c6-8584-f3fe32b1badd
+      - 30ad5aa2-c7a0-4d52-9f21-7278ff57d305
     status:
       code: 200
       message: OK
@@ -186,21 +186,21 @@ interactions:
       string: '{"value":["Washington","Wuhan","Xi''an","Yokohama"],"@nextLink":null}'
     headers:
       apim-request-id:
-      - e4032b6c-d2c2-4f34-bcf7-fdc631e35775
+      - b67f689c-c972-45a7-a637-d70b3ada3b37
       content-length:
       - '68'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 26 Dec 2020 19:34:26 GMT
+      - Fri, 22 Jan 2021 01:01:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '52'
+      - '73'
       x-request-id:
-      - e4032b6c-d2c2-4f34-bcf7-fdc631e35775
+      - b67f689c-c972-45a7-a637-d70b3ada3b37
     status:
       code: 200
       message: OK
