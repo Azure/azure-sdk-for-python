@@ -524,7 +524,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
-                string_index_type=self._string_code_unit,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
                 polling=TextAnalyticsLROPollingMethod(
                     timeout=polling_interval,
