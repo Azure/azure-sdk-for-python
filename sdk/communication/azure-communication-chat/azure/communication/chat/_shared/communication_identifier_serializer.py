@@ -8,6 +8,7 @@ from .models import (
     CommunicationIdentifierKind,
     CommunicationIdentifierModel,
     CommunicationUserIdentifier,
+    CommunicationCloudEnvironment,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
     UnknownIdentifier
@@ -37,7 +38,8 @@ class CommunicationUserIdentifierSerializer(object):
         if isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
-                id=communicationIdentifier.user_id
+                id=communicationIdentifier.user_id,
+                cloud=communicationIdentifier.cloud
             )
 
         return CommunicationIdentifierModel(
@@ -74,7 +76,8 @@ class CommunicationUserIdentifierSerializer(object):
                 raise ValueError("MicrosoftTeamsUser must have a valid attribute - microsoft_teams_user_id")
             return MicrosoftTeamsUserIdentifier(
                 identifierModel.microsoft_teams_user_id,
-                is_anonymous=identifierModel.is_anonymous
+                is_anonymous=identifierModel.is_anonymous,
+                cloud=identifierModel.communication_cloud_environment
             )
 
         if not identifier:
