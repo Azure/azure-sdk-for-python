@@ -1,5 +1,5 @@
 from ._version import VERSION
-from .template_code import template_main
+from ._client import MixedRealityStsClient
 
-__all__ = ['template_main']
 __version__ = VERSION
+__all__ = ['MixedRealityStsClient']

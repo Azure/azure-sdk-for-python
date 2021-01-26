@@ -4,7 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# matches SEMVER
-VERSION = "0.0.1b1"
+from ._client_async import MixedRealityStsClient
 
-SDK_MONIKER = "mixedreality-authentication/{}".format(VERSION)  # type: str
+__all__ = [
+    'MixedRealityStsClient'
+]

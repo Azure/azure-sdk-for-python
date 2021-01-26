@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# matches SEMVER
-VERSION = "0.0.1b1"
-
-SDK_MONIKER = "mixedreality-authentication/{}".format(VERSION)  # type: str
+def _construct_endpoint_url(account_domain):
+    # type: (str) -> str
+    return 'https://sts.' + account_domain

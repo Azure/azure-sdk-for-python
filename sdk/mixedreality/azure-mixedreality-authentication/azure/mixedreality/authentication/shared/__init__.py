@@ -4,7 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# matches SEMVER
-VERSION = "0.0.1b1"
+from ._authentication_endpoint import _construct_endpoint_url
+from ._mixedreality_account_key_credential import MixedRealityAccountKeyCredential
 
-SDK_MONIKER = "mixedreality-authentication/{}".format(VERSION)  # type: str
+__all__ = [
+    '_construct_endpoint_url'
+    'MixedRealityAccountKeyCredential'
+]
