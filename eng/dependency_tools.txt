@@ -1,0 +1,4 @@
+../../../tools/azure-sdk-tools
+azure-mgmt-keyvault<7.0.0
+azure-mgmt-resource<15.0.0
+azure-mgmt-storage<15.0.0
