@@ -196,6 +196,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             call. If the request does not specify the server will return up to 5,000 items per page.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword bool include_deleted:
+            Specifies that deleted file systems to be returned in the response. This is for file system restore enabled
+            account. The default value is `False`.
+            .. versionadded:: 12.4.0
         :returns: An iterable (auto-paging) of FileSystemProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.FileSystemProperties]
 
