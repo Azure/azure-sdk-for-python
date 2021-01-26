@@ -15,59 +15,54 @@ from devtools_testutils import AzureMgmtTestCase
 from msrest.serialization import UTC
 from azure.eventgrid import EventGridDeserializer, CloudEvent, EventGridEvent
 from _mocks import (
-    cloud_storage_dict,
-    cloud_storage_string,
-    cloud_storage_bytes,
-    cloud_custom_dict,
-    cloud_custom_string,
-    cloud_custom_bytes,
-    eg_custom_dict,
-    eg_custom_string,
-    eg_custom_bytes,
-    eg_storage_dict,
-    eg_storage_string,
-    eg_storage_bytes
+    eg_bytes,
+    eg_string,
+    eg_unicode,
+    cloud_bytes,
+    cloud_string,
+    cloud_unicode,
+    cloud_string_with_data_base64
     )
 
 class EventGridDeserializerTests(AzureMgmtTestCase):
 
     # Cloud Event tests
-    def test_eg_consumer_cloud_storage_dict(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_cloud_events(cloud_storage_dict)
-        assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data.__class__ == dict
+    def test_eg_consumer_cloud_unicode(self, **kwargs):
+        deserialized_events = EventGridDeserializer.deserialize_cloud_events(cloud_unicode)
+        for deserialized_event in deserialized_events:
+            assert deserialized_event.__class__ == CloudEvent
+            assert deserialized_event.data.__class__ == dict
 
-    def test_eg_consumer_cloud_storage_string(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_cloud_events(cloud_storage_string)
-        assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data.__class__ == dict
+    def test_eg_consumer_cloud_string(self, **kwargs):
+        deserialized_events = EventGridDeserializer.deserialize_cloud_events(cloud_string)
+        for deserialized_event in deserialized_events:
+            assert deserialized_event.__class__ == CloudEvent
+            assert deserialized_event.data.__class__ == dict
 
-    def test_eg_consumer_cloud_storage_bytes(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_cloud_events(cloud_storage_bytes)
-        assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data.__class__ == dict
-    
+    def test_eg_consumer_cloud_bytes(self, **kwargs):
+        deserialized_events = EventGridDeserializer.deserialize_cloud_events(cloud_bytes)
+        for deserialized_event in deserialized_events:
+            assert deserialized_event.__class__ == CloudEvent
+            assert deserialized_event.data.__class__ == dict
+
     # EG Event tests
 
-    def test_eg_consumer_eg_storage_dict(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_eventgrid_events(eg_storage_dict)
-        assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data.__class__ == dict
+    def test_eg_consumer_eg_storage_unicode(self, **kwargs):
+        deserialized_events = EventGridDeserializer.deserialize_eventgrid_events(eg_unicode)
+        for deserialized_event in deserialized_events:
+            assert deserialized_event.__class__ == EventGridEvent
+            assert deserialized_event.data.__class__ == dict
 
 
     def test_eg_consumer_eg_storage_string(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_eventgrid_events(eg_storage_string)
-        assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data.__class__ == dict
+        deserialized_events = EventGridDeserializer.deserialize_eventgrid_events(eg_string)
+        for deserialized_event in deserialized_events:
+            assert deserialized_event.__class__ == EventGridEvent
+            assert deserialized_event.data.__class__ == dict
 
 
     def test_eg_consumer_eg_storage_bytes(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_eventgrid_events(eg_storage_bytes)
-        assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data.__class__ == dict
+        deserialized_events = EventGridDeserializer.deserialize_eventgrid_events(eg_bytes)
+        for deserialized_event in deserialized_events:
+            assert deserialized_event.__class__ == EventGridEvent
+            assert deserialized_event.data.__class__ == dict
