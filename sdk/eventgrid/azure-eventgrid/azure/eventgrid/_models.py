@@ -11,27 +11,12 @@ import six
 from msrest.serialization import UTC
 from ._generated.models import EventGridEvent as InternalEventGridEvent, CloudEvent as InternalCloudEvent
 from ._shared.mixins import DictMixin
-from ._event_mappings import _event_mappings
 
 
 class EventMixin(object):
     """
     Mixin for the event models comprising of some helper methods.
     """
-    @staticmethod
-    def _deserialize_data(event, event_type):
-        """
-        Sets the data of the desrialized event to strongly typed event object if event type exists in _event_mappings.
-        Otherwise, sets it to None.
-
-        :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
-        """
-        # if system event type defined, set event.data to system event object
-        try:
-            event.data = (_event_mappings[event_type]).deserialize(event.data)
-        except KeyError: # else, if custom event, then event.data is dict and should be set to None
-            event.data = None
-
     @staticmethod
     def _from_json(event, encode):
         """
