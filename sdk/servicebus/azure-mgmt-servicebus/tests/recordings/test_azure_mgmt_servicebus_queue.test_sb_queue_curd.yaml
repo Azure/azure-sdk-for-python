@@ -14,8 +14,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -23,7 +23,7 @@ interactions:
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue","name":"testingpythontestcasequeue","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasequeue","createdAt":"2020-09-16T02:37:09.803Z","updatedAt":"2020-09-16T02:37:09.803Z","serviceBusEndpoint":"https://testingpythontestcasequeue.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasequeue","createdAt":"2021-01-26T03:44:27.197Z","updatedAt":"2021-01-26T03:44:27.197Z","serviceBusEndpoint":"https://testingpythontestcasequeue.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
@@ -32,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:37:11 GMT
+      - Tue, 26 Jan 2021 03:44:28 GMT
       expires:
       - '-1'
       pragma:
@@ -65,14 +65,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue","name":"testingpythontestcasequeue","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasequeue","createdAt":"2020-09-16T02:37:09.803Z","updatedAt":"2020-09-16T02:37:09.803Z","serviceBusEndpoint":"https://testingpythontestcasequeue.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasequeue","createdAt":"2021-01-26T03:44:27.197Z","updatedAt":"2021-01-26T03:44:27.197Z","serviceBusEndpoint":"https://testingpythontestcasequeue.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
@@ -81,16 +81,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:37:42 GMT
+      - Tue, 26 Jan 2021 03:45:00 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -112,14 +112,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue","name":"testingpythontestcasequeue","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasequeue","createdAt":"2020-09-16T02:37:09.803Z","updatedAt":"2020-09-16T02:37:52.487Z","serviceBusEndpoint":"https://testingpythontestcasequeue.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasequeue","createdAt":"2021-01-26T03:44:27.197Z","updatedAt":"2021-01-26T03:45:11.317Z","serviceBusEndpoint":"https://testingpythontestcasequeue.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
@@ -128,16 +128,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:29 GMT
+      - Tue, 26 Jan 2021 03:45:30 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -159,8 +159,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -168,7 +168,7 @@ interactions:
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue","name":"testingpythontestcasequeue","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasequeue","createdAt":"2020-09-16T02:37:09.803Z","updatedAt":"2020-09-16T02:37:52.487Z","serviceBusEndpoint":"https://testingpythontestcasequeue.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasequeue","createdAt":"2021-01-26T03:44:27.197Z","updatedAt":"2021-01-26T03:45:11.317Z","serviceBusEndpoint":"https://testingpythontestcasequeue.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
@@ -177,7 +177,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:33 GMT
+      - Tue, 26 Jan 2021 03:45:30 GMT
       expires:
       - '-1'
       pragma:
@@ -212,8 +212,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -221,16 +221,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue/queues/testingpythonsdkqueue","name":"testingpythonsdkqueue","type":"Microsoft.ServiceBus/Namespaces/Queues","location":"West
-        US","properties":{"lockDuration":"PT1M","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"enableBatchedOperations":true,"duplicateDetectionHistoryTimeWindow":"PT10M","maxDeliveryCount":10,"sizeInBytes":0,"messageCount":0,"status":"Active","autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"createdAt":"2020-09-16T02:38:36.123Z","updatedAt":"2020-09-16T02:38:36.157Z","accessedAt":"0001-01-01T00:00:00"}}'
+        US","properties":{"lockDuration":"PT1M","maxSizeInMegabytes":1024,"requiresDuplicateDetection":false,"requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"enableBatchedOperations":true,"duplicateDetectionHistoryTimeWindow":"PT10M","maxDeliveryCount":10,"sizeInBytes":0,"messageCount":0,"status":"Active","autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"createdAt":"2021-01-26T03:45:33.58Z","updatedAt":"2021-01-26T03:45:33.627Z","accessedAt":"0001-01-01T00:00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1081'
+      - '1080'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:36 GMT
+      - Tue, 26 Jan 2021 03:45:33 GMT
       expires:
       - '-1'
       pragma:
@@ -263,8 +263,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -272,16 +272,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue/queues/testingpythonsdkqueue","name":"testingpythonsdkqueue","type":"Microsoft.ServiceBus/Namespaces/Queues","location":"West
-        US","properties":{"lockDuration":"PT1M","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"enableBatchedOperations":true,"duplicateDetectionHistoryTimeWindow":"PT10M","maxDeliveryCount":10,"sizeInBytes":0,"messageCount":0,"status":"Active","autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"createdAt":"2020-09-16T02:38:36.123Z","updatedAt":"2020-09-16T02:38:36.157Z","accessedAt":"0001-01-01T00:00:00Z"}}'
+        US","properties":{"lockDuration":"PT1M","maxSizeInMegabytes":1024,"requiresDuplicateDetection":false,"requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"enableBatchedOperations":true,"duplicateDetectionHistoryTimeWindow":"PT10M","maxDeliveryCount":10,"sizeInBytes":0,"messageCount":0,"status":"Active","autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"createdAt":"2021-01-26T03:45:33.58Z","updatedAt":"2021-01-26T03:45:33.627Z","accessedAt":"0001-01-01T00:00:00Z"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1082'
+      - '1081'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:37 GMT
+      - Tue, 26 Jan 2021 03:45:34 GMT
       expires:
       - '-1'
       pragma:
@@ -312,8 +312,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -321,16 +321,16 @@ interactions:
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue/queues/testingpythonsdkqueue","name":"testingpythonsdkqueue","type":"Microsoft.ServiceBus/Namespaces/Queues","location":"West
-        US","properties":{"lockDuration":"PT1M","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"enableBatchedOperations":true,"duplicateDetectionHistoryTimeWindow":"PT10M","maxDeliveryCount":10,"sizeInBytes":0,"messageCount":0,"status":"Active","autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"createdAt":"2020-09-16T02:38:36.123Z","updatedAt":"2020-09-16T02:38:36.157Z","accessedAt":"0001-01-01T00:00:00Z"}}]}'
+        US","properties":{"lockDuration":"PT1M","maxSizeInMegabytes":1024,"requiresDuplicateDetection":false,"requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"enableBatchedOperations":true,"duplicateDetectionHistoryTimeWindow":"PT10M","maxDeliveryCount":10,"sizeInBytes":0,"messageCount":0,"status":"Active","autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"createdAt":"2021-01-26T03:45:33.58Z","updatedAt":"2021-01-26T03:45:33.627Z","accessedAt":"0001-01-01T00:00:00Z"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1094'
+      - '1093'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:38 GMT
+      - Tue, 26 Jan 2021 03:45:35 GMT
       expires:
       - '-1'
       pragma:
@@ -368,8 +368,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -386,7 +386,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:40 GMT
+      - Tue, 26 Jan 2021 03:45:36 GMT
       expires:
       - '-1'
       pragma:
@@ -423,8 +423,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -441,7 +441,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:40 GMT
+      - Tue, 26 Jan 2021 03:45:38 GMT
       expires:
       - '-1'
       pragma:
@@ -474,8 +474,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -492,7 +492,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:41 GMT
+      - Tue, 26 Jan 2021 03:45:38 GMT
       expires:
       - '-1'
       pragma:
@@ -527,8 +527,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -545,16 +545,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:42 GMT
+      - Tue, 26 Jan 2021 03:45:39 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -578,8 +578,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -596,7 +596,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:42 GMT
+      - Tue, 26 Jan 2021 03:45:41 GMT
       expires:
       - '-1'
       pragma:
@@ -629,15 +629,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue/queues/testingpythonsdkqueue/authorizationRules/testingauthrulepy/ListKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=3ud5wbJs++Gwnt2lEuqi96Ikzz9cbOoSSlnzKmgMP4k=;EntityPath=testingpythonsdkqueue","secondaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=E0+kUm+7XgDnkV8Il6A9KX+8t95tq/jhzVnDgUKDhkU=;EntityPath=testingpythonsdkqueue","primaryKey":"3ud5wbJs++Gwnt2lEuqi96Ikzz9cbOoSSlnzKmgMP4k=","secondaryKey":"E0+kUm+7XgDnkV8Il6A9KX+8t95tq/jhzVnDgUKDhkU=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=yu5WExTJZwnqeHdifyCGhhRxzBcfhp6ehK8RsQcgD7Q=;EntityPath=testingpythonsdkqueue","secondaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=brqEHGtXUiQ371cPbjar/sABdpj67F02oA9zI+SZZ5Q=;EntityPath=testingpythonsdkqueue","primaryKey":"yu5WExTJZwnqeHdifyCGhhRxzBcfhp6ehK8RsQcgD7Q=","secondaryKey":"brqEHGtXUiQ371cPbjar/sABdpj67F02oA9zI+SZZ5Q=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -646,7 +646,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:43 GMT
+      - Tue, 26 Jan 2021 03:45:42 GMT
       expires:
       - '-1'
       pragma:
@@ -683,15 +683,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue/queues/testingpythonsdkqueue/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=HxkNpTHe8+2Ay47aTPfhZJC78tedp0cnNl7lOdnNjDY=;EntityPath=testingpythonsdkqueue","secondaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=E0+kUm+7XgDnkV8Il6A9KX+8t95tq/jhzVnDgUKDhkU=;EntityPath=testingpythonsdkqueue","primaryKey":"HxkNpTHe8+2Ay47aTPfhZJC78tedp0cnNl7lOdnNjDY=","secondaryKey":"E0+kUm+7XgDnkV8Il6A9KX+8t95tq/jhzVnDgUKDhkU=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=68ZnflvuyxUigPRVnPlLSOIIwpuGJctPN2Lp0UNYnk4=;EntityPath=testingpythonsdkqueue","secondaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=brqEHGtXUiQ371cPbjar/sABdpj67F02oA9zI+SZZ5Q=;EntityPath=testingpythonsdkqueue","primaryKey":"68ZnflvuyxUigPRVnPlLSOIIwpuGJctPN2Lp0UNYnk4=","secondaryKey":"brqEHGtXUiQ371cPbjar/sABdpj67F02oA9zI+SZZ5Q=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -700,7 +700,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:43 GMT
+      - Tue, 26 Jan 2021 03:45:43 GMT
       expires:
       - '-1'
       pragma:
@@ -737,15 +737,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue/queues/testingpythonsdkqueue/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=HxkNpTHe8+2Ay47aTPfhZJC78tedp0cnNl7lOdnNjDY=;EntityPath=testingpythonsdkqueue","secondaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=ISTHuk4J27k5ME57Cgv2tr6EIcYRCW5otWYfn81JWIU=;EntityPath=testingpythonsdkqueue","primaryKey":"HxkNpTHe8+2Ay47aTPfhZJC78tedp0cnNl7lOdnNjDY=","secondaryKey":"ISTHuk4J27k5ME57Cgv2tr6EIcYRCW5otWYfn81JWIU=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=68ZnflvuyxUigPRVnPlLSOIIwpuGJctPN2Lp0UNYnk4=;EntityPath=testingpythonsdkqueue","secondaryConnectionString":"Endpoint=sb://testingpythontestcasequeue.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=fpMXRHURtG5O99RO01d8HfsieqQk/t2uECrV5pNoGTc=;EntityPath=testingpythonsdkqueue","primaryKey":"68ZnflvuyxUigPRVnPlLSOIIwpuGJctPN2Lp0UNYnk4=","secondaryKey":"fpMXRHURtG5O99RO01d8HfsieqQk/t2uECrV5pNoGTc=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -754,7 +754,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:44 GMT
+      - Tue, 26 Jan 2021 03:45:44 GMT
       expires:
       - '-1'
       pragma:
@@ -789,8 +789,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -804,7 +804,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 02:38:45 GMT
+      - Tue, 26 Jan 2021 03:45:45 GMT
       expires:
       - '-1'
       pragma:
@@ -833,8 +833,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -850,7 +850,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 02:38:45 GMT
+      - Tue, 26 Jan 2021 03:45:46 GMT
       expires:
       - '-1'
       pragma:
@@ -883,8 +883,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -898,7 +898,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 02:38:46 GMT
+      - Tue, 26 Jan 2021 03:45:47 GMT
       expires:
       - '-1'
       pragma:
@@ -929,8 +929,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -944,7 +944,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 02:38:48 GMT
+      - Tue, 26 Jan 2021 03:45:49 GMT
       expires:
       - '-1'
       location:
@@ -975,8 +975,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/0.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasequeue/operationresults/testingpythontestcasequeue?api-version=2018-01-01-preview
   response:
@@ -988,7 +988,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 02:39:19 GMT
+      - Tue, 26 Jan 2021 03:46:20 GMT
       expires:
       - '-1'
       pragma:
