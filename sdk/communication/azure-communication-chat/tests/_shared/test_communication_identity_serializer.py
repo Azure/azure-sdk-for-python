@@ -134,7 +134,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
                 kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
                 microsoft_teams_user_id="teamsid",
                 is_anonymous=True,
-                communication_cloud_environment="public"
+                communication_cloud_environment="PUBLIC"
             )
         )
 
@@ -147,7 +147,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         assert isinstance(teams_user_identifier_actual, MicrosoftTeamsUserIdentifier)
         assert teams_user_identifier_actual.user_id == teams_user_identifier_expected.user_id
         assert teams_user_identifier_actual.is_anonymous== teams_user_identifier_expected.is_anonymous
-        assert teams_user_identifier_actual.cloud== teams_user_identifier_expected.cloud
+        assert teams_user_identifier_actual.cloud == teams_user_identifier_expected.cloud
        
 if __name__ == "__main__":
     unittest.main()
