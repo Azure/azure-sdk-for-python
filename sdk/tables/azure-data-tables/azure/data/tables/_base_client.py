@@ -4,17 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
-    Tuple,
-    TYPE_CHECKING,
-)
+from typing import TYPE_CHECKING
+
 import logging
 from uuid import uuid4, UUID
 from datetime import datetime
@@ -65,6 +56,18 @@ from ._policies import (
 from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
+if TYPE_CHECKING:
+    from typing import (  # pylint: disable=ungrouped-imports
+        Union,
+        Optional,
+        Any,
+        Iterable,
+        Dict,
+        List,
+        Type,
+        Tuple,
+    )
+
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
     "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
@@ -75,7 +78,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+class StorageAccountHostsMixin(object):
     def __init__(
         self,
         parsed_url,  # type: Any
@@ -261,7 +264,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-    def _batch_send(  # pylint: disable=inconsistent-return-statements
+    def _batch_send(
         self,
         entities,  # type: List[TableEntity]
         *reqs,  # type: List[HttpRequest]
@@ -292,7 +295,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             boundary="batch_{}".format(uuid4()),
         )
 
-        pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint:disable=protected-access
+        pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code == 403:
@@ -328,10 +331,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 )
         return transaction_result
 
-    def _parameter_filter_substitution(  # pylint: disable = R0201
+    def _parameter_filter_substitution(  # pylint: disable=no-self-use
             self,
             parameters,  # type: dict[str,str]
-            filter  # type: str  # pylint: disable = W0622
+            filter  # type: str  pylint:disable=redefined-builtin
     ):
         """Replace user defined parameter in filter
         :param parameters: User defined parameters
@@ -354,7 +357,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                         filter_strings[index] = "'{}'".format(val)
             return ' '.join(filter_strings)
 
-        return filter  # pylint: disable = W0622
+        return filter
 
 
 class TransportWrapper(HttpTransport):
@@ -378,7 +381,7 @@ class TransportWrapper(HttpTransport):
     def __enter__(self):
         pass
 
-    def __exit__(self, *args):  # pylint: disable=arguments-differ
+    def __exit__(self, *args):
         pass
 
 

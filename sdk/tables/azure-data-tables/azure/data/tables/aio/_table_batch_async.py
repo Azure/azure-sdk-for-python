@@ -3,25 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Union, TYPE_CHECKING
 import msrest
 
 from azure.core.pipeline import PipelineResponse
-from azure.core.exceptions import (  # pylint:disable=unused-import
-    ClientAuthenticationError,
-    ResourceNotFoundError,
-    ResourceExistsError,
-)
+
 
 from .._models import UpdateMode
 from .._serialize import (
     _get_match_headers,
     _add_entity_properties,
-)  # pylint:disable=unused-import
-from .._generated.models import QueryOptions  # pylint:disable=unused-import
+)
+
 from .._generated.aio._azure_table import AzureTable
 from .._generated.aio._configuration import AzureTableConfiguration
 
+if TYPE_CHECKING:
+    from .._generated.models import QueryOptions
 
 class TableBatchOperations(object):
     """
@@ -138,7 +136,7 @@ class TableBatchOperations(object):
             ),
             "table": self._serialize.url("table", table, "str"),
         }
-        url = self._client._client.format_url(  # pylint:disable=protected-access
+        url = self._client._client.format_url(  # pylint: disable=protected-access
             url, **path_format_arguments
         )
 
@@ -180,7 +178,7 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.post(  # pylint:disable=protected-access
+        request = self._client._client.post(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
         self._requests.append(request)
@@ -307,7 +305,7 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint:disable=protected-access
+        url = self._client._client.format_url(  # pylint: disable=protected-access
             url, **path_format_arguments
         )
 
@@ -349,7 +347,7 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.put(  # pylint:disable=protected-access
+        request = self._client._client.put(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
         self._requests.append(request)
@@ -415,7 +413,7 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint:disable=protected-access
+        url = self._client._client.format_url(  # pylint: disable=protected-access
             url, **path_format_arguments
         )
 
@@ -457,7 +455,7 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.patch(  # pylint:disable=protected-access
+        request = self._client._client.patch(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
         self._requests.append(request)
@@ -571,7 +569,7 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint:disable=protected-access
+        url = self._client._client.format_url(  # pylint: disable=protected-access
             url, **path_format_arguments
         )
 
@@ -603,7 +601,7 @@ class TableBatchOperations(object):
         )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
-        request = self._client._client.delete(  # pylint:disable=protected-access
+        request = self._client._client.delete(  # pylint: disable=protected-access
             url, query_parameters, header_parameters
         )
         self._requests.append(request)
