@@ -135,17 +135,16 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
-    def test_list_all_phone_numbers_from_managed_identity(self, connection_string):
-        endpoint, access_key = parse_connection_str(connection_string)
+    def test_list_all_phone_numbers_from_managed_identity(self):
+        endpoint, access_key = parse_connection_str(self.connection_str)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
         phone_number_client = PhoneNumberAdministrationClient(endpoint, credential)
-        user = identity_client.create_user()
-
-        assert user.identifier is not None
+        pages = phone_number_client.list_all_phone_numbers()
+        assert pages.next()
 
     @pytest.mark.live_test_only
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
