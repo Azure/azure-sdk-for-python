@@ -108,10 +108,10 @@ class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     """Communication Identifier Kind.
     """
     Unknown = "UNKNOWN"
-    CommunicationUser = "COMMUNICATIONuSER"
-    PhoneNumber = "PHONEnUMBER"
+    CommunicationUser = "COMMUNICATIONUSER"
+    PhoneNumber = "PHONENUMBER"
     CallingApplication = "CALLINGAPPLICATION"
-    MicrosoftTeamsUser = "MICROSOFTTEAMSuSER"
+    MicrosoftTeamsUser = "MICROSOFTTEAMSUSER"
 
 class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
