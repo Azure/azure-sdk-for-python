@@ -39,8 +39,6 @@ class EventGridDeserializer(object):
             deserialized_event = CloudEvent._from_generated(cloud_event) # pylint: disable=protected-access
             return deserialized_event
         except Exception as err:
-            _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. \
-                Event must be a string, dict, or bytes following the CloudEvent schema.')
             _LOGGER.error('Your event: %s', cloud_event)
             _LOGGER.error(err)
             raise ValueError('Error: cannot deserialize event. Event does not have a valid format. \
