@@ -78,6 +78,8 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
     :type is_anonymous: bool
     :param microsoft_teams_user_id: Microsoft Teams user id.
     :type microsoft_teams_user_id: str
+    :param communication_cloud_environment: Cloud environment that the user belongs to.
+    :type communication_cloud_environment: CloudEnvironment
     """
 
     _validation = {
@@ -90,6 +92,7 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
         'phone_number': {'key': 'phoneNumber', 'type': 'str'},
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'microsoft_teams_user_id': {'key': 'microsoftTeamsUserId', 'type': 'str'},
+        'communication_cloud_environment': {'key': 'communicationCloudEnvironment', 'type': 'str'},
     }
 
     def __init__(
@@ -102,6 +105,7 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
         self.phone_number = kwargs.get('phone_number', None)
         self.is_anonymous = kwargs.get('is_anonymous', None)
         self.microsoft_teams_user_id = kwargs.get('microsoft_teams_user_id', None)
+        self.communication_cloud_environment = kwargs.get('communication_cloud_environment', None)
 
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(cls, name):
