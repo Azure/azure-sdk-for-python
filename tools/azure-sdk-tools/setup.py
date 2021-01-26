@@ -37,6 +37,8 @@ setup(
         'console_scripts': [
             'generate_package=packaging_tools.generate_package:generate_main',
             'generate_sdk=packaging_tools.generate_sdk:generate_main',
+            'auto_codegen=packaging_tools.auto_codegen:generate_main',
+            'auto_package=packaging_tools.auto_package:generate_main',
         ],
     },
     extras_require={
