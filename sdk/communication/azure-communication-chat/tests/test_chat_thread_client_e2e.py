@@ -10,7 +10,7 @@ from datetime import datetime
 from devtools_testutils import AzureTestCase
 from msrest.serialization import TZ_UTC
 
-from azure.communication.administration import CommunicationIdentityClient
+from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import (
     ChatClient,
     CommunicationTokenCredential,
