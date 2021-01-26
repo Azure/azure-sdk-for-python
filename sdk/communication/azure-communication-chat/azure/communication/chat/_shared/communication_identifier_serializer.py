@@ -8,7 +8,6 @@ from .models import (
     CommunicationIdentifierKind,
     CommunicationIdentifierModel,
     CommunicationUserIdentifier,
-    CommunicationCloudEnvironment,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
     UnknownIdentifier
