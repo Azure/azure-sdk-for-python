@@ -56,7 +56,8 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
-        return self._client._pipeline.run(request, **kwargs)
+        stream = kwargs.pop("stream", False)
+        return self._client._pipeline.run(request, stream=stream, **kwargs)
 
     def close(self):
         # type: () -> None
