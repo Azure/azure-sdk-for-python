@@ -76,7 +76,7 @@ class SmsClient(object):
              to_phone_numbers, # type: list[str]
              message, # type: str
              **kwargs  #type: Any
-        ): # type: (...) -> SendSmsResponse
+        ): # type: (...) -> ItemPaged[SendSmsResponse]
         """Sends SMSs to phone numbers.
 
         :param str from_phone_number: the sender of the SMS.
@@ -84,8 +84,8 @@ class SmsClient(object):
         :param str message: The message in the SMS
         :keyword send_sms_options: the options object to configure delivery reporting.
         :type send_sms_options: ~azure.communication.sms.models.SendSmsOptions
-        :return: The response object with the message_id
-        :rtype: SendMessageResponse: ~azure.communication.sms.models.SendMessageResponse
+        :return: An iterator like instance of SendSmsResponse
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.sms.models.SendSmsResponse]
         """
 
         send_sms_options = kwargs.pop('send_sms_options', None)

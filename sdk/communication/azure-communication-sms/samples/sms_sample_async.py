@@ -33,7 +33,7 @@ class SmsSamples(object):
         async with sms_client:
             try:
                 # calling send() with constructed request object
-                smsresponse = await sms_client.send(
+                sms_responses = await sms_client.send(
                     from_phone_number="<leased-phone-number>",
                     to_phone_numbers=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
                     message="Hello World via SMS",
@@ -42,7 +42,8 @@ class SmsSamples(object):
                 print(Exception)
                 pass
 
-            print(smsresponse)
+            for sms_response in sms_responses:
+                print(sms_response)
 
 if __name__ == '__main__':
     sample = SmsSamples()
