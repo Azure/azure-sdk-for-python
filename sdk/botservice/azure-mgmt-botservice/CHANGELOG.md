@@ -13,6 +13,10 @@
 
   - Removed operation group EnterpriseChannelsOperations
 
+## 0.2.0 (2019-05-22)
+
+- Add some new features
+
 ## 0.1.0 (2018-08-07)
 
   - Initial Release
