@@ -414,7 +414,7 @@ class FormLine(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormLine, this is "line".
-    :ivar appearance: Text appearance properties.
+    :ivar appearance: An object representing the appearance of the line.
     :vartype appearance: ~azure.ai.formrecognizer.Appearance
 
     .. versionadded:: v2.1-preview
