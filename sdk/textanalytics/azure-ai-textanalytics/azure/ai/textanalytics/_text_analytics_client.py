@@ -19,7 +19,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
-from ._request_handlers import _validate_input
+from ._request_handlers import _validate_input, _check_string_index_type_arg
 from ._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -109,24 +109,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
         self._deserialize = _get_deserialize()
-
-    def _check_string_index_type_arg(self, string_index_type_arg):
-        string_index_type = None
-
-        if self._api_version == "v3.0":
-            if string_index_type_arg is not None:
-                raise ValueError(
-                    "'string_index_type' is only available for API version v3.1-preview and up"
-                )
-
-        else:
-            if string_index_type is None:
-                string_index_type = self._string_code_unit
-
-            else:
-                string_index_type = string_index_type_arg
-
-        return string_index_type
 
 
     @distributed_trace
@@ -252,8 +234,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        string_index_type = self._check_string_index_type_arg(
+        string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -339,8 +323,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
 
-        string_index_type = self._check_string_index_type_arg(
-            kwargs.pop("string_index_type", None)
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -429,8 +415,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
 
-        string_index_type = self._check_string_index_type_arg(
-            kwargs.pop("string_index_type", None)
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -512,8 +500,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        string_index_type = self._check_string_index_type_arg(
-            kwargs.pop("string_index_type", None)
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -718,8 +708,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
 
-        string_index_type = self._check_string_index_type_arg(
-            kwargs.pop("string_index_type", None)
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
