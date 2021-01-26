@@ -65,11 +65,11 @@ class TableClient(TableClientBase):
         super(TableClient, self).__init__(
             account_url, table_name, credential=credential, **kwargs
         )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        kwargs["connection_timeout"] = (
+            kwargs.get("connection_timeout") or CONNECTION_TIMEOUT
+        )
         self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
+            self.url, policies=kwargs.pop("policies", self._policies), **kwargs
         )
 
     @classmethod
@@ -442,10 +442,12 @@ class TableClient(TableClientBase):
                 :dedent: 8
                 :caption: List all entities held within a table
         """
-        entity_hook = kwargs.pop('entity_hook', None)
+        entity_hook = kwargs.pop("entity_hook", None)
         page_iterator_class = TableEntityPropertiesPaged
         if entity_hook:
-            page_iterator_class = functools.partial(TableEntityPropertiesPaged, entity_hook=entity_hook)
+            page_iterator_class = functools.partial(
+                TableEntityPropertiesPaged, entity_hook=entity_hook
+            )
 
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -492,7 +494,9 @@ class TableClient(TableClientBase):
         entity_hook = kwargs.pop("entity_hook", None)
         page_iterator_class = TableEntityPropertiesPaged
         if entity_hook:
-            page_iterator_class = functools.partial(TableEntityPropertiesPaged, entity_hook=entity_hook)
+            page_iterator_class = functools.partial(
+                TableEntityPropertiesPaged, entity_hook=entity_hook
+            )
 
         parameters = kwargs.pop("parameters", None)
         filter = self._parameter_filter_substitution(
@@ -540,7 +544,7 @@ class TableClient(TableClientBase):
                 :dedent: 8
                 :caption: Get a single entity from a table
         """
-        entity_hook = kwargs.pop('entity_hook', None)
+        entity_hook = kwargs.pop("entity_hook", None)
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
@@ -669,5 +673,7 @@ class TableClient(TableClientBase):
                 :caption: Using batches to send multiple requests at once
         """
         return self._batch_send(  # pylint:disable=protected-access
-            batch._entities, *batch._requests, **kwargs  # pylint:disable=protected-access
+            batch._entities,
+            *batch._requests,
+            **kwargs  # pylint:disable=protected-access
         )

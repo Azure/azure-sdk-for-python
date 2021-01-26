@@ -120,7 +120,7 @@ class TableAnalyticsLogging(GeneratedLogging):
             write=generated.write,
             retention_policy=RetentionPolicy._from_generated(  # pylint:disable=protected-access
                 generated.retention_policy
-            )
+            ),
         )
 
 
@@ -138,8 +138,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(  # pylint:disable=super-init-not-called
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         self.version = kwargs.get("version", u"1.0")
         self.enabled = kwargs.get("enabled", False)
@@ -161,7 +160,7 @@ class Metrics(GeneratedMetrics):
             include_apis=generated.include_apis,
             retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            )
+            ),
         )
 
 
@@ -307,7 +306,8 @@ class TablePropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [
-            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint:disable=protected-access
+            TableItem._from_generated(t, **self._headers)
+            for t in self._response.value  # pylint:disable=protected-access
         ]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
@@ -364,7 +364,9 @@ class TableEntityPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [self.entity_hook(t) for t in self._response.value] #self._get_props_list()
+        props_list = [
+            self.entity_hook(t) for t in self._response.value
+        ]  # self._get_props_list()
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {
@@ -463,7 +465,9 @@ def service_stats_deserialize(generated):
 def service_properties_deserialize(generated):
     """Deserialize a ServiceProperties objects into a dict."""
     return {
-        "analytics_logging": TableAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
+        "analytics_logging": TableAnalyticsLogging._from_generated(
+            generated.logging
+        ),  # pylint: disable=protected-access
         "hour_metrics": Metrics._from_generated(  # pylint: disable=protected-access
             generated.hour_metrics
         ),
@@ -471,7 +475,8 @@ def service_properties_deserialize(generated):
             generated.minute_metrics
         ),
         "cors": [
-            CorsRule._from_generated(cors) for cors in generated.cors  # pylint: disable=protected-access
+            CorsRule._from_generated(cors)
+            for cors in generated.cors  # pylint: disable=protected-access
         ],
     }
 

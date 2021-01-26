@@ -78,11 +78,13 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             loop=loop,
             **kwargs
         )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        kwargs["connection_timeout"] = (
+            kwargs.get("connection_timeout") or CONNECTION_TIMEOUT
+        )
         self._configure_policies(**kwargs)
         self._client = AzureTable(
             self.url,
-            policies=kwargs.pop('policies', self._policies),
+            policies=kwargs.pop("policies", self._policies),
             loop=loop,
             **kwargs
         )
@@ -460,10 +462,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
-        entity_hook = kwargs.pop('entity_hook', None)
+        entity_hook = kwargs.pop("entity_hook", None)
         page_iterator_class = TableEntityPropertiesPaged
         if entity_hook:
-            page_iterator_class = functools.partial(TableEntityPropertiesPaged, entity_hook=entity_hook)
+            page_iterator_class = functools.partial(
+                TableEntityPropertiesPaged, entity_hook=entity_hook
+            )
 
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -510,7 +514,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         entity_hook = kwargs.pop("entity_hook", None)
         page_iterator_class = TableEntityPropertiesPaged
         if entity_hook:
-            page_iterator_class = functools.partial(TableEntityPropertiesPaged, entity_hook=entity_hook)
+            page_iterator_class = functools.partial(
+                TableEntityPropertiesPaged, entity_hook=entity_hook
+            )
 
         parameters = kwargs.pop("parameters", None)
         filter = self._parameter_filter_substitution(
@@ -559,7 +565,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Getting an entity from PartitionKey and RowKey
         """
-        entity_hook = kwargs.pop('entity_hook', None)
+        entity_hook = kwargs.pop("entity_hook", None)
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
@@ -684,5 +690,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Using batches to send multiple requests at once
         """
         return await self._batch_send(
-            batch._entities, *batch._requests, **kwargs  # pylint:disable=protected-access
+            batch._entities,
+            *batch._requests,
+            **kwargs  # pylint:disable=protected-access
         )
