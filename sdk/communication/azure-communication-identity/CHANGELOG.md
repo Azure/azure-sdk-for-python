@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.4 (Unreleased)
+## 1.0.0b4 (Unreleased)
 
 ### Added
 - Added CommunicationIdentityClient (originally was part of the azure.communication.administration package).
