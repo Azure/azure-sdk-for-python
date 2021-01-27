@@ -9,7 +9,6 @@
 
 - Added `AzureSasCredential` and its respective policy. #15946
 
-
 ## 1.9.0 (2020-11-09)
 
 ### Features

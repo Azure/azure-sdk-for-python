@@ -4,7 +4,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, List
+from typing import Dict
 
 from azure.communication.administration._phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
 from azure.core.async_paging import AsyncItemPaged

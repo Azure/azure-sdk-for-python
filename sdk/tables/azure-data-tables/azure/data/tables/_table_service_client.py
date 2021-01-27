@@ -268,7 +268,7 @@ class TableServiceClient(TableServiceClientBase):
     @distributed_trace
     def query_tables(
         self,
-        filter,  # pylint: disable=W0622
+        filter,  # pylint: disable=redefined-builtin
         **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[TableItem]
@@ -296,7 +296,7 @@ class TableServiceClient(TableServiceClientBase):
         parameters = kwargs.pop("parameters", None)
         filter = self._parameter_filter_substitution(
             parameters, filter
-        )  # pylint: disable=W0622
+        )  # pylint: disable=redefined-builtin
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
