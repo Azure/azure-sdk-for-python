@@ -2,6 +2,9 @@
 
 ## 5.1.0b5 (Unreleased)
 
+**New Features**
+- No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare`. `begin_analyze_healthcare` is still in gated preview though.
+
 
 ## 5.1.0b4 (2021-01-12)
 
@@ -59,7 +62,7 @@ used in conjunction with the Bing Entity Search API to fetch additional relevant
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
 - `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
 
-## 1.0.0b5 
+## 1.0.0b5
 
 - This was a broken release
 
