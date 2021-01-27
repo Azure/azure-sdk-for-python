@@ -428,7 +428,7 @@ from azure.ai.textanalytics import TextAnalyticsClient
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
 
-text_analytics_client = TextAnalyticsClient(endpoint, credential, api_version="v3.1-preview.3")
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = ["Subject is taking 100mg of ibuprofen twice daily"]
 
@@ -478,7 +478,7 @@ from azure.ai.textanalytics import (
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
 
-text_analytics_client = TextAnalyticsClient(endpoint, credential, api_version="v3.1-preview.3")
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = ["Microsoft was founded by Bill Gates and Paul Allen."]
 

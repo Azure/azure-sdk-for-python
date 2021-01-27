@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/recognition/general?model-version=2020-02-01&showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/general?model-version=2020-02-01&showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":1.0},{"text":"Bill
@@ -29,16 +29,16 @@ interactions:
         Gates","category":"Person","offset":37,"length":10,"confidenceScore":0.86},{"text":"Paul
         Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 4fc3df61-4058-4e3f-8c7a-a7696bb6a2fe
+      apim-request-id: a08bbbb9-cce2-4688-9a46-1855f437a4ee
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 19 Nov 2020 21:27:05 GMT
+      date: Wed, 27 Jan 2021 02:23:08 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '79'
+      x-envoy-upstream-service-time: '59'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/entities/recognition/general?model-version=2020-02-01&showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/recognition/general?model-version=2020-02-01&showStats=false&stringIndexType=UnicodeCodePoint
 version: 1
