@@ -9,6 +9,7 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
+from opentelemetry import trace as trace_api
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.trace import Link, SpanContext, SpanKind
@@ -42,6 +43,7 @@ class TestAzureTraceExporter(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        trace_api._TRACER_PROVIDER
         shutil.rmtree(cls._exporter.storage._path, True)
 
     def test_constructor(self):

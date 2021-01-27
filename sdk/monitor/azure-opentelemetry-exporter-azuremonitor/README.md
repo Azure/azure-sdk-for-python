@@ -57,14 +57,17 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [Exporter Options][exporter_options]: Options to configure Azure exporters. Currently only includes connection_string.
 
+* [Meter Provider][meter_provider]: Provides a `Meter` for use by the given instrumentation library.
+
 For more information about these resources, see [What is Azure Monitor?][product_docs].
 
 ## Examples
 
 The following sections provide several code snippets covering some of the most common tasks, including:
 
-* [Exporting a custom span](#export-hello-world-trace)
+* [Exporting a custom span with trace exporter](#export-hello-world-trace)
 * [Using an instrumentation to track a library](#instrumentation-with-requests-library)
+* [Track a counter metric and export with metrics exporter](#export-counter-metric)
 
 ### Export Hello World Trace
 
@@ -124,6 +127,35 @@ RequestsInstrumentor().instrument()
 response = requests.get(url="https://azure.microsoft.com/")
 ```
 
+### Export counter metric
+
+```python
+from opentelemetry import metrics
+from opentelemetry.sdk.metrics import MeterProvider
+
+from azure.opentelemetry.exporter.azuremonitor import AzureMonitorMetricsExporter
+
+metrics.set_meter_provider(MeterProvider())
+meter = metrics.get_meter(__name__)
+exporter = AzureMonitorMetricsExporter(
+    connection_string="InstrumentationKey=<INSTRUMENTATION KEY HERE>"
+)
+metrics.get_meter_provider().start_pipeline(meter, exporter, 5)
+
+requests_counter = meter.create_counter(
+    name="requests",
+    description="number of requests",
+    unit="1",
+    value_type=int,
+)
+
+testing_labels = {"environment": "testing"}
+
+requests_counter.add(25, testing_labels)
+
+input("Press any key to exit...")
+```
+
 ## Troubleshooting
 
 The exporter raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#azure-core-library-exceptions).
@@ -160,13 +192,9 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [product_docs]: https://docs.microsoft.com/azure/azure-monitor/overview
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
-[cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
-[cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/project/azure-opentelemetry-exporter-azuremonitor
 [python]: https://www.python.org/downloads/
-[venv]: https://docs.python.org/3/library/venv.html
-[virtualenv]: https://virtualenv.pypa.io
 [ot_sdk_python]: https://github.com/open-telemetry/opentelemetry-python
 [application_insights_namespace]: https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#how-do-i-use-application-insights
 [exporter_options]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/azure/opentelemetry/exporter/azuremonitor/_options.py#L21
@@ -174,8 +202,9 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [client_reference]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/azure/opentelemetry/exporter/azuremonitor/export/trace/_exporter.py#L30
 [opentelemtry_spec]: https://opentelemetry.io/
 [instrumentation_library]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#instrumentation-libraries
-[tracer_provider]: https://opentelemetry-python.readthedocs.io/en/stable/api/trace.html?highlight=TracerProvider#opentelemetry.trace.TracerProvider
-[span_processor]: https://opentelemetry-python.readthedocs.io/en/stable/_modules/opentelemetry/sdk/trace.html?highlight=SpanProcessor#
+[tracer_provider]: https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html#opentelemetry.trace.TracerProvider
+[span_processor]: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.html#opentelemetry.sdk.trace.SpanProcessor
 [sampler_ref]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/sdk.md#sampling
+[meter_provider]: https://opentelemetry-python.readthedocs.io/en/latest/api/metrics.html#opentelemetry.metrics.MeterProvider
 
 [sample_authenticate_client_connstr]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_trace.py

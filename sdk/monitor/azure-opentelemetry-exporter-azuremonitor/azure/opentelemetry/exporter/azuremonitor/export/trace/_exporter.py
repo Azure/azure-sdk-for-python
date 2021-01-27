@@ -28,7 +28,7 @@ __all__ = ["AzureMonitorTraceExporter"]
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
-    """Azure Monitor base exporter for OpenTelemetry.
+    """Azure Monitor trace exporter for OpenTelemetry.
 
     :param options: Exporter configuration options.
     :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
