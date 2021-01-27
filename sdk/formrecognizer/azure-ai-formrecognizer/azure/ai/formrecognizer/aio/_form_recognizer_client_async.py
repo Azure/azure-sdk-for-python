@@ -122,7 +122,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"locale": locale})
             else:
                 raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
@@ -182,7 +182,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"locale": locale})
             else:
                 raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
@@ -490,13 +490,13 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
 
         if language:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"language": language})
             else:
                 raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
@@ -542,13 +542,13 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
 
         if language:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"language": language})
             else:
                 raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
