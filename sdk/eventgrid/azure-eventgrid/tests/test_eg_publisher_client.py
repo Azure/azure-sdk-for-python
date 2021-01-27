@@ -15,8 +15,8 @@ import datetime as dt
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
-from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, CustomEvent ,EventGridSharedAccessSignatureCredential, generate_shared_access_signature
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, CustomEvent, generate_sas
 
 from eventgrid_preparer import (
     CachedEventGridTopicPreparer
@@ -36,7 +36,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        client.send(eg_event)
+        client.send_events(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -55,7 +55,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        client.send([eg_event1, eg_event2])
+        client.send_events([eg_event1, eg_event2])
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -68,7 +68,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        client.send(eg_event)
+        client.send_events(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -82,7 +82,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data_version="2.0"
                 )
         with pytest.raises(TypeError, match="Data in EventGridEvent cannot be bytes*"):
-            client.send(eg_event)
+            client.send_events(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -96,7 +96,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 "data_version":"2.0"
         }
         with pytest.raises(TypeError, match="Data in EventGridEvent cannot be bytes*"):
-            client.send(eg_event)
+            client.send_events(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -108,7 +108,20 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = {"sample": "cloudevent"},
                 type="Sample.Cloud.Event"
                 )
-        client.send(cloud_event)
+        client.send_events(cloud_event)
+
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    def test_send_cloud_event_data_none(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = None,
+                type="Sample.Cloud.Event"
+                )
+        client.send_events(cloud_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -120,7 +133,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        client.send(cloud_event)
+        client.send_events(cloud_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -132,7 +145,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = b"cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        client.send(cloud_event)
+        client.send_events(cloud_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -144,7 +157,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        client.send([cloud_event])
+        client.send_events([cloud_event])
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -160,7 +173,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     'extension':'hello'
                     }
                 )
-        client.send([cloud_event])
+        client.send_events([cloud_event])
         internal = cloud_event._to_generated().serialize()
         assert 'reason_code' in internal
         assert 'extension' in internal
@@ -178,14 +191,14 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 "data": "cloudevent",
                 "type": "Sample.Cloud.Event"
         }
-        client.send(cloud_event1)
+        client.send_events(cloud_event1)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
-        signature = generate_shared_access_signature(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
-        credential = EventGridSharedAccessSignatureCredential(signature)
+        signature = generate_sas(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
+        credential = AzureSasCredential(signature)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
                 subject="sample", 
@@ -193,7 +206,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        client.send(eg_event)
+        client.send_events(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='customeventgridtest')
@@ -210,7 +223,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customData": "sample data"
                     }
                 )
-        client.send(custom_event)
+        client.send_events(custom_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='customeventgridtest')
@@ -237,4 +250,9 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customData": "sample data 2"
                     }
                 )
-        client.send([custom_event1, custom_event2])
+        client.send_events([custom_event1, custom_event2])
+
+    def test_send_throws_with_bad_credential(self):
+        bad_credential = "I am a bad credential"
+        with pytest.raises(ValueError, match="The provided credential should be an instance of AzureSasCredential or AzureKeyCredential"):
+            client = EventGridPublisherClient("eventgrid_endpoint", bad_credential)

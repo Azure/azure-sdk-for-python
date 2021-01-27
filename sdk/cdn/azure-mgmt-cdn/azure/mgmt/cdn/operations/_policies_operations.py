@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class PoliciesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class PoliciesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CdnWebApplicationFirewallPolicyList"]
+        # type: (...) -> Iterable["_models.CdnWebApplicationFirewallPolicyList"]
         """Lists all of the protection policies within a resource group.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -62,12 +62,12 @@ class PoliciesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicyList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CdnWebApplicationFirewallPolicyList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnWebApplicationFirewallPolicyList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -79,7 +79,7 @@ class PoliciesOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -108,7 +108,7 @@ class PoliciesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -125,7 +125,7 @@ class PoliciesOperations(object):
         policy_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CdnWebApplicationFirewallPolicy"
+        # type: (...) -> "_models.CdnWebApplicationFirewallPolicy"
         """Retrieve protection policy with specified name within a resource group.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -137,18 +137,18 @@ class PoliciesOperations(object):
         :rtype: ~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CdnWebApplicationFirewallPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnWebApplicationFirewallPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
             'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -168,7 +168,7 @@ class PoliciesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CdnWebApplicationFirewallPolicy', pipeline_response)
@@ -183,23 +183,23 @@ class PoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         policy_name,  # type: str
-        cdn_web_application_firewall_policy,  # type: "models.CdnWebApplicationFirewallPolicy"
+        cdn_web_application_firewall_policy,  # type: "_models.CdnWebApplicationFirewallPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CdnWebApplicationFirewallPolicy"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CdnWebApplicationFirewallPolicy"]
+        # type: (...) -> "_models.CdnWebApplicationFirewallPolicy"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnWebApplicationFirewallPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
             'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -223,7 +223,7 @@ class PoliciesOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -245,10 +245,10 @@ class PoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         policy_name,  # type: str
-        cdn_web_application_firewall_policy,  # type: "models.CdnWebApplicationFirewallPolicy"
+        cdn_web_application_firewall_policy,  # type: "_models.CdnWebApplicationFirewallPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.CdnWebApplicationFirewallPolicy"]
+        # type: (...) -> LROPoller["_models.CdnWebApplicationFirewallPolicy"]
         """Create or update policy with specified rule set name within a resource group.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -268,7 +268,7 @@ class PoliciesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CdnWebApplicationFirewallPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnWebApplicationFirewallPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -293,7 +293,13 @@ class PoliciesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -311,25 +317,23 @@ class PoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         policy_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        cdn_web_application_firewall_policy_patch_parameters,  # type: "_models.CdnWebApplicationFirewallPolicyPatchParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CdnWebApplicationFirewallPolicy"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CdnWebApplicationFirewallPolicy"]
+        # type: (...) -> "_models.CdnWebApplicationFirewallPolicy"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnWebApplicationFirewallPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _cdn_web_application_firewall_policy_patch_parameters = models.CdnWebApplicationFirewallPolicyPatchParameters(tags=tags)
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
             'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -345,7 +349,7 @@ class PoliciesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_cdn_web_application_firewall_policy_patch_parameters, 'CdnWebApplicationFirewallPolicyPatchParameters')
+        body_content = self._serialize.body(cdn_web_application_firewall_policy_patch_parameters, 'CdnWebApplicationFirewallPolicyPatchParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -353,7 +357,7 @@ class PoliciesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -372,10 +376,10 @@ class PoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         policy_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        cdn_web_application_firewall_policy_patch_parameters,  # type: "_models.CdnWebApplicationFirewallPolicyPatchParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.CdnWebApplicationFirewallPolicy"]
+        # type: (...) -> LROPoller["_models.CdnWebApplicationFirewallPolicy"]
         """Update an existing CdnWebApplicationFirewallPolicy with the specified policy name under the
         specified subscription and resource group.
 
@@ -383,8 +387,9 @@ class PoliciesOperations(object):
         :type resource_group_name: str
         :param policy_name: The name of the CdnWebApplicationFirewallPolicy.
         :type policy_name: str
-        :param tags: CdnWebApplicationFirewallPolicy tags.
-        :type tags: dict[str, str]
+        :param cdn_web_application_firewall_policy_patch_parameters: CdnWebApplicationFirewallPolicy
+         parameters to be patched.
+        :type cdn_web_application_firewall_policy_patch_parameters: ~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicyPatchParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -396,7 +401,7 @@ class PoliciesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CdnWebApplicationFirewallPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnWebApplicationFirewallPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -406,7 +411,7 @@ class PoliciesOperations(object):
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 policy_name=policy_name,
-                tags=tags,
+                cdn_web_application_firewall_policy_patch_parameters=cdn_web_application_firewall_policy_patch_parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -421,7 +426,13 @@ class PoliciesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -458,12 +469,12 @@ class PoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
+        api_version = "2020-09-01"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
             'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }

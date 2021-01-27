@@ -9,6 +9,7 @@
 from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._generated.models import (
@@ -59,8 +60,9 @@ class MetricsAdvisorClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
-        Requires both subscription key and API key.
-    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
+        which requires both subscription key and API key. Or an object which can provide an access
+        token for the vault, such as a credential from :mod:`azure.identity`
+    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
@@ -79,12 +81,27 @@ class MetricsAdvisorClient(object):
 
         self._endpoint = endpoint
 
-        self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
-            endpoint=endpoint,
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-            **kwargs
-        )
+        if isinstance(credential, MetricsAdvisorKeyCredential):
+            self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
+                **kwargs
+            )
+        else:
+            if hasattr(credential, "get_token"):
+                credential_scopes = kwargs.pop('credential_scopes',
+                                               ['https://cognitiveservices.azure.com/.default'])
+                credential_policy = BearerTokenCredentialPolicy(credential, *credential_scopes)
+            else:
+                raise TypeError("Please provide an instance from azure-identity "
+                                "or a class that implement the 'get_token protocol")
+            self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=credential_policy,
+                **kwargs
+            )
 
     def __repr__(self):
         # type: () -> str
@@ -475,7 +492,7 @@ class MetricsAdvisorClient(object):
         return self._list_anomalies_for_alert(**kwargs)
 
     @distributed_trace
-    def list_dimension_values(
+    def list_anomaly_dimension_values(
             self, detection_configuration_id,
             dimension_name,
             start_time,
@@ -500,8 +517,8 @@ class MetricsAdvisorClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_dimension_values]
-                :end-before: [END list_dimension_values]
+                :start-after: [START list_anomaly_dimension_values]
+                :end-before: [END list_anomaly_dimension_values]
                 :language: python
                 :dedent: 4
                 :caption: Query dimension values.

@@ -3,6 +3,7 @@
 ## 5.3.0 (Unreleased)
 
 **New Features**
+- Added a `parse_connection_string` method which parses a connection string into a properties bag, `EventHubConnectionStringProperties`, containing its component parts.
 - The `EventHubConsumerClient` and `EventHubProducerClient` constructor now accepts optional `custom_endpoint_address` argument
 which allows for specifying a custom endpoint to use when communicating with the Event Hubs service,
 and is useful when your network does not allow communicating to the standard Event Hubs endpoint.

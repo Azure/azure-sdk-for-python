@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Union, List, Dict, cast
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import (
     RequestIdPolicy,
@@ -25,14 +25,13 @@ from azure.core.pipeline.policies import (
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import CloudEvent, EventGridEvent, CustomEvent
 from .._helpers import (
-    _get_topic_hostname_only_fqdn,
+    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _eventgrid_data_typecheck
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent as InternalEventGridEvent
-from .._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from .._version import VERSION
 
 SendType = Union[
@@ -56,27 +55,27 @@ ListEventType = Union[
 class EventGridPublisherClient():
     """Asynchronous EventGrid Python Publisher Client.
 
-    :param str topic_hostname: The topic endpoint to send the events to.
+    :param str endpoint: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which implements
      SAS key authentication or SAS token authentication.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or EventGridSharedAccessSignatureCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
     """
 
     def __init__(
         self,
-        topic_hostname: str,
-        credential: Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential],
+        endpoint: str,
+        credential: Union[AzureKeyCredential, AzureSasCredential],
         **kwargs: Any) -> None:
         self._client = EventGridPublisherClientAsync(
             policies=EventGridPublisherClient._policies(credential, **kwargs),
             **kwargs
             )
-        topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
-        self._topic_hostname = topic_hostname
+        endpoint = _get_endpoint_only_fqdn(endpoint)
+        self._endpoint = endpoint
 
     @staticmethod
     def _policies(
-        credential: Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential],
+        credential: Union[AzureKeyCredential, AzureSasCredential],
         **kwargs: Any
         ) -> List[Any]:
         auth_policy = _get_authentication_policy(credential)
@@ -99,7 +98,7 @@ class EventGridPublisherClient():
         return policies
 
     @distributed_trace_async
-    async def send(
+    async def send_events(
         self,
         events: SendType,
         **kwargs: Any) -> None:
@@ -125,7 +124,7 @@ class EventGridPublisherClient():
                 pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
             await self._client.publish_cloud_event_events(
-                self._topic_hostname,
+                self._endpoint,
                 cast(List[InternalCloudEvent], events),
                 **kwargs
                 )
@@ -134,16 +133,28 @@ class EventGridPublisherClient():
             for event in events:
                 _eventgrid_data_typecheck(event)
             await self._client.publish_events(
-                self._topic_hostname,
+                self._endpoint,
                 cast(List[InternalEventGridEvent], events),
                 **kwargs
                 )
         elif all(isinstance(e, CustomEvent) for e in events):
             serialized_events = [dict(e) for e in events] # type: ignore
             await self._client.publish_custom_event_events(
-                self._topic_hostname,
+                self._endpoint,
                 cast(List, serialized_events),
                 **kwargs
                 )
         else:
             raise ValueError("Event schema is not correct.")
+
+    async def __aenter__(self) -> "EventGridPublisherClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.eventgrid.aio.EventGridPublisherClient` session.
+        """
+        await self._client.__aexit__()
