@@ -1,5 +1,11 @@
 # Release History
 
+## 3.0.0 (2021-01-27)
+
+**Breaking changes**
+
+  - Parameter table_names of model DataExport is now required
+
 ## 2.0.0(2020-11-09)
 
 **Breaking changes**
