@@ -2,22 +2,41 @@ from dotenv import load_dotenv, find_dotenv
 import logging
 import os
 import unittest
+import zlib
+
+try:
+    from inspect import getfullargspec as get_arg_spec
+except ImportError:
+    from inspect import getargspec as get_arg_spec
 
 from azure_devtools.scenario_tests import GeneralNameReplacer, AzureTestError
 # from azure_devtools.scenario_tests.config import TestConfig
 
 from . import mgmt_settings_fake as fake_settings
-from .azure_testcase import get_resource_name, get_qualified_method_name
-from .config import TEST_SETTING_FILENAME
 
 
-class AzureUnitTest(unittest.TestCase):
-    def __init__(self, method_name, config_file=None):
-        super(AzureUnitTest, self).__init__(method_name)
+def get_resource_name(name_prefix, identifier):
+    # Append a suffix to the name, based on the fully qualified test name
+    # We use a checksum of the test name so that each test gets different
+    # resource names, but each test will get the same name on repeat runs,
+    # which is needed for playback.
+    # Most resource names have a length limit, so we use a crc32
+    checksum = zlib.adler32(identifier) & 0xFFFFFFFF
+    name = "{}{}".format(name_prefix, hex(checksum)[2:]).rstrip("L")
+    if name.endswith("L"):
+        name = name[:-1]
+    return name
 
-    def setUp(self):
-        super(AzureUnitTest, self).setUp()
 
+def _is_autorest_v3(client_class):
+    """IS this client a autorestv3/track2 one?.
+    Could be refined later if necessary.
+    """
+    args = get_arg_spec(client_class.__init__).args
+    return "credential" in args
+
+
+class AzureUnitTest(object):
 
     def create_client_from_credential(self, client_class, credential, **kwargs):
         if _is_autorest_v3(client_class):
@@ -98,29 +117,6 @@ class AzureUnitTest(unittest.TestCase):
             else:
                 return self.settings.get_credentials()
 
-    def create_client_from_credential(self, client_class, credential, **kwargs):
-
-        # Real client creation
-        if _is_autorest_v3(client_class):
-            kwargs.setdefault("logging_enable", True)
-            client = client_class(credential=credential, **kwargs)
-        else:
-            client = client_class(credentials=credential, **kwargs)
-
-        if self.is_playback():
-            try:
-                client._config.polling_interval = (
-                    0  # FIXME in azure-mgmt-core, make this a kwargs
-                )
-            except AttributeError:
-                pass
-
-        if hasattr(client, "config"):  # Autorest v2
-            if self.is_playback():
-                client.config.long_running_operation_timeout = 0
-            client.config.enable_http_logger = True
-        return client
-
     def create_basic_client(self, client_class, **kwargs):
         """ DO NOT USE ME ANYMORE."""
         logger = logging.getLogger()
@@ -140,9 +136,8 @@ class AzureUnitTest(unittest.TestCase):
             and self._real_settings
             and getattr(self._real_settings, key) != key_value
         ):
-            logger = logging.getLogger()
-            logger.warning(
-                "You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values. Defaulting to the env variable".format(
+            raise ValueError(
+                "You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values".format(
                     key=key
                 )
             )
@@ -174,3 +169,6 @@ class AzureUnitTest(unittest.TestCase):
                 )
         else:
             return self._fake_settings
+
+    def create_random_name(self, name):
+        return get_resource_name(name, self.qualified_test_name.encode())
