@@ -97,7 +97,7 @@ def _is_eventgrid_event(event):
     # type: (Any) -> bool
     required = ('subject', 'event_type', 'data', 'data_version')
     try:
-        return all([_ in event for _ in required])
+        return all([prop in event for prop in required])
     except TypeError:
         return False
 
