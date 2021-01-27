@@ -66,7 +66,7 @@ try:
     from ._models_py3 import TasksStateTasksDetails
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
-    from ._models_py3 import TasksStateTasksKeyPhraseExtractionTasksItem
+    from ._models_py3 import TasksStateTasksKeyPhraseExtractionActionsItem
     from ._models_py3 import TextAnalyticsError
     from ._models_py3 import TextAnalyticsWarning
 except (SyntaxError, ImportError):
@@ -129,7 +129,7 @@ except (SyntaxError, ImportError):
     from ._models import TasksStateTasksDetails  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
-    from ._models import TasksStateTasksKeyPhraseExtractionTasksItem  # type: ignore
+    from ._models import TasksStateTasksKeyPhraseExtractionActionsItem  # type: ignore
     from ._models import TextAnalyticsError  # type: ignore
     from ._models import TextAnalyticsWarning  # type: ignore
 
@@ -207,7 +207,7 @@ __all__ = [
     'TasksStateTasksDetails',
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
-    'TasksStateTasksKeyPhraseExtractionTasksItem',
+    'TasksStateTasksKeyPhraseExtractionActionsItem',
     'TextAnalyticsError',
     'TextAnalyticsWarning',
     'AspectRelationType',

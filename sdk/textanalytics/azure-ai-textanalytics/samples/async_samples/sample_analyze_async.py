@@ -32,9 +32,9 @@ class AnalyzeSampleAsync(object):
         # [START analyze_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import EntitiesRecognitionTask, \
-            PiiEntitiesRecognitionTask, \
-            KeyPhraseExtractionTask
+        from azure.ai.textanalytics import EntitiesRecognitionAction, \
+            PiiEntitiesRecognitionAction, \
+            KeyPhraseExtractionAction
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -57,9 +57,9 @@ class AnalyzeSampleAsync(object):
             poller = await text_analytics_client.begin_analyze_batch_actions(
                 documents,
                 display_name="Sample Text Analysis",
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+                entities_recognition_tasks=[EntitiesRecognitionAction()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionAction()],
+                key_phrase_extraction_tasks=[KeyPhraseExtractionAction()]
             )
 
             result = await poller.result()

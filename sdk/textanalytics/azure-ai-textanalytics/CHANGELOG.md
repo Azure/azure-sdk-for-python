@@ -5,6 +5,7 @@
 **New Features**
 
 - `begin_analyze` renamed to `begin_analyze_batch_actions`
+- Rename `EntitiesRecognitionTask` to `EntitiesRecognitionAction`, `PiiEntitiesRecognitionTask` to `PiiEntitiesRecognitionAction`, and `ExtractKeyPhrasesTask` to `ExtractKeyPhrasesAction`
 - No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze_batch_actions` and `begin_analyze_healthcare`. `begin_analyze_healthcare` is still in gated preview though.
 
 ## 5.1.0b4 (2021-01-12)

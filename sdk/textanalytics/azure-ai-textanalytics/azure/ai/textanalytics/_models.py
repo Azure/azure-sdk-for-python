@@ -1164,8 +1164,8 @@ class SentimentConfidenceScores(DictMixin):
             .format(self.positive, self.neutral, self.negative)[:1024]
 
 
-class EntitiesRecognitionTask(DictMixin):
-    """EntitiesRecognitionTask encapsulates the parameters for starting a long-running Entities Recognition operation.
+class EntitiesRecognitionAction(DictMixin):
+    """EntitiesRecognitionAction encapsulates the parameters for starting a long-running Entities Recognition operation.
 
     :ivar str model_version: The model version to use for the analysis.
     """
@@ -1174,7 +1174,7 @@ class EntitiesRecognitionTask(DictMixin):
         self.model_version = kwargs.get("model_version", "latest")
 
     def __repr__(self, **kwargs):
-        return "EntitiesRecognitionTask(model_version={})" \
+        return "EntitiesRecognitionAction(model_version={})" \
             .format(self.model_version)[:1024]
 
     def to_generated(self):
@@ -1185,8 +1185,8 @@ class EntitiesRecognitionTask(DictMixin):
         )
 
 
-class EntitiesRecognitionTaskResult(DictMixin):
-    """EntitiesRecognitionTaskResult contains the results of a single Entities Recognition task,
+class EntitiesRecognitionActionResult(DictMixin):
+    """EntitiesRecognitionActionResult contains the results of a single Entities Recognition task,
         including additional task metadata.
 
     :ivar str name: The name of the task.
@@ -1199,12 +1199,12 @@ class EntitiesRecognitionTaskResult(DictMixin):
         self.results = kwargs.get("results", [])
 
     def __repr__(self, **kwargs):
-        return "EntitiesRecognitionTaskResult(name={}, results={})" \
+        return "EntitiesRecognitionActionResult(name={}, results={})" \
             .format(self.name, repr(self.results))[:1024]
 
 
-class PiiEntitiesRecognitionTask(DictMixin):
-    """PiiEntitiesRecognitionTask encapsulates the parameters for starting a
+class PiiEntitiesRecognitionAction(DictMixin):
+    """PiiEntitiesRecognitionAction encapsulates the parameters for starting a
     long-running PII Entities Recognition operation.
 
     :ivar str model_version: The model version to use for the analysis.
@@ -1217,7 +1217,7 @@ class PiiEntitiesRecognitionTask(DictMixin):
         self.domain = kwargs.get("domain", None)
 
     def __repr__(self, **kwargs):
-        return "PiiEntitiesRecognitionTask(model_version={}, domain={})" \
+        return "PiiEntitiesRecognitionAction(model_version={}, domain={})" \
             .format(self.model_version, self.domain)[:1024]
 
     def to_generated(self):
@@ -1229,8 +1229,8 @@ class PiiEntitiesRecognitionTask(DictMixin):
         )
 
 
-class PiiEntitiesRecognitionTaskResult(DictMixin):
-    """PiiEntitiesRecognitionTaskResult contains the results of a single PII Entities Recognition task,
+class PiiEntitiesRecognitionActionResult(DictMixin):
+    """PiiEntitiesRecognitionActionResult contains the results of a single PII Entities Recognition task,
         including additional task metadata.
 
     :ivar str name: The name of the task.
@@ -1243,12 +1243,12 @@ class PiiEntitiesRecognitionTaskResult(DictMixin):
         self.results = kwargs.get("results", [])
 
     def __repr__(self, **kwargs):
-        return "PiiEntitiesRecognitionTaskResult(name={}, results={})" \
+        return "PiiEntitiesRecognitionActionResult(name={}, results={})" \
             .format(self.name, repr(self.results))[:1024]
 
 
-class KeyPhraseExtractionTask(DictMixin):
-    """KeyPhraseExtractionTask encapsulates the parameters for starting a long-running Key Phrase Extraction operation.
+class KeyPhraseExtractionAction(DictMixin):
+    """KeyPhraseExtractionAction encapsulates the parameters for starting a long-running Key Phrase Extraction operation.
 
     :ivar str model_version: The model version to use for the analysis.
     """
@@ -1257,7 +1257,7 @@ class KeyPhraseExtractionTask(DictMixin):
         self.model_version = kwargs.get("model_version", "latest")
 
     def __repr__(self, **kwargs):
-        return "KeyPhraseExtractionTask(model_version={})" \
+        return "KeyPhraseExtractionAction(model_version={})" \
             .format(self.model_version)[:1024]
 
     def to_generated(self):
@@ -1268,8 +1268,8 @@ class KeyPhraseExtractionTask(DictMixin):
         )
 
 
-class KeyPhraseExtractionTaskResult(DictMixin):
-    """KeyPhraseExtractionTaskResult contains the results of a single Key Phrase Extraction task, including additional
+class KeyPhraseExtractionActionResult(DictMixin):
+    """KeyPhraseExtractionActionResult contains the results of a single Key Phrase Extraction task, including additional
         task metadata.
 
     :ivar str name: The name of the task.
@@ -1282,7 +1282,7 @@ class KeyPhraseExtractionTaskResult(DictMixin):
         self.results = kwargs.get("results", [])
 
     def __repr__(self, **kwargs):
-        return "KeyPhraseExtractionTaskResult(name={}, results={})" \
+        return "KeyPhraseExtractionActionResult(name={}, results={})" \
             .format(self.name, repr(self.results))[:1024]
 
 
@@ -1291,13 +1291,13 @@ class TextAnalysisResult(DictMixin):
 
     :ivar entities_recognition_results: A list of objects containing results for all Entity Recognition tasks
         included in the analysis.
-    :vartype entities_recognition_results: list[~azure.ai.textanalytics.EntitiesRecognitionTaskResult]
+    :vartype entities_recognition_results: list[~azure.ai.textanalytics.EntitiesRecognitionActionResult]
     :ivar pii_entities_recognition_results: A list of objects containing results for all PII Entity Recognition
         tasks included in the analysis.
-    :vartype pii_entities_recogition_results: list[~azure.ai.textanalytics.PiiEntitiesRecognitionTaskResult]
+    :vartype pii_entities_recogition_results: list[~azure.ai.textanalytics.PiiEntitiesRecognitionActionResult]
     :ivar key_phrase_extraction_results: A list of objects containing results for all Key Phrase Extraction tasks
         included in the analysis.
-    :vartype key_phrase_extraction_results: list[~azure.ai.textanalytics.KeyPhraseExtractionTaskResult]
+    :vartype key_phrase_extraction_results: list[~azure.ai.textanalytics.KeyPhraseExtractionActionResult]
     """
     def __init__(self, **kwargs):
         self.entities_recognition_results = kwargs.get("entities_recognition_results", [])

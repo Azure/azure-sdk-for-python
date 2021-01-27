@@ -31,9 +31,9 @@ from ._models import (
     PiiEntity,
     AnalyzeHealthcareResultItem,
     TextAnalysisResult,
-    EntitiesRecognitionTaskResult,
-    PiiEntitiesRecognitionTaskResult,
-    KeyPhraseExtractionTaskResult,
+    EntitiesRecognitionActionResult,
+    PiiEntitiesRecognitionActionResult,
+    KeyPhraseExtractionActionResult,
     RequestStatistics
 )
 from ._paging import AnalyzeHealthcareResult, AnalyzeResult
@@ -196,19 +196,19 @@ def healthcare_result(health_result, results, *args, **kwargs): # pylint: disabl
 def analyze_result(doc_id_order, obj, response_headers, tasks, **kwargs): # pylint: disable=unused-argument
     return TextAnalysisResult(
         entities_recognition_results=[
-            EntitiesRecognitionTaskResult(
+            EntitiesRecognitionActionResult(
                 name=t.name,
                 results=entities_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.entity_recognition_tasks
         ] if tasks.entity_recognition_tasks else [],
         pii_entities_recognition_results=[
-            PiiEntitiesRecognitionTaskResult(
+            PiiEntitiesRecognitionActionResult(
                 name=t.name,
                 results=pii_entities_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.entity_recognition_pii_tasks
         ] if tasks.entity_recognition_pii_tasks else [],
         key_phrase_extraction_results=[
-            KeyPhraseExtractionTaskResult(
+            KeyPhraseExtractionActionResult(
                 name=t.name,
                 results=key_phrases_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.key_phrase_extraction_tasks

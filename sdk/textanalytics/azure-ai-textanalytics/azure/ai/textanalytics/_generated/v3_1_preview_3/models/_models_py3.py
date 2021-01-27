@@ -2276,7 +2276,7 @@ class TasksStateTasks(msrest.serialization.Model):
      list[~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasksEntityRecognitionPiiTasksItem]
     :param key_phrase_extraction_tasks:
     :type key_phrase_extraction_tasks:
-     list[~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasksKeyPhraseExtractionTasksItem]
+     list[~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasksKeyPhraseExtractionActionsItem]
     """
 
     _validation = {
@@ -2294,7 +2294,7 @@ class TasksStateTasks(msrest.serialization.Model):
         'total': {'key': 'total', 'type': 'int'},
         'entity_recognition_tasks': {'key': 'entityRecognitionTasks', 'type': '[TasksStateTasksEntityRecognitionTasksItem]'},
         'entity_recognition_pii_tasks': {'key': 'entityRecognitionPiiTasks', 'type': '[TasksStateTasksEntityRecognitionPiiTasksItem]'},
-        'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[TasksStateTasksKeyPhraseExtractionTasksItem]'},
+        'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[TasksStateTasksKeyPhraseExtractionActionsItem]'},
     }
 
     def __init__(
@@ -2307,7 +2307,7 @@ class TasksStateTasks(msrest.serialization.Model):
         details: Optional["TaskState"] = None,
         entity_recognition_tasks: Optional[List["TasksStateTasksEntityRecognitionTasksItem"]] = None,
         entity_recognition_pii_tasks: Optional[List["TasksStateTasksEntityRecognitionPiiTasksItem"]] = None,
-        key_phrase_extraction_tasks: Optional[List["TasksStateTasksKeyPhraseExtractionTasksItem"]] = None,
+        key_phrase_extraction_tasks: Optional[List["TasksStateTasksKeyPhraseExtractionActionsItem"]] = None,
         **kwargs
     ):
         super(TasksStateTasks, self).__init__(**kwargs)
@@ -2486,8 +2486,8 @@ class TasksStateTasksEntityRecognitionTasksItem(TaskState, Components15Gvwi3Sche
         self.status = status
 
 
-class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1):
-    """TasksStateTasksKeyPhraseExtractionTasksItem.
+class TasksStateTasksKeyPhraseExtractionActionsItem(TaskState, Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1):
+    """TasksStateTasksKeyPhraseExtractionActionsItem.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2524,7 +2524,7 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, Components1D9IzucSc
         name: Optional[str] = None,
         **kwargs
     ):
-        super(TasksStateTasksKeyPhraseExtractionTasksItem, self).__init__(last_update_date_time=last_update_date_time, name=name, status=status, results=results, **kwargs)
+        super(TasksStateTasksKeyPhraseExtractionActionsItem, self).__init__(last_update_date_time=last_update_date_time, name=name, status=status, results=results, **kwargs)
         self.results = results
         self.last_update_date_time = last_update_date_time
         self.name = name
