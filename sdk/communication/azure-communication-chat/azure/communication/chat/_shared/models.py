@@ -136,7 +136,8 @@ class MicrosoftTeamsUserIdentifier(object):
     :param is_anonymous: Value to initialize MicrosoftTeamsUserIdentifier.
     :type is_anonymous: bool
     """
-    def __init__(self, user_id, cloud=CommunicationCloudEnvironment.Public, is_anonymous=False):
+    def __init__(self, user_id, identifier=None, cloud=CommunicationCloudEnvironment.Public, is_anonymous=False):
+        self.identifier = identifier
         self.user_id = user_id
         self.is_anonymous = is_anonymous
         self.cloud = cloud
