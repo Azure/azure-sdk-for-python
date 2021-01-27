@@ -193,7 +193,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint:disable=unused-argument
+    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
         # type: (...) -> cls
         """The retention policy which determines how long the associated data should
         persist.
