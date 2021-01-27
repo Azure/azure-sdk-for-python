@@ -2,6 +2,11 @@
 
 ## 3.1.0b3 (Unreleased)
 
+**Breaking Changes**
+
+- `Appearance` is renamed to `TextAppearance`
+- `Style` is renamed to `TextStyle`
+
 
 ## 3.1.0b2 (2021-01-12)
 
