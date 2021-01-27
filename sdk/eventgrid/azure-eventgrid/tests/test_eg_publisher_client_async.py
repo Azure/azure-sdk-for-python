@@ -287,4 +287,4 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     data = "cloudevent",
                     type="Sample.Cloud.Event"
                     )
-            await client.send_events(cloud_event)
+            await client.send(cloud_event)
