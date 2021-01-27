@@ -10,7 +10,6 @@ from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 
 from .._deserialize import process_storage_error, get_deleted_file_properties_from_generated_code
 from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
-from .._models import DeletedFileProperties
 
 from .._shared.models import DictMixin
 from .._shared.response_handlers import return_context_and_deserialized
@@ -86,7 +85,7 @@ class DeletedPathPropertiesPaged(AsyncPageIterator):
             file_props.file_system = self.container
             return file_props
         if isinstance(item, GenBlobPrefix):
-            return DeletedDirectoryProperties(
+            return DirectoryPrefix(
                 container=self.container,
                 prefix=item.name,
                 results_per_page=self.results_per_page,
@@ -94,8 +93,8 @@ class DeletedPathPropertiesPaged(AsyncPageIterator):
         return item
 
 
-class DeletedDirectoryProperties(DictMixin):
-    """Deleted directory properties.
+class DirectoryPrefix(DictMixin):
+    """Directory prefix.
 
     :ivar str name: Name of the deleted directory.
     :ivar int results_per_page: The maximum number of results retrieved per API call.

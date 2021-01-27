@@ -23,8 +23,8 @@ from testcase import (
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
-from azure.storage.filedatalake._list_paths_helper import DeletedDirectoryProperties
-from azure.storage.filedatalake._models import DeletedFileProperties
+from azure.storage.filedatalake._list_paths_helper import DirectoryPrefix
+from azure.storage.filedatalake._models import DeletedPathProperties
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
@@ -401,7 +401,7 @@ class FileSystemTest(StorageTestCase):
     @record
     def test_get_deleted_paths(self):
         # Arrange
-        file_system = self._create_file_system(file_system_prefix="fs")
+        file_system = self._create_file_system()
         file0 = file_system.create_file("file0")
         file1 = file_system.create_file("file1")
 
@@ -417,20 +417,11 @@ class FileSystemTest(StorageTestCase):
         dir2.delete_directory()
         file_in_dir3.delete_file()
         file_in_subdir.delete_file()
-        first_layer_paths = list(file_system.get_deleted_paths())
-        deleted_file_paths = []
-        deleted_directory_paths = []
-        for path in first_layer_paths:
-            if isinstance(path, DeletedDirectoryProperties):
-                deleted_directory_paths.append(path)
-            else:
-                deleted_file_paths.append(path)
+        deleted_paths = list(file_system.get_deleted_paths())
         dir3_paths = list(file_system.get_deleted_paths(name_starts_with="dir3/"))
 
         # Assert
-        self.assertEqual(len(deleted_directory_paths), 2)
-        self.assertEqual(len(deleted_file_paths), 4)
-        self.assertIsInstance(first_layer_paths[0], DeletedDirectoryProperties)
+        self.assertEqual(len(deleted_paths), 6)
         self.assertEqual(len(dir3_paths), 2)
         self.assertIsNotNone(dir3_paths[0].deletion_id)
         self.assertIsNotNone(dir3_paths[1].deletion_id)
@@ -447,10 +438,6 @@ class FileSystemTest(StorageTestCase):
         # Assert
         self.assertEqual(len(paths1), 2)
         self.assertEqual(len(paths2), 4)
-        for path in paths1:
-            self.assertIsInstance(path, DeletedDirectoryProperties)
-        for path in paths2:
-            self.assertIsInstance(path, DeletedFileProperties)
 
     @record
     def test_list_paths_which_are_all_files(self):

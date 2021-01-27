@@ -82,7 +82,7 @@ class DeletedPathPropertiesPaged(PageIterator):
             file_props.file_system = self.container
             return file_props
         if isinstance(item, GenBlobPrefix):
-            return DeletedDirectoryProperties(
+            return DirectoryPrefix(
                 container=self.container,
                 prefix=item.name,
                 results_per_page=self.results_per_page,
@@ -90,8 +90,8 @@ class DeletedPathPropertiesPaged(PageIterator):
         return item
 
 
-class DeletedDirectoryProperties(DictMixin):
-    """Deleted directory properties.
+class DirectoryPrefix(DictMixin):
+    """Directory prefix.
 
     :ivar str name: Name of the deleted directory.
     :ivar int results_per_page: The maximum number of results retrieved per API call.

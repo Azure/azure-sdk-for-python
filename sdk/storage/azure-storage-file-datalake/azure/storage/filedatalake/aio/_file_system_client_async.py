@@ -29,8 +29,8 @@ from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties, DeletedFileProperties
-from ._list_paths_helper import DeletedDirectoryProperties, DeletedPathPropertiesPaged
+from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties, DeletedPathProperties
+from ._list_paths_helper import DeletedPathPropertiesPaged
 
 
 if TYPE_CHECKING:
@@ -838,7 +838,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     def get_deleted_paths(self,
                           name_starts_with=None,    # type: Optional[str],
                           **kwargs):
-        # type: (...) -> AsyncItemPaged[Union[DeletedFileProperties, DeletedDirectoryProperties]]
+        # type: (...) -> AsyncItemPaged[DeletedPathProperties]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -855,15 +855,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype:
-            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedFileProperties or
-            ~azure.storage.filedatalake.DeletedDirectoryProperties]
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """
         results_per_page = kwargs.pop('max_results', None)
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
             showonly=ListBlobsIncludeItem.deleted,
-            delimiter="",
             timeout=timeout,
             **kwargs)
         return AsyncItemPaged(

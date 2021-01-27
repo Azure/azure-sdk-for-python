@@ -17,14 +17,8 @@ from azure.core import MatchConditions
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-<<<<<<< HEAD
-from azure.storage.filedatalake import AccessPolicy, generate_directory_sas, DirectorySasPermissions, \
-    generate_file_system_sas, generate_account_sas, ResourceTypes, AccountSasPermissions
-=======
-from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, \
-    generate_file_system_sas
-from azure.storage.filedatalake._models import DeletedFileProperties
->>>>>>> bdb8fe9d38... added test
+from azure.storage.filedatalake import generate_account_sas, ResourceTypes, AccountSasPermissions
+from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, generate_file_system_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake import PublicAccess
 from testcase import (
@@ -34,7 +28,6 @@ from testcase import (
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import FileSystemSasPermissions
-from azure.storage.filedatalake.aio._list_paths_helper import DeletedDirectoryProperties
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 
@@ -644,7 +637,7 @@ class FileSystemTest(StorageTestCase):
 
     async def _test_get_deleted_paths(self):
         # Arrange
-        file_system = await self._create_file_system(file_system_prefix="fs1")
+        file_system = await self._create_file_system()
         file0 = await file_system.create_file("file0")
         file1 = await file_system.create_file("file1")
 
@@ -660,24 +653,15 @@ class FileSystemTest(StorageTestCase):
         await dir2.delete_directory()
         await file_in_dir3.delete_file()
         await file_in_subdir.delete_file()
-        first_layer_paths = []
+        deleted_paths = []
         async for path in file_system.get_deleted_paths():
-            first_layer_paths.append(path)
-        deleted_file_paths = []
-        deleted_directory_paths = []
-        for path in first_layer_paths:
-            if isinstance(path, DeletedDirectoryProperties):
-                deleted_directory_paths.append(path)
-            else:
-                deleted_file_paths.append(path)
+            deleted_paths.append(path)
         dir3_paths = []
         async for path in file_system.get_deleted_paths(name_starts_with="dir3/"):
             dir3_paths.append(path)
 
         # Assert
-        self.assertEqual(len(deleted_directory_paths), 2)
-        self.assertEqual(len(deleted_file_paths), 4)
-        self.assertIsInstance(first_layer_paths[0], DeletedDirectoryProperties)
+        self.assertEqual(len(deleted_paths), 6)
         self.assertEqual(len(dir3_paths), 2)
         self.assertIsNotNone(dir3_paths[0].deletion_id)
         self.assertIsNotNone(dir3_paths[1].deletion_id)
@@ -698,10 +682,6 @@ class FileSystemTest(StorageTestCase):
         # Assert
         self.assertEqual(len(paths1), 2)
         self.assertEqual(len(paths2), 4)
-        for path in paths1:
-            self.assertIsInstance(path, DeletedDirectoryProperties)
-        for path in paths2:
-            self.assertIsInstance(path, DeletedFileProperties)
 
     @record
     def test_get_deleted_paths(self):
