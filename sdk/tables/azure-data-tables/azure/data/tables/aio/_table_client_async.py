@@ -476,7 +476,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace
     def query_entities(
         self,
-        filter,  # type: str  # pylint: disable = redefined-builtin
+        filter,  # type: str  # pylint: disable=redefined-builtin
         **kwargs
     ):
         # type: (...) -> AsyncItemPaged[TableEntity]
