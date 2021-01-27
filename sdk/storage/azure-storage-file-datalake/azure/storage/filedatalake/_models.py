@@ -822,7 +822,7 @@ class AccessControlChanges(DictMixin):
         self.continuation = continuation
 
 
-class DeletedFileProperties(DictMixin):
+class DeletedPathProperties(DictMixin):
     """
     Properties populated for a deleted path.
 

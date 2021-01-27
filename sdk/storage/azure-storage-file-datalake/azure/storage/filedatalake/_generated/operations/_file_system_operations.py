@@ -465,7 +465,7 @@ class FileSystemOperations(object):
         return deserialized
     list_paths.metadata = {'url': '/{filesystem}'}
 
-    def list_blob_hierarchy_segment(self, delimiter, prefix=None, marker=None, max_results=None, include=None, showonly=None, timeout=None, request_id=None, cls=None, **kwargs):
+    def list_blob_hierarchy_segment(self, delimiter=None, prefix=None, marker=None, max_results=None, include=None, showonly=None, timeout=None, request_id=None, cls=None, **kwargs):
         """[Update] The List Blobs operation returns a list of the blobs under the
         specified container.
 
@@ -529,7 +529,8 @@ class FileSystemOperations(object):
         query_parameters = {}
         if prefix is not None:
             query_parameters['prefix'] = self._serialize.query("prefix", prefix, 'str')
-        query_parameters['delimiter'] = self._serialize.query("delimiter", delimiter, 'str')
+        if delimiter is not None:
+            query_parameters['delimiter'] = self._serialize.query("delimiter", delimiter, 'str')
         if marker is not None:
             query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
         if max_results is not None:

@@ -12,7 +12,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifiedError, ClientAuthenticationError, \
     ResourceNotFoundError, ResourceExistsError
-from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedFileProperties, StaticWebsite, \
+from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedPathProperties, StaticWebsite, \
     RetentionPolicy, Metrics, AnalyticsLogging  # pylint: disable=protected-access
 from ._shared.models import StorageErrorCode
 
@@ -46,7 +46,7 @@ def deserialize_file_properties(response, obj, headers):
 
 
 def get_deleted_file_properties_from_generated_code(generated):
-    deleted_path = DeletedFileProperties()
+    deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
     deleted_path.remaining_retention_days = generated.properties.remaining_retention_days
