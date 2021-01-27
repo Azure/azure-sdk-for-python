@@ -45,7 +45,7 @@ def deserialize_file_properties(response, obj, headers):
     return file_properties
 
 
-def get_deleted_file_properties_from_generated_code(generated):
+def get_deleted_path_properties_from_generated_code(generated):
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
