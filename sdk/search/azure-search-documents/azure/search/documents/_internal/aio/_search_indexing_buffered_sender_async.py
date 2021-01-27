@@ -258,6 +258,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
+            if pos < self._batch_action_count:
+                self._index_documents_batch = pos
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
