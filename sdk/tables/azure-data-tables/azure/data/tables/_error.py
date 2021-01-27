@@ -55,17 +55,17 @@ def _validate_not_none(param_name, param):
 
 def _wrap_exception(ex, desired_type):
     msg = ""
-    if len(ex.args) > 0:  # pylint: disable=C1801
+    if len(ex.args) > 0:
         msg = ex.args[0]
-    if version_info >= (3,):  # pylint: disable=R1705
+    if version_info >= (3,):
         # Automatic chaining in Python 3 means we keep the trace
         return desired_type(msg)
-    else:
-        # There isn't a good solution in 2 for keeping the stack trace
-        # in general, or that will not result in an error in 3
-        # However, we can keep the previous error type and message
-        # TODO: In the future we will log the trace
-        return desired_type("{}: {}".format(ex.__class__.__name__, msg))
+
+    # There isn't a good solution in 2 for keeping the stack trace
+    # in general, or that will not result in an error in 3
+    # However, we can keep the previous error type and message
+    # TODO: In the future we will log the trace
+    return desired_type("{}: {}".format(ex.__class__.__name__, msg))
 
 
 def _validate_table_name(table_name):

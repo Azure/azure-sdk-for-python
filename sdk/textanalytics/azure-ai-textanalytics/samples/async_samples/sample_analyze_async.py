@@ -40,9 +40,8 @@ class AnalyzeSampleAsync(object):
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
         text_analytics_client = TextAnalyticsClient(
-            endpoint=endpoint, 
+            endpoint=endpoint,
             credential=AzureKeyCredential(key),
-            api_version="v3.1-preview.3"
         )
 
         documents = [
@@ -68,7 +67,7 @@ class AnalyzeSampleAsync(object):
             async for page in result:
                 for task in page.entities_recognition_results:
                     print("Results of Entities Recognition task:")
-                    
+
                     docs = [doc for doc in task.results if not doc.is_error]
                     for idx, doc in enumerate(docs):
                         print("\nDocument text: {}".format(documents[idx]))
