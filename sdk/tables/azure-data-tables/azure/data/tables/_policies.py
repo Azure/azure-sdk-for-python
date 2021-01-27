@@ -153,7 +153,7 @@ class StorageHeadersPolicy(HeadersPolicy):
 
 
 class StorageHosts(SansIOHTTPPolicy):
-    def __init__(self, hosts=None, **kwargs):  # pylint:disable=unused-argument
+    def __init__(self, hosts=None, **kwargs):  # pylint: disable=unused-argument
         self.hosts = hosts
         super(StorageHosts, self).__init__()
 
