@@ -1,6 +1,10 @@
 # Release History
 
 ## 1.0.0b4 (Unreleased)
+### Breaking Changes
+- Replaced CommunicationUser with CommunicationUserIdentifier.
+- Replaced CommunicationUser with CommunicationUserIdentifier.
+- Replaced PhoneNumber with PhoneNumberIdentifier
 
 ### Added
 
