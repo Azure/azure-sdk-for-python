@@ -5,10 +5,10 @@
 import time
 
 from azure_devtools.scenario_tests.patches import patch_time_sleep_api
-from devtools_testutils import AzureMgmtTestCase, AzureTestCase
+from devtools_testutils import AzureMgmtTestCase
 
 
-class KeyVaultTestCase(AzureTestCase):
+class KeyVaultTestCase(AzureMgmtTestCase):
     def __init__(self, *args, **kwargs):
         if "match_body" not in kwargs:
             kwargs["match_body"] = True
