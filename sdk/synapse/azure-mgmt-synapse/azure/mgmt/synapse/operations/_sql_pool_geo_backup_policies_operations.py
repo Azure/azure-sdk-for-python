@@ -24,7 +24,7 @@ class SqlPoolGeoBackupPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
     :ivar geo_backup_policy_name: The name of the geo backup policy. Constant value: "Default".
     """
 
@@ -35,7 +35,7 @@ class SqlPoolGeoBackupPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
         self.geo_backup_policy_name = "Default"
 
         self.config = config
@@ -62,7 +62,7 @@ class SqlPoolGeoBackupPoliciesOperations(object):
         :rtype:
          ~azure.mgmt.synapse.models.GeoBackupPolicyPaged[~azure.mgmt.synapse.models.GeoBackupPolicy]
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -104,7 +104,7 @@ class SqlPoolGeoBackupPoliciesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorContractException(self._deserialize, response)
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -116,6 +116,82 @@ class SqlPoolGeoBackupPoliciesOperations(object):
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/geoBackupPolicies'}
+
+    def create_or_update(
+            self, resource_group_name, workspace_name, sql_pool_name, state, custom_headers=None, raw=False, **operation_config):
+        """Updates a SQL Pool geo backup policy.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace
+        :type workspace_name: str
+        :param sql_pool_name: SQL pool name
+        :type sql_pool_name: str
+        :param state: The state of the geo backup policy. Possible values
+         include: 'Disabled', 'Enabled'
+        :type state: str or ~azure.mgmt.synapse.models.GeoBackupPolicyState
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: GeoBackupPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.GeoBackupPolicy or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
+        """
+        parameters = models.GeoBackupPolicy(state=state)
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
+            'geoBackupPolicyName': self._serialize.url("self.geo_backup_policy_name", self.geo_backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'GeoBackupPolicy')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('GeoBackupPolicy', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('GeoBackupPolicy', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/geoBackupPolicies/{geoBackupPolicyName}'}
 
     def get(
             self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
@@ -139,7 +215,7 @@ class SqlPoolGeoBackupPoliciesOperations(object):
         :rtype: ~azure.mgmt.synapse.models.GeoBackupPolicy or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -171,7 +247,7 @@ class SqlPoolGeoBackupPoliciesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

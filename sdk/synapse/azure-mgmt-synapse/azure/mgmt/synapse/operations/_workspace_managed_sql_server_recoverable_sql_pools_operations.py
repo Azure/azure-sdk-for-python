@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(object):
-    """WorkspaceManagedSqlServerRecoverableSqlpoolsOperations operations.
+class WorkspaceManagedSqlServerRecoverableSqlPoolsOperations(object):
+    """WorkspaceManagedSqlServerRecoverableSqlPoolsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -112,10 +112,10 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(object):
         deserialized = models.RecoverableSqlPoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/recoverableSqlpools'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/recoverableSqlPools'}
 
     def get(
-            self, resource_group_name, workspace_name, sql_compute_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
         """Get recoverable sql pools for the server.
 
         Get recoverable sql pools for workspace managed sql server.
@@ -125,8 +125,8 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(object):
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_compute_name: The name of the sql compute
-        :type sql_compute_name: str
+        :param sql_pool_name: The name of the sql pool
+        :type sql_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -143,7 +143,7 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlComputeName': self._serialize.url("sql_compute_name", sql_compute_name, 'str')
+            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -179,4 +179,4 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/recoverableSqlPools/{sqlComputeName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/recoverableSqlPools/{sqlPoolName}'}

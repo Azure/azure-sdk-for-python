@@ -23,11 +23,14 @@ from .operations import SqlPoolGeoBackupPoliciesOperations
 from .operations import SqlPoolDataWarehouseUserActivitiesOperations
 from .operations import SqlPoolRestorePointsOperations
 from .operations import SqlPoolReplicationLinksOperations
+from .operations import SqlPoolMaintenanceWindowsOperations
+from .operations import SqlPoolMaintenanceWindowOptionsOperations
 from .operations import SqlPoolTransparentDataEncryptionsOperations
 from .operations import SqlPoolBlobAuditingPoliciesOperations
 from .operations import SqlPoolOperations
 from .operations import SqlPoolUsagesOperations
 from .operations import SqlPoolSensitivityLabelsOperations
+from .operations import SqlPoolRecommendedSensitivityLabelsOperations
 from .operations import SqlPoolSchemasOperations
 from .operations import SqlPoolTablesOperations
 from .operations import SqlPoolTableColumnsOperations
@@ -57,6 +60,7 @@ from .operations import IntegrationRuntimeAuthKeysOperations
 from .operations import IntegrationRuntimeMonitoringDataOperations
 from .operations import IntegrationRuntimeStatusOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateLinkHubPrivateLinkResourcesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkHubsOperations
 from .operations import PrivateEndpointConnectionsPrivateLinkHubOperations
@@ -64,8 +68,9 @@ from .operations import WorkspaceManagedSqlServerBlobAuditingPoliciesOperations
 from .operations import WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations
 from .operations import WorkspaceManagedSqlServerSecurityAlertPolicyOperations
 from .operations import WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations
+from .operations import WorkspaceManagedSqlServerEncryptionProtectorOperations
 from .operations import WorkspaceManagedSqlServerUsagesOperations
-from .operations import WorkspaceManagedSqlServerRecoverableSqlpoolsOperations
+from .operations import WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
 from .operations import KeysOperations
 from . import models
 
@@ -96,6 +101,10 @@ class SynapseManagementClient(SDKClient):
     :vartype sql_pool_restore_points: azure.mgmt.synapse.operations.SqlPoolRestorePointsOperations
     :ivar sql_pool_replication_links: SqlPoolReplicationLinks operations
     :vartype sql_pool_replication_links: azure.mgmt.synapse.operations.SqlPoolReplicationLinksOperations
+    :ivar sql_pool_maintenance_windows: SqlPoolMaintenanceWindows operations
+    :vartype sql_pool_maintenance_windows: azure.mgmt.synapse.operations.SqlPoolMaintenanceWindowsOperations
+    :ivar sql_pool_maintenance_window_options: SqlPoolMaintenanceWindowOptions operations
+    :vartype sql_pool_maintenance_window_options: azure.mgmt.synapse.operations.SqlPoolMaintenanceWindowOptionsOperations
     :ivar sql_pool_transparent_data_encryptions: SqlPoolTransparentDataEncryptions operations
     :vartype sql_pool_transparent_data_encryptions: azure.mgmt.synapse.operations.SqlPoolTransparentDataEncryptionsOperations
     :ivar sql_pool_blob_auditing_policies: SqlPoolBlobAuditingPolicies operations
@@ -106,6 +115,8 @@ class SynapseManagementClient(SDKClient):
     :vartype sql_pool_usages: azure.mgmt.synapse.operations.SqlPoolUsagesOperations
     :ivar sql_pool_sensitivity_labels: SqlPoolSensitivityLabels operations
     :vartype sql_pool_sensitivity_labels: azure.mgmt.synapse.operations.SqlPoolSensitivityLabelsOperations
+    :ivar sql_pool_recommended_sensitivity_labels: SqlPoolRecommendedSensitivityLabels operations
+    :vartype sql_pool_recommended_sensitivity_labels: azure.mgmt.synapse.operations.SqlPoolRecommendedSensitivityLabelsOperations
     :ivar sql_pool_schemas: SqlPoolSchemas operations
     :vartype sql_pool_schemas: azure.mgmt.synapse.operations.SqlPoolSchemasOperations
     :ivar sql_pool_tables: SqlPoolTables operations
@@ -164,6 +175,8 @@ class SynapseManagementClient(SDKClient):
     :vartype integration_runtime_status: azure.mgmt.synapse.operations.IntegrationRuntimeStatusOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.synapse.operations.PrivateLinkResourcesOperations
+    :ivar private_link_hub_private_link_resources: PrivateLinkHubPrivateLinkResources operations
+    :vartype private_link_hub_private_link_resources: azure.mgmt.synapse.operations.PrivateLinkHubPrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
     :vartype private_endpoint_connections: azure.mgmt.synapse.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_hubs: PrivateLinkHubs operations
@@ -178,10 +191,12 @@ class SynapseManagementClient(SDKClient):
     :vartype workspace_managed_sql_server_security_alert_policy: azure.mgmt.synapse.operations.WorkspaceManagedSqlServerSecurityAlertPolicyOperations
     :ivar workspace_managed_sql_server_vulnerability_assessments: WorkspaceManagedSqlServerVulnerabilityAssessments operations
     :vartype workspace_managed_sql_server_vulnerability_assessments: azure.mgmt.synapse.operations.WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations
+    :ivar workspace_managed_sql_server_encryption_protector: WorkspaceManagedSqlServerEncryptionProtector operations
+    :vartype workspace_managed_sql_server_encryption_protector: azure.mgmt.synapse.operations.WorkspaceManagedSqlServerEncryptionProtectorOperations
     :ivar workspace_managed_sql_server_usages: WorkspaceManagedSqlServerUsages operations
     :vartype workspace_managed_sql_server_usages: azure.mgmt.synapse.operations.WorkspaceManagedSqlServerUsagesOperations
-    :ivar workspace_managed_sql_server_recoverable_sqlpools: WorkspaceManagedSqlServerRecoverableSqlpools operations
-    :vartype workspace_managed_sql_server_recoverable_sqlpools: azure.mgmt.synapse.operations.WorkspaceManagedSqlServerRecoverableSqlpoolsOperations
+    :ivar workspace_managed_sql_server_recoverable_sql_pools: WorkspaceManagedSqlServerRecoverableSqlPools operations
+    :vartype workspace_managed_sql_server_recoverable_sql_pools: azure.mgmt.synapse.operations.WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
     :ivar keys: Keys operations
     :vartype keys: azure.mgmt.synapse.operations.KeysOperations
 
@@ -200,7 +215,7 @@ class SynapseManagementClient(SDKClient):
         super(SynapseManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-06-01-preview'
+        self.api_version = '2020-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -224,6 +239,10 @@ class SynapseManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.sql_pool_replication_links = SqlPoolReplicationLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.sql_pool_maintenance_windows = SqlPoolMaintenanceWindowsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_pool_maintenance_window_options = SqlPoolMaintenanceWindowOptionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.sql_pool_transparent_data_encryptions = SqlPoolTransparentDataEncryptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sql_pool_blob_auditing_policies = SqlPoolBlobAuditingPoliciesOperations(
@@ -233,6 +252,8 @@ class SynapseManagementClient(SDKClient):
         self.sql_pool_usages = SqlPoolUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sql_pool_sensitivity_labels = SqlPoolSensitivityLabelsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_pool_recommended_sensitivity_labels = SqlPoolRecommendedSensitivityLabelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sql_pool_schemas = SqlPoolSchemasOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -292,6 +313,8 @@ class SynapseManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_hub_private_link_resources = PrivateLinkHubPrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_hubs = PrivateLinkHubsOperations(
@@ -306,9 +329,11 @@ class SynapseManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workspace_managed_sql_server_vulnerability_assessments = WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.workspace_managed_sql_server_encryption_protector = WorkspaceManagedSqlServerEncryptionProtectorOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.workspace_managed_sql_server_usages = WorkspaceManagedSqlServerUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.workspace_managed_sql_server_recoverable_sqlpools = WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(
+        self.workspace_managed_sql_server_recoverable_sql_pools = WorkspaceManagedSqlServerRecoverableSqlPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.keys = KeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
