@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?restype=container
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?restype=container
   response:
     body:
       string: ''
@@ -26,7 +26,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?restype=container
+    url: https://storagename.blob.core.windows.net/filesystemac201283?restype=container
 - request:
     body: null
     headers:
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/file0?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/file0?resource=file
   response:
     body:
       string: ''
@@ -56,7 +56,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/file0?resource=file
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/file0?resource=file
 - request:
     body: null
     headers:
@@ -71,7 +71,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/file1?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/file1?resource=file
   response:
     body:
       string: ''
@@ -86,7 +86,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/file1?resource=file
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/file1?resource=file
 - request:
     body: null
     headers:
@@ -101,7 +101,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir1?resource=directory
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir1?resource=directory
   response:
     body:
       string: ''
@@ -116,7 +116,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir1?resource=directory
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir1?resource=directory
 - request:
     body: null
     headers:
@@ -131,7 +131,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir2?resource=directory
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir2?resource=directory
   response:
     body:
       string: ''
@@ -146,7 +146,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir2?resource=directory
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir2?resource=directory
 - request:
     body: null
     headers:
@@ -161,7 +161,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3?resource=directory
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3?resource=directory
   response:
     body:
       string: ''
@@ -176,7 +176,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3?resource=directory
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3?resource=directory
 - request:
     body: null
     headers:
@@ -191,7 +191,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?resource=file
   response:
     body:
       string: ''
@@ -206,7 +206,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?resource=file
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?resource=file
 - request:
     body: null
     headers:
@@ -221,7 +221,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?resource=file
   response:
     body:
       string: ''
@@ -236,7 +236,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?resource=file
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?resource=file
 - request:
     body: null
     headers:
@@ -249,7 +249,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/file0?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/file0?recursive=true
   response:
     body:
       string: ''
@@ -264,7 +264,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/file0?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/file0?recursive=true
 - request:
     body: null
     headers:
@@ -277,7 +277,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/file1?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/file1?recursive=true
   response:
     body:
       string: ''
@@ -292,7 +292,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/file1?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/file1?recursive=true
 - request:
     body: null
     headers:
@@ -305,7 +305,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir1?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir1?recursive=true
   response:
     body:
       string: ''
@@ -320,7 +320,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir1?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir1?recursive=true
 - request:
     body: null
     headers:
@@ -333,7 +333,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir2?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir2?recursive=true
   response:
     body:
       string: ''
@@ -348,7 +348,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir2?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir2?recursive=true
 - request:
     body: null
     headers:
@@ -361,7 +361,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?recursive=true
   response:
     body:
       string: ''
@@ -376,7 +376,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?recursive=true
 - request:
     body: null
     headers:
@@ -389,7 +389,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
   response:
     body:
       string: ''
@@ -404,7 +404,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
 - request:
     body: null
     headers:
@@ -419,11 +419,11 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?showonly=deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://sachinssoftdelete3.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Blobs><Blob><Name>dir1</Name><DeletionId>132562615345014937</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Blobs><Blob><Name>dir1</Name><DeletionId>132562615345014937</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
         27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
         GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C31630504E73</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
@@ -470,7 +470,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?showonly=deleted&restype=container&comp=list
+    url: https://storagename.blob.core.windows.net/filesystemac201283?showonly=deleted&restype=container&comp=list
 - request:
     body: null
     headers:
@@ -485,11 +485,11 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?prefix=dir3/&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?prefix=dir3/&showonly=deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://sachinssoftdelete3.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615346636843</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615346636843</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
         27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
         GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C316306D4F4E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
@@ -512,7 +512,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?prefix=dir3/&showonly=deleted&restype=container&comp=list
+    url: https://storagename.blob.core.windows.net/filesystemac201283?prefix=dir3/&showonly=deleted&restype=container&comp=list
 - request:
     body: null
     headers:
@@ -527,11 +527,11 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?maxResults=2&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?maxResults=2&showonly=deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://sachinssoftdelete3.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><MaxResults>2</MaxResults><Blobs><Blob><Name>dir1</Name><DeletionId>132562615345014937</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><MaxResults>2</MaxResults><Blobs><Blob><Name>dir1</Name><DeletionId>132562615345014937</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
         27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
         GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C31630504E73</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
@@ -554,7 +554,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?maxResults=2&showonly=deleted&restype=container&comp=list
+    url: https://storagename.blob.core.windows.net/filesystemac201283?maxResults=2&showonly=deleted&restype=container&comp=list
 - request:
     body: null
     headers:
@@ -569,11 +569,11 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?marker=2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-&maxResults=4&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?marker=2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-&maxResults=4&showonly=deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://sachinssoftdelete3.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Marker>2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-</Marker><MaxResults>4</MaxResults><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615346636843</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Marker>2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-</Marker><MaxResults>4</MaxResults><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615346636843</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
         27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
         GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C316306D4F4E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
@@ -608,5 +608,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sachinssoftdelete3.blob.core.windows.net/filesystemac201283?marker=2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-&maxResults=4&showonly=deleted&restype=container&comp=list
+    url: https://storagename.blob.core.windows.net/filesystemac201283?marker=2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-&maxResults=4&showonly=deleted&restype=container&comp=list
 version: 1
