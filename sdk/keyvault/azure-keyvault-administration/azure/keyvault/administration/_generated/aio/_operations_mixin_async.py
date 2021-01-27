@@ -47,7 +47,7 @@ class KeyVaultClientOperationsMixin(object):
         """
         api_version = self._get_api_version('begin_full_backup')
         if api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+            from ..v7_2_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -83,7 +83,7 @@ class KeyVaultClientOperationsMixin(object):
         """
         api_version = self._get_api_version('begin_full_restore_operation')
         if api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+            from ..v7_2_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -122,7 +122,7 @@ class KeyVaultClientOperationsMixin(object):
         """
         api_version = self._get_api_version('begin_selective_key_restore_operation')
         if api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+            from ..v7_2_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -151,7 +151,7 @@ class KeyVaultClientOperationsMixin(object):
         """
         api_version = self._get_api_version('full_backup_status')
         if api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+            from ..v7_2_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -180,7 +180,7 @@ class KeyVaultClientOperationsMixin(object):
         """
         api_version = self._get_api_version('restore_status')
         if api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+            from ..v7_2_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()

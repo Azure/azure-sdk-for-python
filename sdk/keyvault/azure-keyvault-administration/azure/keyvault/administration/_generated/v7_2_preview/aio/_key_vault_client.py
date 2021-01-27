@@ -6,15 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-from azure.core import AsyncPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration_async import KeyVaultClientConfiguration
-from .operations_async import KeyVaultClientOperationsMixin
-from .operations_async import RoleDefinitionsOperations
-from .operations_async import RoleAssignmentsOperations
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
+
+from ._configuration import KeyVaultClientConfiguration
+from .operations import RoleDefinitionsOperations
+from .operations import RoleAssignmentsOperations
+from .operations import KeyVaultClientOperationsMixin
 from .. import models
 
 
@@ -22,19 +26,22 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
 
     :ivar role_definitions: RoleDefinitionsOperations operations
-    :vartype role_definitions: azure.keyvault.v7_2.aio.operations_async.RoleDefinitionsOperations
+    :vartype role_definitions: azure.keyvault.v7_2.aio.operations.RoleDefinitionsOperations
     :ivar role_assignments: RoleAssignmentsOperations operations
-    :vartype role_assignments: azure.keyvault.v7_2.aio.operations_async.RoleAssignmentsOperations
+    :vartype role_assignments: azure.keyvault.v7_2.aio.operations.RoleAssignmentsOperations
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
         base_url = '{vaultBaseUrl}'
-        self._config = KeyVaultClientConfiguration(**kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = KeyVaultClientConfiguration(credential, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
