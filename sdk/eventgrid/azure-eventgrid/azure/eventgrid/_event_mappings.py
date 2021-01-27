@@ -5,6 +5,11 @@
 from enum import Enum
 
 class SystemEventMappings(str, Enum):
+    """
+    This enum represents the names of the various event types for the system events published to
+    Azure Event Grid. To check the list of recognizable system topics,
+    visit https://docs.microsoft.com/azure/event-grid/system-topics.
+    """
     ACSChatMemberAddedToThreadWithUserEventName = "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
     ACSChatMemberRemovedFromThreadWithUserEventName = "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser"
     ACSChatMessageDeletedEventName = "Microsoft.Communication.ChatMessageDeleted"
