@@ -48,8 +48,9 @@ class EventHubProducerClient(ClientBase):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str custom_endpoint_address: The custom endpoint address to connect to. Default is None.
-    :keyword str connection_verify: Custom SSL certificate verification. It could be set to the path to a CA_BUNDLE
-     file. Default is None in which case `certifi.where()` will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -173,8 +174,9 @@ class EventHubProducerClient(ClientBase):
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
         :keyword str custom_endpoint_address: The custom endpoint address to connect to. Default is None.
-        :keyword str connection_verify: Custom SSL certificate verification. It could be set to the path to a CA_BUNDLE
-         file. Default is None in which case `certifi.where()` will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:
