@@ -19,7 +19,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystem41b81006?restype=container
+    uri: https://storagename.blob.core.windows.net/filesystem41b81006?restype=container
   response:
     body:
       string: ''
@@ -63,7 +63,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/file0?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/file0?resource=file
   response:
     body:
       string: ''
@@ -107,7 +107,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/file1?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/file1?resource=file
   response:
     body:
       string: ''
@@ -151,7 +151,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir1?resource=directory
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir1?resource=directory
   response:
     body:
       string: ''
@@ -195,7 +195,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir2?resource=directory
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir2?resource=directory
   response:
     body:
       string: ''
@@ -239,7 +239,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir3?resource=directory
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3?resource=directory
   response:
     body:
       string: ''
@@ -283,7 +283,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir3%2Ffile_in_dir3?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3%2Ffile_in_dir3?resource=file
   response:
     body:
       string: ''
@@ -327,7 +327,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: PUT
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir3%2Fsubdir%2Ffile_in_subdir?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3%2Fsubdir%2Ffile_in_subdir?resource=file
   response:
     body:
       string: ''
@@ -369,7 +369,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/file0?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/file0?recursive=true
   response:
     body:
       string: ''
@@ -411,7 +411,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/file1?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/file1?recursive=true
   response:
     body:
       string: ''
@@ -453,7 +453,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir1?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir1?recursive=true
   response:
     body:
       string: ''
@@ -495,7 +495,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir2?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir2?recursive=true
   response:
     body:
       string: ''
@@ -537,7 +537,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir3%2Ffile_in_dir3?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3%2Ffile_in_dir3?recursive=true
   response:
     body:
       string: ''
@@ -579,7 +579,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://sachinssoftdelete3.dfs.core.windows.net/filesystem41b81006/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
   response:
     body:
       string: ''
@@ -619,11 +619,11 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystem41b81006?showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystem41b81006?showonly=deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://sachinssoftdelete3.blob.core.windows.net/\" ContainerName=\"filesystem41b81006\"><Blobs><Blob><Name>dir1</Name><DeletionId>132562615172749559</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystem41b81006\"><Blobs><Blob><Name>dir1</Name><DeletionId>132562615172749559</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
         27 Jan 2021 22:51:56 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:51:56
         GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:51:57 GMT</Expiry-Time><Etag>0x8D8C31625D0A13E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
@@ -694,11 +694,11 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystem41b81006?prefix=dir3%2F&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystem41b81006?prefix=dir3%2F&showonly=deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://sachinssoftdelete3.blob.core.windows.net/\" ContainerName=\"filesystem41b81006\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615175400480</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystem41b81006\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615175400480</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
         27 Jan 2021 22:51:56 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:51:56
         GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:51:57 GMT</Expiry-Time><Etag>0x8D8C3162604DE38</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
@@ -745,11 +745,11 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystem41b81006?maxResults=2&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystem41b81006?maxResults=2&showonly=deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://sachinssoftdelete3.blob.core.windows.net/\" ContainerName=\"filesystem41b81006\"><MaxResults>2</MaxResults><Blobs><Blob><Name>dir1</Name><DeletionId>132562615172749559</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystem41b81006\"><MaxResults>2</MaxResults><Blobs><Blob><Name>dir1</Name><DeletionId>132562615172749559</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
         27 Jan 2021 22:51:56 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:51:56
         GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:51:57 GMT</Expiry-Time><Etag>0x8D8C31625D0A13E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
@@ -796,11 +796,11 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://sachinssoftdelete3.blob.core.windows.net/filesystem41b81006?marker=2%21252%21MDAwMTQ0IU9URTJOemszTXpreE1UVTJNelF5TnpZME5pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiVFF4WWpneE1EQTJBVEF4UkRaR05FWkdNREpFTWpORlJqY0NMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MTo1OC4xNDg3Nzg2WiE-&maxResults=4&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystem41b81006?marker=2%21252%21MDAwMTQ0IU9URTJOemszTXpreE1UVTJNelF5TnpZME5pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiVFF4WWpneE1EQTJBVEF4UkRaR05FWkdNREpFTWpORlJqY0NMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MTo1OC4xNDg3Nzg2WiE-&maxResults=4&showonly=deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://sachinssoftdelete3.blob.core.windows.net/\" ContainerName=\"filesystem41b81006\"><Marker>2!252!MDAwMTQ0IU9URTJOemszTXpreE1UVTJNelF5TnpZME5pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiVFF4WWpneE1EQTJBVEF4UkRaR05FWkdNREpFTWpORlJqY0NMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MTo1OC4xNDg3Nzg2WiE-</Marker><MaxResults>4</MaxResults><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615175400480</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystem41b81006\"><Marker>2!252!MDAwMTQ0IU9URTJOemszTXpreE1UVTJNelF5TnpZME5pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiVFF4WWpneE1EQTJBVEF4UkRaR05FWkdNREpFTWpORlJqY0NMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MTo1OC4xNDg3Nzg2WiE-</Marker><MaxResults>4</MaxResults><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615175400480</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
         27 Jan 2021 22:51:56 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:51:56
         GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:51:57 GMT</Expiry-Time><Etag>0x8D8C3162604DE38</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
