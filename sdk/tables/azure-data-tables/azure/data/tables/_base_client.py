@@ -334,7 +334,7 @@ class StorageAccountHostsMixin(object):
     def _parameter_filter_substitution(  # pylint: disable=no-self-use
             self,
             parameters,  # type: dict[str,str]
-            filter  # type: str  pylint:disable=redefined-builtin
+            filter  # type: str  pylint: disable=redefined-builtin
     ):
         """Replace user defined parameter in filter
         :param parameters: User defined parameters
