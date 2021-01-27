@@ -120,9 +120,6 @@ if __name__ == "__main__":
     pkg_name, namespace, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
 
     if should_build_docs(pkg_name):
-        if is_mgmt_package(pkg_name):
-            mgmt_apidoc(output_directory, namespace)
-        else:
-            sphinx_apidoc(args.working_directory)
+        sphinx_apidoc(args.working_directory)
     else:
         logging.info("Skipping sphinx source generation for {}".format(pkg_name))
