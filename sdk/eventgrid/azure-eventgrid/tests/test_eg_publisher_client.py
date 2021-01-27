@@ -8,7 +8,8 @@ import logging
 import sys
 import os
 import pytest
-from datetime import timedelta
+import uuid
+from datetime import datetime, timedelta
 from msrest.serialization import UTC
 import datetime as dt
 
@@ -93,7 +94,9 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 "subject":"sample", 
                 "data":b"eventgridevent", 
                 "event_type":"Sample.EventGrid.Event",
-                "data_version":"2.0"
+                "data_version":"2.0",
+                "id": uuid.uuid4(),
+                "event_time": datetime.now()
         }
         with pytest.raises(TypeError, match="Data in EventGridEvent cannot be bytes*"):
             client.send(eg_event)
