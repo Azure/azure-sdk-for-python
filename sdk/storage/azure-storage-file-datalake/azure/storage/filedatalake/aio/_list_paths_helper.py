@@ -8,7 +8,7 @@
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 
-from .._deserialize import process_storage_error, get_deleted_file_properties_from_generated_code
+from .._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code
 from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
 
 from .._shared.models import DictMixin
@@ -81,7 +81,7 @@ class DeletedPathPropertiesPaged(AsyncPageIterator):
 
     def _build_item(self, item):
         if isinstance(item, BlobItemInternal):
-            file_props = get_deleted_file_properties_from_generated_code(item)
+            file_props = get_deleted_path_properties_from_generated_code(item)
             file_props.file_system = self.container
             return file_props
         if isinstance(item, GenBlobPrefix):

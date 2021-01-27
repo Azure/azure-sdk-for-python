@@ -49,7 +49,7 @@ def deserialize_path_properties(path_list):
     return [PathProperties._from_generated(path) for path in path_list] # pylint: disable=protected-access
 
 
-def get_deleted_file_properties_from_generated_code(generated):
+def get_deleted_path_properties_from_generated_code(generated):
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
