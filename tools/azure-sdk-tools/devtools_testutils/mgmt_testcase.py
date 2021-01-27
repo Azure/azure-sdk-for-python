@@ -20,7 +20,7 @@ from azure_devtools.scenario_tests import (
 from .azure_testcase import AzureTestCase
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
-
+from .azure_unit_test import AzureUnitTest
 
 class HttpStatusCode(object):
     OK = 200
@@ -30,17 +30,17 @@ class HttpStatusCode(object):
     NotFound = 404
 
 
-def get_resource_name(name_prefix, identifier):
-    # Append a suffix to the name, based on the fully qualified test name
-    # We use a checksum of the test name so that each test gets different
-    # resource names, but each test will get the same name on repeat runs,
-    # which is needed for playback.
-    # Most resource names have a length limit, so we use a crc32
-    checksum = zlib.adler32(identifier) & 0xFFFFFFFF
-    name = "{}{}".format(name_prefix, hex(checksum)[2:]).rstrip("L")
-    if name.endswith("L"):
-        name = name[:-1]
-    return name
+# def get_resource_name(name_prefix, identifier):
+#     # Append a suffix to the name, based on the fully qualified test name
+#     # We use a checksum of the test name so that each test gets different
+#     # resource names, but each test will get the same name on repeat runs,
+#     # which is needed for playback.
+#     # Most resource names have a length limit, so we use a crc32
+#     checksum = zlib.adler32(identifier) & 0xFFFFFFFF
+#     name = "{}{}".format(name_prefix, hex(checksum)[2:]).rstrip("L")
+#     if name.endswith("L"):
+#         name = name[:-1]
+#     return name
 
 
 def get_qualified_method_name(obj, method_name):

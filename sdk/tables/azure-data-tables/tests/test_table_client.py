@@ -14,7 +14,7 @@ from azure.data.tables import (
     AccountSasPermissions,
     ResourceTypes
 )
-from azure.data.tables._version import VERSION
+from azure.data.tables.__version__ import VERSION
 from azure.core.exceptions import HttpResponseError
 
 from preparers import TablesPreparer
@@ -40,8 +40,6 @@ class StorageTableClientTest(TableTestCase):
 
     def setUp(self):
         super(StorageTableClientTest, self).setUp()
-        self.sas_token = self.generate_sas_token()
-        self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):
@@ -91,21 +89,29 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         assert isinstance(tables,  list)
 
+    @TablesPreparer()
+    def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
 
-class TestTableClientUnit(AzureUnitTest):#, TableTestCase):
+        service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
+
+        def callback(response):
+            assert 'User-Agent' in response.http_request.headers
+            assert response.http_request.headers['User-Agent'] == "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
+                    VERSION,
+                    platform.python_version(),
+                    platform.platform())
+
+        custom_headers = {'User-Agent': 'customer_user_agent'}
+        tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
+
+
+class TestTableClientUnit(AzureUnitTest):
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
 
     def generate_oauth_token(self):
-        # if self.is_live:
-        #     from azure.identity import ClientSecretCredential
-        #     return ClientSecretCredential(
-        #         self.get_settings_value("TENANT_ID"),
-        #         self.get_settings_value("CLIENT_ID"),
-        #         self.get_settings_value("CLIENT_SECRET"),
-        #     )
-        return self.generate_fake_token()
+        return FakeTokenCredential()
 
     def generate_sas_token(self):
         fake_key = 'a'*30 + 'b'*30
@@ -118,9 +124,6 @@ class TestTableClientUnit(AzureUnitTest):#, TableTestCase):
             start = datetime.now() - timedelta(hours = 24),
             expiry = datetime.now() + timedelta(days = 8)
         )
-
-    def generate_fake_token(self):
-        return FakeTokenCredential()
 
     def account_url(self, account, endpoint_type):
         """Return an url of storage account.
@@ -516,22 +519,6 @@ class TestTableClientUnit(AzureUnitTest):#, TableTestCase):
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
-
-    def test_user_agent_append(self):
-        tables_storage_account_name="fake_table_account"
-        tables_primary_storage_account_key="faketablesaccountkey"
-
-        service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
-
-        def callback(response):
-            assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] == "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())
-
-        custom_headers = {'User-Agent': 'customer_user_agent'}
-        tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
 
     def test_create_table_client_with_complete_table_url(self):
         tables_storage_account_name="fake_table_account"

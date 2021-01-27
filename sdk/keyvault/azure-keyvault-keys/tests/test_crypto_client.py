@@ -90,7 +90,8 @@ class CryptoClientTests(KeyVaultTestCase):
     def test_ec_key_id(self, key_client, credential, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
 
-        key = key_client.create_ec_key(self.create_random_name("eckey"))
+        name = self.create_random_name("eckey")
+        key = key_client.create_ec_key(name)
 
         crypto_client = CryptographyClient(key.id, credential)
         crypto_client._initialize()
@@ -107,7 +108,8 @@ class CryptoClientTests(KeyVaultTestCase):
     def test_rsa_key_id(self, key_client, credential, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
 
-        key = key_client.create_rsa_key(self.create_random_name("rsakey"))
+        name = self.create_random_name("rsakey")
+        key = key_client.create_rsa_key(name)
 
         crypto_client = CryptographyClient(key.id, credential)
         crypto_client._initialize()
