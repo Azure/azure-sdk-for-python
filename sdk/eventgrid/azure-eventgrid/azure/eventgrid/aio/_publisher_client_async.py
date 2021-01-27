@@ -146,3 +146,15 @@ class EventGridPublisherClient():
                 )
         else:
             raise ValueError("Event schema is not correct.")
+
+    async def __aenter__(self) -> "EventGridPublisherClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.eventgrid.aio.EventGridPublisherClient` session.
+        """
+        await self._client.__aexit__()
