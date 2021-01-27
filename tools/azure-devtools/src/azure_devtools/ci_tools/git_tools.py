@@ -90,8 +90,9 @@ def get_files_in_commit(git_folder, commit_id="HEAD"):
     return output.splitlines()
 
 def get_diff_file_list(git_folder):
-    """List of unstaged files.
+    """List of new files.
     """
     repo = Repo(str(git_folder))
-    output = repo.git.diff("--name-only")
+    repo.git.add("sdk")
+    output = repo.git.diff("HEAD", "--name-only")
     return output.splitlines()
