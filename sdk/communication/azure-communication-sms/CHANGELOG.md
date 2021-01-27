@@ -9,7 +9,6 @@
 - Updated `azure-communication-sms` version.
 ### Breaking Changes
 - Replaced CommunicationUser with CommunicationUserIdentifier.
-- Replaced CommunicationUser with CommunicationUserIdentifier.
 - Replaced PhoneNumber with PhoneNumberIdentifier
 
 ## 1.0.0b3 (2020-10-07)
