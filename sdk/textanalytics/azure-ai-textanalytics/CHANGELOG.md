@@ -3,8 +3,9 @@
 ## 5.1.0b5 (Unreleased)
 
 **New Features**
-- No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare`. `begin_analyze_healthcare` is still in gated preview though.
 
+- `begin_analyze` renamed to `begin_analyze_batch_actions`
+- No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze_batch_actions` and `begin_analyze_healthcare`. `begin_analyze_healthcare` is still in gated preview though.
 
 ## 5.1.0b4 (2021-01-12)
 
@@ -12,35 +13,36 @@
 
 - Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.8.2 or greater
 
-
 ## 5.1.0b3 (2020-11-19)
 
 **New Features**
+
 - We have added method `begin_analyze`, which supports long-running batch process of Named Entity Recognition, Personally identifiable Information, and Key Phrase Extraction. To use, you must specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when creating your client.
 - We have added method `begin_analyze_healthcare`, which supports the service's Health API. Since the Health API is currently only available in a gated preview, you need to have your subscription on the service's allow list, and you must specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when creating your client. Note that since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
-
 
 ## 5.1.0b2 (2020-10-06)
 
 **Breaking changes**
+
 - Removed property `length` from `CategorizedEntity`, `SentenceSentiment`, `LinkedEntityMatch`, `AspectSentiment`, `OpinionSentiment`, and `PiiEntity`.
-To get the length of the text in these models, just call `len()` on the `text` property.
+  To get the length of the text in these models, just call `len()` on the `text` property.
 - When a parameter or endpoint is not compatible with the API version you specify, we will now return a `ValueError` instead of a `NotImplementedError`.
 - Client side validation of input is now disabled by default. This means there will be no `ValidationError`s thrown by the client SDK in the case of malformed input. The error will now be thrown by the service through an `HttpResponseError`.
 
 ## 5.1.0b1 (2020-09-17)
 
 **New features**
+
 - We are now targeting the service's v3.1-preview API as the default. If you would like to still use version v3.0 of the service,
-pass in `v3.0` to the kwarg `api_version` when creating your TextAnalyticsClient
+  pass in `v3.0` to the kwarg `api_version` when creating your TextAnalyticsClient
 - We have added an API `recognize_pii_entities` which returns entities containing personally identifiable information for a batch of documents. Only available for API version v3.1-preview and up.
 - Added `offset` and `length` properties for `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`. These properties are only available for API versions v3.1-preview and up.
   - `length` is the number of characters in the text of these models
   - `offset` is the offset of the text from the start of the document
 - We now have added support for opinion mining. To use this feature, you need to make sure you are using the service's
-v3.1-preview API. To get this support pass `show_opinion_mining` as True when calling the `analyze_sentiment` endpoint
+  v3.1-preview API. To get this support pass `show_opinion_mining` as True when calling the `analyze_sentiment` endpoint
 - Add property `bing_entity_search_api_id` to the `LinkedEntity` class. This property is only available for v3.1-preview and up, and it is to be
-used in conjunction with the Bing Entity Search API to fetch additional relevant information about the returned entity.
+  used in conjunction with the Bing Entity Search API to fetch additional relevant information about the returned entity.
 
 ## 5.0.0 (2020-07-27)
 
@@ -53,10 +55,12 @@ used in conjunction with the Bing Entity Search API to fetch additional relevant
 ## 1.0.0b6 (2020-05-27)
 
 **New features**
+
 - We now have a `warnings` property on each document-level response object returned from the endpoints. It is a list of `TextAnalyticsWarning`s.
 - Added `text` property to `SentenceSentiment`
 
 **Breaking changes**
+
 - Now targets only the service's v3.0 API, instead of the v3.0-preview.1 API
 - `score` attribute of `DetectedLanguage` has been renamed to `confidence_score`
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
@@ -69,16 +73,18 @@ used in conjunction with the Bing Entity Search API to fetch additional relevant
 ## 1.0.0b4 (2020-04-07)
 
 **Breaking changes**
+
 - Removed the `recognize_pii_entities` endpoint and all related models (`RecognizePiiEntitiesResult` and `PiiEntity`)
-from this library.
+  from this library.
 - Removed `TextAnalyticsApiKeyCredential` and now using `AzureKeyCredential` from azure.core.credentials as key credential
 - `score` attribute has been renamed to `confidence_score` for the `CategorizedEntity`, `LinkedEntityMatch`, and
-`PiiEntity` models
+  `PiiEntity` models
 - All input parameters `inputs` have been renamed to `documents`
 
 ## 1.0.0b3 (2020-03-10)
 
 **Breaking changes**
+
 - `SentimentScorePerLabel` has been renamed to `SentimentConfidenceScores`
 - `AnalyzeSentimentResult` and `SentenceSentiment` attribute `sentiment_scores` has been renamed to `confidence_scores`
 - `TextDocumentStatistics` attribute `character_count` has been renamed to `grapheme_count`
@@ -86,12 +92,14 @@ from this library.
 - Parameters `country_hint` and `language` are now passed as keyword arguments
 - The keyword argument `response_hook` has been renamed to `raw_response_hook`
 - `length` and `offset` attributes have been renamed to `grapheme_length` and `grapheme_offset` for the `SentenceSentiment`,
-`CategorizedEntity`, `PiiEntity`, and `LinkedEntityMatch` models
+  `CategorizedEntity`, `PiiEntity`, and `LinkedEntityMatch` models
 
 **New features**
+
 - Pass `country_hint="none"` to not use the default country hint of `"US"`.
 
 **Dependency updates**
+
 - Adopted [azure-core](https://pypi.org/project/azure-core/) version 1.3.0 or greater
 
 ## 1.0.0b2 (2020-02-11)
@@ -99,9 +107,9 @@ from this library.
 **Breaking changes**
 
 - The single text, module-level operations `single_detect_language()`, `single_recognize_entities()`, `single_extract_key_phrases()`, `single_analyze_sentiment()`, `single_recognize_pii_entities()`, and `single_recognize_linked_entities()`
-have been removed from the client library. Use the batching methods for optimal performance in production environments.
+  have been removed from the client library. Use the batching methods for optimal performance in production environments.
 - To use an API key as the credential for authenticating the client, a new credential class `TextAnalyticsApiKeyCredential("<api_key>")` must be passed in for the `credential` parameter.
-Passing the API key as a string is no longer supported.
+  Passing the API key as a string is no longer supported.
 - `detect_languages()` is renamed to `detect_language()`.
 - The `TextAnalyticsError` model has been simplified to an object with only attributes `code`, `message`, and `target`.
 - `NamedEntity` has been renamed to `CategorizedEntity` and its attributes `type` to `category` and `subtype` to `subcategory`.
@@ -120,7 +128,6 @@ Passing the API key as a string is no longer supported.
 - `__repr__` has been added to all of the response objects.
 - If you try to access a result attribute on a `DocumentError` object, an `AttributeError` is raised with a custom error message that provides the document ID and error of the invalid document.
 
-
 ## 1.0.0b1 (2020-01-09)
 
 Version (1.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Text Analytics. For more information about this, and preview releases of other Azure SDK libraries, please visit
@@ -129,9 +136,11 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
 **Breaking changes: New API design**
 
 - New namespace/package name:
+
   - The namespace/package name for Azure Text Analytics client library has changed from `azure.cognitiveservices.language.textanalytics` to `azure.ai.textanalytics`
 
 - New operations and naming:
+
   - `detect_language` is renamed to `detect_languages`
   - `entities` is renamed to `recognize_entities`
   - `key_phrases` is renamed to `extract_key_phrases`
@@ -139,7 +148,7 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - New operation `recognize_pii_entities` finds personally identifiable information entities in text
   - New operation `recognize_linked_entities` provides links from a well-known knowledge base for each recognized entity
   - New module-level operations `single_detect_language`, `single_recognize_entities`, `single_extract_key_phrases`, `single_analyze_sentiment`, `single_recognize_pii_entities`, and `single_recognize_linked_entities` perform
-  function on a single string instead of a batch of text documents and can be imported from the `azure.ai.textanalytics` namespace.
+    function on a single string instead of a batch of text documents and can be imported from the `azure.ai.textanalytics` namespace.
   - New client and module-level async APIs added to subnamespace `azure.ai.textanalytics.aio`.
   - `MultiLanguageInput` has been renamed to `TextDocumentInput`
   - `LanguageInput` has been renamed to `DetectLanguageInput`
@@ -155,23 +164,26 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - The batching methods' `documents` parameter has been renamed `inputs`
 
 - New input types:
+
   - `detect_languages` can take as input a `list[DetectLanguageInput]` or a `list[str]`. A list of dict-like objects in the same shape as `DetectLanguageInput` is still accepted as input.
   - `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment` can take as input a `list[TextDocumentInput]` or `list[str]`.
-  A list of dict-like objects in the same shape as `TextDocumentInput` is still accepted as input.
+    A list of dict-like objects in the same shape as `TextDocumentInput` is still accepted as input.
 
 - New parameters/keyword arguments:
+
   - All operations now take a keyword argument `model_version` which allows the user to specify a string referencing the desired model version to be used for analysis. If no string specified, it will default to the latest, non-preview version.
   - `detect_languages` now takes a parameter `country_hint` which allows you to specify the country hint for the entire batch. Any per-item country hints will take precedence over a whole batch hint.
   - `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment` now take a parameter `language` which allows you to specify the language for the entire batch.
-  Any per-item specified language will take precedence over a whole batch hint.
+    Any per-item specified language will take precedence over a whole batch hint.
   - A `default_country_hint` or `default_language` keyword argument can be passed at client instantiation to set the default values for all operations.
   - A `response_hook` keyword argument can be passed with a callback to use the raw response from the service. Additionally, values returned for `TextDocumentBatchStatistics` and `model_version` used must be retrieved using a response hook.
   - `show_stats` and `model_version` parameters move to keyword only arguments.
 
 - New return types
+
   - The return types for the batching methods (`detect_languages`, `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment`) now return a heterogeneous list of
-  result objects and document errors in the order passed in with the request. To iterate over the list and filter for result or error, a boolean property on each object called `is_error` can be used to determine whether the returned response object at
-  that index is a result or an error:
+    result objects and document errors in the order passed in with the request. To iterate over the list and filter for result or error, a boolean property on each object called `is_error` can be used to determine whether the returned response object at
+    that index is a result or an error:
   - `detect_languages` now returns a List[Union[`DetectLanguageResult`, `DocumentError`]]
   - `recognize_entities` now returns a List[Union[`RecognizeEntitiesResult`, `DocumentError`]]
   - `recognize_pii_entities` now returns a List[Union[`RecognizePiiEntitiesResult`, `DocumentError`]]
@@ -190,12 +202,12 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See README for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
-  for more information
+    [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+    for more information
 - New error hierarchy:
-    - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`
-    - There is one exception type derived from this base type for authentication errors:
-        - `ClientAuthenticationError`: Authentication failed.
+  - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`
+  - There is one exception type derived from this base type for authentication errors:
+    - `ClientAuthenticationError`: Authentication failed.
 
 ## 0.2.0 (2019-03-12)
 
@@ -216,10 +228,10 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
 
 **General Breaking changes**
 
-This version uses a next-generation code generator that *might* introduce breaking changes.
+This version uses a next-generation code generator that _might_ introduce breaking changes.
 
 - Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
-  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "\*" syntax for keyword-only arguments.
 - Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
   While this is not a breaking change, the distinctions are important, and are documented here:
   https://docs.python.org/3/library/enum.html#others
@@ -232,7 +244,6 @@ This version uses a next-generation code generator that *might* introduce breaki
 
 - Compatibility of the sdist with wheel 0.31.0
 
-
 ## 0.1.0 (2018-01-12)
 
-* Initial Release
+- Initial Release

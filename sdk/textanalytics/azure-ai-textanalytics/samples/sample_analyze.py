@@ -53,7 +53,7 @@ class AnalyzeSample(object):
             The only complaint I have is the food didn't come fast enough. Overall I highly recommend it!"
         ]
 
-        poller = text_analytics_client.begin_analyze(
+        poller = text_analytics_client.begin_analyze_batch_actions(
             documents,
             display_name="Sample Text Analysis",
             entities_recognition_tasks=[EntitiesRecognitionTask()],

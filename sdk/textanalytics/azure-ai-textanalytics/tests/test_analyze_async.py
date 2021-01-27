@@ -52,7 +52,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await client.begin_analyze("hello world", polling_interval=self._interval())
+            response = await client.begin_analyze_batch_actions("hello world", polling_interval=self._interval())
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -62,7 +62,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 show_stats=True,
@@ -100,7 +100,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 show_stats=True,
@@ -139,7 +139,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 show_stats=True,
@@ -182,7 +182,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 polling_interval=self._interval()
@@ -219,7 +219,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 polling_interval=self._interval()
@@ -257,7 +257,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval()
@@ -297,7 +297,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 polling_interval=self._interval()
@@ -326,7 +326,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             async with client:
-                response = await (await client.begin_analyze(
+                response = await (await client.begin_analyze_batch_actions(
                     docs,
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                     polling_interval=self._interval()
@@ -342,7 +342,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 polling_interval=self._interval()
@@ -377,7 +377,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval()
@@ -421,7 +421,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -458,7 +458,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await client.begin_analyze(
+                response = await client.begin_analyze_batch_actions(
                     ["This is written in English."],
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -474,7 +474,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await client.begin_analyze(
+                response = await client.begin_analyze_batch_actions(
                     ["This is written in English."],
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -490,7 +490,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(TypeError):
             async with client:
-                response = await client.begin_analyze(
+                response = await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -509,7 +509,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
         with self.assertRaises(TypeError):
             async with client:
-                response = await (await client.begin_analyze(
+                response = await (await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -527,7 +527,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                 # at this moment this should cause all documents to be errors, which isn't correct behavior but I'm using it here to test document ordering with errors.  :)
@@ -568,7 +568,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="latest")],
@@ -611,7 +611,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -649,7 +649,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -686,7 +686,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -729,7 +729,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -765,7 +765,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -803,7 +803,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -839,7 +839,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -877,7 +877,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -908,7 +908,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_invalid_language_hint_method(self, client):
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 ["This should fail because we're passing in an invalid language hint"],
                 language="notalanguage",
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
@@ -939,7 +939,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_invalid_language_hint_docs(self, client):
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 [{"id": "1", "language": "notalanguage",
                   "text": "This should fail because we're passing in an invalid language hint"}],
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
@@ -978,7 +978,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -990,7 +990,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
             credential.update("xxx")  # Make authentication fail
             with self.assertRaises(ClientAuthenticationError):
-                response = await (await client.begin_analyze(
+                response = await (await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -999,7 +999,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 )).result()
 
             credential.update(text_analytics_account_key)  # Authenticate successfully again
-            response = await (await client.begin_analyze(
+            response = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1022,7 +1022,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            poller = await client.begin_analyze(
+            poller = await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1044,7 +1044,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             async with client:
-                result = await (await client.begin_analyze(
+                result = await (await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                     polling_interval=self._interval()
@@ -1058,7 +1058,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         async with client:
             response = await(await
-            client.begin_analyze(
+            client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
@@ -1093,7 +1093,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             async with client:
-                result = await (await client.begin_analyze(
+                result = await (await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
@@ -1107,7 +1107,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             async with client:
-                await client.begin_analyze(
+                await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1122,7 +1122,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze(
+                await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1136,7 +1136,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze(None, polling_interval=self._interval())
+                await client.begin_analyze_batch_actions(None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1148,7 +1148,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             async with client:
-                result = await (await client.begin_analyze(
+                result = await (await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1163,7 +1163,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             return "cls result"
 
         async with client:
-            res = await (await client.begin_analyze(
+            res = await (await client.begin_analyze_batch_actions(
                 documents=["Test passing cls to endpoint"],
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1181,7 +1181,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 enumerate(list(itertools.repeat(single_doc, 25)))]  # max number of documents is 25
 
         async with client:
-            result = await (await client.begin_analyze(
+            result = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1227,7 +1227,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 enumerate(list(itertools.repeat(single_doc, 25)))]  # max number of documents is 25
 
         async with client:
-            result = await (await client.begin_analyze(
+            result = await (await client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1270,7 +1270,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             async with client:
-                await client.begin_analyze(
+                await client.begin_analyze_batch_actions(
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],

@@ -689,7 +689,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def begin_analyze(  # type: ignore
+    async def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         entities_recognition_tasks=None,  # type: List[EntitiesRecognitionTask]

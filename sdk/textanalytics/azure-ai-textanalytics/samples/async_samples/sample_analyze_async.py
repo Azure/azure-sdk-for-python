@@ -54,7 +54,7 @@ class AnalyzeSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            poller = await text_analytics_client.begin_analyze(
+            poller = await text_analytics_client.begin_analyze_batch_actions(
                 documents,
                 display_name="Sample Text Analysis",
                 entities_recognition_tasks=[EntitiesRecognitionTask()],

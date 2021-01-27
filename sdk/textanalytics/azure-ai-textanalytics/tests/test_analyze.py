@@ -37,7 +37,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = client.begin_analyze("hello world", polling_interval=self._interval())
+            response = client.begin_analyze_batch_actions("hello world", polling_interval=self._interval())
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -46,7 +46,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             show_stats=True,
@@ -77,7 +77,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
                 {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             show_stats=True,
@@ -112,7 +112,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             show_stats=True,
@@ -151,7 +151,7 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen", language="es")
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             polling_interval=self._interval(),
@@ -181,7 +181,7 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.", language="de")
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             polling_interval=self._interval(),
@@ -214,7 +214,7 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="Is 998.214.865-68 your Brazilian CPF number?")
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             polling_interval=self._interval(),
@@ -252,7 +252,7 @@ class TestAnalyze(TextAnalyticsTest):
             u"Microsoft fue fundado por Bill Gates y Paul Allen"
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             polling_interval=self._interval(),
@@ -278,7 +278,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [u""]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_batch_actions(
                 docs,
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 polling_interval=self._interval(),
@@ -294,7 +294,7 @@ class TestAnalyze(TextAnalyticsTest):
             u"Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             polling_interval=self._interval(),
@@ -327,7 +327,7 @@ class TestAnalyze(TextAnalyticsTest):
             u"Is 998.214.865-68 your Brazilian CPF number?"
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             polling_interval=self._interval(),
@@ -380,7 +380,7 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="5", text="five")
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -414,7 +414,7 @@ class TestAnalyze(TextAnalyticsTest):
     })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_batch_actions(
                 ["This is written in English."],
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -429,7 +429,7 @@ class TestAnalyze(TextAnalyticsTest):
     })
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_batch_actions(
                 ["This is written in English."],
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -444,7 +444,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -461,7 +461,7 @@ class TestAnalyze(TextAnalyticsTest):
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -477,7 +477,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],  # at this moment this should cause all documents to be errors, which isn't correct behavior but I'm using it here to test document ordering with errors.  :)
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -515,7 +515,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="latest")],
@@ -554,7 +554,7 @@ class TestAnalyze(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -587,7 +587,7 @@ class TestAnalyze(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -617,7 +617,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -653,7 +653,7 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -684,7 +684,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -717,7 +717,7 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -748,7 +748,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -782,7 +782,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -807,7 +807,7 @@ class TestAnalyze(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_method(self, client):
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             ["This should fail because we're passing in an invalid language hint"],
             language="notalanguage",
             entities_recognition_tasks=[EntitiesRecognitionTask()],
@@ -833,7 +833,7 @@ class TestAnalyze(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_docs(self, client):
-        response = list(client.begin_analyze(
+        response = list(client.begin_analyze_batch_actions(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}],
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -864,7 +864,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -876,7 +876,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -885,7 +885,7 @@ class TestAnalyze(TextAnalyticsTest):
             ).result()
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -907,7 +907,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        poller = client.begin_analyze(
+        poller = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -929,7 +929,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "text": ""}]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 polling_interval=self._interval(),
@@ -942,7 +942,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
-            result = client.begin_analyze(
+            result = client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                 polling_interval=self._interval(),
@@ -954,7 +954,7 @@ class TestAnalyze(TextAnalyticsTest):
     def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
@@ -985,7 +985,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
@@ -998,7 +998,7 @@ class TestAnalyze(TextAnalyticsTest):
     def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
-            client.begin_analyze(
+            client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1012,7 +1012,7 @@ class TestAnalyze(TextAnalyticsTest):
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze(
+            client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1025,7 +1025,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze(None)
+            client.begin_analyze_batch_actions(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1036,7 +1036,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
-            result = client.begin_analyze(
+            result = client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1050,7 +1050,7 @@ class TestAnalyze(TextAnalyticsTest):
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
-        res = client.begin_analyze(
+        res = client.begin_analyze_batch_actions(
             documents=["Test passing cls to endpoint"],
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1066,7 +1066,7 @@ class TestAnalyze(TextAnalyticsTest):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 25)))] # max number of documents is 25
 
-        result = client.begin_analyze(
+        result = client.begin_analyze_batch_actions(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1107,7 +1107,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
 
         with pytest.raises(HttpResponseError) as excinfo:
-            client.begin_analyze(
+            client.begin_analyze_batch_actions(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],

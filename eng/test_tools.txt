@@ -28,7 +28,5 @@ Jinja2==2.11.2
 pylint==1.8.4; python_version < '3.4'
 pylint==2.5.2; python_version >= '3.4'
 
-../../../tools/azure-devtools
-
 # python-dotenv
 python-dotenv==0.15.0
