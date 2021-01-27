@@ -114,7 +114,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         # redeem the authorization code for a token
         code = self._parse_response(request_state, response)
         return app.acquire_token_by_authorization_code(
-            code, scopes=scopes, redirect_uri=redirect_uri, claims_challenge=kwargs.get("claims_challenge")
+            code, scopes=scopes, redirect_uri=redirect_uri, claims_challenge=kwargs.get("claims")
         )
 
     @staticmethod

@@ -71,6 +71,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+          claims challenge following an authorization failure
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
@@ -148,7 +150,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
             now = int(time.time())
             result = self._app.acquire_token_silent_with_error(
-                list(scopes), account=account, claims_challenge=kwargs.get("claims_challenge")
+                list(scopes), account=account, claims_challenge=kwargs.get("claims")
             )
             if result and "access_token" in result and "expires_in" in result:
                 return AccessToken(result["access_token"], now + int(result["expires_in"]))

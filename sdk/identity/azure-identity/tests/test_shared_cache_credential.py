@@ -831,7 +831,7 @@ def test_claims_challenge():
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
     credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
     with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication", lambda *_, **__: msal_app):
-        credential.get_token("scope", claims_challenge=expected_claims)
+        credential.get_token("scope", claims=expected_claims)
 
     assert msal_app.acquire_token_silent_with_error.call_count == 1
     args, kwargs = msal_app.acquire_token_silent_with_error.call_args

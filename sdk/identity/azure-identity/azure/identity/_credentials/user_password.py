@@ -59,5 +59,5 @@ class UsernamePasswordCredential(InteractiveCredential):
             username=self._username,
             password=self._password,
             scopes=list(scopes),
-            claims_challenge=kwargs.get("claims_challenge"),
+            claims_challenge=kwargs.get("claims"),
         )

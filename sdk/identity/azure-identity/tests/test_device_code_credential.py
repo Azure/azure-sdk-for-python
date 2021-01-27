@@ -292,7 +292,7 @@ def test_claims_challenge():
         msal_app = get_mock_app()
         msal_app.initiate_device_flow.return_value = {"message": "it worked"}
         msal_app.acquire_token_by_device_flow.return_value = msal_acquire_token_result
-        credential.get_token("scope", claims_challenge=expected_claims)
+        credential.get_token("scope", claims=expected_claims)
 
         assert msal_app.acquire_token_by_device_flow.call_count == 1
         args, kwargs = msal_app.acquire_token_by_device_flow.call_args
@@ -300,7 +300,7 @@ def test_claims_challenge():
 
         msal_app.get_accounts.return_value = [{"home_account_id": credential._auth_record.home_account_id}]
         msal_app.acquire_token_silent_with_error.return_value = msal_acquire_token_result
-        credential.get_token("scope", claims_challenge=expected_claims)
+        credential.get_token("scope", claims=expected_claims)
 
         assert msal_app.acquire_token_silent_with_error.call_count == 1
         args, kwargs = msal_app.acquire_token_silent_with_error.call_args
