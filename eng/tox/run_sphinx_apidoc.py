@@ -20,10 +20,6 @@ import shutil
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-generate_mgmt_script = os.path.join(root_dir, "doc/sphinx/generate_doc.py")
-
-def is_mgmt_package(package_dir):
-    return "mgmt"  in pkg_name or "cognitiveservices" in pkg_name
 
 def copy_existing_docs(source, target):
     for file in os.listdir(source):
@@ -60,31 +56,6 @@ def sphinx_apidoc(working_directory):
     except CalledProcessError as e:
         logging.error(
             "sphinx-apidoc failed for path {} exited with error {}".format(
-                args.working_directory, e.returncode
-            )
-        )
-        exit(1)
-
-def mgmt_apidoc(working_directory, namespace):
-    command_array = [
-        sys.executable,
-        generate_mgmt_script,
-        "-p",
-        namespace,
-        "-o",
-        working_directory,
-        "--verbose"
-        ]
-
-    try:
-        logging.info("Command to generate management sphinx sources: {}".format(command_array))
-
-        check_call(
-            command_array
-        )
-    except CalledProcessError as e:
-        logging.error(
-            "script failed for path {} exited with error {}".format(
                 args.working_directory, e.returncode
             )
         )
