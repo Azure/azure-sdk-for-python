@@ -46,6 +46,7 @@ steps:
         "${{ parameters.BuildTargetingString }}"
         ${{ parameters.AdditionalTestArgs }}
         ${{ parameters.CoverageArg }}
+        --parallel-mode
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="${{ parameters.ToxTestEnv }}"
