@@ -32,7 +32,7 @@ jobs:
 
       - pwsh: |
           Get-ChildItem $(Build.SourcesDirectory)/ -Recurse
-
+pip install coverage==4.5.4
       - task: PythonScript@0
         displayName: 'Create Coverage Report'
         inputs:
