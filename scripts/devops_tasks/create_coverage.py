@@ -43,7 +43,7 @@ def install_coverage():
 
 def collect_tox_coverage_files():#targeted_packages):
 
-    install_coverage()
+    # install_coverage()
 
     logging.info("Running collect tox coverage files...")
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
