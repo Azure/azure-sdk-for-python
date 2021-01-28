@@ -8,9 +8,9 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.communication.chat.aio import ChatThreadClient
 from azure.communication.chat import (
-    ChatMessagePriority,
     ChatThreadParticipant,
     CommunicationUserIdentifier,
+    ChatMessageType
 )
 from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError
@@ -54,13 +54,11 @@ async def test_send_message():
 
     create_message_result_id = None
     try:
-        priority=ChatMessagePriority.NORMAL
         content='hello world'
         sender_display_name='sender name'
 
         create_message_result_id = await chat_thread_client.send_message(
             content,
-            priority=priority,
             sender_display_name=sender_display_name)
     except:
         raised = True
@@ -69,13 +67,96 @@ async def test_send_message():
     assert create_message_result_id == message_id
 
 @pytest.mark.asyncio
-async def test_get_message():
+async def test_send_message_w_type():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     message_id='1596823919339'
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=200, json_payload={"id": message_id})
+        return mock_response(status_code=201, json_payload={"id": message_id})
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    create_message_result_id = None
+
+    chat_message_types = [ChatMessageType.TEXT, ChatMessageType.HTML,
+                          ChatMessageType.PARTICIPANT_ADDED, ChatMessageType.PARTICIPANT_REMOVED,
+                          ChatMessageType.TOPIC_UPDATED,
+                          "text", "html", "participant_added", "participant_removed", "topic_updated"]
+
+    for chat_message_type in chat_message_types:
+        try:
+            content='hello world'
+            sender_display_name='sender name'
+
+            create_message_result_id = await chat_thread_client.send_message(
+                content,
+                chat_message_type=chat_message_type,
+                sender_display_name=sender_display_name)
+        except:
+            raised = True
+
+        assert raised == False
+        assert create_message_result_id == message_id
+
+@pytest.mark.asyncio
+async def test_send_message_w_invalid_type_throws_error():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    message_id='1596823919339'
+    raised = False
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=201, json_payload={"id": message_id})
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    create_message_result_id = None
+
+    chat_message_types = ["ChatMessageType.TEXT", "ChatMessageType.HTML",
+                          "ChatMessageType.PARTICIPANT_ADDED", "ChatMessageType.PARTICIPANT_REMOVED",
+                          "ChatMessageType.TOPIC_UPDATED"]
+    for chat_message_type in chat_message_types:
+        try:
+            content='hello world'
+            sender_display_name='sender name'
+
+            create_message_result_id = await chat_thread_client.send_message(
+                content,
+                chat_message_type=chat_message_type,
+                sender_display_name=sender_display_name)
+        except:
+            raised = True
+
+        assert raised == True
+
+
+@pytest.mark.asyncio
+async def test_get_message():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    message_id='1596823919339'
+    raised = False
+    message_str = "Hi I am Bob."
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=200, json_payload={
+                        "id": message_id,
+                        "type": "text",
+                        "sequenceId": "3",
+                        "version": message_id,
+                        "content": {
+                            "message": message_str,
+                            "topic": "Lunch Chat thread",
+                            "participants": [
+                                {
+                                    "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                    "displayName": "Bob",
+                                    "shareHistoryTime": "2020-10-30T10:50:50Z"
+                                }
+                            ],
+                            "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                        },
+                        "senderDisplayName": "Bob",
+                        "createdOn": "2021-01-27T01:37:33Z",
+                        "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                    })
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     message = None
@@ -86,6 +167,9 @@ async def test_get_message():
 
     assert raised == False
     assert message.id == message_id
+    assert message.type == ChatMessageType.TEXT
+    assert message.content.message == message_str
+    assert len(message.content.participants) > 0
 
 @pytest.mark.asyncio
 async def test_list_messages():
@@ -94,7 +178,27 @@ async def test_list_messages():
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=200, json_payload={"value": [{"id": message_id}]})
+        return mock_response(status_code=200, json_payload={"value": [{
+                        "id": message_id,
+                        "type": "text",
+                        "sequenceId": "3",
+                        "version": message_id,
+                        "content": {
+                            "message": "message_str",
+                            "topic": "Lunch Chat thread",
+                            "participants": [
+                                {
+                                    "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                    "displayName": "Bob",
+                                    "shareHistoryTime": "2020-10-30T10:50:50Z"
+                                }
+                            ],
+                            "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                        },
+                        "senderDisplayName": "Bob",
+                        "createdOn": "2021-01-27T01:37:33Z",
+                        "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                    }]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     chat_messages = None
@@ -121,9 +225,48 @@ async def test_list_messages_with_start_time():
     async def mock_send(*_, **__):
         return mock_response(status_code=200, json_payload={
             "value": [
-                {"id": "message_id1", "createdOn": "2020-08-17T18:05:44Z"},
-                {"id": "message_id2", "createdOn": "2020-08-17T23:13:33Z"}
-                ]})
+                {
+                    "id": "message_id1",
+                    "type": "text",
+                    "sequenceId": "3",
+                    "version": "message_id1",
+                    "content": {
+                        "message": "message_str",
+                        "topic": "Lunch Chat thread",
+                        "participants": [
+                            {
+                                "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                "displayName": "Bob",
+                                "shareHistoryTime": "2020-10-30T10:50:50Z"
+                            }
+                        ],
+                        "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                    },
+                    "senderDisplayName": "Bob",
+                    "createdOn": "2020-08-17T18:05:44Z",
+                    "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                },
+                {
+                    "id": "message_id2",
+                    "type": "text",
+                    "sequenceId": "3",
+                    "version": "message_id2",
+                    "content": {
+                        "message": "message_str",
+                        "topic": "Lunch Chat thread",
+                        "participants": [
+                            {
+                                "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                "displayName": "Bob",
+                                "shareHistoryTime": "2020-10-30T10:50:50Z"
+                            }
+                        ],
+                        "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                    },
+                    "senderDisplayName": "Bob",
+                    "createdOn": "2020-08-17T23:13:33Z",
+                    "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                }]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     chat_messages = None

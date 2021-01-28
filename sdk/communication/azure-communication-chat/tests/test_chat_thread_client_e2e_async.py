@@ -17,7 +17,7 @@ from azure.communication.chat.aio import (
 )
 from azure.communication.chat import (
     ChatThreadParticipant,
-    ChatMessagePriority
+    ChatMessageType
 )
 from azure.communication.identity._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor
@@ -106,12 +106,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
     async def _send_message(self):
         # send a message
-        priority = ChatMessagePriority.NORMAL
         content = 'hello world'
         sender_display_name = 'sender name'
         create_message_result_id = await self.chat_thread_client.send_message(
             content,
-            priority=priority,
             sender_display_name=sender_display_name)
         message_id = create_message_result_id
         return message_id
@@ -137,13 +135,11 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             await self._create_thread()
 
             async with self.chat_thread_client:
-                priority = ChatMessagePriority.NORMAL
                 content = 'hello world'
                 sender_display_name = 'sender name'
 
                 create_message_result_id = await self.chat_thread_client.send_message(
                     content,
-                    priority=priority,
                     sender_display_name=sender_display_name)
 
                 self.assertTrue(create_message_result_id)
@@ -162,6 +158,8 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 message_id = await self._send_message()
                 message = await self.chat_thread_client.get_message(message_id)
                 assert message.id == message_id
+                assert message.type == ChatMessageType.TEXT
+                assert message.content.message == 'hello world'
 
             # delete chat threads
             if not self.is_playback():
@@ -365,8 +363,6 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 # first user sends 2 messages
                 for i in range(2):
                     message_id = await self._send_message()
-                    print(f"Message Id: {message_id}")
-
                     # send read receipts first
                     await self.chat_thread_client.send_read_receipt(message_id)
 
@@ -381,12 +377,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 # second user sends 1 message
                 message_id_new_user = await chat_thread_client_new_user.send_message(
                     "content",
-                    priority=ChatMessagePriority.NORMAL,
                     sender_display_name="sender_display_name")
                 # send read receipt
                 await chat_thread_client_new_user.send_read_receipt(message_id_new_user)
 
-                print(f"Second User message id: {message_id_new_user}")
                 if self.is_live:
                     await self._wait_on_thread(chat_client=self.chat_client_new_user, thread_id=self.thread_id, message_id=message_id_new_user)
 
