@@ -279,7 +279,6 @@ class ChatThreadClientTest(CommunicationTestCase):
         # send messages and read receipts
         for i in range(2):
             message_id = self._send_message()
-            print("Message Id: ", message_id)
             self.chat_thread_client.send_read_receipt(message_id)
 
             if self.is_live:

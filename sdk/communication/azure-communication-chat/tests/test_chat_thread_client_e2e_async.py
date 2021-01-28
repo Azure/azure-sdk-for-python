@@ -360,8 +360,6 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 # first user sends 2 messages
                 for i in range(2):
                     message_id = await self._send_message()
-                    print(f"Message Id: {message_id}")
-
                     # send read receipts first
                     await self.chat_thread_client.send_read_receipt(message_id)
 
@@ -380,7 +378,6 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 # send read receipt
                 await chat_thread_client_new_user.send_read_receipt(message_id_new_user)
 
-                print(f"Second User message id: {message_id_new_user}")
                 if self.is_live:
                     await self._wait_on_thread(chat_client=self.chat_client_new_user, thread_id=self.thread_id, message_id=message_id_new_user)
 
