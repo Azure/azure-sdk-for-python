@@ -105,7 +105,7 @@ class CommunicationIdentityClient(object):
 ~azure.communication.identity.CommunicationIdentityToken)
         """
         return self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id),
+            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id), u.access_token),
             create_token_with_scopes=scopes,
             **kwargs)
 

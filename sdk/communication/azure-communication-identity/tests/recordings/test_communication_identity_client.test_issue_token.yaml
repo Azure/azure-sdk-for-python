@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 27 Jan 2021 23:59:18 GMT
+      - Thu, 28 Jan 2021 18:22:56 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -22,22 +22,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:8b7cf66e-98a2-4dc9-b44e-902ad4bd2a83_00000007-e62b-2a03-8d33-3b3a0d00aab4"}}'
+      string: '{"identity": {"id": "8:acs:fa9ae185-9f60-4454-8be7-5757cf514f4b_00000007-ea1d-8d6f-8d33-3b3a0d000285"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 23:59:19 GMT
+      - Thu, 28 Jan 2021 18:22:55 GMT
       ms-cv:
-      - svjbdAEx+0CIrvFNZfZTNA.0
+      - FsWGFnXtdEyCvzh35+CEqw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 20ms
+      - 18ms
     status:
       code: 201
       message: Created
@@ -55,7 +55,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 27 Jan 2021 23:59:19 GMT
+      - Thu, 28 Jan 2021 18:22:57 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -64,22 +64,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-28T23:59:19.164577+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-29T18:22:55.4643038+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 23:59:20 GMT
+      - Thu, 28 Jan 2021 18:22:56 GMT
       ms-cv:
-      - q/mt/g2JeUiXEsC0OhWXNQ.0
+      - SUXqGX/Z4E6C6zfcxiWQEw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 284ms
+      - 35ms
     status:
       code: 200
       message: OK
