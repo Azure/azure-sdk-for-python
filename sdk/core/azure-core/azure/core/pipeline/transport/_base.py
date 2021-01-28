@@ -585,6 +585,10 @@ class _HttpResponseBase(object):
         return self._decode_parts(message, http_response_type, requests)
 
     def raise_for_status(self):
+        # type () -> None
+        """Raises an HttpResponseError if the response has an error status code.
+        If response is good, does nothing.
+        """
         if self.status_code >= 400:
             raise HttpResponseError(response=self)
 
