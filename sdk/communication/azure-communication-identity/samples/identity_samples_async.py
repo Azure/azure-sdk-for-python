@@ -9,11 +9,13 @@
 """
 FILE: identity_sample_async.py
 DESCRIPTION:
-    These samples demonstrate async identity client samples.
+    These async samples demonstrate creating a user, issuing a token, revoking a token and deleting a user.
 
     ///authenticating a client via a connection string
 USAGE:
     python identity_samples_async.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
 """
 
 import asyncio
@@ -31,6 +33,7 @@ class CommunicationIdentityClientSamples(object):
 
     async def issue_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
+        from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
             identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
@@ -40,11 +43,12 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             user = await identity_client.create_user()
             print(user.identifier)
-            tokenresponse = await identity_client.issue_token(user, scopes=["chat"])
+            tokenresponse = await identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
             print(tokenresponse)
 
     async def revoke_tokens(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
+        from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
             identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
@@ -53,7 +57,7 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            tokenresponse = await identity_client.issue_token(user, scopes=["chat"])
+            tokenresponse = await identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
             await identity_client.revoke_tokens(user)
             print(tokenresponse)
 
@@ -68,6 +72,20 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             user = await identity_client.create_user()
             print(user.identifier)
+
+    async def create_user_with_token(self):
+        from azure.communication.identity.aio import CommunicationIdentityClient
+        from azure.communication.identity import CommunicationTokenScope
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+            from azure.identity import DefaultAzureCredential
+            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+        else:
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
+
+        async with identity_client:
+            user, tokenresponse = await identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+            print(user.identifier)
+            print(tokenresponse)
 
     async def delete_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -84,9 +102,10 @@ class CommunicationIdentityClientSamples(object):
 async def main():
     sample = CommunicationIdentityClientSamples()
     await sample.create_user()
-    await sample.delete_user()
+    await sample.create_user_with_token()
     await sample.issue_token()
     await sample.revoke_tokens()
+    await sample.delete_user()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

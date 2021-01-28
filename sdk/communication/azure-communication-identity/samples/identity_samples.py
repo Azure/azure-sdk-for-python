@@ -9,11 +9,13 @@
 """
 FILE: identity_sample.py
 DESCRIPTION:
-    These samples demonstrate identity client samples.
+    These samples demonstrate creating a user, issuing a token, revoking a token and deleting a user.
 
     ///authenticating a client via a connection string
 USAGE:
     python identity_samples.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
 """
 import os
 
@@ -27,7 +29,10 @@ class CommunicationIdentityClientSamples(object):
         self.tenant_id = os.getenv('AZURE_TENANT_ID')
 
     def issue_token(self):
-        from azure.communication.identity import CommunicationIdentityClient
+        from azure.communication.identity import (
+            CommunicationIdentityClient,
+            CommunicationTokenScope
+        )
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
@@ -35,11 +40,14 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
-        tokenresponse = identity_client.issue_token(user, scopes=["chat"])
+        tokenresponse = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
         print(tokenresponse)
     
     def revoke_tokens(self):
-        from azure.communication.identity import CommunicationIdentityClient
+        from azure.communication.identity import (
+            CommunicationIdentityClient,
+            CommunicationTokenScope
+        )
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
@@ -47,7 +55,7 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
-        tokenresponse = identity_client.issue_token(user, scopes=["chat"])
+        tokenresponse = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
         identity_client.revoke_tokens(user)
         print(tokenresponse)
 
@@ -61,7 +69,21 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
         print(user.identifier)
-    
+
+    def create_user_with_token(self):
+        from azure.communication.identity import (
+            CommunicationIdentityClient,
+            CommunicationTokenScope
+        )
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+            from azure.identity import DefaultAzureCredential
+            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+        else:
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
+        user, tokenresponse = identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+        print(user.identifier)
+        print(tokenresponse)
+
     def delete_user(self):
         from azure.communication.identity import CommunicationIdentityClient
 
@@ -76,6 +98,7 @@ class CommunicationIdentityClientSamples(object):
 if __name__ == '__main__':
     sample = CommunicationIdentityClientSamples()
     sample.create_user()
-    sample.delete_user()
+    sample.create_user_with_token()
     sample.issue_token()
     sample.revoke_tokens()
+    sample.delete_user()
