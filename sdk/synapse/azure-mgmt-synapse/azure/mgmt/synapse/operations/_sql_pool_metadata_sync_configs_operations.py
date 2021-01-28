@@ -24,7 +24,7 @@ class SqlPoolMetadataSyncConfigsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class SqlPoolMetadataSyncConfigsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -60,7 +60,7 @@ class SqlPoolMetadataSyncConfigsOperations(object):
         :rtype: ~azure.mgmt.synapse.models.MetadataSyncConfig or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -91,7 +91,7 @@ class SqlPoolMetadataSyncConfigsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -131,7 +131,7 @@ class SqlPoolMetadataSyncConfigsOperations(object):
         :rtype: ~azure.mgmt.synapse.models.MetadataSyncConfig or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         metadata_sync_configuration = models.MetadataSyncConfig(enabled=enabled, sync_interval_in_minutes=sync_interval_in_minutes)
 
@@ -168,7 +168,7 @@ class SqlPoolMetadataSyncConfigsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

@@ -26,7 +26,7 @@ class IpFirewallRulesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class IpFirewallRulesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -58,7 +58,7 @@ class IpFirewallRulesOperations(object):
         :rtype:
          ~azure.mgmt.synapse.models.IpFirewallRuleInfoPaged[~azure.mgmt.synapse.models.IpFirewallRuleInfo]
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -99,7 +99,7 @@ class IpFirewallRulesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorContractException(self._deserialize, response)
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -150,7 +150,7 @@ class IpFirewallRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -194,7 +194,7 @@ class IpFirewallRulesOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.IpFirewallRuleInfo]]
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -257,7 +257,7 @@ class IpFirewallRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -291,7 +291,7 @@ class IpFirewallRulesOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -340,7 +340,7 @@ class IpFirewallRulesOperations(object):
         :rtype: ~azure.mgmt.synapse.models.IpFirewallRuleInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -371,7 +371,7 @@ class IpFirewallRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -421,7 +421,7 @@ class IpFirewallRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -460,7 +460,7 @@ class IpFirewallRulesOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.ReplaceAllFirewallRulesOperationResponse]]
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         raw_result = self._replace_all_initial(
             resource_group_name=resource_group_name,

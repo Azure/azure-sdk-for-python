@@ -27,7 +27,7 @@ class WorkspaceManagedSqlServerSecurityAlertPolicyOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
     :ivar security_alert_policy_name: The name of the security alert policy. Constant value: "Default".
     """
 
@@ -38,7 +38,7 @@ class WorkspaceManagedSqlServerSecurityAlertPolicyOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
         self.security_alert_policy_name = "Default"
 
         self.config = config

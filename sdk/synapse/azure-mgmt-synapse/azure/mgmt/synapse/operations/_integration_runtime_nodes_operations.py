@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class IntegrationRuntimeNodesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
     """
 
     models = models
@@ -35,7 +34,7 @@ class IntegrationRuntimeNodesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -63,7 +62,8 @@ class IntegrationRuntimeNodesOperations(object):
          raw=true
         :rtype: ~azure.mgmt.synapse.models.SelfHostedIntegrationRuntimeNode or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -95,9 +95,7 @@ class IntegrationRuntimeNodesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -138,7 +136,8 @@ class IntegrationRuntimeNodesOperations(object):
          raw=true
         :rtype: ~azure.mgmt.synapse.models.SelfHostedIntegrationRuntimeNode or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         update_integration_runtime_node_request = models.UpdateIntegrationRuntimeNodeRequest(concurrent_jobs_limit=concurrent_jobs_limit)
 
@@ -176,9 +175,7 @@ class IntegrationRuntimeNodesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -213,7 +210,8 @@ class IntegrationRuntimeNodesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -244,9 +242,7 @@ class IntegrationRuntimeNodesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

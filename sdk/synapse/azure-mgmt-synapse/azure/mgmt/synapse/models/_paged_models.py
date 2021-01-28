@@ -428,6 +428,19 @@ class ServerVulnerabilityAssessmentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ServerVulnerabilityAssessmentPaged, self).__init__(*args, **kwargs)
+class EncryptionProtectorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`EncryptionProtector <azure.mgmt.synapse.models.EncryptionProtector>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EncryptionProtector]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EncryptionProtectorPaged, self).__init__(*args, **kwargs)
 class ServerUsagePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ServerUsage <azure.mgmt.synapse.models.ServerUsage>` object

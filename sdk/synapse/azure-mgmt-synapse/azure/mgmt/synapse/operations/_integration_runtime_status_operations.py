@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class IntegrationRuntimeStatusOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
     """
 
     models = models
@@ -35,7 +34,7 @@ class IntegrationRuntimeStatusOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -61,7 +60,8 @@ class IntegrationRuntimeStatusOperations(object):
          raw=true
         :rtype: ~azure.mgmt.synapse.models.IntegrationRuntimeStatusResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -92,9 +92,7 @@ class IntegrationRuntimeStatusOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

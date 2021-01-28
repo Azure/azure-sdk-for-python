@@ -26,7 +26,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -60,7 +60,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
          ~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModel or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -90,7 +90,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -140,7 +140,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorContractException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -179,7 +179,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModel]]
         :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,

@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PrivateLinkResourcesOperations(object):
-    """PrivateLinkResourcesOperations operations.
+class PrivateLinkHubPrivateLinkResourcesOperations(object):
+    """PrivateLinkHubPrivateLinkResourcesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,16 +39,16 @@ class PrivateLinkResourcesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, private_link_hub_name, custom_headers=None, raw=False, **operation_config):
         """Private Link Resources.
 
-        Get all private link resources for a workspaces.
+        Get all private link resources for a private link hub.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The name of the workspace
-        :type workspace_name: str
+        :param private_link_hub_name: The name of the private link hub
+        :type private_link_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -67,7 +67,7 @@ class PrivateLinkResourcesOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str')
+                    'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -110,19 +110,19 @@ class PrivateLinkResourcesOperations(object):
         deserialized = models.PrivateLinkResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/privateLinkResources'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs/{privateLinkHubName}/privateLinkResources'}
 
     def get(
-            self, resource_group_name, workspace_name, private_link_resource_name, custom_headers=None, raw=False, **operation_config):
-        """Get Private Link Resource.
+            self, resource_group_name, private_link_hub_name, private_link_resource_name, custom_headers=None, raw=False, **operation_config):
+        """Get Private Link Hub Private Link Resource.
 
-        Get private link resource in workspace.
+        Get private link resource in private link hub.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The name of the workspace
-        :type workspace_name: str
+        :param private_link_hub_name: The name of the private link hub
+        :type private_link_hub_name: str
         :param private_link_resource_name: The name of the private link
          resource
         :type private_link_resource_name: str
@@ -142,7 +142,7 @@ class PrivateLinkResourcesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str'),
             'privateLinkResourceName': self._serialize.url("private_link_resource_name", private_link_resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -177,4 +177,4 @@ class PrivateLinkResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/privateLinkResources/{privateLinkResourceName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs/{privateLinkHubName}/privateLinkResources/{privateLinkResourceName}'}

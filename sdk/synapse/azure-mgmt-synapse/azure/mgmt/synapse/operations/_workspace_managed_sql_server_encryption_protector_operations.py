@@ -11,14 +11,15 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class PrivateEndpointConnectionsOperations(object):
-    """PrivateEndpointConnectionsOperations operations.
+class WorkspaceManagedSqlServerEncryptionProtectorOperations(object):
+    """WorkspaceManagedSqlServerEncryptionProtectorOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -27,6 +28,7 @@ class PrivateEndpointConnectionsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
+    :ivar encryption_protector_name: The name of the encryption protector. Constant value: "current".
     """
 
     models = models
@@ -37,28 +39,28 @@ class PrivateEndpointConnectionsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2020-12-01"
+        self.encryption_protector_name = "current"
 
         self.config = config
 
     def get(
-            self, resource_group_name, workspace_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a private endpoint connection.
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        """Get workspace server's encryption protector.
+
+        Get workspace managed sql server's encryption protector.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
+        :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection.
-        :type private_endpoint_connection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.PrivateEndpointConnection or
+        :return: EncryptionProtector or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.EncryptionProtector or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
@@ -69,7 +71,7 @@ class PrivateEndpointConnectionsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
+            'encryptionProtectorName': self._serialize.url("self.encryption_protector_name", self.encryption_protector_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -96,27 +98,27 @@ class PrivateEndpointConnectionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
+            deserialized = self._deserialize('EncryptionProtector', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/encryptionProtector/{encryptionProtectorName}'}
 
 
-    def _create_initial(
-            self, resource_group_name, workspace_name, private_endpoint_connection_name, private_endpoint=None, private_link_service_connection_state=None, custom_headers=None, raw=False, **operation_config):
-        request = models.PrivateEndpointConnection(private_endpoint=private_endpoint, private_link_service_connection_state=private_link_service_connection_state)
+    def _create_or_update_initial(
+            self, resource_group_name, workspace_name, server_key_type, server_key_name=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.EncryptionProtector(server_key_name=server_key_name, server_key_type=server_key_type)
 
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
+            'encryptionProtectorName': self._serialize.url("self.encryption_protector_name", self.encryption_protector_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -136,21 +138,19 @@ class PrivateEndpointConnectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(request, 'PrivateEndpointConnection')
+        body_content = self._serialize.body(parameters, 'EncryptionProtector')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
+            deserialized = self._deserialize('EncryptionProtector', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -158,53 +158,49 @@ class PrivateEndpointConnectionsOperations(object):
 
         return deserialized
 
-    def create(
-            self, resource_group_name, workspace_name, private_endpoint_connection_name, private_endpoint=None, private_link_service_connection_state=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Approve or reject a private endpoint connection.
+    def create_or_update(
+            self, resource_group_name, workspace_name, server_key_type, server_key_name=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates workspace server's encryption protector.
+
+        Updates workspace managed sql server's encryption protector.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
+        :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection.
-        :type private_endpoint_connection_name: str
-        :param private_endpoint: The private endpoint which the connection
-         belongs to.
-        :type private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
-        :param private_link_service_connection_state: Connection state of the
-         private endpoint connection.
-        :type private_link_service_connection_state:
-         ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
+        :param server_key_type: The encryption protector type like
+         'ServiceManaged', 'AzureKeyVault'. Possible values include:
+         'ServiceManaged', 'AzureKeyVault'
+        :type server_key_type: str or ~azure.mgmt.synapse.models.ServerKeyType
+        :param server_key_name: The name of the server key.
+        :type server_key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         PrivateEndpointConnection or
-         ClientRawResponse<PrivateEndpointConnection> if raw==True
+        :return: An instance of LROPoller that returns EncryptionProtector or
+         ClientRawResponse<EncryptionProtector> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.synapse.models.PrivateEndpointConnection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.synapse.models.EncryptionProtector]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.PrivateEndpointConnection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.EncryptionProtector]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
-            private_endpoint=private_endpoint,
-            private_link_service_connection_state=private_link_service_connection_state,
+            server_key_type=server_key_type,
+            server_key_name=server_key_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
+            deserialized = self._deserialize('EncryptionProtector', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -219,125 +215,28 @@ class PrivateEndpointConnectionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/privateEndpointConnections/{privateEndpointConnectionName}'}
-
-
-    def _delete_initial(
-            self, resource_group_name, workspace_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
-        # Construct URL
-        url = self.delete.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('OperationResource', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def delete(
-            self, resource_group_name, workspace_name, private_endpoint_connection_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete a private endpoint connection.
-
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
-        :type workspace_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection.
-        :type private_endpoint_connection_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns OperationResource or
-         ClientRawResponse<OperationResource> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.synapse.models.OperationResource]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.OperationResource]]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
-        """
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('OperationResource', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/encryptionProtector/{encryptionProtectorName}'}
 
     def list(
             self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
-        """Lists private endpoint connection in workspace.
+        """Get list of encryption protectors for the server.
+
+        Get list of encryption protectors for workspace managed sql server.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
+        :param workspace_name: The name of the workspace
         :type workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PrivateEndpointConnection
+        :return: An iterator like instance of EncryptionProtector
         :rtype:
-         ~azure.mgmt.synapse.models.PrivateEndpointConnectionPaged[~azure.mgmt.synapse.models.PrivateEndpointConnection]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
+         ~azure.mgmt.synapse.models.EncryptionProtectorPaged[~azure.mgmt.synapse.models.EncryptionProtector]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -378,7 +277,9 @@ class PrivateEndpointConnectionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -386,7 +287,91 @@ class PrivateEndpointConnectionsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PrivateEndpointConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.EncryptionProtectorPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/privateEndpointConnections'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/encryptionProtector'}
+
+
+    def _revalidate_initial(
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.revalidate.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'encryptionProtectorName': self._serialize.url("self.encryption_protector_name", self.encryption_protector_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def revalidate(
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Revalidates server's existing encryption protector.
+
+        Revalidates workspace managed sql server's existing encryption
+        protector.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace
+        :type workspace_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._revalidate_initial(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    revalidate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/encryptionProtector/{encryptionProtectorName}/revalidate'}

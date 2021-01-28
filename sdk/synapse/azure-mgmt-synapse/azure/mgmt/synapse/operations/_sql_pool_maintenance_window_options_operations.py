@@ -11,12 +11,13 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class SqlPoolConnectionPoliciesOperations(object):
-    """SqlPoolConnectionPoliciesOperations operations.
+class SqlPoolMaintenanceWindowOptionsOperations(object):
+    """SqlPoolMaintenanceWindowOptionsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +26,6 @@ class SqlPoolConnectionPoliciesOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
-    :ivar connection_policy_name: The name of the connection policy. Constant value: "default".
     """
 
     models = models
@@ -36,15 +36,14 @@ class SqlPoolConnectionPoliciesOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2020-12-01"
-        self.connection_policy_name = "default"
 
         self.config = config
 
     def get(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Get a Sql pool's connection policy, which is used with table auditing.
+            self, resource_group_name, workspace_name, sql_pool_name, maintenance_window_options_name, custom_headers=None, raw=False, **operation_config):
+        """SQL pool's available maintenance windows.
 
-        Get a Sql pool's connection policy, which is used with table auditing.
+        Get list of SQL pool's available maintenance windows.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -53,16 +52,18 @@ class SqlPoolConnectionPoliciesOperations(object):
         :type workspace_name: str
         :param sql_pool_name: SQL pool name
         :type sql_pool_name: str
+        :param maintenance_window_options_name: Maintenance window options
+         name.
+        :type maintenance_window_options_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlPoolConnectionPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.SqlPoolConnectionPolicy or
+        :return: MaintenanceWindowOptions or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.MaintenanceWindowOptions or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -70,14 +71,14 @@ class SqlPoolConnectionPoliciesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
-            'connectionPolicyName': self._serialize.url("self.connection_policy_name", self.connection_policy_name, 'str')
+            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['maintenanceWindowOptionsName'] = self._serialize.query("maintenance_window_options_name", maintenance_window_options_name, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -94,15 +95,17 @@ class SqlPoolConnectionPoliciesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlPoolConnectionPolicy', response)
+            deserialized = self._deserialize('MaintenanceWindowOptions', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/connectionPolicies/{connectionPolicyName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/maintenanceWindowOptions/current'}
