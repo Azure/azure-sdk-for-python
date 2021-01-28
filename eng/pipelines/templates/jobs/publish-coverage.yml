@@ -46,6 +46,9 @@ jobs:
       - pwsh: |
           Get-Content $(Build.SourcesDirectory)\.coverage
 
+      - pwsh: |
+          Get-Content $(Build.SourcesDirectory)\coverage.xml
+
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
         continueOnError: true
