@@ -88,7 +88,7 @@ class CommunicationIdentityClient:
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
         return await self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: CommunicationUserIdentifier(u.id),
+            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id),
             **kwargs)
 
     @distributed_trace_async
@@ -109,7 +109,7 @@ class CommunicationIdentityClient:
         """
         return await self._identity_service_client.communication_identity.create(
             create_token_with_scopes=scopes,
-            cls=lambda pr, u, e: CommunicationUserIdentifier(u.id),
+            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id),
             **kwargs)
 
     @distributed_trace_async
