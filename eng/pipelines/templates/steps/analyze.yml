@@ -26,10 +26,15 @@ steps:
       python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
 
-  - script: |
-      find ./ -type f -name "*.py" -o -name "*.md" -print0 | while IFS= read -r -d '' file; do
-          [[ $(file $file) =~ "CRLF" ]] && echo -n "CRLF line ending in: " && echo "$file"
-      done
+  - pwsh: |
+      Get-ChildItem .\ -Filter "*.py" |
+      Foreach-Object {
+        (Get-Content $_ -Raw) -match "\r\n$" && Write-Output $_
+      }
+      Get-ChildItem .\ -Filter "*.md" |
+      Foreach-Object {
+        (Get-Content $_ -Raw) -match "\r\n$" && Write-Output $_
+      }
     displayName: Check for CRLF Line endings
 
   - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
