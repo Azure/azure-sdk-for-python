@@ -268,7 +268,8 @@ class ChatThreadClient(object):
         if chat_message_type is None:
             chat_message_type = ChatMessageType.TEXT
         elif not isinstance(chat_message_type, ChatMessageType):
-            raise ValueError("chat_message_type: {chat_message_type} is not acceptable".format(chat_message_type))
+            raise ValueError(
+                "chat_message_type: {message_type} is not acceptable".format(message_type=chat_message_type))
 
         sender_display_name = kwargs.pop("sender_display_name", None)
 

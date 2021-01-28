@@ -108,7 +108,7 @@ class ChatMessage(object):
             type=cls._get_message_type(chat_message.type),
             sequence_id=chat_message.sequence_id,
             version=chat_message.version,
-            content=ChatMessageContent._from_generated(chat_message.content),
+            content=ChatMessageContent._from_generated(chat_message.content), # pylint:disable=protected-access
             sender_display_name=chat_message.sender_display_name,
             created_on=chat_message.created_on,
             sender_id=CommunicationUser(chat_message.sender_id),
@@ -145,7 +145,7 @@ class ChatMessageContent(object):
     def _from_generated(cls, chat_message_content):
         participants_list = chat_message_content.participants
         if participants_list is not None and len(participants_list) > 0:
-            participants = [ChatThreadParticipant._from_generated(participant) for participant in participants_list]
+            participants = [ChatThreadParticipant._from_generated(participant) for participant in participants_list] # pylint:disable=protected-access
         else:
             participants = []
         return cls(

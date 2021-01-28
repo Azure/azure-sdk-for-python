@@ -20,7 +20,7 @@ __all__ = [
     'ChatClient',
     'ChatThreadClient',
     'ChatMessage',
-    'ChatMessageContent'
+    'ChatMessageContent',
     'ChatMessageReadReceipt',
     'SendChatMessageResult',
     'ChatThread',
