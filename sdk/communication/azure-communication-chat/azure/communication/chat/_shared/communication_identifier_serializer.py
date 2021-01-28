@@ -43,10 +43,13 @@ class CommunicationUserIdentifierSerializer(object):
                 communication_cloud_environment=communicationIdentifier.cloud
             )
 
-        return CommunicationIdentifierModel(
-            kind=CommunicationIdentifierKind.Unknown,
-            id=communicationIdentifier.identifier
-        )
+        if isinstance(communicationIdentifier, UnknownIdentifier):
+            return CommunicationIdentifierModel(
+                kind=CommunicationIdentifierKind.Unknown,
+                id=communicationIdentifier.identifier
+            )
+
+        raise TypeError("Identifier type is unknown")
 
     @classmethod
     def deserialize(cls, identifierModel):
