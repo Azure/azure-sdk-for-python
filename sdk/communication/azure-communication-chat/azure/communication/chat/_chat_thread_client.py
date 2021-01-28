@@ -249,9 +249,8 @@ class ChatThreadClient(object):
 
         :param content: Required. Chat message content.
         :type content: str
-        :param chat_message_type: The chat message type. Possible values include: ChatMessageType.TEXT, ChatMessageType.HTML,
-        ChatMessageType.PARTICIPANT_ADDED, ChatMessageType.PARTICIPANT_REMOVED, ChatMessageType.TOPIC_UPDATED,
-        "text", "html", "participant_added", "participant_removed", "topic_updated" Default: ChatMessageType.TEXT
+        :param chat_message_type: The chat message type. Possible values include: "text", "html", "participant_added",
+        "participant_removed", "topic_updated" Default: ChatMessageType.TEXT
         :type chat_message_type: str or ~azure.communication.chat.models.ChatMessageType
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
