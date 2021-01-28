@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from pathlib import PurePosixPath
 
 try:
     from urllib.parse import urlparse, quote
@@ -18,7 +17,7 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import LocationMode, FileSystemProperties, PublicAccess
+from ._models import LocationMode, FileSystemProperties, PublicAccess, FileProperties
 from ._list_paths_helper import PathPropertiesPaged
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
@@ -781,7 +780,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
-        if isinstance(file_path, PurePosixPath):
+        if not isinstance(file_path, FileProperties) and hasattr(file_path, "name"):
             file_path = str(file_path)
         else:
             try:

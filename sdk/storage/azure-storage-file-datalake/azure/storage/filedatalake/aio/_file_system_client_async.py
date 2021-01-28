@@ -7,7 +7,6 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
-from pathlib import PurePosixPath
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
@@ -28,7 +27,7 @@ from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._models import FileSystemProperties, PublicAccess
+from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -698,7 +697,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        if isinstance(directory, PurePosixPath):
+        if not isinstance(directory, DirectoryProperties) and hasattr(directory, "name"):
             directory_name = str(directory)
         else:
             try:
@@ -742,7 +741,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 12
                 :caption: Getting the file client to interact with a specific file.
         """
-        if isinstance(file_path, PurePosixPath):
+        if not isinstance(file_path, FileProperties) and hasattr(file_path, "name"):
             file_path = str(file_path)
         else:
             try:

@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from pathlib import PurePosixPath
-
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -13,7 +11,7 @@ except ImportError:
 from azure.core.pipeline import AsyncPipeline
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
-from .._models import DirectoryProperties
+from .._models import DirectoryProperties, FileProperties
 from .._deserialize import deserialize_dir_properties
 from ._path_client_async import PathClient
 from .._shared.base_client_async import AsyncTransportWrapper
@@ -484,7 +482,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 12
                 :caption: Getting the file client to interact with a specific file.
         """
-        if isinstance(file, PurePosixPath):
+        if not isinstance(file, FileProperties) and hasattr(file, "name"):
             file_path = str(file)
         else:
             try:
@@ -526,7 +524,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        if isinstance(sub_directory, PurePosixPath):
+        if not isinstance(sub_directory, DirectoryProperties) and hasattr(sub_directory, "name"):
             subdir_path = str(sub_directory)
         else:
             try:

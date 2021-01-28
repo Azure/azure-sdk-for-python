@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from pathlib import PurePosixPath
-
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -13,7 +11,7 @@ from azure.core.pipeline import Pipeline
 from ._deserialize import deserialize_dir_properties
 from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
-from ._models import DirectoryProperties
+from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
 
 
@@ -506,7 +504,7 @@ class DataLakeDirectoryClient(PathClient):
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake..DataLakeFileClient
         """
-        if isinstance(file, PurePosixPath):
+        if not isinstance(file, FileProperties) and hasattr(file, "name"):
             file_path = str(file)
         else:
             try:
@@ -539,7 +537,7 @@ class DataLakeDirectoryClient(PathClient):
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
-        if isinstance(sub_directory, PurePosixPath):
+        if not isinstance(sub_directory, DirectoryProperties) and hasattr(sub_directory, "name"):
             subdir_path = str(sub_directory)
         else:
             try:
