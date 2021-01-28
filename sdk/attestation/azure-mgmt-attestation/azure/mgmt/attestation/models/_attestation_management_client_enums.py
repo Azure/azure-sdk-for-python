@@ -25,3 +25,11 @@ class AttestationServiceStatus(str, Enum):
     ready = "Ready"
     not_ready = "NotReady"
     error = "Error"
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    creating = "Creating"
+    deleting = "Deleting"
+    failed = "Failed"

@@ -11,8 +11,10 @@
 
 from ._operations import Operations
 from ._attestation_providers_operations import AttestationProvidersOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 
 __all__ = [
     'Operations',
     'AttestationProvidersOperations',
+    'PrivateEndpointConnectionsOperations',
 ]

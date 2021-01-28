@@ -21,6 +21,7 @@ try:
     from ._models_py3 import OperationList
     from ._models_py3 import OperationsDefinition
     from ._models_py3 import OperationsDisplayDefinition
+    from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import SystemData
@@ -37,13 +38,16 @@ except (SyntaxError, ImportError):
     from ._models import OperationList
     from ._models import OperationsDefinition
     from ._models import OperationsDisplayDefinition
+    from ._models import PrivateEndpointConnection
     from ._models import ProxyResource
     from ._models import Resource
     from ._models import SystemData
     from ._models import TrackedResource
+from ._paged_models import PrivateEndpointConnectionPaged
 from ._attestation_management_client_enums import (
     CreatedByType,
     AttestationServiceStatus,
+    PrivateEndpointConnectionProvisioningState,
 )
 
 __all__ = [
@@ -58,10 +62,13 @@ __all__ = [
     'OperationList',
     'OperationsDefinition',
     'OperationsDisplayDefinition',
+    'PrivateEndpointConnection',
     'ProxyResource',
     'Resource',
     'SystemData',
     'TrackedResource',
+    'PrivateEndpointConnectionPaged',
     'CreatedByType',
     'AttestationServiceStatus',
+    'PrivateEndpointConnectionProvisioningState',
 ]
