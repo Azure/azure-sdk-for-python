@@ -65,6 +65,7 @@ from typing import (
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import (
     ABC,
     AbstractContextManager,
@@ -582,6 +583,10 @@ class _HttpResponseBase(object):
         message = message_parser(http_body)  # type: Message
         requests = self.request.multipart_mixed_info[0]  # type: List[HttpRequest]
         return self._decode_parts(message, http_response_type, requests)
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise HttpResponseError(response=self)
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
