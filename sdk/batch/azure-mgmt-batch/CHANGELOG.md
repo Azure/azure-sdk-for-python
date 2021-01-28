@@ -1,4 +1,20 @@
 # Release History
+
+## 10.0.0 (2021-01-28)
+
+**Features**
+
+  - Model Pool has a new parameter task_slots_per_node
+  - Model Pool has a new parameter identity
+  - Model BatchAccountIdentity has a new parameter user_assigned_identities
+  - Model VirtualMachineConfiguration has a new parameter extensions
+  - Model VirtualMachineConfiguration has a new parameter node_placement_configuration
+
+**Breaking changes**
+
+  - Model Pool no longer has parameter max_tasks_per_node
+  - Model ContainerRegistry no longer has parameter username
+  - Model ContainerRegistry has a new required parameter user_name
 ## 9.0.0 (2020-05-29)
 ### REST API version
 - This version targets REST API version 2020-05-01.
