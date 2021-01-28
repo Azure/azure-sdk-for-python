@@ -23,10 +23,10 @@ class CommunicationUserIdentifier(object):
 class PhoneNumberIdentifier(object):
     """
     Represents a phone number.
-    :ivar value: Value for a phone number.
-    :vartype value: str
-    :param value: Value to initialize PhoneNumberIdentifier.
-    :type value: str
+    :param phone_number: The phone number in E.164 format.
+    :type phone_number: str
+    :param identifier: The full id of the phone number.
+    :type identifier: str
     """
     def __init__(self, phone_number, identifier=None):
         self.phone_number = phone_number
