@@ -23,6 +23,7 @@ class CommunicationUserIdentifierSerializer(object):
         :type identifier: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
         :return: CommunicationIdentifierModel
         :rtype: ~azure.communication.chat.CommunicationIdentifierModel
+        :raises Union[TypeError, ValueError]
         """
         if isinstance(communicationIdentifier, CommunicationUserIdentifier):
             return CommunicationIdentifierModel(

@@ -160,6 +160,14 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         assert teams_user_identifier_actual.user_id == teams_user_identifier_expected.user_id
         assert teams_user_identifier_actual.is_anonymous== teams_user_identifier_expected.is_anonymous
         assert teams_user_identifier_actual.cloud == teams_user_identifier_expected.cloud
-       
+
+    def test_serialize_foreign_throws(self):
+        foreign_obj = "Foreign object"
+        self.assertRaises(
+            TypeError,
+            lambda : CommunicationUserIdentifierSerializer.serialize(foreign_obj)
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
