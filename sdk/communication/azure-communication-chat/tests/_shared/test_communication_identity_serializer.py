@@ -17,7 +17,7 @@ from azure.communication.chat._shared.models import(
 
 class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
 
-    def test_missing_property_desrializer_throws(self):
+    def test_missing_property_deserializer_throws(self):
         models_with_missing_property = [
             CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.Unknown
