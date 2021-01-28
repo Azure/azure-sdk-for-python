@@ -42,9 +42,9 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print(user.identifier)
+            print("Issuing token for: " + user.identifier)
             tokenresponse = await identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
-            print(tokenresponse)
+            print("Token issued with value: " + tokenresponse.token)
 
     async def revoke_tokens(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -58,8 +58,9 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             user = await identity_client.create_user()
             tokenresponse = await identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+            print("Revoking token: " + tokenresponse.token)
             await identity_client.revoke_tokens(user)
-            print(tokenresponse)
+            print(tokenresponse.token + " revoked successfully")
 
     async def create_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -70,8 +71,9 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
         async with identity_client:
+            print("Creating new user")
             user = await identity_client.create_user()
-            print(user.identifier)
+            print("User created with id:" + user.identifier)
 
     async def create_user_with_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -83,9 +85,10 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
         async with identity_client:
+            print("Creating new user with token")
             user, tokenresponse = await identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
-            print(user.identifier)
-            print(tokenresponse)
+            print("User created with id:" + user.identifier)
+            print("Token issued with value: " + tokenresponse.token)
 
     async def delete_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -97,7 +100,9 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
+            print("Deleting user: " + user.identifier)
             await identity_client.delete_user(user)
+            print(user.identifier + " deleted")
 
 async def main():
     sample = CommunicationIdentityClientSamples()

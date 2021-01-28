@@ -36,19 +36,58 @@ endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
-identity_client_managed_identity = CommunicationIdentityClient.(endpoint, DefaultAzureCredential())
+identity_client_managed_identity = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
 
 #You can also authenticate using your connection string
 identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
 
 ```
 
-# Examples
+## Examples
 The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
 
-[Create/delete Azure Communication Service identities][identitysamples] 
+### Creating a new user
 
-[Create/revoke scoped user access tokens][identitysamples]
+Use the `create_user` method to create a new user. 
+```python
+user = identity_client.create_user()
+print("User created with id:" + user.identifier)
+```
+
+Alternatively, use the `create_user_with_token` method to create a new user and issue a token for it.\
+For this option, a list of `CommunicationTokenScope` must be defined (see "Issuing an access token" for more information)
+
+```python
+user, tokenresponse = identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+print("User id:" + user.identifier)
+print("Token issued with value: " + tokenresponse.token)
+```
+
+### Issuing or Refreshing an access token for a user
+
+Use the `issue_token` method to issue or refresh a scoped access token for the user. \
+Pass in the user object as a parameter, and a list of `CommunicationTokenScope`. Scope options are:
+- `CHAT` (Chat)
+- `VOIP` (VoIP)
+
+```python
+tokenresponse = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+print("Token issued with value: " + tokenresponse.token)
+```
+
+### Revoking a user's access tokens
+
+Use `revoke_tokens` to revoke all access tokens for a user. Pass in the user object as a parameter
+```python
+identity_client.revoke_tokens(user)
+```
+
+### Deleting a user
+
+Use the `delete_user` method to delete a user. Pass in the user object as a parameter
+```python
+identity_client.delete_user(user)
+```
 
 # Troubleshooting
 The Azure Communication Service Identity client will raise exceptions defined in [Azure Core][azure_core].
@@ -73,5 +112,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 <!-- LINKS -->
-[identitysamples]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity/samples/identity_samples.py
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
