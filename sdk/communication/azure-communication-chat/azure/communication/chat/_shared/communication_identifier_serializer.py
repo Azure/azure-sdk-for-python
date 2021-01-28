@@ -19,8 +19,9 @@ class CommunicationUserIdentifierSerializer(object):
     def serialize(cls, communicationIdentifier):
         """ Serialize the Communication identifier into CommunicationIdentifierModel
 
-        :param identifier: Communication service identifier
-        :type identifier: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
+        :param identifier: Identifier object
+        :type identifier: Union[CommunicationUserIdentifier,
+           PhoneNumberIdentifier, MicrosoftTeamsUserIdentifier, UnknownIdentifier]
         :return: CommunicationIdentifierModel
         :rtype: ~azure.communication.chat.CommunicationIdentifierModel
         :raises Union[TypeError, ValueError]
