@@ -80,9 +80,13 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         self._client = AzureDataLakeStorageRESTAPI(self.url, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
+    async def __aenter__(self):
+        await self._blob_service_client.__aenter__()
+        return self
+
     async def __aexit__(self, *args):
         await self._blob_service_client.close()
-        await super(DataLakeServiceClient, self).__aexit__(*args)
+        await super(BlobServiceClient, self._blob_service_client).__aexit__(*args)
 
     async def close(self):
         # type: () -> None
