@@ -78,19 +78,24 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         create_message_result = None
-        try:
-            content='hello world'
-            sender_display_name='sender name'
-            chat_message_type=ChatMessageType.TEXT
-            create_message_result_id = chat_thread_client.send_message(
-                content=content,
-                chat_message_type=chat_message_type,
-                sender_display_name=sender_display_name)
-        except:
-            raised = True
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        assert create_message_result_id == message_id
+        chat_message_types = [ChatMessageType.TEXT, ChatMessageType.HTML,
+                              ChatMessageType.PARTICIPANT_ADDED, ChatMessageType.PARTICIPANT_REMOVED, ChatMessageType.TOPIC_UPDATED,
+                              "text", "html", "participant_added", "participant_removed", "topic_updated"]
+
+        for chat_message_type in chat_message_types:
+            try:
+                content='hello world'
+                sender_display_name='sender name'
+                create_message_result_id = chat_thread_client.send_message(
+                    content=content,
+                    chat_message_type=chat_message_type,
+                    sender_display_name=sender_display_name)
+            except:
+                raised = True
+
+            self.assertFalse(raised, 'Expected is no excpetion raised')
+            assert create_message_result_id == message_id
 
     def test_send_message_w_invalid_type_throws_error(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
@@ -102,19 +107,22 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         create_message_result = None
-        try:
-            content='hello world'
-            sender_display_name='sender name'
-            chat_message_type="ChatMessageType.TEXT"
-            create_message_result_id = chat_thread_client.send_message(
-                content=content,
-                chat_message_type=chat_message_type,
-                sender_display_name=sender_display_name)
-        except:
-            raised = True
 
-        self.assertTrue(raised, 'Expected is excpetion raised')
+        chat_message_types = ["ChatMessageType.TEXT", "ChatMessageType.HTML",
+                              "ChatMessageType.PARTICIPANT_ADDED", "ChatMessageType.PARTICIPANT_REMOVED",
+                              "ChatMessageType.TOPIC_UPDATED"]
+        for chat_message_type in chat_message_types:
+            try:
+                content='hello world'
+                sender_display_name='sender name'
+                create_message_result_id = chat_thread_client.send_message(
+                    content=content,
+                    chat_message_type=chat_message_type,
+                    sender_display_name=sender_display_name)
+            except:
+                raised = True
 
+            self.assertTrue(raised, 'Expected is excpetion raised')
 
 
     def test_get_message(self):

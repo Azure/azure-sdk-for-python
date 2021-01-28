@@ -242,8 +242,9 @@ class ChatThreadClient(object):
 
         :param content: Required. Chat message content.
         :type content: str
-        :param chat_message_type: The chat message type. Possible values include: "text", "html", "topicUpdated",
-        "participantAdded", "participantRemoved". Default: "text"
+        :param chat_message_type: The chat message type. Possible values include: ChatMessageType.TEXT, ChatMessageType.HTML,
+        ChatMessageType.PARTICIPANT_ADDED, ChatMessageType.PARTICIPANT_REMOVED, ChatMessageType.TOPIC_UPDATED,
+        "text", "html", "participant_added", "participant_removed", "topic_updated" Default: ChatMessageType.TEXT
         :type chat_message_type: str or ~azure.communication.chat.models.ChatMessageType
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
@@ -268,8 +269,11 @@ class ChatThreadClient(object):
         if chat_message_type is None:
             chat_message_type = ChatMessageType.TEXT
         elif not isinstance(chat_message_type, ChatMessageType):
-            raise ValueError(
-                "chat_message_type: {message_type} is not acceptable".format(message_type=chat_message_type))
+            try:
+                chat_message_type = ChatMessageType.__getattr__(chat_message_type)  # pylint:disable=protected-access
+            except Exception:
+                raise ValueError(
+                    "chat_message_type: {message_type} is not acceptable".format(message_type=chat_message_type))
 
         sender_display_name = kwargs.pop("sender_display_name", None)
 

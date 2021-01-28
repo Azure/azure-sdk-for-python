@@ -77,20 +77,26 @@ async def test_send_message_w_type():
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     create_message_result_id = None
-    try:
-        chat_message_type=ChatMessageType.TEXT
-        content='hello world'
-        sender_display_name='sender name'
 
-        create_message_result_id = await chat_thread_client.send_message(
-            content,
-            chat_message_type=chat_message_type,
-            sender_display_name=sender_display_name)
-    except:
-        raised = True
+    chat_message_types = [ChatMessageType.TEXT, ChatMessageType.HTML,
+                          ChatMessageType.PARTICIPANT_ADDED, ChatMessageType.PARTICIPANT_REMOVED,
+                          ChatMessageType.TOPIC_UPDATED,
+                          "text", "html", "participant_added", "participant_removed", "topic_updated"]
 
-    assert raised == False
-    assert create_message_result_id == message_id
+    for chat_message_type in chat_message_types:
+        try:
+            content='hello world'
+            sender_display_name='sender name'
+
+            create_message_result_id = await chat_thread_client.send_message(
+                content,
+                chat_message_type=chat_message_type,
+                sender_display_name=sender_display_name)
+        except:
+            raised = True
+
+        assert raised == False
+        assert create_message_result_id == message_id
 
 @pytest.mark.asyncio
 async def test_send_message_w_invalid_type_throws_error():
@@ -103,19 +109,23 @@ async def test_send_message_w_invalid_type_throws_error():
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     create_message_result_id = None
-    try:
-        chat_message_type="ChatMessageType.TEXT"
-        content='hello world'
-        sender_display_name='sender name'
 
-        create_message_result_id = await chat_thread_client.send_message(
-            content,
-            chat_message_type=chat_message_type,
-            sender_display_name=sender_display_name)
-    except:
-        raised = True
+    chat_message_types = ["ChatMessageType.TEXT", "ChatMessageType.HTML",
+                          "ChatMessageType.PARTICIPANT_ADDED", "ChatMessageType.PARTICIPANT_REMOVED",
+                          "ChatMessageType.TOPIC_UPDATED"]
+    for chat_message_type in chat_message_types:
+        try:
+            content='hello world'
+            sender_display_name='sender name'
 
-    assert raised == True
+            create_message_result_id = await chat_thread_client.send_message(
+                content,
+                chat_message_type=chat_message_type,
+                sender_display_name=sender_display_name)
+        except:
+            raised = True
+
+        assert raised == True
 
 
 @pytest.mark.asyncio
