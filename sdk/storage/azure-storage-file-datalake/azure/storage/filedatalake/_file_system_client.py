@@ -17,7 +17,7 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import LocationMode, FileSystemProperties, PublicAccess, FileProperties
+from ._models import LocationMode, FileSystemProperties, PublicAccess, FileProperties, DirectoryProperties
 from ._list_paths_helper import PathPropertiesPaged
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
@@ -737,7 +737,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        if isinstance(directory, PurePosixPath):
+        if not isinstance(directory, DirectoryProperties) and hasattr(directory, "name"):
             directory_name = str(directory)
         else:
             try:
