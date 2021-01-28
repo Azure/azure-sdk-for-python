@@ -8,7 +8,7 @@ from subprocess import check_call
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
 )
-from azure_devtools.ci_tools.git_tools import get_diff_file_list
+from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from .generate_sdk import generate
 
 _LOGGER = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ DEFAULT_DEST_FOLDER = "./dist"
 
 
 def get_package_names(sdk_folder):
-    files = get_diff_file_list(sdk_folder)
+    files = get_add_diff_file_list(sdk_folder)
     matches = {_SDK_FOLDER_RE.search(f) for f in files}
     package_names = {match.groups() for match in matches if match is not None}
     return package_names
