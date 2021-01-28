@@ -100,16 +100,16 @@ class CommunicationIdentityClient:
         # type: (...) -> Tuple[CommunicationUserIdentifier, CommunicationUserToken]
         """create a single Communication user along with an Identity Token
 
-        :param scopes:
+        :param scopes:\
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
         :return: A tuple of a CommunicationUserIdentifier and a CommunicationUserToken.
         :rtype: tuple of (~azure.communication.identity.CommunicationUserIdentifier, \
-~azure.communication.identity.CommunicationUserToken)
+            ~azure.communication.identity.CommunicationUserToken)
         """
         return await self._identity_service_client.communication_identity.create(
             create_token_with_scopes=scopes,
-            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id),
+            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id), u.access_token),
             **kwargs)
 
     @distributed_trace_async
@@ -121,7 +121,7 @@ class CommunicationIdentityClient:
         # type: (...) -> None
         """Triggers revocation event for user and deletes all its data.
 
-        :param communication_user:
+        :param communication_user:\
             Azure Communication User to delete
         :type communication_user: ~azure.communication.identity.CommunicationUserIdentifier
         :return: None
