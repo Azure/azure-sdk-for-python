@@ -445,7 +445,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :type form: bytes or IO[bytes]
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
-            `pages=["1-3", 5-6"]`. Separate each page number or range with a comma.
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
@@ -517,7 +517,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
-            `pages=["1-3", 5-6"]`. Separate each page number or range with a comma.
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
