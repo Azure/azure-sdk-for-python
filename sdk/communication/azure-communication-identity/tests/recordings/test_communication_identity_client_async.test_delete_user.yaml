@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 28 Jan 2021 00:06:09 GMT
+      - Thu, 28 Jan 2021 02:41:01 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -18,26 +18,26 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:0f760253-1d8c-4ac0-b43b-df2d1c43e136_00000007-e631-705c-92fd-8b3a0d004c1d"}}'
+      string: '{"identity": {"id": "8:acs:d483da20-3812-4e70-b5a8-481118650acd_00000007-e6bf-355e-1000-343a0d00b33d"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 00:06:10 GMT
-      ms-cv: CP51xT5ofU2Qf4/8quyvHA.0
+      date: Thu, 28 Jan 2021 02:41:01 GMT
+      ms-cv: 8vQZTcgPHk+qWq1ms36ScA.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 207ms
+      x-processing-time: 19ms
     status:
       code: 201
       message: Created
-    url: https://communicationjr4rcjud6dy.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communicationb4ch4hbfoan.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: ''
     headers:
       Accept:
       - application/json
       Date:
-      - Thu, 28 Jan 2021 00:06:10 GMT
+      - Thu, 28 Jan 2021 02:41:02 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -49,12 +49,12 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
-      date: Thu, 28 Jan 2021 00:06:11 GMT
-      ms-cv: PvIFy0Tb7UmwNq2Se6oJhg.0
+      date: Thu, 28 Jan 2021 02:41:02 GMT
+      ms-cv: id2Rhv3ZBkKfkmTsqROVPQ.0
       strict-transport-security: max-age=2592000
-      x-processing-time: 843ms
+      x-processing-time: 580ms
     status:
       code: 204
       message: No Content
-    url: https://communicationjr4rcjud6dy.communication.azure.com/identities/sanitized?api-version=2021-03-07
+    url: https://communicationb4ch4hbfoan.communication.azure.com/identities/sanitized?api-version=2021-03-07
 version: 1

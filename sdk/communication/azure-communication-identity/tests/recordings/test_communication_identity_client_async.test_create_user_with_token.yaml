@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: '{"createTokenWithScopes": ["chat"]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '35'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 28 Jan 2021 02:39:55 GMT
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity": {"id": "8:acs:99832228-19ea-4e32-b724-74bf72f8915d_00000007-e6be-3378-8d33-3b3a0d00ad91"},
+        "accessToken": {"token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwMiIsIng1dCI6IjNNSnZRYzhrWVNLd1hqbEIySmx6NTRQVzNBYyIsInR5cCI6IkpXVCJ9.eyJza3lwZWlkIjoiYWNzOjk5ODMyMjI4LTE5ZWEtNGUzMi1iNzI0LTc0YmY3MmY4OTE1ZF8wMDAwMDAwNy1lNmJlLTMzNzgtOGQzMy0zYjNhMGQwMGFkOTEiLCJzY3AiOjE3OTIsImNzaSI6IjE2MTE4MDE1OTUiLCJpYXQiOjE2MTE4MDE1OTUsImV4cCI6MTYxMTg4Nzk5NSwiYWNzU2NvcGUiOiJjaGF0IiwicmVzb3VyY2VJZCI6Ijk5ODMyMjI4LTE5ZWEtNGUzMi1iNzI0LTc0YmY3MmY4OTE1ZCJ9.LF5tFDfLceBBoomQtaYhbPZTEBq7fEq5ucN0k_Fd4gUefz2I-y6dBBBOnpy4KEsNHWPHv58fgqWacbC43GnG4o2d7PNiL1g8zNBqibEiBjPEHSuSrlxAASkL5ZBCQWPb0EPfnTeMS0ab4V586MTWv9SfASYIEzsPLwXv8vXwnqnNjHYRAXUeiUabGiAmn8UH4WGJ56YCIL4PoJMLtcSqEo1FL-BmYupSoAZ-ylRtnsrprkIiJGhfQqL2546idq9jgI7Ofq9urYjOitxY6Yaf4EDcNhH4Iklvivo87LtIdZYl0AF-k9K-Tjzdwx6geTe7eSyrYXQhgyr8E0k9azsjuw",
+        "expiresOn": "2021-01-29T02:39:54.7876798+00:00"}}'
+    headers:
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      content-type: application/json; charset=utf-8
+      date: Thu, 28 Jan 2021 02:39:55 GMT
+      ms-cv: LoHYen34pUWYkMsutT922Q.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 32ms
+    status:
+      code: 201
+      message: Created
+    url: https://communicationaq6igkh2usb.communication.azure.com/identities?api-version=2021-03-07
+version: 1
