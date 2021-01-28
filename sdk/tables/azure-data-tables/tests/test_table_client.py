@@ -14,7 +14,7 @@ from azure.data.tables import (
     AccountSasPermissions,
     ResourceTypes
 )
-from azure.data.tables.__version__ import VERSION
+from azure.data.tables import __version__ as VERSION
 from azure.core.exceptions import HttpResponseError
 
 from preparers import TablesPreparer

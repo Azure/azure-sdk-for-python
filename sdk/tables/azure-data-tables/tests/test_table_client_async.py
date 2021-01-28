@@ -13,7 +13,6 @@ from azure.data.tables import (
     AccountSasPermissions,
     ResourceTypes
 )
-
 from azure.data.tables import __version__ as VERSION
 
 from _shared.testcase import TableTestCase, FakeTokenCredential

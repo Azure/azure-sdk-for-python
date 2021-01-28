@@ -26,8 +26,8 @@ class IntegrationTestBase(unittest.TestCase):
         self.diagnose = os.environ.get(ENV_TEST_DIAGNOSE, None) == 'True'
         self.logger = logging.getLogger('azure_devtools.scenario_tests')
 
-    def create_random_name(self, prefix, length):  # pylint: disable=no-self-use
-        return create_random_name(prefix=prefix, length=length)
+    # def create_random_name(self, prefix, length):  # pylint: disable=no-self-use
+    #     return create_random_name(prefix=prefix, length=length)
 
     def create_temp_file(self, size_kb, full_random=False):
         """ Create a temporary file for testing. The test harness will delete the file during tearing down. """
