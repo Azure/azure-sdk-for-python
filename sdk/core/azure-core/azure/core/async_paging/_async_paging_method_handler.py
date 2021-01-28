@@ -49,7 +49,7 @@ class _AsyncPagingMethodHandler(_PagingMethodHandlerBase):
         else:
             request = self._paging_method.get_next_request(continuation_token, self.initial_request, self._client)
             response = await self._make_call(request)
-        return self._handle_response(continuation_token, response)
+        return self._handle_response(response)
 
     def extract_data(self, pipeline_response):
         continuation_token, list_of_elem = self._extract_data_helper(pipeline_response)

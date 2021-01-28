@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from collections import defaultdict
 
 from ..exceptions import (
     map_error,
@@ -51,12 +50,9 @@ class _PagingMethodHandlerBase(object):
         self._client = client
         self._initial_state = initial_state
         self._cls = kwargs.pop("_cls", None)
-        self._error_map = defaultdict(
-            HttpResponseError,
-            {
-                401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-            }
-        )
+        self._error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         self._error_map.update(kwargs.pop('error_map', {}))
         self._item_name = kwargs.pop("item_name", "value")
         self._continuation_token_location = kwargs.pop("continuation_token_location", None)
@@ -68,14 +64,12 @@ class _PagingMethodHandlerBase(object):
             return self._initial_state.http_response.request
         return self._initial_state
 
-    def _handle_response(self, continuation_token, response):
+    def _handle_response(self, response):
         http_response = response.http_response
         status_code = http_response.status_code
         if status_code >= 400:
-            if self._error_map:
-                map_error(status_code=status_code, response=http_response, error_map=self._error_map)
+            map_error(status_code=status_code, response=http_response, error_map=self._error_map)
             error = HttpResponseError(response=http_response)
-            error.continuation_token = continuation_token
             raise error
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]
@@ -108,7 +102,7 @@ class _PagingMethodHandler(_PagingMethodHandlerBase):
         else:
             request = self._paging_method.get_next_request(continuation_token, self.initial_request, self._client)
             response = self._make_call(request)
-        return self._handle_response(continuation_token, response)
+        return self._handle_response(response)
 
     def extract_data(self, pipeline_response):
         return self._extract_data_helper(pipeline_response)

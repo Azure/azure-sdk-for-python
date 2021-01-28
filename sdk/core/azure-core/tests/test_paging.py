@@ -110,17 +110,18 @@ def paging_method_handler(pipeline_response):
             self._raise_on_second_call = raise_on_second_call
 
         def _make_call(self, request):
+            self._num_calls += 1
+            if self._num_calls > 1:
+                if self._validate_next_request:
+                    self._validate_next_request(request)
+                if self._raise_on_second_call:
+                    pipeline_response.http_response.status_code = 400
+
             pipeline_response.http_request = request
             return pipeline_response
 
         def get_next(self, continuation_token):
             response = super(_MyPagingMethodHandler, self).get_next(continuation_token)
-            self._num_calls += 1
-            if self._num_calls > 1:
-                if self._validate_next_request:
-                    self._validate_next_request(response.http_request)
-                if self._raise_on_second_call:
-                    raise HttpResponseError()
             return response
 
         def extract_data(self, pipeline_response):

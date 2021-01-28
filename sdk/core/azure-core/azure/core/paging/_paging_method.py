@@ -109,7 +109,7 @@ class PagingMethodABC(object):
 
 class ContinueWithCallback(PagingMethodABC):
 
-    def __init__(self, next_request_callback, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, next_request_callback):
         """Base paging method. Accepts the callback for the next request as an init arg.
 
         :param callable next_request_callback: Takes the continuation token as input and
@@ -184,9 +184,9 @@ class ContinueWithCallback(PagingMethodABC):
         # check response headers for cont token
         return pipeline_response.http_response.headers.get(continuation_token_location, None)
 
-class ContinueWithNextLink(ContinueWithCallback):  # pylint: disable=too-many-instance-attributes
+class ContinueWithNextLink(ContinueWithCallback):
 
-    def __init__(self, path_format_arguments=None, **kwargs):
+    def __init__(self, path_format_arguments=None):
         """Most common paging method. Uses the continuation token as the URL for the next call.
         """
         def _next_request_callback(continuation_token, initial_request, client):
@@ -196,7 +196,7 @@ class ContinueWithNextLink(ContinueWithCallback):  # pylint: disable=too-many-in
             return request
 
         super(ContinueWithNextLink, self).__init__(
-            next_request_callback=_next_request_callback, **kwargs
+            next_request_callback=_next_request_callback
         )
         self._path_format_arguments = path_format_arguments or {}
 
@@ -216,7 +216,7 @@ class ContinueWithNextLink(ContinueWithCallback):  # pylint: disable=too-many-in
 
 class ContinueWithRequestHeader(ContinueWithCallback):
 
-    def __init__(self, header_name, **kwargs):
+    def __init__(self, header_name):
         """Passes continuation token as a header parameter to next call.
         """
         self._header_name = header_name
@@ -225,7 +225,7 @@ class ContinueWithRequestHeader(ContinueWithCallback):
             request.headers[self._header_name] = continuation_token
             return request
         super(ContinueWithRequestHeader, self).__init__(
-            next_request_callback=_next_request_callback, **kwargs
+            next_request_callback=_next_request_callback
         )
 
     def get_next_request(self, continuation_token, initial_request, client):

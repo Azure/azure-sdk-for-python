@@ -37,7 +37,6 @@ from typing import (
 from ._async_paging_method_handler import _AsyncPagingMethodHandler
 from ._async_list import AsyncList
 from ..paging._utils import ReturnType, ResponseType
-from ..paging import PagingMethodABC
 from ..exceptions import AzureError
 from ..pipeline._tools_async import await_result as _await_result
 
