@@ -6,9 +6,6 @@
 
 import base64
 import json
-import time
-from datetime import datetime
-from msrest.serialization import TZ_UTC
 
 def _retrieve_jwt_expiration_timestamp(jwt_value):
     # type: (str) -> int
@@ -21,15 +18,20 @@ def _retrieve_jwt_expiration_timestamp(jwt_value):
     if not jwt_value:
         raise ValueError("jwt_value can not be None")
 
-    token_parse_err_msg = "Token is not formatted correctly"
     parts = jwt_value.split(".")
 
     if len(parts) < 3:
-        raise ValueError(token_parse_err_msg)
+        raise ValueError("Invalid JWT structure.")
 
     try:
         padded_base64_payload = base64.b64decode(parts[1])
         payload = json.loads(padded_base64_payload)
-        return payload['exp']
     except ValueError:
-        raise ValueError(token_parse_err_msg)
+        raise ValueError("Unable to decode the JWT.")
+
+    try:
+        exp = payload['exp']
+    except KeyError:
+        raise ValueError("Invalid JWT payload structure. No expiration.")
+
+    return int(exp)
