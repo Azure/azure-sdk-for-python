@@ -1,5 +1,21 @@
 # Release History
 
+## 14.0.0b2 (2021-01-28)
+
+**Features**
+
+  - Model VirtualMachineConfiguration has a new parameter extensions
+  - Model VirtualMachineConfiguration has a new parameter node_placement_configuration
+  - Model Pool has a new parameter identity
+  - Model BatchAccountIdentity has a new parameter user_assigned_identities
+  - Added operation CertificateOperations.create
+  - Added operation PoolOperations.create
+
+**Breaking changes**
+
+  - Removed operation CertificateOperations.begin_create
+  - Removed operation PoolOperations.begin_create
+
 ## 14.0.0 (2020-12-22)
 
 - GA release
