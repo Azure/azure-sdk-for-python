@@ -8,7 +8,7 @@
 
 ### Breaking
 - CommunicationIdentityClient.RevokeTokens tokens now revoke all the currently issued tokens instead of revoking tokens issued prior to a given time.
-- CommunicationIdentityClient.IssueToken returns an instance of `Azure.Core.AccessToken` instead of `CommunicationUserToken`.
+- CommunicationIdentityClient.IssueToken returns an instance of `azure.core.credentials.AccessToken` instead of `CommunicationUserToken`.
 
 <!-- LINKS -->
 [read_me]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity/README.md
