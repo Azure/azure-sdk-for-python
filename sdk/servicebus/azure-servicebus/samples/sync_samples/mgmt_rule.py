@@ -20,8 +20,8 @@ import os
 from azure.servicebus.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-TOPIC_NAME = "sb_mgmt_demo_topic"
-SUBSCRIPTION_NAME = "sb_mgmt_demo_subscription"
+TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
+SUBSCRIPTION_NAME = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
 RULE_NAME = "sb_mgmt_demo_rule"
 
 

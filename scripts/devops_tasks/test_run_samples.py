@@ -25,7 +25,11 @@ IGNORED_SAMPLES = {
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
         "consume_cloud_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py"]
+        "consume_cloud_events_from_storage_queue.py"],
+    "azure-servicebus": [
+        "proxy.py",
+        "proxy_async.py"
+    ]
 }
 
 
