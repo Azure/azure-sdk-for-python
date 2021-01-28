@@ -43,7 +43,7 @@ from ..pipeline._tools_async import await_result as _await_result
 
 _LOGGER = logging.getLogger(__name__)
 
-class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
+class AsyncPageIterator(AsyncIterator[AsyncList[ReturnType]]):
     def __init__(
         self,
         get_next: Optional[Callable[
@@ -53,7 +53,6 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
             [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
         ]] = None,
         continuation_token: Optional[str] = None,
-        paging_method: Optional[PagingMethodABC] = None,
         **kwargs
     ) -> None:
         """Return an async iterator of pages.
@@ -62,11 +61,12 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
          list of ReturnType
         :param str continuation_token: The continuation token needed by get_next
-        :param paging_method: Preferred way of paging. Pass in a sansio paging method, to tell the iterator
+        :keyword paging_method: Preferred way of paging. Pass in a sansio paging method, to tell the iterator
          how to make requests, and deserialize responses. When passing in paging_method, do not pass in
          callables for get_next and extract_data.
-        :type paging_method: ~azure.core.paging_method.PagingMethodABC
+        :paramtype paging_method: ~azure.core.paging_method.PagingMethodABC
         """
+        paging_method = kwargs.pop("paging_method", None)
         if get_next or extract_data:
             if paging_method:
                 raise ValueError(

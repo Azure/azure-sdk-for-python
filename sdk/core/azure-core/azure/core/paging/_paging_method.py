@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 from typing import TYPE_CHECKING
 from six import add_metaclass
 
@@ -39,8 +39,9 @@ if TYPE_CHECKING:
     from .._pipeline_client import PipelineClient
 
 @add_metaclass(ABCMeta)
-class PagingMethodABC():
+class PagingMethodABC(object):
 
+    @abstractmethod
     def get_next_request(self, continuation_token, initial_request, client):
         # type: (Any, HttpRequest, PipelineClient) -> HttpRequest
         """Return the next request object for paging.
@@ -58,6 +59,7 @@ class PagingMethodABC():
 
     # extracting data from response
 
+    @abstractmethod
     def get_list_elements(self, pipeline_response, deserialized, item_name="value"):
         # type: (HttpResponse, ResponseType, str) -> Iterable[ReturnType]
         """Extract the list elements from the current page to return to users
@@ -72,6 +74,7 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
+    @abstractmethod
     def mutate_list(self, pipeline_response, list_of_elem, cls=None):
         # type: (HttpResponse, Iterable[ReturnType], Optional[Callable]) -> Iterable[ReturnType]
         """Mutate list of elements in current page, i.e. if users passed in a cls calback
@@ -86,6 +89,7 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
+    @abstractmethod
     def get_continuation_token(self, pipeline_response, deserialized, continuation_token_location=None):
         # type: (HttpResponse, ResponseType, Optional[str]) -> Any
         """Get the continuation token from the current page. This operation returning None signals the end of paging.
@@ -137,11 +141,14 @@ class ContinueWithCallback(PagingMethodABC):
         :return: The iterable of items extracted out of paging response
         :rtype: iterable[object]
         """
-        if hasattr(deserialized, item_name):
+        try:
             return getattr(deserialized, item_name)
-        raise ValueError(
-            "The response object does not have property '{}' to extract element list from".format(item_name)
-        )
+        except AttributeError:
+            raise ValueError(
+                "The response object does not have property '{}' to extract element list from".format(
+                    item_name
+                )
+            )
 
     def mutate_list(self, pipeline_response, list_of_elem, cls=None):
         # type: (HttpResponse, Iterable[ReturnType], Optional[Callable]) -> Iterable[ReturnType]
@@ -168,15 +175,14 @@ class ContinueWithCallback(PagingMethodABC):
         :return: The continuation token. Can be any value, and will be passed as-is to :func:`get_next_request`.
         :rtype: any
         """
-        if continuation_token_location:
-            if not hasattr(deserialized, continuation_token_location):
-                raise ValueError(
-                    "The response object does not have property '{}' to extract continuation token from".format(
-                        continuation_token_location
-                    )
-                )
+        if not continuation_token_location:
+            return None
+        try:
             return getattr(deserialized, continuation_token_location)
-        return None
+        except AttributeError:
+            pass
+        # check response headers for cont token
+        return pipeline_response.http_response.headers.get(continuation_token_location, None)
 
 class ContinueWithNextLink(ContinueWithCallback):  # pylint: disable=too-many-instance-attributes
 
@@ -185,18 +191,14 @@ class ContinueWithNextLink(ContinueWithCallback):  # pylint: disable=too-many-in
         """
         def _next_request_callback(continuation_token, initial_request, client):
             request = initial_request
-            next_link = continuation_token
-            if self._path_format_arguments:
-                next_link = client.format_url(next_link, **self._path_format_arguments)
-            else:
-                next_link = client.format_url(next_link)
+            next_link = client.format_url(continuation_token, **self._path_format_arguments)
             request.url = next_link
             return request
 
         super(ContinueWithNextLink, self).__init__(
             next_request_callback=_next_request_callback, **kwargs
         )
-        self._path_format_arguments = path_format_arguments
+        self._path_format_arguments = path_format_arguments or {}
 
     def get_next_request(self, continuation_token, initial_request, client):
         # type: (Any, HttpRequest, PipelineClient) -> HttpRequest

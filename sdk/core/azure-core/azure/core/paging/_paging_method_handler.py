@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
+from collections import defaultdict
 
 from ..exceptions import (
     map_error,
@@ -50,16 +51,19 @@ class _PagingMethodHandlerBase(object):
         self._client = client
         self._initial_state = initial_state
         self._cls = kwargs.pop("_cls", None)
-        self._error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        self._error_map = defaultdict(
+            HttpResponseError,
+            {
+                401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            }
+        )
         self._error_map.update(kwargs.pop('error_map', {}))
         self._item_name = kwargs.pop("item_name", "value")
         self._continuation_token_location = kwargs.pop("continuation_token_location", None)
         self._operation_config = kwargs
 
     @property
-    def _initial_request(self):
+    def initial_request(self):
         if isinstance(self._initial_state, PipelineResponse):
             return self._initial_state.http_response.request
         return self._initial_state
@@ -67,7 +71,7 @@ class _PagingMethodHandlerBase(object):
     def _handle_response(self, continuation_token, response):
         http_response = response.http_response
         status_code = http_response.status_code
-        if status_code < 200 or status_code >= 300:
+        if status_code >= 400:
             if self._error_map:
                 map_error(status_code=status_code, response=http_response, error_map=self._error_map)
             error = HttpResponseError(response=http_response)
@@ -102,7 +106,7 @@ class _PagingMethodHandler(_PagingMethodHandlerBase):
         if not continuation_token:
             response = self._do_initial_call()
         else:
-            request = self._paging_method.get_next_request(continuation_token, self._initial_request, self._client)
+            request = self._paging_method.get_next_request(continuation_token, self.initial_request, self._client)
             response = self._make_call(request)
         return self._handle_response(continuation_token, response)
 

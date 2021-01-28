@@ -47,7 +47,6 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         get_next=None,  # type: Callable[[Optional[str]], ResponseType]
         extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         continuation_token=None,  # type: Optional[str]
-        paging_method=None,  # type: PagingMethodABC
         **kwargs
     ):
         """Return an iterator of pages.
@@ -55,11 +54,12 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
          list of ReturnType
         :param str continuation_token: The continuation token needed by get_next
-        :param paging_method: Preferred way of paging. Pass in a sansio paging method, to tell the iterator
+        :keyword paging_method: Preferred way of paging. Pass in a sansio paging method, to tell the iterator
          how to make requests, and deserialize responses. When passing in paging_method, do not pass in
          callables for get_next and extract_data.
-        :type paging_method: ~azure.core.paging_method.PagingMethodABC
+        :paramtype paging_method: ~azure.core.paging_method.PagingMethodABC
         """
+        paging_method = kwargs.pop("paging_method", None)
         if get_next or extract_data:
             if paging_method:
                 raise ValueError(

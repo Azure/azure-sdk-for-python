@@ -47,7 +47,7 @@ class _AsyncPagingMethodHandler(_PagingMethodHandlerBase):
         if not continuation_token:
             response = await self._do_initial_call()
         else:
-            request = self._paging_method.get_next_request(continuation_token, self._initial_request, self._client)
+            request = self._paging_method.get_next_request(continuation_token, self.initial_request, self._client)
             response = await self._make_call(request)
         return self._handle_response(continuation_token, response)
 

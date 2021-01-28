@@ -147,13 +147,12 @@ def page_iterator(paging_method_handler):
             get_next=None,
             extract_data=None,
             continuation_token=None,
-            paging_method=None,
             **kwargs
         ):
             super(_AsyncTwoCallPageIterator, self).__init__(
-                get_next, extract_data, continuation_token, paging_method, **kwargs
+                get_next, extract_data, continuation_token, **kwargs
             )
-            handler = paging_method_handler(paging_method, **kwargs)
+            handler = paging_method_handler(**kwargs)
             self._extract_data = handler.extract_data
             self._get_next = handler.get_next
 
@@ -316,10 +315,6 @@ class TestPaging(object):
 
     @pytest.mark.asyncio
     async def test_next_link_in_response_headers(self, client, deserialize_output, page_iterator, pipeline_response):
-        class MyPagingMethod(ContinueWithNextLink):
-            def get_continuation_token(self, pipeline_response, deserialized, continuation_token_location=None):
-                return pipeline_response.http_response.headers.get('x-ms-token', None)
-
         def _validate_next_request_paging_method(request):
             assert request.url == 'https://baseurl/responseToken'
 
@@ -328,8 +323,8 @@ class TestPaging(object):
             client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
             initial_state=_get_custom_pipeline_response(headers={'x-ms-token': 'responseToken'}),
-            paging_method=MyPagingMethod(),
-            continuation_token_location="next_link",
+            paging_method=ContinueWithNextLink(),
+            continuation_token_location="x-ms-token",
             validate_next_request=_validate_next_request_paging_method,  # arg added for testing purposes
         )
 
@@ -337,9 +332,6 @@ class TestPaging(object):
 
     @pytest.mark.asyncio
     async def test_continuation_token_in_response_headers(self, client, deserialize_output, page_iterator, pipeline_response):
-        class MyPagingMethod(ContinueWithRequestHeader):
-            def get_continuation_token(self, pipeline_response, deserialized, continuation_token_location=None):
-                return pipeline_response.http_response.headers.get('x-ms-token', None)
 
         def _validate_header_paging_method(request):
             assert request.headers['x-ms-header'] == 'responseToken'
@@ -349,8 +341,8 @@ class TestPaging(object):
             client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
             initial_state=_get_custom_pipeline_response(headers={'x-ms-token': 'responseToken'}),
-            paging_method=MyPagingMethod(header_name='x-ms-header'),
-            continuation_token_location="next_link",
+            paging_method=ContinueWithRequestHeader(header_name='x-ms-header'),
+            continuation_token_location="x-ms-token",
             validate_next_request=_validate_header_paging_method,  # arg added for testing purposes
         )
         assert ['value1.0', 'value1.1', 'value2.0', 'value2.1'] == await _as_list(item_paged)
