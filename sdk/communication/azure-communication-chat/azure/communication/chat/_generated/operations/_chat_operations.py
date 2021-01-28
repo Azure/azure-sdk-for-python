@@ -74,10 +74,10 @@ class ChatOperations(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-11-01-preview3"
@@ -146,10 +146,10 @@ class ChatOperations(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-11-01-preview3"
@@ -231,10 +231,10 @@ class ChatOperations(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-11-01-preview3"
@@ -293,10 +293,10 @@ class ChatOperations(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-11-01-preview3"

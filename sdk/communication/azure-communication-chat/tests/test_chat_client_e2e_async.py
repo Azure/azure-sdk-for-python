@@ -8,6 +8,7 @@ import asyncio
 import os
 from datetime import datetime
 from msrest.serialization import TZ_UTC
+from uuid import uuid4
 
 from azure.communication.administration import CommunicationIdentityClient
 from azure.communication.chat.aio import (
@@ -55,7 +56,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         if not self.is_playback():
             self.identity_client.delete_user(self.user)
 
-    async def _create_thread(self):
+    async def _create_thread(self, repeatability_request_id=None):
         # create chat thread
         topic = "test topic"
         share_history_time = datetime.utcnow()
@@ -65,7 +66,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        chat_thread_client = await self.chat_client.create_chat_thread(topic, participants)
+        chat_thread_client = await self.chat_client.create_chat_thread(topic, participants, repeatability_request_id)
         self.thread_id = chat_thread_client.thread_id
 
     @pytest.mark.live_test_only
@@ -78,6 +79,27 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
             # delete created users and chat threads
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_create_chat_thread_w_repeatability_request_id_async(self):
+        async with self.chat_client:
+            repeatability_request_id = str(uuid4())
+
+            # create thread
+            await self._create_thread(repeatability_request_id=repeatability_request_id)
+            assert self.thread_id is not None
+            thread_id = self.thread_id
+
+            # re-create thread
+            await self._create_thread(repeatability_request_id=repeatability_request_id)
+            assert thread_id == self.thread_id
+
+
+            # delete created users and chat threads
+            if not self.is_playback():
+                await self.chat_client.delete_chat_thread(self.thread_id)
+
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test

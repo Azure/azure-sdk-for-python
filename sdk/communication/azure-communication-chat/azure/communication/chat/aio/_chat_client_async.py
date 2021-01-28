@@ -11,6 +11,7 @@ except ImportError:
 # pylint: disable=unused-import,ungrouped-imports
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 from datetime import datetime
+from uuid import uuid4
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -119,6 +120,7 @@ class ChatClient(object):
     async def create_chat_thread(
         self, topic: str,
         thread_participants: List[ChatThreadParticipant],
+        repeatability_request_id: Optional[str] = None,
         **kwargs
     ) -> ChatThreadClient:
         """Creates a chat thread.
@@ -127,6 +129,13 @@ class ChatClient(object):
         :type topic: str
         :param thread_participants: Required. Participants to be added to the thread.
         :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
+        :param repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
+         representing a client-generated, globally unique for all time, identifier for the request. If not
+         specified, a new unique id would be generated.
+        :type repeatability_request_id: str
         :return: ChatThreadClient
         :rtype: ~azure.communication.chat.aio.ChatThreadClient
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -144,13 +153,17 @@ class ChatClient(object):
             raise ValueError("topic cannot be None.")
         if not thread_participants:
             raise ValueError("List of ThreadParticipant cannot be None.")
+        if repeatability_request_id is None:
+            repeatability_request_id = str(uuid4())
 
         participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
         create_thread_request = \
             CreateChatThreadRequest(topic=topic, participants=participants)
 
         create_chat_thread_result = await self._client.chat.create_chat_thread(
-            create_thread_request, **kwargs)
+            create_chat_thread_request=create_thread_request,
+            repeatability_request_id=repeatability_request_id,
+            **kwargs)
         if hasattr(create_chat_thread_result, 'errors') \
                 and create_chat_thread_result.errors is not None:
             participants = \

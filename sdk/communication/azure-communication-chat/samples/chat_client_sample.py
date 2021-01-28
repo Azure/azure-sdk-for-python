@@ -67,7 +67,15 @@ class ChatClientSamples(object):
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
+
+        # creates a new chat_thread everytime
         chat_thread_client = chat_client.create_chat_thread(topic, participants)
+
+        # creates a new chat_thread if not exists
+        repeatability_request_id = 'b66d6031-fdcc-41df-8306-e524c9f226b8' # unique identifier
+        chat_thread_client_w_repeatability_id = chat_client.create_chat_thread(topic,
+                                                                               participants,
+                                                                               repeatability_request_id)
         # [END create_thread]
 
         self._thread_id = chat_thread_client.thread_id

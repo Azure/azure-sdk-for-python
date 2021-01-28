@@ -9,6 +9,7 @@ import time
 from datetime import datetime
 from devtools_testutils import AzureTestCase
 from msrest.serialization import TZ_UTC
+from uuid import uuid4
 
 from azure.communication.administration import CommunicationIdentityClient
 from azure.communication.chat import (
@@ -58,7 +59,7 @@ class ChatClientTest(CommunicationTestCase):
             self.identity_client.delete_user(self.user)
             self.chat_client.delete_chat_thread(self.thread_id)
 
-    def _create_thread(self):
+    def _create_thread(self, repeatability_request_id=None):
         # create chat thread
         topic = "test topic"
         share_history_time = datetime.utcnow()
@@ -68,13 +69,26 @@ class ChatClientTest(CommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
+        chat_thread_client = self.chat_client.create_chat_thread(topic, participants, repeatability_request_id)
         self.thread_id = chat_thread_client.thread_id
 
     @pytest.mark.live_test_only
     def test_create_chat_thread(self):
         self._create_thread()
         assert self.thread_id is not None
+
+    @pytest.mark.live_test_only
+    def test_create_chat_thread_w_repeatability_request_id(self):
+        repeatability_request_id = str(uuid4())
+        # create thread
+        self._create_thread(repeatability_request_id=repeatability_request_id)
+        thread_id = self.thread_id
+
+        # re-create thread with same repeatability_request_id
+        self._create_thread(repeatability_request_id=repeatability_request_id)
+
+        # test idempotency
+        assert thread_id == self.thread_id
 
     @pytest.mark.live_test_only
     def test_get_chat_thread(self):

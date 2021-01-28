@@ -62,6 +62,15 @@ You can get it by creating a new chat thread using ChatClient:
 chat_thread_client = chat_client.create_chat_thread(topic, thread_participants)
 ```
 
+Additionally, the client can also direct so that the request is repeatable; that is, if the client makes the 
+request multiple times with the same Repeatability-Request-ID and it will get back an appropriate response without 
+the server executing the request multiple times. The value of the Repeatability-Request-ID is an opaque string 
+representing a client-generated, globally unique for all time, identifier for the request.
+
+```python
+chat_thread_client = chat_client.create_chat_thread(topic, thread_participants, repeatability_request_id)
+```
+
 Alternatively, if you have created a chat thread before and you have its thread_id, you can create it by:
 
 ```python
@@ -141,6 +150,7 @@ Use the `create_chat_thread` method to create a chat thread client object.
 
 - Use `topic` to give a thread topic;
 - Use `thread_participants` to list the `ChatThreadParticipant` to be added to the thread;
+- Use `repeatability_request_id` to specify the unique identifier for the request
 - `user`, required, it is the `CommunicationUser` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens) -->
 - `display_name`, optional, is the display name for the thread participant.
@@ -149,6 +159,8 @@ Use the `create_chat_thread` method to create a chat thread client object.
 `ChatThreadClient` is the result returned from creating a thread, you can use it to perform other chat operations to this chat thread
 
 ```Python
+# Without repeatability_request_id
+
 from azure.communication.chat import ChatThreadParticipant
 topic = "test topic"
 thread_participants = [ChatThreadParticipant(
@@ -160,6 +172,31 @@ thread_participants = [ChatThreadParticipant(
 chat_thread_client = chat_client.create_chat_thread(topic, thread_participants)
 thread_id = chat_thread_client.thread_id
 ```
+
+```Python
+# With repeatability_request_id
+
+from azure.communication.chat import ChatThreadParticipant
+import uuid
+
+# modify function to implement customer logic
+def get_unique_identifier_for_request(**kwargs):
+    res = None
+    # implement custom logic here
+    res = uuid.uuid4()
+    return res
+
+topic = "test topic"
+thread_participants = [ChatThreadParticipant(
+    user='<user>',
+    display_name='name',
+    share_history_time=datetime.utcnow()
+)]
+
+chat_thread_client = chat_client.create_chat_thread(topic, thread_participants, repeatability_request_id)
+thread_id = chat_thread_client.thread_id
+```
+
 
 ### Get a thread
 
@@ -215,7 +252,7 @@ chat_client.delete_chat_thread(thread_id)
 Use `send_message` method to sends a message to a thread identified by threadId.
 
 - Use `content` to provide the chat message content, it is required
-- Use `priority` to specify the message priority level, such as 'Normal' or 'High', if not speficied, 'Normal' will be set
+- Use `chat_message_type` to provide the chat message type. Possible values include: `ChatMessageType.TEXT`, `ChatMessageType.HTML`, `ChatMessageType.TOPIC_UPDATED`, `ChatMessageType.PARTICIPANT_ADDED`, `ChatMessageType.PARTICIPANT_REMOVED`
 - Use `sender_display_name` to specify the display name of the sender, if not specified, empty name will be set
 
 `SendChatMessageResult` is the response returned from sending a message, it contains an id, which is the unique ID of the message.
@@ -224,10 +261,9 @@ Use `send_message` method to sends a message to a thread identified by threadId.
 from azure.communication.chat import ChatMessagePriority
 
 content='hello world'
-priority=ChatMessagePriority.NORMAL
 sender_display_name='sender name'
 
-send_message_result = chat_thread_client.send_message(content, priority=priority, sender_display_name=sender_display_name)
+send_message_result = chat_thread_client.send_message(content, sender_display_name=sender_display_name)
 ```
 
 ### Get a message

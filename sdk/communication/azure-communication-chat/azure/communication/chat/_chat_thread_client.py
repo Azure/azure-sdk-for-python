@@ -20,7 +20,8 @@ from ._generated.models import (
     SendReadReceiptRequest,
     SendChatMessageRequest,
     UpdateChatMessageRequest,
-    UpdateChatThreadRequest
+    UpdateChatThreadRequest,
+    ChatMessageType
 )
 from ._models import (
     ChatThreadParticipant,
@@ -248,8 +249,10 @@ class ChatThreadClient(object):
 
         :param content: Required. Chat message content.
         :type content: str
-        :keyword priority: Message priority.
-        :paramtype priority: str or ChatMessagePriority
+        :param chat_message_type: The chat message type. Possible values include: ChatMessageType.TEXT,
+        ChatMessageType.HTML, ChatMessageType.TOPIC_UPDATED, ChatMessageType.PARTICIPANT_ADDED,
+        ChatMessageType.PARTICIPANT_REMOVED. Default: ChatMessageType.TEXT
+        :type chat_message_type: str or ~azure.communication.chat.models.ChatMessageType
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -269,12 +272,17 @@ class ChatThreadClient(object):
         if not content:
             raise ValueError("content cannot be None.")
 
-        priority = kwargs.pop("priority", None)
+        chat_message_type = kwargs.pop("chat_message_type", None)
+        if chat_message_type is None:
+            chat_message_type = ChatMessageType.TEXT
+        elif not isinstance(chat_message_type, ChatMessageType):
+            raise ValueError("chat_message_type: {chat_message_type} is not acceptable".format(chat_message_type))
+
         sender_display_name = kwargs.pop("sender_display_name", None)
 
         create_message_request = SendChatMessageRequest(
             content=content,
-            priority=priority,
+            type=chat_message_type,
             sender_display_name=sender_display_name
         )
 

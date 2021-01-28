@@ -15,7 +15,7 @@ from azure.communication.chat import (
     ChatClient,
     CommunicationUserCredential,
     ChatThreadParticipant,
-    ChatMessagePriority
+    ChatMessageType
 )
 from azure.communication.chat._shared.utils import parse_connection_str
 
@@ -106,12 +106,10 @@ class ChatThreadClientTest(CommunicationTestCase):
 
     def _send_message(self):
         # send a message
-        priority = ChatMessagePriority.NORMAL
         content = 'hello world'
         sender_display_name = 'sender name'
         create_message_result_id = self.chat_thread_client.send_message(
             content,
-            priority=priority,
             sender_display_name=sender_display_name)
         message_id = create_message_result_id
         return message_id
@@ -126,13 +124,11 @@ class ChatThreadClientTest(CommunicationTestCase):
     def test_send_message(self):
         self._create_thread()
 
-        priority = ChatMessagePriority.NORMAL
         content = 'hello world'
         sender_display_name = 'sender name'
 
         create_message_result_id = self.chat_thread_client.send_message(
             content,
-            priority=priority,
             sender_display_name=sender_display_name)
 
         assert create_message_result_id is not None
@@ -143,6 +139,8 @@ class ChatThreadClientTest(CommunicationTestCase):
         message_id = self._send_message()
         message = self.chat_thread_client.get_message(message_id)
         assert message.id == message_id
+        assert message.type == ChatMessageType.TEXT
+        assert message.content.message == 'hello world'
 
     @pytest.mark.live_test_only
     def test_list_messages(self):
@@ -292,7 +290,6 @@ class ChatThreadClientTest(CommunicationTestCase):
         # second user sends 1 message
         message_id_new_user = chat_thread_client_new_user.send_message(
             "content",
-            priority=ChatMessagePriority.NORMAL,
             sender_display_name="sender_display_name")
         # send read receipt
         chat_thread_client_new_user.send_read_receipt(message_id_new_user)

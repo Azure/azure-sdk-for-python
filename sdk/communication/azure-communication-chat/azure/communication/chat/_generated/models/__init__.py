@@ -11,6 +11,7 @@ try:
     from ._models_py3 import AddChatParticipantsRequest
     from ._models_py3 import AddChatParticipantsResult
     from ._models_py3 import ChatMessage
+    from ._models_py3 import ChatMessageContent
     from ._models_py3 import ChatMessageReadReceipt
     from ._models_py3 import ChatMessageReadReceiptsCollection
     from ._models_py3 import ChatMessagesCollection
@@ -19,10 +20,11 @@ try:
     from ._models_py3 import ChatThread
     from ._models_py3 import ChatThreadInfo
     from ._models_py3 import ChatThreadsInfoCollection
+    from ._models_py3 import CommunicationError
+    from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import CreateChatThreadErrors
     from ._models_py3 import CreateChatThreadRequest
     from ._models_py3 import CreateChatThreadResult
-    from ._models_py3 import Error
     from ._models_py3 import SendChatMessageRequest
     from ._models_py3 import SendChatMessageResult
     from ._models_py3 import SendReadReceiptRequest
@@ -33,6 +35,7 @@ except (SyntaxError, ImportError):
     from ._models import AddChatParticipantsRequest  # type: ignore
     from ._models import AddChatParticipantsResult  # type: ignore
     from ._models import ChatMessage  # type: ignore
+    from ._models import ChatMessageContent  # type: ignore
     from ._models import ChatMessageReadReceipt  # type: ignore
     from ._models import ChatMessageReadReceiptsCollection  # type: ignore
     from ._models import ChatMessagesCollection  # type: ignore
@@ -41,10 +44,11 @@ except (SyntaxError, ImportError):
     from ._models import ChatThread  # type: ignore
     from ._models import ChatThreadInfo  # type: ignore
     from ._models import ChatThreadsInfoCollection  # type: ignore
+    from ._models import CommunicationError  # type: ignore
+    from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import CreateChatThreadErrors  # type: ignore
     from ._models import CreateChatThreadRequest  # type: ignore
     from ._models import CreateChatThreadResult  # type: ignore
-    from ._models import Error  # type: ignore
     from ._models import SendChatMessageRequest  # type: ignore
     from ._models import SendChatMessageResult  # type: ignore
     from ._models import SendReadReceiptRequest  # type: ignore
@@ -52,7 +56,7 @@ except (SyntaxError, ImportError):
     from ._models import UpdateChatThreadRequest  # type: ignore
 
 from ._azure_communication_chat_service_enums import (
-    ChatMessagePriority,
+    ChatMessageType,
 )
 
 __all__ = [
@@ -60,6 +64,7 @@ __all__ = [
     'AddChatParticipantsRequest',
     'AddChatParticipantsResult',
     'ChatMessage',
+    'ChatMessageContent',
     'ChatMessageReadReceipt',
     'ChatMessageReadReceiptsCollection',
     'ChatMessagesCollection',
@@ -68,14 +73,15 @@ __all__ = [
     'ChatThread',
     'ChatThreadInfo',
     'ChatThreadsInfoCollection',
+    'CommunicationError',
+    'CommunicationErrorResponse',
     'CreateChatThreadErrors',
     'CreateChatThreadRequest',
     'CreateChatThreadResult',
-    'Error',
     'SendChatMessageRequest',
     'SendChatMessageResult',
     'SendReadReceiptRequest',
     'UpdateChatMessageRequest',
     'UpdateChatThreadRequest',
-    'ChatMessagePriority',
+    'ChatMessageType',
 ]

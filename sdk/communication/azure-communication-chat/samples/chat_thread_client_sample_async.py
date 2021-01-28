@@ -95,9 +95,14 @@ class ChatThreadClientSamplesAsync(object):
                 content,
                 priority=priority,
                 sender_display_name=sender_display_name)
+
+            send_message_result_w_type_id = await chat_thread_client.send_message(
+                content,
+                sender_display_name=sender_display_name, chat_message_type=ChatMessageType.TEXT)
             # [END send_message]
             self._message_id = send_message_result_id
             print("send_message succeeded, message id:", self._message_id)
+            print("send_message succeeded with type specified, message id:", send_message_result_w_type_id)
 
     async def get_message_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential

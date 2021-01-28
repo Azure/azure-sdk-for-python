@@ -54,6 +54,34 @@ async def test_create_chat_thread():
     assert chat_thread_client.thread_id == thread_id
 
 @pytest.mark.asyncio
+async def test_create_chat_thread_w_repeatability_request_id():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    repeatability_request_id = "b66d6031-fdcc-41df-8306-e524c9f226b8"
+    async def mock_send(*_, **__):
+        return mock_response(status_code=201, json_payload={
+            "chatThread": {
+                "id": thread_id,
+                "topic": "test topic",
+                "createdOn": "2020-12-03T21:09:17Z",
+                "createdBy": "8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+            }
+        })
+
+    chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
+
+    topic="test topic"
+    user = CommunicationUser("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
+    participants=[ChatThreadParticipant(
+        user=user,
+        display_name='name',
+        share_history_time=datetime.utcnow()
+    )]
+    chat_thread_client = await chat_client.create_chat_thread(topic=topic,
+                                                              thread_participants=participants,
+                                                              repeatability_request_id=repeatability_request_id)
+    assert chat_thread_client.thread_id == thread_id
+
+@pytest.mark.asyncio
 async def test_create_chat_thread_raises_error():
     async def mock_send(*_, **__):
         return mock_response(status_code=400, json_payload={"msg": "some error"})
