@@ -5,6 +5,10 @@ interactions:
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
       - '132'
       Content-Type:
@@ -16,15 +20,21 @@ interactions:
   response:
     body: '{"messageId": "sanitized"}'
     headers:
-      api-supported-versions: 2020-07-20-preview1, 2021-03-07
-      content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 00:18:06 GMT
-      ms-cv: Wughs0UhS0m0u5ddoo6CQg.0
-      request-context: appId=
-      transfer-encoding: chunked
-      x-processing-time: 432ms
+      api-supported-versions:
+      - 2020-07-20-preview1, 2021-03-07
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 28 Jan 2021 00:18:04 GMT
+      ms-cv:
+      - WPKNfk9Z7UqF10qZmasXyA.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 610ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/sms?api-version=2020-07-20-preview1
 version: 1

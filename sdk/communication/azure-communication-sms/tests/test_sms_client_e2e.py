@@ -9,12 +9,20 @@ import pytest
 from azure.communication.sms import (
     PhoneNumberIdentifier, SendSmsOptions, SmsClient
 )
+from azure.communication.sms._shared.utils import parse_connection_str
 from _shared.testcase import (
     CommunicationTestCase,
     BodyReplacerProcessor,
     ResponseReplacerProcessor
 )
+from azure.identity import DefaultAzureCredential
 
+class FakeTokenCredential(object):
+    def __init__(self):
+        self.token = AccessToken("Fake Token", 0)
+
+    def get_token(self, *args):
+        return self.token
 class SMSClientTest(CommunicationTestCase):
     def __init__(self, method_name):
         super(SMSClientTest, self).__init__(method_name)
@@ -38,6 +46,24 @@ class SMSClientTest(CommunicationTestCase):
 
         # calling send() with sms values
         sms_response = self.sms_client.send(
+            from_phone_number=PhoneNumberIdentifier(self.phone_number),
+            to_phone_numbers=[PhoneNumberIdentifier(self.phone_number)],
+            message="Hello World via SMS",
+            send_sms_options=SendSmsOptions(enable_delivery_report=True))  # optional property
+
+        assert sms_response.message_id is not None
+
+    @pytest.mark.live_test_only
+    def test_send_sms_from_managed_identity(self):
+        endpoint, access_key = parse_connection_str(self.connection_str)
+        from devtools_testutils import is_live
+        if not is_live():
+            credential = FakeTokenCredential()
+        else:
+            credential = DefaultAzureCredential()
+        sms_client = SmsClient(endpoint, credential)
+        # calling send() with sms values
+        sms_response = sms_client.send(
             from_phone_number=PhoneNumberIdentifier(self.phone_number),
             to_phone_numbers=[PhoneNumberIdentifier(self.phone_number)],
             message="Hello World via SMS",

@@ -67,7 +67,6 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
         else:
             credential = DefaultAzureCredential()
         sms_client = SmsClient(endpoint, credential)
-        print(sms_client)
         async with sms_client:
             # calling send() with sms values
             sms_response = await sms_client.send(

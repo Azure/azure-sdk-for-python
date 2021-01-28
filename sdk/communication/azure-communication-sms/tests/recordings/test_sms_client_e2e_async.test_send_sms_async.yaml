@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 20 Jan 2021 18:11:24 GMT
+      - Thu, 28 Jan 2021 00:18:05 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -20,12 +20,13 @@ interactions:
   response:
     body: '{"messageId": "sanitized"}'
     headers:
+      api-supported-versions: 2020-07-20-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Wed, 20 Jan 2021 18:11:24 GMT
-      ms-cv: x7uY4q7a+EmmyTMUW8my+A.0
+      date: Thu, 28 Jan 2021 00:18:05 GMT
+      ms-cv: gaTWYwT6rE6iao/bzl/MXw.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 468ms
+      x-processing-time: 542ms
     status:
       code: 200
       message: OK
