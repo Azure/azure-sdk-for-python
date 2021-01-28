@@ -459,7 +459,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         await file_client.create_file(**kwargs)
         return file_client
 
-    def get_file_client(self, file  # type: Union[FileProperties, str]
+    def get_file_client(self, file  # type: Union[FileProperties, str, PurePosixPath]
                         ):
         # type: (...) -> DataLakeFileClient
         """Get a client to interact with the specified file.
@@ -469,7 +469,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :param file:
             The file with which to interact. This can either be the name of the file,
             or an instance of FileProperties. eg. directory/subdirectory/file
-        :type file: str or ~azure.storage.filedatalake.FileProperties
+        :type file: str or ~azure.storage.filedatalake.FileProperties or PurePosixPath
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
 
@@ -501,7 +501,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
-    def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
+    def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str, PurePosixPath]
                                  ):
         # type: (...) -> DataLakeDirectoryClient
         """Get a client to interact with the specified subdirectory of the current directory.
@@ -511,7 +511,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :param sub_directory:
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
-        :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
+        :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties or a PurePosixPath
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
 

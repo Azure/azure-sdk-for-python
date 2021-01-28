@@ -674,7 +674,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         """
         return self.get_directory_client('/')
 
-    def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
+    def get_directory_client(self, directory  # type: Union[DirectoryProperties, str, PurePosixPath]
                              ):
         # type: (...) -> DataLakeDirectoryClient
         """Get a client to interact with the specified directory.
@@ -684,7 +684,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :param directory:
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
-        :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
+        :type directory: str or ~azure.storage.filedatalake.DirectoryProperties or a PurePosixPath
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
 
@@ -718,7 +718,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                        loop=self._loop
                                        )
 
-    def get_file_client(self, file_path  # type: Union[FileProperties, str]
+    def get_file_client(self, file_path  # type: Union[FileProperties, str, PurePosixPath]
                         ):
         # type: (...) -> DataLakeFileClient
         """Get a client to interact with the specified file.
@@ -728,7 +728,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :param file_path:
             The file with which to interact. This can either be the path of the file(from root directory),
             or an instance of FileProperties. eg. directory/subdirectory/file
-        :type file_path: str or ~azure.storage.filedatalake.FileProperties
+        :type file_path: str or ~azure.storage.filedatalake.FileProperties or a PurePosixPath
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
 

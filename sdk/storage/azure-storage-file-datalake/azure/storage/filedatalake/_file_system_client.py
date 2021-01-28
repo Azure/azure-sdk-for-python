@@ -714,7 +714,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self.get_directory_client('/')
 
-    def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
+    def get_directory_client(self, directory  # type: Union[DirectoryProperties, str, PurePosixPath]
                              ):
         # type: (...) -> DataLakeDirectoryClient
         """Get a client to interact with the specified directory.
@@ -723,7 +723,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         :param directory:
             The directory with which to interact. This can either be the name of the directory,
-            or an instance of DirectoryProperties.
+            or an instance of DirectoryProperties or a PurePosixPath.
         :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
@@ -757,7 +757,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                        key_resolver_function=self.key_resolver_function
                                        )
 
-    def get_file_client(self, file_path  # type: Union[FileProperties, str]
+    def get_file_client(self, file_path  # type: Union[FileProperties, str, PurePosixPath]
                         ):
         # type: (...) -> DataLakeFileClient
         """Get a client to interact with the specified file.
@@ -767,7 +767,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param file_path:
             The file with which to interact. This can either be the path of the file(from root directory),
             or an instance of FileProperties. eg. directory/subdirectory/file
-        :type file_path: str or ~azure.storage.filedatalake.FileProperties
+        :type file_path: str or ~azure.storage.filedatalake.FileProperties or a PurePosixPath
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake..DataLakeFileClient
 
