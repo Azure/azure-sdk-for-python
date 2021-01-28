@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 03:01:38 GMT
+      - Thu, 28 Jan 2021 07:48:47 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/aecfed0f-9355-480a-b686-7f56ad8f950a?api-version=2021-01-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/fd069452-43fd-44c5-84eb-b8ab743cf452?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -55,7 +55,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/aecfed0f-9355-480a-b686-7f56ad8f950a?api-version=2021-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/fd069452-43fd-44c5-84eb-b8ab743cf452?api-version=2021-01-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5","name":"batch3e1b0fe5","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch3e1b0fe5.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":700,"dedicatedCoreQuotaPerVMFamily":[{"name":"standardAv2Family","coreQuota":100},{"name":"standardDv2Family","coreQuota":100},{"name":"standardDv3Family","coreQuota":100},{"name":"standardEv3Family","coreQuota":50},{"name":"standardDSv2Family","coreQuota":100},{"name":"standardDSv3Family","coreQuota":100},{"name":"standardESv3Family","coreQuota":50},{"name":"standardFFamily","coreQuota":50},{"name":"standardFSFamily","coreQuota":50},{"name":"standardA0_A7Family","coreQuota":0},{"name":"standardA8_A11Family","coreQuota":0},{"name":"standardDFamily","coreQuota":0},{"name":"standardGFamily","coreQuota":0},{"name":"basicAFamily","coreQuota":0},{"name":"standardNVFamily","coreQuota":0},{"name":"standardNVPromoFamily","coreQuota":0},{"name":"standardNCFamily","coreQuota":0},{"name":"standardNCPromoFamily","coreQuota":0},{"name":"standardHFamily","coreQuota":0},{"name":"standardHPromoFamily","coreQuota":0},{"name":"standardMSFamily","coreQuota":0},{"name":"standardDSFamily","coreQuota":0},{"name":"standardGSFamily","coreQuota":0},{"name":"standardLSFamily","coreQuota":0},{"name":"standardLSv2Family","coreQuota":0},{"name":"standardNCSv2Family","coreQuota":0},{"name":"standardNDSFamily","coreQuota":0},{"name":"standardNCSv3Family","coreQuota":0},{"name":"standardFSv2Family","coreQuota":0},{"name":"standardHBSFamily","coreQuota":0},{"name":"standardHCSFamily","coreQuota":0},{"name":"standardNVSv3Family","coreQuota":0},{"name":"standardHBrsv2Family","coreQuota":0},{"name":"standardDAv4Family","coreQuota":0},{"name":"standardDASv4Family","coreQuota":0},{"name":"standardEAv4Family","coreQuota":0},{"name":"standardEASv4Family","coreQuota":0},{"name":"standardDDv4Family","coreQuota":0},{"name":"standardDDSv4Family","coreQuota":0},{"name":"standardEDv4Family","coreQuota":0},{"name":"standardEDSv4Family","coreQuota":0},{"name":"standardMSv2Family","coreQuota":0},{"name":"standardEIv3Family","coreQuota":0},{"name":"standardNVSv4Family","coreQuota":0},{"name":"standardXEIDSv4Family","coreQuota":0}],"dedicatedCoreQuotaPerVMFamilyEnforced":true,"lowPriorityCoreQuota":500,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService","publicNetworkAccess":"Enabled","encryption":{"keySource":"Microsoft.Batch"}},"identity":{"type":"None"}}'
@@ -67,13 +67,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 03:01:53 GMT
+      - Thu, 28 Jan 2021 07:49:02 GMT
       etag:
-      - '"0x8D8C3391146F351"'
+      - '"0x8D8C3612E985742"'
       expires:
       - '-1'
       last-modified:
-      - Thu, 28 Jan 2021 03:01:54 GMT
+      - Thu, 28 Jan 2021 07:49:03 GMT
       pragma:
       - no-cache
       server:
@@ -113,13 +113,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 03:01:54 GMT
+      - Thu, 28 Jan 2021 07:49:02 GMT
       etag:
-      - '"0x8D8C3390A472864"'
+      - '"0x8D8C3612801088F"'
       expires:
       - '-1'
       last-modified:
-      - Thu, 28 Jan 2021 03:01:42 GMT
+      - Thu, 28 Jan 2021 07:48:52 GMT
       pragma:
       - no-cache
       server:
@@ -159,7 +159,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 03:01:54 GMT
+      - Thu, 28 Jan 2021 07:49:03 GMT
       expires:
       - '-1'
       pragma:
@@ -194,7 +194,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/listKeys?api-version=2021-01-01
   response:
     body:
-      string: '{"accountName":"batch3e1b0fe5","primary":"YSZkOPk5RmwUDn4cnXt4FmyEWdKle8mRobwsYHXVuUPFa/u1xK+rcKGEDwUh9aHb8LRd6HtwCSyFTtF9945MAg==","secondary":"4YEHIdDA0s9rUEF0pbvPvMc91+gJT6h8gMHdjDCrjH5t54A0a0J4uQaWWYePtimNIwYNipIPT8TYtulqHhPnVw=="}'
+      string: '{"accountName":"batch3e1b0fe5","primary":"PY50ab7Psi4S/VhH1AGF0+pYFUVPDo651FtCN283AztKwfWYweVr8dbypuFZUaQ13wBai3rl3BqRX4uHip/SRw==","secondary":"0VZN4Pb+7muURc6QMBZm+8UD9QRySX+peazpPgQivIW6r5ePl2MLalvwEqHNJnYelsX15BxboxmwOubcfOFFmg=="}'
     headers:
       cache-control:
       - no-cache
@@ -203,7 +203,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 03:01:54 GMT
+      - Thu, 28 Jan 2021 07:49:03 GMT
       expires:
       - '-1'
       pragma:
@@ -219,7 +219,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -242,7 +242,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/regenerateKeys?api-version=2021-01-01
   response:
     body:
-      string: '{"accountName":"batch3e1b0fe5","primary":"YSZkOPk5RmwUDn4cnXt4FmyEWdKle8mRobwsYHXVuUPFa/u1xK+rcKGEDwUh9aHb8LRd6HtwCSyFTtF9945MAg==","secondary":"u4HB6zvyRM11YotM/629qCYPtbC43pWkJwBb+ak6oMnfNk0n0gpqECoHYzX58i6bPsvVDxuT5si0Kf2Qubjstg=="}'
+      string: '{"accountName":"batch3e1b0fe5","primary":"PY50ab7Psi4S/VhH1AGF0+pYFUVPDo651FtCN283AztKwfWYweVr8dbypuFZUaQ13wBai3rl3BqRX4uHip/SRw==","secondary":"ky5naRkRzgwYxzkjeX9F0PZ5jtJGFKuRwsViz+O7ovS/B3Ync8LFKHifTEPwIdS0JB7k9uEy5BoKntikv2a4Gg=="}'
     headers:
       cache-control:
       - no-cache
@@ -251,7 +251,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 03:01:55 GMT
+      - Thu, 28 Jan 2021 07:49:03 GMT
       expires:
       - '-1'
       pragma:
@@ -267,7 +267,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -299,13 +299,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 03:01:58 GMT
+      - Thu, 28 Jan 2021 07:49:08 GMT
       etag:
-      - '"0x8D8C33912BFED1D"'
+      - '"0x8D8C361304B0F2A"'
       expires:
       - '-1'
       last-modified:
-      - Thu, 28 Jan 2021 03:01:56 GMT
+      - Thu, 28 Jan 2021 07:49:06 GMT
       pragma:
       - no-cache
       server:
@@ -319,7 +319,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -347,11 +347,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 03:01:59 GMT
+      - Thu, 28 Jan 2021 07:49:09 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-842997f7-566c-455b-a20b-eae37bd52398?api-version=2021-01-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-4b838fcb-4c96-4a87-b29c-2445ab3165c7?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -361,7 +361,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14995'
+      - '14999'
     status:
       code: 202
       message: Accepted
@@ -377,7 +377,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-842997f7-566c-455b-a20b-eae37bd52398?api-version=2021-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-4b838fcb-4c96-4a87-b29c-2445ab3165c7?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -387,7 +387,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 03:02:14 GMT
+      - Thu, 28 Jan 2021 07:49:24 GMT
       expires:
       - '-1'
       pragma:
