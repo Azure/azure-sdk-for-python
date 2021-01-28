@@ -16,18 +16,12 @@ from azure.core.credentials import AccessToken
 from phone_number_helper import PhoneNumberUriReplacer
 from phone_number_testcase import PhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
-from azure.identity import DefaultAzureCredential
+from _shared.utils import create_token_credential
 from azure.communication.administration._shared.utils import parse_connection_str
 
 SKIP_PHONE_NUMBER_TESTS = True
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
-
-    def get_token(self, *args):
-        return self.token
 class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
     def setUp(self):
         super(PhoneNumberAdministrationClientTest, self).setUp()
@@ -137,11 +131,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_list_all_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
-        from devtools_testutils import is_live
-        if not is_live():
-            credential = FakeTokenCredential()
-        else:
-            credential = DefaultAzureCredential()
+        credential = create_token_credential()
         phone_number_client = PhoneNumberAdministrationClient(endpoint, credential)
         pages = phone_number_client.list_all_phone_numbers()
         assert pages.next()
