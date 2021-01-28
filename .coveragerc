@@ -6,6 +6,10 @@ omit =
 	*/test*
 	env*
 
+[paths]
+source =
+	*/sdk/
+
 [report]
 exclude_lines =
 	pragma: no cover

@@ -42,6 +42,8 @@ def install_coverage():
 
 
 def collect_tox_coverage_files():#targeted_packages):
+    coverage_version_cmd = [sys.executable, "-m", "coverage", "--version"]
+    run_check_call(coverage_version_cmd, root_dir)
 
     # install_coverage()
 
@@ -150,16 +152,20 @@ def fix_dot_coverage_file():
     with open('.coverage') as cov_file:
         line = cov_file.read()
         sdks = [m.start() for m in re.finditer("/sdk/", line)]
-        # print(sdks)
-        file_starts = [m.start() for m in re.finditer('"/', line)]
-        # print(file_starts)
-        print(len(sdks), len(file_starts))
+        print(sdks)
+        if len(sdks):
+            # print(sdks)
+            file_starts = [m.start() for m in re.finditer('"/', line)]
+            # print(file_starts)
+            print(len(sdks), len(file_starts))
 
-        str_to_replace = line[file_starts[0]+1 : sdks[0]] + '/'
-        print(str_to_replace)
+            str_to_replace = line[file_starts[0]+1 : sdks[0]] + '/'
+            print(str_to_replace)
 
-        out = line.replace(str_to_replace, replacement)
-        out = out.replace('\\', '/')
+            out = line.replace(str_to_replace, replacement)
+            out = out.replace('\\', '/')
+        else:
+            print("coverage files were created on this machine")
 
     if out:
         with open('.coverage', 'w') as cov_file:
@@ -168,5 +174,5 @@ def fix_dot_coverage_file():
 
 if __name__ == "__main__":
     collect_tox_coverage_files()
-    fix_dot_coverage_file()
+    # fix_dot_coverage_file()
     generate_coverage_xml()
