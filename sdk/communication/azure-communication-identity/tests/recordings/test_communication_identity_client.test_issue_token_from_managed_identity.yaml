@@ -18,22 +18,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:31fd4348-e9dd-4222-ae65-a61c9953759c_00000007-e62c-414b-0e04-343a0d00a745"}}'
+      string: '{"identity": {"id": "8:acs:24c5bf6f-a229-4275-b6a9-cae0d1f70ca4_00000007-ea1e-96a8-6032-3b3a0d0002d2"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 00:00:30 GMT
+      - Thu, 28 Jan 2021 18:24:04 GMT
       ms-cv:
-      - BndpwMRlKkSHkEuCPG7OOw.0
+      - LHLZRP95jE2SbM8pXoqtnA.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 198ms
+      - 501ms
     status:
       code: 201
       message: Created
@@ -56,22 +56,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-29T00:00:30.7153587+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-29T18:24:03.353153+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 00:00:31 GMT
+      - Thu, 28 Jan 2021 18:24:04 GMT
       ms-cv:
-      - Ka0JSro0U0mjBhf0UNLzSg.0
+      - ypXqr3+DHEyTO0p32UznqA.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 328ms
+      - 25ms
     status:
       code: 200
       message: OK

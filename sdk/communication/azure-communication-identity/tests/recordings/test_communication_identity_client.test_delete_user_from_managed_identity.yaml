@@ -18,22 +18,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:f050eca7-6baa-4427-966b-21841aa36a78_00000007-e62a-1f3f-8337-3b3a0d009555"}}'
+      string: '{"identity": {"id": "8:acs:d09cd7e3-a33e-4e7b-9ab0-0edc3b9c7ae5_00000007-ea1c-84ff-6032-3b3a0d0002c6"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 23:58:10 GMT
+      - Thu, 28 Jan 2021 18:21:48 GMT
       ms-cv:
-      - RivzvSMrYUCxdpIjJOqXeA.0
+      - z+d65i45k0Sfvh2myFd7aQ.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 193ms
+      - 596ms
     status:
       code: 201
       message: Created
@@ -59,13 +59,13 @@ interactions:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       date:
-      - Wed, 27 Jan 2021 23:58:12 GMT
+      - Thu, 28 Jan 2021 18:21:48 GMT
       ms-cv:
-      - akcIQiMeskOt/X1QZdhizg.0
+      - V0oUwgZPAkO+7Sxm2/717w.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 1936ms
+      - 680ms
     status:
       code: 204
       message: No Content

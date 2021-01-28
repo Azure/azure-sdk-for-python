@@ -14,19 +14,19 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:f1c4becd-73c5-45f2-9597-4ec8cd3a1ab9_00000007-e6c4-4fbb-6032-3b3a0d00a18c"}}'
+      string: '{"identity": {"id": "8:acs:9c243817-dfbe-432e-b72f-f85ef3b2f4eb_00000007-ea29-dd81-0338-3b3a0d000388"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 02:46:35 GMT
-      ms-cv: CYpZ2LF4wEaD5kO1JjvXVw.0
+      date: Thu, 28 Jan 2021 18:36:22 GMT
+      ms-cv: xJV0TRqg1EOgI5OdRmuqow.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 203ms
+      x-processing-time: 227ms
     status:
       code: 201
       message: Created
-    url: https://communicationyhjerbqgmdh.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communicationzgjjmgzzjny.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -42,19 +42,19 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-29T02:46:35.2885265+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-29T18:36:22.3834487+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 02:46:35 GMT
-      ms-cv: uF35+QvQnE20Wjd65apo0A.0
+      date: Thu, 28 Jan 2021 18:36:23 GMT
+      ms-cv: B3CeQ2BKKU6Noqw+KqX+HQ.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-processing-time: 24ms
     status:
       code: 200
       message: OK
-    url: https://communicationyhjerbqgmdh.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    url: https://communicationzgjjmgzzjny.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
 - request:
     body: null
     headers:
@@ -69,12 +69,12 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
-      date: Thu, 28 Jan 2021 02:46:35 GMT
-      ms-cv: T6cWVDrvuEWzmNW+5XJ8AA.0
+      date: Thu, 28 Jan 2021 18:36:23 GMT
+      ms-cv: P7MHamf7XE6e1/GYbRD19g.0
       strict-transport-security: max-age=2592000
-      x-processing-time: 192ms
+      x-processing-time: 88ms
     status:
       code: 204
       message: No Content
-    url: https://communicationyhjerbqgmdh.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
+    url: https://communicationzgjjmgzzjny.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
 version: 1
