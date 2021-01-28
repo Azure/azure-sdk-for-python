@@ -5,6 +5,7 @@ jobs:
     parameters:
       AllocateResourceGroup: 'false'
       ServiceDirectory: eventhub
+      InjectedPackages: $(WheelLocationsList)
       Matrix:
         Linux_Python35:
           Pool: azsdk-pool-mms-ubuntu-1804-general
