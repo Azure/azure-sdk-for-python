@@ -45,7 +45,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
         # type: (*str, **Any) -> Optional[AccessToken]
         app = self._get_app()
         request_time = int(time.time())
-        result = app.acquire_token_for_client(list(scopes))
+        result = app.acquire_token_for_client(list(scopes), **kwargs)
         if "access_token" not in result:
             message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
             raise ClientAuthenticationError(message=message)
