@@ -499,14 +499,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
 
         doc_id_order = [doc.get("id") for doc in docs]
 
@@ -514,6 +507,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
+                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
                 polling=TextAnalyticsLROPollingMethod(
                     timeout=polling_interval,
