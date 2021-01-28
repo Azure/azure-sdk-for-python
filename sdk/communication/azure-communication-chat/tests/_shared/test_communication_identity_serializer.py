@@ -168,6 +168,16 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
             lambda : CommunicationUserIdentifierSerializer.serialize(foreign_obj)
         )
 
+    def test_deserialize_unknown_kind(self):
+        unknown_identifier = CommunicationUserIdentifierSerializer.deserialize(
+            CommunicationIdentifierModel(
+                kind="foreign",
+                id="an id"
+            )
+        )
+
+        assert isinstance(unknown_identifier, UnknownIdentifier)
+        
 
 if __name__ == "__main__":
     unittest.main()
