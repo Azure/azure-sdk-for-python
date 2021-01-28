@@ -1,5 +1,42 @@
 # Release History
 
+## 0.7.0 (2021-01-28)
+
+**Features**
+
+  - Model WorkspaceRepositoryConfiguration has a new parameter tenant_id
+  - Model WorkspaceRepositoryConfiguration has a new parameter last_commit_id
+  - Model SqlPoolPatchInfo has a new parameter storage_account_type
+  - Model Workspace has a new parameter adla_resource_id
+  - Model SensitivityLabel has a new parameter schema_name
+  - Model SensitivityLabel has a new parameter table_name
+  - Model SensitivityLabel has a new parameter column_name
+  - Model SensitivityLabel has a new parameter managed_by
+  - Model SensitivityLabel has a new parameter rank
+  - Model BigDataPoolResourceInfo has a new parameter cache_size
+  - Model BigDataPoolResourceInfo has a new parameter dynamic_executor_allocation
+  - Model BigDataPoolResourceInfo has a new parameter custom_libraries
+  - Model BigDataPoolResourceInfo has a new parameter last_succeeded_timestamp
+  - Model SqlPoolColumn has a new parameter is_computed
+  - Model SqlPool has a new parameter storage_account_type
+  - Added operation SqlPoolsOperations.rename
+  - Added operation DataMaskingRulesOperations.get
+  - Added operation SqlPoolSensitivityLabelsOperations.update
+  - Added operation SqlPoolGeoBackupPoliciesOperations.create_or_update
+  - Added operation group WorkspaceManagedSqlServerEncryptionProtectorOperations
+  - Added operation group PrivateLinkHubPrivateLinkResourcesOperations
+  - Added operation group WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
+  - Added operation group SqlPoolMaintenanceWindowOptionsOperations
+  - Added operation group SqlPoolRecommendedSensitivityLabelsOperations
+  - Added operation group SqlPoolMaintenanceWindowsOperations
+
+**Breaking changes**
+
+  - Model BigDataPoolResourceInfo no longer has parameter have_library_requirements_changed
+  - Model ErrorResponse has a new signature
+  - Model ErrorDetail has a new signature
+  - Removed operation group WorkspaceManagedSqlServerRecoverableSqlpoolsOperations
+
 ## 0.6.0 (2020-12-17)
 
 **Features**
