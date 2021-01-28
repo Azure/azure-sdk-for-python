@@ -15,3 +15,8 @@ python -m packaging_tools.auto_codegen "$1" "$TMPDIR/venv-sdk/auto_temp.json" 2>
 echo "[Generate] codegen done!!!"
 python -m packaging_tools.auto_package "$TMPDIR/venv-sdk/auto_temp.json" "$2" 2>&1
 echo "[Generate] generate done!!!"
+
+if [ ! -f "$2" ]; then
+  echo "$2 does not exist!!!"
+  exit 1
+fi
