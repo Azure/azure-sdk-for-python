@@ -39,7 +39,7 @@ class CommunicationUserIdentifierSerializer(object):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
                 id=communicationIdentifier.identifier,
-                microsoft_teams_user_id =communicationIdentifier.user_id,
+                microsoft_teams_user_id=communicationIdentifier.user_id,
                 communication_cloud_environment=communicationIdentifier.cloud
             )
 
