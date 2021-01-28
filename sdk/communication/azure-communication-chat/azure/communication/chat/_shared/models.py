@@ -126,10 +126,12 @@ class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str
 class MicrosoftTeamsUserIdentifier(object):
     """
     Represents an identifier for a Microsoft Teams user.
-    :ivar user_id: the string identifier representing the identity
+    :ivar user_id: The id of the Microsoft Teams user. If the user isn't anonymous, the id is the AAD object id of the user.
     :vartype user_id: str
     :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
     :type user_id: str
+    :ivar identifier: The full id of the Microsoft Teams User identifier.
+    :vartype identifier: str
     :ivar cloud: Cloud environment that this identifier belongs to
     :vartype cloud: CommunicationCloudEnvironment
     :ivar is_anonymous: set this to true if the user is anonymous for example when joining a meeting with a share link
