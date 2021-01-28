@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+from pathlib import PurePosixPath
 
 try:
     from urllib.parse import urlparse, quote
@@ -737,10 +738,13 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        try:
-            directory_name = directory.name
-        except AttributeError:
-            directory_name = directory
+        if isinstance(directory, PurePosixPath):
+            directory_name = str(directory)
+        else:
+            try:
+                directory_name = directory.name
+            except AttributeError:
+                directory_name = directory
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
@@ -777,10 +781,13 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
-        try:
-            file_path = file_path.name
-        except AttributeError:
-            pass
+        if isinstance(file_path, PurePosixPath):
+            file_path = str(file_path)
+        else:
+            try:
+                file_path = file_path.name
+            except AttributeError:
+                pass
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

@@ -7,6 +7,7 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
+from pathlib import PurePosixPath
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
@@ -697,10 +698,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        try:
-            directory_name = directory.name
-        except AttributeError:
-            directory_name = directory
+        if isinstance(directory, PurePosixPath):
+            directory_name = str(directory)
+        else:
+            try:
+                directory_name = directory.name
+            except AttributeError:
+                directory_name = directory
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
@@ -738,10 +742,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 12
                 :caption: Getting the file client to interact with a specific file.
         """
-        try:
-            file_path = file_path.name
-        except AttributeError:
-            pass
+        if isinstance(file_path, PurePosixPath):
+            file_path = str(file_path)
+        else:
+            try:
+                file_path = file_path.name
+            except AttributeError:
+                pass
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from pathlib import PurePosixPath
+
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -504,10 +506,13 @@ class DataLakeDirectoryClient(PathClient):
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake..DataLakeFileClient
         """
-        try:
-            file_path = file.name
-        except AttributeError:
-            file_path = self.path_name + '/' + file
+        if isinstance(file, PurePosixPath):
+            file_path = str(file)
+        else:
+            try:
+                file_path = file.name
+            except AttributeError:
+                file_path = self.path_name + '/' + file
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -534,10 +539,13 @@ class DataLakeDirectoryClient(PathClient):
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
-        try:
-            subdir_path = sub_directory.name
-        except AttributeError:
-            subdir_path = self.path_name + '/' + sub_directory
+        if isinstance(sub_directory, PurePosixPath):
+            subdir_path = str(sub_directory)
+        else:
+            try:
+                subdir_path = sub_directory.name
+            except AttributeError:
+                subdir_path = self.path_name + '/' + sub_directory
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from pathlib import PurePosixPath
+
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -482,10 +484,13 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 12
                 :caption: Getting the file client to interact with a specific file.
         """
-        try:
-            file_path = file.name
-        except AttributeError:
-            file_path = self.path_name + '/' + file
+        if isinstance(file, PurePosixPath):
+            file_path = str(file)
+        else:
+            try:
+                file_path = file.name
+            except AttributeError:
+                file_path = self.path_name + '/' + file
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -521,10 +526,13 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        try:
-            subdir_path = sub_directory.name
-        except AttributeError:
-            subdir_path = self.path_name + '/' + sub_directory
+        if isinstance(sub_directory, PurePosixPath):
+            subdir_path = str(sub_directory)
+        else:
+            try:
+                subdir_path = sub_directory.name
+            except AttributeError:
+                subdir_path = self.path_name + '/' + sub_directory
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
