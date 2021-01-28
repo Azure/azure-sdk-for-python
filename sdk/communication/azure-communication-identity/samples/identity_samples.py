@@ -24,7 +24,7 @@ class CommunicationIdentityClientSamples(object):
         self.endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
         self.client_id = os.getenv('AZURE_CLIENT_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
-        self.tenant_id = os.getnenv('AZURE_TENANT_ID')
+        self.tenant_id = os.getenv('AZURE_TENANT_ID')
 
     def issue_token(self):
         from azure.communication.identity import CommunicationIdentityClient

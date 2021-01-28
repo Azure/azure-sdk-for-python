@@ -27,7 +27,7 @@ class CommunicationIdentityClientSamples(object):
         self.endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
         self.client_id = os.getenv('AZURE_CLIENT_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
-        self.tenant_id = os.getnenv('AZURE_TENANT_ID')
+        self.tenant_id = os.getenv('AZURE_TENANT_ID')
 
     async def issue_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -42,7 +42,7 @@ class CommunicationIdentityClientSamples(object):
             print(user.identifier)
             tokenresponse = await identity_client.issue_token(user, scopes=["chat"])
             print(tokenresponse)
-    
+
     async def revoke_tokens(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
