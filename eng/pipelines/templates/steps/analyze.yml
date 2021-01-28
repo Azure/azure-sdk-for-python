@@ -28,7 +28,7 @@ steps:
 
   - script: |
       find ./ -type f -name "*.py" -o -name "*.md" -print0 | while IFS= read -r -d '' file; do
-          [[ $(file $file) =~ "CRLF" ]] && printf 'CRLF line ending in %s\n' "$file"
+          [[ $(file $file) =~ "CRLF" ]] && echo -n "CRLF line ending in: " && echo "$file"
       done
     displayName: Check for CRLF Line endings
 
