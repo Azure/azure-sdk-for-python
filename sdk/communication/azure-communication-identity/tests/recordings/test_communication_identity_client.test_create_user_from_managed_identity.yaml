@@ -18,22 +18,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:f8a47a4f-7f0a-4010-a42d-594ddb4d35f3_00000007-ea19-697d-8d33-3b3a0d000262"}}'
+      string: '{"identity": {"id": "8:acs:d55adea9-88a8-4d4a-9359-073890c445a6_00000007-eb15-4e24-0e04-343a0d00068e"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 18:18:24 GMT
+      - Thu, 28 Jan 2021 22:53:32 GMT
       ms-cv:
-      - XgP1JYSRKE+0gaEXB6KWYA.0
+      - woD5pVjAJkiGuj8UchrvRQ.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 495ms
+      - 203ms
     status:
       code: 201
       message: Created

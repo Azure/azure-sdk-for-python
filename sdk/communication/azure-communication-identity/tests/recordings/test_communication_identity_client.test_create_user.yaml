@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 28 Jan 2021 18:17:17 GMT
+      - Thu, 28 Jan 2021 22:52:25 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -22,22 +22,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:f823ebe3-93ab-46d6-82a0-29e7f8e18877_00000007-ea18-6094-0e04-343a0d000438"}}'
+      string: '{"identity": {"id": "8:acs:ef6d49fa-4453-4a43-9c9c-97e580a64502_00000007-eb14-4452-ac00-343a0d000650"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 18:17:16 GMT
+      - Thu, 28 Jan 2021 22:52:24 GMT
       ms-cv:
-      - CvM4lDVC8ECvD7/H/t27oQ.0
+      - /BTjDpAECU2VRGrcDO1Pmw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 17ms
+      - 21ms
     status:
       code: 201
       message: Created

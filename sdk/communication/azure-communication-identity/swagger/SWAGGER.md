@@ -26,15 +26,6 @@ v3: true
 python: true
 ```
 
-### Rename CommunicationIdentityAccessToken to CommunicationUserToken
-
-``` yaml
-directive:
-    - rename-model:
-        from: CommunicationIdentityAccessToken
-        to: CommunicationUserToken
-```
-
 ### Rename CommunicationIdentityTokenScope to CommunicationTokenScope
 ```yaml
 directive:

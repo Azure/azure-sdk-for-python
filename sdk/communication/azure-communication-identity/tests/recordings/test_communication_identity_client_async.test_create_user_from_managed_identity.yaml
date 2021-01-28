@@ -14,17 +14,17 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:637e59a0-ce59-45d7-b7f5-d169a1592f33_00000007-ea22-b142-6032-3b3a0d0002f0"}}'
+      string: '{"identity": {"id": "8:acs:abab8fcc-3f0a-4c61-bcee-2d79b2e789af_00000007-eb1f-3f7d-f40f-343a0d000477"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 18:28:33 GMT
-      ms-cv: 9WNCoxWz4Ei8Qgy2v1O8Vw.0
+      date: Thu, 28 Jan 2021 23:04:23 GMT
+      ms-cv: XavJoN6310ifLUw3xN/HLw.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 255ms
+      x-processing-time: 211ms
     status:
       code: 201
       message: Created
-    url: https://communicationl7hupoln2fs.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communicationdojctlmd6vr.communication.azure.com/identities?api-version=2021-03-07
 version: 1

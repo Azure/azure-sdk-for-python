@@ -218,7 +218,7 @@ class CommunicationIdentityOperations:
         id: str,
         scopes: List[Union[str, "_models.CommunicationTokenScope"]],
         **kwargs
-    ) -> "_models.CommunicationUserToken":
+    ) -> "_models.CommunicationIdentityAccessToken":
         """Issue a new token for an identity.
 
         Issue a new token for an identity.
@@ -228,11 +228,11 @@ class CommunicationIdentityOperations:
         :param scopes: List of scopes attached to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CommunicationUserToken, or the result of cls(response)
-        :rtype: ~azure.communication.identity.models.CommunicationUserToken
+        :return: CommunicationIdentityAccessToken, or the result of cls(response)
+        :rtype: ~azure.communication.identity.models.CommunicationIdentityAccessToken
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationUserToken"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationIdentityAccessToken"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -272,7 +272,7 @@ class CommunicationIdentityOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('CommunicationUserToken', pipeline_response)
+        deserialized = self._deserialize('CommunicationIdentityAccessToken', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
