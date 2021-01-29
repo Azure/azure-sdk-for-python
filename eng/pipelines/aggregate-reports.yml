@@ -35,8 +35,11 @@ jobs:
       workingDirectory: $(Build.SourcesDirectory)
       filePath: eng/common/scripts/Verify-Resource-Ref.ps1
       
+  - template: /eng/pipelines/templates/steps/analyze_dependency.yml
+
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@3
     displayName: 'Run CredScan'
+    condition: succeededOrFailed()
     inputs:
       suppressionsFile: 'eng\CredScanSuppression.json'
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@2
@@ -54,7 +57,6 @@ jobs:
     displayName: 'Publish Security Analysis Logs'
     continueOnError: true
     condition: succeededOrFailed()
-  - template: /eng/pipelines/templates/steps/analyze_dependency.yml
   - template: ../common/pipelines/templates/steps/verify-links.yml
     parameters:
       Directory: ""
