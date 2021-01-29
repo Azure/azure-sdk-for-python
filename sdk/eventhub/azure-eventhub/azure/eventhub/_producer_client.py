@@ -47,7 +47,9 @@ class EventHubProducerClient(ClientBase):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
-    :keyword str custom_endpoint_address: The custom endpoint address to connect to. Default is None.
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
@@ -173,7 +175,9 @@ class EventHubProducerClient(ClientBase):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
-        :keyword str custom_endpoint_address: The custom endpoint address to connect to. Default is None.
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Event Hubs service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.

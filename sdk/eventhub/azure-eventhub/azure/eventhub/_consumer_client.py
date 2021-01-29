@@ -102,7 +102,9 @@ class EventHubConsumerClient(ClientBase):
      evaluation regardless of the load balancing strategy.
      Greedy strategy is used by default.
     :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
-    :keyword str custom_endpoint_address: The custom endpoint address to connect to. Default is None.
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
@@ -240,7 +242,9 @@ class EventHubConsumerClient(ClientBase):
          evaluation regardless of the load balancing strategy.
          Greedy strategy is used by default.
         :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
-        :keyword str custom_endpoint_address: The custom endpoint address to connect to. Default is None.
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Event Hubs service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
