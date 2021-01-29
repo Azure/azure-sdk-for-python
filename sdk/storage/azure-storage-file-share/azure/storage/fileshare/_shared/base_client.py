@@ -307,29 +307,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         except HttpResponseError as error:
             process_storage_error(error)
 
-class TransportWrapper(HttpTransport):
-    """Wrapper class that ensures that an inner client created
-    by a `get_client` method does not close the outer transport for the parent
-    when used in a context manager.
-    """
-    def __init__(self, transport):
-        self._transport = transport
-
-    def send(self, request, **kwargs):
-        return self._transport.send(request, **kwargs)
-
-    def open(self):
-        pass
-
-    def close(self):
-        pass
-
-    def __enter__(self):
-        pass
-
-    def __exit__(self, *args):  # pylint: disable=arguments-differ
-        pass
-
 
 def _format_shared_key_credential(account_name, credential):
     if isinstance(credential, six.string_types):
