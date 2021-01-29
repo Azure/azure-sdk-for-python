@@ -25,10 +25,13 @@ try:
     from ._models_py3 import BatchAccount
     from ._models_py3 import BatchAccountCreateParameters
     from ._models_py3 import BatchAccountIdentity
+    from ._models_py3 import BatchAccountIdentityUserAssignedIdentitiesValue
     from ._models_py3 import BatchAccountKeys
     from ._models_py3 import BatchAccountRegenerateKeyParameters
     from ._models_py3 import BatchAccountUpdateParameters
     from ._models_py3 import BatchLocationQuota
+    from ._models_py3 import BatchPoolIdentity
+    from ._models_py3 import BatchPoolIdentityUserAssignedIdentitiesValue
     from ._models_py3 import Certificate
     from ._models_py3 import CertificateBaseProperties
     from ._models_py3 import CertificateCreateOrUpdateParameters
@@ -56,6 +59,7 @@ try:
     from ._models_py3 import NetworkConfiguration
     from ._models_py3 import NetworkSecurityGroupRule
     from ._models_py3 import NFSMountConfiguration
+    from ._models_py3 import NodePlacementConfiguration
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Pool
@@ -78,6 +82,7 @@ try:
     from ._models_py3 import UserIdentity
     from ._models_py3 import VirtualMachineConfiguration
     from ._models_py3 import VirtualMachineFamilyCoreQuota
+    from ._models_py3 import VMExtension
     from ._models_py3 import WindowsConfiguration
     from ._models_py3 import WindowsUserConfiguration
 except (SyntaxError, ImportError):
@@ -96,10 +101,13 @@ except (SyntaxError, ImportError):
     from ._models import BatchAccount
     from ._models import BatchAccountCreateParameters
     from ._models import BatchAccountIdentity
+    from ._models import BatchAccountIdentityUserAssignedIdentitiesValue
     from ._models import BatchAccountKeys
     from ._models import BatchAccountRegenerateKeyParameters
     from ._models import BatchAccountUpdateParameters
     from ._models import BatchLocationQuota
+    from ._models import BatchPoolIdentity
+    from ._models import BatchPoolIdentityUserAssignedIdentitiesValue
     from ._models import Certificate
     from ._models import CertificateBaseProperties
     from ._models import CertificateCreateOrUpdateParameters
@@ -127,6 +135,7 @@ except (SyntaxError, ImportError):
     from ._models import NetworkConfiguration
     from ._models import NetworkSecurityGroupRule
     from ._models import NFSMountConfiguration
+    from ._models import NodePlacementConfiguration
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Pool
@@ -149,6 +158,7 @@ except (SyntaxError, ImportError):
     from ._models import UserIdentity
     from ._models import VirtualMachineConfiguration
     from ._models import VirtualMachineFamilyCoreQuota
+    from ._models import VMExtension
     from ._models import WindowsConfiguration
     from ._models import WindowsUserConfiguration
 from ._paged_models import ApplicationPackagePaged
@@ -176,6 +186,7 @@ from ._batch_management_client_enums import (
     CachingType,
     StorageAccountType,
     DiskEncryptionTarget,
+    NodePlacementPolicyType,
     ComputeNodeDeallocationOption,
     InterNodeCommunicationState,
     InboundEndpointProtocol,
@@ -188,8 +199,7 @@ from ._batch_management_client_enums import (
     ContainerWorkingDirectory,
     CertificateStoreLocation,
     CertificateVisibility,
-    ContainerType,
-    ResourceType,
+    PoolIdentityType,
     NameAvailabilityReason,
 )
 
@@ -209,10 +219,13 @@ __all__ = [
     'BatchAccount',
     'BatchAccountCreateParameters',
     'BatchAccountIdentity',
+    'BatchAccountIdentityUserAssignedIdentitiesValue',
     'BatchAccountKeys',
     'BatchAccountRegenerateKeyParameters',
     'BatchAccountUpdateParameters',
     'BatchLocationQuota',
+    'BatchPoolIdentity',
+    'BatchPoolIdentityUserAssignedIdentitiesValue',
     'Certificate',
     'CertificateBaseProperties',
     'CertificateCreateOrUpdateParameters',
@@ -240,6 +253,7 @@ __all__ = [
     'NetworkConfiguration',
     'NetworkSecurityGroupRule',
     'NFSMountConfiguration',
+    'NodePlacementConfiguration',
     'Operation',
     'OperationDisplay',
     'Pool',
@@ -262,6 +276,7 @@ __all__ = [
     'UserIdentity',
     'VirtualMachineConfiguration',
     'VirtualMachineFamilyCoreQuota',
+    'VMExtension',
     'WindowsConfiguration',
     'WindowsUserConfiguration',
     'BatchAccountPaged',
@@ -288,6 +303,7 @@ __all__ = [
     'CachingType',
     'StorageAccountType',
     'DiskEncryptionTarget',
+    'NodePlacementPolicyType',
     'ComputeNodeDeallocationOption',
     'InterNodeCommunicationState',
     'InboundEndpointProtocol',
@@ -300,7 +316,6 @@ __all__ = [
     'ContainerWorkingDirectory',
     'CertificateStoreLocation',
     'CertificateVisibility',
-    'ContainerType',
-    'ResourceType',
+    'PoolIdentityType',
     'NameAvailabilityReason',
 ]

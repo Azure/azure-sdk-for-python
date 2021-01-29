@@ -1,4 +1,21 @@
 # Release History
+
+## 10.0.0 (2021-01-28)
+
+**Features**
+
+  - Added new extensions property to VirtualMachineConfiguration on pools to specify virtual machine extensions for nodes
+  - Added the ability to specify availability zones using a new property node_placement_configuration on VirtualMachineConfiguration
+  - Added a new identity property on Pool to specify a managed identity
+  - Added a new user_assigned_identities on BatchAccountIdentity to specify a user managed identity
+  - Added certificate operation method PoolOperations.create
+  - Added certificate operation method CertificateOperations.create
+
+**Breaking changes**
+
+  - Removed certificate operation method PoolOperations.begin_create. Certificate operations are not long running operations so this was incorrect.
+  - Removed certificate operation method CertificateOperations.begin_create. Certificate operations are not long running operations so this was incorrect.
+
 ## 9.0.0 (2020-05-29)
 ### REST API version
 - This version targets REST API version 2020-05-01.
