@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class TopicsOperations(object):
-    """TopicsOperations operations.
+class PartnerNamespacesOperations(object):
+    """PartnerNamespacesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -42,23 +42,23 @@ class TopicsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, topic_name, custom_headers=None, raw=False, **operation_config):
-        """Get a topic.
+            self, resource_group_name, partner_namespace_name, custom_headers=None, raw=False, **operation_config):
+        """Get a partner namespace.
 
-        Get properties of a topic.
+        Get properties of a partner namespace.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic.
-        :type topic_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Topic or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventgrid.models.Topic or
+        :return: PartnerNamespace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.PartnerNamespace or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -67,7 +67,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -96,24 +96,24 @@ class TopicsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Topic', response)
+            deserialized = self._deserialize('PartnerNamespace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, topic_name, topic_info, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, partner_namespace_name, partner_namespace_info, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -133,7 +133,7 @@ class TopicsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(topic_info, 'Topic')
+        body_content = self._serialize.body(partner_namespace_info, 'PartnerNamespace')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -147,7 +147,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Topic', response)
+            deserialized = self._deserialize('PartnerNamespace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -156,42 +156,44 @@ class TopicsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, topic_name, topic_info, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create a topic.
+            self, resource_group_name, partner_namespace_name, partner_namespace_info, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create a partner namespace.
 
-        Asynchronously creates a new topic with the specified parameters.
+        Asynchronously creates a new partner namespace with the specified
+        parameters.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic.
-        :type topic_name: str
-        :param topic_info: Topic information.
-        :type topic_info: ~azure.mgmt.eventgrid.models.Topic
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param partner_namespace_info: PartnerNamespace information.
+        :type partner_namespace_info:
+         ~azure.mgmt.eventgrid.models.PartnerNamespace
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Topic or
-         ClientRawResponse<Topic> if raw==True
+        :return: An instance of LROPoller that returns PartnerNamespace or
+         ClientRawResponse<PartnerNamespace> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.Topic]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.PartnerNamespace]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.Topic]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.PartnerNamespace]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
-            topic_name=topic_name,
-            topic_info=topic_info,
+            partner_namespace_name=partner_namespace_name,
+            partner_namespace_info=partner_namespace_info,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Topic', response)
+            deserialized = self._deserialize('PartnerNamespace', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -206,17 +208,17 @@ class TopicsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, topic_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, partner_namespace_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -237,7 +239,7 @@ class TopicsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -247,16 +249,16 @@ class TopicsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, topic_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete a topic.
+            self, resource_group_name, partner_namespace_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a partner namespace.
 
-        Delete existing topic.
+        Delete existing partner namespace.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic.
-        :type topic_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -270,7 +272,7 @@ class TopicsOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            topic_name=topic_name,
+            partner_namespace_name=partner_namespace_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -288,17 +290,19 @@ class TopicsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}'}
 
 
     def _update_initial(
-            self, resource_group_name, topic_name, topic_update_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, partner_namespace_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        partner_namespace_update_parameters = models.PartnerNamespaceUpdateParameters(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -318,7 +322,7 @@ class TopicsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(topic_update_parameters, 'TopicUpdateParameters')
+        body_content = self._serialize.body(partner_namespace_update_parameters, 'PartnerNamespaceUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -332,7 +336,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Topic', response)
+            deserialized = self._deserialize('PartnerNamespace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -341,43 +345,43 @@ class TopicsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, topic_name, topic_update_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update a topic.
+            self, resource_group_name, partner_namespace_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update a partner namespace.
 
-        Asynchronously updates a topic with the specified parameters.
+        Asynchronously updates a partner namespace with the specified
+        parameters.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic.
-        :type topic_name: str
-        :param topic_update_parameters: Topic update information.
-        :type topic_update_parameters:
-         ~azure.mgmt.eventgrid.models.TopicUpdateParameters
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param tags: Tags of the partner namespace.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Topic or
-         ClientRawResponse<Topic> if raw==True
+        :return: An instance of LROPoller that returns PartnerNamespace or
+         ClientRawResponse<PartnerNamespace> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.Topic]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.PartnerNamespace]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.Topic]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.PartnerNamespace]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
-            topic_name=topic_name,
-            topic_update_parameters=topic_update_parameters,
+            partner_namespace_name=partner_namespace_name,
+            tags=tags,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Topic', response)
+            deserialized = self._deserialize('PartnerNamespace', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -392,13 +396,13 @@ class TopicsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}'}
 
     def list_by_subscription(
             self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """List topics under an Azure subscription.
+        """List partner namespaces under an Azure subscription.
 
-        List all the topics under an Azure subscription.
+        List all the partner namespaces under an Azure subscription.
 
         :param filter: The query used to filter the search results using OData
          syntax. Filtering is permitted on the 'name' property only and with
@@ -419,9 +423,9 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Topic
+        :return: An iterator like instance of PartnerNamespace
         :rtype:
-         ~azure.mgmt.eventgrid.models.TopicPaged[~azure.mgmt.eventgrid.models.Topic]
+         ~azure.mgmt.eventgrid.models.PartnerNamespacePaged[~azure.mgmt.eventgrid.models.PartnerNamespace]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -475,16 +479,16 @@ class TopicsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.TopicPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.PartnerNamespacePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/topics'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/partnerNamespaces'}
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """List topics under a resource group.
+        """List partner namespaces under a resource group.
 
-        List all the topics under a resource group.
+        List all the partner namespaces under a resource group.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
@@ -508,9 +512,9 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Topic
+        :return: An iterator like instance of PartnerNamespace
         :rtype:
-         ~azure.mgmt.eventgrid.models.TopicPaged[~azure.mgmt.eventgrid.models.Topic]
+         ~azure.mgmt.eventgrid.models.PartnerNamespacePaged[~azure.mgmt.eventgrid.models.PartnerNamespace]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -565,30 +569,31 @@ class TopicsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.TopicPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.PartnerNamespacePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces'}
 
     def list_shared_access_keys(
-            self, resource_group_name, topic_name, custom_headers=None, raw=False, **operation_config):
-        """List keys for a topic.
+            self, resource_group_name, partner_namespace_name, custom_headers=None, raw=False, **operation_config):
+        """List keys for a partner namespace.
 
-        List the two keys used to publish to a topic.
+        List the two keys used to publish to a partner namespace.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic.
-        :type topic_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TopicSharedAccessKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventgrid.models.TopicSharedAccessKeys or
-         ~msrest.pipeline.ClientRawResponse
+        :return: PartnerNamespaceSharedAccessKeys or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.PartnerNamespaceSharedAccessKeys
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -596,7 +601,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -625,26 +630,47 @@ class TopicsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TopicSharedAccessKeys', response)
+            deserialized = self._deserialize('PartnerNamespaceSharedAccessKeys', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list_shared_access_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}/listKeys'}
+    list_shared_access_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/listKeys'}
 
+    def regenerate_key(
+            self, resource_group_name, partner_namespace_name, key_name, custom_headers=None, raw=False, **operation_config):
+        """Regenerate key for a partner namespace.
 
-    def _regenerate_key_initial(
-            self, resource_group_name, topic_name, key_name, custom_headers=None, raw=False, **operation_config):
-        regenerate_key_request = models.TopicRegenerateKeyRequest(key_name=key_name)
+        Regenerate a shared access key for a partner namespace.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription.
+        :type resource_group_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param key_name: Key name to regenerate (key1 or key2).
+        :type key_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PartnerNamespaceSharedAccessKeys or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.PartnerNamespaceSharedAccessKeys
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        regenerate_key_request = models.PartnerNamespaceRegenerateKeyRequest(key_name=key_name)
 
         # Construct URL
         url = self.regenerate_key.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -664,158 +690,24 @@ class TopicsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(regenerate_key_request, 'TopicRegenerateKeyRequest')
+        body_content = self._serialize.body(regenerate_key_request, 'PartnerNamespaceRegenerateKeyRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('TopicSharedAccessKeys', response)
+            deserialized = self._deserialize('PartnerNamespaceSharedAccessKeys', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-
-    def regenerate_key(
-            self, resource_group_name, topic_name, key_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Regenerate key for a topic.
-
-        Regenerate a shared access key for a topic.
-
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param topic_name: Name of the topic.
-        :type topic_name: str
-        :param key_name: Key name to regenerate key1 or key2
-        :type key_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns TopicSharedAccessKeys
-         or ClientRawResponse<TopicSharedAccessKeys> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.TopicSharedAccessKeys]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.TopicSharedAccessKeys]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._regenerate_key_initial(
-            resource_group_name=resource_group_name,
-            topic_name=topic_name,
-            key_name=key_name,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('TopicSharedAccessKeys', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}/regenerateKey'}
-
-    def list_event_types(
-            self, resource_group_name, provider_namespace, resource_type_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """List topic event types.
-
-        List event types for a topic.
-
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param provider_namespace: Namespace of the provider of the topic.
-        :type provider_namespace: str
-        :param resource_type_name: Name of the topic type.
-        :type resource_type_name: str
-        :param resource_name: Name of the topic.
-        :type resource_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of EventType
-        :rtype:
-         ~azure.mgmt.eventgrid.models.EventTypePaged[~azure.mgmt.eventgrid.models.EventType]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_event_types.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'providerNamespace': self._serialize.url("provider_namespace", provider_namespace, 'str'),
-                    'resourceTypeName': self._serialize.url("resource_type_name", resource_type_name, 'str'),
-                    'resourceName': self._serialize.url("resource_name", resource_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.EventTypePaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_event_types.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerNamespace}/{resourceTypeName}/{resourceName}/providers/Microsoft.EventGrid/eventTypes'}
+    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/regenerateKey'}

@@ -27,7 +27,7 @@ class EventSubscriptionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-10-15-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class EventSubscriptionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-06-01"
+        self.api_version = "2020-10-15-preview"
 
         self.config = config
 
@@ -1439,3 +1439,74 @@ class EventSubscriptionsOperations(object):
 
         return deserialized
     list_by_domain_topic.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{topicName}/providers/Microsoft.EventGrid/eventSubscriptions'}
+
+    def get_delivery_attributes(
+            self, scope, event_subscription_name, custom_headers=None, raw=False, **operation_config):
+        """Get delivery attributes for an event subscription.
+
+        Get all delivery attributes for an event subscription.
+
+        :param scope: The scope of the event subscription. The scope can be a
+         subscription, or a resource group, or a top level resource belonging
+         to a resource provider namespace, or an EventGrid topic. For example,
+         use '/subscriptions/{subscriptionId}/' for a subscription,
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
+         for a resource group, and
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}'
+         for a resource, and
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'
+         for an EventGrid topic.
+        :type scope: str
+        :param event_subscription_name: Name of the event subscription.
+        :type event_subscription_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeliveryAttributeListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.DeliveryAttributeListResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_delivery_attributes.metadata['url']
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'eventSubscriptionName': self._serialize.url("event_subscription_name", event_subscription_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeliveryAttributeListResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_delivery_attributes.metadata = {'url': '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}/getDeliveryAttributes'}

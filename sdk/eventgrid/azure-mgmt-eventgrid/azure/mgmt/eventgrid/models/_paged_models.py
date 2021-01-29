@@ -38,6 +38,19 @@ class DomainTopicPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(DomainTopicPaged, self).__init__(*args, **kwargs)
+class EventChannelPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`EventChannel <azure.mgmt.eventgrid.models.EventChannel>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EventChannel]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EventChannelPaged, self).__init__(*args, **kwargs)
 class EventSubscriptionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`EventSubscription <azure.mgmt.eventgrid.models.EventSubscription>` object
@@ -64,32 +77,45 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
-class TopicPaged(Paged):
+class PartnerNamespacePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Topic <azure.mgmt.eventgrid.models.Topic>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Topic]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(TopicPaged, self).__init__(*args, **kwargs)
-class EventTypePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`EventType <azure.mgmt.eventgrid.models.EventType>` object
+    A paging container for iterating over a list of :class:`PartnerNamespace <azure.mgmt.eventgrid.models.PartnerNamespace>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[EventType]'}
+        'current_page': {'key': 'value', 'type': '[PartnerNamespace]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(EventTypePaged, self).__init__(*args, **kwargs)
+        super(PartnerNamespacePaged, self).__init__(*args, **kwargs)
+class PartnerRegistrationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PartnerRegistration <azure.mgmt.eventgrid.models.PartnerRegistration>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PartnerRegistration]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PartnerRegistrationPaged, self).__init__(*args, **kwargs)
+class PartnerTopicPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PartnerTopic <azure.mgmt.eventgrid.models.PartnerTopic>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PartnerTopic]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PartnerTopicPaged, self).__init__(*args, **kwargs)
 class PrivateEndpointConnectionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.eventgrid.models.PrivateEndpointConnection>` object
@@ -116,6 +142,45 @@ class PrivateLinkResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+class SystemTopicPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SystemTopic <azure.mgmt.eventgrid.models.SystemTopic>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SystemTopic]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SystemTopicPaged, self).__init__(*args, **kwargs)
+class TopicPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Topic <azure.mgmt.eventgrid.models.Topic>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Topic]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TopicPaged, self).__init__(*args, **kwargs)
+class EventTypePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`EventType <azure.mgmt.eventgrid.models.EventType>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EventType]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EventTypePaged, self).__init__(*args, **kwargs)
 class TopicTypeInfoPaged(Paged):
     """
     A paging container for iterating over a list of :class:`TopicTypeInfo <azure.mgmt.eventgrid.models.TopicTypeInfo>` object
