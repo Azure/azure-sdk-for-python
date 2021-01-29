@@ -30,19 +30,6 @@ class HttpStatusCode(object):
     NotFound = 404
 
 
-# def get_resource_name(name_prefix, identifier):
-#     # Append a suffix to the name, based on the fully qualified test name
-#     # We use a checksum of the test name so that each test gets different
-#     # resource names, but each test will get the same name on repeat runs,
-#     # which is needed for playback.
-#     # Most resource names have a length limit, so we use a crc32
-#     checksum = zlib.adler32(identifier) & 0xFFFFFFFF
-#     name = "{}{}".format(name_prefix, hex(checksum)[2:]).rstrip("L")
-#     if name.endswith("L"):
-#         name = name[:-1]
-#     return name
-
-
 def get_qualified_method_name(obj, method_name):
     # example of qualified test name:
     # test_mgmt_network.test_public_ip_addresses
