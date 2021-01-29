@@ -33,6 +33,8 @@ extends:
       safeName: azurecommunicationnspkg
     - name: azure_communication_administration
       safeName: azurecommunicationadministration
+    - name: azure_communication_identity
+      safeName: azurecommunicationidentity
     - name: azure_communication_chat
       safeName: azurecommunicationchat
     - name: azure_mgmt_communication

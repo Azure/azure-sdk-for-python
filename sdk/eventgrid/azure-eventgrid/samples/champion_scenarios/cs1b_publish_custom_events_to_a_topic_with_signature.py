@@ -15,7 +15,7 @@ USAGE:
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
 import os
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_shared_access_signature
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from datetime import datetime, timedelta
 
@@ -23,11 +23,11 @@ topic_key = os.environ["EG_ACCESS_KEY"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
 
-signature = generate_shared_access_signature(endpoint, topic_key, expiration_date_utc)
+signature = generate_sas(endpoint, topic_key, expiration_date_utc)
 credential = AzureSasCredential(signature)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send_events([
+client.send([
 	EventGridEvent(
 		event_type="Contoso.Items.ItemReceived",
 		data={

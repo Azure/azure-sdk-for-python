@@ -330,7 +330,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace
     def query_tables(
         self,
-        filter,  # type: str    pylint: disable=W0622
+        filter,  # type: str    pylint: disable=redefined-builtin
         **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[TableItem]
@@ -358,7 +358,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         parameters = kwargs.pop("parameters", None)
         filter = self._parameter_filter_substitution(
             parameters, filter
-        )  # pylint: disable=W0622
+        )  # pylint: disable=redefined-builtin
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
