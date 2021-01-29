@@ -84,8 +84,8 @@ class ManagedIdentityClientBase(ABC):
 
         return token
 
-    def get_cached_token(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def get_cached_token(self, *scopes, **kwargs):   # pylint:disable=unused-argument
+        # type: (*str, **Any) -> Optional[AccessToken]
         resource = _scopes_to_resource(*scopes)
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
         for token in tokens:

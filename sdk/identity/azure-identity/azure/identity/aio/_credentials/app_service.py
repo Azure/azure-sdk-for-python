@@ -39,8 +39,8 @@ class AppServiceCredential(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self._client.close()  # pylint:disable=no-member
 
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
-        return self._client.get_cached_token(*scopes)
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+        return self._client.get_cached_token(*scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         return await self._client.request_token(*scopes, **kwargs)
