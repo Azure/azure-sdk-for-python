@@ -443,9 +443,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type form: bytes or IO[bytes]
-        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
-            pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-            range with a comma.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
@@ -515,9 +515,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
-        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
-            pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-            range with a comma.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
