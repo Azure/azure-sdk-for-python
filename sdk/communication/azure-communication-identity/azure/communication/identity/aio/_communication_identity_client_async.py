@@ -9,7 +9,6 @@ from azure.core.credentials import AccessToken
 
 from .._generated.aio._communication_identity_client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
-
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
@@ -95,12 +94,11 @@ class CommunicationIdentityClient:
     async def create_user_with_token(
             self,
             scopes, # type: List[Union[str, "_model.CommunicationTokenScope"]]
-            **kwargs
+            **kwargs # type: Any
         ):
         # type: (...) -> Tuple[CommunicationUserIdentifier, AccessToken]
-        """create a single Communication user along with an Identity Token
-
-        :param scopes:\
+        """create a single Communication user with an identity token.
+        :param scopes:
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
         :return: A tuple of a CommunicationUserIdentifier and a AccessToken.
