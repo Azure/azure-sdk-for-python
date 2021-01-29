@@ -54,7 +54,7 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
     :type kind: CommunicationIdentifierKind
     :param id: Full id of the identifier.
     :type id: str
-    :param phone_number: phone number in case the identity is a phone number.
+    :param phone_number: phone number in case the identifier is a phone number.
     :type phone_number: str
     :param is_anonymous: True if the identifier is anonymous.
     :type is_anonymous: bool
