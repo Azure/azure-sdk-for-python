@@ -56,7 +56,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    async def test_create_user_with_token(self, connection_string):
+    def test_create_user_with_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         user, token_response = identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
 
