@@ -36,9 +36,11 @@ jobs:
         displayName: Install coverage
 
       - pwsh: |
-          Get-ChildItem .\_all_coverage_files\ |
+          Get-ChildItem -Recurse .\_all_coverage_files\ |
           ForEach-Object {
-            Get-Content $_
+            If (Test-Path $_ -PathType Leaf) {
+              Get-Content $_
+            }
           }
 
       - task: PythonScript@0
