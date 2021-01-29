@@ -689,7 +689,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def begin_analyze(  # type: ignore
+    async def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         entities_recognition_tasks=None,  # type: List[EntitiesRecognitionTask]
@@ -782,7 +782,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze' endpoint is only available for API version v3.1-preview and up"
+                    "'begin_analyze_batch_actions' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
 
