@@ -46,7 +46,7 @@ class AttestationProvidersOperations(object):
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param provider_name: Name of the attestation service instance
+        :param provider_name: Name of the attestation provider.
         :type provider_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -103,12 +103,12 @@ class AttestationProvidersOperations(object):
 
     def create(
             self, resource_group_name, provider_name, creation_params, custom_headers=None, raw=False, **operation_config):
-        """Creates a new Attestation Provider instance.
+        """Creates a new Attestation Provider.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param provider_name: Name of the attestation service instance.
+        :param provider_name: Name of the attestation provider.
         :type provider_name: str
         :param creation_params: Client supplied parameters.
         :type creation_params:
@@ -179,10 +179,10 @@ class AttestationProvidersOperations(object):
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param provider_name: Name of the attestation service instance.
+        :param provider_name: Name of the attestation provider.
         :type provider_name: str
-        :param tags: The tags that will be assigned to the attestation service
-         instance.
+        :param tags: The tags that will be assigned to the attestation
+         provider.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

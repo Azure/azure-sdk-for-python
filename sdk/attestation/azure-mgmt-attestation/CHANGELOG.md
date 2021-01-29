@@ -1,5 +1,12 @@
 # Release History
 
+## 0.3.0 (2021-01-28)
+
+**Features**
+
+  - Model AttestationProvider has a new parameter private_endpoint_connections
+  - Added operation group PrivateEndpointConnectionsOperations
+
 ## 0.2.0 (2020-11-17)
 
 **Features**

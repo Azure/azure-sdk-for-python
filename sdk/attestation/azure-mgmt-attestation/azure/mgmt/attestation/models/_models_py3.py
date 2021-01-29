@@ -119,7 +119,7 @@ class AttestationProvider(TrackedResource):
     :type location: str
     :ivar system_data: The system metadata relating to this resource
     :vartype system_data: ~azure.mgmt.attestation.models.SystemData
-    :param trust_model: Trust model for the attestation service instance.
+    :param trust_model: Trust model for the attestation provider.
     :type trust_model: str
     :param status: Status of attestation service. Possible values include:
      'Ready', 'NotReady', 'Error'
@@ -127,6 +127,10 @@ class AttestationProvider(TrackedResource):
      ~azure.mgmt.attestation.models.AttestationServiceStatus
     :param attest_uri: Gets the uri of attestation service
     :type attest_uri: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     associated with the attestation provider.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.attestation.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -135,6 +139,7 @@ class AttestationProvider(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'system_data': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -147,6 +152,7 @@ class AttestationProvider(TrackedResource):
         'trust_model': {'key': 'properties.trustModel', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'attest_uri': {'key': 'properties.attestUri', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(self, *, location: str, tags=None, trust_model: str=None, status=None, attest_uri: str=None, **kwargs) -> None:
@@ -155,6 +161,7 @@ class AttestationProvider(TrackedResource):
         self.trust_model = trust_model
         self.status = status
         self.attest_uri = attest_uri
+        self.private_endpoint_connections = None
 
 
 class AttestationProviderListResult(Model):
@@ -185,18 +192,16 @@ class AttestationProviderListResult(Model):
 
 
 class AttestationServiceCreationParams(Model):
-    """Parameters for creating an attestation service instance.
+    """Parameters for creating an attestation provider.
 
     All required parameters must be populated in order to send to Azure.
 
     :param location: Required. The supported Azure location where the
-     attestation service instance should be created.
+     attestation provider should be created.
     :type location: str
-    :param tags: The tags that will be assigned to the attestation service
-     instance.
+    :param tags: The tags that will be assigned to the attestation provider.
     :type tags: dict[str, str]
-    :param properties: Required. Properties of the attestation service
-     instance
+    :param properties: Required. Properties of the attestation provider
     :type properties:
      ~azure.mgmt.attestation.models.AttestationServiceCreationSpecificParams
     """
@@ -220,8 +225,7 @@ class AttestationServiceCreationParams(Model):
 
 
 class AttestationServiceCreationSpecificParams(Model):
-    """Client supplied parameters used to create a new attestation service
-    instance.
+    """Client supplied parameters used to create a new attestation provider.
 
     :param policy_signing_certificates: JSON Web Key Set defining a set of
      X.509 Certificates that will represent the parent certificate for the
@@ -240,10 +244,9 @@ class AttestationServiceCreationSpecificParams(Model):
 
 
 class AttestationServicePatchParams(Model):
-    """Parameters for patching an attestation service instance.
+    """Parameters for patching an attestation provider.
 
-    :param tags: The tags that will be assigned to the attestation service
-     instance.
+    :param tags: The tags that will be assigned to the attestation provider.
     :type tags: dict[str, str]
     """
 
@@ -351,8 +354,8 @@ class JSONWebKey(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param alg: Required. The "alg" (algorithm) parameter identifies the
-     algorithm intended for
+    :param alg: The "alg" (algorithm) parameter identifies the algorithm
+     intended for
      use with the key.  The values used should either be registered in the
      IANA "JSON Web Signature and Encryption Algorithms" registry
      established by [JWA] or be a value that contains a Collision-
@@ -370,8 +373,8 @@ class JSONWebKey(Model):
     :type e: str
     :param k: Symmetric key
     :type k: str
-    :param kid: Required. The "kid" (key ID) parameter is used to match a
-     specific key.  This
+    :param kid: The "kid" (key ID) parameter is used to match a specific key.
+     This
      is used, for instance, to choose among a set of keys within a JWK Set
      during key rollover.  The structure of the "kid" value is
      unspecified.  When "kid" values are used within a JWK Set, different
@@ -396,8 +399,7 @@ class JSONWebKey(Model):
     :type q: str
     :param qi: RSA Private Key Parameter
     :type qi: str
-    :param use: Required. Use ("public key use") identifies the intended use
-     of
+    :param use: Use ("public key use") identifies the intended use of
      the public key. The "use" parameter is employed to indicate whether
      a public key is used for encrypting data or verifying the signature
      on data. Values are commonly "sig" (signature) or "enc" (encryption).
@@ -418,10 +420,7 @@ class JSONWebKey(Model):
     """
 
     _validation = {
-        'alg': {'required': True},
-        'kid': {'required': True},
         'kty': {'required': True},
-        'use': {'required': True},
     }
 
     _attribute_map = {
@@ -444,7 +443,7 @@ class JSONWebKey(Model):
         'y': {'key': 'y', 'type': 'str'},
     }
 
-    def __init__(self, *, alg: str, kid: str, kty: str, use: str, crv: str=None, d: str=None, dp: str=None, dq: str=None, e: str=None, k: str=None, n: str=None, p: str=None, q: str=None, qi: str=None, x: str=None, x5c=None, y: str=None, **kwargs) -> None:
+    def __init__(self, *, kty: str, alg: str=None, crv: str=None, d: str=None, dp: str=None, dq: str=None, e: str=None, k: str=None, kid: str=None, n: str=None, p: str=None, q: str=None, qi: str=None, use: str=None, x: str=None, x5c=None, y: str=None, **kwargs) -> None:
         super(JSONWebKey, self).__init__(**kwargs)
         self.alg = alg
         self.crv = crv
@@ -559,6 +558,45 @@ class OperationsDisplayDefinition(Model):
         self.resource = resource
         self.operation = operation
         self.description = description
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :param provisioning_state: Provisioning state of the private endpoint
+     connection. Possible values include: 'Succeeded', 'Creating', 'Deleting',
+     'Failed'
+    :type provisioning_state: str or
+     ~azure.mgmt.attestation.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, provisioning_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.provisioning_state = provisioning_state
 
 
 class ProxyResource(Resource):

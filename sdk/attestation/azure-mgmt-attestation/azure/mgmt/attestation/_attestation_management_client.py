@@ -15,11 +15,12 @@ from msrest import Serializer, Deserializer
 from ._configuration import AttestationManagementClientConfiguration
 from .operations import Operations
 from .operations import AttestationProvidersOperations
+from .operations import PrivateEndpointConnectionsOperations
 from . import models
 
 
 class AttestationManagementClient(SDKClient):
-    """Various APIs for managing resources in attestation service. This primarily encompasses per-tenant instance management.
+    """Various APIs for managing resources in attestation service. This primarily encompasses per-provider management.
 
     :ivar config: Configuration for client.
     :vartype config: AttestationManagementClientConfiguration
@@ -28,6 +29,8 @@ class AttestationManagementClient(SDKClient):
     :vartype operations: azure.mgmt.attestation.operations.Operations
     :ivar attestation_providers: AttestationProviders operations
     :vartype attestation_providers: azure.mgmt.attestation.operations.AttestationProvidersOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.attestation.operations.PrivateEndpointConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -51,4 +54,6 @@ class AttestationManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.attestation_providers = AttestationProvidersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
