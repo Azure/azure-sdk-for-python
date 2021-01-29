@@ -59,9 +59,10 @@ class InvokeSample(object):
             "documents": documents
         })
         try:
-            pipeline_response = text_analytics_client.invoke(request)  # type: PipelineResponse
-            response = pipeline_response.http_response
-            if response.status_code < 200 or response.status_code >= 400:
+            response = text_analytics_client.invoke(request)  # type: HttpResponse
+
+            # this will be converted to response.raise_for_status()
+            if response.status_code >= 400:
                 raise HttpResponseError(response=response)
             print(response.text())
         except HttpResponseError as err:
