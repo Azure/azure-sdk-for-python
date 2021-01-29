@@ -106,6 +106,7 @@ from ._key_vault_management_client_enums import (
     SkuFamily,
     SkuName,
     StoragePermissions,
+    VaultProvisioningState,
 )
 
 __all__ = [
@@ -165,4 +166,5 @@ __all__ = [
     'SkuFamily',
     'SkuName',
     'StoragePermissions',
+    'VaultProvisioningState',
 ]

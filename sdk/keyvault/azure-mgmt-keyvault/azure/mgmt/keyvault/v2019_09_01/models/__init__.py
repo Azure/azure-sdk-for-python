@@ -8,12 +8,18 @@
 
 try:
     from ._models_py3 import AccessPolicyEntry
+    from ._models_py3 import Attributes
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudErrorBody
     from ._models_py3 import DeletedVault
     from ._models_py3 import DeletedVaultListResult
     from ._models_py3 import DeletedVaultProperties
     from ._models_py3 import IPRule
+    from ._models_py3 import Key
+    from ._models_py3 import KeyAttributes
+    from ._models_py3 import KeyCreateParameters
+    from ._models_py3 import KeyListResult
+    from ._models_py3 import KeyProperties
     from ._models_py3 import LogSpecification
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import Operation
@@ -42,12 +48,18 @@ try:
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
     from ._models import AccessPolicyEntry  # type: ignore
+    from ._models import Attributes  # type: ignore
     from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
     from ._models import DeletedVault  # type: ignore
     from ._models import DeletedVaultListResult  # type: ignore
     from ._models import DeletedVaultProperties  # type: ignore
     from ._models import IPRule  # type: ignore
+    from ._models import Key  # type: ignore
+    from ._models import KeyAttributes  # type: ignore
+    from ._models import KeyCreateParameters  # type: ignore
+    from ._models import KeyListResult  # type: ignore
+    from ._models import KeyProperties  # type: ignore
     from ._models import LogSpecification  # type: ignore
     from ._models import NetworkRuleSet  # type: ignore
     from ._models import Operation  # type: ignore
@@ -79,6 +91,10 @@ from ._key_vault_management_client_enums import (
     AccessPolicyUpdateKind,
     CertificatePermissions,
     CreateMode,
+    DeletionRecoveryLevel,
+    JsonWebKeyCurveName,
+    JsonWebKeyOperation,
+    JsonWebKeyType,
     KeyPermissions,
     NetworkRuleAction,
     NetworkRuleBypassOptions,
@@ -89,16 +105,23 @@ from ._key_vault_management_client_enums import (
     SkuFamily,
     SkuName,
     StoragePermissions,
+    VaultProvisioningState,
 )
 
 __all__ = [
     'AccessPolicyEntry',
+    'Attributes',
     'CheckNameAvailabilityResult',
     'CloudErrorBody',
     'DeletedVault',
     'DeletedVaultListResult',
     'DeletedVaultProperties',
     'IPRule',
+    'Key',
+    'KeyAttributes',
+    'KeyCreateParameters',
+    'KeyListResult',
+    'KeyProperties',
     'LogSpecification',
     'NetworkRuleSet',
     'Operation',
@@ -128,6 +151,10 @@ __all__ = [
     'AccessPolicyUpdateKind',
     'CertificatePermissions',
     'CreateMode',
+    'DeletionRecoveryLevel',
+    'JsonWebKeyCurveName',
+    'JsonWebKeyOperation',
+    'JsonWebKeyType',
     'KeyPermissions',
     'NetworkRuleAction',
     'NetworkRuleBypassOptions',
@@ -138,4 +165,5 @@ __all__ = [
     'SkuFamily',
     'SkuName',
     'StoragePermissions',
+    'VaultProvisioningState',
 ]
