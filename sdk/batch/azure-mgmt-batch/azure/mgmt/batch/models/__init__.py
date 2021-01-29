@@ -27,6 +27,7 @@ try:
     from ._models_py3 import BatchAccountRegenerateKeyParameters
     from ._models_py3 import BatchAccountUpdateParameters
     from ._models_py3 import BatchLocationQuota
+    from ._models_py3 import BatchPoolIdentity
     from ._models_py3 import CIFSMountConfiguration
     from ._models_py3 import Certificate
     from ._models_py3 import CertificateBaseProperties
@@ -38,6 +39,8 @@ try:
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudErrorBody
     from ._models_py3 import CloudServiceConfiguration
+    from ._models_py3 import Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties
+    from ._models_py3 import Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import ContainerConfiguration
     from ._models_py3 import ContainerRegistry
     from ._models_py3 import DataDisk
@@ -63,6 +66,7 @@ try:
     from ._models_py3 import NFSMountConfiguration
     from ._models_py3 import NetworkConfiguration
     from ._models_py3 import NetworkSecurityGroupRule
+    from ._models_py3 import NodePlacementConfiguration
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
@@ -84,6 +88,7 @@ try:
     from ._models_py3 import TaskSchedulingPolicy
     from ._models_py3 import UserAccount
     from ._models_py3 import UserIdentity
+    from ._models_py3 import VMExtension
     from ._models_py3 import VirtualMachineConfiguration
     from ._models_py3 import VirtualMachineFamilyCoreQuota
     from ._models_py3 import WindowsConfiguration
@@ -109,6 +114,7 @@ except (SyntaxError, ImportError):
     from ._models import BatchAccountRegenerateKeyParameters  # type: ignore
     from ._models import BatchAccountUpdateParameters  # type: ignore
     from ._models import BatchLocationQuota  # type: ignore
+    from ._models import BatchPoolIdentity  # type: ignore
     from ._models import CIFSMountConfiguration  # type: ignore
     from ._models import Certificate  # type: ignore
     from ._models import CertificateBaseProperties  # type: ignore
@@ -120,6 +126,8 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
     from ._models import CloudServiceConfiguration  # type: ignore
+    from ._models import Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
+    from ._models import Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import ContainerConfiguration  # type: ignore
     from ._models import ContainerRegistry  # type: ignore
     from ._models import DataDisk  # type: ignore
@@ -145,6 +153,7 @@ except (SyntaxError, ImportError):
     from ._models import NFSMountConfiguration  # type: ignore
     from ._models import NetworkConfiguration  # type: ignore
     from ._models import NetworkSecurityGroupRule  # type: ignore
+    from ._models import NodePlacementConfiguration  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
@@ -166,6 +175,7 @@ except (SyntaxError, ImportError):
     from ._models import TaskSchedulingPolicy  # type: ignore
     from ._models import UserAccount  # type: ignore
     from ._models import UserIdentity  # type: ignore
+    from ._models import VMExtension  # type: ignore
     from ._models import VirtualMachineConfiguration  # type: ignore
     from ._models import VirtualMachineFamilyCoreQuota  # type: ignore
     from ._models import WindowsConfiguration  # type: ignore
@@ -192,8 +202,10 @@ from ._batch_management_enums import (
     LoginMode,
     NameAvailabilityReason,
     NetworkSecurityGroupRuleAccess,
+    NodePlacementPolicyType,
     PackageState,
     PoolAllocationMode,
+    PoolIdentityType,
     PoolProvisioningState,
     PrivateEndpointConnectionProvisioningState,
     PrivateLinkServiceConnectionStatus,
@@ -224,6 +236,7 @@ __all__ = [
     'BatchAccountRegenerateKeyParameters',
     'BatchAccountUpdateParameters',
     'BatchLocationQuota',
+    'BatchPoolIdentity',
     'CIFSMountConfiguration',
     'Certificate',
     'CertificateBaseProperties',
@@ -235,6 +248,8 @@ __all__ = [
     'CheckNameAvailabilityResult',
     'CloudErrorBody',
     'CloudServiceConfiguration',
+    'Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties',
+    'Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties',
     'ContainerConfiguration',
     'ContainerRegistry',
     'DataDisk',
@@ -260,6 +275,7 @@ __all__ = [
     'NFSMountConfiguration',
     'NetworkConfiguration',
     'NetworkSecurityGroupRule',
+    'NodePlacementConfiguration',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
@@ -281,6 +297,7 @@ __all__ = [
     'TaskSchedulingPolicy',
     'UserAccount',
     'UserIdentity',
+    'VMExtension',
     'VirtualMachineConfiguration',
     'VirtualMachineFamilyCoreQuota',
     'WindowsConfiguration',
@@ -305,8 +322,10 @@ __all__ = [
     'LoginMode',
     'NameAvailabilityReason',
     'NetworkSecurityGroupRuleAccess',
+    'NodePlacementPolicyType',
     'PackageState',
     'PoolAllocationMode',
+    'PoolIdentityType',
     'PoolProvisioningState',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateLinkServiceConnectionStatus',
