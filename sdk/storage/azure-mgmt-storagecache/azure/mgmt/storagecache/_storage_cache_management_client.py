@@ -16,6 +16,7 @@ from ._configuration import StorageCacheManagementClientConfiguration
 from .operations import Operations
 from .operations import SkusOperations
 from .operations import UsageModelsOperations
+from .operations import AscOperations
 from .operations import CachesOperations
 from .operations import StorageTargetsOperations
 from . import models
@@ -33,6 +34,8 @@ class StorageCacheManagementClient(SDKClient):
     :vartype skus: azure.mgmt.storagecache.operations.SkusOperations
     :ivar usage_models: UsageModels operations
     :vartype usage_models: azure.mgmt.storagecache.operations.UsageModelsOperations
+    :ivar asc_operations: AscOperations operations
+    :vartype asc_operations: azure.mgmt.storagecache.operations.AscOperations
     :ivar caches: Caches operations
     :vartype caches: azure.mgmt.storagecache.operations.CachesOperations
     :ivar storage_targets: StorageTargets operations
@@ -55,7 +58,7 @@ class StorageCacheManagementClient(SDKClient):
         super(StorageCacheManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-03-01'
+        self.api_version = '2020-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -64,6 +67,8 @@ class StorageCacheManagementClient(SDKClient):
         self.skus = SkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usage_models = UsageModelsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.asc_operations = AscOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.caches = CachesOperations(
             self._client, self.config, self._serialize, self._deserialize)

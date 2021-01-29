@@ -12,7 +12,12 @@
 try:
     from ._models_py3 import ApiOperation
     from ._models_py3 import ApiOperationDisplay
+    from ._models_py3 import ApiOperationPropertiesServiceSpecification
+    from ._models_py3 import AscOperation
     from ._models_py3 import Cache
+    from ._models_py3 import CacheActiveDirectorySettings
+    from ._models_py3 import CacheActiveDirectorySettingsCredentials
+    from ._models_py3 import CacheDirectorySettings
     from ._models_py3 import CacheEncryptionSettings
     from ._models_py3 import CacheHealth
     from ._models_py3 import CacheIdentity
@@ -20,14 +25,21 @@ try:
     from ._models_py3 import CacheSecuritySettings
     from ._models_py3 import CacheSku
     from ._models_py3 import CacheUpgradeStatus
+    from ._models_py3 import CacheUsernameDownloadSettings
+    from ._models_py3 import CacheUsernameDownloadSettingsCredentials
     from ._models_py3 import ClfsTarget
     from ._models_py3 import ClfsTargetProperties
     from ._models_py3 import CloudErrorBody
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import KeyVaultKeyReference
     from ._models_py3 import KeyVaultKeyReferenceSourceVault
+    from ._models_py3 import MetricDimension
+    from ._models_py3 import MetricSpecification
     from ._models_py3 import NamespaceJunction
     from ._models_py3 import Nfs3Target
     from ._models_py3 import Nfs3TargetProperties
+    from ._models_py3 import NfsAccessPolicy
+    from ._models_py3 import NfsAccessRule
     from ._models_py3 import ResourceSku
     from ._models_py3 import ResourceSkuCapabilities
     from ._models_py3 import ResourceSkuLocationInfo
@@ -35,6 +47,7 @@ try:
     from ._models_py3 import StorageTarget
     from ._models_py3 import StorageTargetProperties
     from ._models_py3 import StorageTargetResource
+    from ._models_py3 import SystemData
     from ._models_py3 import UnknownTarget
     from ._models_py3 import UnknownTargetProperties
     from ._models_py3 import UsageModel
@@ -42,7 +55,12 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ApiOperation
     from ._models import ApiOperationDisplay
+    from ._models import ApiOperationPropertiesServiceSpecification
+    from ._models import AscOperation
     from ._models import Cache
+    from ._models import CacheActiveDirectorySettings
+    from ._models import CacheActiveDirectorySettingsCredentials
+    from ._models import CacheDirectorySettings
     from ._models import CacheEncryptionSettings
     from ._models import CacheHealth
     from ._models import CacheIdentity
@@ -50,14 +68,21 @@ except (SyntaxError, ImportError):
     from ._models import CacheSecuritySettings
     from ._models import CacheSku
     from ._models import CacheUpgradeStatus
+    from ._models import CacheUsernameDownloadSettings
+    from ._models import CacheUsernameDownloadSettingsCredentials
     from ._models import ClfsTarget
     from ._models import ClfsTargetProperties
     from ._models import CloudErrorBody
+    from ._models import ErrorResponse
     from ._models import KeyVaultKeyReference
     from ._models import KeyVaultKeyReferenceSourceVault
+    from ._models import MetricDimension
+    from ._models import MetricSpecification
     from ._models import NamespaceJunction
     from ._models import Nfs3Target
     from ._models import Nfs3TargetProperties
+    from ._models import NfsAccessPolicy
+    from ._models import NfsAccessRule
     from ._models import ResourceSku
     from ._models import ResourceSkuCapabilities
     from ._models import ResourceSkuLocationInfo
@@ -65,6 +90,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageTarget
     from ._models import StorageTargetProperties
     from ._models import StorageTargetResource
+    from ._models import SystemData
     from ._models import UnknownTarget
     from ._models import UnknownTargetProperties
     from ._models import UsageModel
@@ -75,18 +101,29 @@ from ._paged_models import ResourceSkuPaged
 from ._paged_models import StorageTargetPaged
 from ._paged_models import UsageModelPaged
 from ._storage_cache_management_client_enums import (
+    MetricAggregationType,
     CacheIdentityType,
+    CreatedByType,
     HealthStateType,
     ProvisioningStateType,
     FirmwareStatusType,
-    StorageTargetType,
+    NfsAccessRuleScope,
+    NfsAccessRuleAccess,
+    DomainJoinedType,
+    UsernameSource,
+    UsernameDownloadedType,
     ReasonCode,
 )
 
 __all__ = [
     'ApiOperation',
     'ApiOperationDisplay',
+    'ApiOperationPropertiesServiceSpecification',
+    'AscOperation',
     'Cache',
+    'CacheActiveDirectorySettings',
+    'CacheActiveDirectorySettingsCredentials',
+    'CacheDirectorySettings',
     'CacheEncryptionSettings',
     'CacheHealth',
     'CacheIdentity',
@@ -94,14 +131,21 @@ __all__ = [
     'CacheSecuritySettings',
     'CacheSku',
     'CacheUpgradeStatus',
+    'CacheUsernameDownloadSettings',
+    'CacheUsernameDownloadSettingsCredentials',
     'ClfsTarget',
     'ClfsTargetProperties',
     'CloudErrorBody',
+    'ErrorResponse',
     'KeyVaultKeyReference',
     'KeyVaultKeyReferenceSourceVault',
+    'MetricDimension',
+    'MetricSpecification',
     'NamespaceJunction',
     'Nfs3Target',
     'Nfs3TargetProperties',
+    'NfsAccessPolicy',
+    'NfsAccessRule',
     'ResourceSku',
     'ResourceSkuCapabilities',
     'ResourceSkuLocationInfo',
@@ -109,6 +153,7 @@ __all__ = [
     'StorageTarget',
     'StorageTargetProperties',
     'StorageTargetResource',
+    'SystemData',
     'UnknownTarget',
     'UnknownTargetProperties',
     'UsageModel',
@@ -118,10 +163,16 @@ __all__ = [
     'UsageModelPaged',
     'CachePaged',
     'StorageTargetPaged',
+    'MetricAggregationType',
     'CacheIdentityType',
+    'CreatedByType',
     'HealthStateType',
     'ProvisioningStateType',
     'FirmwareStatusType',
-    'StorageTargetType',
+    'NfsAccessRuleScope',
+    'NfsAccessRuleAccess',
+    'DomainJoinedType',
+    'UsernameSource',
+    'UsernameDownloadedType',
     'ReasonCode',
 ]
