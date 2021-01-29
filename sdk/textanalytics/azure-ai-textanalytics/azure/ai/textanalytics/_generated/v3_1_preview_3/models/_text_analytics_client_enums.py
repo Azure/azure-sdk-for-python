@@ -81,13 +81,13 @@ class SentenceSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
 
 class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    NOTSTARTED = "notstarted"
+    NOT_STARTED = "notStarted"
     RUNNING = "running"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
+    REJECTED = "rejected"
     CANCELLED = "cancelled"
     CANCELLING = "cancelling"
-    NOT_STARTED = "notStarted"
     PARTIALLY_COMPLETED = "partiallyCompleted"
 
 class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):

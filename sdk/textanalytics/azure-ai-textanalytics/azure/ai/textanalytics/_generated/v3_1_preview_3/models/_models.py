@@ -151,8 +151,8 @@ class JobMetadata(msrest.serialization.Model):
     :type job_id: str
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
@@ -204,8 +204,8 @@ class AnalyzeJobState(JobMetadata, TasksState, Pagination):
     :type job_id: str
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     :param errors:
     :type errors: list[~azure.ai.textanalytics.v3_1_preview_3.models.TextAnalyticsError]
@@ -328,9 +328,15 @@ class AspectRelation(msrest.serialization.Model):
 class Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1(msrest.serialization.Model):
     """Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1.
 
-    :param results:
+    All required parameters must be populated in order to send to Azure.
+
+    :param results: Required.
     :type results: ~azure.ai.textanalytics.v3_1_preview_3.models.EntitiesResult
     """
+
+    _validation = {
+        'results': {'required': True},
+    }
 
     _attribute_map = {
         'results': {'key': 'results', 'type': 'EntitiesResult'},
@@ -341,15 +347,21 @@ class Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecogniti
         **kwargs
     ):
         super(Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
+        self.results = kwargs['results']
 
 
 class Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1(msrest.serialization.Model):
     """Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1.
 
-    :param results:
+    All required parameters must be populated in order to send to Azure.
+
+    :param results: Required.
     :type results: ~azure.ai.textanalytics.v3_1_preview_3.models.PiiResult
     """
+
+    _validation = {
+        'results': {'required': True},
+    }
 
     _attribute_map = {
         'results': {'key': 'results', 'type': 'PiiResult'},
@@ -360,15 +372,21 @@ class Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecogniti
         **kwargs
     ):
         super(Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
+        self.results = kwargs['results']
 
 
 class Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1(msrest.serialization.Model):
     """Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1.
 
-    :param results:
+    All required parameters must be populated in order to send to Azure.
+
+    :param results: Required.
     :type results: ~azure.ai.textanalytics.v3_1_preview_3.models.KeyPhraseResult
     """
+
+    _validation = {
+        'results': {'required': True},
+    }
 
     _attribute_map = {
         'results': {'key': 'results', 'type': 'KeyPhraseResult'},
@@ -379,7 +397,7 @@ class Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextrac
         **kwargs
     ):
         super(Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
+        self.results = kwargs['results']
 
 
 class DetectedLanguage(msrest.serialization.Model):
@@ -1039,8 +1057,8 @@ class HealthcareJobState(JobMetadata, Pagination):
     :type job_id: str
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     :param results:
     :type results: ~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareResult
@@ -1993,7 +2011,7 @@ class TasksStateTasks(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param details:
-    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasksDetails
+    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TaskState
     :param completed: Required.
     :type completed: int
     :param failed: Required.
@@ -2021,7 +2039,7 @@ class TasksStateTasks(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': 'TasksStateTasksDetails'},
+        'details': {'key': 'details', 'type': 'TaskState'},
         'completed': {'key': 'completed', 'type': 'int'},
         'failed': {'key': 'failed', 'type': 'int'},
         'in_progress': {'key': 'inProgress', 'type': 'int'},
@@ -2046,25 +2064,6 @@ class TasksStateTasks(msrest.serialization.Model):
         self.key_phrase_extraction_tasks = kwargs.get('key_phrase_extraction_tasks', None)
 
 
-class TasksStateTasksDetails(msrest.serialization.Model):
-    """TasksStateTasksDetails.
-
-    :param allof:
-    :type allof: ~azure.ai.textanalytics.v3_1_preview_3.models.TaskState
-    """
-
-    _attribute_map = {
-        'allof': {'key': 'allof', 'type': 'TaskState'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TasksStateTasksDetails, self).__init__(**kwargs)
-        self.allof = kwargs.get('allof', None)
-
-
 class TaskState(msrest.serialization.Model):
     """TaskState.
 
@@ -2072,16 +2071,15 @@ class TaskState(msrest.serialization.Model):
 
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
-    :param name: Required.
+    :param name:
     :type name: str
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
     _validation = {
         'last_update_date_time': {'required': True},
-        'name': {'required': True},
         'status': {'required': True},
     }
 
@@ -2097,8 +2095,40 @@ class TaskState(msrest.serialization.Model):
     ):
         super(TaskState, self).__init__(**kwargs)
         self.last_update_date_time = kwargs['last_update_date_time']
-        self.name = kwargs['name']
+        self.name = kwargs.get('name', None)
         self.status = kwargs['status']
+
+
+class TasksStateTasksDetails(TaskState):
+    """TasksStateTasksDetails.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param last_update_date_time: Required.
+    :type last_update_date_time: ~datetime.datetime
+    :param name:
+    :type name: str
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
+    """
+
+    _validation = {
+        'last_update_date_time': {'required': True},
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TasksStateTasksDetails, self).__init__(**kwargs)
 
 
 class TasksStateTasksEntityRecognitionPiiTasksItem(TaskState, Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1):
@@ -2106,20 +2136,20 @@ class TasksStateTasksEntityRecognitionPiiTasksItem(TaskState, Components15X8E9LS
 
     All required parameters must be populated in order to send to Azure.
 
-    :param results:
+    :param results: Required.
     :type results: ~azure.ai.textanalytics.v3_1_preview_3.models.PiiResult
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
-    :param name: Required.
+    :param name:
     :type name: str
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
     _validation = {
+        'results': {'required': True},
         'last_update_date_time': {'required': True},
-        'name': {'required': True},
         'status': {'required': True},
     }
 
@@ -2135,9 +2165,9 @@ class TasksStateTasksEntityRecognitionPiiTasksItem(TaskState, Components15X8E9LS
         **kwargs
     ):
         super(TasksStateTasksEntityRecognitionPiiTasksItem, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
+        self.results = kwargs['results']
         self.last_update_date_time = kwargs['last_update_date_time']
-        self.name = kwargs['name']
+        self.name = kwargs.get('name', None)
         self.status = kwargs['status']
 
 
@@ -2146,20 +2176,20 @@ class TasksStateTasksEntityRecognitionTasksItem(TaskState, Components15Gvwi3Sche
 
     All required parameters must be populated in order to send to Azure.
 
-    :param results:
+    :param results: Required.
     :type results: ~azure.ai.textanalytics.v3_1_preview_3.models.EntitiesResult
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
-    :param name: Required.
+    :param name:
     :type name: str
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
     _validation = {
+        'results': {'required': True},
         'last_update_date_time': {'required': True},
-        'name': {'required': True},
         'status': {'required': True},
     }
 
@@ -2175,9 +2205,9 @@ class TasksStateTasksEntityRecognitionTasksItem(TaskState, Components15Gvwi3Sche
         **kwargs
     ):
         super(TasksStateTasksEntityRecognitionTasksItem, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
+        self.results = kwargs['results']
         self.last_update_date_time = kwargs['last_update_date_time']
-        self.name = kwargs['name']
+        self.name = kwargs.get('name', None)
         self.status = kwargs['status']
 
 
@@ -2186,20 +2216,20 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, Components1D9IzucSc
 
     All required parameters must be populated in order to send to Azure.
 
-    :param results:
+    :param results: Required.
     :type results: ~azure.ai.textanalytics.v3_1_preview_3.models.KeyPhraseResult
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
-    :param name: Required.
+    :param name:
     :type name: str
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
     _validation = {
+        'results': {'required': True},
         'last_update_date_time': {'required': True},
-        'name': {'required': True},
         'status': {'required': True},
     }
 
@@ -2215,9 +2245,9 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, Components1D9IzucSc
         **kwargs
     ):
         super(TasksStateTasksKeyPhraseExtractionTasksItem, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
+        self.results = kwargs['results']
         self.last_update_date_time = kwargs['last_update_date_time']
-        self.name = kwargs['name']
+        self.name = kwargs.get('name', None)
         self.status = kwargs['status']
 
 
