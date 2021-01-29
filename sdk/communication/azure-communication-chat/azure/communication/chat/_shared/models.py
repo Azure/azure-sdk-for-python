@@ -52,11 +52,11 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
 
     :param kind: Required. Kind of Communication Identifier.
     :type kind: CommunicationIdentifierKind
-    :param id: Full id of the identitifier.
+    :param id: Full id of the identifier.
     :type id: str
-    :param phone_number: phone number in case the identity is phone number.
+    :param phone_number: phone number in case the identity is a phone number.
     :type phone_number: str
-    :param is_anonymous: is the Microsoft Teams user is anonymous.
+    :param is_anonymous: True if the identifier is anonymous.
     :type is_anonymous: bool
     :param microsoft_teams_user_id: Microsoft Teams user id.
     :type microsoft_teams_user_id: str
