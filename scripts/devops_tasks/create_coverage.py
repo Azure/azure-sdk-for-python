@@ -55,6 +55,7 @@ def collect_tox_coverage_files():#targeted_packages):
         for f in files:
             if re.match(".coverage_*", f):
                 coverage_files.append(os.path.join(root, f))
+                fix_dot_coverage_file(os.path.join(root, f))
 
     logging.info(".coverage files: {}".format(coverage_files))
 
@@ -138,24 +139,25 @@ def combine_coverage_files(coverage_files):
         logging.error("tox.ini is not found in path {}".format(root_dir))
 
 
-def fix_dot_coverage_file():
+def fix_dot_coverage_file(coverage_file):
+    print("running 'fix_dot_coverage_file' on {}".format(coverage_file))
     # Change the location of files before "/sdk/" to be the current machine
 
-    replacement = os.getcwd()
-    replacement = replacement.replace('\\', '/') + '/'
-    print(replacement)
+    # replacement = os.getcwd()
+    # replacement = replacement.replace('\\', '/') + '/'
+    # print(replacement)
 
-    dot_coverage = os.path.join(root_dir, ".coverage")
-    print(dot_coverage)
+    # dot_coverage = os.path.join(root_dir, ".coverage")
+    # print(dot_coverage)
 
     out = None
-    with open('.coverage') as cov_file:
+    with open(coverage_file) as cov_file:
         line = cov_file.read()
-        l = len(line)
-        out = line.replace("\\\\.tox\\\\whl\\\\lib\\\\python3.9\\\\site-packages", "\\\\")
-        o = len(out)
-        print(out)
-        print(l, o)
+        # l = len(line)
+        out = line.replace("/.tox/whl/lib/python3.9/site-packages", "")
+        # o = len(out)
+        # print(out)
+        # print(l, o)
         # locs = line.split("/.tox/whl/lib/python3.9/site-packages")
         # print(locs)
         # sdks = [m.start() for m in re.finditer("/sdk/", line)]
@@ -170,17 +172,20 @@ def fix_dot_coverage_file():
         #     print(str_to_replace)
 
         #     out = line.replace(str_to_replace, replacement)
-        out = out.replace('//', '/')
+        # out = out.replace('//', '/')
         # else:
         #     print("coverage files were created on this machine")
         # print(out)
 
     if out:
-        with open('.coverage', 'w') as cov_file:
+        with open(coverage_file, 'w') as cov_file:
             cov_file.write(out)
 
 
 if __name__ == "__main__":
+
+    # remove the ".tox" part before running coverage combine
+
     collect_tox_coverage_files()
-    fix_dot_coverage_file()
+    # fix_dot_coverage_file()
     generate_coverage_xml()
