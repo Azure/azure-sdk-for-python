@@ -93,7 +93,8 @@ def find_sdist(dist_dir, pkg_name, pkg_version):
         return
 
     pkg_name_format = "{0}-{1}.zip".format(pkg_name, pkg_version)
-    packages = [os.path.basename(w) for w in glob.glob(os.path.join(dist_dir, pkg_name_format))]
+    packages = [os.path.relpath(w, dist_dir) for w in glob.glob(os.path.join(dist_dir, "**", pkg_name_format), recursive=True)]
+
     if not packages:
         logging.error("No sdist is found in directory %s with package name format %s", dist_dir, pkg_name_format)
         return

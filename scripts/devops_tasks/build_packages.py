@@ -32,7 +32,7 @@ def build_packages(targeted_packages, distribution_directory, service, is_dev_bu
         print("Generating Package Using Python {}".format(sys.version))
         run_check_call(
             [
-                "python",
+                sys.executable,
                 build_packing_script_location,
                 "--dest",
                 os.path.join(distribution_directory, service_hierarchy),
