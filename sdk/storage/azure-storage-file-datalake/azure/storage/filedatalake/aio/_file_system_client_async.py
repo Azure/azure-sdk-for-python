@@ -7,6 +7,7 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
+from copy import deepcopy
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
@@ -25,7 +26,7 @@ from ._models import PathPropertiesPaged
 from ._data_lake_lease_async import DataLakeLeaseClient
 from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
-from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._models import FileSystemProperties, PublicAccess
 
@@ -702,7 +703,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         except AttributeError:
             directory_name = directory
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
@@ -743,7 +744,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         except AttributeError:
             pass
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeFileClient(

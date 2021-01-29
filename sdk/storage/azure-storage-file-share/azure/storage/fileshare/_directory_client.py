@@ -6,6 +6,7 @@
 
 import functools
 import time
+from copy import deepcopy
 from typing import (  # pylint: disable=unused-import
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
@@ -24,7 +25,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureFileStorage
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.parser import _str
@@ -223,7 +224,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             file_name = self.directory_path.rstrip('/') + "/" + file_name
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return ShareFileClient(
@@ -255,7 +256,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return ShareDirectoryClient(

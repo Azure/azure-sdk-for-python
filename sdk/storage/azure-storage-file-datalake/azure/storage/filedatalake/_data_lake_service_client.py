@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+from copy import deepcopy
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -13,7 +13,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 
 from azure.storage.blob import BlobServiceClient
-from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
+from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._file_system_client import FileSystemClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
@@ -332,7 +332,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             file_system_name = file_system
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
@@ -379,7 +379,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             directory_name = directory
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
@@ -429,7 +429,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             pass
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeFileClient(

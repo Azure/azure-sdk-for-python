@@ -6,6 +6,7 @@
 # pylint: disable=invalid-overridden-method
 import functools
 import time
+from copy import deepcopy
 from typing import ( # pylint: disable=unused-import
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
@@ -19,7 +20,7 @@ from .._parser import _get_file_permission, _datetime_to_str
 from .._shared.parser import _str
 
 from .._generated.aio import AzureFileStorage
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -109,7 +110,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             file_name = self.directory_path.rstrip('/') + "/" + file_name
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return ShareFileClient(
@@ -140,7 +141,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return ShareDirectoryClient(

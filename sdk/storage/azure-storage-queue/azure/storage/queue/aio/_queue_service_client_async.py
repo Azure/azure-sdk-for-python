@@ -6,6 +6,7 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
+from copy import deepcopy
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING)
@@ -23,7 +24,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.policies_async import ExponentialRetry
 from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
 from .._shared.models import LocationMode
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.response_handlers import process_storage_error
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import StorageServiceProperties
@@ -375,7 +376,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             queue_name = queue
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
 

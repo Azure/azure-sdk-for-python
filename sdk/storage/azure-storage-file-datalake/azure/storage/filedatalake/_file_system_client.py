@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+from copy import deepcopy
 
 try:
     from urllib.parse import urlparse, quote
@@ -15,7 +16,7 @@ import six
 from azure.core.pipeline import Pipeline
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
-from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
+from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
 from ._models import LocationMode, FileSystemProperties, PublicAccess
 from ._list_paths_helper import PathPropertiesPaged
@@ -742,7 +743,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         except AttributeError:
             directory_name = directory
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
@@ -782,7 +783,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         except AttributeError:
             pass
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeFileClient(

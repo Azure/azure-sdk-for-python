@@ -3,13 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from copy import deepcopy
+
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
 from azure.core.pipeline import Pipeline
 from ._deserialize import deserialize_dir_properties
-from ._shared.base_client import TransportWrapper, parse_connection_str
+from ._shared.base_client import parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import DirectoryProperties
 from ._path_client import PathClient
@@ -510,7 +512,7 @@ class DataLakeDirectoryClient(PathClient):
             file_path = self.path_name + '/' + file
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeFileClient(
@@ -540,7 +542,7 @@ class DataLakeDirectoryClient(PathClient):
             subdir_path = self.path_name + '/' + sub_directory
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeDirectoryClient(

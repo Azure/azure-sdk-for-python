@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+from copy import deepcopy
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, List,
     TYPE_CHECKING
@@ -20,7 +21,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
 from ._generated import AzureFileStorage
 from ._generated.models import StorageServiceProperties
@@ -411,7 +412,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             share_name = share
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return ShareClient(

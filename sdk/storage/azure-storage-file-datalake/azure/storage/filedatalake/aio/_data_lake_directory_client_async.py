@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from copy import deepcopy
+
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -14,7 +16,6 @@ from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDir
 from .._models import DirectoryProperties
 from .._deserialize import deserialize_dir_properties
 from ._path_client_async import PathClient
-from .._shared.base_client_async import AsyncTransportWrapper
 
 
 class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
@@ -488,7 +489,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             file_path = self.path_name + '/' + file
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeFileClient(
@@ -527,7 +528,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             subdir_path = self.path_name + '/' + sub_directory
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=deepcopy(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeDirectoryClient(
