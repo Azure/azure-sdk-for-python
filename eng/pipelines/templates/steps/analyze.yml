@@ -27,7 +27,7 @@ steps:
     displayName: Find Invalid Versions
 
   - pwsh: |
-      Get-ChildItem .\ -Filter "*.py" |
+      Get-ChildItem $(Build.SourcesDirectory) -Filter "*.py" |
       Foreach-Object {
         If ((Get-Content $_ -Raw) -match "\r\n") {
           Write-Ouput $_
@@ -35,7 +35,7 @@ steps:
         }
       }
 
-      Get-ChildItem .\ -Filter "*.md" |
+      Get-ChildItem $(Build.SourcesDirectory) -Filter "*.md" |
       Foreach-Object {
         If ((Get-Content $_ -Raw) -match "\r\n") {
           Write-Ouput $_
