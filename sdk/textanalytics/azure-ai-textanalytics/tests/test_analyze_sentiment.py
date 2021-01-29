@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import os
 import pytest
 import platform
 import functools
@@ -717,3 +717,16 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
         # cause v3.0 calls to fail
         client.analyze_sentiment(["please don't fail"])
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_string_index_type_explicit_fails_v3(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            client.analyze_sentiment(["this should fail"], string_index_type="UnicodeCodePoint")
+        assert "'string_index_type' is only available for API version v3.1-preview and up" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW})
+    def test_string_index_type_explicit_not_fail_v31preview(self, client):
+        result = client.analyze_sentiment(["this shouldn't fail"], string_index_type="UnicodeCodePoint")
+        self.assertIsNotNone(result)

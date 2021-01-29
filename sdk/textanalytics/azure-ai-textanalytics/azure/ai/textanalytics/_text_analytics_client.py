@@ -211,8 +211,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -250,12 +251,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", entities_result),
                 **kwargs
             )
-        except TypeError as error:
-            if "string_index_type" in str(error):
-                raise ValueError(
-                    "'string_index_type' is only available for API version v3.1-preview and up"
-                )
-            raise error
         except HttpResponseError as error:
             process_http_response_error(error)
 
@@ -298,8 +293,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -346,12 +342,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
-        except TypeError as error:
-            if "string_index_type" in str(error):
-                raise ValueError(
-                    "'string_index_type' is only available for API version v3.1-preview and up"
-                )
-            raise error
         except HttpResponseError as error:
             process_http_response_error(error)
 
@@ -391,8 +381,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -474,8 +465,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -674,8 +666,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         .. versionadded:: v3.1-preview
             The *show_opinion_mining* parameter.
             The *string_index_type* parameter.

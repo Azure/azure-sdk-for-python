@@ -1169,8 +1169,8 @@ class EntitiesRecognitionTask(DictMixin):
 
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+        Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
+        For additional information see https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):

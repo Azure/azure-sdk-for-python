@@ -608,3 +608,9 @@ class TestHealth(TextAnalyticsTest):
         self.assertIsNone(cancellation_result)
 
         poller.wait()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW})
+    def test_string_index_type_explicit_not_fail_v31preview(self, client):
+        result = client.begin_analyze_healthcare(["this shouldn't fail"], string_index_type="UnicodeCodePoint").result()
+        self.assertIsNotNone(result)

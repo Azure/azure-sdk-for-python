@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "this shouldn''t fail", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '77'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: '{"documents":[{"redactedText":"this shouldn''t fail","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
+    headers:
+      apim-request-id:
+      - af18175c-4254-49c8-bd61-706987f9ba05
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1
+      date:
+      - Fri, 29 Jan 2021 02:56:34 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '219'
+    status:
+      code: 200
+      message: OK
+version: 1

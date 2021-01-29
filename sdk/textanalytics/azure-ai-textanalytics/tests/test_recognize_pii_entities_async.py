@@ -589,3 +589,16 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         self.assertEqual(len(result[0].entities), 1)
         self.assertEqual(result[0].entities[0].text, '333-333-3333')
         self.assertEqual(result[0].entities[0].category, 'Phone Number')
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    async def test_string_index_type_explicit_fails_v3(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            await client.recognize_pii_entities(["this should fail"], string_index_type="UnicodeCodePoint")
+        assert "'string_index_type' is only available for API version v3.1-preview and up" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW})
+    async def test_string_index_type_explicit_not_fail_v31preview(self, client):
+        result = await client.recognize_pii_entities(["this shouldn't fail"], string_index_type="UnicodeCodePoint")
+        self.assertIsNotNone(result)

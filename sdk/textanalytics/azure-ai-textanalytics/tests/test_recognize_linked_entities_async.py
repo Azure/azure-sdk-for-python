@@ -620,3 +620,16 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
         for doc in result:
             for entity in doc.entities:
                 assert entity.bing_entity_search_api_id  # this checks if it's None and if it's empty
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    async def test_string_index_type_explicit_fails_v3(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            await client.recognize_linked_entities(["this should fail"], string_index_type="UnicodeCodePoint")
+        assert "'string_index_type' is only available for API version v3.1-preview and up" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW, "text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    async def test_string_index_type_explicit_not_fail_v31preview(self, client):
+        result = await client.recognize_linked_entities(["this shouldn't fail"], string_index_type="UnicodeCodePoint")
+        self.assertIsNotNone(result)
