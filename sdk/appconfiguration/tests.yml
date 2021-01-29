@@ -1,10 +1,9 @@
 trigger: none
 
-extends:
-  template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: false
-      BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: appconfiguration
       DeployArmTemplate: true
       EnvVars:

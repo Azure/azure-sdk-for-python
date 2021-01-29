@@ -1,9 +1,9 @@
 trigger: none
 
-extends:
-  template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: 'false'
+      AllocateResourceGroup: false
       ServiceDirectory: eventhub
       Matrix:
         Linux_Python35:
