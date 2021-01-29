@@ -51,7 +51,7 @@ class CommunicationUserIdentifierSerializer(object):
                 id=communicationIdentifier.identifier
             )
 
-        raise TypeError("Identifier type is unknown")
+        raise TypeError("Unsupported identifier type " + communicationIdentifier.__class__.__name__)
 
     @classmethod
     def deserialize(cls, identifierModel):
