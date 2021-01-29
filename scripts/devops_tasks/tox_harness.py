@@ -292,9 +292,6 @@ def replace_dev_reqs(file, pkg_root):
     req_file_name = os.path.basename(file)
     logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
 
-    import pdb
-    #pdb.set_trace()
-
     adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
     logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
 

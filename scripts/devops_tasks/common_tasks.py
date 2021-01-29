@@ -19,7 +19,6 @@ import ast
 import textwrap
 import io
 import re
-import pdb
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -363,8 +362,6 @@ def find_whl(package_name, version, whl_directory):
             )
         )
         exit(1)
-
-    # pdb.set_trace()
 
     return whls[0]
 
