@@ -44,7 +44,7 @@ from .._models import (
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
-    TextAnalysisResult
+    AnalyzeBatchActionsResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from .._async_lro import TextAnalyticsAsyncLROPollingMethod
@@ -696,7 +696,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         pii_entities_recognition_tasks=None,  # type: List[RecognizePiiEntitiesAction]
         key_phrase_extraction_tasks=None,  # type: List[ExtractKeyPhrasesAction]
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[TextAnalysisResult]]
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeBatchActionsResult]]
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -723,7 +723,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 30 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
-            object to return an instance of TextAnalysisResult.
+            object to return an instance of AnalyzeBatchActionsResult.
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:

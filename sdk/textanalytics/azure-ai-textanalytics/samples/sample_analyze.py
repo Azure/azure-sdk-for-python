@@ -64,10 +64,10 @@ class AnalyzeSample(object):
         result = poller.result()
 
         for page in result:
-            for task in page.entities_recognition_results:
+            for results in page.recognize_entities_results:
                 print("Results of Entities Recognition task:")
 
-                docs = [doc for doc in task.results if not doc.is_error]
+                docs = [doc for doc in results if not doc.is_error]
                 for idx, doc in enumerate(docs):
                     print("\nDocument text: {}".format(documents[idx]))
                     for entity in doc.entities:
@@ -77,10 +77,10 @@ class AnalyzeSample(object):
                         print("...Offset: {}".format(entity.offset))
                     print("------------------------------------------")
 
-            for task in page.pii_entities_recognition_results:
+            for results in page.recognize_pii_entities_results:
                 print("Results of PII Entities Recognition task:")
 
-                docs = [doc for doc in task.results if not doc.is_error]
+                docs = [doc for doc in results if not doc.is_error]
                 for idx, doc in enumerate(docs):
                     print("Document text: {}".format(documents[idx]))
                     for entity in doc.entities:
@@ -89,10 +89,10 @@ class AnalyzeSample(object):
                         print("Confidence Score: {}\n".format(entity.confidence_score))
                     print("------------------------------------------")
 
-            for task in page.key_phrase_extraction_results:
+            for results in page.extract_key_phrases_results:
                 print("Results of Key Phrase Extraction task:")
 
-                docs = [doc for doc in task.results if not doc.is_error]
+                docs = [doc for doc in results if not doc.is_error]
                 for idx, doc in enumerate(docs):
                     print("Document text: {}\n".format(documents[idx]))
                     print("Key Phrases: {}\n".format(doc.key_phrases))

@@ -50,7 +50,7 @@ if TYPE_CHECKING:
         RecognizePiiEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeHealthcareResultItem,
-        TextAnalysisResult
+        AnalyzeBatchActionsResult,
     )
 
 
@@ -694,7 +694,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         pii_entities_recognition_tasks=None,  # type: List[RecognizePiiEntitiesAction]
         key_phrase_extraction_tasks=None,  # type: List[ExtractKeyPhrasesAction]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[TextAnalysisResult]]
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeBatchActionsResult]]
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -720,7 +720,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return an instance of TextAnalysisResult.
+            object to return an instance of AnalyzeBatchActionsResult.
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:

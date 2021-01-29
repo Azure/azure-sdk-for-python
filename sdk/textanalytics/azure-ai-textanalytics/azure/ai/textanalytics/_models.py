@@ -1188,24 +1188,6 @@ class RecognizeEntitiesAction(DictMixin):
         )
 
 
-class EntitiesRecognitionTaskResult(DictMixin):
-    """EntitiesRecognitionTaskResult contains the results of a single Entities Recognition task,
-        including additional task metadata.
-
-    :ivar str name: The name of the task.
-    :ivar results: The results of the analysis.
-    :vartype results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.results = kwargs.get("results", [])
-
-    def __repr__(self, **kwargs):
-        return "EntitiesRecognitionTaskResult(name={}, results={})" \
-            .format(self.name, repr(self.results))[:1024]
-
-
 class RecognizePiiEntitiesAction(DictMixin):
     """RecognizePiiEntitiesAction encapsulates the parameters for starting a long-running PII
     Entities Recognition operation.
@@ -1236,24 +1218,6 @@ class RecognizePiiEntitiesAction(DictMixin):
         )
 
 
-class PiiEntitiesRecognitionTaskResult(DictMixin):
-    """PiiEntitiesRecognitionTaskResult contains the results of a single PII Entities Recognition task,
-    including additional task metadata.
-
-    :ivar str name: The name of the task.
-    :ivar results: The results of the analysis.
-    :vartype results: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult]
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.results = kwargs.get("results", [])
-
-    def __repr__(self, **kwargs):
-        return "PiiEntitiesRecognitionTaskResult(name={}, results={})" \
-            .format(self.name, repr(self.results))[:1024]
-
-
 class ExtractKeyPhrasesAction(DictMixin):
     """ExtractKeyPhrasesAction encapsulates the parameters for starting a long-running key phrase
     extraction operation
@@ -1280,49 +1244,31 @@ class ExtractKeyPhrasesAction(DictMixin):
         )
 
 
-class KeyPhraseExtractionTaskResult(DictMixin):
-    """KeyPhraseExtractionTaskResult contains the results of a single Key Phrase Extraction task, including additional
-        task metadata.
+class AnalyzeBatchActionsResult(DictMixin):
+    """AnalyzeBatchActionsResult contains the results of multiple text analyses performed on a batch of documents.
 
-    :ivar str name: The name of the task.
-    :ivar results: The results of the analysis.
-    :vartype results: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult]
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.results = kwargs.get("results", [])
-
-    def __repr__(self, **kwargs):
-        return "KeyPhraseExtractionTaskResult(name={}, results={})" \
-            .format(self.name, repr(self.results))[:1024]
-
-
-class TextAnalysisResult(DictMixin):
-    """TextAnalysisResult contains the results of multiple text analyses performed on a batch of documents.
-
-    :ivar entities_recognition_results: A list of objects containing results for all Entity Recognition tasks
+    :ivar recognize_entities_results: A list of objects containing results for all Entity Recognition tasks
         included in the analysis.
-    :vartype entities_recognition_results: list[~azure.ai.textanalytics.EntitiesRecognitionTaskResult]
-    :ivar pii_entities_recognition_results: A list of objects containing results for all PII Entity Recognition
+    :vartype recognize_entities_results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
+    :ivar recognize_pii_entities_results: A list of objects containing results for all PII Entity Recognition
         tasks included in the analysis.
-    :vartype pii_entities_recogition_results: list[~azure.ai.textanalytics.PiiEntitiesRecognitionTaskResult]
-    :ivar key_phrase_extraction_results: A list of objects containing results for all Key Phrase Extraction tasks
+    :vartype recognize_pii_entities_results: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult]
+    :ivar extract_key_phrases_results: A list of objects containing results for all Key Phrase Extraction tasks
         included in the analysis.
-    :vartype key_phrase_extraction_results: list[~azure.ai.textanalytics.KeyPhraseExtractionTaskResult]
+    :vartype extract_key_phrases_results: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult]
     """
     def __init__(self, **kwargs):
-        self.entities_recognition_results = kwargs.get("entities_recognition_results", [])
-        self.pii_entities_recognition_results = kwargs.get("pii_entities_recognition_results", [])
-        self.key_phrase_extraction_results = kwargs.get("key_phrase_extraction_results", [])
+        self.recognize_entities_results = kwargs.get("recognize_entities_results", [])
+        self.recognize_pii_entities_results = kwargs.get("recognize_pii_entities_results", [])
+        self.extract_key_phrases_results = kwargs.get("extract_key_phrases_results", [])
 
     def __repr__(self):
-        return "TextAnalysisResult(entities_recognition_results={}, pii_entities_recognition_results={}, \
-            key_phrase_extraction_results={})" \
+        return "AnalyzeBatchActionsResult(recognize_entities_results={}, recognize_pii_entities_results={}, \
+            extract_key_phrases_results={})" \
             .format(
-                repr(self.entities_recognition_results),
-                repr(self.pii_entities_recognition_results),
-                repr(self.key_phrase_extraction_results)
+                repr(self.recognize_entities_results),
+                repr(self.recognize_pii_entities_results),
+                repr(self.extract_key_phrases_results)
             )[:1024]
 
 

@@ -39,7 +39,7 @@ from ._models import (
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
-    TextAnalysisResult,
+    AnalyzeBatchActionsResult,
     RequestStatistics
 )
 from._paging import AnalyzeHealthcareResult
@@ -79,7 +79,7 @@ __all__ = [
     'RecognizeEntitiesAction',
     'RecognizePiiEntitiesAction',
     'ExtractKeyPhrasesAction',
-    'TextAnalysisResult',
+    'AnalyzeBatchActionsResult',
     'RequestStatistics'
 ]
 

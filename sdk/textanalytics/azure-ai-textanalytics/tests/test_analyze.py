@@ -56,10 +56,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_results = results_pages[0].key_phrase_extraction_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
+        results = results_pages[0].extract_key_phrases_results
         self.assertEqual(len(results), 2)
 
         for phrases in results:
@@ -87,10 +84,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_results = results_pages[0].entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
+        results = results_pages[0].recognize_entities_results
         self.assertEqual(len(results), 3)
 
         for doc in results:
@@ -122,10 +116,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_results = results_pages[0].pii_entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
+        results = results_pages[0].recognize_pii_entities_results
         self.assertEqual(len(results), 3)
 
         self.assertEqual(results[0].entities[0].text, "859-98-0987")
@@ -160,10 +151,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        key_phrase_task_results = results_pages[0].key_phrase_extraction_results
-        self.assertEqual(len(key_phrase_task_results), 1)
-
-        results = key_phrase_task_results[0].results
+        results = results_pages[0].extract_key_phrases_results
         self.assertEqual(len(results), 2)
 
         for phrases in results:
@@ -190,10 +178,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_results = results_pages[0].entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
+        results = results_pages[0].recognize_entities_results
         self.assertEqual(len(results), 3)
 
         for doc in results:
@@ -223,10 +208,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_results = results_pages[0].pii_entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
+        results = results_pages[0].recognize_pii_entities_results
         self.assertEqual(len(results), 3)
 
         self.assertEqual(results[0].entities[0].text, "859-98-0987")
@@ -261,10 +243,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        key_phrase_task_results = results_pages[0].key_phrase_extraction_results
-        self.assertEqual(len(key_phrase_task_results), 1)
-
-        results = key_phrase_task_results[0].results
+        results = results_pages[0].extract_key_phrases_results
         self.assertEqual(len(results), 2)
 
         self.assertIn("Paul Allen", results[0].key_phrases)
@@ -303,10 +282,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_results = results_pages[0].entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
+        results = results_pages[0].recognize_entities_results
         self.assertEqual(len(results), 3)
 
         self.assertEqual(len(results[0].entities), 4)
@@ -336,10 +312,7 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_results = results_pages[0].pii_entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
+        results = results_pages[0].recognize_pii_entities_results
         self.assertEqual(len(results), 3)
 
         self.assertEqual(results[0].entities[0].text, "859-98-0987")
@@ -391,17 +364,14 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(results_pages[0], result_type)
             self.assertEqual(len(results), 5)
 
             for idx, doc in enumerate(results):
@@ -488,19 +458,16 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
         in_order = ["56", "0", "19", "1"]
 
-        for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(results_pages[0], result_type)
             self.assertEqual(len(results), len(docs))
 
             for idx, resp in enumerate(results):
@@ -527,17 +494,14 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(results_pages[0], result_type)
             self.assertEqual(len(results), len(docs))
 
             # self.assertEqual(results.statistics.document_count, 5)
@@ -563,17 +527,14 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(response[0], result_type)
             for r in results:
                 self.assertFalse(r.is_error)
 
@@ -596,17 +557,14 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(response[0], result_type)
             for r in results:
                 self.assertFalse(r.is_error)
 
@@ -625,17 +583,14 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(response[0], result_type)
             for r in results:
                 self.assertFalse(r.is_error)
 
@@ -662,17 +617,14 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(response[0], result_type)
             for r in results:
                 self.assertFalse(r.is_error)
 
@@ -693,17 +645,14 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(response[0], result_type)
             for r in results:
                 self.assertFalse(r.is_error)
 
@@ -727,17 +676,14 @@ class TestAnalyze(TextAnalyticsTest):
         ).result())
 
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(response[0], result_type)
             for r in results:
                 self.assertFalse(r.is_error)
 
@@ -757,17 +703,14 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
+        for result_type in result_types:
+            results = getattr(response[0], result_type)
             for r in results:
                 self.assertFalse(r.is_error)
 
@@ -790,18 +733,16 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
-            self.assertEqual(len(tasks), 1)
-            self.assertEqual(len(tasks[0].results), 3)
+        for result_type in result_types:
+            results = getattr(response[0], result_type)  # only expecting a single page of results here
 
-            for r in tasks[0].results:
+            for r in results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -816,17 +757,15 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
-            self.assertEqual(len(tasks), 1)
-
-            for r in tasks[0].results:
+        for result_type in result_types:
+            results = getattr(response[0], result_type)  # only expecting a single page of results here
+            for r in results:
                 self.assertTrue(r.is_error)
 
     @pytest.mark.playback_test_only
@@ -841,17 +780,15 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
-            self.assertEqual(len(tasks), 1)
-
-            for r in tasks[0].results:
+        for result_type in result_types:
+            results = getattr(response[0], result_type)  # only expecting a single page of results here
+            for r in results:
                 self.assertTrue(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -965,17 +902,21 @@ class TestAnalyze(TextAnalyticsTest):
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
-        for task_type in task_types:
-            tasks = getattr(results_pages[0], task_type)  # only expecting a single page of results here
-            self.assertEqual(len(tasks), 1)
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
+        ]
 
-            for r in tasks[0].results:
+        for result_type in result_types:
+            results = getattr(results_pages[0], result_type)  # only expecting a single page of results here
+            for r in results:
                 self.assertTrue(r.is_error)  # This is not the optimal way to represent this failure.  We are discussing a solution with the service team.
 
     @pytest.mark.playback_test_only
@@ -1080,20 +1021,17 @@ class TestAnalyze(TextAnalyticsTest):
 
         # self.assertIsNotNone(result.statistics)  # statistics not working at the moment, but a bug has been filed on the service to correct this.
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        result_types = [
+            "recognize_entities_results",
+            "recognize_pii_entities_results",
+            "extract_key_phrases_results",
         ]
 
         expected_results_per_page = [20, 5]
 
         for idx, page in enumerate(pages):
-            for task_type in task_types:
-                task_results = getattr(page, task_type)
-                self.assertEqual(len(task_results), 1)
-
-                results = task_results[0].results
+            for result_type in result_types:
+                results = getattr(page, result_type)
                 self.assertEqual(len(results), expected_results_per_page[idx])
 
                 for doc in results:
