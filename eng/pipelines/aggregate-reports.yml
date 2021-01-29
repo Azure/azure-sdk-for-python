@@ -28,7 +28,7 @@ jobs:
       GdnBreakGdnToolCredScan: true
       GdnBreakGdnToolCredScanSeverity: Error   
       GdnBreakOutputBaselineFile: python
-      GdnBreakOutputBaseline: demobaseline
+      GdnBreakOutputBaseline: baseline
       # GdnBreakBaselineFiles: $(Build.SourcesDirectory)\eng\python.gdnbaselines
       # GdnBreakBaselines: baseline   
     continueOnError: true
