@@ -49,12 +49,11 @@ jobs:
       GdnBreakAllTools: false
       GdnBreakGdnToolCredScan: true
       GdnBreakGdnToolCredScanSeverity: Error
-      # GdnBreakBaselineFiles: $(Build.SourcesDirectory)\eng\python.gdnbaselines
-      # GdnBreakBaselines: baseline   
+      GdnBreakBaselineFiles: $(Build.SourcesDirectory)\eng\python.gdnbaselines
+      GdnBreakBaselines: baseline   
       # Used for generating baseline file.   
-      GdnBreakOutputBaselineFile: python
-      GdnBreakOutputBaseline: baseline
-    continueOnError: true
+      # GdnBreakOutputBaselineFile: python
+      # GdnBreakOutputBaseline: baseline
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
     displayName: 'Publish Security Analysis Logs'
     continueOnError: true
