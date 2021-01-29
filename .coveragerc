@@ -9,8 +9,7 @@ omit =
 [paths]
 source =
 	sdk/
-	D:\*\sdk
-	/mnt/vss-agent-2.181.1/_work/1/s/sdk
+	**/sdk
 
 [report]
 exclude_lines =

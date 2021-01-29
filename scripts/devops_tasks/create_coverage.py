@@ -113,7 +113,7 @@ def generate_coverage_xml():
     # coverage_path = os.path.join(root_dir, ".coverage")
     if os.path.exists(coverage_dir):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"']
+        commands = ["coverage", "xml", "--omit", '"*test*,*example*"'] # add the "-i" back eventually
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
@@ -151,21 +151,29 @@ def fix_dot_coverage_file():
     out = None
     with open('.coverage') as cov_file:
         line = cov_file.read()
-        sdks = [m.start() for m in re.finditer("/sdk/", line)]
-        print(sdks)
-        if len(sdks):
-            # print(sdks)
-            file_starts = [m.start() for m in re.finditer('"/', line)]
-            # print(file_starts)
-            print(len(sdks), len(file_starts))
+        l = len(line)
+        out = line.replace("\\\\.tox\\\\whl\\\\lib\\\\python3.9\\\\site-packages", "\\\\")
+        o = len(out)
+        print(out)
+        print(l, o)
+        # locs = line.split("/.tox/whl/lib/python3.9/site-packages")
+        # print(locs)
+        # sdks = [m.start() for m in re.finditer("/sdk/", line)]
+        # print(sdks)
+        # if len(sdks):
+        #     # print(sdks)
+        #     file_starts = [m.start() for m in re.finditer('"/', line)]
+        #     # print(file_starts)
+        #     print(len(sdks), len(file_starts))
 
-            str_to_replace = line[file_starts[0]+1 : sdks[0]] + '/'
-            print(str_to_replace)
+        #     str_to_replace = line[file_starts[0]+1 : sdks[0]] + '/'
+        #     print(str_to_replace)
 
-            out = line.replace(str_to_replace, replacement)
-            out = out.replace('\\', '/')
-        else:
-            print("coverage files were created on this machine")
+        #     out = line.replace(str_to_replace, replacement)
+        out = out.replace('//', '/')
+        # else:
+        #     print("coverage files were created on this machine")
+        # print(out)
 
     if out:
         with open('.coverage', 'w') as cov_file:
@@ -174,5 +182,5 @@ def fix_dot_coverage_file():
 
 if __name__ == "__main__":
     collect_tox_coverage_files()
-    # fix_dot_coverage_file()
+    fix_dot_coverage_file()
     generate_coverage_xml()

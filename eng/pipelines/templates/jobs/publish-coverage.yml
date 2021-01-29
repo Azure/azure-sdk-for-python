@@ -31,7 +31,6 @@ jobs:
           path: '$(Build.SourcesDirectory)/_all_coverage_files'
 
       - pwsh: |
-          Get-ChildItem $(Build.SourcesDirectory)/ -Recurse
           pip install coverage==4.5.4
         displayName: Install coverage
 
@@ -42,6 +41,7 @@ jobs:
               Get-Content $_
             }
           }
+        displayName: Show all coverage files
 
       - task: PythonScript@0
         displayName: 'Create Coverage Report'
