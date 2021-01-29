@@ -692,9 +692,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        entities_recognition_tasks=None,  # type: List[RecognizeEntitiesAction]
-        pii_entities_recognition_tasks=None,  # type: List[RecognizePiiEntitiesAction]
-        key_phrase_extraction_tasks=None,  # type: List[ExtractKeyPhrasesAction]
+        recognize_entities_actions=None,  # type: List[RecognizeEntitiesAction]
+        recognize_pii_entities_actions=None,  # type: List[RecognizePiiEntitiesAction]
+        extract_key_phrases_actions=None,  # type: List[ExtractKeyPhrasesAction]
         **kwargs  # type: Any
     ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeBatchActionsResult]]
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
@@ -752,14 +752,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         try:
             analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
                 entity_recognition_tasks=[
-                    t.to_generated() for t in entities_recognition_tasks
-                ] if entities_recognition_tasks else [],
+                    t.to_generated() for t in recognize_entities_actions
+                ] if recognize_entities_actions else [],
                 entity_recognition_pii_tasks=[
-                    t.to_generated() for t in pii_entities_recognition_tasks
-                ] if pii_entities_recognition_tasks else [],
+                    t.to_generated() for t in recognize_pii_entities_actions
+                ] if recognize_pii_entities_actions else [],
                 key_phrase_extraction_tasks=[
-                    t.to_generated() for t in key_phrase_extraction_tasks
-                ] if key_phrase_extraction_tasks else []
+                    t.to_generated() for t in extract_key_phrases_actions
+                ] if extract_key_phrases_actions else []
             )
             analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
                 display_name=display_name,

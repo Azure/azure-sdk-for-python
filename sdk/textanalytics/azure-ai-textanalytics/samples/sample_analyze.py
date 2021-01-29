@@ -56,9 +56,9 @@ class AnalyzeSample(object):
         poller = text_analytics_client.begin_analyze_batch_actions(
             documents,
             display_name="Sample Text Analysis",
-            entities_recognition_tasks=[RecognizeEntitiesAction()],
-            pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
-            key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()]
+            recognize_entities_actions=[RecognizeEntitiesAction()],
+            recognize_pii_entities_actions=[RecognizePiiEntitiesAction()],
+            extract_key_phrases_actions=[ExtractKeyPhrasesAction()]
         )
 
         result = poller.result()
