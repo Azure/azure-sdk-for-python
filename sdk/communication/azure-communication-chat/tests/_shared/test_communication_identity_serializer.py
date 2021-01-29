@@ -177,6 +177,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         )
 
         assert isinstance(unknown_identifier, UnknownIdentifier)
+        assert unknown_identifier.identifier == "an id"
         
 
 if __name__ == "__main__":
