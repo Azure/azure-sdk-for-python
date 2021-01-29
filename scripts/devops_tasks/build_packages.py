@@ -22,11 +22,10 @@ tox_path = os.path.abspath(os.path.join(root_dir, "eng", "tox"))
 sys.path.append(tox_path)
 from sanitize_setup import process_requires
 
-def build_packages(targeted_packages, distribution_directory, service, is_dev_build=False):
+def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
     # run the build and distribution
     for package_root in targeted_packages:
-        if service:
-            service_hierarchy = os.path.join(os.path.basename(package_root))
+        service_hierarchy = os.path.join(os.path.basename(package_root))
         if is_dev_build:
             verify_update_package_requirement(package_root)
         print("Generating Package Using Python {}".format(sys.version))
@@ -108,5 +107,5 @@ if __name__ == "__main__":
         args.glob_string, target_dir, args.package_filter_string
     )
     build_packages(
-        targeted_packages, args.distribution_directory, args.service, str_to_bool(args.is_dev_build)
+        targeted_packages, args.distribution_directory, str_to_bool(args.is_dev_build)
     )
