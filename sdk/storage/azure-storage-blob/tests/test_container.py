@@ -312,6 +312,17 @@ class StorageContainerTest(StorageTestCase):
         self.assertDictEqual(md, metadata)
 
     @GlobalStorageAccountPreparer()
+    def test_container_exists(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+
+        container1 = self._create_container(bsc, prefix="container1")
+        container2_name = self._get_container_reference(prefix="container2")
+        container2 = bsc.get_container_client(container2_name)
+
+        self.assertTrue(container1.exists())
+        self.assertFalse(container2.exists())
+
+    @GlobalStorageAccountPreparer()
     def test_get_container_properties(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
