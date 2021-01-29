@@ -19,7 +19,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sachinssoftdelete3.blob.core.windows.net/fs1dc581ff4?restype=container
+    uri: https://storagename.blob.core.windows.net/fs1dc581ff4?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: DELETE
-    uri: https://sachinssoftdelete3.blob.core.windows.net/fs1dc581ff4?restype=container
+    uri: https://storagename.blob.core.windows.net/fs1dc581ff4?restype=container
   response:
     body:
       string: ''
@@ -99,7 +99,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sachinssoftdelete3.blob.core.windows.net/fs2dc581ff4?restype=container
+    uri: https://storagename.blob.core.windows.net/fs2dc581ff4?restype=container
   response:
     body:
       string: ''

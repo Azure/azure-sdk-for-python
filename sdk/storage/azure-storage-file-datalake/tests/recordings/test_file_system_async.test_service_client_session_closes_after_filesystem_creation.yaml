@@ -13,7 +13,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sachinssoftdelete3.blob.core.windows.net/fs1a55d2271?restype=container
+    uri: https://storagename.blob.core.windows.net/fs1a55d2271?restype=container
   response:
     body:
       string: ''
@@ -28,7 +28,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.blob.core.windows.net/fs1a55d2271?restype=container
+    url: https://storagename.blob.core.windows.net/fs1a55d2271?restype=container
 - request:
     body: null
     headers:
@@ -43,7 +43,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: DELETE
-    uri: https://sachinssoftdelete3.blob.core.windows.net/fs1a55d2271?restype=container
+    uri: https://storagename.blob.core.windows.net/fs1a55d2271?restype=container
   response:
     body:
       string: ''
@@ -56,7 +56,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://sachinssoftdelete3.blob.core.windows.net/fs1a55d2271?restype=container
+    url: https://storagename.blob.core.windows.net/fs1a55d2271?restype=container
 - request:
     body: null
     headers:
@@ -71,7 +71,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sachinssoftdelete3.blob.core.windows.net/fs2a55d2271?restype=container
+    uri: https://storagename.blob.core.windows.net/fs2a55d2271?restype=container
   response:
     body:
       string: ''
@@ -86,5 +86,5 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sachinssoftdelete3.blob.core.windows.net/fs2a55d2271?restype=container
+    url: https://storagename.blob.core.windows.net/fs2a55d2271?restype=container
 version: 1
