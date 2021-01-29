@@ -32,9 +32,9 @@ class AnalyzeSample(object):
         # [START analyze]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient, \
-            EntitiesRecognitionTask, \
-            PiiEntitiesRecognitionTask, \
-            KeyPhraseExtractionTask
+            RecognizeEntitiesAction, \
+            RecognizePiiEntitiesAction, \
+            ExtractKeyPhrasesAction
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -56,9 +56,9 @@ class AnalyzeSample(object):
         poller = text_analytics_client.begin_analyze_batch_actions(
             documents,
             display_name="Sample Text Analysis",
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+            entities_recognition_tasks=[RecognizeEntitiesAction()],
+            pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
+            key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()]
         )
 
         result = poller.result()

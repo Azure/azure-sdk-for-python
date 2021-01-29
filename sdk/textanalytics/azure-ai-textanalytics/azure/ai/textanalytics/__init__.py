@@ -36,9 +36,9 @@ from ._models import (
     HealthcareEntity,
     HealthcareRelation,
     HealthcareEntityLink,
-    EntitiesRecognitionTask,
-    PiiEntitiesRecognitionTask,
-    KeyPhraseExtractionTask,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
     TextAnalysisResult,
     RequestStatistics
 )
@@ -76,9 +76,9 @@ __all__ = [
     'HealthcareEntity',
     'HealthcareRelation',
     'HealthcareEntityLink',
-    'EntitiesRecognitionTask',
-    'PiiEntitiesRecognitionTask',
-    'KeyPhraseExtractionTask',
+    'RecognizeEntitiesAction',
+    'RecognizePiiEntitiesAction',
+    'ExtractKeyPhrasesAction',
     'TextAnalysisResult',
     'RequestStatistics'
 ]

@@ -499,7 +499,7 @@ This sample demonstrates the usage for [long-running operations](#long-running-o
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import (
-    TextAnalyticsClient, EntitiesRecognitionTask, PiiEntitiesRecognitionTask, KeyPhraseExtractionTask
+    TextAnalyticsClient, RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction
 )
 
 credential = AzureKeyCredential("<api_key>")
@@ -512,9 +512,9 @@ documents = ["Microsoft was founded by Bill Gates and Paul Allen."]
 poller = text_analytics_client.begin_analyze_batch_actions(
     documents,
     display_name="Sample Text Analysis",
-    entities_recognition_tasks=[EntitiesRecognitionTask()],
-    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+    entities_recognition_tasks=[RecognizeEntitiesAction()],
+    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
+    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()]
 )
 
 result = poller.result()

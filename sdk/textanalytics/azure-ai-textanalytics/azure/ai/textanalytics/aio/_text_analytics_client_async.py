@@ -41,9 +41,9 @@ from .._models import (
     DocumentError,
     RecognizePiiEntitiesResult,
     AnalyzeHealthcareResultItem,
-    EntitiesRecognitionTask,
-    PiiEntitiesRecognitionTask,
-    KeyPhraseExtractionTask,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
     TextAnalysisResult
 )
 from .._lro import TextAnalyticsOperationResourcePolling
@@ -692,9 +692,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        entities_recognition_tasks=None,  # type: List[EntitiesRecognitionTask]
-        pii_entities_recognition_tasks=None,  # type: List[PiiEntitiesRecognitionTask]
-        key_phrase_extraction_tasks=None,  # type: List[KeyPhraseExtractionTask]
+        entities_recognition_tasks=None,  # type: List[RecognizeEntitiesAction]
+        pii_entities_recognition_tasks=None,  # type: List[RecognizePiiEntitiesAction]
+        key_phrase_extraction_tasks=None,  # type: List[ExtractKeyPhrasesAction]
         **kwargs  # type: Any
     ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[TextAnalysisResult]]
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
@@ -709,9 +709,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[dict[str, str]]
         :param tasks: A list of tasks to include in the analysis.  Each task object encapsulates the parameters
             used for the particular task type.
-        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask,
-            ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask,
-            ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
+        :type tasks: list[Union[~azure.ai.textanalytics.RecognizeEntitiesAction,
+            ~azure.ai.textanalytics.RecognizePiiEntitiesAction, ~azure.ai.textanalytics.EntityLinkingTask,
+            ~azure.ai.textanalytics.ExtractKeyPhrasesAction, ~azure.ai.textanalytics.SentimentAnalysisTask]]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.

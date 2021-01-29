@@ -22,9 +22,9 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    EntitiesRecognitionTask,
-    PiiEntitiesRecognitionTask,
-    KeyPhraseExtractionTask
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -64,7 +64,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
                 show_stats=True,
                 polling_interval=self._interval()
             )).result()
@@ -102,7 +102,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
                 show_stats=True,
                 polling_interval=self._interval()
             )).result()
@@ -141,7 +141,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 show_stats=True,
                 polling_interval=self._interval()
             )).result()
@@ -184,7 +184,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -221,7 +221,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -259,7 +259,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -299,7 +299,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -328,7 +328,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 response = await (await client.begin_analyze_batch_actions(
                     docs,
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
                     polling_interval=self._interval()
                 )).result()
 
@@ -344,7 +344,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -379,7 +379,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -423,9 +423,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -460,9 +460,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 response = await client.begin_analyze_batch_actions(
                     ["This is written in English."],
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )
 
@@ -476,9 +476,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 response = await client.begin_analyze_batch_actions(
                     ["This is written in English."],
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )
 
@@ -492,9 +492,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 response = await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )
 
@@ -511,9 +511,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 response = await (await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )).result()
 
@@ -529,10 +529,10 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
+                entities_recognition_tasks=[RecognizeEntitiesAction(model_version="bad")],
                 # at this moment this should cause all documents to be errors, which isn't correct behavior but I'm using it here to test document ordering with errors.  :)
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -570,9 +570,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="latest")],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="latest")],
+                entities_recognition_tasks=[RecognizeEntitiesAction(model_version="latest")],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction(model_version="latest")],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction(model_version="latest")],
                 show_stats=True,
                 polling_interval=self._interval()
             )).result()
@@ -613,9 +613,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 language="en",
                 polling_interval=self._interval()
             )).result()
@@ -651,9 +651,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 language="",
                 polling_interval=self._interval()
             )).result()
@@ -688,9 +688,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -731,9 +731,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 language="en",
                 polling_interval=self._interval()
             )).result()
@@ -767,9 +767,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 language="en",
                 polling_interval=self._interval()
             )).result()
@@ -805,9 +805,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 language="en",
                 polling_interval=self._interval()
             )).result()
@@ -841,9 +841,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 language="en",
                 polling_interval=self._interval()
             )).result()
@@ -879,9 +879,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -911,9 +911,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             response = await (await client.begin_analyze_batch_actions(
                 ["This should fail because we're passing in an invalid language hint"],
                 language="notalanguage",
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -942,9 +942,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             response = await (await client.begin_analyze_batch_actions(
                 [{"id": "1", "language": "notalanguage",
                   "text": "This should fail because we're passing in an invalid language hint"}],
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -980,9 +980,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -992,18 +992,18 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             with self.assertRaises(ClientAuthenticationError):
                 response = await (await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )).result()
 
             credential.update(text_analytics_account_key)  # Authenticate successfully again
             response = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
             self.assertIsNotNone(response)
@@ -1024,9 +1024,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             poller = await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )
 
@@ -1046,7 +1046,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 result = await (await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
+                    entities_recognition_tasks=[RecognizeEntitiesAction(model_version="bad")],
                     polling_interval=self._interval()
                 )).result()
 
@@ -1060,9 +1060,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             response = await(await
             client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")],
+                entities_recognition_tasks=[RecognizeEntitiesAction(model_version="latest")],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction(model_version="bad")],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction(model_version="bad")],
                 polling_interval=self._interval()
             )).result()
 
@@ -1095,9 +1095,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 result = await (await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")],
+                    entities_recognition_tasks=[RecognizeEntitiesAction(model_version="bad")],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction(model_version="bad")],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction(model_version="bad")],
                     polling_interval=self._interval()
                 )).result()
 
@@ -1109,9 +1109,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )
         assert "Input documents cannot be a dict" in str(excinfo.value)
@@ -1124,9 +1124,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )
         assert "Input documents can not be empty or None" in str(excinfo.value)
@@ -1150,9 +1150,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 result = await (await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )).result()
 
@@ -1165,9 +1165,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             res = await (await client.begin_analyze_batch_actions(
                 documents=["Test passing cls to endpoint"],
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 cls=callback,
                 polling_interval=self._interval()
             )).result()
@@ -1183,9 +1183,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             result = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction()],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 show_stats=True,
                 polling_interval=self._interval()
             )).result()
@@ -1229,9 +1229,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             result = await (await client.begin_analyze_batch_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                entities_recognition_tasks=[RecognizeEntitiesAction(model_version="bad")],
+                key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                 polling_interval=self._interval()
             )).result()
 
@@ -1272,9 +1272,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 await client.begin_analyze_batch_actions(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask()],
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    entities_recognition_tasks=[RecognizeEntitiesAction()],
+                    key_phrase_extraction_tasks=[ExtractKeyPhrasesAction()],
+                    pii_entities_recognition_tasks=[RecognizePiiEntitiesAction()],
                     polling_interval=self._interval()
                 )
         assert excinfo.value.status_code == 400

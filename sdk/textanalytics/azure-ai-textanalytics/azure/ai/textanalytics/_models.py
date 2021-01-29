@@ -1163,9 +1163,12 @@ class SentimentConfidenceScores(DictMixin):
         return "SentimentConfidenceScores(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]
 
+class RecognizeEntitiesAction(DictMixin):
+    """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Entities Recognition operation.
 
-class EntitiesRecognitionTask(DictMixin):
-    """EntitiesRecognitionTask encapsulates the parameters for starting a long-running Entities Recognition operation.
+    If you just want to recognize entities in a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `recognize_entities` instead
+    of interfacting with this model.
 
     :ivar str model_version: The model version to use for the analysis.
     """
@@ -1174,7 +1177,7 @@ class EntitiesRecognitionTask(DictMixin):
         self.model_version = kwargs.get("model_version", "latest")
 
     def __repr__(self, **kwargs):
-        return "EntitiesRecognitionTask(model_version={})" \
+        return "RecognizeEntitiesAction(model_version={})" \
             .format(self.model_version)[:1024]
 
     def to_generated(self):
@@ -1203,13 +1206,17 @@ class EntitiesRecognitionTaskResult(DictMixin):
             .format(self.name, repr(self.results))[:1024]
 
 
-class PiiEntitiesRecognitionTask(DictMixin):
-    """PiiEntitiesRecognitionTask encapsulates the parameters for starting a
-    long-running PII Entities Recognition operation.
+class RecognizePiiEntitiesAction(DictMixin):
+    """RecognizePiiEntitiesAction encapsulates the parameters for starting a long-running PII
+    Entities Recognition operation.
+
+    If you just want to recognize pii entities in a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `recognize_pii_entities` instead
+    of interfacting with this model.
 
     :ivar str model_version: The model version to use for the analysis.
     :ivar str domain: An optional string to set the PII domain to include only a
-    subset of the entity categories. Possible values include 'PHI' or None.
+    subset of the PII entity categories. Possible values include 'PHI' or None.
     """
 
     def __init__(self, **kwargs):
@@ -1217,7 +1224,7 @@ class PiiEntitiesRecognitionTask(DictMixin):
         self.domain = kwargs.get("domain", None)
 
     def __repr__(self, **kwargs):
-        return "PiiEntitiesRecognitionTask(model_version={}, domain={})" \
+        return "RecognizePiiEntitiesAction(model_version={}, domain={})" \
             .format(self.model_version, self.domain)[:1024]
 
     def to_generated(self):
@@ -1231,7 +1238,7 @@ class PiiEntitiesRecognitionTask(DictMixin):
 
 class PiiEntitiesRecognitionTaskResult(DictMixin):
     """PiiEntitiesRecognitionTaskResult contains the results of a single PII Entities Recognition task,
-        including additional task metadata.
+    including additional task metadata.
 
     :ivar str name: The name of the task.
     :ivar results: The results of the analysis.
@@ -1247,8 +1254,13 @@ class PiiEntitiesRecognitionTaskResult(DictMixin):
             .format(self.name, repr(self.results))[:1024]
 
 
-class KeyPhraseExtractionTask(DictMixin):
-    """KeyPhraseExtractionTask encapsulates the parameters for starting a long-running Key Phrase Extraction operation.
+class ExtractKeyPhrasesAction(DictMixin):
+    """ExtractKeyPhrasesAction encapsulates the parameters for starting a long-running key phrase
+    extraction operation
+
+    If you just want to extract key phrases from a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `extract_key_phrases` instead
+    of interfacting with this model.
 
     :ivar str model_version: The model version to use for the analysis.
     """
@@ -1257,7 +1269,7 @@ class KeyPhraseExtractionTask(DictMixin):
         self.model_version = kwargs.get("model_version", "latest")
 
     def __repr__(self, **kwargs):
-        return "KeyPhraseExtractionTask(model_version={})" \
+        return "ExtractKeyPhrasesAction(model_version={})" \
             .format(self.model_version)[:1024]
 
     def to_generated(self):
