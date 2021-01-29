@@ -29,11 +29,11 @@ steps:
   - pwsh: |
       Get-ChildItem .\ -Filter "*.py" |
       Foreach-Object {
-        (Get-Content $_ -Raw) -match "\r\n$" && Write-Output $_
+        (Get-Content $_ -Raw) -match "\r\n" && Write-Output $_
       }
       Get-ChildItem .\ -Filter "*.md" |
       Foreach-Object {
-        (Get-Content $_ -Raw) -match "\r\n$" && Write-Output $_
+        (Get-Content $_ -Raw) -match "\r\n" && Write-Output $_
       }
     displayName: Check for CRLF Line endings
 
