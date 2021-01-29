@@ -109,7 +109,7 @@ class CommunicationIdentityClient:
         """
         return await self._identity_service_client.communication_identity.create(
             create_token_with_scopes=scopes,
-            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id), 
+            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id),
                 AccessToken(u.access_token.token, u.access_token.expires_on)),
             **kwargs)
 
