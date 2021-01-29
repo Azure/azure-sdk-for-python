@@ -52,7 +52,7 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
 
     :param kind: Required. Kind of Communication Identifier.
     :type kind: CommunicationIdentifierKind
-    :param id: identifies the Communication Identitity.
+    :param id: Full id of the identitifier.
     :type id: str
     :param phone_number: phone number in case the identity is phone number.
     :type phone_number: str
