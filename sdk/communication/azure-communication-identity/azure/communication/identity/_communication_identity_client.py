@@ -5,10 +5,10 @@
 # ------------------------------------
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.credentials import AccessToken
 
 from ._generated._communication_identity_client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
-from ._generated.models import CommunicationUserToken
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._shared.models import CommunicationUserIdentifier
 from ._version import SDK_MONIKER
@@ -95,17 +95,18 @@ class CommunicationIdentityClient(object):
             scopes, # type: List[Union[str, "_model.CommunicationTokenScope"]]
             **kwargs # type: Any
         ):
-        # type: (...) -> Tuple[CommunicationUserIdentifier, CommunicationUserToken]
+        # type: (...) -> Tuple[CommunicationUserIdentifier, AccessToken]
         """create a single Communication user with an identity token.
         :param scopes:
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
         :return: A CommunicationUser and a CommunicationIdentityToken tuple.
         :rtype: tuple of (~azure.communication.identity.CommunicationUser, \
-~azure.communication.identity.CommunicationIdentityToken)
+~azure.core.credentials.AccessToken)
         """
         return self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id), u.access_token),
+            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id), 
+                AccessToken(u.access_token.token, u.access_token.expires_on)),
             create_token_with_scopes=scopes,
             **kwargs)
 
@@ -134,7 +135,7 @@ class CommunicationIdentityClient(object):
             scopes, # List[Union[str, "_model.CommunicationTokenScope"]]
             **kwargs # type: Any
         ):
-        # type: (...) -> CommunicationUserToken
+        # type: (...) -> AccessToken
         """Generates a new token for an identity.
 
         :param user: Azure Communication User
@@ -142,12 +143,13 @@ class CommunicationIdentityClient(object):
         :param scopes:
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
-        :return: CommunicationUserToken
-        :rtype: ~azure.communication.identity.CommunicationUserToken
+        :return: AccessToken
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return self._identity_service_client.communication_identity.issue_access_token(
             user.identifier,
             scopes,
+            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
 
     @distributed_trace

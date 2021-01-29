@@ -18,22 +18,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:bfdef7ee-81ef-49f2-8225-8fc46b6375ca_00000007-ea20-a5c5-0338-3b3a0d000348"}}'
+      string: '{"identity": {"id": "8:acs:036cb0f3-31ab-4245-aa9c-fe6263a441cf_00000007-eb1d-307f-6a0b-343a0d0006d0"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 18:26:18 GMT
+      - Thu, 28 Jan 2021 23:02:09 GMT
       ms-cv:
-      - aWfeg9AErUumovuCa1Pbag.0
+      - grHGYr0FUkWxFNh5Yz95Gg.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 238ms
+      - 158ms
     status:
       code: 201
       message: Created
@@ -56,22 +56,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-29T18:26:18.2983032+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-29T23:02:08.8824561+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 18:26:18 GMT
+      - Thu, 28 Jan 2021 23:02:09 GMT
       ms-cv:
-      - lBqqia0r6EisjeNjafRDVA.0
+      - AfJPXwsc70S2FiugdW3XZA.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 27ms
+      - 26ms
     status:
       code: 200
       message: OK
@@ -97,13 +97,13 @@ interactions:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       date:
-      - Thu, 28 Jan 2021 18:26:18 GMT
+      - Thu, 28 Jan 2021 23:02:09 GMT
       ms-cv:
-      - LqICD2AsY0GGMPyhrc+3rQ.0
+      - mhVkbrGKFUKNPvslI/Cyhg.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 311ms
+      - 598ms
     status:
       code: 204
       message: No Content

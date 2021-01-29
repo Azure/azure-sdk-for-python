@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 28 Jan 2021 18:33:02 GMT
+      - Thu, 28 Jan 2021 23:09:22 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -18,19 +18,19 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:21fb9d58-5d22-412c-b382-4d00a17a9e82_00000007-ea26-ca65-f40f-343a0d0001b6"}}'
+      string: '{"identity": {"id": "8:acs:1d7d15fa-673e-41aa-b447-4fc078a1006a_00000007-eb23-c782-ac00-343a0d00068b"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 18:33:01 GMT
-      ms-cv: GT6Oe3Sa+ESINExEesALCw.0
+      date: Thu, 28 Jan 2021 23:09:21 GMT
+      ms-cv: wjSdUDbYpUGnDHaTzRjRew.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 22ms
+      x-processing-time: 23ms
     status:
       code: 201
       message: Created
-    url: https://communicationohk2wgjgjym.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communicationoh7nrq5spts.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -41,7 +41,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 28 Jan 2021 18:33:02 GMT
+      - Thu, 28 Jan 2021 23:09:22 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -50,17 +50,17 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-29T18:33:00.8904527+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-29T23:09:20.7524479+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 18:33:01 GMT
-      ms-cv: tyqmpTNhZEyFRVHGw5SZFQ.0
+      date: Thu, 28 Jan 2021 23:09:21 GMT
+      ms-cv: jFST8Y8YH0e7ukS/opF4Dw.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 37ms
+      x-processing-time: 31ms
     status:
       code: 200
       message: OK
-    url: https://communicationohk2wgjgjym.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    url: https://communicationoh7nrq5spts.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
 version: 1
