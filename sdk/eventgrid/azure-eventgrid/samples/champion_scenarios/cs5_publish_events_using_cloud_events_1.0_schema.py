@@ -19,12 +19,12 @@ from azure.eventgrid import EventGridPublisherClient, CloudEvent
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["CLOUD_ACCESS_KEY"]
-topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
+endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
 
 credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(topic_hostname, credential)
+client = EventGridPublisherClient(endpoint, credential)
 
-client.send([
+client.send_events([
     CloudEvent(
         type="Contoso.Items.ItemReceived",
         source="/contoso/items",
