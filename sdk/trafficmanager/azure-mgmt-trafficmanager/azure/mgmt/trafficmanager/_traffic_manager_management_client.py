@@ -11,48 +11,14 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.endpoints_operations import EndpointsOperations
-from .operations.profiles_operations import ProfilesOperations
-from .operations.geographic_hierarchies_operations import GeographicHierarchiesOperations
-from .operations.heat_map_operations import HeatMapOperations
-from .operations.traffic_manager_user_metrics_keys_operations import TrafficManagerUserMetricsKeysOperations
+
+from ._configuration import TrafficManagerManagementClientConfiguration
+from .operations import EndpointsOperations
+from .operations import ProfilesOperations
+from .operations import GeographicHierarchiesOperations
+from .operations import HeatMapOperations
+from .operations import TrafficManagerUserMetricsKeysOperations
 from . import models
-
-
-class TrafficManagerManagementClientConfiguration(AzureConfiguration):
-    """Configuration for TrafficManagerManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(TrafficManagerManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-trafficmanager/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class TrafficManagerManagementClient(SDKClient):

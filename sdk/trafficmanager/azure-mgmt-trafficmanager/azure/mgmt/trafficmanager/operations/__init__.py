@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .endpoints_operations import EndpointsOperations
-from .profiles_operations import ProfilesOperations
-from .geographic_hierarchies_operations import GeographicHierarchiesOperations
-from .heat_map_operations import HeatMapOperations
-from .traffic_manager_user_metrics_keys_operations import TrafficManagerUserMetricsKeysOperations
+from ._endpoints_operations import EndpointsOperations
+from ._profiles_operations import ProfilesOperations
+from ._geographic_hierarchies_operations import GeographicHierarchiesOperations
+from ._heat_map_operations import HeatMapOperations
+from ._traffic_manager_user_metrics_keys_operations import TrafficManagerUserMetricsKeysOperations
 
 __all__ = [
     'EndpointsOperations',

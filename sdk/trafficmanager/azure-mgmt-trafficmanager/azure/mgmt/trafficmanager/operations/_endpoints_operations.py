@@ -19,6 +19,8 @@ from .. import models
 class EndpointsOperations(object):
     """EndpointsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -104,7 +106,6 @@ class EndpointsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Endpoint', response)
 
@@ -173,7 +174,6 @@ class EndpointsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Endpoint', response)
 
@@ -251,7 +251,6 @@ class EndpointsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Endpoint', response)
         if response.status_code == 201:
@@ -324,7 +323,6 @@ class EndpointsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DeleteOperationResult', response)
 
