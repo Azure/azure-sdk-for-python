@@ -7,15 +7,15 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_text.py
+FILE: sample_analyze.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
-    of text analysis tasks, such as Entity Recognition, PII Entity Recognition, Entity Linking, Sentiment Analysis,
-    or Key Phrase Extraction.  The response will contain results from each of the individual tasks specified in the request.
+    of text analysis actions, such as Entity Recognition, PII Entity Recognition, Entity Linking, Sentiment Analysis,
+    or Key Phrase Extraction.  The response will contain results from each of the individual actions specified in the request.
 
 USAGE:
-    python sample_analyze_text.py
+    python sample_analyze.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -65,7 +65,7 @@ class AnalyzeSample(object):
 
         for page in result:
             for results in page.recognize_entities_results:
-                print("Results of Entities Recognition task:")
+                print("Results of Entities Recognition action:")
 
                 docs = [doc for doc in results if not doc.is_error]
                 for idx, doc in enumerate(docs):
@@ -78,7 +78,7 @@ class AnalyzeSample(object):
                     print("------------------------------------------")
 
             for results in page.recognize_pii_entities_results:
-                print("Results of PII Entities Recognition task:")
+                print("Results of PII Entities Recognition action:")
 
                 docs = [doc for doc in results if not doc.is_error]
                 for idx, doc in enumerate(docs):
@@ -90,7 +90,7 @@ class AnalyzeSample(object):
                     print("------------------------------------------")
 
             for results in page.extract_key_phrases_results:
-                print("Results of Key Phrase Extraction task:")
+                print("Results of Key Phrase Extraction action:")
 
                 docs = [doc for doc in results if not doc.is_error]
                 for idx, doc in enumerate(docs):

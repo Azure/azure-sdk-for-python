@@ -695,7 +695,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         extract_key_phrases_actions=None,  # type: List[ExtractKeyPhrasesAction]
         **kwargs  # type: Any
     ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeBatchActionsResult]]
-        """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+        """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -731,7 +731,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :language: python
                 :dedent: 8
                 :caption: Start a long-running operation to perform a variety of text analysis
-                    tasks over a batch of documents.
+                    actions over a batch of documents.
         """
 
         display_name = kwargs.pop("display_name", None)

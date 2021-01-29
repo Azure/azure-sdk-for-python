@@ -1247,13 +1247,13 @@ class ExtractKeyPhrasesAction(DictMixin):
 class AnalyzeBatchActionsResult(DictMixin):
     """AnalyzeBatchActionsResult contains the results of multiple text analyses performed on a batch of documents.
 
-    :ivar recognize_entities_results: A list of objects containing results for all Entity Recognition tasks
+    :ivar recognize_entities_results: A list of objects containing results for all Entity Recognition actions
         included in the analysis.
     :vartype recognize_entities_results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
     :ivar recognize_pii_entities_results: A list of objects containing results for all PII Entity Recognition
-        tasks included in the analysis.
+        actions included in the analysis.
     :vartype recognize_pii_entities_results: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult]
-    :ivar extract_key_phrases_results: A list of objects containing results for all Key Phrase Extraction tasks
+    :ivar extract_key_phrases_results: A list of objects containing results for all Key Phrase Extraction actions
         included in the analysis.
     :vartype extract_key_phrases_results: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult]
     """

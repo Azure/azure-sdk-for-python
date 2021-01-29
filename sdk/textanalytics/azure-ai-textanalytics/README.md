@@ -534,7 +534,7 @@ for page in result:
             print("------------------------------------------")
 
     for action_result in page.recognize_pii_entities_results:
-        print("Results of PII Entities Recognition task:")
+        print("Results of PII Entities Recognition action:")
 
         docs = [doc for doc in action_result if not doc.is_error]
         for idx, doc in enumerate(docs):
@@ -546,7 +546,7 @@ for page in result:
             print("------------------------------------------")
 
     for action_result in page.extract_key_phrases_results:
-        print("Results of Key Phrase Extraction task:")
+        print("Results of Key Phrase Extraction action:")
 
         docs = [doc for doc in action_result if not doc.is_error]
         for idx, doc in enumerate(docs):
