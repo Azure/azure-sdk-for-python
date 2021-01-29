@@ -44,6 +44,7 @@ jobs:
       suppressionsFile: 'eng\CredScanSuppression.json'
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@2
     displayName: 'Post Analysis'
+    condition: succeededOrFailed()
     inputs:
       GdnBreakAllTools: false
       GdnBreakGdnToolCredScan: true
