@@ -86,7 +86,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
     async def __aexit__(self, *args):
         await self._blob_service_client.close()
-        await super(BlobServiceClient, self._blob_service_client).__aexit__(*args)
 
     async def close(self):
         # type: () -> None
@@ -94,7 +93,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         It need not be used when using with a context manager.
         """
         await self._blob_service_client.close()
-        await self.__aexit__()
 
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
                                       key_expiry_time,  # type: datetime
