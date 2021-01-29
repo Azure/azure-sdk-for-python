@@ -5,35 +5,16 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# This script is the primary entry point for the azure-sdk-for-python Devops CI commands
-# Primarily, it figures out which packages need to be built by combining the targeting string with the servicedir argument.
-# After this, it either executes a global install of all packages followed by a test, or a tox invocation per package collected.
-
-
-import argparse
 import sys
 import os
-import errno
-import shutil
-import glob
 import logging
-import pdb
 import re
-from common_tasks import (
-    process_glob_string,
-    run_check_call,
-    cleanup_folder,
-    clean_coverage,
-    is_error_code_5_allowed,
-    create_code_coverage_params,
-)
-from tox_harness import prep_and_run_tox
+from common_tasks import run_check_call
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_all_coverage_files/")
-dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
 
 def install_coverage():
@@ -41,11 +22,9 @@ def install_coverage():
     run_check_call(install_cmd_arry, root_dir)
 
 
-def collect_tox_coverage_files():#targeted_packages):
+def collect_tox_coverage_files():
     coverage_version_cmd = [sys.executable, "-m", "coverage", "--version"]
     run_check_call(coverage_version_cmd, root_dir)
-
-    # install_coverage()
 
     logging.info("Running collect tox coverage files...")
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
@@ -67,115 +46,28 @@ def collect_tox_coverage_files():#targeted_packages):
         run_check_call(cov_cmd_array, root_dir)
 
         logging.info("after running coverage combine")
-
         for root, _, files in os.walk(root_dir):
             for f in files:
                 if re.match(".coverage*", f):
                     print(os.path.join(root, f))
 
-        # generate_coverage_xml()
-
-    # clean_coverage(coverage_dir)
-
-    # # coverage report has paths starting .tox and azure
-    # # coverage combine fixes this with the help of tox.ini[coverage:paths]
-    # # combine_coverage_files(targeted_packages) # Skipping this, upload all .coverage-{package-name} files
-
-    # coverage_files = []
-    # # generate coverage files
-    # for package_dir in [package for package in targeted_packages]:
-    #     coverage_file = os.path.join(package_dir, ".coverage")
-    #     if os.path.isfile(coverage_file):
-    #         destination_file = os.path.join(
-    #             root_coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
-    #         )
-    #         shutil.copyfile(coverage_file, destination_file)
-    #         coverage_files.append(destination_file)
-
-    # logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
-
-    # if len(coverage_files):
-    #     cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
-    #     cov_cmd_array.extend(coverage_files)
-
-    #     # merge them with coverage combine and copy to root
-    #     # run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/")) # Don't run a coverage combine
-
-    #     # Don't move to root and generate XML, this will be done at a later step.
-    #     # source = os.path.join(coverage_dir, "./.coverage")
-    #     # dest = os.path.join(root_dir, ".coverage")
-
-    #     # shutil.move(source, dest)
-    #     # # Generate coverage XML
-    #     generate_coverage_xml()
-
 
 def generate_coverage_xml():
-    # coverage_path = os.path.join(root_dir, ".coverage")
     if os.path.exists(coverage_dir):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "--omit", '"*test*,*example*"'] # add the "-i" back eventually
+        commands = ["coverage", "xml", "--omit", '"*test*,*example*"']
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
 
 
-def combine_coverage_files(coverage_files):
-    # find tox.ini file. tox.ini is used to combine coverage paths to generate formatted report
-    tox_ini_file = os.path.join(root_dir, "eng", "tox", "tox.ini")
-    config_file_flag = "--rcfile={}".format(tox_ini_file)
-
-    if os.path.isfile(tox_ini_file):
-        # for every individual coverage file, run coverage combine to combine path
-        for coverage_file in coverage_files:
-            cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
-            # tox.ini file has coverage paths to combine
-            # Pas tox.ini as coverage config file
-            cov_cmd_array.extend([config_file_flag, coverage_file])
-            run_check_call(cov_cmd_array, root_dir)
-    else:
-        # not a hard error at this point
-        # this combine step is required only for modules if report has package name starts with .tox
-        logging.error("tox.ini is not found in path {}".format(root_dir))
-
-
 def fix_dot_coverage_file(coverage_file):
     print("running 'fix_dot_coverage_file' on {}".format(coverage_file))
-    # Change the location of files before "/sdk/" to be the current machine
-
-    # replacement = os.getcwd()
-    # replacement = replacement.replace('\\', '/') + '/'
-    # print(replacement)
-
-    # dot_coverage = os.path.join(root_dir, ".coverage")
-    # print(dot_coverage)
 
     out = None
     with open(coverage_file) as cov_file:
         line = cov_file.read()
-        # l = len(line)
         out = line.replace("/.tox/whl/lib/python3.9/site-packages", "")
-        # o = len(out)
-        # print(out)
-        # print(l, o)
-        # locs = line.split("/.tox/whl/lib/python3.9/site-packages")
-        # print(locs)
-        # sdks = [m.start() for m in re.finditer("/sdk/", line)]
-        # print(sdks)
-        # if len(sdks):
-        #     # print(sdks)
-        #     file_starts = [m.start() for m in re.finditer('"/', line)]
-        #     # print(file_starts)
-        #     print(len(sdks), len(file_starts))
-
-        #     str_to_replace = line[file_starts[0]+1 : sdks[0]] + '/'
-        #     print(str_to_replace)
-
-        #     out = line.replace(str_to_replace, replacement)
-        # out = out.replace('//', '/')
-        # else:
-        #     print("coverage files were created on this machine")
-        # print(out)
 
     if out:
         with open(coverage_file, 'w') as cov_file:
@@ -183,9 +75,5 @@ def fix_dot_coverage_file(coverage_file):
 
 
 if __name__ == "__main__":
-
-    # remove the ".tox" part before running coverage combine
-
     collect_tox_coverage_files()
-    # fix_dot_coverage_file()
     generate_coverage_xml()
