@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 28 Jan 2021 22:54:40 GMT
+      - Fri, 29 Jan 2021 22:50:21 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -22,24 +22,23 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:d9175f03-830a-44a1-a828-5f9b0184f70b_00000007-eb16-521d-ac00-343a0d000659"},
-        "accessToken": {"token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwMiIsIng1dCI6IjNNSnZRYzhrWVNLd1hqbEIySmx6NTRQVzNBYyIsInR5cCI6IkpXVCJ9.eyJza3lwZWlkIjoiYWNzOmQ5MTc1ZjAzLTgzMGEtNDRhMS1hODI4LTVmOWIwMTg0ZjcwYl8wMDAwMDAwNy1lYjE2LTUyMWQtYWMwMC0zNDNhMGQwMDA2NTkiLCJzY3AiOjE3OTIsImNzaSI6IjE2MTE4NzQ0NzkiLCJpYXQiOjE2MTE4NzQ0NzksImV4cCI6MTYxMTk2MDg3OSwiYWNzU2NvcGUiOiJjaGF0IiwicmVzb3VyY2VJZCI6ImQ5MTc1ZjAzLTgzMGEtNDRhMS1hODI4LTVmOWIwMTg0ZjcwYiJ9.vJ3bNsuzyz5rtxRhUn8XIeOLJyyht2dQ3uqVydiwxqr75r3knaNbh60wUwF3j6AOZ_7ckS_4znTp43tPe0mDPucCVtDbbEdxvFVeo8WAm5uUDm_4wtn9KanH-lrNVeGvyAfQkkZ_g2OQid8VpIWVssMh16HUjXqjHU9Ig3qh7wY0DoBqXHrnfE7e3KGDjlBT-ACKKT2YnbdGPJHLurWOsMSPX_-b4FjULCoLbL0L4gUmFdIXtI-RSr_CcUHi9HYQOmyN27IDvNSAlQbpOlJD32qmlJ1S8Bg6abnwVKakKelgCjXi1wOo5dGIS52WYA74D_Am1Ph6JQpNlpm2PRn1xg",
-        "expiresOn": "2021-01-29T22:54:38.6713921+00:00"}}'
+      string: '{"identity": {"id": "sanitized"}, "accessToken": {"token": "sanitized",
+        "expiresOn": "2021-01-30T22:50:20.3668737+00:00"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 22:54:39 GMT
+      - Fri, 29 Jan 2021 22:50:20 GMT
       ms-cv:
-      - z2eBeCl6z0OH1U4U254PJg.0
+      - 4wYYchxOnEay3S80a4tugw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 40ms
+      - 38ms
     status:
       code: 201
       message: Created

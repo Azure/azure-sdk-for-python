@@ -18,22 +18,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:036cb0f3-31ab-4245-aa9c-fe6263a441cf_00000007-eb1d-307f-6a0b-343a0d0006d0"}}'
+      string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 23:02:09 GMT
+      - Fri, 29 Jan 2021 22:28:50 GMT
       ms-cv:
-      - grHGYr0FUkWxFNh5Yz95Gg.0
+      - VDeJxLCpwEiwT+0DkDgQ/w.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 158ms
+      - 258ms
     status:
       code: 201
       message: Created
@@ -56,22 +56,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-29T23:02:08.8824561+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-30T22:28:50.160399+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 23:02:09 GMT
+      - Fri, 29 Jan 2021 22:28:50 GMT
       ms-cv:
-      - AfJPXwsc70S2FiugdW3XZA.0
+      - qGOKcdu3m0Cwmnn0J3k7Tw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 26ms
+      - 32ms
     status:
       code: 200
       message: OK
@@ -97,13 +97,13 @@ interactions:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       date:
-      - Thu, 28 Jan 2021 23:02:09 GMT
+      - Fri, 29 Jan 2021 22:28:51 GMT
       ms-cv:
-      - mhVkbrGKFUKNPvslI/Cyhg.0
+      - GGw7vBUa70CbJs5Df0aTSw.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 598ms
+      - 581ms
     status:
       code: 204
       message: No Content

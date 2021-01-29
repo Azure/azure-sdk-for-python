@@ -14,19 +14,19 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:88aef940-e60c-4224-9957-fa140a8cb02f_00000007-eb22-c2a3-4332-3b3a0d0006db"}}'
+      string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 23:08:14 GMT
-      ms-cv: 7yGhqvNlO0G0/YuIm1iX+Q.0
+      date: Fri, 29 Jan 2021 22:34:32 GMT
+      ms-cv: M4o3j8QviU6dfW/2cZS4ug.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 182ms
+      x-processing-time: 242ms
     status:
       code: 201
       message: Created
-    url: https://communicationedwns3s7ugb.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communicationvfxjz4kgs5q.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: null
     headers:
@@ -41,12 +41,12 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
-      date: Thu, 28 Jan 2021 23:08:15 GMT
-      ms-cv: ppCkyDxTN0+sz0JnBnAHKw.0
+      date: Fri, 29 Jan 2021 22:34:33 GMT
+      ms-cv: 4NslPsnjL0iQ1CODgbz7TA.0
       strict-transport-security: max-age=2592000
-      x-processing-time: 476ms
+      x-processing-time: 676ms
     status:
       code: 204
       message: No Content
-    url: https://communicationedwns3s7ugb.communication.azure.com/identities/sanitized?api-version=2021-03-07
+    url: https://communicationvfxjz4kgs5q.communication.azure.com/identities/sanitized?api-version=2021-03-07
 version: 1

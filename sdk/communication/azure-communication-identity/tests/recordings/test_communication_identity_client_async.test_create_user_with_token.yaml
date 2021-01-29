@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 28 Jan 2021 23:05:31 GMT
+      - Fri, 29 Jan 2021 22:32:18 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -18,19 +18,18 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:6423fa6f-85d2-44c8-9980-81f39f75ec90_00000007-eb20-423c-0e04-343a0d0006ce"},
-        "accessToken": {"token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwMiIsIng1dCI6IjNNSnZRYzhrWVNLd1hqbEIySmx6NTRQVzNBYyIsInR5cCI6IkpXVCJ9.eyJza3lwZWlkIjoiYWNzOjY0MjNmYTZmLTg1ZDItNDRjOC05OTgwLTgxZjM5Zjc1ZWM5MF8wMDAwMDAwNy1lYjIwLTQyM2MtMGUwNC0zNDNhMGQwMDA2Y2UiLCJzY3AiOjE3OTIsImNzaSI6IjE2MTE4NzUxMzAiLCJpYXQiOjE2MTE4NzUxMzAsImV4cCI6MTYxMTk2MTUzMCwiYWNzU2NvcGUiOiJjaGF0IiwicmVzb3VyY2VJZCI6IjY0MjNmYTZmLTg1ZDItNDRjOC05OTgwLTgxZjM5Zjc1ZWM5MCJ9.AHxRvJ-ibnHxLHZvkANEzwhNsydA2LM6rIfLJDj31GKBCrJPAzAckJT19nRXAr9qQTAbP2UP1_NhMpXbmZeVLoBRWCTPwExp8yw9DQmeSfdlXvMFoTkC9lBjm1eYl6DiSaRfptywZWkI9TV3XMPc2x97lUx3HwL0uBIDTTGU7vl03uhd57G21lp8nGmtcyJnW3fpnCtc1slcwm7IXfBNEc5sVkgtDu32PSMMZ306QMl37TQFo0HAtTatXG2jKwf-j-hOUtKRJoqyc9RwuZBdccA4oy1OKdVhWFgixIXh3I3Xk3I_4s4PAW4h83qTtvQxNG-aMOtHY1wyQveRRSqv0w",
-        "expiresOn": "2021-01-29T23:05:29.9620096+00:00"}}'
+      string: '{"identity": {"id": "sanitized"}, "accessToken": {"token": "sanitized",
+        "expiresOn": "2021-01-30T22:32:16.9405213+00:00"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 23:05:30 GMT
-      ms-cv: lS2WduNiikeJGzJVElP0vw.0
+      date: Fri, 29 Jan 2021 22:32:17 GMT
+      ms-cv: W1T1PVQFlEWIXcgu0EeooA.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 38ms
+      x-processing-time: 35ms
     status:
       code: 201
       message: Created
-    url: https://communication2jmgon4osrs.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communication6l4km7ph3zj.communication.azure.com/identities?api-version=2021-03-07
 version: 1

@@ -14,19 +14,19 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity": {"id": "8:acs:fe0c995d-5d4e-4814-a54d-390c5774194f_00000007-eb24-cf49-0338-3b3a0d0007c8"}}'
+      string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 23:10:28 GMT
-      ms-cv: s1WDd5dwK06jpQLK/lzljQ.0
+      date: Fri, 29 Jan 2021 22:36:49 GMT
+      ms-cv: cUzRyy4LbUigYrZ7lbi4wA.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 197ms
+      x-processing-time: 238ms
     status:
       code: 201
       message: Created
-    url: https://communicationainkjfb56g5.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communication5brewzlj3te.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -42,17 +42,17 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-29T23:10:28.2693857+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-30T22:36:48.7283566+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 28 Jan 2021 23:10:28 GMT
-      ms-cv: 1LR664ddDE6PMwi4LbIS1w.0
+      date: Fri, 29 Jan 2021 22:36:49 GMT
+      ms-cv: bFRoAJk3ikGgv2ot2Vwh4A.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 23ms
+      x-processing-time: 26ms
     status:
       code: 200
       message: OK
-    url: https://communicationainkjfb56g5.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    url: https://communication5brewzlj3te.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
 version: 1
