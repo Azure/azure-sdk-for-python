@@ -61,7 +61,8 @@ class InvokeSample(object):
         try:
             response = text_analytics_client.invoke(request)  # type: HttpResponse
 
-            # this will be converted to response.raise_for_status()
+            # Uncomment following line and comment error handling if you have editable install of current azure-core
+            # response.raise_for_status()
             if response.status_code >= 400:
                 raise HttpResponseError(response=response)
             print(response.text())
