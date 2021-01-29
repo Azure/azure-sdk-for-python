@@ -14,9 +14,6 @@ parameters:
   - name: BuildDocs
     type: boolean
     default: true
-  - name: Artifacts
-    type: object
-    default: []
 
 steps:
   - ${{if eq(parameters.TestPipeline, 'true')}}:

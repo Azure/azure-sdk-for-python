@@ -106,7 +106,6 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
-        Artifacts: $${{ parameters.Artifacts }}
 
     - template: /eng/common/pipelines/templates/steps/create-apireview.yml
       parameters:
