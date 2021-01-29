@@ -80,6 +80,7 @@ setup(
         "azure-core<2.0.0,>=1.6.0",
         "msrest>=0.6.10",
         "opentelemetry-api == 0.16b1",
-        "opentelemetry-sdk == 0.16b1"
+        "opentelemetry-sdk == 0.16b1",
+        'psutil >= 5.8.0',
     ],
 )
