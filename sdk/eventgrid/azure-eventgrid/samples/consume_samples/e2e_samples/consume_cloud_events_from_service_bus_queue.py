@@ -32,17 +32,5 @@ with sb_client:
         msgs = receiver.receive(max_batch_size=10, max_wait_time=1)
         print("number of messages: {}".format(len(msgs)))
         for msg in msgs:
-            # receive single dict message
-            if 'specversion' in msg:
-                deserialized_event = consumer.deserialize_cloud_events(str(msg))
-                dict_event = deserialized_event.to_json()
-                print("event.to_json(): {}\n".format(dict_event))
-                print("model: {}\n".format(deserialized_event.model))
-                print("model.data: {}\n".format(deserialized_event.model.data))
-            else:
-                deserialized_event = consumer.deserialize_eventgrid_events(str(msg))
-                dict_event = deserialized_event.to_json()
-                print("event.to_json(): {}\n".format(dict_event))
-                print("model: {}\n".format(deserialized_event.model))
-                print("model.data: {}\n".format(deserialized_event.model.data))
+            events = [CloudEvent(**data) for data in json.loads(str(msg))]
             msg.complete()
