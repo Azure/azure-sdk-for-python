@@ -25,7 +25,6 @@ from azure.opentelemetry.exporter.azuremonitor import ExporterOptions
 from azure.opentelemetry.exporter.azuremonitor.export._base import ExportResult
 from azure.opentelemetry.exporter.azuremonitor.export.metrics._exporter import (
     AzureMonitorMetricsExporter,
-    # standard_metrics_processor,
 )
 from azure.opentelemetry.exporter.azuremonitor._generated.models import (
     MetricDataPoint,
