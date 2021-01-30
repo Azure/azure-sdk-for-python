@@ -40,8 +40,12 @@ class GlobalClientPreparer(AzureMgmtPreparer):
         self.client_cls = client_cls
 
     def create_resource(self, name, **kwargs):
-        form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
-        form_recognizer_account_key = os.environ["FORMRECOGNIZER_TEST_API_KEY"]
+        if self.is_live:
+            form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
+            form_recognizer_account_key = os.environ["FORMRECOGNIZER_TEST_API_KEY"]
+        else:
+            form_recognizer_account = "https://region.api.cognitive.microsoft.com/"
+            form_recognizer_account_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
 
         if self.is_live:
             polling_interval = 5
