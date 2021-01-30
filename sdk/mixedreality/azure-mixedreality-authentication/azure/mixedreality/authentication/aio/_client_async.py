@@ -41,7 +41,7 @@ class MixedRealityStsClient(object):
     def __init__(self,
         account_id: str,
         account_domain: str,
-        credential: Union[AzureKeyCredential, "AzureTokenCredential"],
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         **kwargs) -> None:
         if not account_id:
             raise ValueError("account_id can not be None")
