@@ -76,9 +76,3 @@ def test_device_code():
 
     credential = DeviceCodeCredential(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, prompt_callback=prompt, timeout=40)
     get_token(credential)
-
-
-@pytest.mark.manual
-def test_browser_auth():
-    credential = InteractiveBrowserCredential(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, timeout=40)
-    get_token(credential)
