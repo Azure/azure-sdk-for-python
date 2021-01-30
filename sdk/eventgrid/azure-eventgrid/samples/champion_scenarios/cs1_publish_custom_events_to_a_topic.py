@@ -24,7 +24,7 @@ endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send_events([
+client.send([
 	EventGridEvent(
 		event_type="Contoso.Items.ItemReceived",
 		data={

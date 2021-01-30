@@ -14,7 +14,6 @@ import datetime as dt
 from devtools_testutils import AzureMgmtTestCase
 from msrest.serialization import UTC
 from azure.eventgrid import EventGridDeserializer, CloudEvent, EventGridEvent
-from azure.eventgrid.systemevents import StorageBlobCreatedEventData
 from _mocks import (
     cloud_storage_dict,
     cloud_storage_string,
@@ -37,40 +36,19 @@ class EventGridDeserializerTests(AzureMgmtTestCase):
         client = EventGridDeserializer()
         deserialized_event = client.deserialize_cloud_events(cloud_storage_dict)
         assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
+        assert deserialized_event.data.__class__ == dict
 
     def test_eg_consumer_cloud_storage_string(self, **kwargs):
         client = EventGridDeserializer()
         deserialized_event = client.deserialize_cloud_events(cloud_storage_string)
         assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
+        assert deserialized_event.data.__class__ == dict
 
     def test_eg_consumer_cloud_storage_bytes(self, **kwargs):
         client = EventGridDeserializer()
         deserialized_event = client.deserialize_cloud_events(cloud_storage_bytes)
         assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
-    
-
-    def test_eg_consumer_cloud_custom_dict(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_cloud_events(cloud_custom_dict)
-        assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data is None
-
-
-    def test_eg_consumer_cloud_custom_string(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_cloud_events(cloud_custom_string)
-        assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data is None
-
-
-    def test_eg_consumer_cloud_custom_bytes(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_cloud_events(cloud_custom_bytes)
-        assert deserialized_event.__class__ == CloudEvent
-        assert deserialized_event.data is None
+        assert deserialized_event.data.__class__ == dict
     
     # EG Event tests
 
@@ -78,39 +56,18 @@ class EventGridDeserializerTests(AzureMgmtTestCase):
         client = EventGridDeserializer()
         deserialized_event = client.deserialize_eventgrid_events(eg_storage_dict)
         assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
+        assert deserialized_event.data.__class__ == dict
 
 
     def test_eg_consumer_eg_storage_string(self, **kwargs):
         client = EventGridDeserializer()
         deserialized_event = client.deserialize_eventgrid_events(eg_storage_string)
         assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
+        assert deserialized_event.data.__class__ == dict
 
 
     def test_eg_consumer_eg_storage_bytes(self, **kwargs):
         client = EventGridDeserializer()
         deserialized_event = client.deserialize_eventgrid_events(eg_storage_bytes)
         assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
-    
-
-    def test_eg_consumer_eg_custom_dict(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_eventgrid_events(eg_custom_dict)
-        assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data is None
-
-
-    def test_eg_consumer_eg_custom_string(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_eventgrid_events(eg_custom_string)
-        assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data is None
-
-
-    def test_eg_consumer_eg_custom_bytes(self, **kwargs):
-        client = EventGridDeserializer()
-        deserialized_event = client.deserialize_eventgrid_events(eg_custom_bytes)
-        assert deserialized_event.__class__ == EventGridEvent
-        assert deserialized_event.data is None
+        assert deserialized_event.data.__class__ == dict

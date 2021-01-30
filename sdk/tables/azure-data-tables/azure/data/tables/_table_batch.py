@@ -145,7 +145,7 @@ class TableBatchOperations(object):
             ),
             "table": self._serialize.url("table", table, "str"),
         }
-        url = self._client._client.format_url(  # pylint:disable=protected-access
+        url = self._client._client.format_url(  # pylint: disable=protected-access
             url, **path_format_arguments
         )
 
@@ -187,7 +187,7 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.post(  # pylint:disable=protected-access
+        request = self._client._client.post(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
         self._requests.append(request)
@@ -314,7 +314,7 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint:disable=protected-access
+        url = self._client._client.format_url(  # pylint: disable=protected-access
             url, **path_format_arguments
         )
 
@@ -356,7 +356,7 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.put(  # pylint:disable=protected-access
+        request = self._client._client.put(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
         self._requests.append(request)
@@ -422,7 +422,7 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint:disable=protected-access
+        url = self._client._client.format_url(  # pylint: disable=protected-access
             url, **path_format_arguments
         )
 
@@ -464,7 +464,7 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs["content"] = body_content
-        request = self._client._client.patch(  # pylint:disable=protected-access
+        request = self._client._client.patch(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
         self._requests.append(request)
@@ -577,7 +577,7 @@ class TableBatchOperations(object):
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint:disable=protected-access
+        url = self._client._client.format_url(  # pylint: disable=protected-access
             url, **path_format_arguments
         )
 
@@ -609,7 +609,7 @@ class TableBatchOperations(object):
         )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
-        request = self._client._client.delete(  # pylint:disable=protected-access
+        request = self._client._client.delete(  # pylint: disable=protected-access
             url, query_parameters, header_parameters
         )
         self._requests.append(request)

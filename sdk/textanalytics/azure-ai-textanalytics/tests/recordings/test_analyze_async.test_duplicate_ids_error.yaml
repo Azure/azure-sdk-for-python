@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
   response:
@@ -23,13 +23,13 @@ interactions:
       string: '{"error":{"code":"InvalidArgument","message":"Request contains duplicated
         Ids. Make sure each document has a unique Id."}}'
     headers:
-      apim-request-id: 140cf9bc-9d8a-4c8f-bab3-e1c50d9ff406
+      apim-request-id: 1dcc0ac5-2fab-4a10-a8af-ce0f2ceec9e7
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:16:44 GMT
+      date: Wed, 27 Jan 2021 02:16:48 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request
