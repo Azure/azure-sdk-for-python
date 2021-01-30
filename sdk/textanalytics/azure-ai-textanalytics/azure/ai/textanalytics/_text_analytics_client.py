@@ -35,7 +35,12 @@ from ._response_handlers import (
 
 from ._models import AnalyzeBatchActionsType
 
-from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPollingMethod
+from ._lro import (
+    TextAnalyticsOperationResourcePolling,
+    TextAnalyticsLROPollingMethod,
+    AnalyzeBatchActionsLROPollingMethod,
+    AnalyzeBatchActionsLROPoller,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -776,10 +781,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 tasks=analyze_tasks,
                 analysis_input=docs
             )
-            return self._client.begin_analyze(
+            poller = self._client.begin_analyze(
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats)),
-                polling=TextAnalyticsLROPollingMethod(
+                polling=AnalyzeBatchActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
@@ -788,6 +793,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
+            return AnalyzeBatchActionsLROPoller.from_lro_poller(poller)
 
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):

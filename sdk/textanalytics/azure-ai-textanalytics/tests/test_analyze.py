@@ -9,6 +9,7 @@ import pytest
 import platform
 import functools
 import itertools
+import datetime
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -369,7 +370,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.begin_analyze_batch_actions(
+        poller = client.begin_analyze_batch_actions(
             docs,
             actions=[
                 RecognizeEntitiesAction(model_version="latest"),
@@ -378,7 +379,19 @@ class TestAnalyze(TextAnalyticsTest):
             ],
             show_stats=True,
             polling_interval=self._interval(),
-        ).result()
+        )
+
+        response = poller.result()
+
+        assert isinstance(poller.created_on, datetime.datetime)
+        poller._polling_method.display_name
+        assert isinstance(poller.expires_on, datetime.datetime)
+        assert poller.actions_failed_count == 0
+        assert poller.actions_in_progress_count == 0
+        assert poller.actions_succeeded_count == 3
+        assert isinstance(poller.last_modified_on, datetime.datetime)
+        assert poller.total_actions_count == 3
+        assert poller.id
 
         action_results = list(response)
         assert len(action_results) == 3

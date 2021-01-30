@@ -3,9 +3,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import json
 from six.moves.urllib.parse import urlencode
+from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling, OperationFailed, BadStatus
+from ._generated.v3_1_preview_3.models import JobMetadata
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallysucceeded"])
@@ -88,3 +90,109 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
         if final_get_url:
             self._pipeline_response = self.request_status(final_get_url)
             TextAnalyticsLROPollingMethod._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+
+class AnalyzeBatchActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
+
+    @property
+    def _current_body(self):
+        return JobMetadata.deserialize(self._pipeline_response)
+
+    @property
+    def created_on(self):
+        if not self._current_body:
+            return None
+        return self._current_body.created_date_time
+
+    @property
+    def display_name(self):
+        if not self._current_body:
+            return None
+        return self._current_body.display_name
+
+    @property
+    def expires_on(self):
+        if not self._current_body:
+            return None
+        return self._current_body.expiration_date_time
+
+    @property
+    def actions_failed_count(self):
+        if not self._current_body:
+            return None
+        return self._current_body.additional_properties['tasks']['failed']
+
+    @property
+    def actions_in_progress_count(self):
+        if not self._current_body:
+            return None
+        return self._current_body.additional_properties['tasks']['inProgress']
+
+    @property
+    def actions_succeeded_count(self):
+        if not self._current_body:
+            return None
+        return self._current_body.additional_properties['tasks']["completed"]
+
+    @property
+    def last_modified_on(self):
+        if not self._current_body:
+            return None
+        return self._current_body.last_update_date_time
+
+    @property
+    def total_actions_count(self):
+        if not self._current_body:
+            return None
+        return self._current_body.additional_properties['tasks']["total"]
+
+    @property
+    def id(self):
+        if not self._current_body:
+            return None
+        return self._current_body.job_id
+
+class AnalyzeBatchActionsLROPoller(LROPoller):
+
+    @property
+    def created_on(self):
+        return self._polling_method.created_on
+
+    @property
+    def display_name(self):
+        return self._polling_method.display_name
+
+    @property
+    def expires_on(self):
+        return self._polling_method.expires_on
+
+    @property
+    def actions_failed_count(self):
+        return self._polling_method.actions_failed_count
+
+    @property
+    def actions_in_progress_count(self):
+        return self._polling_method.actions_in_progress_count
+
+    @property
+    def actions_succeeded_count(self):
+        return self._polling_method.actions_succeeded_count
+
+    @property
+    def last_modified_on(self):
+        return self._polling_method.last_modified_on
+    @property
+    def total_actions_count(self):
+        return self._polling_method.total_actions_count
+
+    @property
+    def id(self):
+        return self._polling_method.id
+
+    @classmethod
+    def from_lro_poller(cls, lro_poller):
+        return cls(
+            client=lro_poller._polling_method._client,
+            initial_response=lro_poller._polling_method._initial_response,
+            deserialization_callback=lro_poller._polling_method._deserialization_callback,
+            polling_method=lro_poller._polling_method,
+        )
