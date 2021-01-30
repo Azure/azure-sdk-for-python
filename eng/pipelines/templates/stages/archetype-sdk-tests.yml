@@ -83,7 +83,7 @@ parameters:
 
 
 stages:
-  - stage: Live_Test
+  - stage: Live_${{ parameters.JobName }}
     jobs:
     - template: ../jobs/archetype-sdk-tests.yml
       parameters:
@@ -107,7 +107,7 @@ stages:
         CloudConfigurations: ${{ parameters.CloudConfigurations }}
 
 
-  - stage: Publish_Coverage
+  - stage: Publish_Coverage_${{ parameters.JobName }}
     jobs:
     - template: ../jobs/publish-coverage.yml
       parameters:
