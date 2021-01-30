@@ -30,7 +30,7 @@ stages:
             ServiceDirectory: formrecognizer
             DeployArmTemplate: true
             TestTimeoutInMinutes: 200
-            TestSamples: false
+            TestSamples: true
             Location: '${{cloud.value.Location}}'
             ResourceGroupLocation: '${{cloud.value.Location}}'
             # This is a specific request from the formrecognizer service team
