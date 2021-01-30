@@ -3,24 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AccessToken
 
 class StaticAccessTokenCredential(object):
     """ Represents a static access token credential.
-    This implements the TokenCredential protocol.
+    This implements the AsyncTokenCredential protocol.
 
     :param AccessToken access_token: An access token.
     """
 
-    def __init__(self, access_token):
-        # type: (AccessToken) -> None
+    def __init__(self, access_token: "AccessToken"):
         self._access_token = access_token
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         return self._access_token
+
+    async def close(self) -> None:
+        pass
+
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        pass

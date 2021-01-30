@@ -10,11 +10,12 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
-from .._static_access_token_credential import StaticAccessTokenCredential
+from ._static_access_token_credential import StaticAccessTokenCredential
 from ...aio._client_async import MixedRealityStsClient
 
-def get_mixedreality_credential_async(
+def get_mixedreality_credential(
     account_id: str,
+    account_domain: str,
     endpoint_url: str,
     credential: "AsyncTokenCredential",
     **kwargs):
@@ -23,6 +24,7 @@ def get_mixedreality_credential_async(
 
         return MixedRealityTokenCredential(
             account_id=account_id,
+            account_domain=account_domain,
             endpoint_url=endpoint_url,
             credential=credential,
             **kwargs)
@@ -37,9 +39,10 @@ class MixedRealityTokenCredential(object):
     :param TokenCredential credential: The credential used to access the Mixed Reality service.
     """
 
-    def __init__(self, account_id, endpoint_url, credential, **kwargs):
+    def __init__(self, account_id: str, account_domain: str, endpoint_url: str, credential: "AsyncTokenCredential", **kwargs):
         self.stsClient = MixedRealityStsClient(
             account_id=account_id,
+            account_domain=account_domain,
             endpoint_url=endpoint_url,
             credential=credential,
             **kwargs)

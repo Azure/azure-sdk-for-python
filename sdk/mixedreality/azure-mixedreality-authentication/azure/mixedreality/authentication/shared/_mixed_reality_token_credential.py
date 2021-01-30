@@ -13,13 +13,14 @@ if TYPE_CHECKING:
 from ._static_access_token_credential import StaticAccessTokenCredential
 from .._client import MixedRealityStsClient
 
-def get_mixedreality_credential(account_id, endpoint_url, credential, **kwargs):
-        # type: (str, str, TokenCredential, Any) -> TokenCredential
+def get_mixedreality_credential(account_id, account_domain, endpoint_url, credential, **kwargs):
+        # type: (str, str, str, TokenCredential, Any) -> TokenCredential
         if isinstance(credential, StaticAccessTokenCredential):
             return credential
 
         return MixedRealityTokenCredential(
             account_id=account_id,
+            account_domain=account_domain,
             endpoint_url=endpoint_url,
             credential=credential,
             **kwargs)
@@ -34,10 +35,11 @@ class MixedRealityTokenCredential(object):
     :param TokenCredential credential: The credential used to access the Mixed Reality service.
     """
 
-    def __init__(self, account_id, endpoint_url, credential, **kwargs):
-        # type: (str, str, TokenCredential, Any) -> None
+    def __init__(self, account_id, account_domain, endpoint_url, credential, **kwargs):
+        # type: (str, str, str, TokenCredential, Any) -> None
         self.stsClient = MixedRealityStsClient(
             account_id=account_id,
+            account_domain=account_domain,
             endpoint_url=endpoint_url,
             credential=credential,
             **kwargs)

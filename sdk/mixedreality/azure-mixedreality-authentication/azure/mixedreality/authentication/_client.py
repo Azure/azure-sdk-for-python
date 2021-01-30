@@ -51,6 +51,10 @@ class MixedRealityStsClient(object):
 
         self._account_id = account_id
         self._account_domain = account_domain
+
+        if isinstance(credential, AzureKeyCredential):
+            credential = MixedRealityAccountKeyCredential(account_id, credential)
+
         self._credential = credential
 
         endpoint_url = kwargs.pop('endpoint_url', construct_endpoint_url(account_domain))
@@ -66,9 +70,6 @@ class MixedRealityStsClient(object):
             raise ValueError("Invalid URL: {}".format(endpoint_url))
 
         self._endpoint_url = endpoint_url
-
-        if isinstance(credential, AzureKeyCredential):
-            credential = MixedRealityAccountKeyCredential(account_id, credential)
 
         authentication_policy = BearerTokenCredentialPolicy(credential, [endpoint_url + '/.default'])
 

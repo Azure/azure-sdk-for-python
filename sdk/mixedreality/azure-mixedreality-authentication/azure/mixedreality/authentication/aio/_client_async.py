@@ -15,13 +15,13 @@ from typing import Any, Union
 
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
 from .._generated.aio import MixedRealityStsRestClient
 from .._generated.models import TokenRequestOptions
 from .._version import SDK_MONIKER
 from ..shared._authentication_endpoint import construct_endpoint_url
-from ..shared._mixedreality_account_key_credential import MixedRealityAccountKeyCredential
+from ..shared.aio._mixedreality_account_key_credential import MixedRealityAccountKeyCredential
 from ..utils import _convert_to_access_token, _generate_cv_base
 
 if TYPE_CHECKING:
@@ -55,6 +55,10 @@ class MixedRealityStsClient(object):
 
         self._account_id = account_id
         self._account_domain = account_domain
+
+        if isinstance(credential, AzureKeyCredential):
+            credential = MixedRealityAccountKeyCredential(account_id, credential)
+
         self._credential = credential
 
         endpoint_url = kwargs.pop('endpoint_url', construct_endpoint_url(account_domain))
@@ -71,10 +75,7 @@ class MixedRealityStsClient(object):
 
         self._endpoint_url = endpoint_url
 
-        if isinstance(credential, AzureKeyCredential):
-            credential = MixedRealityAccountKeyCredential(account_id, credential)
-
-        authentication_policy = BearerTokenCredentialPolicy(credential, [endpoint_url + '/.default'])
+        authentication_policy = AsyncBearerTokenCredentialPolicy(credential, [endpoint_url + '/.default'])
 
         self._client = MixedRealityStsRestClient(
             base_url=endpoint_url,
