@@ -13,9 +13,9 @@ from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
-from testcase import GlobalFormRecognizerAccountPreparer
+from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from testcase import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
@@ -23,9 +23,9 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerCl
 @pytest.mark.skip
 class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_polling_interval(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key), polling_interval=7)
+    @FormRecognizerPreparer()
+    async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         self.assertEqual(client._client._config.polling_interval, 7)
 
         async with client:
@@ -36,7 +36,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             await poller2.wait()
             self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_cards_encoded_url(self, client):
         async with client:
@@ -45,36 +45,36 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             except HttpResponseError as e:
                 self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_business_card_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    @FormRecognizerPreparer()
+    async def test_business_card_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
 
         with self.assertRaises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
+            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_authentication_successful_key(self, client):
         async with client:
             poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
             result = await poller.result()
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         async with client:
             with self.assertRaises(ClientAuthenticationError):
                 poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_bad_url(self, client):
         async with client:
             with self.assertRaises(HttpResponseError):
                 poller = await client.begin_recognize_business_cards_from_url("https://badurl.jpg")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_url_pass_stream(self, client):
         async with client:
@@ -82,7 +82,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
                 with self.assertRaises(HttpResponseError):
                     poller = await client.begin_recognize_business_cards_from_url(business_card)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_url_transform_png(self, client):
         responses = []
@@ -117,7 +117,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(business_card.pages, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_url_transform_jpg(self, client):
         responses = []
@@ -153,7 +153,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(business_card.pages, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_url_multipage_transform_pdf(self, client):
         responses = []
@@ -191,7 +191,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(returned_model, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_jpg(self, client):
         async with client:
@@ -234,7 +234,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
         self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_png(self, client):
         async with client:
@@ -277,7 +277,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
         self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_multipage_pdf(self, client):
 
@@ -339,7 +339,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
         self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_jpg_include_field_elements(self, client):
         async with client:
@@ -355,7 +355,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             for f in field.value:
                 self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
     async def test_business_card_continuation_token(self, client):
@@ -367,7 +367,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     async def test_business_card_v2(self, client):
         with pytest.raises(ValueError) as e:
@@ -375,7 +375,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
                 await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
         assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_locale_specified(self, client):
         async with client:
@@ -383,7 +383,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
             await poller.wait()
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_locale_error(self, client):
         with pytest.raises(HttpResponseError) as e:

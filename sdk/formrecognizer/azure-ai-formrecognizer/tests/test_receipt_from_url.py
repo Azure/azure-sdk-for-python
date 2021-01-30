@@ -12,18 +12,18 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalClientPreparer as _GlobalClientPreparer
-
+from testcase import FormRecognizerTest
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import FormRecognizerPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 @pytest.mark.skip
 class TestReceiptFromUrl(FormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
-    def test_polling_interval(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key), polling_interval=7)
+    @FormRecognizerPreparer()
+    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         self.assertEqual(client._client._config.polling_interval, 7)
 
         poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg, polling_interval=6)
@@ -42,7 +42,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         result = poller.result()
         self.assertIsNotNone(result)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipts_encoded_url(self, client):
         try:
@@ -50,38 +50,38 @@ class TestReceiptFromUrl(FormRecognizerTest):
         except HttpResponseError as e:
             self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
 
-    @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    @FormRecognizerPreparer()
+    def test_receipt_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         with self.assertRaises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
+            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_url_auth_successful_key(self, client):
         poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
         result = poller.result()
 
-    @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_bad_url(self, client):
         with self.assertRaises(HttpResponseError):
             poller = client.begin_recognize_receipts_from_url("https://badurl.jpg")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_url_pass_stream(self, client):
         with open(self.receipt_png, "rb") as receipt:
             with self.assertRaises(HttpResponseError):
                 poller = client.begin_recognize_receipts_from_url(receipt)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_url_transform_jpg(self, client):
         responses = []
@@ -116,7 +116,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_url_transform_png(self, client):
 
@@ -152,7 +152,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_url_include_field_elements(self, client):
 
@@ -171,7 +171,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
             if field.value_type not in ["list", "dictionary"] and name != "ReceiptType":  # receipt cases where value_data is None
                 self.assertFieldElementsHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_url_jpg(self, client):
 
@@ -197,7 +197,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt_type.value, 'Itemized')
         self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, False)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_url_png(self, client):
 
@@ -220,7 +220,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertIsNotNone(receipt_type.confidence)
         self.assertEqual(receipt_type.value, 'Itemized')
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_multipage_url(self, client):
 
@@ -253,7 +253,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertIsNotNone(receipt_type.confidence)
         self.assertEqual(receipt_type.value, 'Itemized')
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_multipage_transform_url(self, client):
 
@@ -294,7 +294,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(returned_model, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
     def test_receipt_continuation_token(self, client):
@@ -306,21 +306,21 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_locale_specified(self, client):
         poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-IN")
         assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
         poller.wait()
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_locale_error(self, client):
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="not a locale")
         assert "UnsupportedLocale" == e.value.error.code
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_receipt_locale_v2(self, client):
         with pytest.raises(ValueError) as e:

@@ -5,10 +5,15 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+import functools
 import re
 from azure.ai.formrecognizer._helpers import get_element_type
+from azure.ai.formrecognizer import FormRecognizerClient
 from testcase import FormRecognizerTest
+from preparers import FormRecognizerPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 class TestResolveElements(FormRecognizerTest):
 
@@ -40,3 +45,11 @@ class TestResolveElements(FormRecognizerTest):
 
         bad_ref3 = "#/analyzeResult/readResults/100"
         assert get_element_type(bad_ref3) is None
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_region(self, client, formrecognizer_region):
+        import os
+        assert formrecognizer_region == "canadacentral"
+        REGION = os.getenv('REGION', None)
+        assert REGION == "canadacentral"
