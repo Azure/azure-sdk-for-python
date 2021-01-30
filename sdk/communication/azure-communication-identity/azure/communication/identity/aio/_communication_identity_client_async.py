@@ -102,8 +102,8 @@ class CommunicationIdentityClient:
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
         :return: A tuple of a CommunicationUserIdentifier and a AccessToken.
-        :rtype: tuple of (~azure.communication.identity.CommunicationUserIdentifier, \
-~azure.core.credentials.AccessToken)
+        :rtype:
+            tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
         return await self._identity_service_client.communication_identity.create(
             create_token_with_scopes=scopes,
@@ -120,7 +120,7 @@ class CommunicationIdentityClient:
         # type: (...) -> None
         """Triggers revocation event for user and deletes all its data.
 
-        :param communication_user:\
+        :param communication_user:
             Azure Communication User to delete
         :type communication_user: ~azure.communication.identity.CommunicationUserIdentifier
         :return: None
