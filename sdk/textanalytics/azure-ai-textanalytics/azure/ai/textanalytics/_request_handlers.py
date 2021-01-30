@@ -10,8 +10,11 @@ import six
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
+    AnalyzeBatchActionsType,
 )
-
 
 def _validate_input(documents, hint, whole_input_hint):
     """Validate that batch input has either all string docs
@@ -64,3 +67,10 @@ def _validate_input(documents, hint, whole_input_hint):
             request_batch.append(doc)
 
     return request_batch
+
+def _determine_action_type(action):
+    if isinstance(action, RecognizeEntitiesAction):
+        return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+    if isinstance(action, RecognizePiiEntitiesAction):
+        return AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+    return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES

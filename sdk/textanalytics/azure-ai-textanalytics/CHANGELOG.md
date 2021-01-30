@@ -5,10 +5,11 @@
 **Breaking Changes**
 
 - Rename `begin_analyze` to `begin_analyze_batch_actions`.
-- The results of your batch actions are returned on the top level of the result object. I.e., instead of accessing the results of your extract key phrases
-task through `result.key_phrase_extraction_task_results.results`, you call `result.extract_key_phrases_results`.
-- Rename parameters to `begin_analyze_batch_actions`. Renamed `entities_recognition_tasks` to `recognize_entities_actions`,
-`pii_entities_recognition_tasks` to `recognize_pii_entities_actions`, and `key_phrase_extraction_tasks` to `extract_key_phrases_actions`.
+- Now instead of separate parameters for all of the different types of actions you can pass to `begin_analyze_batch_actions`, we accept one parameter `actions`,
+which is a list of actions you would like performed. The results of the actions are returned in the same order as when inputted.
+- The response object from `begin_analyze_batch_actions` has also changed. Now, after the completion of your long running operation, we return a paged iterable
+of action results, in the same order they've been inputted. The actual document results for each action are included under property `document_results` of
+each action result.
 
 **New Features**
 - No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare`. `begin_analyze_healthcare` is still in gated preview though.

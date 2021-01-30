@@ -31,7 +31,8 @@ from ._models import (
     PiiEntity,
     AnalyzeHealthcareResultItem,
     AnalyzeBatchActionsResult,
-    RequestStatistics
+    RequestStatistics,
+    AnalyzeBatchActionsType,
 )
 from ._paging import AnalyzeHealthcareResult, AnalyzeResult
 
@@ -189,35 +190,54 @@ def pii_entities_result(entity, results, *args, **kwargs):  # pylint: disable=un
 def healthcare_result(health_result, results, *args, **kwargs): # pylint: disable=unused-argument
     return AnalyzeHealthcareResultItem._from_generated(health_result) # pylint: disable=protected-access
 
-def analyze_result(doc_id_order, obj, response_headers, tasks, **kwargs):  # pylint: disable=unused-argument
-
-    recognize_entities_results = []
-    for task in (tasks.entity_recognition_tasks or []):
-        recognize_entities_results.extend(entities_result(doc_id_order, task.results, response_headers, lro=True))
-
-    recognize_pii_entities_results = []
-    for task in (tasks.entity_recognition_pii_tasks or []):
-        recognize_pii_entities_results.extend(pii_entities_result(doc_id_order, task.results, response_headers, lro=True))
-
-    extract_key_phrases_results = []
-    for task in (tasks.key_phrase_extraction_tasks or []):
-        extract_key_phrases_results.extend(key_phrases_result(doc_id_order, task.results, response_headers, lro=True))
-
-
-    return AnalyzeBatchActionsResult(
-        recognize_entities_results=recognize_entities_results,
-        recognize_pii_entities_results=recognize_pii_entities_results,
-        extract_key_phrases_results=extract_key_phrases_results
-    )
-
 
 def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job_state): # pylint: disable=unused-argument
     return (health_job_state.next_link,
         healthcare_result(doc_id_order, health_job_state.results, response_headers, lro=True))
 
+def _get_deserialization_callback_from_task_type(task_type):
+    if task_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
+        return entities_result
+    if task_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES:
+        return pii_entities_result
+    return key_phrases_result
 
-def analyze_extract_page_data(doc_id_order, obj, response_headers, analyze_job_state):
-    return analyze_job_state.next_link, [analyze_result(doc_id_order, obj, response_headers, analyze_job_state.tasks)]
+def _get_property_name_from_task_type(task_type):
+    if task_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
+        return "entity_recognition_tasks"
+    if task_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES:
+        return "entity_recognition_pii_tasks"
+    return "key_phrase_extraction_tasks"
+
+def _num_tasks_in_current_page(returned_tasks_object):
+    return (
+        len(returned_tasks_object.entity_recognition_tasks or []) +
+        len(returned_tasks_object.entity_recognition_pii_tasks or []) +
+        len(returned_tasks_object.key_phrase_extraction_tasks or [])
+    )
+
+def get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_state):
+    iter_items = []
+    returned_tasks_object = analyze_job_state.tasks
+    for _ in range(_num_tasks_in_current_page(returned_tasks_object)):
+        current_task_type = task_order.pop(0)
+        deserialization_callback = _get_deserialization_callback_from_task_type(current_task_type)
+        property_name = _get_property_name_from_task_type(current_task_type)
+        response_task_to_deserialize = getattr(returned_tasks_object, property_name).pop(0)
+        document_results = deserialization_callback(doc_id_order, response_task_to_deserialize.results, response_headers, lro=True)
+        iter_items.append(
+            AnalyzeBatchActionsResult(
+                document_results=document_results,
+                action_type=current_task_type,
+                completed_on=response_task_to_deserialize.last_update_date_time,
+            )
+        )
+    return iter_items
+
+def analyze_extract_page_data(doc_id_order, task_order, obj, response_headers, analyze_job_state):
+    # return next link, list of
+    iter_items = get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_state)
+    return analyze_job_state.next_link, iter_items
 
 
 def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_stats=False):
@@ -246,10 +266,10 @@ def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, respon
         statistics=RequestStatistics._from_generated(obj.results.statistics) if show_stats else None # pylint: disable=protected-access
     )
 
-def analyze_paged_result(doc_id_order, analyze_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
+def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
     return AnalyzeResult(
         functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
-        functools.partial(analyze_extract_page_data, doc_id_order, obj, response_headers),
+        functools.partial(analyze_extract_page_data, doc_id_order, task_order, obj, response_headers),
         statistics=RequestStatistics._from_generated(obj.statistics) \
             if show_stats and obj.statistics is not None else None # pylint: disable=protected-access
     )

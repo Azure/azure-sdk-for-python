@@ -40,7 +40,8 @@ from ._models import (
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
     AnalyzeBatchActionsResult,
-    RequestStatistics
+    RequestStatistics,
+    AnalyzeBatchActionsType,
 )
 from._paging import AnalyzeHealthcareResult
 
@@ -80,7 +81,8 @@ __all__ = [
     'RecognizePiiEntitiesAction',
     'ExtractKeyPhrasesAction',
     'AnalyzeBatchActionsResult',
-    'RequestStatistics'
+    'RequestStatistics',
+    'AnalyzeBatchActionsType',
 ]
 
 __version__ = VERSION

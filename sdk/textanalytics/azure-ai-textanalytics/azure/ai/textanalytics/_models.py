@@ -1163,6 +1163,44 @@ class SentimentConfidenceScores(DictMixin):
         return "SentimentConfidenceScores(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]
 
+
+class AnalyzeBatchActionsType(str, Enum):
+    """The type of batch action that was applied to the documents
+    """
+    RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
+    RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
+    EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
+
+class AnalyzeBatchActionsResult(DictMixin):
+    """RecognizeEntitiesActionResult contains the results of a recognize entities action
+    on a list of documents. Returned by `begin_analyze_batch_actions`
+
+    :ivar document_results: A list of objects containing results for all Entity Recognition actions
+        included in the analysis.
+    :vartype document_results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        actions. Always False for an instance of a AnalyzeBatchActionsResult.
+    :ivar action_type: The type of batch action this class is a result of.
+    :vartype action_type: str or ~azure.ai.textanalytics.AnalyzeBatchActionsType
+    :ivar ~datetime.datetime completed_on: Date and time (UTC) when the result completed
+        on the service.
+    """
+    def __init__(self, **kwargs):
+        self.document_results = kwargs.get("document_results")
+        self.is_error = False
+        self.action_type = kwargs.get("action_type")
+        self.completed_on = kwargs.get("completed_on")
+
+    def __repr__(self):
+        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={})" \
+            .format(
+                repr(self.document_results),
+                self.is_error,
+                self.action_type,
+                self.completed_on
+            )[:1024]
+
+
 class RecognizeEntitiesAction(DictMixin):
     """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Entities Recognition operation.
 
@@ -1242,35 +1280,6 @@ class ExtractKeyPhrasesAction(DictMixin):
                 model_version=self.model_version
             )
         )
-
-
-class AnalyzeBatchActionsResult(DictMixin):
-    """AnalyzeBatchActionsResult contains the results of multiple text analyses performed on a batch of documents.
-
-    :ivar recognize_entities_results: A list of objects containing results for all Entity Recognition actions
-        included in the analysis.
-    :vartype recognize_entities_results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
-    :ivar recognize_pii_entities_results: A list of objects containing results for all PII Entity Recognition
-        actions included in the analysis.
-    :vartype recognize_pii_entities_results: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult]
-    :ivar extract_key_phrases_results: A list of objects containing results for all Key Phrase Extraction actions
-        included in the analysis.
-    :vartype extract_key_phrases_results: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult]
-    """
-    def __init__(self, **kwargs):
-        self.recognize_entities_results = kwargs.get("recognize_entities_results", [])
-        self.recognize_pii_entities_results = kwargs.get("recognize_pii_entities_results", [])
-        self.extract_key_phrases_results = kwargs.get("extract_key_phrases_results", [])
-
-    def __repr__(self):
-        return "AnalyzeBatchActionsResult(recognize_entities_results={}, recognize_pii_entities_results={}, \
-            extract_key_phrases_results={})" \
-            .format(
-                repr(self.recognize_entities_results),
-                repr(self.recognize_pii_entities_results),
-                repr(self.extract_key_phrases_results)
-            )[:1024]
-
 
 class RequestStatistics(DictMixin):
     def __init__(self, **kwargs):
