@@ -1,12 +1,12 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "0", "text": "this shouldn''t fail", "language":
-      "en"}]}'
+    body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
+      "language": "en"}]}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '77'
+      - '93'
       Content-Type:
       - application/json
       User-Agent:
@@ -15,17 +15,17 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"0","sentiment":"positive","confidenceScores":{"positive":0.99,"neutral":0.0,"negative":0.01},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.99,"neutral":0.0,"negative":0.01},"offset":0,"length":19,"text":"this
-        shouldn''t fail"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"offset":0,"length":35,"text":"Bill
+        Gates is the CEO of Microsoft."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: e81ff6e6-9a5b-435c-9685-5d518119dcac
+      apim-request-id: 93998cf6-ea51-4e0e-bf47-efbaf7680e2d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 29 Jan 2021 18:51:00 GMT
+      date: Fri, 29 Jan 2021 20:35:22 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '97'
+      x-envoy-upstream-service-time: '430'
     status:
       code: 200
       message: OK

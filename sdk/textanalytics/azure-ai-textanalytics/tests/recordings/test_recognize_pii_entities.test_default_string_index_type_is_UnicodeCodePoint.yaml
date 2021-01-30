@@ -1,7 +1,6 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "0", "text": "this shouldn''t fail", "language":
-      "en"}]}'
+    body: '{"documents": [{"id": "0", "text": "Hello world", "language": "en"}]}'
     headers:
       Accept:
       - application/json, text/json
@@ -10,25 +9,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '77'
+      - '69'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
+      string: '{"documents":[{"redactedText":"Hello world","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - f082d3c4-4f69-4d77-ae51-78620ad6d84a
+      - 4f9d4aab-283a-4821-8bba-946a9736decd
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 29 Jan 2021 17:48:58 GMT
+      - Fri, 29 Jan 2021 21:36:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '16'
+      - '53'
     status:
       code: 200
       message: OK

@@ -107,7 +107,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._api_version = kwargs.get("api_version")
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
-        self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        self._string_index_type_default = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
         self._deserialize = _get_deserialize()
 
 
@@ -238,7 +238,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
-            string_index_type_default=self._string_code_unit
+            string_index_type_default=self._string_index_type_default
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -322,7 +322,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
-            string_index_type_default=self._string_code_unit
+            string_index_type_default=self._string_index_type_default
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -409,7 +409,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
-            string_index_type_default=self._string_code_unit
+            string_index_type_default=self._string_index_type_default
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -491,7 +491,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+        string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
 
         doc_id_order = [doc.get("id") for doc in docs]
 
@@ -698,7 +698,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
-            string_index_type_default=self._string_code_unit
+            string_index_type_default=self._string_index_type_default
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})

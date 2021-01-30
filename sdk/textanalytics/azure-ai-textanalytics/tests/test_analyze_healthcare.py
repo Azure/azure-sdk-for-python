@@ -610,7 +610,20 @@ class TestHealth(TextAnalyticsTest):
         poller.wait()
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW})
-    def test_string_index_type_explicit_not_fail_v31preview(self, client):
-        result = client.begin_analyze_healthcare(["this shouldn't fail"], string_index_type="UnicodeCodePoint").result()
-        self.assertIsNotNone(result)
+    @TextAnalyticsClientPreparer()
+    def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+        poller = client.begin_analyze_healthcare(documents=["Hello world"])
+        actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
+        self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
+        poller.result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_explicit_set_string_index_type(self, client):
+        poller = client.begin_analyze_healthcare(
+            documents=["Hello world"],
+            string_index_type="TextElements_v8"
+        )
+        actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
+        self.assertEqual(actual_string_index_type, "TextElements_v8")
+        poller.result()

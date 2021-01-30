@@ -76,7 +76,7 @@ def _check_string_index_type_arg(string_index_type_arg, api_version, string_inde
             )
 
     else:
-        if string_index_type is None:
+        if string_index_type_arg is None:
             string_index_type = string_index_type_default
 
         else:

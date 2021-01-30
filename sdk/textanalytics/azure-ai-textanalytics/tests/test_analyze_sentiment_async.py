@@ -745,3 +745,26 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     async def test_string_index_type_explicit_not_fail_v31preview(self, client):
         result = await client.analyze_sentiment(["this shouldn't fail"], string_index_type="UnicodeCodePoint")
         self.assertIsNotNone(result)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+        def callback(response):
+            self.assertEqual(response.http_request.query["stringIndexType"], "UnicodeCodePoint")
+
+        res = await client.analyze_sentiment(
+            documents=["Hello world"],
+            raw_response_hook=callback
+        )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_explicit_set_string_index_type(self, client):
+        def callback(response):
+            self.assertEqual(response.http_request.query["stringIndexType"], "TextElements_v8")
+
+        res = await client.analyze_sentiment(
+            documents=["Hello world"],
+            string_index_type="TextElements_v8",
+            raw_response_hook=callback
+        )

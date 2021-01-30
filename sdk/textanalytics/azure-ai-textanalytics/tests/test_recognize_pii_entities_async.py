@@ -598,7 +598,24 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         assert "'string_index_type' is only available for API version v3.1-preview and up" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW})
-    async def test_string_index_type_explicit_not_fail_v31preview(self, client):
-        result = await client.recognize_pii_entities(["this shouldn't fail"], string_index_type="UnicodeCodePoint")
-        self.assertIsNotNone(result)
+    @TextAnalyticsClientPreparer()
+    async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+        def callback(response):
+            self.assertEqual(response.http_request.query["stringIndexType"], "UnicodeCodePoint")
+
+        res = await client.recognize_pii_entities(
+            documents=["Hello world"],
+            raw_response_hook=callback
+        )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_explicit_set_string_index_type(self, client):
+        def callback(response):
+            self.assertEqual(response.http_request.query["stringIndexType"], "TextElements_v8")
+
+        res = await client.recognize_pii_entities(
+            documents=["Hello world"],
+            string_index_type="TextElements_v8",
+            raw_response_hook=callback
+        )
