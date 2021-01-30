@@ -28,8 +28,11 @@ stages:
           parameters:
             BuildTargetingString: azure-ai-formrecognizer
             ServiceDirectory: formrecognizer
+            DeployArmTemplate: true
             TestTimeoutInMinutes: 200
             TestSamples: false
+            Location: '${{cloud.value.Location}}'
+            ResourceGroupLocation: '${{cloud.value.Location}}'
             # This is a specific request from the formrecognizer service team
             # their claim is that the full matrix ends up stress-testing their service.
             # As such, the canary test runs should run on a reduced matrix.
@@ -78,22 +81,18 @@ stages:
                   PythonVersion: '3.9'
                   CoverageArg: ''
             EnvVars:
-              AZURE_FORM_RECOGNIZER_PYTHON_CANARY_API_KEY: $(python-formrecognizer-test-canary-api-key)
-              AZURE_FORM_RECOGNIZER_PYTHON_API_KEY: $(python-formrecognizer-test-api-key)
               AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
               AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
               AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
               AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-              AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
-              AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-multipage-sas-url)
-              AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2: $(python-formrecognizer-test-storage-multipage-sas-url2)
-              AZURE_FORM_RECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-selection-mark-storage-sas-url)
-              AZURE_FORM_RECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-testing-data-sas-url)
+              TEST_MODE: 'RunLiveNoRecord'
+              AZURE_SKIP_LIVE_RECORDING: 'True'
+              AZURE_TEST_RUN_LIVE: 'true'
+              REGION: '${{cloud.value.Location}}'
+              # EnvVars for samples to run. TODO: These use an existing FR resource. Fix samples so they don't have to
               AZURE_FORM_RECOGNIZER_AAD_ENDPOINT: $(python-formrecognizer-test-aad-endpoint)
-              # EnvVars for samples to run. Mostly re-used from above values
               AZURE_FORM_RECOGNIZER_ENDPOINT: $(python-formrecognizer-test-endpoint)
               AZURE_FORM_RECOGNIZER_KEY: $(python-formrecognizer-test-endpoint-key)
-              CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
               CUSTOM_TRAINED_MODEL_ID: $(python-formrecognizer-test-model-trained-without-labels)
               AZURE_SOURCE_MODEL_ID: $(python-formrecognizer-test-model-trained-with-labels)
               ID_OF_MODEL_TRAINED_WITH_LABELS: $(python-formrecognizer-test-model-trained-with-labels)
@@ -104,11 +103,3 @@ stages:
               AZURE_FORM_RECOGNIZER_TARGET_KEY: $(python-formrecognizer-test-endpoint-key)
               AZURE_FORM_RECOGNIZER_TARGET_REGION: $(python-formrecognizer-test-target-region)
               AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID: $(python-formrecognizer-test-target-resource-id)
-              PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
-              PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
-              PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
-              PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
-              TEST_MODE: 'RunLiveNoRecord'
-              AZURE_SKIP_LIVE_RECORDING: 'True'
-              AZURE_TEST_RUN_LIVE: 'true'
-              REGION: '${{cloud.value.Location}}'
