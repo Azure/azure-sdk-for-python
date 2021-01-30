@@ -161,16 +161,13 @@ class FileSystemTest(StorageTestCase):
         filesystem1 = await self.dsc.create_file_system(old_name1)
         await self.dsc.create_file_system(old_name2)
 
-        new_filesystem = await self.dsc.rename_file_system(
-            source_file_system_name=old_name1, destination_file_system_name=new_name)
+        new_filesystem = await self.dsc.rename_file_system(name=old_name1, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(
-                source_file_system_name=old_name2, destination_file_system_name=new_name)
+            await self.dsc.rename_file_system(name=old_name2, new_name=new_name)
         with self.assertRaises(HttpResponseError):
             await filesystem1.get_file_system_properties()
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(
-                source_file_system_name="badfilesystem", destination_file_system_name="filesystem")
+            await self.dsc.rename_file_system(name="badfilesystem", new_name="filesystem")
         props = await new_filesystem.get_file_system_properties()
         self.assertEqual(new_name, props.name)
 
@@ -185,13 +182,10 @@ class FileSystemTest(StorageTestCase):
         filesystem = await self.dsc.create_file_system(old_name)
         filesystem_lease_id = await filesystem.acquire_lease()
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(
-                source_file_system_name=old_name, destination_file_system_name=new_name)
+            await self.dsc.rename_file_system(name=old_name, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(
-                source_file_system_name=old_name, destination_file_system_name=new_name, source_lease="bad_id")
-        new_filesystem = await self.dsc.rename_file_system(
-            source_file_system_name=old_name, destination_file_system_name=new_name, source_lease=filesystem_lease_id)
+            await self.dsc.rename_file_system(name=old_name, new_name=new_name, lease="bad_id")
+        new_filesystem = await self.dsc.rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
         props = await new_filesystem.get_file_system_properties()
         self.assertEqual(new_name, props.name)
 
@@ -210,7 +204,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems():
+        async for fs in self.dsc.list_file_systems(include_deleted=True):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
@@ -245,7 +239,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems():
+        async for fs in self.dsc.list_file_systems(include_deleted=True):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
@@ -280,7 +274,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems():
+        async for fs in self.dsc.list_file_systems(include_deleted=True):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 

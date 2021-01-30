@@ -132,16 +132,13 @@ class FileSystemTest(StorageTestCase):
         filesystem1 = self.dsc.create_file_system(old_name1)
         self.dsc.create_file_system(old_name2)
 
-        new_filesystem = self.dsc.rename_file_system(
-            source_file_system_name=old_name1, destination_file_system_name=new_name)
+        new_filesystem = self.dsc.rename_file_system(name=old_name1, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            self.dsc.rename_file_system(
-                source_file_system_name=old_name2, destination_file_system_name=new_name)
+            self.dsc.rename_file_system(name=old_name2, new_name=new_name)
         with self.assertRaises(HttpResponseError):
             filesystem1.get_file_system_properties()
         with self.assertRaises(HttpResponseError):
-            self.dsc.rename_file_system(
-                source_file_system_name="badfilesystem", destination_file_system_name="filesystem")
+            self.dsc.rename_file_system(name="badfilesystem", new_name="filesystem")
         self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
 
     @record
@@ -151,18 +148,15 @@ class FileSystemTest(StorageTestCase):
         filesystem = self.dsc.create_file_system(old_name)
         filesystem_lease_id = filesystem.acquire_lease()
         with self.assertRaises(HttpResponseError):
-            self.dsc.rename_file_system(
-                source_file_system_name=old_name, destination_file_system_name=new_name)
+            self.dsc.rename_file_system(name=old_name, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            self.dsc.rename_file_system(
-                source_file_system_name=old_name, destination_file_system_name=new_name, source_lease="bad_id")
-        new_filesystem = self.dsc.rename_file_system(
-            source_file_system_name=old_name, destination_file_system_name=new_name, source_lease=filesystem_lease_id)
+            self.dsc.rename_file_system(name=old_name, new_name=new_name, lease="bad_id")
+        new_filesystem = self.dsc.rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
         self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
 
     @record
     def test_undelete_file_system(self):
-        name = self._get_file_system_reference(prefix="filesystem")
+        name = self._get_file_system_reference(prefix="fs")
         filesystem_client = self.dsc.create_file_system(name)
 
         # Act
@@ -171,7 +165,7 @@ class FileSystemTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             filesystem_client.get_file_system_properties()
 
-        filesystem_list = list(self.dsc.list_file_systems())
+        filesystem_list = list(self.dsc.list_file_systems(include_deleted=True))
         self.assertTrue(len(filesystem_list) >= 1)
 
         restored_version = 0
@@ -179,7 +173,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.version,
-                                                              new_name="restored" + str(restored_version))
+                                                                   new_name="restored" + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted filesystem is restored
@@ -200,7 +194,7 @@ class FileSystemTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             filesystem_client.get_file_system_properties()
 
-        filesystem_list = list(self.dsc.list_file_systems())
+        filesystem_list = list(self.dsc.list_file_systems(include_deleted=True))
         self.assertTrue(len(filesystem_list) >= 1)
 
         for filesystem in filesystem_list:
@@ -230,7 +224,7 @@ class FileSystemTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             filesystem_client.get_file_system_properties()
 
-        filesystem_list = list(dsc.list_file_systems())
+        filesystem_list = list(dsc.list_file_systems(include_deleted=True))
         self.assertTrue(len(filesystem_list) >= 1)
 
         restored_version = 0

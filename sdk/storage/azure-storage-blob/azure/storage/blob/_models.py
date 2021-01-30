@@ -317,6 +317,10 @@ class ContainerProperties(DictMixin):
         container as metadata.
     :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
         The default encryption scope configuration for the container.
+    :ivar bool deleted:
+        Whether this container was deleted.
+    :ivar str version:
+        The version of a deleted container.
     """
 
     def __init__(self, **kwargs):

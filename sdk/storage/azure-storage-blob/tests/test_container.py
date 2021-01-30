@@ -147,16 +147,13 @@ class StorageContainerTest(StorageTestCase):
         container1.create_container()
         container2.create_container()
 
-        new_container = bsc.rename_container(
-            source_container_name=old_name1, destination_container_name=new_name)
+        new_container = bsc.rename_container(name=old_name1, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            bsc.rename_container(
-                source_container_name=old_name2, destination_container_name=new_name)
+            bsc.rename_container(name=old_name2, new_name=new_name)
         with self.assertRaises(HttpResponseError):
             container1.get_container_properties()
         with self.assertRaises(HttpResponseError):
-            bsc.rename_container(
-                source_container_name="badcontainer", destination_container_name="container")
+            bsc.rename_container(name="badcontainer", new_name="container")
         self.assertEqual(new_name, new_container.get_container_properties().name)
 
     @GlobalStorageAccountPreparer()
@@ -168,13 +165,10 @@ class StorageContainerTest(StorageTestCase):
         container.create_container()
         container_lease_id = container.acquire_lease()
         with self.assertRaises(HttpResponseError):
-            bsc.rename_container(
-                source_container_name=old_name, destination_container_name=new_name)
+            bsc.rename_container(name=old_name, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            bsc.rename_container(
-                source_container_name=old_name, destination_container_name=new_name, source_lease="bad_id")
-        new_container = bsc.rename_container(
-            source_container_name=old_name, destination_container_name=new_name, source_lease=container_lease_id)
+            bsc.rename_container(name=old_name, new_name=new_name, lease="bad_id")
+        new_container = bsc.rename_container(name=old_name, new_name=new_name, lease=container_lease_id)
         self.assertEqual(new_name, new_container.get_container_properties().name)
 
     @GlobalStorageAccountPreparer()
