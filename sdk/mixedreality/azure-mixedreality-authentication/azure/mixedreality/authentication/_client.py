@@ -17,7 +17,8 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._generated import MixedRealityStsRestClient
 from ._generated.models import TokenRequestOptions
 from ._version import SDK_MONIKER
-from .shared import _construct_endpoint_url, MixedRealityAccountKeyCredential
+from .shared._authentication_endpoint import construct_endpoint_url
+from .shared._mixedreality_account_key_credential import MixedRealityAccountKeyCredential
 from .utils import _convert_to_access_token, _generate_cv_base
 
 if TYPE_CHECKING:
@@ -52,7 +53,7 @@ class MixedRealityStsClient(object):
         self._account_domain = account_domain
         self._credential = credential
 
-        endpoint_url = kwargs.pop('endpoint_url', _construct_endpoint_url(account_domain))
+        endpoint_url = kwargs.pop('endpoint_url', construct_endpoint_url(account_domain))
 
         try:
             if not endpoint_url.lower().startswith('http'):

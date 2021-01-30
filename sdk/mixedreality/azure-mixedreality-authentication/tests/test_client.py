@@ -10,7 +10,7 @@ from devtools_testutils import AzureTestCase
 
 from azure.core.credentials import AzureKeyCredential
 from azure.mixedreality.authentication import MixedRealityStsClient
-from azure.mixedreality.authentication.shared import MixedRealityAccountKeyCredential
+from azure.mixedreality.authentication.shared._mixedreality_account_key_credential import MixedRealityAccountKeyCredential
 
 # Import fake account details matching recordings.
 from _constants import (
