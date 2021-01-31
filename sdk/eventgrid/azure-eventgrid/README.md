@@ -62,9 +62,6 @@ Information about the key concepts on Event Grid, see [Concepts in Azure Event G
 `EventGridPublisherClient` provides operations to send event data to topic hostname specified during client initialization.
 Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can be sent.
 
-### EventGridDeserializer
-`EventGridDeserializer` is used to desrialize an event received.
-
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Event Grid tasks, including:
@@ -121,62 +118,6 @@ credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(endpoint, credential)
 
 client.send(event)
-```
-
-### Consume an Event Grid Event
-
-This example demonstrates consuming and deserializing an eventgrid event.
-
-```Python
-import os
-from azure.eventgrid import EventGridDeserializer
-
-consumer = EventGridDeserializer()
-
-eg_storage_dict = {
-    "id":"bbab625-dc56-4b22-abeb-afcc72e5290c",
-    "subject":"/blobServices/default/containers/oc2d2817345i200097container/blobs/oc2d2817345i20002296blob",
-    "data":{
-        "api":"PutBlockList",
-    },
-    "eventType":"Microsoft.Storage.BlobCreated",
-    "dataVersion":"2.0",
-    "metadataVersion":"1",
-    "eventTime":"2020-08-07T02:28:23.867525Z",
-    "topic":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.EventGrid/topics/eventgridegsub"
-}
-
-deserialized_event = consumer.deserialize_eventgrid_events(eg_storage_dict)
-
-# both allow access to raw properties as strings
-time_string = deserialized_event.event_time
-```
-
-### Consume a Cloud Event
-
-This example demonstrates consuming and deserializing a cloud event.
-
-```Python
-import os
-from azure.eventgrid import EventGridDeserializer
-
-consumer = EventGridDeserializer()
-
-cloud_storage_dict = {
-    "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
-    "source":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Storage/storageAccounts/{storage-account}",
-    "data":{
-        "api":"PutBlockList",
-    },
-    "type":"Microsoft.Storage.BlobCreated",
-    "time":"2020-08-07T01:11:49.765846Z",
-    "specversion":"1.0"
-}
-
-deserialized_event = consumer.deserialize_cloud_events(cloud_storage_dict)
-
-# both allow access to raw properties as strings
-time_string = deserialized_event.time
 ```
 
 ## Troubleshooting
