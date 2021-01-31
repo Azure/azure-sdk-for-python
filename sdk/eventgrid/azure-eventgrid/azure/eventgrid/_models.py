@@ -43,7 +43,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :type source: str
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
-    :param data: Optional. Event data specific to the event type. This cannot be provided along with
+    :keyword data: Optional. Event data specific to the event type. This cannot be provided along with
         data_base64.
     :type data: object
     :keyword time: Optional. The time (in UTC) the event was generated, in RFC3339 format.
