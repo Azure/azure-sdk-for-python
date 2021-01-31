@@ -35,13 +35,16 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
 
     All required parameters must be populated in order to send to Azure.
+    If data is of binary type, data_base64 can be used alternatively. Note that data and data_base64
+    cannot be present at the same time.
 
     :param source: Required. Identifies the context in which an event happened. The combination of id and source must
         be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :type source: str
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
-    :param data: Required. Event data specific to the event type.
+    :param data: Optional. Event data specific to the event type. This cannot be provided along with
+        data_base64.
     :type data: object
     :keyword time: Optional. The time (in UTC) the event was generated, in RFC3339 format.
     :type time: ~datetime.datetime
@@ -57,11 +60,17 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :keyword id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
+    :keyword data_base64: Event data specific to the event type if the data is bytes. This must
+        be provided only when data is not provided and data is of bytes type.
+    :type data_base64: bytes
     :ivar source: Identifies the context in which an event happened. The combination of id and source must
         be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :vartype source: str
     :ivar data: Event data specific to the event type.
     :vartype data: object
+    :ivar data_base64: Event data specific to the event type if the data is bytes. This must
+        be provided only when data is not provided and data is of bytes type.
+    :vartype data_base64: bytes
     :ivar type: Type of event related to the originating occurrence.
     :vartype type: str
     :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
@@ -79,8 +88,8 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :vartype id: Optional[str]
     """
-    def __init__(self, source, type, data, **kwargs): # pylint: disable=redefined-builtin
-        # type: (str, str, object, Any) -> None
+    def __init__(self, source, type, data=None, **kwargs): # pylint: disable=redefined-builtin
+        # type: (str, str, Optional[object], Any) -> None
         self.source = source
         self.type = type
         self.specversion = kwargs.pop("specversion", "1.0")
@@ -90,8 +99,12 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         self.datacontenttype = kwargs.pop("datacontenttype", None)
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
+        self.data_base64 = kwargs.pop("data_base64", None)
         self.extensions = {}
         self.extensions.update(dict(kwargs.pop('extensions', {})))
+        if self.data is not None and self.data_base64 is not None:
+            raise ValueError("data and data_base64 cannot be provided at the same time.\
+                Use data_base64 only if you are sending bytes, and use data otherwise.")
 
     @classmethod
     def _from_generated(cls, cloud_event, **kwargs):
@@ -118,14 +131,13 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
             data_base64 = self.data
             data = None
         else:
-            data_base64 = None
             data = self.data
         return InternalCloudEvent(
             id=self.id,
             source=self.source,
             type=self.type,
             specversion=self.specversion,
-            data=data,
+            data=self.data_base64 or data,
             data_base64=data_base64,
             time=self.time,
             dataschema=self.dataschema,
