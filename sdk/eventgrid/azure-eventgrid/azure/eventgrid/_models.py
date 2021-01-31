@@ -10,7 +10,6 @@ import json
 import six
 from msrest.serialization import UTC
 from ._generated.models import EventGridEvent as InternalEventGridEvent, CloudEvent as InternalCloudEvent
-from ._shared.mixins import DictMixin
 
 
 class EventMixin(object):
@@ -221,17 +220,3 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
         kwargs.setdefault('data_version', data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
-
-
-class CustomEvent(DictMixin):
-    """The wrapper class for a CustomEvent, to be used when publishing events.
-       :param dict args: dict
-    """
-
-    def __init__(self, *args, **kwargs):
-        # type: (Any, Any) -> None
-        self._update(*args, **kwargs)
-
-    def _update(self, *args, **kwargs):
-        for k, v in dict(*args, **kwargs).items():
-            self[k] = v

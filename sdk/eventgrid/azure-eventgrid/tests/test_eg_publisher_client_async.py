@@ -17,7 +17,7 @@ from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.eventgrid import CloudEvent, EventGridEvent, CustomEvent, generate_sas
+from azure.eventgrid import CloudEvent, EventGridEvent, generate_sas
 from azure.eventgrid.aio import EventGridPublisherClient
 
 from eventgrid_preparer import (
@@ -234,8 +234,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     async def test_send_custom_schema_event(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
-        custom_event = CustomEvent(
-                    {
+        custom_event = {
                     "customSubject": "sample",
                     "customEventType": "sample.event",
                     "customDataVersion": "2.0",
@@ -243,7 +242,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customEventTime": dt.datetime.now(UTC()).isoformat(),
                     "customData": "sample data"
                     }
-                )
         await client.send(custom_event)
 
 
@@ -253,8 +251,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     async def test_send_custom_schema_event_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
-        custom_event1 = CustomEvent(
-                    {
+        custom_event1 = {
                     "customSubject": "sample",
                     "customEventType": "sample.event",
                     "customDataVersion": "2.0",
@@ -263,8 +260,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customData": "sample data"
                     }
                 )
-        custom_event2 = CustomEvent(
-                    {
+        custom_event2 = {
                     "customSubject": "sample2",
                     "customEventType": "sample.event",
                     "customDataVersion": "2.0",
