@@ -88,14 +88,14 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :vartype id: Optional[str]
     """
-    def __init__(self, source, type, data=None, **kwargs): # pylint: disable=redefined-builtin
-        # type: (str, str, Optional[object], Any) -> None
+    def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
+        # type: (str, str, Any) -> None
         self.source = source
         self.type = type
         self.specversion = kwargs.pop("specversion", "1.0")
         self.id = kwargs.pop("id", str(uuid.uuid4()))
         self.time = kwargs.pop("time", dt.datetime.now(UTC()).isoformat())
-        self.data = data
+        self.data = kwargs.pop("data", None)
         self.datacontenttype = kwargs.pop("datacontenttype", None)
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
@@ -170,9 +170,6 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :keyword metadata_version: Optional. The schema version of the event metadata. If provided,
         must match Event Grid Schema exactly. If not provided, EventGrid will stamp onto event.
     :type metadata_version: str
-    :keyword data_version: Optional. The schema version of the data object. If not provided,
-        will be stamped with an empty value.
-    :type data_version: str
     :keyword id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
     :type id: Optional[str]
     :keyword event_time: Optional.The time (in UTC) of the event. If not provided,
@@ -192,8 +189,6 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :ivar metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
      If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
-    :ivar data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
-    :vartype data_version: str
     :ivar id: An identifier for the event. In not provided, a random UUID will be generated and used.
     :vartype id: Optional[str]
     :ivar event_time: The time (in UTC) of the event. If not provided,
