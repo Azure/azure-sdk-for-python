@@ -222,8 +222,8 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
         'data_version': {'key': 'dataVersion', 'type': 'str'},
     }
 
-    def __init__(self, data, subject, event_type, data_version, **kwargs):
-        # type: (object, str, str, str, Any) -> None
+    def __init__(self, subject, event_type, data, data_version, **kwargs):
+        # type: (str, str, object, str, Any) -> None
         kwargs.setdefault('id', uuid.uuid4())
         kwargs.setdefault('subject', subject)
         kwargs.setdefault("event_type", event_type)
