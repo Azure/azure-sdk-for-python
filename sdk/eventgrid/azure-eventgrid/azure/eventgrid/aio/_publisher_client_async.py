@@ -57,6 +57,8 @@ class EventGridPublisherClient():
     :param credential: The credential object used for authentication which implements
      SAS key authentication or SAS token authentication.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+    :rtype: None
+    :raises: :class:`ValueError`, when events do not follow specified SendType.
     """
 
     def __init__(
