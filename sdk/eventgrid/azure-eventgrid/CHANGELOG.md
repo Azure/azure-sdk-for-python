@@ -4,7 +4,7 @@
 
   **Breaking Changes**
   - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
-  - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventMappings` can be used to get the event model type mapping.
+  - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping.
   - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
   - `data` is now a required param for `CloudEvent`.
   - `azure.eventgrid.generate_shared_access_signature` method is now renamed to `generate_sas`.
