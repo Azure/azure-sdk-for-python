@@ -16,34 +16,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: "{\"documents\":[{\"id\":\"1\",\"sentiment\":\"neutral\",\"confidenceScores\"\
-        :{\"positive\":0.15,\"neutral\":0.81,\"negative\":0.04},\"sentences\":[{\"\
-        sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\"\
-        :0.81,\"negative\":0.04},\"offset\":0,\"length\":41,\"text\":\"I should take\
-        \ my cat to the veterinarian.\"}],\"warnings\":[]},{\"id\":\"4\",\"sentiment\"\
-        :\"neutral\",\"confidenceScores\":{\"positive\":0.38,\"neutral\":0.48,\"negative\"\
-        :0.14},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"\
-        positive\":0.38,\"neutral\":0.48,\"negative\":0.14},\"offset\":0,\"length\"\
-        :39,\"text\":\"Este es un document escrito en Espa\xF1ol.\"}],\"warnings\"\
-        :[]},{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\"\
-        :0.15,\"neutral\":0.79,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"\
-        neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\":0.79,\"negative\"\
-        :0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"\
-        warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
+      string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en"}}},{"id":"4","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en"}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - c560fadc-959d-449a-b60e-07df969f7736
+      - 79ac2635-c56d-4d57-a4ea-57ab22e6fbff
       content-type:
       - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 19 Nov 2020 21:25:42 GMT
+      - Mon, 01 Feb 2021 17:49:58 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -51,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '105'
+      - '2'
     status:
       code: 200
       message: OK

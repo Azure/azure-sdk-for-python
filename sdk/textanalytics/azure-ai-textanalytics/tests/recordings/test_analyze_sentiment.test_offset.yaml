@@ -14,23 +14,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"mixed","confidenceScores":{"positive":0.44,"neutral":0.27,"negative":0.29},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.88,"neutral":0.11,"negative":0.01},"offset":0,"length":14,"text":"I
-        like nature."},{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.43,"negative":0.56},"offset":15,"length":26,"text":"I
-        do not like being inside"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+        like nature.","aspects":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":7,"length":6,"text":"nature","relations":[{"relationType":"opinion","ref":"#/documents/0/sentences/0/opinions/0"}]}],"opinions":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":2,"length":4,"text":"like","isNegated":false}]},{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.43,"negative":0.56},"offset":15,"length":26,"text":"I
+        do not like being inside","aspects":[],"opinions":[]}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 94ec8756-185a-477b-bc53-03bf4994d3aa
+      - b701eaaf-50bd-4ed3-9410-6664e8d0a8da
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 19 Nov 2020 21:23:41 GMT
+      - Mon, 01 Feb 2021 17:49:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '136'
+      - '97'
     status:
       code: 200
       message: OK

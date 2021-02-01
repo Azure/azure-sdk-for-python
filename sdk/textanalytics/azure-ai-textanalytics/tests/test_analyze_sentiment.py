@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import os
 import pytest
 import platform
 import functools
@@ -25,13 +25,13 @@ TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, Te
 class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             response = client.analyze_sentiment("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_all_successful_passing_dict(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
@@ -58,7 +58,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_all_successful_passing_text_document_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
@@ -85,7 +85,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_passing_only_string(self, client):
         docs = [
             u"Microsoft was founded by Bill Gates and Paul Allen.",
@@ -101,7 +101,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertTrue(response[3].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_input_with_some_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at. It was too expensive."},
@@ -113,7 +113,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_input_with_all_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at. It was too expensive."},
@@ -125,7 +125,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_too_many_documents(self, client):
         docs = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"]
 
@@ -136,7 +136,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_document_warnings(self, client):
         # No warnings actually returned for analyze_sentiment. Will update when they add
         docs = [
@@ -149,7 +149,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertEqual(len(doc_warnings), 0)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_output_same_order_as_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="one"),
@@ -181,7 +181,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_bad_document_input(self, client):
         docs = "This is the wrong type"
 
@@ -189,7 +189,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             response = client.analyze_sentiment(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_mixing_inputs(self, client):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
@@ -200,7 +200,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             response = client.analyze_sentiment(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_out_of_order_ids(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -214,7 +214,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertEqual(resp.id, in_order[idx])
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_show_stats_and_model_version(self, client):
         def callback(response):
             self.assertIsNotNone(response)
@@ -239,14 +239,14 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_batch_size_over_limit(self, client):
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
             response = client.analyze_sentiment(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_whole_batch_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"fr\""
@@ -262,7 +262,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="fr", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_whole_batch_dont_use_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -278,7 +278,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_per_item_dont_use_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -296,7 +296,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_whole_batch_language_hint_and_obj_input(self, client):
         def callback(resp):
             language_str = "\"language\": \"de\""
@@ -312,7 +312,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="de", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_whole_batch_language_hint_and_dict_input(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -326,7 +326,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="es", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -345,7 +345,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="en", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -363,7 +363,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="en", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
+    @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es", "text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_client_passed_default_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -384,7 +384,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_invalid_language_hint_method(self, client):
         response = client.analyze_sentiment(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
@@ -392,7 +392,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_invalid_language_hint_docs(self, client):
         response = client.analyze_sentiment(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
@@ -401,6 +401,8 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics_account = os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")
+        text_analytics_account_key = os.environ.get("AZURE_TEXT_ANALYTICS_KEY")
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential)
 
@@ -420,7 +422,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_user_agent(self, client):
         def callback(resp):
             self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -435,7 +437,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         response = client.analyze_sentiment(docs)
@@ -457,7 +459,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         response = client.analyze_sentiment(docs)
@@ -472,18 +474,18 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_bad_model_version_error(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
             result = client.analyze_sentiment(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "ModelVersionIncorrect")
+            self.assertEqual(err.error.code, "InvalidRequest")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_document_errors(self, client):
         text = ""
         for _ in range(5121):
@@ -502,7 +504,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertIsNotNone(doc_errors[2].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
@@ -510,7 +512,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
@@ -518,14 +520,14 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.analyze_sentiment(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_duplicate_ids_error(self, client):
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
@@ -537,7 +539,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_batch_size_over_limit_error(self, client):
         # Batch size over limit
         docs = [u"hello world"] * 1001
@@ -548,7 +550,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_language_kwarg_spanish(self, client):
         def callback(response):
             language_str = "\"language\": \"es\""
@@ -561,11 +563,12 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             language="es",
+            show_opinion_mining=False,
             raw_response_hook=callback
         )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
@@ -576,7 +579,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert res == "cls result"
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_opinion_mining(self, client):
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at."
@@ -610,7 +613,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 self.assertFalse(premium_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_opinion_mining_with_negated_opinion(self, client):
         documents = [
             "The food and service is not good"
@@ -647,7 +650,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_opinion_mining_more_than_5_documents(self, client):
         documents = [
             "The food was unacceptable",
@@ -681,7 +684,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert doc_6_opinions == ["smelled"]
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_opinion_mining_no_mined_opinions(self, client):
         document = client.analyze_sentiment(documents=["today is a hot day"])[0]
 
@@ -689,14 +692,20 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    def test_disable_opinion_mining_v3(self, client):
+    def test_disable_opinion_mining_v3_fails(self, client):
         with pytest.raises(ValueError) as excinfo:
-            client.analyze_sentiment(["will fail"], disable_opinion_mining=True)
+            client.analyze_sentiment(["will fail"], show_opinion_mining=False)
 
-        assert "'disable_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)
+        assert "'show_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    def test_disable_opinion_mining_succeeds(self, client):
+        result = client.analyze_sentiment(["The food was unacceptable"], show_opinion_mining=False)
+        self.assertEqual(len(result[0].sentences[0].mined_opinions), 0)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_offset(self, client):
         result = client.analyze_sentiment(["I like nature. I do not like being inside"])
         sentences = result[0].sentences
@@ -704,7 +713,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertEqual(sentences[1].offset, 15)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0, "text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_no_offset_v3_sentence_sentiment(self, client):
         result = client.analyze_sentiment(["I like nature. I do not like being inside"])
         sentences = result[0].sentences
@@ -712,7 +721,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertIsNone(sentences[1].offset)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0, "text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_string_index_type_not_fail_v3(self, client):
         # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
         # cause v3.0 calls to fail

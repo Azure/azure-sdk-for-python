@@ -652,15 +652,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
 
-        if not self._opinion_mining_supported and show_opinion_mining is not None:
-            raise ValueError("'show_opinion_mining' is only available for API version v3.1-preview and up")
-
-        else :
+        if self._opinion_mining_supported:
             if show_opinion_mining is None:
                 show_opinion_mining = True
             
             kwargs.update({"opinion_mining": show_opinion_mining})
-
+        
+        else:
+            if show_opinion_mining is not None:
+                raise ValueError("'show_opinion_mining' is only available for API version v3.1-preview and up")
 
         if self._string_code_unit:
             kwargs.update({"string_index_type": self._string_code_unit})

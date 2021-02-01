@@ -1,6 +1,7 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "0", "text": "please don''t fail", "language": "en"}]}'
+    body: '{"documents": [{"id": "0", "text": "The food was unacceptable", "language":
+      "en"}]}'
     headers:
       Accept:
       - application/json, text/json
@@ -9,26 +10,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '75'
+      - '83'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"0","sentiment":"positive","confidenceScores":{"positive":0.99,"neutral":0.0,"negative":0.01},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.99,"neutral":0.0,"negative":0.01},"offset":0,"length":17,"text":"please
-        don''t fail"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"0","sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":0,"length":25,"text":"The
+        food was unacceptable"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 4fcbe8e4-7961-458b-89ec-f22d70bec251
+      - ef7ff1cb-7a19-44b1-946b-0dbdcaa41943
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Mon, 01 Feb 2021 17:49:56 GMT
+      - Mon, 01 Feb 2021 17:54:05 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '94'
+      - '121'
     status:
       code: 200
       message: OK

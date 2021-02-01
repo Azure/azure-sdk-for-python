@@ -16,34 +16,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: "{\"documents\":[{\"id\":\"1\",\"sentiment\":\"neutral\",\"confidenceScores\"\
-        :{\"positive\":0.05,\"neutral\":0.94,\"negative\":0.01},\"sentences\":[{\"\
-        sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.05,\"neutral\"\
-        :0.94,\"negative\":0.01},\"offset\":0,\"length\":41,\"text\":\"I should take\
-        \ my cat to the veterinarian.\"}],\"warnings\":[]},{\"id\":\"2\",\"sentiment\"\
-        :\"neutral\",\"confidenceScores\":{\"positive\":0.03,\"neutral\":0.92,\"negative\"\
-        :0.05},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"\
-        positive\":0.03,\"neutral\":0.92,\"negative\":0.05},\"offset\":0,\"length\"\
-        :39,\"text\":\"Este es un document escrito en Espa\xF1ol.\"}],\"warnings\"\
-        :[]},{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\"\
-        :0.13,\"neutral\":0.81,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"\
-        neutral\",\"confidenceScores\":{\"positive\":0.13,\"neutral\":0.81,\"negative\"\
-        :0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"\
-        warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
+      string: "{\"documents\":[{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.13,\"neutral\":0.81,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.13,\"neutral\":0.81,\"negative\":0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\",\"aspects\":[],\"opinions\":[]}],\"warnings\":[]}],\"errors\":[{\"id\":\"1\",\"error\":{\"code\":\"InvalidArgument\",\"message\":\"Invalid
+        Language Code.\",\"innererror\":{\"code\":\"UnsupportedLanguageCode\",\"message\":\"Invalid
+        language code. Supported languages: en\"}}},{\"id\":\"2\",\"error\":{\"code\":\"InvalidArgument\",\"message\":\"Invalid
+        Language Code.\",\"innererror\":{\"code\":\"UnsupportedLanguageCode\",\"message\":\"Invalid
+        language code. Supported languages: en\"}}}],\"modelVersion\":\"2020-04-01\"}"
     headers:
       apim-request-id:
-      - 7f552bcb-a1d1-4db9-a931-9201955b067b
+      - bed2eefb-be42-488b-883e-32ca9c8d9f05
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=3
+      - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 19 Nov 2020 21:25:44 GMT
+      - Mon, 01 Feb 2021 17:49:58 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -51,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '99'
+      - '82'
     status:
       code: 200
       message: OK
