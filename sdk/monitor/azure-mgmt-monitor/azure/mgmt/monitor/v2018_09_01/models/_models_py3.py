@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+from ._monitor_client_enums import *
 
 
 class ActionGroupList(msrest.serialization.Model):
@@ -412,6 +412,15 @@ class Baseline(msrest.serialization.Model):
     :type low_thresholds: list[float]
     :param high_thresholds: Required. The high thresholds of the baseline.
     :type high_thresholds: list[float]
+    :param timestamps: the array of timestamps of the baselines.
+    :type timestamps: list[~datetime.datetime]
+    :param prediction_result_type: The prediction result type of the baseline. Possible values
+     include: 0, 1, 2.
+    :type prediction_result_type: str or ~$(python-base-
+     namespace).v2018_09_01.models.PredictionResultType
+    :param error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4, 100,
+     200.
+    :type error_type: str or ~$(python-base-namespace).v2018_09_01.models.ErrorType
     """
 
     _validation = {
@@ -424,6 +433,9 @@ class Baseline(msrest.serialization.Model):
         'sensitivity': {'key': 'sensitivity', 'type': 'str'},
         'low_thresholds': {'key': 'lowThresholds', 'type': '[float]'},
         'high_thresholds': {'key': 'highThresholds', 'type': '[float]'},
+        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
+        'prediction_result_type': {'key': 'PredictionResultType', 'type': 'int'},
+        'error_type': {'key': 'ErrorType', 'type': 'int'},
     }
 
     def __init__(
@@ -432,12 +444,51 @@ class Baseline(msrest.serialization.Model):
         sensitivity: Union[str, "Sensitivity"],
         low_thresholds: List[float],
         high_thresholds: List[float],
+        timestamps: Optional[List[datetime.datetime]] = None,
+        prediction_result_type: Optional[Union[int, "PredictionResultType"]] = None,
+        error_type: Optional[Union[int, "ErrorType"]] = None,
         **kwargs
     ):
         super(Baseline, self).__init__(**kwargs)
         self.sensitivity = sensitivity
         self.low_thresholds = low_thresholds
         self.high_thresholds = high_thresholds
+        self.timestamps = timestamps
+        self.prediction_result_type = prediction_result_type
+        self.error_type = error_type
+
+
+class BaselineMetadata(msrest.serialization.Model):
+    """Represents a baseline metadata value.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of the baseline metadata.
+    :type name: str
+    :param value: Required. Value of the baseline metadata.
+    :type value: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: str,
+        **kwargs
+    ):
+        super(BaselineMetadata, self).__init__(**kwargs)
+        self.name = name
+        self.value = value
 
 
 class BaselineMetadataValue(msrest.serialization.Model):
@@ -477,6 +528,19 @@ class BaselineResponse(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name and the display name of the metric, i.e. it is localizable string.
     :vartype name: ~$(python-base-namespace).v2018_09_01.models.LocalizableString
+    :param timestamps: The array of timestamps of the baselines.
+    :type timestamps: list[~datetime.datetime]
+    :param baseline: The baseline values for each sensitivity.
+    :type baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
+    :param metdata: The baseline metadata values.
+    :type metdata: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadataValue]
+    :param prediction_result_type: The prediction result type of the baseline. Possible values
+     include: 0, 1, 2.
+    :type prediction_result_type: str or ~$(python-base-
+     namespace).v2018_09_01.models.PredictionResultType
+    :param error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4, 100,
+     200.
+    :type error_type: str or ~$(python-base-namespace).v2018_09_01.models.ErrorType
     :param timespan: The timespan for which the data was retrieved. Its value consists of two
      datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
      from what was originally requested.
@@ -487,57 +551,64 @@ class BaselineResponse(msrest.serialization.Model):
     :type interval: ~datetime.timedelta
     :param aggregation: The aggregation type of the metric.
     :type aggregation: str
-    :param timestamps: The array of timestamps of the baselines.
-    :type timestamps: list[~datetime.datetime]
-    :param baseline: The baseline values for each sensitivity.
-    :type baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-    :param metadata: The baseline metadata values.
-    :type metadata: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadataValue]
+    :ivar internal_operation_id: internal operation id.
+    :vartype internal_operation_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'internal_operation_id': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'LocalizableString'},
+        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
+        'baseline': {'key': 'baseline', 'type': '[Baseline]'},
+        'metdata': {'key': 'metdata', 'type': '[BaselineMetadataValue]'},
+        'prediction_result_type': {'key': 'predictionResultType', 'type': 'int'},
+        'error_type': {'key': 'errorType', 'type': 'int'},
         'timespan': {'key': 'properties.timespan', 'type': 'str'},
         'interval': {'key': 'properties.interval', 'type': 'duration'},
         'aggregation': {'key': 'properties.aggregation', 'type': 'str'},
-        'timestamps': {'key': 'properties.timestamps', 'type': '[iso-8601]'},
-        'baseline': {'key': 'properties.baseline', 'type': '[Baseline]'},
-        'metadata': {'key': 'properties.metadata', 'type': '[BaselineMetadataValue]'},
+        'internal_operation_id': {'key': 'properties.internalOperationId', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
+        timestamps: Optional[List[datetime.datetime]] = None,
+        baseline: Optional[List["Baseline"]] = None,
+        metdata: Optional[List["BaselineMetadataValue"]] = None,
+        prediction_result_type: Optional[Union[int, "PredictionResultType"]] = None,
+        error_type: Optional[Union[int, "ErrorType"]] = None,
         timespan: Optional[str] = None,
         interval: Optional[datetime.timedelta] = None,
         aggregation: Optional[str] = None,
-        timestamps: Optional[List[datetime.datetime]] = None,
-        baseline: Optional[List["Baseline"]] = None,
-        metadata: Optional[List["BaselineMetadataValue"]] = None,
         **kwargs
     ):
         super(BaselineResponse, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
+        self.timestamps = timestamps
+        self.baseline = baseline
+        self.metdata = metdata
+        self.prediction_result_type = prediction_result_type
+        self.error_type = error_type
         self.timespan = timespan
         self.interval = interval
         self.aggregation = aggregation
-        self.timestamps = timestamps
-        self.baseline = baseline
-        self.metadata = metadata
+        self.internal_operation_id = None
 
 
 class CalculateBaselineResponse(msrest.serialization.Model):
     """The response to a calculate baseline call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -547,17 +618,29 @@ class CalculateBaselineResponse(msrest.serialization.Model):
     :type timestamps: list[~datetime.datetime]
     :param baseline: Required. The baseline values for each sensitivity.
     :type baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
+    :param statistics: The statistics.
+    :type statistics: ~$(python-base-
+     namespace).v2018_09_01.models.CalculateBaselineResponseStatistics
+    :ivar internal_operation_id: internal operation id.
+    :vartype internal_operation_id: str
+    :param error_type: The error type for calculating the baseline. Possible values include: 0, 1,
+     2, 3, 4, 100, 200.
+    :type error_type: str or ~$(python-base-namespace).v2018_09_01.models.ErrorTypeAutoGenerated
     """
 
     _validation = {
         'type': {'required': True},
         'baseline': {'required': True},
+        'internal_operation_id': {'readonly': True},
     }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
         'baseline': {'key': 'baseline', 'type': '[Baseline]'},
+        'statistics': {'key': 'statistics', 'type': 'CalculateBaselineResponseStatistics'},
+        'internal_operation_id': {'key': 'internalOperationId', 'type': 'str'},
+        'error_type': {'key': 'errorType', 'type': 'int'},
     }
 
     def __init__(
@@ -566,12 +649,48 @@ class CalculateBaselineResponse(msrest.serialization.Model):
         type: str,
         baseline: List["Baseline"],
         timestamps: Optional[List[datetime.datetime]] = None,
+        statistics: Optional["CalculateBaselineResponseStatistics"] = None,
+        error_type: Optional[Union[int, "ErrorTypeAutoGenerated"]] = None,
         **kwargs
     ):
         super(CalculateBaselineResponse, self).__init__(**kwargs)
         self.type = type
         self.timestamps = timestamps
         self.baseline = baseline
+        self.statistics = statistics
+        self.internal_operation_id = None
+        self.error_type = error_type
+
+
+class CalculateBaselineResponseStatistics(msrest.serialization.Model):
+    """The statistics.
+
+    :param is_eligible: is series eligible for dynamic threshold analysis.
+    :type is_eligible: bool
+    :param status: The list of extended status for calculating the baseline.
+    :type status: list[str]
+    :param seasonality_period: The seasonality period for calculating the baseline.
+    :type seasonality_period: int
+    """
+
+    _attribute_map = {
+        'is_eligible': {'key': 'isEligible', 'type': 'bool'},
+        'status': {'key': 'status', 'type': '[str]'},
+        'seasonality_period': {'key': 'seasonalityPeriod', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        is_eligible: Optional[bool] = None,
+        status: Optional[List[str]] = None,
+        seasonality_period: Optional[int] = None,
+        **kwargs
+    ):
+        super(CalculateBaselineResponseStatistics, self).__init__(**kwargs)
+        self.is_eligible = is_eligible
+        self.status = status
+        self.seasonality_period = seasonality_period
 
 
 class EmailReceiver(msrest.serialization.Model):
@@ -796,6 +915,171 @@ class LogicAppReceiver(msrest.serialization.Model):
         self.callback_url = callback_url
 
 
+class MetricBaselinesResponse(msrest.serialization.Model):
+    """A list of metric baselines.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param timespan: Required. The timespan for which the data was retrieved. Its value consists of
+     two datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned
+     back from what was originally requested.
+    :type timespan: str
+    :param interval: Required. The interval (window size) for which the metric data was returned
+     in.  This may be adjusted in the future and returned back from what was originally requested.
+     This is not present if a metadata request was made.
+    :type interval: ~datetime.timedelta
+    :param namespace: The namespace of the metrics been queried.
+    :type namespace: str
+    :param value: The baseline for each time series that was queried.
+    :type value: list[~$(python-base-namespace).v2018_09_01.models.SingleMetricBaseline]
+    """
+
+    _validation = {
+        'timespan': {'required': True},
+        'interval': {'required': True},
+    }
+
+    _attribute_map = {
+        'timespan': {'key': 'timespan', 'type': 'str'},
+        'interval': {'key': 'interval', 'type': 'duration'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[SingleMetricBaseline]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        timespan: str,
+        interval: datetime.timedelta,
+        namespace: Optional[str] = None,
+        value: Optional[List["SingleMetricBaseline"]] = None,
+        **kwargs
+    ):
+        super(MetricBaselinesResponse, self).__init__(**kwargs)
+        self.timespan = timespan
+        self.interval = interval
+        self.namespace = namespace
+        self.value = value
+
+
+class MetricSingleDimension(msrest.serialization.Model):
+    """The metric dimension name and value.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of the dimension.
+    :type name: str
+    :param value: Required. Value of the dimension.
+    :type value: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: str,
+        **kwargs
+    ):
+        super(MetricSingleDimension, self).__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
+class SingleBaseline(msrest.serialization.Model):
+    """The baseline values for a single sensitivity value.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: "Low",
+     "Medium", "High".
+    :type sensitivity: str or ~$(python-base-namespace).v2018_09_01.models.BaselineSensitivity
+    :param low_thresholds: Required. The low thresholds of the baseline.
+    :type low_thresholds: list[float]
+    :param high_thresholds: Required. The high thresholds of the baseline.
+    :type high_thresholds: list[float]
+    """
+
+    _validation = {
+        'sensitivity': {'required': True},
+        'low_thresholds': {'required': True},
+        'high_thresholds': {'required': True},
+    }
+
+    _attribute_map = {
+        'sensitivity': {'key': 'sensitivity', 'type': 'str'},
+        'low_thresholds': {'key': 'lowThresholds', 'type': '[float]'},
+        'high_thresholds': {'key': 'highThresholds', 'type': '[float]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        sensitivity: Union[str, "BaselineSensitivity"],
+        low_thresholds: List[float],
+        high_thresholds: List[float],
+        **kwargs
+    ):
+        super(SingleBaseline, self).__init__(**kwargs)
+        self.sensitivity = sensitivity
+        self.low_thresholds = low_thresholds
+        self.high_thresholds = high_thresholds
+
+
+class SingleMetricBaseline(msrest.serialization.Model):
+    """The baseline results of a single metric.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The metric baseline Id.
+    :type id: str
+    :param type: Required. The resource type of the metric baseline resource.
+    :type type: str
+    :param metric_name: Required. The name of the metric for which the baselines were retrieved.
+    :type metric_name: str
+    :param baselines: Required. The baseline for each time series that was queried.
+    :type baselines: list[~$(python-base-namespace).v2018_09_01.models.TimeSeriesBaseline]
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'type': {'required': True},
+        'metric_name': {'required': True},
+        'baselines': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'metric_name': {'key': 'metricName', 'type': 'str'},
+        'baselines': {'key': 'baselines', 'type': '[TimeSeriesBaseline]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        type: str,
+        metric_name: str,
+        baselines: List["TimeSeriesBaseline"],
+        **kwargs
+    ):
+        super(SingleMetricBaseline, self).__init__(**kwargs)
+        self.id = id
+        self.type = type
+        self.metric_name = metric_name
+        self.baselines = baselines
+
+
 class SmsReceiver(msrest.serialization.Model):
     """An SMS receiver.
 
@@ -842,6 +1126,55 @@ class SmsReceiver(msrest.serialization.Model):
         self.country_code = country_code
         self.phone_number = phone_number
         self.status = None
+
+
+class TimeSeriesBaseline(msrest.serialization.Model):
+    """The baseline values for a single time series.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregation: Required. The aggregation type of the metric.
+    :type aggregation: str
+    :param dimensions: The dimensions of this time series.
+    :type dimensions: list[~$(python-base-namespace).v2018_09_01.models.MetricSingleDimension]
+    :param timestamps: Required. The list of timestamps of the baselines.
+    :type timestamps: list[~datetime.datetime]
+    :param data: Required. The baseline values for each sensitivity.
+    :type data: list[~$(python-base-namespace).v2018_09_01.models.SingleBaseline]
+    :param metadata_values: The baseline metadata values.
+    :type metadata_values: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadata]
+    """
+
+    _validation = {
+        'aggregation': {'required': True},
+        'timestamps': {'required': True},
+        'data': {'required': True},
+    }
+
+    _attribute_map = {
+        'aggregation': {'key': 'aggregation', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[MetricSingleDimension]'},
+        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
+        'data': {'key': 'data', 'type': '[SingleBaseline]'},
+        'metadata_values': {'key': 'metadataValues', 'type': '[BaselineMetadata]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        aggregation: str,
+        timestamps: List[datetime.datetime],
+        data: List["SingleBaseline"],
+        dimensions: Optional[List["MetricSingleDimension"]] = None,
+        metadata_values: Optional[List["BaselineMetadata"]] = None,
+        **kwargs
+    ):
+        super(TimeSeriesBaseline, self).__init__(**kwargs)
+        self.aggregation = aggregation
+        self.dimensions = dimensions
+        self.timestamps = timestamps
+        self.data = data
+        self.metadata_values = metadata_values
 
 
 class TimeSeriesInformation(msrest.serialization.Model):

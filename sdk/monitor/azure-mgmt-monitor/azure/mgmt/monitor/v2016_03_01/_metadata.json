@@ -2,14 +2,14 @@
     "chosen_version": "2016-03-01",
     "total_api_version_list": ["2016-03-01"],
     "client": {
-        "name": "MonitorManagementClient",
-        "filename": "_monitor_management_client",
+        "name": "MonitorClient",
+        "filename": "_monitor_client",
         "description": "Monitor Management Client.",
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,
         "has_lro_operations": false,
-        "client_side_validation": false
+        "client_side_validation": true
     },
     "global_parameters": {
         "sync": {
@@ -21,7 +21,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "The Azure subscription Id.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -35,7 +35,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "The Azure subscription Id.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }

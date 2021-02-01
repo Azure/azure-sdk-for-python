@@ -61,7 +61,7 @@ except (SyntaxError, ImportError):
     from ._models import TimeWindow  # type: ignore
     from ._models import WebhookNotification  # type: ignore
 
-from ._monitor_management_client_enums import (
+from ._monitor_client_enums import (
     ComparisonOperationType,
     EventLevel,
     MetricStatisticType,

@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+from ._monitor_client_enums import *
 
 
 class ActionGroupList(msrest.serialization.Model):
@@ -874,8 +874,8 @@ class TimeSeriesBaseline(msrest.serialization.Model):
     :type timestamps: list[~datetime.datetime]
     :param data: Required. The baseline values for each sensitivity.
     :type data: list[~$(python-base-namespace).v2019_03_01.models.SingleBaseline]
-    :param metadata: The baseline metadata values.
-    :type metadata: list[~$(python-base-namespace).v2019_03_01.models.BaselineMetadata]
+    :param metadata_values: The baseline metadata values.
+    :type metadata_values: list[~$(python-base-namespace).v2019_03_01.models.BaselineMetadata]
     """
 
     _validation = {
@@ -889,7 +889,7 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         'dimensions': {'key': 'dimensions', 'type': '[MetricSingleDimension]'},
         'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
         'data': {'key': 'data', 'type': '[SingleBaseline]'},
-        'metadata': {'key': 'metadata', 'type': '[BaselineMetadata]'},
+        'metadata_values': {'key': 'metadataValues', 'type': '[BaselineMetadata]'},
     }
 
     def __init__(
@@ -899,7 +899,7 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         timestamps: List[datetime.datetime],
         data: List["SingleBaseline"],
         dimensions: Optional[List["MetricSingleDimension"]] = None,
-        metadata: Optional[List["BaselineMetadata"]] = None,
+        metadata_values: Optional[List["BaselineMetadata"]] = None,
         **kwargs
     ):
         super(TimeSeriesBaseline, self).__init__(**kwargs)
@@ -907,7 +907,7 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         self.dimensions = dimensions
         self.timestamps = timestamps
         self.data = data
-        self.metadata = metadata
+        self.metadata_values = metadata_values
 
 
 class VoiceReceiver(msrest.serialization.Model):

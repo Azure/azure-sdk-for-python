@@ -9,9 +9,11 @@
 from ._action_groups_operations import ActionGroupsOperations
 from ._metric_baseline_operations import MetricBaselineOperations
 from ._baseline_operations import BaselineOperations
+from ._baselines_operations import BaselinesOperations
 
 __all__ = [
     'ActionGroupsOperations',
     'MetricBaselineOperations',
     'BaselineOperations',
+    'BaselinesOperations',
 ]

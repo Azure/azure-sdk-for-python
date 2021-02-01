@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+from ._monitor_client_enums import *
 
 
 class Action(msrest.serialization.Model):
@@ -402,8 +402,20 @@ class ScheduledQueryRuleResource(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
+     resources of the same type; e.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
+     the resource provider must validate and persist this value.
+    :vartype kind: str
+    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
+     also be provided as a header per the normal etag convention.  Entity tags are used for
+     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
+     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
+     (section 14.27) header fields.
+    :vartype etag: str
     :param description: The description of the scheduled query rule.
     :type description: str
+    :param display_name: The display name of the alert rule.
+    :type display_name: str
     :param severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
      severest. Possible values include: 0, 1, 2, 3, 4.
     :type severity: str or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
@@ -418,6 +430,9 @@ class ScheduledQueryRuleResource(TrackedResource):
     :param window_size: The period of time (in ISO 8601 duration format) on which the Alert query
      will be executed (bin size).
     :type window_size: ~datetime.timedelta
+    :param override_query_time_range: If specified then overrides the query time range (default is
+     WindowSize*NumberOfEvaluationPeriods).
+    :type override_query_time_range: ~datetime.timedelta
     :param target_resource_types: List of resource type of the target resource(s) on which the
      alert is created/updated. For example if the scope is a resource group and targetResourceTypes
      is Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual
@@ -437,6 +452,8 @@ class ScheduledQueryRuleResource(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'kind': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -445,12 +462,16 @@ class ScheduledQueryRuleResource(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'float'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
+        'override_query_time_range': {'key': 'properties.OverrideQueryTimeRange', 'type': 'duration'},
         'target_resource_types': {'key': 'properties.targetResourceTypes', 'type': '[str]'},
         'criteria': {'key': 'properties.criteria', 'type': 'ScheduledQueryRuleCriteria'},
         'mute_actions_duration': {'key': 'properties.muteActionsDuration', 'type': 'duration'},
@@ -463,11 +484,13 @@ class ScheduledQueryRuleResource(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
+        display_name: Optional[str] = None,
         severity: Optional[Union[float, "AlertSeverity"]] = None,
         enabled: Optional[bool] = None,
         scopes: Optional[List[str]] = None,
         evaluation_frequency: Optional[datetime.timedelta] = None,
         window_size: Optional[datetime.timedelta] = None,
+        override_query_time_range: Optional[datetime.timedelta] = None,
         target_resource_types: Optional[List[str]] = None,
         criteria: Optional["ScheduledQueryRuleCriteria"] = None,
         mute_actions_duration: Optional[datetime.timedelta] = None,
@@ -475,12 +498,16 @@ class ScheduledQueryRuleResource(TrackedResource):
         **kwargs
     ):
         super(ScheduledQueryRuleResource, self).__init__(tags=tags, location=location, **kwargs)
+        self.kind = None
+        self.etag = None
         self.description = description
+        self.display_name = display_name
         self.severity = severity
         self.enabled = enabled
         self.scopes = scopes
         self.evaluation_frequency = evaluation_frequency
         self.window_size = window_size
+        self.override_query_time_range = override_query_time_range
         self.target_resource_types = target_resource_types
         self.criteria = criteria
         self.mute_actions_duration = mute_actions_duration
@@ -516,6 +543,8 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param description: The description of the scheduled query rule.
     :type description: str
+    :param display_name: The display name of the alert rule.
+    :type display_name: str
     :param severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
      severest. Possible values include: 0, 1, 2, 3, 4.
     :type severity: str or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
@@ -530,6 +559,9 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     :param window_size: The period of time (in ISO 8601 duration format) on which the Alert query
      will be executed (bin size).
     :type window_size: ~datetime.timedelta
+    :param override_query_time_range: If specified then overrides the query time range (default is
+     WindowSize*NumberOfEvaluationPeriods).
+    :type override_query_time_range: ~datetime.timedelta
     :param target_resource_types: List of resource type of the target resource(s) on which the
      alert is created/updated. For example if the scope is a resource group and targetResourceTypes
      is Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual
@@ -547,11 +579,13 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'float'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
+        'override_query_time_range': {'key': 'properties.OverrideQueryTimeRange', 'type': 'duration'},
         'target_resource_types': {'key': 'properties.targetResourceTypes', 'type': '[str]'},
         'criteria': {'key': 'properties.criteria', 'type': 'ScheduledQueryRuleCriteria'},
         'mute_actions_duration': {'key': 'properties.muteActionsDuration', 'type': 'duration'},
@@ -563,11 +597,13 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
+        display_name: Optional[str] = None,
         severity: Optional[Union[float, "AlertSeverity"]] = None,
         enabled: Optional[bool] = None,
         scopes: Optional[List[str]] = None,
         evaluation_frequency: Optional[datetime.timedelta] = None,
         window_size: Optional[datetime.timedelta] = None,
+        override_query_time_range: Optional[datetime.timedelta] = None,
         target_resource_types: Optional[List[str]] = None,
         criteria: Optional["ScheduledQueryRuleCriteria"] = None,
         mute_actions_duration: Optional[datetime.timedelta] = None,
@@ -577,11 +613,13 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
         super(ScheduledQueryRuleResourcePatch, self).__init__(**kwargs)
         self.tags = tags
         self.description = description
+        self.display_name = display_name
         self.severity = severity
         self.enabled = enabled
         self.scopes = scopes
         self.evaluation_frequency = evaluation_frequency
         self.window_size = window_size
+        self.override_query_time_range = override_query_time_range
         self.target_resource_types = target_resource_types
         self.criteria = criteria
         self.mute_actions_duration = mute_actions_duration

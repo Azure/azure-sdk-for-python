@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class MonitorManagementClientConfiguration(Configuration):
-    """Configuration for MonitorManagementClient.
+class MonitorClientConfiguration(Configuration):
+    """Configuration for MonitorClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -35,7 +35,7 @@ class MonitorManagementClientConfiguration(Configuration):
     ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(MonitorManagementClientConfiguration, self).__init__(**kwargs)
+        super(MonitorClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.api_version = "2018-11-27-preview"

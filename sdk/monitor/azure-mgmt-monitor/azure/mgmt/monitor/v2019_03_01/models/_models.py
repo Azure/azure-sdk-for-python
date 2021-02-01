@@ -780,8 +780,8 @@ class TimeSeriesBaseline(msrest.serialization.Model):
     :type timestamps: list[~datetime.datetime]
     :param data: Required. The baseline values for each sensitivity.
     :type data: list[~$(python-base-namespace).v2019_03_01.models.SingleBaseline]
-    :param metadata: The baseline metadata values.
-    :type metadata: list[~$(python-base-namespace).v2019_03_01.models.BaselineMetadata]
+    :param metadata_values: The baseline metadata values.
+    :type metadata_values: list[~$(python-base-namespace).v2019_03_01.models.BaselineMetadata]
     """
 
     _validation = {
@@ -795,7 +795,7 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         'dimensions': {'key': 'dimensions', 'type': '[MetricSingleDimension]'},
         'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
         'data': {'key': 'data', 'type': '[SingleBaseline]'},
-        'metadata': {'key': 'metadata', 'type': '[BaselineMetadata]'},
+        'metadata_values': {'key': 'metadataValues', 'type': '[BaselineMetadata]'},
     }
 
     def __init__(
@@ -807,7 +807,7 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         self.dimensions = kwargs.get('dimensions', None)
         self.timestamps = kwargs['timestamps']
         self.data = kwargs['data']
-        self.metadata = kwargs.get('metadata', None)
+        self.metadata_values = kwargs.get('metadata_values', None)
 
 
 class VoiceReceiver(msrest.serialization.Model):
