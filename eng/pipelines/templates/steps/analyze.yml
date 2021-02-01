@@ -29,7 +29,7 @@ steps:
   - pwsh: |
       Get-ChildItem $(Build.SourcesDirectory) -Filter "*.py" |
       Foreach-Object {
-        If ((Get-Content $_ -Raw) -match "\r\n") {
+        if ((Get-Content $_ -Raw) -match "\r\n") {
           Write-Error "Found CRLF line ending in `$_`"
         }
       }
