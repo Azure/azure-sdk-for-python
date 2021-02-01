@@ -25,15 +25,17 @@ def get_package_names(sdk_folder):
 
 
 def init_new_service(package_name, folder_name):
-    ci = Path(folder_name, 'ci.yml')
-    if not ci.exists():
+    setup = Path(folder_name, package_name, 'setup.py')
+    if not setup.exists():
         check_call(f'python -m packaging_tools --build-conf {package_name} -o {folder_name}', shell=True)
-        with open('ci_template.yml', 'r') as file_in:
-            content = file_in.readlines()
-        name = package_name.replace('azure-', '').replace('mgmt-', '')
-        content = [line.replace('MyService', name) for line in content]
-        with open(str(ci), 'w') as file_out:
-            file_out.writelines(content)
+        ci = Path(folder_name, 'ci.yml')
+        if not ci.exists():
+            with open('ci_template.yml', 'r') as file_in:
+                content = file_in.readlines()
+            name = package_name.replace('azure-', '').replace('mgmt-', '')
+            content = [line.replace('MyService', name) for line in content]
+            with open(str(ci), 'w') as file_out:
+                file_out.writelines(content)
 
 
 def main(generate_input, generate_output):
