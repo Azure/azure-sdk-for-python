@@ -224,7 +224,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customEventTime": dt.datetime.now(UTC()).isoformat(),
                     "customData": "sample data"
                     }
-                )
         client.send(custom_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -240,7 +239,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customEventTime": dt.datetime.now(UTC()).isoformat(),
                     "customData": "sample data"
                     }
-                )
         custom_event2 = {
                     "customSubject": "sample2",
                     "customEventType": "sample.event",
@@ -249,7 +247,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customEventTime": dt.datetime.now(UTC()).isoformat(),
                     "customData": "sample data 2"
                     }
-                )
         client.send([custom_event1, custom_event2])
 
     def test_send_throws_with_bad_credential(self):

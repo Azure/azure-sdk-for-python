@@ -259,7 +259,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customEventTime": dt.datetime.now(UTC()).isoformat(),
                     "customData": "sample data"
                     }
-                )
         custom_event2 = {
                     "customSubject": "sample2",
                     "customEventType": "sample.event",
@@ -268,7 +267,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     "customEventTime": dt.datetime.now(UTC()).isoformat(),
                     "customData": "sample data 2"
                     }
-                )
         await client.send([custom_event1, custom_event2])
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
