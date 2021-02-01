@@ -19,10 +19,12 @@ class CommunicationUserIdentifierSerializer(object):
     def serialize(cls, communicationIdentifier):
         """ Serialize the Communication identifier into CommunicationIdentifierModel
 
-        :param identifier: Communication service identifier
-        :type identifier: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
+        :param identifier: Identifier object
+        :type identifier: Union[CommunicationUserIdentifier,
+           PhoneNumberIdentifier, MicrosoftTeamsUserIdentifier, UnknownIdentifier]
         :return: CommunicationIdentifierModel
         :rtype: ~azure.communication.chat.CommunicationIdentifierModel
+        :raises Union[TypeError, ValueError]
         """
         if isinstance(communicationIdentifier, CommunicationUserIdentifier):
             return CommunicationIdentifierModel(
@@ -32,18 +34,24 @@ class CommunicationUserIdentifierSerializer(object):
         if isinstance(communicationIdentifier, PhoneNumberIdentifier):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.PhoneNumber,
-                id=communicationIdentifier.phone_number
+                id=communicationIdentifier.identifier,
+                phone_number=communicationIdentifier.phone_number
             )
         if isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
             return CommunicationIdentifierModel(
                 kind=CommunicationIdentifierKind.MicrosoftTeamsUser,
-                id=communicationIdentifier.user_id
+                id=communicationIdentifier.identifier,
+                microsoft_teams_user_id=communicationIdentifier.user_id,
+                communication_cloud_environment=communicationIdentifier.cloud
             )
 
-        return CommunicationIdentifierModel(
-            kind=CommunicationIdentifierKind.Unknown,
-            id=communicationIdentifier.identifier
-        )
+        if isinstance(communicationIdentifier, UnknownIdentifier):
+            return CommunicationIdentifierModel(
+                kind=CommunicationIdentifierKind.Unknown,
+                id=communicationIdentifier.identifier
+            )
+
+        raise TypeError("Unsupported identifier type " + communicationIdentifier.__class__.__name__)
 
     @classmethod
     def deserialize(cls, identifierModel):
@@ -58,26 +66,27 @@ class CommunicationUserIdentifierSerializer(object):
         """
 
         identifier, kind = identifierModel.id, identifierModel.kind
+        if not identifier:
+            raise ValueError("Identifier must have a valid id")
 
         if kind == CommunicationIdentifierKind.CommunicationUser:
-            if not identifier:
-                raise ValueError("CommunictionUser must have a valid id")
             return CommunicationUserIdentifier(id)
         if kind == CommunicationIdentifierKind.PhoneNumber:
             if not identifierModel.phone_number:
                 raise ValueError("PhoneNumberIdentifier must have a valid attribute - phone_number")
-            return PhoneNumberIdentifier(identifierModel.phone_number)
+            return PhoneNumberIdentifier(identifierModel.phone_number, identifier=identifier)
         if kind == CommunicationIdentifierKind.MicrosoftTeamsUser:
             if identifierModel.is_anonymous not in [True, False]:
                 raise ValueError("MicrosoftTeamsUser must have a valid attribute - is_anonymous")
             if not identifierModel.microsoft_teams_user_id:
                 raise ValueError("MicrosoftTeamsUser must have a valid attribute - microsoft_teams_user_id")
+            if not identifierModel.communication_cloud_environment:
+                raise ValueError("MicrosoftTeamsUser must have a valid attribute - communication_cloud_environment")
             return MicrosoftTeamsUserIdentifier(
                 identifierModel.microsoft_teams_user_id,
-                is_anonymous=identifierModel.is_anonymous
+                identifier=identifier,
+                is_anonymous=identifierModel.is_anonymous,
+                cloud=identifierModel.communication_cloud_environment
             )
-
-        if not identifier:
-            raise ValueError("UnknownIdentifier must have a valid id")
 
         return UnknownIdentifier(identifier)
