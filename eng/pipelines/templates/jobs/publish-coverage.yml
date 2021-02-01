@@ -62,8 +62,8 @@ jobs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
 
-  - job: Show_all_coverage_files
+  # - job: Show_all_coverage_files
 
-    steps:
-    - pwsh: |
-          Get-ChildItem
+  #   steps:
+  #   - pwsh: |
+  #         Get-ChildItem

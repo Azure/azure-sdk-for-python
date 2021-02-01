@@ -83,7 +83,7 @@ parameters:
 
 
 stages:
-  - stage: Build
+  - stage: Live_Test
     jobs:
     - template: ../jobs/archetype-sdk-tests.yml
       parameters:
@@ -108,10 +108,8 @@ stages:
 
 
   - stage: Publish_Coverage
-    dependsOn: Build
     jobs:
     - template: ../jobs/publish-coverage.yml
       parameters:
         # condition: succeededOrFailed()
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        
