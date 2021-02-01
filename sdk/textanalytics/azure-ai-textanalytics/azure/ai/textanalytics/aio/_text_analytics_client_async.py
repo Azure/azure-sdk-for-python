@@ -111,7 +111,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
-        self._opinion_mining_supported = False if kwargs.get("api_version") == "v3.0" else True
+        self._opinion_mining_supported = kwargs.get("api_version") != "v3.0"
         self._deserialize = _get_deserialize()
 
     @distributed_trace_async
