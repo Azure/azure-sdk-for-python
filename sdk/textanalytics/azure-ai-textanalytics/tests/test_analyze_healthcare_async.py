@@ -730,3 +730,22 @@ class TestHealth(AsyncTextAnalyticsTest):
             cancellation_result = await (await client.begin_cancel_analyze_healthcare(poller, polling_interval=self._interval())).result()
 
             self.assertIsNone(cancellation_result)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+        poller = await client.begin_analyze_healthcare(documents=["Hello world"])
+        actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
+        self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
+        await poller.result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_explicit_set_string_index_type(self, client):
+        poller = await client.begin_analyze_healthcare(
+            documents=["Hello world"],
+            string_index_type="TextElements_v8"
+        )
+        actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
+        self.assertEqual(actual_string_index_type, "TextElements_v8")
+        await poller.result()
