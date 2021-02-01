@@ -132,13 +132,14 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
             data = None
         else:
             data = self.data
+            data_base64 = None
         return InternalCloudEvent(
             id=self.id,
             source=self.source,
             type=self.type,
             specversion=self.specversion,
-            data=self.data_base64 or data,
-            data_base64=self.data_base64,
+            data=data,
+            data_base64=self.data_base64 or data_base64,
             time=self.time,
             dataschema=self.dataschema,
             datacontenttype=self.datacontenttype,
