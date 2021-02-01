@@ -30,7 +30,7 @@ jobs:
           path: '$(Build.SourcesDirectory)/_all_coverage_files'
 
       - pwsh: |
-          pip install coverage==4.5.4
+          pip install -r $(Build.SourcesDirectory)/eng/ci_tools.txt
         displayName: Install coverage
 
       - pwsh: |
