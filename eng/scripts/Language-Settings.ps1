@@ -55,6 +55,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $docsReadMeName = $pkgId -replace "azure-" , ""
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
@@ -85,6 +86,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
+    DocsReadMeName = $docsReadMeName
   }
 }
 
@@ -240,9 +242,4 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
     LogError "Failed to retrieve package versions. `n$_"
     return $null
   }
-}
-
-# Turn the package name start with `azure-identity` to "identity".
-function Normalize-python-Package-name ($PackageName) {
-  return $PackageName -replace "^azure-" , ""
 }
