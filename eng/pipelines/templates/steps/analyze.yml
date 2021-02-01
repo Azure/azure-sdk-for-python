@@ -36,9 +36,8 @@ steps:
 
       Get-ChildItem $(Build.SourcesDirectory) -Filter "*.md" |
       Foreach-Object {
-        If ((Get-Content $_ -Raw) -match "\r\n") {
-          Write-Ouput $_
-          Throw "Found a CRLF line ending"
+        if ((Get-Content $_ -Raw) -match "\r\n") {
+          Write-Error "Found CRLF line ending in `$_`"
         }
       }
     displayName: Check for CRLF Line endings
