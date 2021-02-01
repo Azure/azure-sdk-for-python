@@ -1,6 +1,6 @@
 trigger: none
 
-jobs:
+stages:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: keyvault
