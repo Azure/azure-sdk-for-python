@@ -14,13 +14,13 @@ credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
 
 event = EventGridEvent(
-		event_type="Contoso.Items.ItemReceived",
-		data={
-			"itemSku": "Contoso Item SKU #1"
-		},
-		subject="Door1",
-		data_version="2.0"
-	)
+        event_type="Contoso.Items.ItemReceived",
+        data={
+            "itemSku": "Contoso Item SKU #1"
+        },
+        subject="Door1",
+        data_version="2.0"
+    )
 
 client.send(event)
 ```
@@ -64,22 +64,22 @@ credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
 
 event0 = EventGridEvent(
-		event_type="Contoso.Items.ItemReceived",
-		data={
-			"itemSku": "Contoso Item SKU #1"
-		},
-		subject="Door1",
-		data_version="2.0"
-	)
+        event_type="Contoso.Items.ItemReceived",
+        data={
+            "itemSku": "Contoso Item SKU #1"
+        },
+        subject="Door1",
+        data_version="2.0"
+    )
 
 event1 = EventGridEvent(
-		event_type="Contoso.Items.ItemReceived",
-		data={
-			"itemSku": "Contoso Item SKU #2"
-		},
-		subject="Door1",
-		data_version="2.0"
-	)
+        event_type="Contoso.Items.ItemReceived",
+        data={
+            "itemSku": "Contoso Item SKU #2"
+        },
+        subject="Door1",
+        data_version="2.0"
+    )
 
 client.send([event0, event1])
 ```
@@ -123,7 +123,7 @@ client.send([event0, event1])
 import os
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
-from datetime import datetime
+from datetime import datetime, timedelta
 
 topic_key = os.environ["EG_ACCESS_KEY"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]
@@ -134,23 +134,23 @@ client = EventGridPublisherClient(endpoint, credential)
 event0 = {
     "eventType": "Contoso.Items.ItemReceived",
     "data": {
-		"itemSku": "Contoso Item SKU #1"
-	},
-	"subject": "Door1",
-	"dataVersion": "2.0",
+        "itemSku": "Contoso Item SKU #1"
+    },
+    "subject": "Door1",
+    "dataVersion": "2.0",
     "id": "randomuuid11",
-    "eventTime": datetime(2021, 1, 21, 17, 37)
+    "eventTime": datetime.utcnow() + timedelta(minutes=10)
 }
 
 event1 = {
     "eventType": "Contoso.Items.ItemReceived",
     "data": {
-		"itemSku": "Contoso Item SKU #2"
-	},
-	"subject": "Door1",
-	"dataVersion": "2.0",
+        "itemSku": "Contoso Item SKU #2"
+    },
+    "subject": "Door1",
+    "dataVersion": "2.0",
     "id": "randomuuid12",
-    "eventTime": datetime(2021, 1, 21, 17, 37)
+    "eventTime": datetime.utcnow()
 }
 
 client.send([event0, event1])
@@ -208,23 +208,23 @@ credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
 
 event = {
-		"custom_event_type":"Contoso.Items.ItemReceived",
-		"data":{
-			"itemSku": "Contoso Item SKU #2"
-		},
-		"custom_subject":"Door1",
-		"custom_data_version":"2.0"
+        "custom_event_type":"Contoso.Items.ItemReceived",
+        "data":{
+            "itemSku": "Contoso Item SKU #2"
+        },
+        "custom_subject":"Door1",
+        "custom_data_version":"2.0"
 }
 client.send(event)
 ```
 
 ## Receive Scenarios
 
-### Deserialize CloudEvents from storage queue
+### Deserialize EventGridEvents from storage queue
 
 ```Python
 from azure.eventgrid import CloudEvent
-from azure.storage.queue import QueueServiceClient
+from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
 import os
 import json
 from base64 import b64decode
@@ -234,24 +234,25 @@ connection_str = os.environ['STORAGE_QUEUE_CONN_STR']
 queue_name = os.environ['STORAGE_QUEUE_NAME']
 
 with QueueServiceClient.from_connection_string(connection_str) as qsc:
-    payload =  qsc.get_queue_client("eventgrid").peek_messages()
+    payload =  qsc.get_queue_client(
+        queue=queue_name,message_decode_policy=BinaryBase64DecodePolicy()).peek_messages()
 
     ## deserialize payload into a lost of typed Events
-    events = [CloudEvent(**json.loads(b64decode(msg.content))) for msg in payload]
+    events = [CloudEvent.from_dict(json.loads(msg.content)) for msg in payload]
 
     for event in events:
         print(type(event)) ## CloudEvent
 ```
 
-### Deserialize CloudEvents from service bus message
+### Deserialize EventGridEvents from service bus message
 
 ```Python
-from azure.eventgrid import CloudEvent
+from azure.eventgrid import EventGridEvent
 from azure.servicebus import ServiceBusClient
 import os
 import json
 
-# all types of CloudEvents below produce same DeserializedEvent
+# all types of EventGridEvents below produce same DeserializedEvent
 connection_str = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
@@ -259,10 +260,10 @@ with ServiceBusClient.from_connection_string(connection_str) as sb_client:
     payload =  sb_client.get_queue_receiver(queue_name).receive_messages()
 
     ## deserialize payload into a lost of typed Events
-    events = [CloudEvent(**json.loads(next(msg.body).decode('utf-8'))) for msg in payload]
+    events = [EventGridEvent.from_dict(json.loads(next(msg.body).decode('utf-8'))) for msg in payload]
 
     for event in events:
-        print(type(event)) ## CloudEvent
+        print(type(event)) ## EventGridEvent
 
 ```
 
@@ -273,16 +274,39 @@ from azure.eventgrid import CloudEvent
 import json
 
 # all types of CloudEvents below produce same DeserializedEvent
-cloud_custom_dict = "[{ \"id\":\"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033\",\
-    \"source\":\"https://egtest.dev/cloudcustomevent\",\
-    \"data\":{\"team\": \"event grid squad\"},\
-    \"type\":\"Azure.Sdk.Sample\",\
-    \"time\":\"2020-08-07T02:06:08.11969Z\",\
-    \"specversion\":\"1.0\" }]"
+cloud_custom_dict = """[{
+    "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+    "source":"https://egtest.dev/cloudcustomevent",
+    "data":{
+        "team": "event grid squad"
+    },
+    "type":"Azure.Sdk.Sample",
+    "time":"2020-08-07T02:06:08.11969Z",
+    "specversion":"1.0"
+}]"""
 
 deserialized_dict_events = [CloudEvent(**msg) for msg in json.loads(cloud_custom_dict)]
 
 for event in deserialized_dict_events:
-	print(event.data)
-	print(type(event))
+    print(event.data)
+    print(type(event))
+```
+
+## generate sas and use AzureSasCredential
+
+```Python
+from azure.eventgrid import generate_sas, EventGridPublisherClient
+from azure.core.credentials import AzureSasCredential
+from datetime import datetime, timedelta
+import os
+
+
+topic_key = os.environ["EG_ACCESS_KEY"]
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
+
+signature = generate_sas(endpoint, topic_key, expiration_date_utc)
+
+credential = AzureSasCredential(signature)
+client = EventGridPublisherClient(endpoint, credential)
 ```
