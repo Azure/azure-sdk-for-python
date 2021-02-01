@@ -55,7 +55,7 @@ class ChatClientSamplesAsync(object):
     async def create_thread_async(self):
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
-        from azure.communication.chat import ChatThreadParticipant, CommunicationUser
+        from azure.communication.chat import ChatThreadParticipant, CommunicationUserIdentifier
 
         refresh_options = CommunicationTokenRefreshOptions(self.token)
         chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))

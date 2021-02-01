@@ -205,7 +205,7 @@ class ChatThreadClientSamplesAsync(object):
 
         async with chat_thread_client:
             # [START add_participant]
-            from azure.communication.chat import ChatThreadParticipant, CommunicationUser
+            from azure.communication.chat import ChatThreadParticipant, CommunicationUserIdentifier
             from datetime import datetime
             new_chat_thread_participant = ChatThreadParticipant(
                     user=self.new_user,
@@ -222,7 +222,7 @@ class ChatThreadClientSamplesAsync(object):
 
         async with chat_thread_client:
             # [START add_participants]
-            from azure.communication.chat import ChatThreadParticipant, CommunicationUser
+            from azure.communication.chat import ChatThreadParticipant, CommunicationUserIdentifier
             from datetime import datetime
             new_participant = ChatThreadParticipant(
                     user=self.new_user,

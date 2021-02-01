@@ -33,7 +33,7 @@ class ChatThreadParticipant(object):
     @classmethod
     def _from_generated(cls, chat_thread_participant):
         return cls(
-            user=CommunicationUserIdentifier(chat_thread_member.id),
+            user=CommunicationUserIdentifier(chat_thread_participant.id),
             display_name=chat_thread_participant.display_name,
             share_history_time=chat_thread_participant.share_history_time
         )
@@ -192,8 +192,7 @@ class ChatThread(object):
             id=chat_thread.id,
             topic=chat_thread.topic,
             created_on=chat_thread.created_on,
-            created_by=CommunicationUserIdentifier(chat_thread.created_by),
-            participants=[ChatThreadParticipant._from_generated(x) for x in chat_thread.participants]
+            created_by=CommunicationUserIdentifier(chat_thread.created_by)
         )
 
 

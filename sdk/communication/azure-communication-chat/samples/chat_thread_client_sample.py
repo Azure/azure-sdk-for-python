@@ -52,7 +52,7 @@ class ChatThreadClientSamples(object):
             ChatClient,
             CommunicationUserIdentifier,
             CommunicationTokenCredential,
-            CommunicationTokenRefreshOptions
+            CommunicationTokenRefreshOptions,
             ChatThreadParticipant
         )
         refresh_options = CommunicationTokenRefreshOptions(self.token)
@@ -226,7 +226,7 @@ class ChatThreadClientSamples(object):
 
     def remove_participant(self):
         from azure.communication.chat import ChatThreadClient
-        from azure.communication.chat import CommunicationTokenCredential, CommunicationUser, CommunicationTokenRefreshOptions
+        from azure.communication.chat import CommunicationTokenCredential, CommunicationUserIdentifier, CommunicationTokenRefreshOptions
         refresh_options = CommunicationTokenRefreshOptions(self.token)
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 

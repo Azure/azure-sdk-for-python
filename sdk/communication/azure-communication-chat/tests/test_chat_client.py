@@ -83,7 +83,7 @@ class TestChatClient(unittest.TestCase):
         chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
 
         topic = "test topic"
-        user = CommunicationUser("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
+        user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
         participants = [ChatThreadParticipant(
             user=user,
             display_name='name',
