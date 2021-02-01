@@ -219,8 +219,7 @@ def _num_tasks_in_current_page(returned_tasks_object):
 def get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_state):
     iter_items = []
     returned_tasks_object = analyze_job_state.tasks
-    for _ in range(_num_tasks_in_current_page(returned_tasks_object)):
-        current_task_type = task_order.pop(0)
+    for current_task_type in task_order:
         deserialization_callback = _get_deserialization_callback_from_task_type(current_task_type)
         property_name = _get_property_name_from_task_type(current_task_type)
         response_task_to_deserialize = getattr(returned_tasks_object, property_name).pop(0)

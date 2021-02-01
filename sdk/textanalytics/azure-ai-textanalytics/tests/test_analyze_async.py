@@ -781,30 +781,28 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 polling_interval=self._interval()
             )).result()
 
-            pages = []
-            async for p in result:
-                pages.append(p)
+            recognize_entities_results = []
+            extract_key_phrases_results = []
+            recognize_pii_entities_results = []
 
-            self.assertEqual(len(pages), 2)  # default page size is 20
+            async for idx, action_result in enumerate(result):
+                if idx % 3 == 0:
+                    assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+                    recognize_entities_results.append(action_result)
+                elif idx % 3 == 1:
+                    assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+                    extract_key_phrases_results.append(action_result)
+                else:
+                    assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+                    recognize_pii_entities_results.append(action_result)
+                if idx < 3:  # first page of task results
+                    assert len(action_result.document_results) == 20
+                else:
+                    assert len(action_result.document_results) == 5
 
-            # self.assertIsNotNone(result.statistics)  # statistics not working at the moment, but a bug has been filed on the service to correct this.
-
-            result_types = [
-                "recognize_entities_results",
-                "recognize_pii_entities_results",
-                "extract_key_phrases_results",
-            ]
-
-            expected_results_per_page = [20, 5]
-
-            for idx, page in enumerate(pages):
-                for result_type in result_types:
-                    results = getattr(page, result_type)
-                    self.assertEqual(len(results), expected_results_per_page[idx])
-
-                    for doc in results:
-                        self.assertFalse(doc.is_error)
-                    # self.assertIsNotNone(doc.statistics)
+            assert all([action_result for action_result in recognize_entities_results if len(action_result.document_results) == len(docs)])
+            assert all([action_result for action_result in extract_key_phrases_results if len(action_result.document_results) == len(docs)])
+            assert all([action_result for action_result in recognize_pii_entities_results if len(action_result.document_results) == len(docs)])
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
