@@ -48,7 +48,7 @@ class OperationLocationReplacer(RecordingProcessor):
     """Replace the location/operation location uri in a request/response body."""
 
     def __init__(self):
-        self._replacement = "https://region.api.cognitive.microsoft.com/"
+        self._replacement = "https://region.api.cognitive.microsoft.com/formrecognizer/"
 
     def process_response(self, response):
         try:
@@ -59,8 +59,8 @@ class OperationLocationReplacer(RecordingProcessor):
             if 'location' in headers:
                 location_header = "location"
             if location_header:
-                if len(headers[location_header]) > 1:
-                    suffix = headers[location_header][0].split("azure.com/")[1]
+                if len(headers[location_header]) > 0:
+                    suffix = headers[location_header][0].split("/formrecognizer/")[1]
                     response['headers'][location_header] = [self._replacement + suffix]
             return response
         except (KeyError, ValueError):
