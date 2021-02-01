@@ -183,10 +183,6 @@
       "type": "string",
       "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
     },
-    "SERVICE_BUS_NAMESPACE": {
-      "type": "string",
-      "value": "[variables('serviceBusNamespace')]"
-    },
     "SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE": {
       "type": "string",
       "value": "[concat(variables('serviceBusNamespace'), '.servicebus.windows.net')]"

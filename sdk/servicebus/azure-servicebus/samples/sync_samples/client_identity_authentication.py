@@ -40,7 +40,7 @@ from azure.servicebus import ServiceBusClient, ServiceBusMessage
 from azure.identity import EnvironmentCredential
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 credential = EnvironmentCredential()

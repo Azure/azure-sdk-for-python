@@ -27,8 +27,13 @@ IGNORED_SAMPLES = {
         "consume_cloud_events_from_service_bus_queue.py",
         "consume_cloud_events_from_storage_queue.py"],
     "azure-servicebus": [
+        "failure_and_recovery.py",
         "proxy.py",
-        "proxy_async.py"
+        "receive_iterator_queue.py",
+        "session_pool_receive.py",
+        "proxy_async.py",
+        "receive_iterator_queue_async.py"
+        "session_pool_receive_async.py"
     ]
 }
 
