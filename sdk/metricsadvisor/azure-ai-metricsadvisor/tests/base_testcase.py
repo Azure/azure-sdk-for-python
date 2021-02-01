@@ -173,7 +173,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_data_feed(self, name):
         name = create_random_name(name)
-        return self.admin_client.create_data_feed(
+        _data_feed = self.admin_client.create_data_feed(
             name=name,
             source=SQLServerDataFeed(
                 connection_string=self.sql_server_connection_string,
@@ -192,6 +192,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             ),
             ingestion_settings="2019-10-01T00:00:00Z",
         )
+        return self.admin_client.get_data_feed(data_feed_id=_data_feed.id)
 
     def _create_data_feed_and_detection_config(self, name):
         data_feed = self._create_data_feed(name)

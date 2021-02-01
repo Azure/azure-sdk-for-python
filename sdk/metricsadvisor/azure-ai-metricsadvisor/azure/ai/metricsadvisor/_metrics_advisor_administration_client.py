@@ -65,6 +65,7 @@ from ._helpers import (
 )
 from .models._models import (
     DataFeed,
+    NotificationHook,
     EmailNotificationHook,
     WebNotificationHook,
     AnomalyAlertConfiguration,
@@ -242,7 +243,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype cross_metrics_operator: str or
             ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword str description: Anomaly alert configuration description.
-        :return: AnomalyAlertConfiguration
+        :return: AnomalyAlertConfiguration with only id information
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -272,7 +273,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
         config_id = response_headers["Location"].split("configurations/")[1]
-        return self.get_alert_configuration(config_id)
+        anomaly_alerting_config = AnomalyAlertConfiguration(
+            id=config_id
+        )
+        return anomaly_alerting_config
 
     @distributed_trace
     def create_data_feed(
@@ -302,7 +306,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :type ingestion_settings: Union[~datetime.datetime, ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings]
         :keyword options: Data feed options.
         :paramtype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
-        :return: DataFeed
+        :return: DataFeed with only id information
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -334,22 +338,23 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             **kwargs
         )
         data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
-        return self.get_data_feed(data_feed_id)
+        data_feed = DataFeed(
+            id=data_feed_id
+        )
+        return data_feed
 
     @distributed_trace
     def create_hook(
             self, hook,  # type: Union[EmailNotificationHook, WebNotificationHook]
             **kwargs  # type: Any
-    ):  # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
+    ):  # type: (...) -> NotificationHook
         """Create a new email or web hook.
 
         :param hook: An email or web hook to create
         :type hook: Union[~azure.ai.metricsadvisor.models.EmailNotificationHook,
             ~azure.ai.metricsadvisor.models.WebNotificationHook]
-        :return: EmailNotificationHook or WebNotificationHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
-            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
-            ~azure.ai.metricsadvisor.models.WebNotificationHook]
+        :return: NotificationHook with only id information
+        :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -375,7 +380,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             **kwargs
         )
         hook_id = response_headers["Location"].split("hooks/")[1]
-        return self.get_hook(hook_id)
+        return NotificationHook(id=hook_id)
 
     @distributed_trace
     def create_detection_configuration(
@@ -949,7 +954,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         hook,  # type: Union[str, EmailNotificationHook, WebNotificationHook]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
+        # type: (...) -> NotificationHook
         """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the chosen
         updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
@@ -970,10 +975,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
         :keyword str certificate_password: client certificate password. Only should be passed to update
             WebNotificationHook.
-        :return: EmailNotificationHook or WebNotificationHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
-            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
-            ~azure.ai.metricsadvisor.models.WebNotificationHook]
+        :return: NotificationHook
+        :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

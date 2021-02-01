@@ -20,7 +20,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_create_email_hook(self):
         email_hook_name = self.create_random_name("testemailhook")
         try:
-            email_hook = self.admin_client.create_hook(
+            hook = self.admin_client.create_hook(
                 hook=EmailNotificationHook(
                     name=email_hook_name,
                     emails_to_alert=["yournamehere@microsoft.com"],
@@ -28,6 +28,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     external_link="external link"
                 )
             )
+            email_hook = self.admin_client.get_hook(hook.id)
             self.assertIsNotNone(email_hook.id)
             self.assertIsNotNone(email_hook.name)
             self.assertIsNotNone(email_hook.admin_emails)
@@ -44,7 +45,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_create_web_hook(self):
         web_hook_name = self.create_random_name("testwebhook")
         try:
-            web_hook = self.admin_client.create_hook(
+            hook = self.admin_client.create_hook(
                 hook=WebNotificationHook(
                     name=web_hook_name,
                     endpoint="https://httpbin.org/post",
@@ -52,6 +53,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     external_link="external link"
                 )
             )
+            web_hook = self.admin_client.get_hook(hook.id)
             self.assertIsNotNone(web_hook.id)
             self.assertIsNotNone(web_hook.name)
             self.assertIsNotNone(web_hook.admin_emails)
