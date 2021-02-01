@@ -235,7 +235,9 @@ queue_name = os.environ['STORAGE_QUEUE_NAME']
 
 with QueueServiceClient.from_connection_string(connection_str) as qsc:
     payload =  qsc.get_queue_client(
-        queue=queue_name,message_decode_policy=BinaryBase64DecodePolicy()).peek_messages()
+        queue=queue_name,
+        message_decode_policy=BinaryBase64DecodePolicy()
+        ).peek_messages()
 
     ## deserialize payload into a lost of typed Events
     events = [CloudEvent.from_dict(json.loads(msg.content)) for msg in payload]
