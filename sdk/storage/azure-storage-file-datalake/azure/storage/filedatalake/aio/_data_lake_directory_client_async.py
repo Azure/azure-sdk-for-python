@@ -459,7 +459,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         await file_client.create_file(**kwargs)
         return file_client
 
-    def get_file_client(self, file  # type: Union[FileProperties, str, PurePosixPath]
+    def get_file_client(self, file  # type: Union[FileProperties, str]
                         ):
         # type: (...) -> DataLakeFileClient
         """Get a client to interact with the specified file.
@@ -469,7 +469,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :param file:
             The file with which to interact. This can either be the name of the file,
             or an instance of FileProperties. eg. directory/subdirectory/file
-        :type file: str or ~azure.storage.filedatalake.FileProperties or PurePosixPath
+        :type file: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
 
@@ -482,13 +482,10 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 12
                 :caption: Getting the file client to interact with a specific file.
         """
-        if not isinstance(file, FileProperties) and hasattr(file, "name"):
-            file_path = str(file)
-        else:
-            try:
-                file_path = file.name
-            except AttributeError:
-                file_path = self.path_name + '/' + file
+        try:
+            file_path = file.get('name')
+        except AttributeError:
+            file_path = self.path_name + '/' + str(file)
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -501,7 +498,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
-    def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str, PurePosixPath]
+    def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
         # type: (...) -> DataLakeDirectoryClient
         """Get a client to interact with the specified subdirectory of the current directory.
@@ -511,7 +508,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :param sub_directory:
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
-        :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties or a PurePosixPath
+        :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
 
@@ -524,13 +521,10 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        if not isinstance(sub_directory, DirectoryProperties) and hasattr(sub_directory, "name"):
-            subdir_path = str(sub_directory)
-        else:
-            try:
-                subdir_path = sub_directory.name
-            except AttributeError:
-                subdir_path = self.path_name + '/' + sub_directory
+        try:
+            subdir_path = sub_directory.get('name')
+        except AttributeError:
+            subdir_path = self.path_name + '/' + str(sub_directory)
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

@@ -714,7 +714,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self.get_directory_client('/')
 
-    def get_directory_client(self, directory  # type: Union[DirectoryProperties, str, PurePosixPath]
+    def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
                              ):
         # type: (...) -> DataLakeDirectoryClient
         """Get a client to interact with the specified directory.
@@ -723,7 +723,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         :param directory:
             The directory with which to interact. This can either be the name of the directory,
-            or an instance of DirectoryProperties or a PurePosixPath.
+            or an instance of DirectoryProperties.
         :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
@@ -737,13 +737,10 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        if not isinstance(directory, DirectoryProperties) and hasattr(directory, "name"):
+        try:
+            directory_name = directory.get('name')
+        except AttributeError:
             directory_name = str(directory)
-        else:
-            try:
-                directory_name = directory.name
-            except AttributeError:
-                directory_name = directory
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
@@ -757,7 +754,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                        key_resolver_function=self.key_resolver_function
                                        )
 
-    def get_file_client(self, file_path  # type: Union[FileProperties, str, PurePosixPath]
+    def get_file_client(self, file_path  # type: Union[FileProperties, str]
                         ):
         # type: (...) -> DataLakeFileClient
         """Get a client to interact with the specified file.
@@ -767,7 +764,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param file_path:
             The file with which to interact. This can either be the path of the file(from root directory),
             or an instance of FileProperties. eg. directory/subdirectory/file
-        :type file_path: str or ~azure.storage.filedatalake.FileProperties or a PurePosixPath
+        :type file_path: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake..DataLakeFileClient
 
@@ -780,13 +777,10 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
-        if not isinstance(file_path, FileProperties) and hasattr(file_path, "name"):
+        try:
+            file_path = file_path.get('name')
+        except AttributeError:
             file_path = str(file_path)
-        else:
-            try:
-                file_path = file_path.name
-            except AttributeError:
-                pass
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
