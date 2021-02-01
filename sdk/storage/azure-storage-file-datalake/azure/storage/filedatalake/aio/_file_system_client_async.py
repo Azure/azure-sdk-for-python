@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 
-import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
@@ -21,8 +20,8 @@ from azure.storage.blob.aio import ContainerClient
 
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
-from ._models import PathPropertiesPaged
 from ._data_lake_lease_async import DataLakeLeaseClient
+from .._deserialize import deserialize_path_properties
 from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
@@ -385,7 +384,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                         recursive=True,  # type: Optional[bool]
                         max_results=None,  # type: Optional[int]
                         **kwargs):
-        # type: (...) -> ItemPaged[PathProperties]
+        # type: (...) -> AsyncItemPaged[PathProperties]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -421,14 +420,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: List the blobs in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        command = functools.partial(
-            self._client.file_system.list_paths,
+        return self._client.file_system.list_paths(
+            recursive=recursive,
+            max_results=max_results,
             path=path,
             timeout=timeout,
+            cls=deserialize_path_properties,
             **kwargs)
-        return AsyncItemPaged(
-            command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
