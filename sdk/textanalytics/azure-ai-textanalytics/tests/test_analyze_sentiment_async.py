@@ -741,7 +741,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         assert "'string_index_type' is only available for API version v3.1-preview and up" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW, "text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW})
     async def test_string_index_type_explicit_not_fail_v31preview(self, client):
         result = await client.analyze_sentiment(["this shouldn't fail"], string_index_type="UnicodeCodePoint")
         self.assertIsNotNone(result)
