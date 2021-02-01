@@ -123,7 +123,7 @@ client.send([event0, event1])
 import os
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
-from datetime import datetime, timedelta
+from datetime import datetime
 
 topic_key = os.environ["EG_ACCESS_KEY"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]
@@ -139,7 +139,7 @@ event0 = {
     "subject": "Door1",
     "dataVersion": "2.0",
     "id": "randomuuid11",
-    "eventTime": datetime.utcnow() + timedelta(minutes=10)
+    "eventTime": datetime.utcnow()
 }
 
 event1 = {
@@ -299,13 +299,13 @@ for event in deserialized_dict_events:
 ```Python
 from azure.eventgrid import generate_sas, EventGridPublisherClient
 from azure.core.credentials import AzureSasCredential
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 
 
 topic_key = os.environ["EG_ACCESS_KEY"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]
-expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
+expiration_date_utc = datetime.utcnow()
 
 signature = generate_sas(endpoint, topic_key, expiration_date_utc)
 
