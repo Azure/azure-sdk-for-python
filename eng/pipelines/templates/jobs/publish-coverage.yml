@@ -21,13 +21,12 @@ jobs:
       - pwsh: |
           New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
         displayName: 'Create all coverages directory'
-        continueOnError: true
+        continueOnError: false
         condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
 
       - task: DownloadPipelineArtifact@2
         inputs:
           source: current
-          # patterns: '**' # Download everything
           path: '$(Build.SourcesDirectory)/_all_coverage_files'
 
       - pwsh: |
@@ -61,9 +60,3 @@ jobs:
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-
-  # - job: Show_all_coverage_files
-
-  #   steps:
-  #   - pwsh: |
-  #         Get-ChildItem

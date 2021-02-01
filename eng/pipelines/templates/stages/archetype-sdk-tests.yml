@@ -111,5 +111,4 @@ stages:
     jobs:
     - template: ../jobs/publish-coverage.yml
       parameters:
-        # condition: succeededOrFailed()
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
