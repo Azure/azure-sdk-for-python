@@ -160,4 +160,4 @@ class AggregatedCostOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_for_billing_period_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/Microsoft.Consumption/aggregatedcost'}  # type: ignore
+    get_for_billing_period_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/Microsoft.Consumption/aggregatedCost'}  # type: ignore

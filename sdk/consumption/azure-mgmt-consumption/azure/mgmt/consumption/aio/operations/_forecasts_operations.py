@@ -46,7 +46,9 @@ class ForecastsOperations:
         filter: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.ForecastsListResult"]:
-        """Lists the forecast charges by subscriptionId.
+        """Lists the forecast charges for scope defined. Please note that this API is no longer actively
+        under development. We recommend using our new Forecast API moving forward:
+        https://docs.microsoft.com/en-us/rest/api/cost-management/forecast/usage.
 
         :param filter: May be used to filter forecasts by properties/usageDate (Utc time),
          properties/chargeType or properties/grain. The filter supports 'eq', 'lt', 'gt', 'le', 'ge',

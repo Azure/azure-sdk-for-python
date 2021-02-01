@@ -51,6 +51,8 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     """
@@ -59,6 +61,7 @@ class Resource(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
     }
 
@@ -66,6 +69,7 @@ class Resource(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -77,6 +81,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.etag = None
         self.tags = None
 
 
@@ -91,6 +96,8 @@ class Balance(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar currency: The ISO currency in which the meter is charged, for example, USD.
@@ -133,6 +140,7 @@ class Balance(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'currency': {'readonly': True},
         'beginning_balance': {'readonly': True},
@@ -154,6 +162,7 @@ class Balance(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'currency': {'key': 'properties.currency', 'type': 'str'},
         'beginning_balance': {'key': 'properties.beginningBalance', 'type': 'float'},
@@ -323,7 +332,7 @@ class Budget(ProxyResource):
      Future start date should not be more than twelve months. Past start date should  be selected
      within the timegrain period. There are no restrictions on the end date.
     :type time_period: ~azure.mgmt.consumption.models.BudgetTimePeriod
-    :param filter: May be used to filter budgets by resource group, resource, or meter.
+    :param filter: May be used to filter budgets by user-specified dimensions and/or tags.
     :type filter: ~azure.mgmt.consumption.models.BudgetFilter
     :ivar current_spend: The current amount of cost which is being tracked for a budget.
     :vartype current_spend: ~azure.mgmt.consumption.models.CurrentSpend
@@ -383,7 +392,7 @@ class BudgetComparisonExpression(msrest.serialization.Model):
     _validation = {
         'name': {'required': True},
         'operator': {'required': True},
-        'values': {'required': True, 'min_items': 1},
+        'values': {'required': True},
     }
 
     _attribute_map = {
@@ -414,10 +423,6 @@ class BudgetFilter(msrest.serialization.Model):
     :param tags: A set of tags. Has comparison expression for a tag.
     :type tags: ~azure.mgmt.consumption.models.BudgetComparisonExpression
     """
-
-    _validation = {
-        'and_property': {'min_items': 2},
-    }
 
     _attribute_map = {
         'and_property': {'key': 'and', 'type': '[BudgetFilterProperties]'},
@@ -561,6 +566,8 @@ class ChargeSummary(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of charge summary.Constant filled by server.
@@ -572,6 +579,7 @@ class ChargeSummary(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
     }
@@ -580,6 +588,7 @@ class ChargeSummary(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -637,6 +646,8 @@ class CreditSummary(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar balance_summary: Summary of balances associated with this credit summary.
@@ -653,6 +664,7 @@ class CreditSummary(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'balance_summary': {'readonly': True},
         'pending_credit_adjustments': {'readonly': True},
@@ -664,6 +676,7 @@ class CreditSummary(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'balance_summary': {'key': 'properties.balanceSummary', 'type': 'CreditBalanceSummary'},
         'pending_credit_adjustments': {'key': 'properties.pendingCreditAdjustments', 'type': 'Amount'},
@@ -811,6 +824,8 @@ class EventSummary(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar transaction_date: Transaction date.
@@ -839,6 +854,7 @@ class EventSummary(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'transaction_date': {'readonly': True},
         'description': {'readonly': True},
@@ -854,6 +870,7 @@ class EventSummary(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'transaction_date': {'key': 'properties.transactionDate', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -893,12 +910,16 @@ class Forecast(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar usage_date: The usage date of the forecast.
     :vartype usage_date: str
-    :param grain: The granularity of forecast. Possible values include: "Daily", "Monthly",
-     "Yearly".
+    :param grain: The granularity of forecast. Please note that Yearly is not currently supported
+     in this API. The API will provide responses in the Monthly grain if Yearly is selected. To get
+     yearly grain data, please use our newer Forecast API. Possible values include: "Daily",
+     "Monthly", "Yearly".
     :type grain: str or ~azure.mgmt.consumption.models.Grain
     :ivar charge: The amount of charge.
     :vartype charge: float
@@ -917,6 +938,7 @@ class Forecast(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'usage_date': {'readonly': True},
         'charge': {'readonly': True},
@@ -928,6 +950,7 @@ class Forecast(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'usage_date': {'key': 'properties.usageDate', 'type': 'str'},
         'grain': {'key': 'properties.grain', 'type': 'str'},
@@ -1023,6 +1046,8 @@ class LegacyChargeSummary(ChargeSummary):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of charge summary.Constant filled by server.
@@ -1048,6 +1073,7 @@ class LegacyChargeSummary(ChargeSummary):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'billing_period_id': {'readonly': True},
@@ -1063,6 +1089,7 @@ class LegacyChargeSummary(ChargeSummary):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
@@ -1139,6 +1166,8 @@ class ReservationRecommendation(Resource, ResourceAttributes):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of reservation recommendation.Constant filled by
@@ -1152,6 +1181,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
     }
@@ -1162,6 +1192,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -1181,6 +1212,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
         self.id = None
         self.name = None
         self.type = None
+        self.etag = None
         self.tags = None
         self.kind = 'ReservationRecommendation'  # type: str
 
@@ -1202,6 +1234,8 @@ class LegacyReservationRecommendation(ReservationRecommendation):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of reservation recommendation.Constant filled by
@@ -1210,7 +1244,7 @@ class LegacyReservationRecommendation(ReservationRecommendation):
     :ivar look_back_period: The number of days of usage to look back for recommendation.
     :vartype look_back_period: str
     :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
-    :vartype instance_flexibility_ratio: int
+    :vartype instance_flexibility_ratio: float
     :ivar instance_flexibility_group: The instance Flexibility Group.
     :vartype instance_flexibility_group: str
     :ivar normalized_size: The normalized Size.
@@ -1243,6 +1277,7 @@ class LegacyReservationRecommendation(ReservationRecommendation):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'look_back_period': {'readonly': True},
@@ -1267,10 +1302,11 @@ class LegacyReservationRecommendation(ReservationRecommendation):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'float'},
         'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
         'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
         'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
@@ -1625,6 +1661,8 @@ class UsageDetail(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of usage details.Constant filled by server.  Possible
@@ -1636,6 +1674,7 @@ class UsageDetail(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
     }
@@ -1644,6 +1683,7 @@ class UsageDetail(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -1673,6 +1713,8 @@ class LegacyUsageDetail(UsageDetail):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of usage details.Constant filled by server.  Possible
@@ -1785,6 +1827,7 @@ class LegacyUsageDetail(UsageDetail):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'billing_account_id': {'readonly': True},
@@ -1835,6 +1878,7 @@ class LegacyUsageDetail(UsageDetail):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
@@ -1972,6 +2016,8 @@ class LotSummary(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar original_amount: Original amount.
@@ -1992,6 +2038,7 @@ class LotSummary(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'original_amount': {'readonly': True},
         'closed_balance': {'readonly': True},
@@ -2005,6 +2052,7 @@ class LotSummary(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'original_amount': {'key': 'properties.originalAmount', 'type': 'Amount'},
         'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
@@ -2038,6 +2086,8 @@ class ManagementGroupAggregatedCostResult(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the aggregated cost belongs
@@ -2069,6 +2119,7 @@ class ManagementGroupAggregatedCostResult(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'billing_period_id': {'readonly': True},
         'usage_start': {'readonly': True},
@@ -2083,6 +2134,7 @@ class ManagementGroupAggregatedCostResult(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
         'usage_start': {'key': 'properties.usageStart', 'type': 'iso-8601'},
@@ -2124,6 +2176,8 @@ class Marketplace(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the usage belongs to.
@@ -2184,6 +2238,7 @@ class Marketplace(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'billing_period_id': {'readonly': True},
         'usage_start': {'readonly': True},
@@ -2216,6 +2271,7 @@ class Marketplace(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
         'usage_start': {'key': 'properties.usageStart', 'type': 'iso-8601'},
@@ -2435,6 +2491,8 @@ class ModernChargeSummary(ChargeSummary):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of charge summary.Constant filled by server.
@@ -2468,6 +2526,7 @@ class ModernChargeSummary(ChargeSummary):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'billing_period_id': {'readonly': True},
@@ -2487,6 +2546,7 @@ class ModernChargeSummary(ChargeSummary):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
@@ -2538,6 +2598,8 @@ class ModernReservationRecommendation(ReservationRecommendation):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of reservation recommendation.Constant filled by
@@ -2546,7 +2608,7 @@ class ModernReservationRecommendation(ReservationRecommendation):
     :ivar look_back_period: The number of days of usage to look back for recommendation.
     :vartype look_back_period: str
     :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
-    :vartype instance_flexibility_ratio: int
+    :vartype instance_flexibility_ratio: float
     :ivar instance_flexibility_group: The instance Flexibility Group.
     :vartype instance_flexibility_group: str
     :ivar normalized_size: The normalized Size.
@@ -2579,6 +2641,7 @@ class ModernReservationRecommendation(ReservationRecommendation):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'look_back_period': {'readonly': True},
@@ -2603,10 +2666,11 @@ class ModernReservationRecommendation(ReservationRecommendation):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'float'},
         'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
         'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
         'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
@@ -2826,6 +2890,8 @@ class ModernUsageDetail(UsageDetail):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of usage details.Constant filled by server.  Possible
@@ -3012,6 +3078,7 @@ class ModernUsageDetail(UsageDetail):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'billing_account_id': {'readonly': True},
@@ -3085,6 +3152,7 @@ class ModernUsageDetail(UsageDetail):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
@@ -3242,15 +3310,19 @@ class Notification(msrest.serialization.Model):
      1000.
     :type threshold: float
     :param contact_emails: Required. Email addresses to send the budget notification to when the
-     threshold is exceeded.
+     threshold is exceeded. Must have at least one contact email or contact group specified at the
+     Subscription or Resource Group scopes. All other scopes must have at least one contact email
+     specified.
     :type contact_emails: list[str]
     :param contact_roles: Contact roles to send the budget notification to when the threshold is
      exceeded.
     :type contact_roles: list[str]
     :param contact_groups: Action groups to send the budget notification to when the threshold is
-     exceeded.
+     exceeded. Must be provided as a fully qualified Azure resource id. Only supported at
+     Subscription or Resource Group scopes.
     :type contact_groups: list[str]
-    :param threshold_type: The type of threshold. Possible values include: "Actual".
+    :param threshold_type: The type of threshold. Possible values include: "Actual". Default value:
+     "Actual".
     :type threshold_type: str or ~azure.mgmt.consumption.models.ThresholdType
     """
 
@@ -3258,7 +3330,7 @@ class Notification(msrest.serialization.Model):
         'enabled': {'required': True},
         'operator': {'required': True},
         'threshold': {'required': True},
-        'contact_emails': {'required': True, 'max_items': 50, 'min_items': 1},
+        'contact_emails': {'required': True, 'max_items': 50, 'min_items': 0},
         'contact_groups': {'max_items': 50, 'min_items': 0},
     }
 
@@ -3283,7 +3355,7 @@ class Notification(msrest.serialization.Model):
         self.contact_emails = kwargs['contact_emails']
         self.contact_roles = kwargs.get('contact_roles', None)
         self.contact_groups = kwargs.get('contact_groups', None)
-        self.threshold_type = kwargs.get('threshold_type', None)
+        self.threshold_type = kwargs.get('threshold_type', "Actual")
 
 
 class Operation(msrest.serialization.Model):
@@ -3291,6 +3363,8 @@ class Operation(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar id: Operation Id.
+    :vartype id: str
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :param display: The object that represents the operation.
@@ -3298,10 +3372,12 @@ class Operation(msrest.serialization.Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
@@ -3311,6 +3387,7 @@ class Operation(msrest.serialization.Model):
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
+        self.id = None
         self.name = None
         self.display = kwargs.get('display', None)
 
@@ -3458,6 +3535,8 @@ class PriceSheetResult(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar pricesheets: Price sheet.
@@ -3470,6 +3549,7 @@ class PriceSheetResult(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'pricesheets': {'readonly': True},
         'next_link': {'readonly': True},
@@ -3479,6 +3559,7 @@ class PriceSheetResult(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'pricesheets': {'key': 'properties.pricesheets', 'type': '[PriceSheetProperties]'},
         'next_link': {'key': 'properties.nextLink', 'type': 'str'},
@@ -3504,6 +3585,8 @@ class ReservationDetail(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar reservation_order_id: The reservation order ID is the identifier for a reservation
@@ -3544,6 +3627,7 @@ class ReservationDetail(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'reservation_order_id': {'readonly': True},
         'instance_flexibility_ratio': {'readonly': True},
@@ -3562,6 +3646,7 @@ class ReservationDetail(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
         'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'str'},
@@ -3690,6 +3775,8 @@ class ReservationRecommendationDetailsModel(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param location: Resource Location.
@@ -3716,6 +3803,7 @@ class ReservationRecommendationDetailsModel(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'currency': {'readonly': True},
         'resource': {'readonly': True},
@@ -3729,6 +3817,7 @@ class ReservationRecommendationDetailsModel(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
@@ -3975,6 +4064,8 @@ class ReservationSummary(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar reservation_order_id: The reservation order ID is the identifier for a reservation
@@ -4027,6 +4118,7 @@ class ReservationSummary(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'reservation_order_id': {'readonly': True},
         'reservation_id': {'readonly': True},
@@ -4049,6 +4141,7 @@ class ReservationSummary(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
         'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
@@ -4184,12 +4277,18 @@ class TagsResult(ProxyResource):
     :type e_tag: str
     :param tags: A set of tags. A list of Tag.
     :type tags: list[~azure.mgmt.consumption.models.Tag]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
+    :ivar previous_link: The link (url) to the previous page of results.
+    :vartype previous_link: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'next_link': {'readonly': True},
+        'previous_link': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4198,6 +4297,8 @@ class TagsResult(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
         'tags': {'key': 'properties.tags', 'type': '[Tag]'},
+        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
+        'previous_link': {'key': 'properties.previousLink', 'type': 'str'},
     }
 
     def __init__(
@@ -4206,6 +4307,8 @@ class TagsResult(ProxyResource):
     ):
         super(TagsResult, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.next_link = None
+        self.previous_link = None
 
 
 class UsageDetailsListResult(msrest.serialization.Model):

@@ -85,7 +85,9 @@ class EventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NEW_CREDIT = "NewCredit"
 
 class Grain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The granularity of forecast.
+    """The granularity of forecast. Please note that Yearly is not currently supported in this API.
+    The API will provide responses in the Monthly grain if Yearly is selected. To get yearly grain
+    data, please use our newer Forecast API.
     """
 
     DAILY = "Daily"

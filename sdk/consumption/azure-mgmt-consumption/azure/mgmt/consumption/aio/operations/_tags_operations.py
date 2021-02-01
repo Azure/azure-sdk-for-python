@@ -44,7 +44,7 @@ class TagsOperations:
         self,
         scope: str,
         **kwargs
-    ) -> "_models.TagsResult":
+    ) -> Optional["_models.TagsResult"]:
         """Get all available tag keys for the defined scope.
 
         :param scope: The scope associated with tags operations. This includes
@@ -60,10 +60,10 @@ class TagsOperations:
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TagsResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.consumption.models.TagsResult
+        :rtype: ~azure.mgmt.consumption.models.TagsResult or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TagsResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -90,12 +90,14 @@ class TagsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('TagsResult', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('TagsResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

@@ -209,9 +209,9 @@ class BudgetsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Budget"
-        """The operation to create or update a budget. Update operation requires latest eTag to be set in
-        the request mandatorily. You may obtain the latest eTag by performing a get operation. Create
-        operation does not require eTag.
+        """The operation to create or update a budget. You can optionally provide an eTag if desired as a
+        form of concurrency control. To obtain the latest eTag for a given budget, perform a get
+        operation prior to your put operation.
 
         :param scope: The scope associated with budget operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
