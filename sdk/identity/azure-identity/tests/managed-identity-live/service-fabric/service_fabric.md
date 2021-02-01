@@ -14,6 +14,9 @@ The `arm-templates` directory contains Azure resource templates for creating the
 - [Azure CLI is used to deploy resources and applications.](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 - Docker is needed to build and push the sample containerized services. Docker should be using Linux containers for building the application images that are provided.
 
+> **Important:** If deploying resources in a Microsoft-internal Azure subscription, an SSH public key is required for 
+> Linux VM deployment -- Linux VMs are used by default in this sample.
+
 ### Clone this repository
 
 From a command prompt window, run
@@ -75,9 +78,14 @@ To use the provided template:
 
 1. Open `arm-templates/cluster.parameters.json` and complete the fields `clusterLocation`, `adminUserName`, `adminPassword`, `sourceVaultValue`, `certificateUrlValue`, and `certificateThumbprint`. The placeholder values will describe how they should be completed.
 2. In `arm-templates/cluster.parameters.json`, change all instances of `sfmi-test` to a unique name, like `<myusername>-sfmi-test`. Also, change the values of `applicationDiagnosticsStorageAccountName` and `supportLogStorageAccountName` to be similarly unique, but without hyphens. This will help ensure the deployment resource names do not conflict with the names of other public resources.
-3. Start the deployment by running the following command in your command prompt:
+3. If using an SSH key, complete the field `sshKeyData` in `arm-templates/cluster.parameters.json` as described by the placeholder value.
+4. Start the deployment by running the following command in your command prompt:
 ```
+# If not using an SSH key
 az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\cluster.template.json --parameters arm-templates\cluster.parameters.json
+
+# If using an SSH key
+az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\cluster.template.ssh.json --parameters arm-templates\cluster.parameters.json
 ```
 
 This will begin to deploy a Service Fabric cluster as well as other necessary resources: a load balancer, public IP address, virtual machine scale set, virtual network, and two storage accounts.
