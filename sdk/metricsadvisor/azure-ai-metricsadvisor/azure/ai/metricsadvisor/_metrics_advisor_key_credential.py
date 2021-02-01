@@ -39,24 +39,36 @@ class MetricsAdvisorKeyCredential(object):
         """
         return self._api_key
 
-    def update(self, subscription_key=None, api_key=None):
-        # type: (str, str) -> None
-        """Update the subscription and/or api key.
+    def update_subscription_key(self, subscription_key):
+        # type: (str) -> None
+        """Update the subscription key.
 
         This can be used when you've regenerated your service keys and want
         to update long-lived clients.
 
         :param str subscription_key: The subscription key
-        :param str api_key: The api key
         :raises: ValueError or TypeError
         """
-        if not subscription_key and not api_key:
-            raise ValueError("Pass at least one non-empty key for updating.")
         if subscription_key:
             if not isinstance(subscription_key, six.string_types):
                 raise TypeError("The subscription_key used for updating must be a string.")
             self._subscription_key = subscription_key
+        else:
+            raise ValueError("Subscription key cannot be None.")
+
+    def update_api_key(self, api_key):
+        # type: (str) -> None
+        """Update the api key.
+
+        This can be used when you've regenerated your service keys and want
+        to update long-lived clients.
+
+        :param str api_key: The api key
+        :raises: ValueError or TypeError
+        """
         if api_key:
             if not isinstance(api_key, six.string_types):
                 raise TypeError("The api_key used for updating must be a string.")
             self._api_key = api_key
+        else:
+            raise ValueError("API key cannot be None.")

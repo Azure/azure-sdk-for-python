@@ -27,12 +27,13 @@ from ._helpers import (
     _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
+    _is_eventgrid_event,
     _eventgrid_data_typecheck
 )
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
 from ._policies import CloudEventDistributedTracingPolicy
 from ._version import VERSION
-from ._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent as InternalEventGridEvent
+from ._generated.models import CloudEvent as InternalCloudEvent
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -98,11 +99,14 @@ class EventGridPublisherClient(object):
         return policies
 
     @distributed_trace
-    def send_events(self, events, **kwargs):
+    def send(self, events, **kwargs):
         # type: (SendType, Any) -> None
         """Sends event data to topic hostname specified during client initialization.
+        Multiple events can be published at once by seding a list of events. It is very
+        inefficient to loop the send method for each event instead of just using a list
+        and we highly recommend against it.
 
-        :param events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.
+        :param events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
@@ -113,24 +117,36 @@ class EventGridPublisherClient(object):
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
 
-        if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
+        if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [cast(CloudEvent, e)._to_generated(**kwargs) for e in events] # pylint: disable=protected-access
             except AttributeError:
                 pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
-            self._client.publish_cloud_event_events(
+            return self._client.publish_cloud_event_events(
                 self._endpoint,
                 cast(List[InternalCloudEvent], events),
                 **kwargs
                 )
-        elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):
-            kwargs.setdefault("content_type", "application/json; charset=utf-8")
+        kwargs.setdefault("content_type", "application/json; charset=utf-8")
+        if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-            self._client.publish_events(self._endpoint, cast(List[InternalEventGridEvent], events), **kwargs)
-        elif all(isinstance(e, CustomEvent) for e in events):
-            serialized_events = [dict(e) for e in events] # type: ignore
-            self._client.publish_custom_event_events(self._endpoint, cast(List, serialized_events), **kwargs)
-        else:
-            raise ValueError("Event schema is not correct.")
+        elif isinstance(events[0], CustomEvent):
+            events = [dict(e) for e in events] # type: ignore
+        return self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
+
+    def close(self):
+        # type: () -> None
+        """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session.
+        """
+        return self._client.close()
+
+    def __enter__(self):
+        # type: () -> EventGridPublisherClient
+        self._client.__enter__()  # pylint:disable=no-member
+        return self
+
+    def __exit__(self, *args):
+        # type: (*Any) -> None
+        self._client.__exit__(*args)  # pylint:disable=no-member

@@ -184,6 +184,13 @@ class NetworkSecurityGroupRuleAccess(with_metaclass(_CaseInsensitiveEnumMeta, st
     ALLOW = "Allow"  #: Allow access.
     DENY = "Deny"  #: Deny access.
 
+class NodePlacementPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The default value is regional.
+    """
+
+    REGIONAL = "Regional"  #: All nodes in the pool will be allocated in the same region.
+    ZONAL = "Zonal"  #: Nodes in the pool will be spread across different zones with best effort balancing.
+
 class PackageState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The current state of the application package.
     """
@@ -197,6 +204,13 @@ class PoolAllocationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     BATCH_SERVICE = "BatchService"  #: Pools will be allocated in subscriptions owned by the Batch service.
     USER_SUBSCRIPTION = "UserSubscription"  #: Pools will be allocated in a subscription owned by the user.
+
+class PoolIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity used for the Batch Pool.
+    """
+
+    USER_ASSIGNED = "UserAssigned"  #: Batch pool has user assigned identities with it.
+    NONE = "None"  #: Batch pool has no identity associated with it. Setting ``None`` in update pool will remove existing identities.
 
 class PoolProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The current state of the pool.
@@ -245,6 +259,7 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"  #: Batch account has a system assigned identity with it.
+    USER_ASSIGNED = "UserAssigned"  #: Batch account has user assigned identities with it.
     NONE = "None"  #: Batch account has no identity associated with it. Setting ``None`` in update account will remove existing identities.
 
 class StorageAccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):

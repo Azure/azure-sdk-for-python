@@ -1,0 +1,124 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 18d17c7c-61c4-11eb-8696-c8348e5fffbf
+      x-ms-date:
+      - Thu, 28 Jan 2021 23:54:02 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/fs1dc581ff4?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Thu, 28 Jan 2021 23:54:02 GMT
+      ETag:
+      - '"0x8D8C3E7FD803F14"'
+      Last-Modified:
+      - Thu, 28 Jan 2021 23:54:03 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - d7930b4a-001e-0017-67d0-f55645000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 19180970-61c4-11eb-b060-c8348e5fffbf
+      x-ms-date:
+      - Thu, 28 Jan 2021 23:54:02 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/fs1dc581ff4?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Thu, 28 Jan 2021 23:54:02 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - d7930b57-001e-0017-71d0-f55645000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 192bdf8f-61c4-11eb-a0a8-c8348e5fffbf
+      x-ms-date:
+      - Thu, 28 Jan 2021 23:54:02 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/fs2dc581ff4?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Thu, 28 Jan 2021 23:54:03 GMT
+      ETag:
+      - '"0x8D8C3E7FDD8A307"'
+      Last-Modified:
+      - Thu, 28 Jan 2021 23:54:03 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - 2fff5a5b-e01e-002c-04d0-f54f7d000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+version: 1

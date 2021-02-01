@@ -227,3 +227,17 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
   python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
 }
+
+function GetExistingPackageVersions ($PackageName, $GroupId=$null)
+{
+  try
+  {
+    $existingVersion = Invoke-RestMethod -Method GET -Uri "https://pypi.python.org/pypi/${PackageName}/json"
+    return ($existingVersion.releases | Get-Member -MemberType NoteProperty).Name
+  }
+  catch
+  {
+    LogError "Failed to retrieve package versions. `n$_"
+    return $null
+  }
+}

@@ -30,7 +30,9 @@ class TableServiceStats(GenTableServiceStats):
     :type geo_replication: ~azure.data.tables.models.GeoReplication
     """
 
-    def __init__(self, geo_replication=None, **kwargs):  # pylint:disable=W0231
+    def __init__(  # pylint: disable=super-init-not-called
+        self, geo_replication=None, **kwargs
+    ):
         self.geo_replication = geo_replication
 
 
@@ -77,9 +79,9 @@ class AccessPolicy(GenAccessPolicy):
     :type start: ~datetime.datetime or str
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self, permission=None, expiry=None, start=None, **kwargs
-    ):  # pylint:disable=W0231
+    ):
         self.start = start
         self.expiry = expiry
         self.permission = permission
@@ -98,7 +100,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         The retention policy for the metrics.
     """
 
-    def __init__(  # pylint:disable=W0231
+    def __init__(  # pylint: disable=super-init-not-called
         self, **kwargs  # type: Any
     ):
         # type: (...)-> None
@@ -118,7 +120,7 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(  # pylint:disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
             )
         )
@@ -137,7 +139,7 @@ class Metrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(  # pylint:disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         **kwargs  # type: Any
     ):
@@ -166,7 +168,7 @@ class Metrics(GeneratedMetrics):
 
 
 class RetentionPolicy(GeneratedRetentionPolicy):
-    def __init__(  # pylint:disable=W0231
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         enabled=False,  # type: bool
         days=None,  # type: int
@@ -191,7 +193,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
+    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
         # type: (...) -> cls
         """The retention policy which determines how long the associated data should
         persist.
@@ -239,7 +241,7 @@ class CorsRule(GeneratedCorsRule):
         headers. Each header can be up to 256 characters.
     """
 
-    def __init__(  # pylint:disable=W0231
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         allowed_origins,  # type: list[str]
         allowed_methods,  # type: list[str]
@@ -307,7 +309,7 @@ class TablePropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [
-            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint:disable=protected-access
+            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
         ]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
@@ -416,7 +418,7 @@ class TableSasPermissions(object):
         cls,
         permission,  # type: str
         **kwargs
-    ):  # pylint:disable=W0613
+    ):
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -490,7 +492,7 @@ class TableItem(object):
         self.date = kwargs.get("date") or kwargs.get("Date")
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
+    def _from_generated(cls, generated, **kwargs):
         # type: (obj, **Any) -> cls
         return cls(generated.table_name, **kwargs)
 
@@ -670,7 +672,7 @@ class AccountSasPermissions(object):
         Valid for the following Object resource type only: queue messages.
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, **kwargs):
         self.read = kwargs.pop("read", None)
         self.write = kwargs.pop("write", None)
         self.delete = kwargs.pop("delete", None)
@@ -694,7 +696,7 @@ class AccountSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+    def from_string(cls, permission, **kwargs):
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to

@@ -22,14 +22,14 @@ pip install --pre azure-communication-chat
 
 ## User Access Tokens
 
-User access tokens enable you to build client applications that directly authenticate to Azure Communication Services. You can generate these tokens with azure.communication.administration module, and then use them to initialize the Communication Services SDKs. Example of using azure.communication.administration:
+User access tokens enable you to build client applications that directly authenticate to Azure Communication Services. You can generate these tokens with azure.communication.identity module, and then use them to initialize the Communication Services SDKs. Example of using azure.communication.identity:
 
 ```bash
-pip install --pre azure-communication-administration
+pip install --pre azure-communication-identity
 ```
 
 ```python
-from azure.communication.administration import CommunicationIdentityClient
+from azure.communication.identity import CommunicationIdentityClient
 identity_client = CommunicationIdentityClient.from_connection_string("<connection string of your Communication service>")
 user = identity_client.create_user()
 tokenresponse = identity_client.issue_token(user, scopes=["chat"])
@@ -374,7 +374,7 @@ to create a resource, then set some Environment Variables
 set AZURE_COMMUNICATION_SERVICE_ENDPOINT="https://<RESOURCE_NAME>.communcationservices.azure.com"
 set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING="<connection string of your Communication service>"
 
-pip install azure-communication-administration
+pip install azure-communication-identity
 
 python samples\chat_client_sample.py
 python samples\chat_client_sample_async.py

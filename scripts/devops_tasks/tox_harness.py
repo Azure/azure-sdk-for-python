@@ -36,7 +36,7 @@ pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 IGNORED_TOX_INIS = ["azure-cosmos"]
 test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
-
+dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
 
 class ToxWorkItem:
     def __init__(self, target_package_path, tox_env, options_array):
@@ -376,6 +376,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         if in_ci():
             replace_dev_reqs(destination_dev_req, package_dir)
             replace_dev_reqs(test_tools_path, package_dir)
+            replace_dev_reqs(dependency_tools_path, package_dir)
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
 
         inject_custom_reqs(
