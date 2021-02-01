@@ -159,7 +159,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         except Exception:  # pylint:disable=broad-except
             return False
 
-        self._token = self._credential.get_token(*self._scopes, claims_challenge=claims)
+        self._token = self._credential.get_token(*self._scopes, claims=claims)
         self._update_headers(request.http_request.headers, self._token.token)
         return True
 
