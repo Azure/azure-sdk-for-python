@@ -1,20 +1,24 @@
 # Release History
 
+## 15.0.0 (2021-02-01)
+
+- Fix changelog
+
 ## 15.0.0b1 (2021-01-28)
 
 **Features**
 
-  - Added a new user_assigned_identities on BatchAccountIdentity to specify a user managed identity
-  - Added a new task_slots_per_node property on Pool so property tasks in a job can consume a dynamic amount of slots
-  - Added a new identity property on Pool to specify a managed identity
   - Added new extensions property to VirtualMachineConfiguration on pools to specify virtual machine extensions for nodes
   - Added the ability to specify availability zones using a new property node_placement_configuration on VirtualMachineConfiguration
-  - Added a new property user_name to ContainerRegistry
+  - Added a new identity property on Pool to specify a managed identity
+  - Added a new user_assigned_identities on BatchAccountIdentity to specify a user managed identity
+  - Added certificate operation method PoolOperations.create
+  - Added certificate operation method CertificateOperations.create
 
 **Breaking changes**
 
-  - Removed property username from ContainerRegistry
-  - Removed max_tasks_per_node property on Pool and replaced it with task_slots_per_node
+  - Removed certificate operation method PoolOperations.begin_create. Certificate operations are not long running operations so this was incorrect.
+  - Removed certificate operation method CertificateOperations.begin_create. Certificate operations are not long running operations so this was incorrect.
 
 ## 14.0.0 (2020-12-22)
 
