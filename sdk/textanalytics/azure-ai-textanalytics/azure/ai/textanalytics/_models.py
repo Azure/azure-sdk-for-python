@@ -1240,7 +1240,7 @@ class RecognizePiiEntitiesAction(DictMixin):
     of interfacting with this model.
 
     :ivar str model_version: The model version to use for the analysis.
-    :ivar str domain: An optional string to set the PII domain to include only a
+    :ivar str domain_filter: An optional string to set the PII domain to include only a
     subset of the PII entity categories. Possible values include 'PHI' or None.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
@@ -1249,18 +1249,18 @@ class RecognizePiiEntitiesAction(DictMixin):
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
-        self.domain = kwargs.get("domain", None)
+        self.domain_filter = kwargs.get("domain_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
 
     def __repr__(self, **kwargs):
-        return "RecognizePiiEntitiesAction(model_version={}, domain={}, string_index_type={})" \
-            .format(self.model_version, self.domain, self.string_index_type)[:1024]
+        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={})" \
+            .format(self.model_version, self.domain_filter, self.string_index_type)[:1024]
 
     def to_generated(self):
         return _v3_1_preview_3_models.PiiTask(
             parameters=_v3_1_preview_3_models.PiiTaskParameters(
                 model_version=self.model_version,
-                domain=self.domain,
+                domain=self.domain_filter,
                 string_index_type=self.string_index_type
             )
         )

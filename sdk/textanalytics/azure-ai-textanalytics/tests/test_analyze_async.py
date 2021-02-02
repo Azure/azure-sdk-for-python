@@ -194,7 +194,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 actions=[
                     RecognizePiiEntitiesAction(),
                     ExtractKeyPhrasesAction(),
-                    RecognizePiiEntitiesAction(domain="PHI"),
+                    RecognizePiiEntitiesAction(domain_filter="PHI"),
                 ],
                 polling_interval=self._interval()
             )).result()

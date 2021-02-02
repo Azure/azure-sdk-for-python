@@ -568,7 +568,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
-            response = await client.begin_analyze_batch_actions(
+            response = client.begin_analyze_batch_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="bad"),
