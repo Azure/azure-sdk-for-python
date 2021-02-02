@@ -45,11 +45,6 @@ def healthcare_paged_result(doc_id_order, health_status_callback, response, obj,
         statistics=RequestStatistics._from_generated(obj.results.statistics) if show_stats else None # pylint: disable=protected-access
     )
 
-async def analyze_extract_page_data(doc_id_order, task_order, obj, response_headers, analyze_job_state):
-    # return next link, list of
-    iter_items = get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_state)
-    return analyze_job_state.next_link, iter_items
-
 async def analyze_extract_page_data_async(doc_id_order, task_order, obj, response_headers, analyze_job_state):
     iter_items = get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_state)
     return analyze_job_state.next_link, AsyncList(iter_items)

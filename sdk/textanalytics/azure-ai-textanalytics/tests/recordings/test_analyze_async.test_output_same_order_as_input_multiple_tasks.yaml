@@ -1,0 +1,373 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [{"parameters":
+      {"model-version": "latest", "stringIndexType": "TextElements_v8"}}, {"parameters":
+      {"domain": "PHI", "model-version": "latest", "stringIndexType": "TextElements_v8"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "1", "text": "one", "language": "en"},
+      {"id": "2", "text": "two", "language": "en"}, {"id": "3", "text": "three", "language":
+      "en"}, {"id": "4", "text": "four", "language": "en"}, {"id": "5", "text": "five",
+      "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '598'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 842151ae-8abf-4313-bc3b-9147a49b19d4
+      date: Tue, 02 Feb 2021 04:32:51 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '230'
+    status:
+      code: 202
+      message: Accepted
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: de05df8a-d6aa-4591-b0cf-8a486107f14c
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:32:55 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '139'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 36429d45-723b-47ea-9888-bd558a88204c
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:00 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '107'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 2dcae585-ac62-4a31-91e9-c70dc3269999
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:06 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '106'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 322074ee-429d-4ab8-bae4-62313fb7fab2
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '101'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 293d7da5-f289-4de7-9a89-ecb135ae63fa
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '135'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 9e2c33e6-e309-4a0e-87c0-821aada9a619
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:21 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '107'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: f03fa04f-b78d-42f4-9e32-a3042fd6a155
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:27 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '94'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 51d76fae-31d0-4824-a516-a9bf405e406f
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:31 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '159'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: c4c77024-8336-476d-98ec-cacbe7a849cb
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:37 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '175'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: e1a1e3f3-1cad-4c70-93ad-39195146dba7
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:42 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '118'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: f4527c35-55f8-4936-bfea-5b7a41577f1f
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:48 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '96'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 0d6a13a4-1e0d-491e-95d4-647b567619e2
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:53 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '151'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 6ab8dcc3-82d7-4edb-b117-c56e780ec8fb
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:33:59 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '142'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+  response:
+    body:
+      string: '{"jobId":"dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000","lastUpdateDateTime":"2021-02-02T04:32:52Z","createdDateTime":"2021-02-02T04:32:51Z","expirationDateTime":"2021-02-03T04:32:51Z","status":"partiallySucceeded","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value PHI is not supported for domain parameter for job task
+        type PersonallyIdentifiableInformation. Supported values phi.","target":"#/tasks/entityRecognitionPiiTasks/1"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:32:52Z"},"completed":2,"failed":1,"inProgress":0,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"redactedText":"one","id":"1","entities":[],"warnings":[]},{"redactedText":"two","id":"2","entities":[],"warnings":[]},{"redactedText":"three","id":"3","entities":[],"warnings":[]},{"redactedText":"four","id":"4","entities":[],"warnings":[]},{"redactedText":"five","id":"5","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}},{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:32:52.7798378Z","results":{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 9f9edb7d-4418-4002-b876-6a90c07ff15d
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Feb 2021 04:34:03 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '166'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/dcdff2d9-0473-4eee-ae0b-e7697f43eff2_637478208000000000
+version: 1

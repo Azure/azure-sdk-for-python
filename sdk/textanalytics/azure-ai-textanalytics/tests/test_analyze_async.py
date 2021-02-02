@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import datetime
 import os
 import pytest
 import platform
@@ -95,12 +95,13 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = client.begin_analyze_batch_actions(
+            poller = await client.begin_analyze_batch_actions(
                 docs,
                 actions=[RecognizeEntitiesAction()],
                 show_stats=True,
                 polling_interval=self._interval(),
-            ).result()
+            )
+            response = await poller.result()
 
             action_results = []
             async for p in response:
@@ -221,7 +222,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_batch_actions(
                     ["This is written in English."],
                     actions=[
                         RecognizeEntitiesAction(),
@@ -229,7 +230,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                     ],
                     polling_interval=self._interval()
-                )
+                )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -238,7 +239,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_batch_actions(
                     ["This is written in English."],
                     actions=[
                         RecognizeEntitiesAction(),
@@ -246,7 +247,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                     ],
                     polling_interval=self._interval()
-                )
+                )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -255,7 +256,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(TypeError):
             async with client:
-                response = await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_batch_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(),
@@ -263,7 +264,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                     ],
                     polling_interval=self._interval()
-                )
+                )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -363,7 +364,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = [{"id": "56", "text": ":)"}]
 
         async with client:
-            poller = client.begin_analyze_batch_actions(
+            poller = await client.begin_analyze_batch_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest")
@@ -372,7 +373,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-            response = poller.result()
+            response = await poller.result()
 
             assert isinstance(poller.created_on, datetime.datetime)
             poller._polling_method.display_name
@@ -517,10 +518,11 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             )).result()
             self.assertIsNotNone(response)
 
+
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_user_agent(self, client):
-        async def callback(resp):
+        def callback(resp):
             self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 resp.http_request.headers["User-Agent"]
@@ -536,15 +538,10 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 actions=[
                     RecognizeEntitiesAction(),
                 ],
-                polling_interval=self._interval()
+                polling_interval=self._interval(),
+                raw_response_hook=callback,
             )
-
-            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()),
-                poller._polling_method._initial_response.http_request.headers["User-Agent"]
-            )
-
-            await poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
+            await poller.wait()
 
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -568,7 +565,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         async with client:
-            response = await(await
+            response = await (await
             client.begin_analyze_batch_actions(
                 docs,
                 actions=[
@@ -612,7 +609,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             async with client:
-                await client.begin_analyze_batch_actions(
+                await (await client.begin_analyze_batch_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(),
@@ -620,7 +617,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         RecognizePiiEntitiesAction()
                     ],
                     polling_interval=self._interval()
-                )
+                )).result()
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -629,7 +626,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze_batch_actions(
+                await (await client.begin_analyze_batch_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(),
@@ -637,7 +634,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         RecognizePiiEntitiesAction()
                     ],
                     polling_interval=self._interval()
-                )
+                )).result()
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -703,11 +700,15 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 polling_interval=self._interval()
             )).result()
 
+            pages = []
+            async for p in result:
+                pages.append(p)
+
             recognize_entities_results = []
             extract_key_phrases_results = []
             recognize_pii_entities_results = []
 
-            async for idx, action_result in enumerate(result):
+            for idx, action_result in enumerate(pages):
                 if idx % 3 == 0:
                     assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
                     recognize_entities_results.append(action_result)
@@ -747,26 +748,12 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             pages = []
             async for p in result:
                 pages.append(p)
-            self.assertEqual(len(pages), 2)  # default page size is 20
 
-            result_types = [
-                "recognize_entities_results",
-                "recognize_pii_entities_results",
-                "extract_key_phrases_results",
-            ]
-
-            expected_results_per_page = [20, 5]
-
-            for idx, page in enumerate(pages):
-                for result_type in result_types:
-                    results = getattr(page, result_type)
-                    self.assertEqual(len(results), expected_results_per_page[idx])
-
-                    for doc in results:
-                        if result_type == "recognize_entities_results":
-                            self.assertTrue(doc.is_error)
-                        else:
-                            self.assertFalse(doc.is_error)
+            for idx, action_result in enumerate(pages):
+                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
+                    assert all([doc for doc in action_result.document_results if doc.is_error])
+                else:
+                    assert all([doc for doc in action_result.document_results if not doc.is_error])
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -775,7 +762,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             async with client:
-                await client.begin_analyze_batch_actions(
+                await (await client.begin_analyze_batch_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(),
@@ -783,5 +770,5 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                     ],
                     polling_interval=self._interval()
-                )
+                )).result()
         assert excinfo.value.status_code == 400
