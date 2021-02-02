@@ -7,6 +7,7 @@
 import logging
 import sys
 import os
+import json
 import pytest
 import uuid
 from datetime import datetime, timedelta
@@ -113,6 +114,51 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(cloud_event)
 
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    def test_send_cloud_event_data_base64_using_data(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = b'cloudevent',
+                type="Sample.Cloud.Event"
+                )
+
+        def callback(request):
+            req = json.loads(request.http_request.body)
+            assert req[0].get("data_base64") is not None
+            assert req[0].get("data") is None
+
+        client.send(cloud_event, raw_response_hook=callback)
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    def test_send_cloud_event_bytes_using_data_base64(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data_base64 = b'cloudevent',
+                type="Sample.Cloud.Event"
+                )
+
+        def callback(request):
+            req = json.loads(request.http_request.body)
+            assert req[0].get("data_base64") is not None
+            assert req[0].get("data") is None
+
+        client.send(cloud_event, raw_response_hook=callback)
+
+
+    def test_send_cloud_event_fails_on_providing_data_and_b64(self):
+        with pytest.raises(ValueError, match="data and data_base64 cannot be provided at the same time*"):
+            cloud_event = CloudEvent(
+                    source = "http://samplesource.dev",
+                    data_base64 = b'cloudevent',
+                    data = "random data",
+                    type="Sample.Cloud.Event"
+                    )
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
