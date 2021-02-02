@@ -184,10 +184,18 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
     def test_business_card_jpg(self, client):
         poller = client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
 
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        business_card = result[0]
+        business_cards = poller.result()
         # check dict values
+        for business_card in business_cards:
+            print("Contact Names:")
+            for contact_name in business_card.fields.contact_names.value:
+                print("...FirstName: {} has confidence {}".format(contact_name.value['FirstName'].value, contact_name.value['FirstName'].confidence))
+                print("...LastName: {} has confidence {}".format(contact_name.value['LastName'].value, contact_name.value['LastName'].confidence))
+            for dept in business_card.fields.departments.value:
+                print("Departments: {} has confidence {}".format(dept.value, dept.confidence))
+            for email in business_card.fields.emails.value:
+                print("Emails: {} has confidence {}".format(email.value, email.confidence))
+
         self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')

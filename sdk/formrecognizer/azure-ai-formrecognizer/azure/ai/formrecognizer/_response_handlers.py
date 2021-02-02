@@ -16,7 +16,8 @@ from ._models import (
     FormPageRange,
     RecognizedForm,
     FormSelectionMark,
-    get_bounding_box
+    get_bounding_box,
+    BusinessCard
 )
 
 
@@ -29,7 +30,7 @@ def prepare_prebuilt_models(response):
     for page in document_result:
         model_id = page.model_id if hasattr(page, "model_id") else None
         doc_type_confidence = page.doc_type_confidence if hasattr(page, "doc_type_confidence") else None
-        prebuilt_model = RecognizedForm(
+        prebuilt_model = BusinessCard(
             page_range=FormPageRange(
                 first_page_number=page.page_range[0], last_page_number=page.page_range[1]
             ),

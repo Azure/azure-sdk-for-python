@@ -1099,3 +1099,116 @@ class TextStyle(object):
 
     def __repr__(self):
         return "TextStyle(name={}, confidence={})".format(self.name, self.confidence)
+
+
+
+class SelectionMarkFormField(FormField):
+    def __init__(self, **kwargs):
+        super(SelectionMarkFormField, self).__init__(**kwargs)
+        self.value_type = "selectionMark"
+
+
+class DateFormField(FormField):
+    def __init__(self, **kwargs):
+        super(DateFormField, self).__init__(**kwargs)
+        self.value_type = "date"
+
+class TimeFormField(FormField):
+    def __init__(self, **kwargs):
+        super(TimeFormField, self).__init__(**kwargs)
+        self.value_type = "time"
+
+class StringFormField(FormField):
+    def __init__(self, **kwargs):
+        super(StringFormField, self).__init__(**kwargs)
+        self.value_type = "string"
+
+
+class IntegerFormField(FormField):
+    def __init__(self, **kwargs):
+        super(IntegerFormField, self).__init__(**kwargs)
+        self.value_type = "integer"
+
+class FloatFormField(FormField):
+    def __init__(self, **kwargs):
+        super(FloatFormField, self).__init__(**kwargs)
+        self.value_type = "float"
+
+class DictionaryFormField(FormField):
+    def __init__(self, **kwargs):
+        super(DictionaryFormField, self).__init__(**kwargs)
+        self.value_type = "dictionary"
+        if self.value is None:
+            self.value = {}
+
+class ListFormField(FormField):
+    def __init__(self, **kwargs):
+        super(ListFormField, self).__init__(**kwargs)
+        self.value_type = "list"
+        if self.value is None:
+            self.value = []
+
+class PhoneNumberFormField(FormField):
+    def __init__(self, **kwargs):
+        super(PhoneNumberFormField, self).__init__(**kwargs)
+        self.value_type = "phoneNumber"
+
+
+class BusinessCardFields(dict):
+
+    def __init__(self, **kwargs):
+        super(BusinessCardFields, self).__init__(**kwargs)
+
+        self.contact_names = ListFormField(**self.get("ContactNames", {}).__dict__)
+        self.company_names = ListFormField(**self.get("CompanyNames", {}).__dict__)
+        self.departments = ListFormField(**self.get("Departments", {}).__dict__)
+        self.job_titles = ListFormField(**self.get("JobTitles", {}).__dict__)
+        self.emails = ListFormField(**self.get("Emails", {}).__dict__)
+        self.websites = ListFormField(**self.get("Websites", {}).__dict__)
+        self.addresses = ListFormField(**self.get("Addresses", {}).__dict__)
+        self.mobile_phones = ListFormField(**self.get("MobilePhones", {}).__dict__)
+        # self.faxes = ListFormField(**self.get("Faxes", {}).__dict__)
+        # self.work_phones = ListFormField(**self.get("WorkPhones", {}).__dict__)
+        # self.other_phones = ListFormField(**self.get("OtherPhones", {}).__dict__)
+
+
+class BusinessCard(RecognizedForm):
+    """Represents a form that has been recognized by a trained or prebuilt model.
+
+    :ivar str form_type:
+        The type of form the model identified the submitted form to be.
+    :ivar str form_type_confidence:
+        Confidence of the type of form the model identified the submitted form to be.
+    :ivar str model_id:
+        Model identifier of model used to analyze form if not using a prebuilt
+        model.
+    :ivar fields:
+        A dictionary of the fields found on the form. The fields dictionary
+        keys are the `name` of the field. For models trained with labels,
+        this is the training-time label of the field. For models trained
+        without labels, a unique name is generated for each field.
+    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
+    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
+        The first and last page number of the input form.
+    :ivar list[~azure.ai.formrecognizer.FormPage] pages:
+        A list of pages recognized from the input document. Contains lines,
+        words, selection marks, tables and page metadata.
+
+    .. versionadded:: v2.1-preview
+        The *form_type_confidence* and *model_id* properties
+    """
+    def __init__(self, **kwargs):
+        super(BusinessCard, self).__init__(**kwargs)
+        self.fields = BusinessCardFields(**kwargs.get("fields"))
+
+    def __repr__(self):
+        return "BusinessCard(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
+               "model_id={})" \
+            .format(
+                self.form_type,
+                repr(self.fields),
+                repr(self.page_range),
+                repr(self.pages),
+                self.form_type_confidence,
+                self.model_id
+            )[:1024]
