@@ -135,6 +135,7 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_rename_container(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -156,6 +157,7 @@ class StorageContainerTest(StorageTestCase):
             bsc.rename_container(name="badcontainer", new_name="container")
         self.assertEqual(new_name, new_container.get_container_properties().name)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_rename_container_with_source_lease(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -758,7 +760,6 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
 
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_client = self._create_container(bsc)
@@ -788,7 +789,6 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
 
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         # get an existing container
@@ -816,7 +816,6 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_restore_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
         token = generate_account_sas(
             storage_account.name,
             storage_account_key,

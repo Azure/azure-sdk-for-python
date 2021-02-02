@@ -174,6 +174,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_rename_container(self, resource_group, location, storage_account, storage_account_key):
@@ -197,6 +198,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_rename_container_with_source_lease(self, resource_group, location, storage_account, storage_account_key):

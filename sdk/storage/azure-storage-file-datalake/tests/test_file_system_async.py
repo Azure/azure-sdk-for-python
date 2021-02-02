@@ -155,6 +155,8 @@ class FileSystemTest(StorageTestCase):
         loop.run_until_complete(self._test_delete_file_system_with_existing_file_system_async())
 
     async def _test_rename_file_system(self):
+        if not self.is_playback():
+            return
         old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
         old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
         new_name = self._get_file_system_reference(prefix="newcontainer")
@@ -177,6 +179,8 @@ class FileSystemTest(StorageTestCase):
         loop.run_until_complete(self._test_rename_file_system())
 
     async def _test_rename_file_system_with_source_lease(self):
+        if not self.is_playback():
+            return
         old_name = self._get_file_system_reference(prefix="old")
         new_name = self._get_file_system_reference(prefix="new")
         filesystem = await self.dsc.create_file_system(old_name)
