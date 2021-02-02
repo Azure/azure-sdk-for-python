@@ -1,3 +1,40 @@
+## Authentication
+
+### generate sas and use AzureSasCredential
+
+```Python
+from azure.eventgrid import generate_sas, EventGridPublisherClient
+from azure.core.credentials import AzureSasCredential
+from datetime import datetime
+import os
+
+
+topic_key = os.environ["EG_ACCESS_KEY"]
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+expiration_date_utc = datetime.utcnow()
+
+signature = generate_sas(endpoint, topic_key, expiration_date_utc)
+
+credential = AzureSasCredential(signature)
+client = EventGridPublisherClient(endpoint, credential)
+```
+
+### use the azure key credential
+
+```Python
+from azure.eventgrid import generate_sas, EventGridPublisherClient
+from azure.core.credentials import AzureKeyCredential
+from datetime import datetime
+import os
+
+
+topic_key = os.environ["EG_ACCESS_KEY"]
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+
+credential = AzureKeyCredential(topic_key)
+client = EventGridPublisherClient(endpoint, credential)
+```
+
 ## Send Scenarios
 
 ### Send a Single EventGridEvent as a strongly typed object
@@ -294,21 +331,3 @@ for event in deserialized_dict_events:
     print(type(event))
 ```
 
-## generate sas and use AzureSasCredential
-
-```Python
-from azure.eventgrid import generate_sas, EventGridPublisherClient
-from azure.core.credentials import AzureSasCredential
-from datetime import datetime
-import os
-
-
-topic_key = os.environ["EG_ACCESS_KEY"]
-endpoint = os.environ["EG_TOPIC_HOSTNAME"]
-expiration_date_utc = datetime.utcnow()
-
-signature = generate_sas(endpoint, topic_key, expiration_date_utc)
-
-credential = AzureSasCredential(signature)
-client = EventGridPublisherClient(endpoint, credential)
-```
