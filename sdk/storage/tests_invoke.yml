@@ -2,7 +2,7 @@ parameters:
   EnvVars: {}
   InjectedPackages: ''
 
-jobs:
+stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: 'false'
