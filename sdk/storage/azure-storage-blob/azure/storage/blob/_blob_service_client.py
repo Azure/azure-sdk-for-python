@@ -581,9 +581,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         Operation is successful only if the source container exists.
 
-        .. versionadded:: 12.7.0.
-            This operation was introduced in API version '2020-04-08'.
-
         :param str name:
             The name of the container to rename.
         :param str new_name:

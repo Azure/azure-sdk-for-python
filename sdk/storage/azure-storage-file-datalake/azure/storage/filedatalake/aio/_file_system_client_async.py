@@ -200,9 +200,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         Operation is successful only if the source filesystem exists.
 
-        .. versionadded:: 12.3.0.
-            This operation was introduced in API version '2020-04-08'.
-
         :param str new_name:
             The new filesystem name the user wants to rename to.
         :keyword lease:

@@ -300,9 +300,6 @@ class ContainerClient(StorageAccountHostsMixin):
 
         Operation is successful only if the source container exists.
 
-        .. versionadded:: 12.7.0.
-            This operation was introduced in API version '2020-04-08'.
-
         :param str new_name:
             The new container name the user wants to rename to.
         :keyword lease:

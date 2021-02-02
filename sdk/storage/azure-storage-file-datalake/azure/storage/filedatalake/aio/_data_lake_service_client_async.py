@@ -213,9 +213,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
         Operation is successful only if the source filesystem exists.
 
-        .. versionadded:: 12.3.0.
-            This operation was introduced in API version '2020-04-08'.
-
         :param str name:
             The name of the filesystem to rename.
         :param str new_name:
