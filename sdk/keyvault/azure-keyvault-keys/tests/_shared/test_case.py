@@ -7,8 +7,6 @@ import time
 from azure_devtools.scenario_tests.patches import patch_time_sleep_api
 from devtools_testutils import AzureTestCase
 
-from azure.keyvault.keys import KeyClient
-
 
 class KeyVaultTestCase(AzureTestCase):
     def __init__(self, *args, **kwargs):
@@ -21,12 +19,6 @@ class KeyVaultTestCase(AzureTestCase):
     def setUp(self):
         self.list_test_size = 7
         super(KeyVaultTestCase, self).setUp()
-
-    def create_kv_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient)
-        return self.create_client_from_credential(
-            KeyClient, credential=credential, vault_url=vault_uri, **kwargs
-        )
 
     def get_resource_name(self, name):
         """helper to create resources with a consistent, test-indicative prefix"""

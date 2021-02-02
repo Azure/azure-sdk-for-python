@@ -32,6 +32,10 @@ class MockHandler(logging.Handler):
 
 
 class KeyClientTests(KeyVaultTestCase):
+    def create_client(self, vault_uri, **kwargs):
+        credential = self.get_credential(KeyClient)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
+
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
@@ -144,7 +148,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_key_crud_operations(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create ec key
@@ -196,7 +200,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_backup_restore(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("keybak")
@@ -223,7 +227,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_key_list(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
@@ -245,7 +249,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_list_versions(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("testKey")
@@ -270,7 +274,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_list_deleted_keys(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         expected = {}
@@ -300,7 +304,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_recover(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create keys
@@ -325,7 +329,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_purge(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create keys
@@ -355,7 +359,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_logging_enabled(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url, logging_enable=True)
+        client = self.create_client(azure_keyvault_url, logging_enable=True)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -379,7 +383,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_logging_disabled(self, azure_keyvault_url, **kwargs):
-        client = self.create_kv_client(azure_keyvault_url, logging_enable=False)
+        client = self.create_client(azure_keyvault_url, logging_enable=False)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
