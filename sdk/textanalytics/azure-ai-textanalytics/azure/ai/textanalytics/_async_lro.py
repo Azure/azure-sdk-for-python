@@ -7,6 +7,7 @@
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling import AsyncLROPoller
+from azure.core.polling._async_poller import PollingReturnType
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallysucceeded"])
@@ -136,7 +137,7 @@ class AsyncAnalyzeBatchActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMetho
             return None
         return self._current_body.job_id
 
-class AsyncAnalyzeBatchActionsLROPoller(AsyncLROPoller):
+class AsyncAnalyzeBatchActionsLROPoller(AsyncLROPoller[PollingReturnType]):
 
     @property
     def created_on(self):
