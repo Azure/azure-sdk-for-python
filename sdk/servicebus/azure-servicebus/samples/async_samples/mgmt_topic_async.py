@@ -21,7 +21,7 @@ import asyncio
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-TOPIC_NAME = "sb_mgmt_demo_topic"
+TOPIC_NAME = "sb_mgmt_demo_topic_async"
 
 
 async def create_topic(servicebus_mgmt_client):

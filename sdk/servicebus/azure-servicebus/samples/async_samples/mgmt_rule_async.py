@@ -21,9 +21,9 @@ import asyncio
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-TOPIC_NAME = "sb_mgmt_demo_topic"
-SUBSCRIPTION_NAME = "sb_mgmt_demo_subscription"
-RULE_NAME = "sb_mgmt_demo_rule"
+TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
+SUBSCRIPTION_NAME = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
+RULE_NAME = "sb_mgmt_demo_rule_async"
 
 
 async def create_rule(servicebus_mgmt_client):

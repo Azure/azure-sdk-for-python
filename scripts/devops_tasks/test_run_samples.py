@@ -32,7 +32,7 @@ IGNORED_SAMPLES = {
         "receive_iterator_queue.py",
         "session_pool_receive.py",
         "proxy_async.py",
-        "receive_iterator_queue_async.py"
+        "receive_iterator_queue_async.py",
         "session_pool_receive_async.py"
     ]
 }
