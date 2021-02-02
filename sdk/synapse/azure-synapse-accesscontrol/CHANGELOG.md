@@ -1,6 +1,6 @@
 # Release History
 
-## 0.5.0 (2021-08-09)
+## 0.5.0 (2021-02-09)
 
 * Update to API version 2020-08-01
 

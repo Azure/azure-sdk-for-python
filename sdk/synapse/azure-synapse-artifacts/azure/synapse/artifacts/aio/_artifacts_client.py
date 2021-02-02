@@ -31,6 +31,7 @@ from .operations import WorkspaceOperations
 from .operations import SqlPoolsOperations
 from .operations import BigDataPoolsOperations
 from .operations import IntegrationRuntimesOperations
+from .operations import LibraryOperations
 from .operations import WorkspaceGitRepoManagementOperations
 from .. import models
 
@@ -68,6 +69,8 @@ class ArtifactsClient(object):
     :vartype big_data_pools: azure.synapse.artifacts.aio.operations.BigDataPoolsOperations
     :ivar integration_runtimes: IntegrationRuntimesOperations operations
     :vartype integration_runtimes: azure.synapse.artifacts.aio.operations.IntegrationRuntimesOperations
+    :ivar library: LibraryOperations operations
+    :vartype library: azure.synapse.artifacts.aio.operations.LibraryOperations
     :ivar workspace_git_repo_management: WorkspaceGitRepoManagementOperations operations
     :vartype workspace_git_repo_management: azure.synapse.artifacts.aio.operations.WorkspaceGitRepoManagementOperations
     :param credential: Credential needed for the client to connect to Azure.
@@ -121,6 +124,8 @@ class ArtifactsClient(object):
         self.big_data_pools = BigDataPoolsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.library = LibraryOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(
             self._client, self._config, self._serialize, self._deserialize)

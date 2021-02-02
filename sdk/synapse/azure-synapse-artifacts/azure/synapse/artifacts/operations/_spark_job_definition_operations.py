@@ -107,7 +107,7 @@ class SparkJobDefinitionOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.CloudError, response)
+                error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -118,29 +118,15 @@ class SparkJobDefinitionOperations(object):
         )
     get_spark_job_definitions_by_workspace.metadata = {'url': '/sparkJobDefinitions'}  # type: ignore
 
-    def create_or_update_spark_job_definition(
+    def _create_or_update_spark_job_definition_initial(
         self,
         spark_job_definition_name,  # type: str
         properties,  # type: "_models.SparkJobDefinition"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.SparkJobDefinitionResource"
-        """Creates or updates a Spark Job Definition.
-
-        :param spark_job_definition_name: The spark job definition name.
-        :type spark_job_definition_name: str
-        :param properties: Properties of spark job definition.
-        :type properties: ~azure.synapse.artifacts.models.SparkJobDefinition
-        :param if_match: ETag of the Spark Job Definition entity.  Should only be specified for update,
-         for which it should match existing entity or can be * for unconditional update.
-        :type if_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SparkJobDefinitionResource, or the result of cls(response)
-        :rtype: ~azure.synapse.artifacts.models.SparkJobDefinitionResource
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkJobDefinitionResource"]
+        # type: (...) -> Optional["_models.SparkJobDefinitionResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SparkJobDefinitionResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -152,7 +138,7 @@ class SparkJobDefinitionOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.create_or_update_spark_job_definition.metadata['url']  # type: ignore
+        url = self._create_or_update_spark_job_definition_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'sparkJobDefinitionName': self._serialize.url("spark_job_definition_name", spark_job_definition_name, 'str'),
@@ -177,18 +163,92 @@ class SparkJobDefinitionOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SparkJobDefinitionResource', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SparkJobDefinitionResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update_spark_job_definition.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}'}  # type: ignore
+    _create_or_update_spark_job_definition_initial.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}'}  # type: ignore
+
+    def begin_create_or_update_spark_job_definition(
+        self,
+        spark_job_definition_name,  # type: str
+        properties,  # type: "_models.SparkJobDefinition"
+        if_match=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.SparkJobDefinitionResource"]
+        """Creates or updates a Spark Job Definition.
+
+        :param spark_job_definition_name: The spark job definition name.
+        :type spark_job_definition_name: str
+        :param properties: Properties of spark job definition.
+        :type properties: ~azure.synapse.artifacts.models.SparkJobDefinition
+        :param if_match: ETag of the Spark Job Definition entity.  Should only be specified for update,
+         for which it should match existing entity or can be * for unconditional update.
+        :type if_match: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either SparkJobDefinitionResource or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SparkJobDefinitionResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkJobDefinitionResource"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_spark_job_definition_initial(
+                spark_job_definition_name=spark_job_definition_name,
+                properties=properties,
+                if_match=if_match,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('SparkJobDefinitionResource', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'sparkJobDefinitionName': self._serialize.url("spark_job_definition_name", spark_job_definition_name, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update_spark_job_definition.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}'}  # type: ignore
 
     def get_spark_job_definition(
         self,
@@ -242,7 +302,7 @@ class SparkJobDefinitionOperations(object):
 
         if response.status_code not in [200, 304]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -255,21 +315,12 @@ class SparkJobDefinitionOperations(object):
         return deserialized
     get_spark_job_definition.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}'}  # type: ignore
 
-    def delete_spark_job_definition(
+    def _delete_spark_job_definition_initial(
         self,
         spark_job_definition_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes a Spark Job Definition.
-
-        :param spark_job_definition_name: The spark job definition name.
-        :type spark_job_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -279,7 +330,7 @@ class SparkJobDefinitionOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.delete_spark_job_definition.metadata['url']  # type: ignore
+        url = self._delete_spark_job_definition_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'sparkJobDefinitionName': self._serialize.url("spark_job_definition_name", spark_job_definition_name, 'str'),
@@ -298,15 +349,75 @@ class SparkJobDefinitionOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_spark_job_definition.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}'}  # type: ignore
+    _delete_spark_job_definition_initial.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}'}  # type: ignore
+
+    def begin_delete_spark_job_definition(
+        self,
+        spark_job_definition_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Deletes a Spark Job Definition.
+
+        :param spark_job_definition_name: The spark job definition name.
+        :type spark_job_definition_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_spark_job_definition_initial(
+                spark_job_definition_name=spark_job_definition_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'sparkJobDefinitionName': self._serialize.url("spark_job_definition_name", spark_job_definition_name, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete_spark_job_definition.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}'}  # type: ignore
 
     def _execute_spark_job_definition_initial(
         self,
@@ -344,7 +455,7 @@ class SparkJobDefinitionOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -371,8 +482,8 @@ class SparkJobDefinitionOperations(object):
         :type spark_job_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either SparkBatchJob or the result of cls(response)
@@ -466,7 +577,7 @@ class SparkJobDefinitionOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -489,8 +600,8 @@ class SparkJobDefinitionOperations(object):
         :type new_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -580,7 +691,7 @@ class SparkJobDefinitionOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -607,8 +718,8 @@ class SparkJobDefinitionOperations(object):
         :type properties: ~azure.synapse.artifacts.models.SparkJobDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either SparkBatchJob or the result of cls(response)

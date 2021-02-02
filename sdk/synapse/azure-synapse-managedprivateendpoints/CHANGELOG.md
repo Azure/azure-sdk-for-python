@@ -1,6 +1,6 @@
 # Release History
 
-## 0.2.0 (2021-08-09)
+## 0.2.0 (2021-02-09)
 
 * Internal bugfixes (re-generated with latest generator)
 
