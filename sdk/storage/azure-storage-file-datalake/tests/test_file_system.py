@@ -8,6 +8,8 @@
 import unittest
 from datetime import datetime, timedelta
 
+import pytest
+
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from azure.core import MatchConditions
@@ -141,6 +143,26 @@ class FileSystemTest(StorageTestCase):
             filesystem1.get_file_system_properties()
         with self.assertRaises(HttpResponseError):
             self.dsc._rename_file_system(name="badfilesystem", new_name="filesystem")
+        self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
+
+    @record
+    def test_rename_file_system_with_file_system_client(self):
+        pytest.skip("Feature not yet enabled. Make sure to record this test once enabled.")
+        old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
+        old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
+        new_name = self._get_file_system_reference(prefix="newcontainer")
+        bad_name = self._get_file_system_reference(prefix="badcontainer")
+        filesystem1 = self.dsc.create_file_system(old_name1)
+        file_system2 = self.dsc.create_file_system(old_name2)
+        bad_file_system = self.dsc.get_file_system_client(bad_name)
+
+        new_filesystem = filesystem1._rename_file_system(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            file_system2._rename_file_system(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            filesystem1.get_file_system_properties()
+        with self.assertRaises(HttpResponseError):
+            bad_file_system._rename_file_system(new_name="filesystem")
         self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
 
     @record

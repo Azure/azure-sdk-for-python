@@ -157,6 +157,31 @@ class StorageContainerTest(StorageTestCase):
             bsc._rename_container(name="badcontainer", new_name="container")
         self.assertEqual(new_name, new_container.get_container_properties().name)
 
+    @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
+    @GlobalStorageAccountPreparer()
+    def test_rename_container_with_container_client(
+            self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name1 = self._get_container_reference(prefix="oldcontainer1")
+        old_name2 = self._get_container_reference(prefix="oldcontainer2")
+        new_name = self._get_container_reference(prefix="newcontainer")
+        bad_name = self._get_container_reference(prefix="badcontainer")
+        container1 = bsc.get_container_client(old_name1)
+        container2 = bsc.get_container_client(old_name2)
+        bad_container = bsc.get_container_client(bad_name)
+
+        container1.create_container()
+        container2.create_container()
+
+        new_container = container1._rename_container(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            container2._rename_container(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            container1.get_container_properties()
+        with self.assertRaises(HttpResponseError):
+            bad_container._rename_container(name="badcontainer", new_name="container")
+        self.assertEqual(new_name, new_container.get_container_properties().name)
+
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_rename_container_with_source_lease(self, resource_group, location, storage_account, storage_account_key):

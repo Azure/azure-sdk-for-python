@@ -198,6 +198,33 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
 
+    @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    def test_rename_container_with_container_client(
+            self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name1 = self._get_container_reference(prefix="oldcontainer1")
+        old_name2 = self._get_container_reference(prefix="oldcontainer2")
+        new_name = self._get_container_reference(prefix="newcontainer")
+        bad_name = self._get_container_reference(prefix="badcontainer")
+        container1 = bsc.get_container_client(old_name1)
+        container2 = bsc.get_container_client(old_name2)
+        bad_container = bsc.get_container_client(bad_name)
+
+        await container1.create_container()
+        await container2.create_container()
+
+        new_container = await container1._rename_container(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await container2._rename_container(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await container1.get_container_properties()
+        with self.assertRaises(HttpResponseError):
+            await bad_container._rename_container(name="badcontainer", new_name="container")
+        new_container_props = await new_container.get_container_properties()
+        self.assertEqual(new_name, new_container_props.name)
+
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
