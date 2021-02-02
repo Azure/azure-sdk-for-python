@@ -55,6 +55,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $docsReadMeName = $pkgId -replace "^azure-" , ""
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
@@ -85,6 +86,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
+    DocsReadMeName = $docsReadMeName
   }
 }
 
