@@ -43,6 +43,10 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
 
         # custom end point
         if self.custom_endpoint_address:
+            # if the custom_endpoint_address doesn't include the schema,
+            # we prepend a default one to make urlparse work
+            if self.custom_endpoint_address.find("//") == -1:
+                self.custom_endpoint_address = "sb://" + self.custom_endpoint_address
             endpoint = urlparse(self.custom_endpoint_address)
             self.transport_type = TransportType.AmqpOverWebsocket
             self.custom_endpoint_hostname = endpoint.hostname
