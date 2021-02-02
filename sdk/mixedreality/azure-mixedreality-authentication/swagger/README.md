@@ -17,7 +17,7 @@ autorest README.md
 
 ```yaml
 title: MixedRealityStsRestClient
-input-file: https://raw.githubusercontent.com/craigktreasure/azure-rest-api-specs/6938d23da2be2a20b9998e002ef8b79e8d83e509/specification/mixedreality/data-plane/Microsoft.MixedReality/preview/2019-02-28-preview/mr-sts.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/aa19725fe79aea2a9dc580f3c66f77f89cc34563/specification/mixedreality/data-plane/Microsoft.MixedReality/preview/2019-02-28-preview/mr-sts.json
 output-folder: ../azure/mixedreality/authentication/_generated
 namespace: azure.mixedreality.authentication._generated
 no-namespace-folders: true
