@@ -163,13 +163,13 @@ class FileSystemTest(StorageTestCase):
         filesystem1 = await self.dsc.create_file_system(old_name1)
         await self.dsc.create_file_system(old_name2)
 
-        new_filesystem = await self.dsc.rename_file_system(name=old_name1, new_name=new_name)
+        new_filesystem = await self.dsc._rename_file_system(name=old_name1, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(name=old_name2, new_name=new_name)
+            await self.dsc._rename_file_system(name=old_name2, new_name=new_name)
         with self.assertRaises(HttpResponseError):
             await filesystem1.get_file_system_properties()
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(name="badfilesystem", new_name="filesystem")
+            await self.dsc._rename_file_system(name="badfilesystem", new_name="filesystem")
         props = await new_filesystem.get_file_system_properties()
         self.assertEqual(new_name, props.name)
 
@@ -186,10 +186,10 @@ class FileSystemTest(StorageTestCase):
         filesystem = await self.dsc.create_file_system(old_name)
         filesystem_lease_id = await filesystem.acquire_lease()
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(name=old_name, new_name=new_name)
+            await self.dsc._rename_file_system(name=old_name, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(name=old_name, new_name=new_name, lease="bad_id")
-        new_filesystem = await self.dsc.rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
+            await self.dsc._rename_file_system(name=old_name, new_name=new_name, lease="bad_id")
+        new_filesystem = await self.dsc._rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
         props = await new_filesystem.get_file_system_properties()
         self.assertEqual(new_name, props.name)
 

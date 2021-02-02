@@ -134,13 +134,13 @@ class FileSystemTest(StorageTestCase):
         filesystem1 = self.dsc.create_file_system(old_name1)
         self.dsc.create_file_system(old_name2)
 
-        new_filesystem = self.dsc.rename_file_system(name=old_name1, new_name=new_name)
+        new_filesystem = self.dsc._rename_file_system(name=old_name1, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            self.dsc.rename_file_system(name=old_name2, new_name=new_name)
+            self.dsc._rename_file_system(name=old_name2, new_name=new_name)
         with self.assertRaises(HttpResponseError):
             filesystem1.get_file_system_properties()
         with self.assertRaises(HttpResponseError):
-            self.dsc.rename_file_system(name="badfilesystem", new_name="filesystem")
+            self.dsc._rename_file_system(name="badfilesystem", new_name="filesystem")
         self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
 
     @record
@@ -152,10 +152,10 @@ class FileSystemTest(StorageTestCase):
         filesystem = self.dsc.create_file_system(old_name)
         filesystem_lease_id = filesystem.acquire_lease()
         with self.assertRaises(HttpResponseError):
-            self.dsc.rename_file_system(name=old_name, new_name=new_name)
+            self.dsc._rename_file_system(name=old_name, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            self.dsc.rename_file_system(name=old_name, new_name=new_name, lease="bad_id")
-        new_filesystem = self.dsc.rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
+            self.dsc._rename_file_system(name=old_name, new_name=new_name, lease="bad_id")
+        new_filesystem = self.dsc._rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
         self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
 
     @record

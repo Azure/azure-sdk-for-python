@@ -255,7 +255,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
         return file_system_client
 
-    def rename_file_system(self, name, new_name, **kwargs):
+    def _rename_file_system(self, name, new_name, **kwargs):
         # type: (str, str, **Any) -> FileSystemClient
         """Renames a filesystem.
 
