@@ -523,7 +523,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             **kwargs)
 
     @distributed_trace_async
-    async def rename_container(self, name, new_name, **kwargs):
+    async def _rename_container(self, name, new_name, **kwargs):
         # type: (str, str, **Any) -> ContainerClient
         """Renames a container.
 

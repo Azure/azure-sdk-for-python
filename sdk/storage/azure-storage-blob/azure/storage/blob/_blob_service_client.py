@@ -575,7 +575,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             **kwargs)
 
     @distributed_trace
-    def rename_container(self, name, new_name, **kwargs):
+    def _rename_container(self, name, new_name, **kwargs):
         # type: (str, str, **Any) -> ContainerClient
         """Renames a container.
 

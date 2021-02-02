@@ -226,7 +226,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
-        await self._blob_service_client.rename_container(name, new_name, **kwargs)   # pylint: disable=protected-access
+        await self._blob_service_client._rename_container(name, new_name, **kwargs)   # pylint: disable=protected-access
         renamed_file_system = self.get_file_system_client(new_name)
         return renamed_file_system
 

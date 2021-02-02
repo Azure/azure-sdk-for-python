@@ -188,13 +188,13 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         await container1.create_container()
         await container2.create_container()
 
-        new_container = await bsc.rename_container(name=old_name1, new_name=new_name)
+        new_container = await bsc._rename_container(name=old_name1, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            await bsc.rename_container(name=old_name2, new_name=new_name)
+            await bsc._rename_container(name=old_name2, new_name=new_name)
         with self.assertRaises(HttpResponseError):
             await container1.get_container_properties()
         with self.assertRaises(HttpResponseError):
-            await bsc.rename_container(name="badcontainer", new_name="container")
+            await bsc._rename_container(name="badcontainer", new_name="container")
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
 
@@ -209,10 +209,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         await container.create_container()
         container_lease_id = await container.acquire_lease()
         with self.assertRaises(HttpResponseError):
-            await bsc.rename_container(name=old_name, new_name=new_name)
+            await bsc._rename_container(name=old_name, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            await bsc.rename_container(name=old_name, new_name=new_name, lease="bad_id")
-        new_container = await bsc.rename_container(name=old_name, new_name=new_name, lease=container_lease_id)
+            await bsc._rename_container(name=old_name, new_name=new_name, lease="bad_id")
+        new_container = await bsc._rename_container(name=old_name, new_name=new_name, lease=container_lease_id)
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
 
