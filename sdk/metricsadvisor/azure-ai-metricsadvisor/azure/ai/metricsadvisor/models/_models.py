@@ -13,8 +13,7 @@ from typing import (
     Union,
     List,
     Dict,
-    TYPE_CHECKING,
-    Optional,
+    TYPE_CHECKING
 )
 from enum import Enum
 import msrest
@@ -355,12 +354,12 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
     """
     def __init__(
-        self, name=None,  # type: Optional[str]
-        source=None,  # type: Optional[DataFeedSourceUnion]
-        granularity=None,  # type: Optional[DataFeedGranularity]
-        schema=None,  # type: Optional[DataFeedSchema]
-        ingestion_settings=None,  # type: Optional[DataFeedIngestionSettings]
-        **kwargs  # type: **Any
+        self, name,  # type: str
+        source,  # type: DataFeedSourceUnion
+        granularity,  # type: DataFeedGranularity
+        schema,  # type: DataFeedSchema
+        ingestion_settings,  # type: DataFeedIngestionSettings
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         self.name = name
@@ -758,8 +757,8 @@ class AnomalyAlertConfiguration(object):
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
 
     """
-    def __init__(self, name=None, metric_alert_configurations=None, hook_ids=None, **kwargs):
-        # type: (Optional[str], Optional[List[MetricAlertConfiguration]], Optional[List[str]], **Any) -> None
+    def __init__(self, name, metric_alert_configurations, hook_ids, **kwargs):
+        # type: (str, List[MetricAlertConfiguration], List[str], Any) -> None
         self.name = name
         self.hook_ids = hook_ids
         self.metric_alert_configurations = metric_alert_configurations
@@ -1517,7 +1516,7 @@ class MongoDBDataFeed(object):
 class NotificationHook(object):
     """NotificationHook.
 
-    :ivar str name: Hook unique name.
+    :param str name: Hook unique name.
     :ivar str description: Hook description.
     :ivar str external_link: Hook external link.
     :ivar list[str] admin_emails: Hook administrator emails.
@@ -1526,9 +1525,9 @@ class NotificationHook(object):
     :ivar str id: Hook unique id.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, name, **kwargs):
         self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
+        self.name = name
         self.description = kwargs.get('description', None)
         self.external_link = kwargs.get('external_link', None)
         self.admin_emails = kwargs.get('admin_emails', None)
@@ -1560,7 +1559,7 @@ class EmailNotificationHook(NotificationHook):
 
     def __init__(self, name, emails_to_alert, **kwargs):
         # type: (str, List[str], Any) -> None
-        super(EmailNotificationHook, self).__init__(name=name, **kwargs)
+        super(EmailNotificationHook, self).__init__(name, **kwargs)
         self.hook_type = 'Email'  # type: str
         self.emails_to_alert = emails_to_alert
 
@@ -1629,7 +1628,7 @@ class WebNotificationHook(NotificationHook):
 
     def __init__(self, name, endpoint, **kwargs):
         # type: (str, str, Any) -> None
-        super(WebNotificationHook, self).__init__(name=name, **kwargs)
+        super(WebNotificationHook, self).__init__(name, **kwargs)
         self.hook_type = 'Webhook'  # type: str
         self.endpoint = endpoint
         self.username = kwargs.get('username', None)
