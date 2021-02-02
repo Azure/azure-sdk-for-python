@@ -564,7 +564,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
+    def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
