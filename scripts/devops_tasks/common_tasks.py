@@ -19,6 +19,7 @@ import ast
 import textwrap
 import io
 import re
+import fnmatch
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -355,10 +356,10 @@ def find_whl(package_name, version, whl_directory):
     whl_name_format = "{0}-{1}-*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
     whls = []
     for root, dirnames, filenames in os.walk(whl_directory):
-        for filename in fnmatch.filter(filenames, pkg_name_format):
+        for filename in fnmatch.filter(filenames, whl_name_format):
             whls.append(os.path.join(root, filename))
 
-    whls = [os.path.relpath(w, whl_dir) for w in whls]
+    whls = [os.path.relpath(w, whl_directory) for w in whls]
 
     if not whls:
         logging.error(
