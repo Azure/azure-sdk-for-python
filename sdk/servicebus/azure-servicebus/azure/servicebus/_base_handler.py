@@ -14,6 +14,11 @@ try:
 except ImportError:
     from urllib.parse import quote_plus
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
 import uamqp
 from uamqp import utils, compat
 from uamqp.message import MessageProperties
@@ -83,17 +88,27 @@ def _parse_conn_str(conn_str):
             ):  # Fallback since technically expiry is optional.
                 # An arbitrary, absurdly large number, since you can't renew.
                 shared_access_signature_expiry = int(time.time() * 2)
-    if not (
-        all((endpoint, shared_access_key_name, shared_access_key))
-        or all((endpoint, shared_access_signature))
-    ) or all(
-        (shared_access_key_name, shared_access_signature)
-    ):  # this latter clause since we don't accept both
+
+    if not endpoint:
+        raise ValueError("Connection string is either blank or malformed.")
+    parsed = urlparse(endpoint.rstrip("/"))
+    if not parsed.netloc:
+        raise ValueError("Invalid Endpoint on the Connection String.")
+    if any([shared_access_key, shared_access_key_name]) and not all(
+        [shared_access_key, shared_access_key_name]
+    ):
         raise ValueError(
-            "Invalid connection string. Should be in the format: "
-            "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
-            "\nWith alternate option of providing SharedAccessSignature instead of SharedAccessKeyName and Key"
+            "Connection string must have both SharedAccessKeyName and SharedAccessKey."
         )
+    if shared_access_signature is not None and shared_access_key is not None:
+        raise ValueError(
+            "Only one of the SharedAccessKey or SharedAccessSignature must be present."
+        )
+    if shared_access_signature is None and shared_access_key is None:
+        raise ValueError(
+            "At least one of the SharedAccessKey or SharedAccessSignature must be present."
+        )
+
     entity = cast(str, entity_path)
     host = cast(str, strip_protocol_from_uri(cast(str, endpoint)))
 

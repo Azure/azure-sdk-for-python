@@ -59,3 +59,9 @@ class ServiceBusConnectionStringParserTests(AzureMgmtTestCase):
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
         assert str(e.value) == 'Connection string must have both SharedAccessKeyName and SharedAccessKey.'
+
+    def test_sb_parse_conn_str_no_key_or_sas(self, **kwargs):
+        conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/'
+        with pytest.raises(ValueError) as e:
+            parse_result = parse_connection_string(conn_str)
+        assert str(e.value) == 'At least one of the SharedAccessKey or SharedAccessSignature must be present.'

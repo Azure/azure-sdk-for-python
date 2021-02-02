@@ -9,6 +9,7 @@ except ImportError:
 
 
 from ..management._models import DictMixin
+from .._base_handler import _parse_conn_str
 
 
 class ServiceBusConnectionStringProperties(DictMixin):
@@ -71,39 +72,14 @@ def parse_connection_string(conn_str):
     :type conn_str: str
     :rtype: ~azure.servicebus.ServiceBusConnectionStringProperties
     """
-    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    if any(len(tup) != 2 for tup in conn_settings):
-        raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_settings)
-    shared_access_signature = None
-    for key, value in conn_settings.items():
-        if key.lower() == "sharedaccesssignature":
-            shared_access_signature = value
-    shared_access_key = conn_settings.get("SharedAccessKey")
-    shared_access_key_name = conn_settings.get("SharedAccessKeyName")
-    if any([shared_access_key, shared_access_key_name]) and not all(
-        [shared_access_key, shared_access_key_name]
-    ):
-        raise ValueError(
-            "Connection string must have both SharedAccessKeyName and SharedAccessKey."
-        )
-    if shared_access_signature is not None and shared_access_key is not None:
-        raise ValueError(
-            "Only one of the SharedAccessKey or SharedAccessSignature must be present."
-        )
-    endpoint = conn_settings.get("Endpoint")
-    if not endpoint:
-        raise ValueError("Connection string is either blank or malformed.")
-    parsed = urlparse(endpoint.rstrip("/"))
-    if not parsed.netloc:
-        raise ValueError("Invalid Endpoint on the Connection String.")
-    namespace = parsed.netloc.strip()
+    namespace, policy, key, entity, signature = _parse_conn_str(conn_str)[:-1]
+    endpoint = "sb://" + namespace + "/"
     props = {
         "fully_qualified_namespace": namespace,
         "endpoint": endpoint,
-        "entity_path": conn_settings.get("EntityPath"),
-        "shared_access_signature": shared_access_signature,
-        "shared_access_key_name": shared_access_key_name,
-        "shared_access_key": shared_access_key,
+        "entity_path": entity,
+        "shared_access_signature": signature,
+        "shared_access_key_name": policy,
+        "shared_access_key": key,
     }
     return ServiceBusConnectionStringProperties(**props)
