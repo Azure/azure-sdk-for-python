@@ -41,6 +41,16 @@ def test_custom_endpoint():
     assert producer._config.transport_type == TransportType.AmqpOverWebsocket
     assert producer._config.connection_port == 200
 
+    producer = EventHubProducerClient(
+        "fake.host.com",
+        "fake_eh",
+        None,
+        custom_endpoint_address="fake.endpoint.com:200"
+    )
+    assert producer._config.custom_endpoint_hostname == 'fake.endpoint.com'
+    assert producer._config.transport_type == TransportType.AmqpOverWebsocket
+    assert producer._config.connection_port == 200
+
     consumer = EventHubConsumerClient(
         "fake.host.com",
         "fake_eh",
@@ -79,6 +89,17 @@ def test_custom_endpoint():
         "fake_group",
         None,
         custom_endpoint_address="https://fake.endpoint.com:200"
+    )
+    assert consumer._config.custom_endpoint_hostname == 'fake.endpoint.com'
+    assert consumer._config.transport_type == TransportType.AmqpOverWebsocket
+    assert consumer._config.connection_port == 200
+
+    consumer = EventHubConsumerClient(
+        "fake.host.com",
+        "fake_eh",
+        "fake_group",
+        None,
+        custom_endpoint_address="fake.endpoint.com:200"
     )
     assert consumer._config.custom_endpoint_hostname == 'fake.endpoint.com'
     assert consumer._config.transport_type == TransportType.AmqpOverWebsocket
