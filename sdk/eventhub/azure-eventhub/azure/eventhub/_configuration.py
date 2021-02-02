@@ -6,9 +6,8 @@ from typing import Optional, Dict, Any
 
 try:
     from urlparse import urlparse
-    from urllib import quote_plus  # type: ignore
 except ImportError:
-    from urllib.parse import urlparse, quote_plus
+    from urllib.parse import urlparse
 
 from uamqp.constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
 
