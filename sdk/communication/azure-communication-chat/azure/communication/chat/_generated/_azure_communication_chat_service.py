@@ -16,13 +16,18 @@ if TYPE_CHECKING:
     from typing import Any
 
 from ._configuration import AzureCommunicationChatServiceConfiguration
-from .operations import AzureCommunicationChatServiceOperationsMixin
+from .operations import ChatThreadOperations
+from .operations import ChatOperations
 from . import models
 
 
-class AzureCommunicationChatService(AzureCommunicationChatServiceOperationsMixin):
+class AzureCommunicationChatService(object):
     """Azure Communication Chat Service.
 
+    :ivar chat_thread: ChatThreadOperations operations
+    :vartype chat_thread: azure.communication.chat.operations.ChatThreadOperations
+    :ivar chat: ChatOperations operations
+    :vartype chat: azure.communication.chat.operations.ChatOperations
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
     """
@@ -39,8 +44,13 @@ class AzureCommunicationChatService(AzureCommunicationChatServiceOperationsMixin
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.chat_thread = ChatThreadOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.chat = ChatOperations(
+            self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
         # type: () -> None

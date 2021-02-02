@@ -11,6 +11,7 @@ except ImportError:
 # pylint: disable=unused-import,ungrouped-imports
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 from datetime import datetime
+from uuid import uuid4
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -28,9 +29,9 @@ from .._generated.models import (
 )
 from .._models import (
     ChatThread,
-    ChatThreadMember
+    ChatThreadParticipant
 )
-from .._utils import _to_utc_datetime  # pylint: disable=unused-import
+from .._utils import _to_utc_datetime, return_response  # pylint: disable=unused-import
 from .._version import SDK_MONIKER
 
 
@@ -118,15 +119,23 @@ class ChatClient(object):
     @distributed_trace_async
     async def create_chat_thread(
         self, topic: str,
-        thread_members: List[ChatThreadMember],
+        thread_participants: List[ChatThreadParticipant],
+        repeatability_request_id: Optional[str] = None,
         **kwargs
     ) -> ChatThreadClient:
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
         :type topic: str
-        :param thread_members: Required. Members to be added to the thread.
-        :type thread_members: list[~azure.communication.chat.ChatThreadMember]
+        :param thread_participants: Required. Participants to be added to the thread.
+        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
+        :param repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
+         representing a client-generated, globally unique for all time, identifier for the request. If not
+         specified, a new unique id would be generated.
+        :type repeatability_request_id: str
         :return: ChatThreadClient
         :rtype: ~azure.communication.chat.aio.ChatThreadClient
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -142,24 +151,29 @@ class ChatClient(object):
         """
         if not topic:
             raise ValueError("topic cannot be None.")
-        if not thread_members:
-            raise ValueError("List of ThreadMember cannot be None.")
+        if not thread_participants:
+            raise ValueError("List of ThreadParticipant cannot be None.")
+        if repeatability_request_id is None:
+            repeatability_request_id = str(uuid4())
 
-        members = [m._to_generated() for m in thread_members]  # pylint:disable=protected-access
-        create_thread_request = CreateChatThreadRequest(topic=topic, members=members)
+        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+        create_thread_request = \
+            CreateChatThreadRequest(topic=topic, participants=participants)
 
-        create_chat_thread_result = await self._client.create_chat_thread(create_thread_request, **kwargs)
-
-        multiple_status = create_chat_thread_result.multiple_status
-        thread_status = [status for status in multiple_status if status.type == "Thread"]
-        if not thread_status:
-            raise HttpResponseError(message="Can not find chat thread status result from: {}".format(thread_status))
-        if thread_status[0].status_code != 201:
-            raise HttpResponseError(message="Chat thread creation failed with status code {}, message: {}.".format(
-                thread_status[0].status_code, thread_status[0].message))
-
-        thread_id = thread_status[0].id
-
+        create_chat_thread_result = await self._client.chat.create_chat_thread(
+            create_chat_thread_request=create_thread_request,
+            repeatability_request_id=repeatability_request_id,
+            **kwargs)
+        if hasattr(create_chat_thread_result, 'errors') \
+                and create_chat_thread_result.errors is not None:
+            participants = \
+                create_chat_thread_result.errors.invalid_participants
+            errors = []
+            for participant in participants:
+                errors.append('participant ' + participant.target +
+                ' failed to join thread due to: ' + participant.message)
+            raise RuntimeError(errors)
+        thread_id = create_chat_thread_result.chat_thread.id
         return ChatThreadClient(
             endpoint=self._endpoint,
             credential=self._credential,
@@ -193,7 +207,7 @@ class ChatClient(object):
         if not thread_id:
             raise ValueError("thread_id cannot be None.")
 
-        chat_thread = await self._client.get_chat_thread(thread_id, **kwargs)
+        chat_thread = await self._client.chat.get_chat_thread(thread_id, **kwargs)
         return ChatThread._from_generated(chat_thread)  # pylint:disable=protected-access
 
     @distributed_trace
@@ -222,7 +236,7 @@ class ChatClient(object):
         results_per_page = kwargs.pop("results_per_page", None)
         start_time = kwargs.pop("start_time", None)
 
-        return self._client.list_chat_threads(
+        return self._client.chat.list_chat_threads(
             max_page_size=results_per_page,
             start_time=start_time,
             **kwargs)
@@ -254,7 +268,7 @@ class ChatClient(object):
         if not thread_id:
             raise ValueError("thread_id cannot be None.")
 
-        return await self._client.delete_chat_thread(thread_id, **kwargs)
+        return await self._client.chat.delete_chat_thread(thread_id, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()
