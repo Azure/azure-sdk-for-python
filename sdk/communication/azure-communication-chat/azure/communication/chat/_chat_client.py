@@ -11,7 +11,6 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 from ._chat_thread_client import ChatThreadClient

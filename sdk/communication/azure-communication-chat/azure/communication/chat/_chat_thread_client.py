@@ -249,7 +249,8 @@ class ChatThreadClient(object):
 
         :param content: Required. Chat message content.
         :type content: str
-        :param chat_message_type: The chat message type. Possible values include: "text", "html". Default: ChatMessageType.TEXT
+        :param chat_message_type: The chat message type. Possible values include: "text", "html".
+        Default: ChatMessageType.TEXT
         :type chat_message_type: str or ~azure.communication.chat.models.ChatMessageType
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
@@ -282,7 +283,7 @@ class ChatThreadClient(object):
 
         if chat_message_type not in [ChatMessageType.TEXT, ChatMessageType.HTML]:
             raise ValueError(
-                    "chat_message_type: {message_type} can be only 'text' or 'html'".format(message_type=chat_message_type))
+                "chat_message_type: {message_type} can be only 'text' or 'html'".format(message_type=chat_message_type))
 
         sender_display_name = kwargs.pop("sender_display_name", None)
 

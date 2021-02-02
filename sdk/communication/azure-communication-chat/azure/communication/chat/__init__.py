@@ -29,7 +29,6 @@ __all__ = [
     'CommunicationTokenCredential',
     'CommunicationTokenRefreshOptions',
     'CommunicationUserIdentifier',
-    'CommunicationUserCredential',
     'ChatThreadParticipant',
     'ChatMessageType'
 ]

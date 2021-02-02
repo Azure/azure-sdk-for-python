@@ -234,8 +234,11 @@ class ChatThreadClientSamplesAsync(object):
             print("add_participants succeeded")
 
     async def remove_participant_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, \
+            CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options),
+                                              self._thread_id)
 
         async with chat_thread_client:
             # [START remove_participant]
