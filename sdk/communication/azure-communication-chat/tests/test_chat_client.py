@@ -13,7 +13,7 @@ from azure.communication.chat import (
     ChatClient,
     ChatThreadMember,
     CommunicationUserIdentifier,
-    CommunicationUserCredential
+    CommunicationTokenCredential
 )
 from unittest_helpers import mock_response
 from datetime import datetime
@@ -26,7 +26,7 @@ except ImportError:  # python < 3.3
 
 class TestChatClient(unittest.TestCase):
     @classmethod
-    @patch('azure.communication.chat.CommunicationUserCredential')
+    @patch('azure.communication.chat.CommunicationTokenCredential')
     def setUpClass(cls, credential):
         credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
         TestChatClient.credential = credential

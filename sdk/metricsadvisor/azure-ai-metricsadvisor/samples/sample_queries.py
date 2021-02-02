@@ -56,8 +56,8 @@ def sample_list_metric_enriched_series_data():
 
     # [END list_metric_enriched_series_data]
 
-def sample_list_dimension_values():
-    # [START list_dimension_values]
+def sample_list_anomaly_dimension_values():
+    # [START list_anomaly_dimension_values]
     import datetime
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
 
@@ -70,7 +70,7 @@ def sample_list_dimension_values():
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    results = client.list_dimension_values(
+    results = client.list_anomaly_dimension_values(
         detection_configuration_id=detection_configuration_id,
         dimension_name=dimension_name,
         start_time=datetime.datetime(2020, 1, 1),
@@ -79,7 +79,7 @@ def sample_list_dimension_values():
     for result in results:
         print(str(result))
 
-    # [END list_dimension_values]
+    # [END list_anomaly_dimension_values]
 
 def sample_list_metric_dimension_values():
     # [START list_metric_dimension_values]
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     print("---List metric enriched series data...")
     sample_list_metric_enriched_series_data()
     print("---List dimension values...")
-    sample_list_dimension_values()
+    sample_list_anomaly_dimension_values()
     print("---List metric dimension values...")
     sample_list_metric_dimension_values()
     print("---List metric series data...")

@@ -9,8 +9,7 @@ from azure.communication.sms._generated.models import SendMessageRequest
 from azure.communication.sms._generated.models import SendSmsResponse
 
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
-from ._shared.policy import HMACCredentialsPolicy
-from ._shared.utils import parse_connection_str
+from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 
 class SmsClient(object):
@@ -41,8 +40,7 @@ class SmsClient(object):
                 "invalid credential from connection string.")
 
         self._endpoint = endpoint
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential)
-
+        self._authentication_policy = get_authentication_policy(endpoint, credential)
         self._sms_service_client = AzureCommunicationSMSService(
             self._endpoint,
             authentication_policy=self._authentication_policy,
@@ -95,8 +93,8 @@ class SmsClient(object):
         send_sms_options = kwargs.pop('send_sms_options', None)
 
         request = SendMessageRequest(
-            from_property=from_phone_number,
-            to=to_phone_numbers,
+            from_property=from_phone_number.phone_number,
+            to=[p.phone_number for p in to_phone_numbers],
             message=message,
             send_sms_options=send_sms_options,
             **kwargs)

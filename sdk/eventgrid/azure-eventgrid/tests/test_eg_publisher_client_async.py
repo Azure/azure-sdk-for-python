@@ -16,8 +16,8 @@ import datetime as dt
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
-from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import CloudEvent, EventGridEvent, CustomEvent ,EventGridSharedAccessSignatureCredential, generate_shared_access_signature
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from azure.eventgrid import CloudEvent, EventGridEvent, CustomEvent, generate_sas
 from azure.eventgrid.aio import EventGridPublisherClient
 
 from eventgrid_preparer import (
@@ -198,14 +198,26 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         }
         await client.send(cloud_event1)
 
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @pytest.mark.asyncio
+    async def test_send_cloud_event_data_none(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = None,
+                type="Sample.Cloud.Event"
+                )
+        await client.send(cloud_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @pytest.mark.asyncio
     async def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
-        signature = generate_shared_access_signature(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
-        credential = EventGridSharedAccessSignatureCredential(signature)
+        signature = generate_sas(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
+        credential = AzureSasCredential(signature)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
                 subject="sample", 
@@ -262,3 +274,17 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     }
                 )
         await client.send([custom_event1, custom_event2])
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @pytest.mark.asyncio
+    async def test_send_and_close_async_session(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        async with client: # this throws if client can't close
+            cloud_event = CloudEvent(
+                    source = "http://samplesource.dev",
+                    data = "cloudevent",
+                    type="Sample.Cloud.Event"
+                    )
+            await client.send(cloud_event)

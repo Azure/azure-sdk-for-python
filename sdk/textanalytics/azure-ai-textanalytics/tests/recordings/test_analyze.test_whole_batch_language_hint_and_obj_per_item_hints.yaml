@@ -20,7 +20,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
   response:
@@ -28,11 +28,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 3d31bfb0-facc-4f97-bfff-e568c98f6d73
+      - 6be37a37-c670-4fa1-9d44-32a9124cb71f
       date:
-      - Thu, 19 Nov 2020 21:23:18 GMT
+      - Wed, 27 Jan 2021 02:19:00 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '18891'
+      - '27'
     status:
       code: 202
       message: Accepted
@@ -54,17 +54,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
         },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
         inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
         ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
         ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
@@ -72,11 +72,11 @@ interactions:
         :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - a3ea3093-c289-4eaa-8bff-887f5a90ca38
+      - c60db609-3824-4122-b3e7-7fecb7e06116
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:23:23 GMT
+      - Wed, 27 Jan 2021 02:19:06 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -84,7 +84,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '133'
+      - '113'
     status:
       code: 200
       message: OK
@@ -98,17 +98,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
         },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
         inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
         ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
         ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
@@ -116,11 +116,11 @@ interactions:
         :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 7391cf7e-5233-433c-818f-c0d6d88da7bc
+      - 4c8af6d2-c887-4da5-a6ba-be1a83e3a6fa
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:23:28 GMT
+      - Wed, 27 Jan 2021 02:19:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -128,7 +128,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '112'
+      - '106'
     status:
       code: 200
       message: OK
@@ -142,17 +142,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
         },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
         inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
         ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
         ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
@@ -160,275 +160,11 @@ interactions:
         :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 0a7246b5-3f6e-4027-9646-4b6e8fbf171a
+      - b4cdd9de-35e0-43dd-aff3-437ac3944564
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:23:33 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '114'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
-  response:
-    body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
-        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
-        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
-        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
-        :\"2020-07-01\"}}]}}"
-    headers:
-      apim-request-id:
-      - fed87404-61e9-4147-98a2-edebd19f7228
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 19 Nov 2020 21:23:39 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '112'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
-  response:
-    body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
-        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
-        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
-        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
-        :\"2020-07-01\"}}]}}"
-    headers:
-      apim-request-id:
-      - 5ca4a0b1-15ab-4f5b-9530-01352350cda8
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 19 Nov 2020 21:23:44 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '346'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
-  response:
-    body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
-        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
-        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
-        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
-        :\"2020-07-01\"}}]}}"
-    headers:
-      apim-request-id:
-      - d321a87d-70a4-4e87-b410-a2c44bd2dcd4
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 19 Nov 2020 21:23:50 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '141'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
-  response:
-    body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
-        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
-        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
-        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
-        :\"2020-07-01\"}}]}}"
-    headers:
-      apim-request-id:
-      - 69184075-e130-4eac-b9fb-388751725e5c
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 19 Nov 2020 21:23:55 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '133'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
-  response:
-    body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
-        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
-        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
-        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
-        :\"2020-07-01\"}}]}}"
-    headers:
-      apim-request-id:
-      - 6fe2a8b9-c582-4554-b42d-10668eb272cb
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 19 Nov 2020 21:24:00 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '126'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
-  response:
-    body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
-        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
-        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
-        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
-        :\"2020-07-01\"}}]}}"
-    headers:
-      apim-request-id:
-      - 6a665620-ce26-4b0f-8e52-58f556523157
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 19 Nov 2020 21:24:05 GMT
+      - Wed, 27 Jan 2021 02:19:16 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -450,17 +186,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
         },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
         inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
         ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
         ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
@@ -468,11 +204,11 @@ interactions:
         :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 11045d95-b437-47d7-b17b-ea0de5bc47d2
+      - 018e5d80-f105-4fe0-b89e-5496a2ad96d2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:11 GMT
+      - Wed, 27 Jan 2021 02:19:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -480,7 +216,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '111'
+      - '117'
     status:
       code: 200
       message: OK
@@ -494,17 +230,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
         },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
         inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
         ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
         ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
@@ -512,11 +248,11 @@ interactions:
         :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - a2d8ee4c-f7ec-4b48-b3b9-eaa2966dc2ec
+      - f9547c19-6e1b-4269-a318-0e482361de23
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:16 GMT
+      - Wed, 27 Jan 2021 02:19:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -524,7 +260,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '143'
+      - '120'
     status:
       code: 200
       message: OK
@@ -538,17 +274,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
         },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
         inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
         ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
         ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
@@ -556,11 +292,11 @@ interactions:
         :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - a44f9509-3016-499b-aa3a-9f33b607fe03
+      - 4c98992e-4ea8-473f-b84a-afa6ef002b78
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:20 GMT
+      - Wed, 27 Jan 2021 02:19:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -568,7 +304,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '154'
+      - '115'
     status:
       code: 200
       message: OK
@@ -582,17 +318,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
         },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
         inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
         ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
         ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
@@ -600,11 +336,11 @@ interactions:
         :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 95473889-900e-404a-a53d-70b8f479f38f
+      - c120519f-5f32-4c43-8d30-c7a9ba86c360
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:25 GMT
+      - Wed, 27 Jan 2021 02:19:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -612,7 +348,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '112'
+      - '108'
     status:
       code: 200
       message: OK
@@ -626,36 +362,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
+        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
+        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
+        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 0f143151-1967-45b9-ae4b-60fd90320c9a
+      - db30654e-5f41-4436-b629-9a448a4060c9
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:32 GMT
+      - Wed, 27 Jan 2021 02:19:42 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -663,7 +392,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '140'
+      - '109'
     status:
       code: 200
       message: OK
@@ -677,36 +406,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
+        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
+        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
+        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - a2181f04-e01b-4198-a4c5-0b73b8c7a0ad
+      - e5d968ee-42be-4271-a290-fa8227ee0c19
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:37 GMT
+      - Wed, 27 Jan 2021 02:19:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -714,7 +436,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '175'
+      - '109'
     status:
       code: 200
       message: OK
@@ -728,36 +450,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
+        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
+        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
+        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 9bbd5668-7519-40ad-b791-64de499dcbce
+      - e0fac67f-f211-4148-85c0-dd0d9bf9d3d2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:42 GMT
+      - Wed, 27 Jan 2021 02:19:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -779,36 +494,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
+        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
+        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
+        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - ac622105-160d-48f4-adca-edd4ad87f27c
+      - 03063aac-a120-480e-8ef9-145669bae613
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:48 GMT
+      - Wed, 27 Jan 2021 02:19:57 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -816,7 +524,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '181'
+      - '126'
     status:
       code: 200
       message: OK
@@ -830,36 +538,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
+        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
+        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
+        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - ae9fbf69-ec47-4151-b65e-d82af325a653
+      - 50bee10b-9ad7-4374-bcb4-8910ee91d8b3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:52 GMT
+      - Wed, 27 Jan 2021 02:20:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -867,7 +568,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '224'
+      - '113'
     status:
       code: 200
       message: OK
@@ -881,36 +582,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\"\
+        ,\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\"\
+        ,\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
+        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - d99dd2a1-27e3-4669-b765-9602b3bc0425
+      - d280938c-371a-437a-ab6b-c736cac53d80
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:24:58 GMT
+      - Wed, 27 Jan 2021 02:20:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -918,7 +612,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '235'
+      - '161'
     status:
       code: 200
       message: OK
@@ -932,36 +626,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 3faeca5b-389c-44b4-a61e-89ee9c8855c5
+      - e238b404-f0bd-4744-a74c-c7e3d2f7b5b5
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:25:04 GMT
+      - Wed, 27 Jan 2021 02:20:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -969,7 +662,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '589'
+      - '163'
     status:
       code: 200
       message: OK
@@ -983,36 +676,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 8dea9aa7-3194-4d0b-9f5c-2421243d726a
+      - 431218ef-2577-4dc3-9710-7304e57f9d62
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:25:09 GMT
+      - Wed, 27 Jan 2021 02:20:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -1020,7 +712,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '216'
+      - '198'
     status:
       code: 200
       message: OK
@@ -1034,36 +726,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - d41a6623-289a-4771-8e1a-2fd8bcadc7f1
+      - cc69a77f-f1a6-4b1f-9f56-e01cd6e94357
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:25:14 GMT
+      - Wed, 27 Jan 2021 02:20:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -1071,7 +762,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '197'
+      - '161'
     status:
       code: 200
       message: OK
@@ -1085,36 +776,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 28da5d2a-e11b-428a-beec-ae87d491333e
+      - 7366a523-493d-483e-8021-9b204090c230
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:25:19 GMT
+      - Wed, 27 Jan 2021 02:20:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -1122,7 +812,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '167'
+      - '184'
     status:
       code: 200
       message: OK
@@ -1136,36 +826,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 08b84e8a-ede9-4b58-9b23-ebc4ea8040b6
+      - 01682963-d1b5-44ea-ba0c-904a7c3ad35b
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:25:25 GMT
+      - Wed, 27 Jan 2021 02:20:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -1173,7 +862,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '190'
+      - '205'
     status:
       code: 200
       message: OK
@@ -1187,36 +876,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"running\",\"\
-        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
-        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
-        inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
-        :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
-        :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
-        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
-        ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\"\
-        :[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\"\
-        :[\"Este es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\"\
-        :\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 26cabeaf-dce0-495f-8e15-4aa1b25af751
+      - ce4ae569-04cd-4c11-93ff-8e85f4516787
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:25:30 GMT
+      - Wed, 27 Jan 2021 02:20:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -1224,7 +912,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '171'
+      - '213'
     status:
       code: 200
       message: OK
@@ -1238,42 +926,292 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/622c3275-0360-4be8-a020-2804d7c60917_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
   response:
     body:
-      string: "{\"jobId\":\"622c3275-0360-4be8-a020-2804d7c60917_637413408000000000\"\
-        ,\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\",\"createdDateTime\":\"2020-11-19T21:22:59Z\"\
-        ,\"expirationDateTime\":\"2020-11-20T21:22:59Z\",\"status\":\"succeeded\"\
-        ,\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-19T21:23:19Z\"\
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - b9ded626-c384-4f77-87a7-9347bfe8f5eb
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 Jan 2021 02:20:45 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '203'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
+  response:
+    body:
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - db9ea404-b358-4549-80c6-7e76e72fb14a
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 Jan 2021 02:20:51 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '248'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
+  response:
+    body:
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - a0d0f3e8-3c45-4473-bf4c-1ccff4ff0b3f
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 Jan 2021 02:20:58 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2188'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
+  response:
+    body:
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - 5e8b6aae-d2f8-4db1-b39f-303ae3014bc8
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 Jan 2021 02:21:03 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '213'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
+  response:
+    body:
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"running\",\"\
+        errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
+        },\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionPiiTasks\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
+        inTerminalState\":true,\"documents\":[{\"redactedText\":\"I should take my\
+        \ cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"\
+        redactedText\":\"Este es un document escrito en Espa\xF1ol.\",\"id\":\"2\"\
+        ,\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\
+        \",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"\
+        2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"documents\"\
+        :[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"\
+        id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1ol\"\
+        ],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
+        \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - 3dd85a67-6449-4716-ae66-9788c6d2c023
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 Jan 2021 02:21:08 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '214'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000
+  response:
+    body:
+      string: "{\"jobId\":\"55a7e70a-586d-45a3-b054-4a4e7dd6f6e4_637473024000000000\"\
+        ,\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\",\"createdDateTime\":\"2021-01-27T02:19:01Z\"\
+        ,\"expirationDateTime\":\"2021-01-28T02:19:01Z\",\"status\":\"succeeded\"\
+        ,\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2021-01-27T02:19:01Z\"\
         },\"completed\":3,\"failed\":0,\"inProgress\":0,\"total\":3,\"entityRecognitionTasks\"\
-        :[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"\
+        :[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"\
         inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\"\
         :\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"\
         confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
         :\"escrito en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\"\
         :18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
         :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"\
-        entityRecognitionPiiTasks\":[{\"lastUpdateDateTime\":\"2020-11-19T21:23:19.8839487Z\"\
+        entityRecognitionPiiTasks\":[{\"lastUpdateDateTime\":\"2021-01-27T02:19:01.5548261Z\"\
         ,\"results\":{\"inTerminalState\":true,\"documents\":[{\"redactedText\":\"\
         I should take my cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"\
         warnings\":[]},{\"redactedText\":\"Este es un document escrito en Espa\xF1\
         ol.\",\"id\":\"2\",\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\
         \u306F\u5E78\u305B\",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\"\
         :[],\"modelVersion\":\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\"\
-        :\"2020-11-19T21:23:19.8839487Z\",\"results\":{\"inTerminalState\":true,\"\
+        :\"2021-01-27T02:19:01.5548261Z\",\"results\":{\"inTerminalState\":true,\"\
         documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\"\
         :[]},{\"id\":\"2\",\"keyPhrases\":[\"Este es\",\"document escrito en Espa\xF1\
         ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
         \"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
     headers:
       apim-request-id:
-      - 99fca9d2-1f5a-494b-91dc-7a085caf9578
+      - 48d8343c-98b0-4290-843f-4cc3ec1868e5
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:25:35 GMT
+      - Wed, 27 Jan 2021 02:21:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -1281,7 +1219,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '172'
+      - '208'
     status:
       code: 200
       message: OK

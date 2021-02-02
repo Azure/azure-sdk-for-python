@@ -13,14 +13,15 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._shared.models import LocationMode
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
-from ._generated import AzureQueueStorage, VERSION
-from ._generated.models import StorageServiceProperties, StorageErrorException
+from ._generated import AzureQueueStorage
+from ._generated.models import StorageServiceProperties
 
 from ._models import (
     QueuePropertiesPaged,
@@ -103,7 +104,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -176,7 +178,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             stats = self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -204,7 +206,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
             return service_properties_deserialize(service_props)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -260,7 +262,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         )
         try:
             return self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace

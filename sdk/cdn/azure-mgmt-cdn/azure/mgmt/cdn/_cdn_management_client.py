@@ -27,6 +27,18 @@ from .operations import CdnManagementClientOperationsMixin
 from .operations import ResourceUsageOperations
 from .operations import Operations
 from .operations import EdgeNodesOperations
+from .operations import AFDProfilesOperations
+from .operations import AFDCustomDomainsOperations
+from .operations import AFDEndpointsOperations
+from .operations import AFDOriginGroupsOperations
+from .operations import AFDOriginsOperations
+from .operations import RoutesOperations
+from .operations import RuleSetsOperations
+from .operations import RulesOperations
+from .operations import SecurityPoliciesOperations
+from .operations import SecretsOperations
+from .operations import ValidateOperations
+from .operations import LogAnalyticsOperations
 from .operations import PoliciesOperations
 from .operations import ManagedRuleSetsOperations
 from . import models
@@ -51,6 +63,30 @@ class CdnManagementClient(CdnManagementClientOperationsMixin):
     :vartype operations: azure.mgmt.cdn.operations.Operations
     :ivar edge_nodes: EdgeNodesOperations operations
     :vartype edge_nodes: azure.mgmt.cdn.operations.EdgeNodesOperations
+    :ivar afd_profiles: AFDProfilesOperations operations
+    :vartype afd_profiles: azure.mgmt.cdn.operations.AFDProfilesOperations
+    :ivar afd_custom_domains: AFDCustomDomainsOperations operations
+    :vartype afd_custom_domains: azure.mgmt.cdn.operations.AFDCustomDomainsOperations
+    :ivar afd_endpoints: AFDEndpointsOperations operations
+    :vartype afd_endpoints: azure.mgmt.cdn.operations.AFDEndpointsOperations
+    :ivar afd_origin_groups: AFDOriginGroupsOperations operations
+    :vartype afd_origin_groups: azure.mgmt.cdn.operations.AFDOriginGroupsOperations
+    :ivar afd_origins: AFDOriginsOperations operations
+    :vartype afd_origins: azure.mgmt.cdn.operations.AFDOriginsOperations
+    :ivar routes: RoutesOperations operations
+    :vartype routes: azure.mgmt.cdn.operations.RoutesOperations
+    :ivar rule_sets: RuleSetsOperations operations
+    :vartype rule_sets: azure.mgmt.cdn.operations.RuleSetsOperations
+    :ivar rules: RulesOperations operations
+    :vartype rules: azure.mgmt.cdn.operations.RulesOperations
+    :ivar security_policies: SecurityPoliciesOperations operations
+    :vartype security_policies: azure.mgmt.cdn.operations.SecurityPoliciesOperations
+    :ivar secrets: SecretsOperations operations
+    :vartype secrets: azure.mgmt.cdn.operations.SecretsOperations
+    :ivar validate: ValidateOperations operations
+    :vartype validate: azure.mgmt.cdn.operations.ValidateOperations
+    :ivar log_analytics: LogAnalyticsOperations operations
+    :vartype log_analytics: azure.mgmt.cdn.operations.LogAnalyticsOperations
     :ivar policies: PoliciesOperations operations
     :vartype policies: azure.mgmt.cdn.operations.PoliciesOperations
     :ivar managed_rule_sets: ManagedRuleSetsOperations operations
@@ -96,6 +132,30 @@ class CdnManagementClient(CdnManagementClientOperationsMixin):
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.edge_nodes = EdgeNodesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.afd_profiles = AFDProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.afd_custom_domains = AFDCustomDomainsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.afd_endpoints = AFDEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.afd_origin_groups = AFDOriginGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.afd_origins = AFDOriginsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.routes = RoutesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.rule_sets = RuleSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.rules = RulesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.security_policies = SecurityPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.secrets = SecretsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.validate = ValidateOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.log_analytics = LogAnalyticsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.policies = PoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)

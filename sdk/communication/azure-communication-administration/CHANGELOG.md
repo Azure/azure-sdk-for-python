@@ -3,6 +3,10 @@
 ## 1.0.0b4 (Unreleased)
 
 ### Breaking Changes
+- CommunicationIdentityClient is moved to a new package: "azure.communication.identity"
+- Replaced CommunicationUser with CommunicationUserIdentifier.
+- Renamed CommunicationUserCredential to CommunicationTokenCredential.
+
 
 ##### `PhoneNumberAdministrationClient`
 -  `begin_reserve_phone_numbers` now takes `display_name`, `description`, `phone_plan_ids`, 
@@ -17,8 +21,11 @@ Caller must provide one of the following:
 
 ### Added
 
+- Added `MicrosoftTeamsUserIdentifier`
+
 ##### `IdentityClient`
 - Added support for Azure Active Directory authentication for the Identity client
+
 
 ## 1.0.0b3 (2020-11-16)
 

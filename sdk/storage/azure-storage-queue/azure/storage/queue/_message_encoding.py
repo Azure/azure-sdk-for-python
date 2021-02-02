@@ -122,6 +122,7 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
     """
 
     def decode(self, content, response):
+        response = response.http_response
         try:
             return b64decode(content.encode('utf-8'))
         except (ValueError, TypeError) as error:

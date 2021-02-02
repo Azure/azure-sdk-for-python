@@ -24,14 +24,14 @@ class TableEntity(dict):
 
     def _set_metadata(self):
         if "Timestamp" in self.keys():
-            self._metadata = {  # pylint:disable=W0201
+            self._metadata = {  # pylint: disable=attribute-defined-outside-init
                 "etag": self.pop("etag"),
                 "timestamp": self.pop("Timestamp"),
             }
         else:
-            self._metadata = {"etag": self.pop("etag")}  # pylint:disable=W0201
+            self._metadata = {"etag": self.pop("etag")}  # pylint: disable=attribute-defined-outside-init
 
-    def metadata(self, **kwargs):  # pylint: disable = W0613
+    def metadata(self):
         # type: (...) -> Dict[str,Any]
         """Resets metadata to be a part of the entity
         :return Dict of entity metadata
@@ -83,7 +83,7 @@ class EntityProperty(object):
     def __init__(
         self,
         value=None,  # type: Any
-        type=None,  # type: Union[str,EdmType] # pylint:disable=W0622
+        type=None,  # type: Union[str,EdmType]  pylint: disable=redefined-builtin
     ):
         """
         Represents an Azure Table. Returned by list_tables.

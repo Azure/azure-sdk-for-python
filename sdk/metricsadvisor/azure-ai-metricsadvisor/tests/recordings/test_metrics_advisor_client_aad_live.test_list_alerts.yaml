@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
+      "timeMode": "AnomalyTime"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '107'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/anomaly_alert_configuration_id/alerts/query
+  response:
+    body:
+      string: '{"value":[{"alertId":"alert_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.687Z","modifiedTime":"2020-10-22T00:03:26.275Z"},{"alertId":"1753e27d800","timestamp":"2020-10-19T00:00:00Z","createdTime":"2020-10-21T15:54:37.468Z","modifiedTime":"2020-10-21T15:54:37.522Z"},{"alertId":"17539017c00","timestamp":"2020-10-18T00:00:00Z","createdTime":"2020-10-21T15:54:37.213Z","modifiedTime":"2020-10-21T15:54:37.286Z"},{"alertId":"17533db2000","timestamp":"2020-10-17T00:00:00Z","createdTime":"2020-10-21T15:54:36.975Z","modifiedTime":"2020-10-21T15:54:37.037Z"}],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - 41d9737b-4040-4c18-8cde-27de5eebd61f
+      content-length:
+      - '604'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:00:35 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '74'
+      x-request-id:
+      - 41d9737b-4040-4c18-8cde-27de5eebd61f
+    status:
+      code: 200
+      message: OK
+version: 1
