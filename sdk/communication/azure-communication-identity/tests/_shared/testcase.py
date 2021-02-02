@@ -48,14 +48,21 @@ class BodyReplacerProcessor(RecordingProcessor):
             response['body']['string'] = self._replace_keys(response['body']['string'])
 
         return response
-
+    
     def _replace_keys(self, body):
+        def _replace_recursively(dictionary):
+            if type(dictionary) != dict:
+                return
+            for key in dictionary:
+                if key in self._keys:
+                    dictionary[key] = self._replacement
+                else:
+                    _replace_recursively(dictionary[key])
+
         import json
         try:
             body = json.loads(body)
-            for key in self._keys:
-                if key in body:
-                    body[key] = self._replacement
+            _replace_recursively(body)
 
         except (KeyError, ValueError):
             return body
