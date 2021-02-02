@@ -212,8 +212,10 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name, filesystem.version,
-                                                                         new_name="restored" + str(restored_version))
+                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name,
+                                                                         filesystem.version,
+                                                                         new_name="restored" +
+                                                                                  name + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted filesystem is restored
@@ -283,7 +285,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.version,
-                                                                    new_name="restored" + str(restored_version))
+                                                                    new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted filesystem is restored

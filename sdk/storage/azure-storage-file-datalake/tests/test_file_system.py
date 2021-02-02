@@ -156,7 +156,7 @@ class FileSystemTest(StorageTestCase):
 
     @record
     def test_undelete_file_system(self):
-        name = self._get_file_system_reference(prefix="fs")
+        name = self._get_file_system_reference()
         filesystem_client = self.dsc.create_file_system(name)
 
         # Act
@@ -173,7 +173,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.version,
-                                                                   new_name="restored" + str(restored_version))
+                                                                   new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted filesystem is restored
@@ -232,7 +232,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 restored_fs_client = dsc.undelete_file_system(filesystem.name, filesystem.version,
-                                                              new_name="restored" + str(restored_version))
+                                                              new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted filesystem is restored

@@ -252,7 +252,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         new_name = kwargs.pop('new_name', None)
-        await self._blob_service_client.undelete_container(name, version, **kwargs)  # pylint: disable=protected-access
+        await self._blob_service_client.undelete_container(name, version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
         file_system = self.get_file_system_client(new_name or name)
         return file_system
 
