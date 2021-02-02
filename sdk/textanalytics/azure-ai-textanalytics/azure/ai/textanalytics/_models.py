@@ -1209,19 +1209,24 @@ class RecognizeEntitiesAction(DictMixin):
     of interfacting with this model.
 
     :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
+        For additional information see https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
 
     def __repr__(self, **kwargs):
-        return "RecognizeEntitiesAction(model_version={})" \
-            .format(self.model_version)[:1024]
+        return "RecognizeEntitiesAction(model_version={}, string_index_type={})" \
+            .format(self.model_version, self.string_index_type)[:1024]
 
     def to_generated(self):
         return _v3_1_preview_3_models.EntitiesTask(
             parameters=_v3_1_preview_3_models.EntitiesTaskParameters(
-                model_version=self.model_version
+                model_version=self.model_version,
+                string_index_type=self.string_index_type
             )
         )
 
@@ -1237,21 +1242,26 @@ class RecognizePiiEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str domain: An optional string to set the PII domain to include only a
     subset of the PII entity categories. Possible values include 'PHI' or None.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
+        For additional information see https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
         self.domain = kwargs.get("domain", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
 
     def __repr__(self, **kwargs):
-        return "RecognizePiiEntitiesAction(model_version={}, domain={})" \
-            .format(self.model_version, self.domain)[:1024]
+        return "RecognizePiiEntitiesAction(model_version={}, domain={}, string_index_type={})" \
+            .format(self.model_version, self.domain, self.string_index_type)[:1024]
 
     def to_generated(self):
         return _v3_1_preview_3_models.PiiTask(
             parameters=_v3_1_preview_3_models.PiiTaskParameters(
                 model_version=self.model_version,
-                domain=self.domain
+                domain=self.domain,
+                string_index_type=self.string_index_type
             )
         )
 

@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 
-import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
@@ -21,13 +20,13 @@ from azure.storage.blob.aio import ContainerClient
 
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
-from ._models import PathPropertiesPaged
 from ._data_lake_lease_async import DataLakeLeaseClient
+from .._deserialize import deserialize_path_properties
 from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._models import FileSystemProperties, PublicAccess
+from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -385,7 +384,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                         recursive=True,  # type: Optional[bool]
                         max_results=None,  # type: Optional[int]
                         **kwargs):
-        # type: (...) -> ItemPaged[PathProperties]
+        # type: (...) -> AsyncItemPaged[PathProperties]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -421,14 +420,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: List the blobs in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        command = functools.partial(
-            self._client.file_system.list_paths,
+        return self._client.file_system.list_paths(
+            recursive=recursive,
+            max_results=max_results,
             path=path,
             timeout=timeout,
+            cls=deserialize_path_properties,
             **kwargs)
-        return AsyncItemPaged(
-            command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
@@ -698,9 +696,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
-            directory_name = directory.name
+            directory_name = directory.get('name')
         except AttributeError:
-            directory_name = directory
+            directory_name = str(directory)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
@@ -739,9 +737,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: Getting the file client to interact with a specific file.
         """
         try:
-            file_path = file_path.name
+            file_path = file_path.get('name')
         except AttributeError:
-            pass
+            file_path = str(file_path)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

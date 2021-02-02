@@ -7,6 +7,7 @@ from six.moves.http_client import HTTPConnection
 from collections import OrderedDict
 import time
 import sys
+import json
 
 try:
     from unittest import mock
@@ -17,6 +18,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTra
 from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
+from azure.core.exceptions import HttpResponseError
 import logging
 import pytest
 
@@ -29,7 +31,6 @@ class MockResponse(HttpResponse):
 
     def body(self):
         return self._body
-
 
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="Multipart serialization not supported on 2.7 + dict order not deterministic on 3.5")
 def test_http_request_serialization():
@@ -670,6 +671,17 @@ def test_multipart_receive():
     res1 = response[1]
     assert res1.status_code == 404
     assert res1.headers['x-ms-fun'] == 'true'
+
+def test_raise_for_status_bad_response():
+    response = MockResponse(request=None, body=None, content_type=None)
+    response.status_code = 400
+    with pytest.raises(HttpResponseError):
+        response.raise_for_status()
+
+def test_raise_for_status_good_response():
+    response = MockResponse(request=None, body=None, content_type=None)
+    response.status_code = 200
+    response.raise_for_status()
 
 
 def test_multipart_receive_with_one_changeset():

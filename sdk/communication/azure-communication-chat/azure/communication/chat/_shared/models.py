@@ -23,13 +23,14 @@ class CommunicationUserIdentifier(object):
 class PhoneNumberIdentifier(object):
     """
     Represents a phone number.
-    :ivar value: Value for a phone number.
-    :vartype value: str
-    :param value: Value to initialize PhoneNumberIdentifier.
-    :type value: str
+    :param phone_number: The phone number in E.164 format.
+    :type phone_number: str
+    :param identifier: The full id of the phone number.
+    :type identifier: str
     """
-    def __init__(self, phone_number):
+    def __init__(self, phone_number, identifier=None):
         self.phone_number = phone_number
+        self.identifier = identifier
 
 class UnknownIdentifier(object):
     """
@@ -44,22 +45,6 @@ class UnknownIdentifier(object):
     def __init__(self, identifier):
         self.identifier = identifier
 
-class MicrosoftTeamsUserIdentifier(object):
-    """
-    Represents an identifier for a Microsoft Teams user.
-    :ivar user_id: the string identifier representing the identity
-    :vartype user_id: str
-    :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
-    :type user_id: str
-    :ivar is_anonymous: set this to true if the user is anonymous for example when joining a meeting with a share link
-    :vartype is_anonymous: bool
-    :param is_anonymous: Value to initialize MicrosoftTeamsUserIdentifier.
-    :type is_anonymous: bool
-    """
-    def __init__(self, user_id, is_anonymous=False):
-        self.user_id = user_id
-        self.is_anonymous = is_anonymous
-
 class CommunicationIdentifierModel(msrest.serialization.Model):
     """Communication Identifier Model.
 
@@ -67,14 +52,16 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
 
     :param kind: Required. Kind of Communication Identifier.
     :type kind: CommunicationIdentifierKind
-    :param id: identifies the Communication Identitity.
+    :param id: Full id of the identifier.
     :type id: str
-    :param phone_number: phone number in case the identity is phone number.
+    :param phone_number: phone number in case the identifier is a phone number.
     :type phone_number: str
-    :param is_anonymous: is the Microsoft Teams user is anaynimous.
+    :param is_anonymous: True if the identifier is anonymous.
     :type is_anonymous: bool
     :param microsoft_teams_user_id: Microsoft Teams user id.
     :type microsoft_teams_user_id: str
+    :param communication_cloud_environment: Cloud environment that the user belongs to.
+    :type communication_cloud_environment: CommunicationCloudEnvironment
     """
 
     _validation = {
@@ -87,6 +74,7 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
         'phone_number': {'key': 'phoneNumber', 'type': 'str'},
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'microsoft_teams_user_id': {'key': 'microsoftTeamsUserId', 'type': 'str'},
+        'communication_cloud_environment': {'key': 'communicationCloudEnvironment', 'type': 'str'},
     }
 
     def __init__(
@@ -99,7 +87,7 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
         self.phone_number = kwargs.get('phone_number', None)
         self.is_anonymous = kwargs.get('is_anonymous', None)
         self.microsoft_teams_user_id = kwargs.get('microsoft_teams_user_id', None)
-
+        self.communication_cloud_environment = kwargs.get('communication_cloud_environment', None)
 
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(cls, name):
@@ -121,7 +109,38 @@ class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     """Communication Identifier Kind.
     """
     Unknown = "UNKNOWN"
-    CommunicationUser = "COMMUNICATIONuSER"
-    PhoneNumber = "PHONEnUMBER"
+    CommunicationUser = "COMMUNICATIONUSER"
+    PhoneNumber = "PHONENUMBER"
     CallingApplication = "CALLINGAPPLICATION"
-    MicrosoftTeamsUser = "MICROSOFTTEAMSuSER"
+    MicrosoftTeamsUser = "MICROSOFTTEAMSUSER"
+
+class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """
+    The cloud enviornment that the identifier belongs to
+    """
+    
+    Public = "PUBLIC"
+    Dod = "DOD"
+    Gcch = "GCCH"
+
+class MicrosoftTeamsUserIdentifier(object):
+    """
+    Represents an identifier for a Microsoft Teams user.
+    :ivar user_id: The id of the Microsoft Teams user. If the user isn't anonymous, the id is the AAD object id of the user.
+    :vartype user_id: str
+    :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
+    :type user_id: str
+    :ivar identifier: The full id of the Microsoft Teams User identifier.
+    :vartype identifier: str
+    :ivar cloud: Cloud environment that this identifier belongs to
+    :vartype cloud: CommunicationCloudEnvironment
+    :ivar is_anonymous: set this to true if the user is anonymous for example when joining a meeting with a share link
+    :vartype is_anonymous: bool
+    :param is_anonymous: Value to initialize MicrosoftTeamsUserIdentifier.
+    :type is_anonymous: bool
+    """
+    def __init__(self, user_id, identifier=None, cloud=CommunicationCloudEnvironment.Public, is_anonymous=False):
+        self.identifier = identifier
+        self.user_id = user_id
+        self.is_anonymous = is_anonymous
+        self.cloud = cloud

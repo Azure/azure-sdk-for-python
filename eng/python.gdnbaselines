@@ -3,8 +3,8 @@
   "baselines": {
     "baseline": {
       "name": "baseline",
-      "createdDate": "2021-01-15 22:07:40Z",
-      "lastUpdatedDate": "2021-01-15 22:07:40Z"
+      "createdDate": "2021-01-29 23:26:49Z",
+      "lastUpdatedDate": "2021-01-29 23:26:49Z"
     }
   },
   "results": {
@@ -17,7 +17,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -30,7 +30,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -43,12 +43,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "f2b522d07d1d527393ce35a8e3017b724fb7630040b7aff076f1c147f1e99fbc": {
-      "signature": "f2b522d07d1d527393ce35a8e3017b724fb7630040b7aff076f1c147f1e99fbc",
+    "de3ed6fabd0a83a52dac712afb006d318fc23d1b55935721b0d648b9447ee215": {
+      "signature": "de3ed6fabd0a83a52dac712afb006d318fc23d1b55935721b0d648b9447ee215",
       "target": "tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py",
       "memberOf": [
         "baseline"
@@ -56,12 +56,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "d3bbf2a2371caa1fbaf62a813e5fb781dcd2c372f5265659a592a41bedf1c27b": {
-      "signature": "d3bbf2a2371caa1fbaf62a813e5fb781dcd2c372f5265659a592a41bedf1c27b",
+    "1c0c7087370854213752a4fabb07ea71b5fe346f7f85ec0133628f33f0fbfc89": {
+      "signature": "1c0c7087370854213752a4fabb07ea71b5fe346f7f85ec0133628f33f0fbfc89",
       "target": "tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py",
       "memberOf": [
         "baseline"
@@ -69,7 +69,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -82,7 +82,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -95,7 +95,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -108,7 +108,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -121,7 +121,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -134,7 +134,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -147,7 +147,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -160,7 +160,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -173,7 +173,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -186,7 +186,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -199,7 +199,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -212,7 +212,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -225,7 +225,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -238,7 +238,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -251,7 +251,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -264,7 +264,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -277,7 +277,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -290,7 +290,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -303,7 +303,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -316,7 +316,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -329,7 +329,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -342,7 +342,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0120",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -355,7 +355,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -368,7 +368,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -381,7 +381,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -394,7 +394,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -407,7 +407,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -420,7 +420,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -433,7 +433,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -446,7 +446,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -459,7 +459,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -472,7 +472,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -485,7 +485,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -498,7 +498,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -511,7 +511,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -524,7 +524,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -537,7 +537,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -550,7 +550,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -563,7 +563,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -576,7 +576,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -589,7 +589,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0050",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -602,7 +602,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -615,7 +615,20 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "9afc6f2267d9e99b251bedeecac951d45894df880909ed6ba6a5d9cb240d86ef": {
+      "signature": "9afc6f2267d9e99b251bedeecac951d45894df880909ed6ba6a5d9cb240d86ef",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/base_testcase_aad.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -628,7 +641,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -641,7 +654,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -654,7 +667,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -667,7 +680,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -680,7 +693,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -693,7 +706,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -706,7 +719,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -719,7 +732,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -732,7 +745,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-MSFT0090",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -745,7 +758,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -758,7 +771,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-MSFT0090",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -771,7 +784,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -784,7 +797,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-MSFT0090",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -797,7 +810,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-MSFT0090",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -810,7 +823,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -823,7 +836,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -836,7 +849,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -849,7 +862,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -862,7 +875,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -875,7 +888,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -888,7 +901,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -901,7 +914,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -914,7 +927,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -927,7 +940,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -940,7 +953,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -953,7 +966,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -966,7 +979,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -979,7 +992,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -992,7 +1005,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1005,7 +1018,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1018,7 +1031,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1031,7 +1044,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1044,7 +1057,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1057,7 +1070,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1070,7 +1083,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1083,7 +1096,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1096,7 +1109,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1109,7 +1122,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1122,7 +1135,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1135,7 +1148,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1148,7 +1161,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1161,7 +1174,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1174,7 +1187,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1187,7 +1200,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1200,7 +1213,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1213,7 +1226,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1226,7 +1239,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1239,7 +1252,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1252,7 +1265,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1265,7 +1278,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1278,7 +1291,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1291,7 +1304,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1304,7 +1317,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1317,7 +1330,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1330,7 +1343,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1343,7 +1356,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1356,7 +1369,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1369,7 +1382,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1382,7 +1395,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1395,7 +1408,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1408,7 +1421,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1421,7 +1434,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1434,7 +1447,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1447,7 +1460,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1460,7 +1473,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1473,7 +1486,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1486,7 +1499,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1499,7 +1512,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1512,7 +1525,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1525,12 +1538,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "e5f47ad2b3148a7fc70da2fb8c06107e53dfd2b02bc6dc1b5ec4a36ae8bbbc22": {
-      "signature": "e5f47ad2b3148a7fc70da2fb8c06107e53dfd2b02bc6dc1b5ec4a36ae8bbbc22",
+    "e6aefe73a0763778f7150089ce34246d7f7095f805ce63220abc444bd8524a00": {
+      "signature": "e6aefe73a0763778f7150089ce34246d7f7095f805ce63220abc444bd8524a00",
       "target": "sdk/batch/azure-mgmt-batch/tests/recordings/test_mgmt_batch.test_mgmt_batch_account.yaml",
       "memberOf": [
         "baseline"
@@ -1538,12 +1551,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "13ff083794178ed90ee4446ce08d1a29f8dbbbbfb8c24308315b1ba998861fe1": {
-      "signature": "13ff083794178ed90ee4446ce08d1a29f8dbbbbfb8c24308315b1ba998861fe1",
+    "c907971ae30aaf8172be5b02aa8d0d748098028f2dfc570d5454afdcb0ab3372": {
+      "signature": "c907971ae30aaf8172be5b02aa8d0d748098028f2dfc570d5454afdcb0ab3372",
       "target": "sdk/batch/azure-mgmt-batch/tests/recordings/test_mgmt_batch.test_mgmt_batch_account.yaml",
       "memberOf": [
         "baseline"
@@ -1551,7 +1564,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1564,7 +1577,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1577,7 +1590,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1590,7 +1603,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1603,7 +1616,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1616,7 +1629,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1629,7 +1642,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1642,7 +1655,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1655,7 +1668,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1668,7 +1681,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1681,7 +1694,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1694,7 +1707,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1707,7 +1720,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1720,25 +1733,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "886f560f7600aac017bfd48782c3d40dd8d4636681763b0a18eaa62bc12f8117": {
-      "signature": "886f560f7600aac017bfd48782c3d40dd8d4636681763b0a18eaa62bc12f8117",
-      "target": "sdk/compute/azure-mgmt-compute/tests/recordings/test_mgmt_compute.test_compute_log_analytics.yaml",
-      "memberOf": [
-        "baseline"
-      ],
-      "tool": "CredentialScanner",
-      "ruleId": "CSCAN-AZURE0070",
-      "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
-      "expirationDate": null,
-      "type": null
-    },
-    "016e3cdd425621380d4e7015c4066f050bc8fec08e6b7f6643097e1a12e3aac9": {
-      "signature": "016e3cdd425621380d4e7015c4066f050bc8fec08e6b7f6643097e1a12e3aac9",
+    "c5d7573359eeef928218ea9e95acc06fee32063632ed070b728bdf10eedc9189": {
+      "signature": "c5d7573359eeef928218ea9e95acc06fee32063632ed070b728bdf10eedc9189",
       "target": "sdk/compute/azure-mgmt-compute/tests/recordings/test_mgmt_compute_disks.test_compute_disks.yaml",
       "memberOf": [
         "baseline"
@@ -1746,12 +1746,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "5d4a464c7085c1080369921cbdfa05606d648b313bc2491355fda71ac5fc8a73": {
-      "signature": "5d4a464c7085c1080369921cbdfa05606d648b313bc2491355fda71ac5fc8a73",
+    "71d7f3dd1d1940fedd941744c1dc000107974e378d5cd7bac6c5f4fcb2ec6e7d": {
+      "signature": "71d7f3dd1d1940fedd941744c1dc000107974e378d5cd7bac6c5f4fcb2ec6e7d",
       "target": "sdk/compute/azure-mgmt-compute/tests/recordings/test_mgmt_compute_disks.test_compute_disks.yaml",
       "memberOf": [
         "baseline"
@@ -1759,12 +1759,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "bd22397ac826212adeb0c0efa32ed97d761b89c80dd0c44b2dbccbb9feac1b9c": {
-      "signature": "bd22397ac826212adeb0c0efa32ed97d761b89c80dd0c44b2dbccbb9feac1b9c",
+    "f24056519a930faf98ba764f8069237fb5e2f9850b7d958b6e50e03a95054664": {
+      "signature": "f24056519a930faf98ba764f8069237fb5e2f9850b7d958b6e50e03a95054664",
       "target": "sdk/compute/azure-mgmt-compute/tests/recordings/test_mgmt_compute_disks.test_compute_disks_multi.yaml",
       "memberOf": [
         "baseline"
@@ -1772,12 +1772,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "4de655277986472ed473ab2f85881888871bc59d600f27feeec2b11515c69d2d": {
-      "signature": "4de655277986472ed473ab2f85881888871bc59d600f27feeec2b11515c69d2d",
+    "be10457ffc0ebc098c9593549f58d50936f70e2345ebe3ed75044acb88cf1479": {
+      "signature": "be10457ffc0ebc098c9593549f58d50936f70e2345ebe3ed75044acb88cf1479",
       "target": "sdk/compute/azure-mgmt-compute/tests/recordings/test_mgmt_compute_disks.test_compute_disks_multi.yaml",
       "memberOf": [
         "baseline"
@@ -1785,12 +1785,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "ca5d97cf044de85522bff3ba46ccdb55a7d0e7977a98a943590fba9b27333b7c": {
-      "signature": "ca5d97cf044de85522bff3ba46ccdb55a7d0e7977a98a943590fba9b27333b7c",
+    "15360d4119bdb98e9a4e0ddec0c29b198ca6d0bbb1b0ee9d0bab1722699ed915": {
+      "signature": "15360d4119bdb98e9a4e0ddec0c29b198ca6d0bbb1b0ee9d0bab1722699ed915",
       "target": "sdk/compute/azure-mgmt-compute/tests/recordings/test_mgmt_compute_disks.test_compute_shot.yaml",
       "memberOf": [
         "baseline"
@@ -1798,12 +1798,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "0afe87544c3d93d22115de88a1996693be0a97a314be1b88677a2533a1d1b983": {
-      "signature": "0afe87544c3d93d22115de88a1996693be0a97a314be1b88677a2533a1d1b983",
+    "3ac825c1822267c4c960c26d0678cf9eaf548e71f56a84089e246f49fc7fafe5": {
+      "signature": "3ac825c1822267c4c960c26d0678cf9eaf548e71f56a84089e246f49fc7fafe5",
       "target": "sdk/compute/azure-mgmt-compute/tests/recordings/test_mgmt_compute_disks.test_compute_shot.yaml",
       "memberOf": [
         "baseline"
@@ -1811,7 +1811,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1824,7 +1824,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1837,7 +1837,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1850,7 +1850,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1863,7 +1863,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1876,7 +1876,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1889,7 +1889,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1902,7 +1902,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1915,7 +1915,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1928,7 +1928,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1941,7 +1941,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1954,7 +1954,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1967,7 +1967,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1980,7 +1980,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -1993,7 +1993,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2006,7 +2006,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0080",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2019,7 +2019,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0080",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2032,7 +2032,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0080",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2045,7 +2045,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0080",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2058,7 +2058,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2071,7 +2071,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2084,7 +2084,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2097,7 +2097,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2110,7 +2110,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2123,7 +2123,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2136,7 +2136,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2149,7 +2149,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2162,7 +2162,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2175,7 +2175,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2188,7 +2188,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2201,7 +2201,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2214,7 +2214,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2227,7 +2227,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2240,7 +2240,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2253,7 +2253,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2266,7 +2266,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2279,7 +2279,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2292,7 +2292,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2305,7 +2305,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2318,7 +2318,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2331,7 +2331,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2344,7 +2344,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2357,7 +2357,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2370,7 +2370,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2383,7 +2383,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0120",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2396,7 +2396,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0120",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2409,7 +2409,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2422,7 +2422,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2435,7 +2435,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2448,7 +2448,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2461,7 +2461,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2474,7 +2474,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2487,7 +2487,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2500,7 +2500,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2513,7 +2513,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2526,7 +2526,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2539,7 +2539,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2552,7 +2552,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2565,7 +2565,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2578,7 +2578,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2591,7 +2591,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2604,7 +2604,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2617,7 +2617,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2630,7 +2630,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2643,7 +2643,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2656,7 +2656,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2669,7 +2669,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2682,7 +2682,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2695,7 +2695,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2708,7 +2708,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2721,7 +2721,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2734,7 +2734,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2747,7 +2747,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2760,7 +2760,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2773,7 +2773,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2786,7 +2786,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2799,7 +2799,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2812,7 +2812,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2825,7 +2825,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2838,7 +2838,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2851,7 +2851,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2864,7 +2864,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2877,7 +2877,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2890,7 +2890,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2903,7 +2903,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2916,7 +2916,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2929,7 +2929,20 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "a7ca3622fcba9389888d83718212554251edc3b6612176574543e524fe0dbac7": {
+      "signature": "a7ca3622fcba9389888d83718212554251edc3b6612176574543e524fe0dbac7",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/async_tests/base_testcase_aad_async.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2942,7 +2955,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2955,12 +2968,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "5dc0373585cb7522c187bc11368216ff9d3db4e805893fbebacd340046ae6d1b": {
-      "signature": "5dc0373585cb7522c187bc11368216ff9d3db4e805893fbebacd340046ae6d1b",
+    "650a14bef4b2b23488741f88332f26a8a4e491eb92697eae5e56437841f772d0": {
+      "signature": "650a14bef4b2b23488741f88332f26a8a4e491eb92697eae5e56437841f772d0",
       "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/recordings/test_data_feeds.test_create_data_feed_with_mysql.yaml",
       "memberOf": [
         "baseline"
@@ -2968,7 +2981,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -2981,12 +2994,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "f456bbc5407b30510e5f8146d12f091a9f42184235544c117cd04035671fbef0": {
-      "signature": "f456bbc5407b30510e5f8146d12f091a9f42184235544c117cd04035671fbef0",
+    "609a575738b102415b5cb921d8b8505f749ddd5d1c31f2bc84612aa3b7c95294": {
+      "signature": "609a575738b102415b5cb921d8b8505f749ddd5d1c31f2bc84612aa3b7c95294",
       "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/recordings/test_data_feeds.test_create_data_feed_with_postgresql.yaml",
       "memberOf": [
         "baseline"
@@ -2994,7 +3007,59 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "d96ec36e21999ebec12f885ea691b916253f6768e7d33054f6adc006980450f6": {
+      "signature": "d96ec36e21999ebec12f885ea691b916253f6768e7d33054f6adc006980450f6",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/recordings/test_data_feeds_aad.test_create_data_feed_with_mysql.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "7ca617dd9ca2d21fb9714b4909fcc0a0d4fa0fd883fe9033cb4f52f0b4c17bfe": {
+      "signature": "7ca617dd9ca2d21fb9714b4909fcc0a0d4fa0fd883fe9033cb4f52f0b4c17bfe",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/recordings/test_data_feeds_aad.test_create_data_feed_with_mysql.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "f0edac8a4c609a5ff15b4fc803aa914032a4a35947820bd02436e04e30cb5af2": {
+      "signature": "f0edac8a4c609a5ff15b4fc803aa914032a4a35947820bd02436e04e30cb5af2",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/recordings/test_data_feeds_aad.test_create_data_feed_with_postgresql.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "360be97dc6cde565767926ad90ddf5c9d25f18312dfb02f6d0fbb99f22d9d106": {
+      "signature": "360be97dc6cde565767926ad90ddf5c9d25f18312dfb02f6d0fbb99f22d9d106",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/recordings/test_data_feeds_aad.test_create_data_feed_with_postgresql.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3007,7 +3072,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-MSFT0090",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3020,7 +3085,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-MSFT0090",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3033,7 +3098,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3046,7 +3111,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3059,7 +3124,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3072,7 +3137,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3085,7 +3150,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3098,7 +3163,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3111,7 +3176,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3124,7 +3189,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3137,7 +3202,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3150,7 +3215,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3163,7 +3228,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3176,7 +3241,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3189,7 +3254,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3202,7 +3267,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3215,7 +3280,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3228,7 +3293,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3241,7 +3306,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3254,7 +3319,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3267,7 +3332,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3280,7 +3345,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3293,7 +3358,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3306,7 +3371,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3319,7 +3384,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3332,7 +3397,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3345,7 +3410,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3358,7 +3423,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3371,7 +3436,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3384,7 +3449,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3397,7 +3462,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3410,7 +3475,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3423,7 +3488,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3436,7 +3501,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3449,7 +3514,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3462,7 +3527,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3475,7 +3540,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3488,7 +3553,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3501,7 +3566,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3514,7 +3579,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3527,7 +3592,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3540,7 +3605,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3553,7 +3618,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3566,7 +3631,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3579,7 +3644,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3592,7 +3657,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3605,7 +3670,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3618,7 +3683,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3631,7 +3696,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3644,7 +3709,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3657,7 +3722,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3670,7 +3735,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3683,7 +3748,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3696,7 +3761,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3709,7 +3774,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3722,7 +3787,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3735,7 +3800,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3748,7 +3813,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3761,7 +3826,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3774,7 +3839,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3787,7 +3852,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3800,7 +3865,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3813,7 +3878,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3826,7 +3891,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3839,7 +3904,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3852,7 +3917,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3865,7 +3930,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3878,7 +3943,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3891,7 +3956,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3904,7 +3969,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3917,7 +3982,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3930,7 +3995,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3943,7 +4008,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3956,7 +4021,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3969,7 +4034,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3982,7 +4047,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -3995,7 +4060,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4008,7 +4073,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4021,7 +4086,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4034,7 +4099,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4047,7 +4112,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4060,7 +4125,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4073,7 +4138,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4086,7 +4151,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4099,7 +4164,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4112,7 +4177,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4125,7 +4190,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4138,7 +4203,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4151,7 +4216,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4164,7 +4229,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4177,7 +4242,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4190,7 +4255,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4203,7 +4268,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4216,7 +4281,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4229,7 +4294,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4242,7 +4307,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4255,7 +4320,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4268,7 +4333,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4281,7 +4346,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4294,7 +4359,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4307,7 +4372,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4320,7 +4385,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4333,7 +4398,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4346,7 +4411,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4359,7 +4424,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4372,7 +4437,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4385,7 +4450,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4398,7 +4463,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4411,7 +4476,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4424,7 +4489,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4437,7 +4502,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4450,7 +4515,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4463,7 +4528,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4476,7 +4541,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4489,7 +4554,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4502,7 +4567,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4515,7 +4580,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4528,7 +4593,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4541,7 +4606,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4554,7 +4619,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4567,7 +4632,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4580,7 +4645,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4593,7 +4658,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4606,7 +4671,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4619,7 +4684,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4632,7 +4697,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4645,7 +4710,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4658,7 +4723,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4671,7 +4736,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4684,7 +4749,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4697,7 +4762,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4710,7 +4775,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4723,7 +4788,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4736,7 +4801,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4749,7 +4814,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4762,7 +4827,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4775,7 +4840,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4788,7 +4853,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4801,7 +4866,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4814,7 +4879,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4827,7 +4892,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4840,7 +4905,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4853,7 +4918,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4866,7 +4931,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4879,7 +4944,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4892,7 +4957,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4905,7 +4970,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4918,7 +4983,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4931,7 +4996,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4944,7 +5009,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4957,7 +5022,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4970,7 +5035,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4983,7 +5048,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -4996,7 +5061,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5009,7 +5074,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5022,7 +5087,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5035,7 +5100,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5048,7 +5113,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5061,7 +5126,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5074,7 +5139,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5087,7 +5152,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5100,7 +5165,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5113,7 +5178,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5126,7 +5191,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5139,7 +5204,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5152,7 +5217,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5165,7 +5230,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5178,7 +5243,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5191,7 +5256,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5204,7 +5269,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5217,7 +5282,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5230,7 +5295,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5243,7 +5308,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5256,7 +5321,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5269,7 +5334,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5282,7 +5347,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5295,7 +5360,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5308,7 +5373,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5321,7 +5386,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5334,7 +5399,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5347,7 +5412,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5360,7 +5425,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5373,7 +5438,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5386,7 +5451,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5399,7 +5464,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5412,7 +5477,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-AZURE0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5425,7 +5490,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5438,7 +5503,59 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "3ea6ff0cd3ec121644b092454e53509db9228cef0943d7575aa2c3b9c592c958": {
+      "signature": "3ea6ff0cd3ec121644b092454e53509db9228cef0943d7575aa2c3b9c592c958",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/async_tests/recordings/test_data_feeds_aad_async.test_create_data_feed_with_mysql.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "bffb5bd79287c822735ad3d3f714d336098cbf566afd9fd2c487b5c35f292f2d": {
+      "signature": "bffb5bd79287c822735ad3d3f714d336098cbf566afd9fd2c487b5c35f292f2d",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/async_tests/recordings/test_data_feeds_aad_async.test_create_data_feed_with_mysql.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "ff0a5e3610108e64433a6345117c583c52486c6480ef13c7d57f249833251d3f": {
+      "signature": "ff0a5e3610108e64433a6345117c583c52486c6480ef13c7d57f249833251d3f",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/async_tests/recordings/test_data_feeds_aad_async.test_create_data_feed_with_postgresql.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "4f0802feb8263483318e52ab551ec20863d708da52735891a34c902bd12e7e5c": {
+      "signature": "4f0802feb8263483318e52ab551ec20863d708da52735891a34c902bd12e7e5c",
+      "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/async_tests/recordings/test_data_feeds_aad_async.test_create_data_feed_with_postgresql.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "CredentialScanner",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5451,12 +5568,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "79938b320d6429837ecff28c5c58aeabd9abfa05f4125c515360702339151e12": {
-      "signature": "79938b320d6429837ecff28c5c58aeabd9abfa05f4125c515360702339151e12",
+    "c5c025aebdf27e657be8927d016b4eb785776e974ef3a687dbe2b3d8f75e6e0f": {
+      "signature": "c5c025aebdf27e657be8927d016b4eb785776e974ef3a687dbe2b3d8f75e6e0f",
       "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/async_tests/recordings/test_data_feeds_async.test_create_data_feed_with_mysql.yaml",
       "memberOf": [
         "baseline"
@@ -5464,7 +5581,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5477,12 +5594,12 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
-    "5900db3f221ae3ca05f5964c2433177818416cebdc1ac24554e0590addb292d9": {
-      "signature": "5900db3f221ae3ca05f5964c2433177818416cebdc1ac24554e0590addb292d9",
+    "1aa8c92315de64211e4070e7725189836cc771328d05c66845f859d54cab21da": {
+      "signature": "1aa8c92315de64211e4070e7725189836cc771328d05c66845f859d54cab21da",
       "target": "sdk/metricsadvisor/azure-ai-metricsadvisor/tests/async_tests/recordings/test_data_feeds_async.test_create_data_feed_with_postgresql.yaml",
       "memberOf": [
         "baseline"
@@ -5490,7 +5607,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5503,7 +5620,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5516,7 +5633,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5529,7 +5646,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5542,7 +5659,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5555,7 +5672,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5568,7 +5685,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5581,7 +5698,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5594,7 +5711,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     },
@@ -5607,7 +5724,7 @@
       "tool": "CredentialScanner",
       "ruleId": "CSCAN-GENERAL0130",
       "justification": null,
-      "createdDate": "2021-01-15 22:07:40Z",
+      "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
     }
