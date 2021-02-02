@@ -48,7 +48,7 @@ from .._models import (
     AnalyzeBatchActionsType,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._async_lro import AsyncAnalyzeBatchActionsLROPollingMethod
+from .._async_lro import AsyncAnalyzeBatchActionsLROPollingMethod, TextAnalyticsAsyncLROPollingMethod
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
