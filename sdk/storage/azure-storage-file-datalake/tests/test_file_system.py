@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 import unittest
 from datetime import datetime, timedelta
-
 import pytest
 
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
