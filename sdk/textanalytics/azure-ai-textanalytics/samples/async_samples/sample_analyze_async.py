@@ -32,9 +32,12 @@ class AnalyzeSampleAsync(object):
         # [START analyze_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import RecognizeEntitiesAction, \
-            RecognizePiiEntitiesAction, \
-            ExtractKeyPhrasesAction
+        from azure.ai.textanalytics import (
+            RecognizeEntitiesAction,
+            RecognizePiiEntitiesAction,
+            ExtractKeyPhrasesAction,
+            AnalyzeBatchActionsType
+        )
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -57,19 +60,19 @@ class AnalyzeSampleAsync(object):
             poller = await text_analytics_client.begin_analyze_batch_actions(
                 documents,
                 display_name="Sample Text Analysis",
-                recognize_entities_actions=[RecognizeEntitiesAction()],
-                recognize_pii_entities_actions=[RecognizePiiEntitiesAction()],
-                extract_key_phrases_actions=[ExtractKeyPhrasesAction()]
+                actions=[
+                    RecognizeEntitiesAction(),
+                    RecognizePiiEntitiesAction(),
+                    ExtractKeyPhrasesAction()
+                ]
             )
 
             result = await poller.result()
 
-            async for page in result:
-                for results in page.recognize_entities_results:
+            async for action_result in result:
+                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
                     print("Results of Entities Recognition action:")
-
-                    docs = [doc for doc in results if not doc.is_error]
-                    for idx, doc in enumerate(docs):
+                    for idx, doc in enumerate(action_result.document_results):
                         print("\nDocument text: {}".format(documents[idx]))
                         for entity in doc.entities:
                             print("Entity: {}".format(entity.text))
@@ -78,11 +81,9 @@ class AnalyzeSampleAsync(object):
                             print("...Offset: {}".format(entity.offset))
                         print("------------------------------------------")
 
-                for results in page.recognize_pii_entities_results:
+                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES:
                     print("Results of PII Entities Recognition action:")
-
-                    docs = [doc for doc in results if not doc.is_error]
-                    for idx, doc in enumerate(docs):
+                    for idx, doc in enumerate(action_result.document_results):
                         print("Document text: {}".format(documents[idx]))
                         for entity in doc.entities:
                             print("Entity: {}".format(entity.text))
@@ -90,11 +91,9 @@ class AnalyzeSampleAsync(object):
                             print("Confidence Score: {}\n".format(entity.confidence_score))
                         print("------------------------------------------")
 
-                for results in page.extract_key_phrases_results:
+                if action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES:
                     print("Results of Key Phrase Extraction action:")
-
-                    docs = [doc for doc in results if not doc.is_error]
-                    for idx, doc in enumerate(docs):
+                    for idx, doc in enumerate(action_result.document_results):
                         print("Document text: {}\n".format(documents[idx]))
                         print("Key Phrases: {}\n".format(doc.key_phrases))
                         print("------------------------------------------")

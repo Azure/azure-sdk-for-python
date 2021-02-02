@@ -56,47 +56,48 @@ class AnalyzeSample(object):
         poller = text_analytics_client.begin_analyze_batch_actions(
             documents,
             display_name="Sample Text Analysis",
-            recognize_entities_actions=[RecognizeEntitiesAction()],
-            recognize_pii_entities_actions=[RecognizePiiEntitiesAction()],
-            extract_key_phrases_actions=[ExtractKeyPhrasesAction()]
+            actions=[
+                RecognizeEntitiesAction(),
+                RecognizePiiEntitiesAction(),
+                ExtractKeyPhrasesAction()
+            ],
         )
 
         result = poller.result()
 
-        for page in result:
-            for results in page.recognize_entities_results:
-                print("Results of Entities Recognition action:")
+        first_action_result = next(result)
+        print("Results of Entities Recognition action:")
+        docs = [doc for doc in first_action_result.document_results if not doc.is_error]
 
-                docs = [doc for doc in results if not doc.is_error]
-                for idx, doc in enumerate(docs):
-                    print("\nDocument text: {}".format(documents[idx]))
-                    for entity in doc.entities:
-                        print("Entity: {}".format(entity.text))
-                        print("...Category: {}".format(entity.category))
-                        print("...Confidence Score: {}".format(entity.confidence_score))
-                        print("...Offset: {}".format(entity.offset))
-                    print("------------------------------------------")
+        for idx, doc in enumerate(docs):
+            print("\nDocument text: {}".format(documents[idx]))
+            for entity in doc.entities:
+                print("Entity: {}".format(entity.text))
+                print("...Category: {}".format(entity.category))
+                print("...Confidence Score: {}".format(entity.confidence_score))
+                print("...Offset: {}".format(entity.offset))
+            print("------------------------------------------")
 
-            for results in page.recognize_pii_entities_results:
-                print("Results of PII Entities Recognition action:")
+        second_action_result = next(result)
+        print("Results of PII Entities Recognition action:")
+        docs = [doc for doc in second_action_result.document_results if not doc.is_error]
 
-                docs = [doc for doc in results if not doc.is_error]
-                for idx, doc in enumerate(docs):
-                    print("Document text: {}".format(documents[idx]))
-                    for entity in doc.entities:
-                        print("Entity: {}".format(entity.text))
-                        print("Category: {}".format(entity.category))
-                        print("Confidence Score: {}\n".format(entity.confidence_score))
-                    print("------------------------------------------")
+        for idx, doc in enumerate(docs):
+            print("Document text: {}".format(documents[idx]))
+            for entity in doc.entities:
+                print("Entity: {}".format(entity.text))
+                print("Category: {}".format(entity.category))
+                print("Confidence Score: {}\n".format(entity.confidence_score))
+            print("------------------------------------------")
 
-            for results in page.extract_key_phrases_results:
-                print("Results of Key Phrase Extraction action:")
+        third_action_result = next(result)
+        print("Results of Key Phrase Extraction action:")
+        docs = [doc for doc in third_action_result.document_results if not doc.is_error]
 
-                docs = [doc for doc in results if not doc.is_error]
-                for idx, doc in enumerate(docs):
-                    print("Document text: {}\n".format(documents[idx]))
-                    print("Key Phrases: {}\n".format(doc.key_phrases))
-                    print("------------------------------------------")
+        for idx, doc in enumerate(docs):
+            print("Document text: {}\n".format(documents[idx]))
+            print("Key Phrases: {}\n".format(doc.key_phrases))
+            print("------------------------------------------")
 
         # [END analyze]
 
