@@ -18,7 +18,7 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from ._base_client_async import AsyncTextAnalyticsClientBase
-from .._request_handlers import _validate_input
+from .._request_handlers import _validate_input, _check_string_index_type_arg
 from .._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -108,6 +108,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             credential=credential,
             **kwargs
         )
+        self._api_version = kwargs.get("api_version")
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
@@ -210,6 +211,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
+            For additional information see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -231,8 +235,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
+        )
+        if string_index_type:
+            kwargs.update({"string_index_type": string_index_type})
+
         try:
             return await self._client.entities_recognition_general(
                 documents=docs,
@@ -281,6 +292,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
+            For additional information see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -304,8 +318,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
 
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
+        )
+        if string_index_type:
+            kwargs.update({"string_index_type": string_index_type})
+
         try:
             return await self._client.entities_recognition_pii(
                 documents=docs,
@@ -358,6 +378,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
+            For additional information see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -379,8 +402,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
+        )
+        if string_index_type:
+            kwargs.update({"string_index_type": string_index_type})
+
         try:
             return await self._client.entities_linking(
                 documents=docs,
@@ -497,6 +527,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
+            For additional information see https://aka.ms/text-analytics-offsets
         .. versionadded:: v3.1-preview
             The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
@@ -521,8 +554,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit
+        )
+        if string_index_type:
+            kwargs.update({"string_index_type": string_index_type})
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})
@@ -583,6 +622,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
+            For additional information see https://aka.ms/text-analytics-offsets
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -606,6 +648,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
 
         doc_id_order = [doc.get("id") for doc in docs]
 
@@ -613,7 +656,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return await self._client.begin_health(
                 docs,
                 model_version=model_version,
-                string_index_type=self._string_code_unit,
+                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
                 polling=TextAnalyticsAsyncLROPollingMethod(
                     timeout=polling_interval,

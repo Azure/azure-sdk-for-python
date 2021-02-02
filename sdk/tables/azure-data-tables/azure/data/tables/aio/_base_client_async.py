@@ -150,7 +150,7 @@ class AsyncStorageAccountHostsMixin(object):
             boundary="batch_{}".format(uuid4()),
         )
 
-        pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint:disable=protected-access
+        pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code == 403:
