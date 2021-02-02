@@ -217,14 +217,16 @@ def _num_tasks_in_current_page(returned_tasks_object):
         len(returned_tasks_object.key_phrase_extraction_tasks or [])
     )
 
-def get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_state):
+def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state):
     iter_items = []
     returned_tasks_object = analyze_job_state.tasks
     for current_task_type in task_order:
         deserialization_callback = _get_deserialization_callback_from_task_type(current_task_type)
         property_name = _get_property_name_from_task_type(current_task_type)
         response_task_to_deserialize = getattr(returned_tasks_object, property_name).pop(0)
-        document_results = deserialization_callback(doc_id_order, response_task_to_deserialize.results, response_headers, lro=True)
+        document_results = deserialization_callback(
+            doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
+        )
         iter_items.append(
             AnalyzeBatchActionsResult(
                 document_results=document_results,
@@ -234,9 +236,9 @@ def get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_
         )
     return iter_items
 
-def analyze_extract_page_data(doc_id_order, task_order, obj, response_headers, analyze_job_state):
+def analyze_extract_page_data(doc_id_order, task_order, response_headers, analyze_job_state):
     # return next link, list of
-    iter_items = get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_state)
+    iter_items = get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state)
     return analyze_job_state.next_link, iter_items
 
 
@@ -269,7 +271,7 @@ def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, respon
 def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
     return AnalyzeResult(
         functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
-        functools.partial(analyze_extract_page_data, doc_id_order, task_order, obj, response_headers),
+        functools.partial(analyze_extract_page_data, doc_id_order, task_order, response_headers),
         statistics=TextDocumentBatchStatistics._from_generated(obj.statistics) \
             if show_stats and obj.statistics is not None else None # pylint: disable=protected-access
     )

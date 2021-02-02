@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import json
 from six.moves.urllib.parse import urlencode
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling, OperationFailed, BadStatus

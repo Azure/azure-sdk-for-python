@@ -45,14 +45,16 @@ def healthcare_paged_result(doc_id_order, health_status_callback, response, obj,
         statistics=RequestStatistics._from_generated(obj.results.statistics) if show_stats else None # pylint: disable=protected-access
     )
 
-async def analyze_extract_page_data_async(doc_id_order, task_order, obj, response_headers, analyze_job_state):
-    iter_items = get_iter_items(doc_id_order, task_order, obj, response_headers, analyze_job_state)
+async def analyze_extract_page_data_async(doc_id_order, task_order, response_headers, analyze_job_state):
+    iter_items = get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state)
     return analyze_job_state.next_link, AsyncList(iter_items)
 
-def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, response, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
+def analyze_paged_result(
+    doc_id_order, task_order, analyze_status_callback, response, obj, response_headers, show_stats=False # pylint: disable=unused-argument
+):
     return AnalyzeResultAsync(
         functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
-        functools.partial(analyze_extract_page_data_async, doc_id_order, task_order, obj, response_headers),
+        functools.partial(analyze_extract_page_data_async, doc_id_order, task_order, response_headers),
         statistics=TextDocumentBatchStatistics._from_generated(obj.statistics) \
             if show_stats and obj.statistics is not None else None # pylint: disable=protected-access
     )

@@ -694,7 +694,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: Union[List[RecognizeEntitiesAction], List[RecognizePiiEntitiesAction], List[ExtractKeyPhrasesAction]]
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]]
         **kwargs  # type: Any
     ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeBatchActionsResult]]
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
@@ -762,13 +762,16 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         try:
             analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
                 entity_recognition_tasks=[
-                    t.to_generated() for t in [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
                 ],
                 entity_recognition_pii_tasks=[
-                    t.to_generated() for t in [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES]
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES]
                 ],
                 key_phrase_extraction_tasks=[
-                    t.to_generated() for t in [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
@@ -778,7 +781,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             )
             return await self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats)),
+                cls=kwargs.pop("cls", partial(
+                    self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
+                )),
                 polling=AsyncAnalyzeBatchActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[

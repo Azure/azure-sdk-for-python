@@ -12,7 +12,6 @@ from ._models import (
     TextDocumentInput,
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
-    ExtractKeyPhrasesAction,
     AnalyzeBatchActionsType,
 )
 

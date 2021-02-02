@@ -39,7 +39,6 @@ from ._lro import (
     TextAnalyticsOperationResourcePolling,
     TextAnalyticsLROPollingMethod,
     AnalyzeBatchActionsLROPollingMethod,
-    AnalyzeBatchActionsLROPoller,
 )
 
 if TYPE_CHECKING:
@@ -767,13 +766,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
                 entity_recognition_tasks=[
-                    t.to_generated() for t in [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
                 ],
                 entity_recognition_pii_tasks=[
-                    t.to_generated() for t in [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES]
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES]
                 ],
                 key_phrase_extraction_tasks=[
-                    t.to_generated() for t in [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
@@ -783,7 +785,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
             return self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats)),
+                cls=kwargs.pop("cls", partial(
+                    self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
+                )),
                 polling=AnalyzeBatchActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
