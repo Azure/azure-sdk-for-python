@@ -2,11 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-
 
 from ..management._models import DictMixin
 from .._base_handler import _parse_conn_str
