@@ -28,5 +28,5 @@ extends:
   parameters:
     ServiceDirectory: template
     Artifacts:
-    - name: azure-template
+    - name: azure_template
       safeName: azuretemplate
