@@ -1,32 +1,36 @@
 interactions:
 - request:
-    body: ''
+    body: '{}'
     headers:
       Accept:
       - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
       Date:
-      - Tue, 22 Dec 2020 18:55:56 GMT
+      - Fri, 29 Jan 2021 22:37:56 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"id": "sanitized"}'
+      string: '{"identity": {"id": "sanitized"}}'
     headers:
-      api-supported-versions: 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Dec 2020 18:55:55 GMT
-      ms-cv: M9b8kGAz8UGwsoZe2mFLCA.0
+      date: Fri, 29 Jan 2021 22:37:55 GMT
+      ms-cv: vJReSgsEzEC1EVRdWZnCWA.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 29ms
+      x-processing-time: 22ms
     status:
-      code: 200
-      message: OK
-    url: https://communicationngn6p2kywhg.communication.azure.com/identities?api-version=2020-07-20-preview2
+      code: 201
+      message: Created
+    url: https://communication2xbng6lk65f.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -37,54 +41,52 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 22 Dec 2020 18:55:57 GMT
+      - Fri, 29 Jan 2021 22:37:56 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-12-23T18:55:54.788117+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-30T22:37:54.9493083+00:00"}'
     headers:
-      api-supported-versions: 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Dec 2020 18:55:55 GMT
-      ms-cv: MBCUlMoRBECvCLmV00eWXw.0
+      date: Fri, 29 Jan 2021 22:37:55 GMT
+      ms-cv: nQk1/zvYyEiAvNDwqRdZAg.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 27ms
+      x-processing-time: 28ms
     status:
       code: 200
       message: OK
-    url: https://communicationngn6p2kywhg.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+    url: https://communication2xbng6lk65f.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
 - request:
-    body: '{}'
+    body: ''
     headers:
-      Content-Length:
-      - '2'
-      Content-Type:
-      - application/merge-patch+json
+      Accept:
+      - application/json
       Date:
-      - Tue, 22 Dec 2020 18:55:57 GMT
+      - Fri, 29 Jan 2021 22:37:56 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
-    method: PATCH
-    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+    method: POST
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
   response:
     body:
       string: ''
     headers:
-      api-supported-versions: 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
-      date: Tue, 22 Dec 2020 18:55:55 GMT
-      ms-cv: MVgoSrOVSkiU0c+teqMDZQ.0
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      date: Fri, 29 Jan 2021 22:37:55 GMT
+      ms-cv: Bf9FLiU9kkm2bE7qs4H8Yw.0
       strict-transport-security: max-age=2592000
-      x-processing-time: 10ms
+      x-processing-time: 674ms
     status:
       code: 204
       message: No Content
-    url: https://communicationngn6p2kywhg.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+    url: https://communication2xbng6lk65f.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
 version: 1
