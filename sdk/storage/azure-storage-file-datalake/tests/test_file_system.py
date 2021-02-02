@@ -181,6 +181,9 @@ class FileSystemTest(StorageTestCase):
 
     @record
     def test_undelete_file_system(self):
+        # Needs soft delete enabled account.
+        if not self.is_playback():
+            return
         name = self._get_file_system_reference()
         filesystem_client = self.dsc.create_file_system(name)
 
@@ -207,6 +210,9 @@ class FileSystemTest(StorageTestCase):
 
     @record
     def test_restore_to_existing_file_system(self):
+        # Needs soft delete enabled account.
+        if not self.is_playback():
+            return
         # get an existing filesystem
         existing_name = self._get_file_system_reference(prefix="existing2")
         name = self._get_file_system_reference(prefix="filesystem2")
@@ -231,9 +237,8 @@ class FileSystemTest(StorageTestCase):
 
     @record
     def test_restore_file_system_with_sas(self):
-        # We are generating a SAS token therefore play only live
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        pytest.skip(
+            "We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
         token = generate_account_sas(
             self.dsc.account_name,
             self.dsc.credential.account_key,
