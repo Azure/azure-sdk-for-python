@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PolicyAssignmentsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class PolicyAssignmentsOperations(object):
         policy_assignment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyAssignment"
+        # type: (...) -> "_models.PolicyAssignment"
         """Deletes a policy assignment.
 
         :param scope: The scope of the policy assignment.
@@ -63,7 +63,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,10 +107,10 @@ class PolicyAssignmentsOperations(object):
         self,
         scope,  # type: str
         policy_assignment_name,  # type: str
-        parameters,  # type: "models.PolicyAssignment"
+        parameters,  # type: "_models.PolicyAssignment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyAssignment"
+        # type: (...) -> "_models.PolicyAssignment"
         """Creates a policy assignment.
 
         Policy assignments are inherited by child resources. For example, when you apply a policy to a
@@ -127,7 +127,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -178,7 +178,7 @@ class PolicyAssignmentsOperations(object):
         policy_assignment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyAssignment"
+        # type: (...) -> "_models.PolicyAssignment"
         """Gets a policy assignment.
 
         :param scope: The scope of the policy assignment.
@@ -190,7 +190,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -236,7 +236,7 @@ class PolicyAssignmentsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicyAssignmentListResult"]
+        # type: (...) -> Iterable["_models.PolicyAssignmentListResult"]
         """Gets policy assignments for the resource group.
 
         :param resource_group_name: The name of the resource group that contains policy assignments.
@@ -248,7 +248,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -316,7 +316,7 @@ class PolicyAssignmentsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicyAssignmentListResult"]
+        # type: (...) -> Iterable["_models.PolicyAssignmentListResult"]
         """Gets policy assignments for a  resource.
 
         :param resource_group_name: The name of the resource group containing the resource. The name is
@@ -337,7 +337,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -404,7 +404,7 @@ class PolicyAssignmentsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicyAssignmentListResult"]
+        # type: (...) -> Iterable["_models.PolicyAssignmentListResult"]
         """Gets all the policy assignments for a subscription.
 
         :param filter: The filter to apply on the operation.
@@ -414,7 +414,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -476,7 +476,7 @@ class PolicyAssignmentsOperations(object):
         policy_assignment_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyAssignment"
+        # type: (...) -> "_models.PolicyAssignment"
         """Deletes a policy assignment by ID.
 
         When providing a scope for the assignment, use '/subscriptions/{subscription-id}/' for
@@ -492,7 +492,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -534,10 +534,10 @@ class PolicyAssignmentsOperations(object):
     def create_by_id(
         self,
         policy_assignment_id,  # type: str
-        parameters,  # type: "models.PolicyAssignment"
+        parameters,  # type: "_models.PolicyAssignment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyAssignment"
+        # type: (...) -> "_models.PolicyAssignment"
         """Creates a policy assignment by ID.
 
         Policy assignments are inherited by child resources. For example, when you apply a policy to a
@@ -557,7 +557,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -606,7 +606,7 @@ class PolicyAssignmentsOperations(object):
         policy_assignment_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicyAssignment"
+        # type: (...) -> "_models.PolicyAssignment"
         """Gets a policy assignment by ID.
 
         When providing a scope for the assignment, use '/subscriptions/{subscription-id}/' for
@@ -622,7 +622,7 @@ class PolicyAssignmentsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

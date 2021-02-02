@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class PolicySetDefinitionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,9 +44,9 @@ class PolicySetDefinitionsOperations:
     async def create_or_update(
         self,
         policy_set_definition_name: str,
-        parameters: "models.PolicySetDefinition",
+        parameters: "_models.PolicySetDefinition",
         **kwargs
-    ) -> "models.PolicySetDefinition":
+    ) -> "_models.PolicySetDefinition":
         """Creates or updates a policy set definition.
 
         :param policy_set_definition_name: The name of the policy set definition to create.
@@ -58,7 +58,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -93,7 +93,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -152,7 +152,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -164,7 +164,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         **kwargs
-    ) -> "models.PolicySetDefinition":
+    ) -> "_models.PolicySetDefinition":
         """Gets the policy set definition.
 
         :param policy_set_definition_name: The name of the policy set definition to get.
@@ -174,7 +174,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -204,7 +204,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
@@ -219,7 +219,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         **kwargs
-    ) -> "models.PolicySetDefinition":
+    ) -> "_models.PolicySetDefinition":
         """Gets the built in policy set definition.
 
         :param policy_set_definition_name: The name of the policy set definition to get.
@@ -229,7 +229,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -258,7 +258,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
@@ -272,7 +272,7 @@ class PolicySetDefinitionsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
+    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Gets all the policy set definitions for a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -280,7 +280,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -325,7 +325,7 @@ class PolicySetDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -339,7 +339,7 @@ class PolicySetDefinitionsOperations:
     def list_built_in(
         self,
         **kwargs
-    ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
+    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Gets all the built in policy set definitions.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -347,7 +347,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -388,7 +388,7 @@ class PolicySetDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -403,9 +403,9 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        parameters: "models.PolicySetDefinition",
+        parameters: "_models.PolicySetDefinition",
         **kwargs
-    ) -> "models.PolicySetDefinition":
+    ) -> "_models.PolicySetDefinition":
         """Creates or updates a policy set definition at management group level.
 
         :param policy_set_definition_name: The name of the policy set definition to create.
@@ -419,7 +419,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -454,7 +454,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -516,7 +516,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -529,7 +529,7 @@ class PolicySetDefinitionsOperations:
         policy_set_definition_name: str,
         management_group_id: str,
         **kwargs
-    ) -> "models.PolicySetDefinition":
+    ) -> "_models.PolicySetDefinition":
         """Gets the policy set definition at management group level.
 
         :param policy_set_definition_name: The name of the policy set definition to get.
@@ -541,7 +541,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -571,7 +571,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
@@ -586,7 +586,7 @@ class PolicySetDefinitionsOperations:
         self,
         management_group_id: str,
         **kwargs
-    ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
+    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Gets all the policy set definitions for a subscription at management group.
 
         :param management_group_id: The ID of the management group.
@@ -596,7 +596,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -641,7 +641,7 @@ class PolicySetDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DeploymentScriptsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,10 +47,10 @@ class DeploymentScriptsOperations:
         self,
         resource_group_name: str,
         script_name: str,
-        deployment_script: "models.DeploymentScript",
+        deployment_script: "_models.DeploymentScript",
         **kwargs
-    ) -> "models.DeploymentScript":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentScript"]
+    ) -> "_models.DeploymentScript":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentScript"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -86,7 +86,7 @@ class DeploymentScriptsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DeploymentScriptsError, response)
+            error = self._deserialize(_models.DeploymentScriptsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -105,9 +105,9 @@ class DeploymentScriptsOperations:
         self,
         resource_group_name: str,
         script_name: str,
-        deployment_script: "models.DeploymentScript",
+        deployment_script: "_models.DeploymentScript",
         **kwargs
-    ) -> AsyncLROPoller["models.DeploymentScript"]:
+    ) -> AsyncLROPoller["_models.DeploymentScript"]:
         """Creates a deployment script.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -127,7 +127,7 @@ class DeploymentScriptsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentScript"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentScript"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -152,7 +152,13 @@ class DeploymentScriptsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'scriptName': self._serialize.url("script_name", script_name, 'str', max_length=90, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -170,9 +176,9 @@ class DeploymentScriptsOperations:
         self,
         resource_group_name: str,
         script_name: str,
-        deployment_script: Optional["models.DeploymentScriptUpdateParameter"] = None,
+        deployment_script: Optional["_models.DeploymentScriptUpdateParameter"] = None,
         **kwargs
-    ) -> "models.DeploymentScript":
+    ) -> "_models.DeploymentScript":
         """Updates deployment script tags with specified values.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -186,7 +192,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentScript"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentScript"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -225,7 +231,7 @@ class DeploymentScriptsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DeploymentScriptsError, response)
+            error = self._deserialize(_models.DeploymentScriptsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DeploymentScript', pipeline_response)
@@ -241,7 +247,7 @@ class DeploymentScriptsOperations:
         resource_group_name: str,
         script_name: str,
         **kwargs
-    ) -> "models.DeploymentScript":
+    ) -> "_models.DeploymentScript":
         """Gets a deployment script with a given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -253,7 +259,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentScript"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentScript"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -284,7 +290,7 @@ class DeploymentScriptsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DeploymentScriptsError, response)
+            error = self._deserialize(_models.DeploymentScriptsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DeploymentScript', pipeline_response)
@@ -344,7 +350,7 @@ class DeploymentScriptsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DeploymentScriptsError, response)
+            error = self._deserialize(_models.DeploymentScriptsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -355,7 +361,7 @@ class DeploymentScriptsOperations:
     def list_by_subscription(
         self,
         **kwargs
-    ) -> AsyncIterable["models.DeploymentScriptListResult"]:
+    ) -> AsyncIterable["_models.DeploymentScriptListResult"]:
         """Lists all deployment scripts for a given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -363,7 +369,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentScriptListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentScriptListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -408,7 +414,7 @@ class DeploymentScriptsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DeploymentScriptsError, response)
+                error = self._deserialize(_models.DeploymentScriptsError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -424,7 +430,7 @@ class DeploymentScriptsOperations:
         resource_group_name: str,
         script_name: str,
         **kwargs
-    ) -> "models.ScriptLogsList":
+    ) -> "_models.ScriptLogsList":
         """Gets deployment script logs for a given deployment script name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -436,7 +442,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptLogsList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScriptLogsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScriptLogsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -467,7 +473,7 @@ class DeploymentScriptsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DeploymentScriptsError, response)
+            error = self._deserialize(_models.DeploymentScriptsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ScriptLogsList', pipeline_response)
@@ -484,7 +490,7 @@ class DeploymentScriptsOperations:
         script_name: str,
         tail: Optional[int] = None,
         **kwargs
-    ) -> "models.ScriptLog":
+    ) -> "_models.ScriptLog":
         """Gets deployment script logs for a given deployment script name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -500,7 +506,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptLog
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScriptLog"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScriptLog"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -533,7 +539,7 @@ class DeploymentScriptsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DeploymentScriptsError, response)
+            error = self._deserialize(_models.DeploymentScriptsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ScriptLog', pipeline_response)
@@ -548,7 +554,7 @@ class DeploymentScriptsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DeploymentScriptListResult"]:
+    ) -> AsyncIterable["_models.DeploymentScriptListResult"]:
         """Lists deployments scripts.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -558,7 +564,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentScriptListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentScriptListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -604,7 +610,7 @@ class DeploymentScriptsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DeploymentScriptsError, response)
+                error = self._deserialize(_models.DeploymentScriptsError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

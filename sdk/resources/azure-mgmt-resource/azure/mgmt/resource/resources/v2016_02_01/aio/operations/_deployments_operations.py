@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DeploymentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -129,7 +129,13 @@ class DeploymentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -202,10 +208,10 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.Deployment",
+        parameters: "_models.Deployment",
         **kwargs
-    ) -> "models.DeploymentExtended":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+    ) -> "_models.DeploymentExtended":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -259,9 +265,9 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.Deployment",
+        parameters: "_models.Deployment",
         **kwargs
-    ) -> AsyncLROPoller["models.DeploymentExtended"]:
+    ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Create a named template deployment using a template.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -281,7 +287,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -306,7 +312,13 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -325,7 +337,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         **kwargs
-    ) -> "models.DeploymentExtended":
+    ) -> "_models.DeploymentExtended":
         """Get a deployment.
 
         :param resource_group_name: The name of the resource group to get. The name is case
@@ -338,7 +350,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -436,9 +448,9 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.Deployment",
+        parameters: "_models.Deployment",
         **kwargs
-    ) -> "models.DeploymentValidateResult":
+    ) -> "_models.DeploymentValidateResult":
         """Validate a deployment template.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -452,7 +464,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentValidateResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentValidateResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -507,7 +519,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         **kwargs
-    ) -> "models.DeploymentExportResult":
+    ) -> "_models.DeploymentExportResult":
         """Exports a deployment template.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -519,7 +531,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -566,7 +578,7 @@ class DeploymentsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.DeploymentListResult"]:
+    ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get a list of deployments.
 
         :param resource_group_name: The name of the resource group to filter by. The name is case
@@ -581,7 +593,7 @@ class DeploymentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -645,7 +657,7 @@ class DeploymentsOperations:
         self,
         template: object,
         **kwargs
-    ) -> "models.TemplateHashResult":
+    ) -> "_models.TemplateHashResult":
         """Calculate the hash of the given template.
 
         :param template: The template provided to calculate hash.
@@ -655,7 +667,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TemplateHashResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateHashResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateHashResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

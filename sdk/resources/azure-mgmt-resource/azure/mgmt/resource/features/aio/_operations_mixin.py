@@ -24,7 +24,7 @@ class FeatureClientOperationsMixin(object):
     def list_operations(
         self,
         **kwargs
-    ) -> AsyncItemPaged["models.OperationListResult"]:
+    ) -> AsyncItemPaged["_models.OperationListResult"]:
         """Lists all of the available Microsoft.Features REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response

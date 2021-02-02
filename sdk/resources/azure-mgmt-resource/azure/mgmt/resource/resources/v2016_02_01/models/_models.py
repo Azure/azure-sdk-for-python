@@ -515,7 +515,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 

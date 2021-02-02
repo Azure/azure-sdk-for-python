@@ -26,7 +26,7 @@ class SubscriptionClientOperationsMixin(object):
 
     def check_resource_name(
         self,
-        resource_name_definition=None,  # type: Optional["models.ResourceName"]
+        resource_name_definition=None,  # type: Optional["_models.ResourceName"]
         **kwargs  # type: Any
     ):
         """Checks resource name validity.

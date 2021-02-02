@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ApplicationDefinitionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class ApplicationDefinitionsOperations:
         resource_group_name: str,
         application_definition_name: str,
         **kwargs
-    ) -> Optional["models.ApplicationDefinition"]:
+    ) -> Optional["_models.ApplicationDefinition"]:
         """Gets the managed application definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -60,7 +60,7 @@ class ApplicationDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ApplicationDefinition"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApplicationDefinition"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -91,7 +91,7 @@ class ApplicationDefinitionsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -141,7 +141,7 @@ class ApplicationDefinitionsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -193,7 +193,13 @@ class ApplicationDefinitionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -211,10 +217,10 @@ class ApplicationDefinitionsOperations:
         self,
         resource_group_name: str,
         application_definition_name: str,
-        parameters: "models.ApplicationDefinition",
+        parameters: "_models.ApplicationDefinition",
         **kwargs
-    ) -> "models.ApplicationDefinition":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationDefinition"]
+    ) -> "_models.ApplicationDefinition":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -250,7 +256,7 @@ class ApplicationDefinitionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -269,9 +275,9 @@ class ApplicationDefinitionsOperations:
         self,
         resource_group_name: str,
         application_definition_name: str,
-        parameters: "models.ApplicationDefinition",
+        parameters: "_models.ApplicationDefinition",
         **kwargs
-    ) -> AsyncLROPoller["models.ApplicationDefinition"]:
+    ) -> AsyncLROPoller["_models.ApplicationDefinition"]:
         """Creates a new managed application definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -292,7 +298,7 @@ class ApplicationDefinitionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationDefinition"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -317,7 +323,13 @@ class ApplicationDefinitionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -335,7 +347,7 @@ class ApplicationDefinitionsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ApplicationDefinitionListResult"]:
+    ) -> AsyncIterable["_models.ApplicationDefinitionListResult"]:
         """Lists the managed application definitions in a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -345,7 +357,7 @@ class ApplicationDefinitionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.managedapplications.models.ApplicationDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -391,7 +403,7 @@ class ApplicationDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -404,22 +416,22 @@ class ApplicationDefinitionsOperations:
 
     async def get_by_id(
         self,
-        application_definition_id: str,
+        resource_group_name: str,
+        application_definition_name: str,
         **kwargs
-    ) -> Optional["models.ApplicationDefinition"]:
+    ) -> Optional["_models.ApplicationDefinition"]:
         """Gets the managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the managed application definition,
-         including the managed application name and the managed application definition resource type.
-         Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}.
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed application definition.
+        :type application_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ApplicationDefinition"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApplicationDefinition"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -430,7 +442,9 @@ class ApplicationDefinitionsOperations:
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -448,7 +462,7 @@ class ApplicationDefinitionsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -459,11 +473,12 @@ class ApplicationDefinitionsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_by_id.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    get_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
     async def _delete_by_id_initial(
         self,
-        application_definition_id: str,
+        resource_group_name: str,
+        application_definition_name: str,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -477,7 +492,9 @@ class ApplicationDefinitionsOperations:
         # Construct URL
         url = self._delete_by_id_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -495,26 +512,26 @@ class ApplicationDefinitionsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_by_id_initial.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    _delete_by_id_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
     async def begin_delete_by_id(
         self,
-        application_definition_id: str,
+        resource_group_name: str,
+        application_definition_name: str,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Deletes the managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the managed application definition,
-         including the managed application name and the managed application definition resource type.
-         Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}.
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed application definition.
+        :type application_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -534,7 +551,8 @@ class ApplicationDefinitionsOperations:
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_by_id_initial(
-                application_definition_id=application_definition_id,
+                resource_group_name=resource_group_name,
+                application_definition_name=application_definition_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -546,7 +564,13 @@ class ApplicationDefinitionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -558,15 +582,16 @@ class ApplicationDefinitionsOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete_by_id.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    begin_delete_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
     async def _create_or_update_by_id_initial(
         self,
-        application_definition_id: str,
-        parameters: "models.ApplicationDefinition",
+        resource_group_name: str,
+        application_definition_name: str,
+        parameters: "_models.ApplicationDefinition",
         **kwargs
-    ) -> "models.ApplicationDefinition":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationDefinition"]
+    ) -> "_models.ApplicationDefinition":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -578,7 +603,9 @@ class ApplicationDefinitionsOperations:
         # Construct URL
         url = self._create_or_update_by_id_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -600,7 +627,7 @@ class ApplicationDefinitionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -613,21 +640,21 @@ class ApplicationDefinitionsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_by_id_initial.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    _create_or_update_by_id_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
     async def begin_create_or_update_by_id(
         self,
-        application_definition_id: str,
-        parameters: "models.ApplicationDefinition",
+        resource_group_name: str,
+        application_definition_name: str,
+        parameters: "_models.ApplicationDefinition",
         **kwargs
-    ) -> AsyncLROPoller["models.ApplicationDefinition"]:
+    ) -> AsyncLROPoller["_models.ApplicationDefinition"]:
         """Creates a new managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the managed application definition,
-         including the managed application name and the managed application definition resource type.
-         Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}.
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed application definition.
+        :type application_definition_name: str
         :param parameters: Parameters supplied to the create or update a managed application
          definition.
         :type parameters: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition
@@ -642,7 +669,7 @@ class ApplicationDefinitionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationDefinition"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -650,7 +677,8 @@ class ApplicationDefinitionsOperations:
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_by_id_initial(
-                application_definition_id=application_definition_id,
+                resource_group_name=resource_group_name,
+                application_definition_name=application_definition_name,
                 parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -666,7 +694,13 @@ class ApplicationDefinitionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -678,4 +712,4 @@ class ApplicationDefinitionsOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update_by_id.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    begin_create_or_update_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore

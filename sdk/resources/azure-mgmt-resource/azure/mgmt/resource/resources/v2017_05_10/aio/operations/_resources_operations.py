@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ResourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,7 +50,7 @@ class ResourcesOperations:
         expand: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ResourceListResult"]:
+    ) -> AsyncIterable["_models.ResourceListResult"]:
         """Get all the resources for a resource group.
 
         :param resource_group_name: The resource group with the resources to get.
@@ -68,7 +68,7 @@ class ResourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2017_05_10.models.ResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -133,7 +133,7 @@ class ResourcesOperations:
     async def _move_resources_initial(
         self,
         source_resource_group_name: str,
-        parameters: "models.ResourcesMoveInfo",
+        parameters: "_models.ResourcesMoveInfo",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -179,7 +179,7 @@ class ResourcesOperations:
     async def begin_move_resources(
         self,
         source_resource_group_name: str,
-        parameters: "models.ResourcesMoveInfo",
+        parameters: "_models.ResourcesMoveInfo",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Moves resources from one resource group to another resource group.
@@ -226,7 +226,12 @@ class ResourcesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'sourceResourceGroupName': self._serialize.url("source_resource_group_name", source_resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -243,7 +248,7 @@ class ResourcesOperations:
     async def _validate_move_resources_initial(
         self,
         source_resource_group_name: str,
-        parameters: "models.ResourcesMoveInfo",
+        parameters: "_models.ResourcesMoveInfo",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -289,7 +294,7 @@ class ResourcesOperations:
     async def begin_validate_move_resources(
         self,
         source_resource_group_name: str,
-        parameters: "models.ResourcesMoveInfo",
+        parameters: "_models.ResourcesMoveInfo",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Validates whether resources can be moved from one resource group to another resource group.
@@ -338,7 +343,12 @@ class ResourcesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'sourceResourceGroupName': self._serialize.url("source_resource_group_name", source_resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -358,7 +368,7 @@ class ResourcesOperations:
         expand: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ResourceListResult"]:
+    ) -> AsyncIterable["_models.ResourceListResult"]:
         """Get all the resources in a subscription.
 
         :param filter: The filter to apply on the operation.
@@ -374,7 +384,7 @@ class ResourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2017_05_10.models.ResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -607,7 +617,16 @@ class ResourcesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
+            'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
+            'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -628,10 +647,10 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
-        parameters: "models.GenericResource",
+        parameters: "_models.GenericResource",
         **kwargs
-    ) -> Optional["models.GenericResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.GenericResource"]]
+    ) -> Optional["_models.GenericResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.GenericResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -692,9 +711,9 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
-        parameters: "models.GenericResource",
+        parameters: "_models.GenericResource",
         **kwargs
-    ) -> AsyncLROPoller["models.GenericResource"]:
+    ) -> AsyncLROPoller["_models.GenericResource"]:
         """Creates a resource.
 
         :param resource_group_name: The name of the resource group for the resource. The name is case
@@ -721,7 +740,7 @@ class ResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GenericResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -749,7 +768,16 @@ class ResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
+            'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
+            'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -770,10 +798,10 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
-        parameters: "models.GenericResource",
+        parameters: "_models.GenericResource",
         **kwargs
-    ) -> Optional["models.GenericResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.GenericResource"]]
+    ) -> Optional["_models.GenericResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.GenericResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -831,9 +859,9 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
-        parameters: "models.GenericResource",
+        parameters: "_models.GenericResource",
         **kwargs
-    ) -> AsyncLROPoller["models.GenericResource"]:
+    ) -> AsyncLROPoller["_models.GenericResource"]:
         """Updates a resource.
 
         :param resource_group_name: The name of the resource group for the resource. The name is case
@@ -860,7 +888,7 @@ class ResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GenericResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -888,7 +916,16 @@ class ResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
+            'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
+            'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -910,7 +947,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         **kwargs
-    ) -> "models.GenericResource":
+    ) -> "_models.GenericResource":
         """Gets a resource.
 
         :param resource_group_name: The name of the resource group containing the resource to get. The
@@ -929,7 +966,7 @@ class ResourcesOperations:
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.GenericResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GenericResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1105,7 +1142,11 @@ class ResourcesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1122,10 +1163,10 @@ class ResourcesOperations:
     async def _create_or_update_by_id_initial(
         self,
         resource_id: str,
-        parameters: "models.GenericResource",
+        parameters: "_models.GenericResource",
         **kwargs
-    ) -> Optional["models.GenericResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.GenericResource"]]
+    ) -> Optional["_models.GenericResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.GenericResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1177,9 +1218,9 @@ class ResourcesOperations:
     async def begin_create_or_update_by_id(
         self,
         resource_id: str,
-        parameters: "models.GenericResource",
+        parameters: "_models.GenericResource",
         **kwargs
-    ) -> AsyncLROPoller["models.GenericResource"]:
+    ) -> AsyncLROPoller["_models.GenericResource"]:
         """Create a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1199,7 +1240,7 @@ class ResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GenericResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1223,7 +1264,11 @@ class ResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1240,10 +1285,10 @@ class ResourcesOperations:
     async def _update_by_id_initial(
         self,
         resource_id: str,
-        parameters: "models.GenericResource",
+        parameters: "_models.GenericResource",
         **kwargs
-    ) -> Optional["models.GenericResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.GenericResource"]]
+    ) -> Optional["_models.GenericResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.GenericResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1292,9 +1337,9 @@ class ResourcesOperations:
     async def begin_update_by_id(
         self,
         resource_id: str,
-        parameters: "models.GenericResource",
+        parameters: "_models.GenericResource",
         **kwargs
-    ) -> AsyncLROPoller["models.GenericResource"]:
+    ) -> AsyncLROPoller["_models.GenericResource"]:
         """Updates a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1314,7 +1359,7 @@ class ResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GenericResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1338,7 +1383,11 @@ class ResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1356,7 +1405,7 @@ class ResourcesOperations:
         self,
         resource_id: str,
         **kwargs
-    ) -> "models.GenericResource":
+    ) -> "_models.GenericResource":
         """Gets a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1368,7 +1417,7 @@ class ResourcesOperations:
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.GenericResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GenericResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

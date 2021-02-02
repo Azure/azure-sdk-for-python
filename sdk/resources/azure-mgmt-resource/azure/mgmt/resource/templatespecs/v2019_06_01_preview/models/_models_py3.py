@@ -87,7 +87,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -208,6 +208,10 @@ class TemplateSpec(AzureResourceBase):
     :type description: str
     :param display_name: Template Spec display name.
     :type display_name: str
+    :ivar versions: High-level information about the versions within this Template Spec. The keys
+     are the version names. Only populated if the $expand query parameter is set to 'versions'.
+    :vartype versions: dict[str,
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersionInfo]
     """
 
     _validation = {
@@ -218,6 +222,7 @@ class TemplateSpec(AzureResourceBase):
         'location': {'required': True},
         'description': {'max_length': 4096, 'min_length': 0},
         'display_name': {'max_length': 64, 'min_length': 0},
+        'versions': {'readonly': True},
     }
 
     _attribute_map = {
@@ -229,6 +234,7 @@ class TemplateSpec(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'versions': {'key': 'properties.versions', 'type': '{TemplateSpecVersionInfo}'},
     }
 
     def __init__(
@@ -245,6 +251,7 @@ class TemplateSpec(AzureResourceBase):
         self.tags = tags
         self.description = description
         self.display_name = display_name
+        self.versions = None
 
 
 class TemplateSpecArtifact(msrest.serialization.Model):
@@ -291,7 +298,8 @@ class TemplateSpecArtifact(msrest.serialization.Model):
 class TemplateSpecsError(msrest.serialization.Model):
     """Template Specs error response.
 
-    :param error: The resource management error response.
+    :param error: Common error response for all Azure Resource Manager APIs to return error details
+     for failed operations. (This also follows the OData error response format.).
     :type error: ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.ErrorResponse
     """
 
@@ -489,6 +497,41 @@ class TemplateSpecVersion(AzureResourceBase):
         self.artifacts = artifacts
         self.description = description
         self.template = template
+
+
+class TemplateSpecVersionInfo(msrest.serialization.Model):
+    """High-level information about a Template Spec version.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: Template Spec version description.
+    :vartype description: str
+    :ivar time_created: The timestamp of when the version was created.
+    :vartype time_created: ~datetime.datetime
+    :ivar time_modified: The timestamp of when the version was last modified.
+    :vartype time_modified: ~datetime.datetime
+    """
+
+    _validation = {
+        'description': {'readonly': True},
+        'time_created': {'readonly': True},
+        'time_modified': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'time_created': {'key': 'timeCreated', 'type': 'iso-8601'},
+        'time_modified': {'key': 'timeModified', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TemplateSpecVersionInfo, self).__init__(**kwargs)
+        self.description = None
+        self.time_created = None
+        self.time_modified = None
 
 
 class TemplateSpecVersionsListResult(msrest.serialization.Model):

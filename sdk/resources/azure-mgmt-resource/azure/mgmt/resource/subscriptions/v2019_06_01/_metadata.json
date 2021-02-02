@@ -8,20 +8,21 @@
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,
-        "has_lro_operations": false
+        "has_lro_operations": false,
+        "client_side_validation": true
     },
     "global_parameters": {
-        "sync_method": {
+        "sync": {
             "credential": {
-                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "signature": "credential,  # type: \"TokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true
             }
         },
-        "async_method": {
+        "async": {
             "credential": {
-                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
@@ -46,12 +47,12 @@
     "operation_mixins": {
         "check_resource_name" : {
             "sync": {
-                "signature": "def check_resource_name(\n    self,\n    resource_name_definition=None,  # type: Optional[\"models.ResourceName\"]\n    **kwargs  # type: Any\n):\n",
+                "signature": "def check_resource_name(\n    self,\n    resource_name_definition=None,  # type: Optional[\"_models.ResourceName\"]\n    **kwargs  # type: Any\n):\n",
                 "doc": "\"\"\"Checks resource name validity.\n\nA resource name is valid if it is not a reserved word, does not contains a reserved word and\ndoes not start with a reserved word.\n\n:param resource_name_definition: Resource object with values for resource name and resource\n type.\n:type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2019_06_01.models.ResourceName\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckResourceNameResult, or the result of cls(response)\n:rtype: ~azure.mgmt.resource.subscriptions.v2019_06_01.models.CheckResourceNameResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
             },
             "async": {
                 "coroutine": true,
-                "signature": "async def check_resource_name(\n    self,\n    resource_name_definition: Optional[\"models.ResourceName\"] = None,\n    **kwargs\n) -\u003e \"models.CheckResourceNameResult\":\n",
+                "signature": "async def check_resource_name(\n    self,\n    resource_name_definition: Optional[\"_models.ResourceName\"] = None,\n    **kwargs\n) -\u003e \"_models.CheckResourceNameResult\":\n",
                 "doc": "\"\"\"Checks resource name validity.\n\nA resource name is valid if it is not a reserved word, does not contains a reserved word and\ndoes not start with a reserved word.\n\n:param resource_name_definition: Resource object with values for resource name and resource\n type.\n:type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2019_06_01.models.ResourceName\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckResourceNameResult, or the result of cls(response)\n:rtype: ~azure.mgmt.resource.subscriptions.v2019_06_01.models.CheckResourceNameResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
             },
             "call": "resource_name_definition"

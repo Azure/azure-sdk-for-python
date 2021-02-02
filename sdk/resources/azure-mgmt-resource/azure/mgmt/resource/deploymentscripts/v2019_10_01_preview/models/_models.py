@@ -151,7 +151,7 @@ class AzureCliScript(DeploymentScript):
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration".
+     "OnExpiration". Default value: "Always".
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
@@ -183,7 +183,7 @@ class AzureCliScript(DeploymentScript):
      Duration is based on ISO 8601 pattern (for example P7D means one week).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
-     value is PT1H.
+     value is P1D.
     :type timeout: ~datetime.timedelta
     :param az_cli_version: Required. Azure CLI module version to be used.
     :type az_cli_version: str
@@ -239,7 +239,7 @@ class AzureCliScript(DeploymentScript):
         self.kind = 'AzureCLI'  # type: str
         self.container_settings = kwargs.get('container_settings', None)
         self.storage_account_settings = kwargs.get('storage_account_settings', None)
-        self.cleanup_preference = kwargs.get('cleanup_preference', None)
+        self.cleanup_preference = kwargs.get('cleanup_preference', "Always")
         self.provisioning_state = None
         self.status = None
         self.outputs = None
@@ -250,7 +250,7 @@ class AzureCliScript(DeploymentScript):
         self.environment_variables = kwargs.get('environment_variables', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.retention_interval = kwargs['retention_interval']
-        self.timeout = kwargs.get('timeout', None)
+        self.timeout = kwargs.get('timeout', "P1D")
         self.az_cli_version = kwargs['az_cli_version']
 
 
@@ -279,7 +279,7 @@ class ScriptConfigurationBase(msrest.serialization.Model):
      Duration is based on ISO 8601 pattern (for example P7D means one week).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
-     value is PT1H.
+     value is P1D.
     :type timeout: ~datetime.timedelta
     """
 
@@ -311,7 +311,7 @@ class ScriptConfigurationBase(msrest.serialization.Model):
         self.environment_variables = kwargs.get('environment_variables', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.retention_interval = kwargs['retention_interval']
-        self.timeout = kwargs.get('timeout', None)
+        self.timeout = kwargs.get('timeout', "P1D")
 
 
 class DeploymentScriptPropertiesBase(msrest.serialization.Model):
@@ -327,7 +327,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration".
+     "OnExpiration". Default value: "Always".
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
@@ -363,7 +363,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
         super(DeploymentScriptPropertiesBase, self).__init__(**kwargs)
         self.container_settings = kwargs.get('container_settings', None)
         self.storage_account_settings = kwargs.get('storage_account_settings', None)
-        self.cleanup_preference = kwargs.get('cleanup_preference', None)
+        self.cleanup_preference = kwargs.get('cleanup_preference', "Always")
         self.provisioning_state = None
         self.status = None
         self.outputs = None
@@ -396,7 +396,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
      Duration is based on ISO 8601 pattern (for example P7D means one week).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
-     value is PT1H.
+     value is P1D.
     :type timeout: ~datetime.timedelta
     :param container_settings: Container settings.
     :type container_settings:
@@ -406,7 +406,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration".
+     "OnExpiration". Default value: "Always".
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
@@ -461,11 +461,11 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         self.environment_variables = kwargs.get('environment_variables', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.retention_interval = kwargs['retention_interval']
-        self.timeout = kwargs.get('timeout', None)
+        self.timeout = kwargs.get('timeout', "P1D")
         self.az_cli_version = kwargs['az_cli_version']
         self.container_settings = kwargs.get('container_settings', None)
         self.storage_account_settings = kwargs.get('storage_account_settings', None)
-        self.cleanup_preference = kwargs.get('cleanup_preference', None)
+        self.cleanup_preference = kwargs.get('cleanup_preference', "Always")
         self.provisioning_state = None
         self.status = None
         self.outputs = None
@@ -508,7 +508,7 @@ class AzurePowerShellScript(DeploymentScript):
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration".
+     "OnExpiration". Default value: "Always".
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
@@ -540,7 +540,7 @@ class AzurePowerShellScript(DeploymentScript):
      Duration is based on ISO 8601 pattern (for example P7D means one week).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
-     value is PT1H.
+     value is P1D.
     :type timeout: ~datetime.timedelta
     :param az_power_shell_version: Required. Azure PowerShell module version to be used.
     :type az_power_shell_version: str
@@ -596,7 +596,7 @@ class AzurePowerShellScript(DeploymentScript):
         self.kind = 'AzurePowerShell'  # type: str
         self.container_settings = kwargs.get('container_settings', None)
         self.storage_account_settings = kwargs.get('storage_account_settings', None)
-        self.cleanup_preference = kwargs.get('cleanup_preference', None)
+        self.cleanup_preference = kwargs.get('cleanup_preference', "Always")
         self.provisioning_state = None
         self.status = None
         self.outputs = None
@@ -607,7 +607,7 @@ class AzurePowerShellScript(DeploymentScript):
         self.environment_variables = kwargs.get('environment_variables', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.retention_interval = kwargs['retention_interval']
-        self.timeout = kwargs.get('timeout', None)
+        self.timeout = kwargs.get('timeout', "P1D")
         self.az_power_shell_version = kwargs['az_power_shell_version']
 
 
@@ -638,7 +638,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
      Duration is based on ISO 8601 pattern (for example P7D means one week).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
-     value is PT1H.
+     value is P1D.
     :type timeout: ~datetime.timedelta
     :param container_settings: Container settings.
     :type container_settings:
@@ -648,7 +648,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration".
+     "OnExpiration". Default value: "Always".
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
@@ -703,11 +703,11 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         self.environment_variables = kwargs.get('environment_variables', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.retention_interval = kwargs['retention_interval']
-        self.timeout = kwargs.get('timeout', None)
+        self.timeout = kwargs.get('timeout', "P1D")
         self.az_power_shell_version = kwargs['az_power_shell_version']
         self.container_settings = kwargs.get('container_settings', None)
         self.storage_account_settings = kwargs.get('storage_account_settings', None)
-        self.cleanup_preference = kwargs.get('cleanup_preference', None)
+        self.cleanup_preference = kwargs.get('cleanup_preference', "Always")
         self.provisioning_state = None
         self.status = None
         self.outputs = None
@@ -779,7 +779,8 @@ class DeploymentScriptListResult(msrest.serialization.Model):
 class DeploymentScriptsError(msrest.serialization.Model):
     """Deployment scripts error response.
 
-    :param error: The resource management error response.
+    :param error: Common error response for all Azure Resource Manager APIs to return error details
+     for failed operations. (This also follows the OData error response format.).
     :type error: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ErrorResponse
     """
 
@@ -895,7 +896,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -947,6 +948,8 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     :param type: Type of the managed identity. Possible values include: "UserAssigned".
     :type type: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentityType
+    :param tenant_id: ID of the Azure Active Directory.
+    :type tenant_id: str
     :param user_assigned_identities: The list of user-assigned managed identities associated with
      the resource. Key is the Azure resource Id of the managed identity.
     :type user_assigned_identities: dict[str,
@@ -955,6 +958,7 @@ class ManagedServiceIdentity(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
     }
 
@@ -964,6 +968,7 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     ):
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
         self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
@@ -1141,11 +1146,18 @@ class SystemData(msrest.serialization.Model):
 class UserAssignedIdentity(msrest.serialization.Model):
     """User-assigned managed identity.
 
-    :param principal_id: Azure Active Directory principal ID associated with this identity.
-    :type principal_id: str
-    :param client_id: Client App Id associated with this identity.
-    :type client_id: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: Azure Active Directory principal ID associated with this identity.
+    :vartype principal_id: str
+    :ivar client_id: Client App Id associated with this identity.
+    :vartype client_id: str
     """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
@@ -1157,5 +1169,5 @@ class UserAssignedIdentity(msrest.serialization.Model):
         **kwargs
     ):
         super(UserAssignedIdentity, self).__init__(**kwargs)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.client_id = kwargs.get('client_id', None)
+        self.principal_id = None
+        self.client_id = None

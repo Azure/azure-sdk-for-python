@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class DeploymentsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -137,7 +137,12 @@ class DeploymentsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -205,11 +210,11 @@ class DeploymentsOperations(object):
     def _create_or_update_at_subscription_scope_initial(
         self,
         deployment_name,  # type: str
-        parameters,  # type: "models.Deployment"
+        parameters,  # type: "_models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentExtended"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        # type: (...) -> "_models.DeploymentExtended"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -261,10 +266,10 @@ class DeploymentsOperations(object):
     def begin_create_or_update_at_subscription_scope(
         self,
         deployment_name,  # type: str
-        parameters,  # type: "models.Deployment"
+        parameters,  # type: "_models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DeploymentExtended"]
+        # type: (...) -> LROPoller["_models.DeploymentExtended"]
         """Deploys resources at subscription scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -284,7 +289,7 @@ class DeploymentsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -308,7 +313,12 @@ class DeploymentsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -327,7 +337,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentExtended"
+        # type: (...) -> "_models.DeploymentExtended"
         """Gets a deployment.
 
         :param deployment_name: The name of the deployment to get.
@@ -337,7 +347,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -435,10 +445,10 @@ class DeploymentsOperations(object):
     def validate_at_subscription_scope(
         self,
         deployment_name,  # type: str
-        parameters,  # type: "models.Deployment"
+        parameters,  # type: "_models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentValidateResult"
+        # type: (...) -> "_models.DeploymentValidateResult"
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
@@ -451,7 +461,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentValidateResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentValidateResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -505,7 +515,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentExportResult"
+        # type: (...) -> "_models.DeploymentExportResult"
         """Exports the template used for specified deployment.
 
         :param deployment_name: The name of the deployment from which to get the template.
@@ -515,7 +525,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -561,7 +571,7 @@ class DeploymentsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentListResult"]
+        # type: (...) -> Iterable["_models.DeploymentListResult"]
         """Get all the deployments for a subscription.
 
         :param filter: The filter to apply on the operation. For example, you can use
@@ -574,7 +584,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -731,7 +741,13 @@ class DeploymentsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -805,11 +821,11 @@ class DeploymentsOperations(object):
         self,
         resource_group_name,  # type: str
         deployment_name,  # type: str
-        parameters,  # type: "models.Deployment"
+        parameters,  # type: "_models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentExtended"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        # type: (...) -> "_models.DeploymentExtended"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -863,10 +879,10 @@ class DeploymentsOperations(object):
         self,
         resource_group_name,  # type: str
         deployment_name,  # type: str
-        parameters,  # type: "models.Deployment"
+        parameters,  # type: "_models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DeploymentExtended"]
+        # type: (...) -> LROPoller["_models.DeploymentExtended"]
         """Deploys resources to a resource group.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -889,7 +905,7 @@ class DeploymentsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -914,7 +930,13 @@ class DeploymentsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -934,7 +956,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentExtended"
+        # type: (...) -> "_models.DeploymentExtended"
         """Gets a deployment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -946,7 +968,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1050,10 +1072,10 @@ class DeploymentsOperations(object):
         self,
         resource_group_name,  # type: str
         deployment_name,  # type: str
-        parameters,  # type: "models.Deployment"
+        parameters,  # type: "_models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentValidateResult"
+        # type: (...) -> "_models.DeploymentValidateResult"
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
@@ -1069,7 +1091,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentValidateResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentValidateResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1125,7 +1147,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentExportResult"
+        # type: (...) -> "_models.DeploymentExportResult"
         """Exports the template used for specified deployment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1137,7 +1159,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1185,7 +1207,7 @@ class DeploymentsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentListResult"]
+        # type: (...) -> Iterable["_models.DeploymentListResult"]
         """Get all the deployments for a resource group.
 
         :param resource_group_name: The name of the resource group with the deployments to get. The
@@ -1201,7 +1223,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1266,7 +1288,7 @@ class DeploymentsOperations(object):
         template,  # type: object
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TemplateHashResult"
+        # type: (...) -> "_models.TemplateHashResult"
         """Calculate the hash of the given template.
 
         :param template: The template provided to calculate hash.
@@ -1276,7 +1298,7 @@ class DeploymentsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.TemplateHashResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateHashResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateHashResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

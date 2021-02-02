@@ -633,6 +633,11 @@ class DeploymentProperties(msrest.serialization.Model):
     :type debug_setting: ~azure.mgmt.resource.resources.v2020_06_01.models.DebugSetting
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment: ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeployment
+    :param expression_evaluation_options: Specifies whether template expressions are evaluated
+     within the scope of the parent template or nested template. Only applicable to nested
+     templates. If not specified, default value is outer.
+    :type expression_evaluation_options:
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptions
     """
 
     _validation = {
@@ -647,6 +652,7 @@ class DeploymentProperties(msrest.serialization.Model):
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
+        'expression_evaluation_options': {'key': 'expressionEvaluationOptions', 'type': 'ExpressionEvaluationOptions'},
     }
 
     def __init__(
@@ -659,6 +665,7 @@ class DeploymentProperties(msrest.serialization.Model):
         parameters_link: Optional["ParametersLink"] = None,
         debug_setting: Optional["DebugSetting"] = None,
         on_error_deployment: Optional["OnErrorDeployment"] = None,
+        expression_evaluation_options: Optional["ExpressionEvaluationOptions"] = None,
         **kwargs
     ):
         super(DeploymentProperties, self).__init__(**kwargs)
@@ -669,6 +676,7 @@ class DeploymentProperties(msrest.serialization.Model):
         self.mode = mode
         self.debug_setting = debug_setting
         self.on_error_deployment = on_error_deployment
+        self.expression_evaluation_options = expression_evaluation_options
 
 
 class DeploymentPropertiesExtended(msrest.serialization.Model):
@@ -880,6 +888,11 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     :type debug_setting: ~azure.mgmt.resource.resources.v2020_06_01.models.DebugSetting
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment: ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeployment
+    :param expression_evaluation_options: Specifies whether template expressions are evaluated
+     within the scope of the parent template or nested template. Only applicable to nested
+     templates. If not specified, default value is outer.
+    :type expression_evaluation_options:
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptions
     :param what_if_settings: Optional What-If operation settings.
     :type what_if_settings:
      ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfSettings
@@ -897,6 +910,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
+        'expression_evaluation_options': {'key': 'expressionEvaluationOptions', 'type': 'ExpressionEvaluationOptions'},
         'what_if_settings': {'key': 'whatIfSettings', 'type': 'DeploymentWhatIfSettings'},
     }
 
@@ -910,10 +924,11 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         parameters_link: Optional["ParametersLink"] = None,
         debug_setting: Optional["DebugSetting"] = None,
         on_error_deployment: Optional["OnErrorDeployment"] = None,
+        expression_evaluation_options: Optional["ExpressionEvaluationOptions"] = None,
         what_if_settings: Optional["DeploymentWhatIfSettings"] = None,
         **kwargs
     ):
-        super(DeploymentWhatIfProperties, self).__init__(template=template, template_link=template_link, parameters=parameters, parameters_link=parameters_link, mode=mode, debug_setting=debug_setting, on_error_deployment=on_error_deployment, **kwargs)
+        super(DeploymentWhatIfProperties, self).__init__(template=template, template_link=template_link, parameters=parameters, parameters_link=parameters_link, mode=mode, debug_setting=debug_setting, on_error_deployment=on_error_deployment, expression_evaluation_options=expression_evaluation_options, **kwargs)
         self.what_if_settings = what_if_settings
 
 
@@ -971,7 +986,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1043,6 +1058,29 @@ class ExportTemplateRequest(msrest.serialization.Model):
         super(ExportTemplateRequest, self).__init__(**kwargs)
         self.resources = resources
         self.options = options
+
+
+class ExpressionEvaluationOptions(msrest.serialization.Model):
+    """Specifies whether template expressions are evaluated within the scope of the parent template or nested template.
+
+    :param scope: The scope to be used for evaluation of parameters, variables and functions in a
+     nested template. Possible values include: "NotSpecified", "Outer", "Inner".
+    :type scope: str or
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptionsScopeType
+    """
+
+    _attribute_map = {
+        'scope': {'key': 'scope', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        scope: Optional[Union[str, "ExpressionEvaluationOptionsScopeType"]] = None,
+        **kwargs
+    ):
+        super(ExpressionEvaluationOptions, self).__init__(**kwargs)
+        self.scope = scope
 
 
 class Resource(msrest.serialization.Model):
