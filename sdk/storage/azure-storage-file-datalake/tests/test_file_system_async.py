@@ -9,7 +9,6 @@ import unittest
 import asyncio
 import uuid
 from datetime import datetime, timedelta
-
 import pytest
 
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
@@ -155,22 +154,21 @@ class FileSystemTest(StorageTestCase):
         loop.run_until_complete(self._test_delete_file_system_with_existing_file_system_async())
 
     async def _test_rename_file_system(self):
+        if not self.is_playback():
+            return
         old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
         old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
         new_name = self._get_file_system_reference(prefix="newcontainer")
         filesystem1 = await self.dsc.create_file_system(old_name1)
         await self.dsc.create_file_system(old_name2)
 
-        new_filesystem = await self.dsc.rename_file_system(
-            source_file_system_name=old_name1, destination_file_system_name=new_name)
+        new_filesystem = await self.dsc._rename_file_system(name=old_name1, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(
-                source_file_system_name=old_name2, destination_file_system_name=new_name)
+            await self.dsc._rename_file_system(name=old_name2, new_name=new_name)
         with self.assertRaises(HttpResponseError):
             await filesystem1.get_file_system_properties()
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(
-                source_file_system_name="badfilesystem", destination_file_system_name="filesystem")
+            await self.dsc._rename_file_system(name="badfilesystem", new_name="filesystem")
         props = await new_filesystem.get_file_system_properties()
         self.assertEqual(new_name, props.name)
 
@@ -179,19 +177,43 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_rename_file_system())
 
+    async def _test_rename_file_system_with_file_system_client(self):
+        pytest.skip("Feature not yet enabled. Make sure to record this test once enabled.")
+        old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
+        old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
+        new_name = self._get_file_system_reference(prefix="newcontainer")
+        bad_name = self._get_file_system_reference(prefix="badcontainer")
+        filesystem1 = await self.dsc.create_file_system(old_name1)
+        file_system2 = await self.dsc.create_file_system(old_name2)
+        bad_file_system = self.dsc.get_file_system_client(bad_name)
+
+        new_filesystem = await filesystem1._rename_file_system(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await file_system2._rename_file_system(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await filesystem1.get_file_system_properties()
+        with self.assertRaises(HttpResponseError):
+            await bad_file_system._rename_file_system(new_name="filesystem")
+        new_file_system_props = await new_filesystem.get_file_system_properties()
+        self.assertEqual(new_name, new_file_system_props.name)
+
+    @record
+    def test_rename_file_system_with_file_system_client(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_rename_file_system_with_file_system_client())
+
     async def _test_rename_file_system_with_source_lease(self):
+        if not self.is_playback():
+            return
         old_name = self._get_file_system_reference(prefix="old")
         new_name = self._get_file_system_reference(prefix="new")
         filesystem = await self.dsc.create_file_system(old_name)
         filesystem_lease_id = await filesystem.acquire_lease()
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(
-                source_file_system_name=old_name, destination_file_system_name=new_name)
+            await self.dsc._rename_file_system(name=old_name, new_name=new_name)
         with self.assertRaises(HttpResponseError):
-            await self.dsc.rename_file_system(
-                source_file_system_name=old_name, destination_file_system_name=new_name, source_lease="bad_id")
-        new_filesystem = await self.dsc.rename_file_system(
-            source_file_system_name=old_name, destination_file_system_name=new_name, source_lease=filesystem_lease_id)
+            await self.dsc._rename_file_system(name=old_name, new_name=new_name, lease="bad_id")
+        new_filesystem = await self.dsc._rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
         props = await new_filesystem.get_file_system_properties()
         self.assertEqual(new_name, props.name)
 
@@ -210,7 +232,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems():
+        async for fs in self.dsc.list_file_systems(include_deleted=True):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
@@ -218,8 +240,10 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name, filesystem.version,
-                                                                         new_name="restored" + str(restored_version))
+                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name,
+                                                                         filesystem.version,
+                                                                         new_name="restored" +
+                                                                                  name + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted filesystem is restored
@@ -245,7 +269,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems():
+        async for fs in self.dsc.list_file_systems(include_deleted=True):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
@@ -280,7 +304,7 @@ class FileSystemTest(StorageTestCase):
             await filesystem_client.get_file_system_properties()
 
         filesystem_list = []
-        async for fs in self.dsc.list_file_systems():
+        async for fs in self.dsc.list_file_systems(include_deleted=True):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
@@ -289,7 +313,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.version,
-                                                                    new_name="restored" + str(restored_version))
+                                                                    new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted filesystem is restored

@@ -523,7 +523,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             **kwargs)
 
     @distributed_trace_async
-    async def rename_container(self, source_container_name, destination_container_name, **kwargs):
+    async def _rename_container(self, name, new_name, **kwargs):
         # type: (str, str, **Any) -> ContainerClient
         """Renames a container.
 
@@ -532,26 +532,26 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         .. versionadded:: 12.7.0.
             This operation was introduced in API version '2020-04-08'.
 
-        :param str source_container_name:
+        :param str name:
             The name of the container to rename.
-        :param str destination_container_name:
+        :param str new_name:
             The new container name the user wants to rename to.
-        :keyword source_lease:
+        :keyword lease:
             Specify this to perform only if the lease ID given
             matches the active lease ID of the source container.
-        :paramtype source_lease: ~azure.storage.blob.BlobLeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.ContainerClient
         """
-        renamed_container = self.get_container_client(destination_container_name)
-        source_lease = kwargs.pop('source_lease', None)
+        renamed_container = self.get_container_client(new_name)
+        lease = kwargs.pop('lease', None)
         try:
-            kwargs['source_lease_id'] = source_lease.id  # type: str
+            kwargs['source_lease_id'] = lease.id  # type: str
         except AttributeError:
-            kwargs['source_lease_id'] = source_lease
+            kwargs['source_lease_id'] = lease
         try:
-            await renamed_container._client.container.rename(source_container_name, **kwargs)   # pylint: disable = protected-access
+            await renamed_container._client.container.rename(name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
