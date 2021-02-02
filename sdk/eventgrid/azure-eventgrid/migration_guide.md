@@ -67,7 +67,7 @@ cloud_event = {
 
 ### Publishing Events
 
-The `publish_events` API is replaced with `send` in v2.0. Additionally, `send` API accepts `CloudEvent`, `CustomEvent` along with `EventGridEvent`
+The `publish_events` API is replaced with `send` in v2.0. Additionally, `send` API accepts `CloudEvent`, `EventGridEvent` along with their dict representations.
 
 | In v1.3 | Equivalent in v2.0 | Sample |
 |---|---|---|

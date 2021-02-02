@@ -9,6 +9,7 @@
   - `data` is now a required param for `CloudEvent`.
   - `azure.eventgrid.generate_shared_access_signature` method is now renamed to `generate_sas`.
   - `EventGridConsumer`is now removed. Please see the samples to see how events can be deserialized.
+  - `CustomEvent` model is removed. Dictionaries must be used to send a custom schema.
   
   **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.
