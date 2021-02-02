@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2021-02-09)
 
 **New Features**
 
@@ -10,6 +10,8 @@
 **Breaking Changes**
 
 - `list_dimension_values` has been renamed to `list_anomaly_dimension_values`
+- create methods now return id instead of entire object
+- update methods now return None
 
 ## 1.0.0b2 (2020-11-10)
 
