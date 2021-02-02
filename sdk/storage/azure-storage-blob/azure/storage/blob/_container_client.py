@@ -21,7 +21,7 @@ except ImportError:
 import six
 
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
@@ -495,6 +495,25 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
         response.name = self.container_name
         return response # type: ignore
+
+    @distributed_trace
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a container exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        try:
+            self._client.container.get_properties(**kwargs)
+            return True
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace
     def set_container_metadata( # type: ignore

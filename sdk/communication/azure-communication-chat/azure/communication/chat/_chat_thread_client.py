@@ -13,7 +13,7 @@ except ImportError:
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
-from ._shared.user_credential import CommunicationUserCredential
+from ._shared.user_credential import CommunicationTokenCredential
 from ._generated import AzureCommunicationChatService
 from ._generated.models import (
     AddChatThreadMembersRequest,
@@ -51,7 +51,7 @@ class ChatThreadClient(object):
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationUserCredential credential:
+    :param CommunicationTokenCredential credential:
         The credentials with which to authenticate. The value contains a User
         Access Token
     :param str thread_id:
@@ -70,7 +70,7 @@ class ChatThreadClient(object):
     def __init__(
             self,
             endpoint,  # type: str
-            credential,  # type: CommunicationUserCredential
+            credential,  # type: CommunicationTokenCredential
             thread_id,  # type: str
             **kwargs  # type: Any
     ):

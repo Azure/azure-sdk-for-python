@@ -93,9 +93,12 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
 
+    def __enter__(self):
+        self._blob_service_client.__enter__()
+        return self
+
     def __exit__(self, *args):
         self._blob_service_client.close()
-        super(DataLakeServiceClient, self).__exit__(*args)
 
     def close(self):
         # type: () -> None
@@ -103,7 +106,6 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         It need not be used when using with a context manager.
         """
         self._blob_service_client.close()
-        self.__exit__()
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to hostname

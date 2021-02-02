@@ -1,0 +1,136 @@
+interactions:
+- request:
+    body: '{"hookType": "Email", "hookName": "testhooka6061ba7", "description": "my
+      email hook", "externalLink": "external link", "hookParameter": {"toList": ["yournamehere@microsoft.com"]}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '179'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 2cc63fd1-c2b3-4adc-8001-0003844e24ea
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:24 GMT
+      location: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '387'
+      x-request-id: 2cc63fd1-c2b3-4adc-8001-0003844e24ea
+    status:
+      code: 201
+      message: Created
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+  response:
+    body:
+      string: '{"hookId":"e21d87d3-c415-4ef6-8e64-61c49f49dc2d","hookName":"testhooka6061ba7","hookType":"Email","externalLink":"external
+        link","description":"my email hook","admins":["f850650c-1fcf-4489-b46f-71af2e30d360"],"hookParameter":{"toList":["yournamehere@microsoft.com"]}}'
+    headers:
+      apim-request-id: 2f1ede40-c098-4470-a1b6-56c584df45dc
+      content-length: '267'
+      content-type: application/json; charset=utf-8
+      date: Fri, 22 Jan 2021 01:07:24 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '102'
+      x-request-id: 2f1ede40-c098-4470-a1b6-56c584df45dc
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+- request:
+    body: '{"hookName": "reset", "description": null, "externalLink": null}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '64'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 06e418cf-022d-48ca-b06e-078175c0b41b
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:24 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '53'
+      x-request-id: 06e418cf-022d-48ca-b06e-078175c0b41b
+    status:
+      code: 204
+      message: No Content
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+  response:
+    body:
+      string: '{"hookId":"e21d87d3-c415-4ef6-8e64-61c49f49dc2d","hookName":"reset","hookType":"Email","externalLink":"external
+        link","description":"my email hook","admins":["f850650c-1fcf-4489-b46f-71af2e30d360"],"hookParameter":{"toList":["yournamehere@microsoft.com"]}}'
+    headers:
+      apim-request-id: 1321e769-7ee8-41a5-9fcb-c401696c9f4c
+      content-length: '256'
+      content-type: application/json; charset=utf-8
+      date: Fri, 22 Jan 2021 01:07:24 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '97'
+      x-request-id: 1321e769-7ee8-41a5-9fcb-c401696c9f4c
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 3c82074d-a2fd-4562-8961-a51fc048494e
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:24 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '118'
+      x-request-id: 3c82074d-a2fd-4562-8961-a51fc048494e
+    status:
+      code: 204
+      message: No Content
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/e21d87d3-c415-4ef6-8e64-61c49f49dc2d
+version: 1

@@ -357,6 +357,16 @@ class FileSystemTest(StorageTestCase):
         self.assertIsNotNone(props.has_legal_hold)
 
     @record
+    def test_service_client_session_closes_after_filesystem_creation(self):
+        # Arrange
+        dsc2 = DataLakeServiceClient(self.dsc.url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
+        with DataLakeServiceClient(self.dsc.url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY) as ds_client:
+            fs1 = ds_client.create_file_system(self._get_file_system_reference(prefix="fs1"))
+            fs1.delete_file_system()
+        dsc2.create_file_system(self._get_file_system_reference(prefix="fs2"))
+        dsc2.close()
+
+    @record
     def test_list_paths(self):
         # Arrange
         file_system = self._create_file_system()

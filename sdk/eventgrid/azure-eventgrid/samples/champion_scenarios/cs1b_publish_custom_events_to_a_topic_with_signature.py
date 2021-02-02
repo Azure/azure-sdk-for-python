@@ -15,17 +15,17 @@ USAGE:
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
 import os
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_shared_access_signature, EventGridSharedAccessSignatureCredential
-from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from datetime import datetime, timedelta
 
 topic_key = os.environ["EG_ACCESS_KEY"]
-topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
 
-signature = generate_shared_access_signature(topic_hostname, topic_key, expiration_date_utc)
-credential = EventGridSharedAccessSignatureCredential(signature)
-client = EventGridPublisherClient(topic_hostname, credential)
+signature = generate_sas(endpoint, topic_key, expiration_date_utc)
+credential = AzureSasCredential(signature)
+client = EventGridPublisherClient(endpoint, credential)
 
 client.send([
 	EventGridEvent(

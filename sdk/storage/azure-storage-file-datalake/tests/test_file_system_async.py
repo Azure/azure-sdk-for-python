@@ -457,6 +457,21 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_system_properties_async())
 
+    async def _test_service_client_session_closes_after_filesystem_creation(self):
+        # Arrange
+        dsc2 = DataLakeServiceClient(self.dsc.url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
+        async with DataLakeServiceClient(
+                self.dsc.url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY) as ds_client:
+            fs1 = await ds_client.create_file_system(self._get_file_system_reference(prefix="fs1"))
+            await fs1.delete_file_system()
+        await dsc2.create_file_system(self._get_file_system_reference(prefix="fs2"))
+        await dsc2.close()
+
+    @record
+    def test_service_client_session_closes_after_filesystem_creation(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_service_client_session_closes_after_filesystem_creation())
+
     async def _test_list_paths_async(self):
         # Arrange
         file_system = await self._create_file_system()

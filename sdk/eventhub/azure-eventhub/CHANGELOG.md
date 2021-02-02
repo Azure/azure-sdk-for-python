@@ -2,6 +2,9 @@
 
 ## 5.2.2 (Unreleased)
 
+**New Features**
+
+* Added a `parse_connection_string` method which parses a connection string into a properties bag, `EventHubConnectionStringProperties`, containing its component parts.
 
 ## 5.2.1 (2021-01-11)
 

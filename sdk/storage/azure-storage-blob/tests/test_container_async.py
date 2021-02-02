@@ -450,8 +450,22 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_container_exists(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(
+            storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+
+        container1 = await self._create_container(bsc, prefix="container1")
+        container2_name = self._get_container_reference(prefix="container2")
+        container2 = bsc.get_container_client(container2_name)
+
+        self.assertTrue(await container1.exists())
+        self.assertFalse(await container2.exists())
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_container_properties(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
