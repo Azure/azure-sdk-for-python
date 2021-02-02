@@ -7,7 +7,7 @@ import asyncio
 from azure_devtools.scenario_tests.patches import mock_in_unit_test
 from devtools_testutils import AzureTestCase
 
-from azure.keyvault.keys import KeyClient
+from azure.keyvault.keys.aio import KeyClient
 
 
 def skip_sleep(unit_test):
@@ -27,7 +27,7 @@ class KeyVaultTestCase(AzureTestCase):
         super(KeyVaultTestCase, self).setUp()
 
     def create_kv_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient)
+        credential = self.get_credential(KeyClient, is_async=True)
         return self.create_client_from_credential(
             KeyClient, credential=credential, vault_url=vault_uri, **kwargs
         )
