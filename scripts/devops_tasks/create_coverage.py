@@ -62,7 +62,7 @@ def fix_dot_coverage_file(coverage_file):
     out = None
     with open(coverage_file) as cov_file:
         line = cov_file.read()
-        out = line.replace("/.tox/whl/lib/python3.9/site-packages", "")
+        out = re.sub("\/\.tox\/[\s\S]*?\/site-packages", "/", line)
 
     if out:
         with open(coverage_file, 'w') as cov_file:
