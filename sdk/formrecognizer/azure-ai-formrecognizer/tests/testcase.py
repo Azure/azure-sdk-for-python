@@ -130,7 +130,7 @@ class FormRecognizerTest(AzureTestCase):
         # self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
         # self.selection_mark_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"
 
-        testing_container_sas_url = os.environ["FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL"]
+        testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
         self.receipt_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
         self.receipt_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
         self.business_card_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
