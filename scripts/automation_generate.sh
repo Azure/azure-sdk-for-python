@@ -17,6 +17,5 @@ python -m packaging_tools.auto_package "$TMPDIR/venv-sdk/auto_temp.json" "$2" 2>
 echo "[Generate] generate done!!!"
 
 if [ ! -f "$2" ]; then
-  echo "$2 does not exist!!!"
-  exit 1
+  echo "[Autorest]$2 does not exist!!!"
 fi
