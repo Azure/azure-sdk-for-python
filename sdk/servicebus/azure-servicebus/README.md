@@ -55,6 +55,10 @@ Please find the samples linked below for demonstration as to how to authenticate
 [TokenCredential][token_credential_interface]
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package][pypi_azure_identity]. The fully qualified namespace is of the format `<yournamespace.servicebus.windows.net>`.
+- To use the credential types provided by `azure-identity`, please install the package:
+```pip install azure-identity```
+- Additionally, to use the async API supported on Python 3.5+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+```pip install aiohttp```
 - When using Azure Active Directory, your principal must be assigned a role which allows access to Service Bus, such as the
 Azure Service Bus Data Owner role. For more information about using Azure Active Directory authorization with Service Bus,
 please refer to [the associated documentation][servicebus_aad_authentication].

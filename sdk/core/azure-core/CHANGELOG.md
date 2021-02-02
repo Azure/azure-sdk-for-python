@@ -4,7 +4,9 @@
 
 ### Features
 
-- Added `CaseInsensitiveEnumMeta` class for case-insensitive enums.
+- Added `CaseInsensitiveEnumMeta` class for case-insensitive enums.  #16316
+- Add `raise_for_status` method onto `HttpResponse`. Calling `response.raise_for_status()` on a response with an error code
+will raise an `HttpResponseError`. Calling it on a good response will do nothing  #16399
 
 
 ## 1.10.0 (2021-01-11)
@@ -12,7 +14,6 @@
 ### Features
 
 - Added `AzureSasCredential` and its respective policy. #15946
-
 
 ## 1.9.0 (2020-11-09)
 

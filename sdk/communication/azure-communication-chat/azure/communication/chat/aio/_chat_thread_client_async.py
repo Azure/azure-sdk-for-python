@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.async_paging import AsyncItemPaged
 
-from .._shared.user_credential_async import CommunicationUserCredential
+from .._shared.user_credential_async import CommunicationTokenCredential
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
     AddChatThreadMembersRequest,
@@ -33,7 +33,7 @@ from .._models import (
     ChatMessage,
     ReadReceipt
 )
-from .._shared.models import CommunicationUser
+from .._shared.models import CommunicationUserIdentifier
 from .._utils import _to_utc_datetime # pylint: disable=unused-import
 from .._version import SDK_MONIKER
 
@@ -51,7 +51,7 @@ class ChatThreadClient(object):
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationUserCredential credential:
+    :param CommunicationTokenCredential credential:
         The credentials with which to authenticate. The value contains a User
         Access Token
     :param str thread_id:
@@ -70,7 +70,7 @@ class ChatThreadClient(object):
     def __init__(
             self,
             endpoint: str,
-            credential: CommunicationUserCredential,
+            credential: CommunicationTokenCredential,
             thread_id: str,
             **kwargs
     ) -> None:
@@ -467,13 +467,13 @@ class ChatThreadClient(object):
     @distributed_trace_async
     async def remove_member(
         self,
-        user: CommunicationUser,
+        user: CommunicationUserIdentifier,
         **kwargs
     ) -> None:
         """Remove a member from a thread.
 
         :param user: Required. User identity of the thread member to remove from the thread.
-        :type user: ~azure.communication.chat.CommunicationUser
+        :type user: ~azure.communication.chat.CommunicationUserIdentifier
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None

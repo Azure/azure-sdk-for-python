@@ -37,9 +37,9 @@ class AnalyzeHealthcareSample(object):
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
         text_analytics_client = TextAnalyticsClient(
-            endpoint=endpoint, 
+            endpoint=endpoint,
             credential=AzureKeyCredential(key),
-            api_version="v3.1-preview.3")
+        )
 
         documents = [
             "Subject is taking 100mg of ibuprofen twice daily"
@@ -47,7 +47,7 @@ class AnalyzeHealthcareSample(object):
 
         poller = text_analytics_client.begin_analyze_healthcare(documents, show_stats=True)
         result = poller.result()
-        
+
         docs = [doc for doc in result if not doc.is_error]
 
         print("Results of Healthcare Analysis:")

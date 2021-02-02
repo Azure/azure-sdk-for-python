@@ -28,7 +28,7 @@ import asyncio
 
 
 class ChatThreadClientSamplesAsync(object):
-    from azure.communication.administration import CommunicationIdentityClient
+    from azure.communication.identity import CommunicationIdentityClient
     connection_string = os.environ.get("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING", None)
     if not connection_string:
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING env before run this sample.")
@@ -49,10 +49,11 @@ class ChatThreadClientSamplesAsync(object):
     async def create_chat_thread_client_async(self):
         # [START create_chat_thread_client]
         from datetime import datetime
-        from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
-        from azure.communication.chat import ChatThreadMember, CommunicationUser
+        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatThreadMember, CommunicationUserIdentifier
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
 
         async with chat_client:
             topic = "test topic"
@@ -68,8 +69,9 @@ class ChatThreadClientSamplesAsync(object):
         print("thread created, id: " + self._thread_id)
 
     async def update_thread_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START update_thread]
@@ -80,8 +82,9 @@ class ChatThreadClientSamplesAsync(object):
         print("update_thread succeeded")
 
     async def send_message_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START send_message]
@@ -100,8 +103,9 @@ class ChatThreadClientSamplesAsync(object):
             print("send_message succeeded, message id:", self._message_id)
 
     async def get_message_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START get_message]
@@ -111,8 +115,9 @@ class ChatThreadClientSamplesAsync(object):
                 "content: ", chat_message.content)
 
     async def list_messages_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START list_messages]
@@ -126,8 +131,9 @@ class ChatThreadClientSamplesAsync(object):
             # [END list_messages]
 
     async def update_message_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START update_message]
@@ -137,8 +143,9 @@ class ChatThreadClientSamplesAsync(object):
             print("update_message succeeded")
 
     async def send_read_receipt_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START send_read_receipt]
@@ -148,8 +155,9 @@ class ChatThreadClientSamplesAsync(object):
         print("send_read_receipt succeeded")
 
     async def list_read_receipts_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START list_read_receipts]
@@ -160,8 +168,9 @@ class ChatThreadClientSamplesAsync(object):
                 print(read_receipt)
 
     async def delete_message_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START delete_message]
@@ -170,8 +179,9 @@ class ChatThreadClientSamplesAsync(object):
             print("delete_message succeeded")
 
     async def list_members_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START list_members]
@@ -182,8 +192,9 @@ class ChatThreadClientSamplesAsync(object):
             # [END list_members]
 
     async def add_members_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START add_members]
@@ -199,8 +210,9 @@ class ChatThreadClientSamplesAsync(object):
             print("add_members succeeded")
 
     async def remove_member_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START remove_member]
@@ -209,8 +221,9 @@ class ChatThreadClientSamplesAsync(object):
             print("remove_member_async succeeded")
 
     async def send_typing_notification_async(self):
-        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
-        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
 
         async with chat_thread_client:
             # [START send_typing_notification]

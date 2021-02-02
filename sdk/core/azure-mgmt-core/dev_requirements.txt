@@ -5,3 +5,4 @@ typing_extensions>=3.7.2
 -e ../azure-core
 mock;python_version<="2.7"
 httpretty
+-e ../../../tools/azure-sdk-tools

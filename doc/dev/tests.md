@@ -5,7 +5,7 @@ In this document we will provide the introduction to the testing framework by:
 - [Integrating with pytest](#integrate-with-the-pytest-test-framework)
 - [Using Tox](#tox)
 - [The `devtools_testutils` package](#devtools_testutils-package)
-- [Writing New Tests](#Writing-new-tests)
+- [Writing New Tests](#writing-new-tests)
 - [Define our credentials and settings](#define-credentials)
 - [Create live test resources](#create-live-test-resources)
 - [Write our test](#writing-your-test)
@@ -82,6 +82,12 @@ With the pytest test suite you can provide directories or specific tests to run 
 ```cmd
 azure-sdk-for-python\sdk\my-directory\my-library> pytest
 azure-sdk-for-python\sdk\my-directory\my-library> pytest <test_file.py>
+```
+
+If your tests are broken up into multiple folders for organization, you can run specific folders:
+```cmd
+azure-sdk-for-python\sdk\my-directory\my-library> pytest .\tests\async_tests\
+azure-sdk-for-python\sdk\my-directory\my-library> pytest .\tests\async_tests\<test_file.py>
 ```
 
 In addition you can provide keywords to run specific tests within the suite or within a specific file
@@ -289,8 +295,8 @@ For more information, refer to the [advanced tests notes][advanced_tests_notes] 
 
 
 <!-- Links -->
-[advanced_tests_notes]: ./tests-advanced.md
+[advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/tests-advanced.md
 [azure_devtools]: https://pypi.org/project/azure-devtools/
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
-[packaging]: ./packaging.md
+[packaging]: https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/packaging.md

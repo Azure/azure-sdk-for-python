@@ -6,14 +6,15 @@ from ._generated.models import (
     SendChatMessageResult,
     ChatThreadInfo,
 )
-from ._shared.user_credential import CommunicationUserCredential
+from ._shared.user_credential import CommunicationTokenCredential
+from ._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from ._models import (
     ChatThreadMember,
     ChatMessage,
     ChatThread,
     ReadReceipt,
 )
-from ._shared.models import CommunicationUser
+from ._shared.models import CommunicationUserIdentifier
 
 __all__ = [
     'ChatClient',
@@ -24,8 +25,9 @@ __all__ = [
     'SendChatMessageResult',
     'ChatThread',
     'ChatThreadInfo',
-    'CommunicationUserCredential',
+    'CommunicationTokenCredential',
+    'CommunicationTokenRefreshOptions',
     'ChatThreadMember',
-    'CommunicationUser',
+    'CommunicationUserIdentifier',
 ]
 __version__ = VERSION

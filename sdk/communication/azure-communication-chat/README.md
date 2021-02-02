@@ -22,14 +22,14 @@ pip install --pre azure-communication-chat
 
 ## User Access Tokens
 
-User access tokens enable you to build client applications that directly authenticate to Azure Communication Services. You can generate these tokens with azure.communication.administration module, and then use them to initialize the Communication Services SDKs. Example of using azure.communication.administration:
+User access tokens enable you to build client applications that directly authenticate to Azure Communication Services. You can generate these tokens with azure.communication.identity module, and then use them to initialize the Communication Services SDKs. Example of using azure.communication.identity:
 
 ```bash
-pip install --pre azure-communication-administration
+pip install --pre azure-communication-identity
 ```
 
 ```python
-from azure.communication.administration import CommunicationIdentityClient
+from azure.communication.identity import CommunicationIdentityClient
 identity_client = CommunicationIdentityClient.from_connection_string("<connection string of your Communication service>")
 user = identity_client.create_user()
 tokenresponse = identity_client.issue_token(user, scopes=["chat"])
@@ -44,11 +44,12 @@ it with this token. It is because the initiator of the create request must be in
 This will allow you to create, get, list or delete chat threads.
 
 ```python
-from azure.communication.chat import ChatClient, CommunicationUserCredential
+from azure.communication.chat import ChatClient, CommunicationTokenCredential
 # Your unique Azure Communication service endpoint
 endpoint = "https://<RESOURCE_NAME>.communcationservices.azure.com"
 token = "<token>"
-chat_client = ChatClient(endpoint, CommunicationUserCredential(token))
+refresh_options = CommunicationTokenRefreshOptions(token)
+chat_client = ChatClient(endpoint, CommunicationTokenCredential(refresh_options))
 ```
 
 ## Create Chat Thread Client
@@ -141,7 +142,7 @@ Use the `create_chat_thread` method to create a chat thread client object.
 
 - Use `topic` to give a thread topic;
 - Use `thread_members` to list the `ChatThreadMember` to be added to the thread;
-- `user`, required, it is the `CommunicationUser` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+- `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens) -->
 - `display_name`, optional, is the display name for the thread member.
 - `share_history_time`, optional, time from which the chat history is shared with the member.
@@ -300,7 +301,7 @@ for chat_thread_member in chat_thread_members:
 Use `add_members` method to add thread members to the thread.
 
 - Use `thread_members` to list the `ChatThreadMember` to be added to the thread;
-- `user`, required, it is the `CommunicationUser` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+- `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens) -->
 - `display_name`, optional, is the display name for the thread member.
 - `share_history_time`, optional, time from which the chat history is shared with the member.
@@ -319,7 +320,7 @@ chat_thread_client.add_members(thread_members)
 ### Remove thread member
 
 Use `remove_member` method to remove thread member from the thread identified by threadId.
-`user` is the `CommunicationUser` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+`user` is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens)  -->
 and was added into this chat thread.
 
@@ -373,7 +374,7 @@ to create a resource, then set some Environment Variables
 set AZURE_COMMUNICATION_SERVICE_ENDPOINT="https://<RESOURCE_NAME>.communcationservices.azure.com"
 set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING="<connection string of your Communication service>"
 
-pip install azure-communication-administration
+pip install azure-communication-identity
 
 python samples\chat_client_sample.py
 python samples\chat_client_sample_async.py
