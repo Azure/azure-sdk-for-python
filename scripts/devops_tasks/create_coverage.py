@@ -17,11 +17,6 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 coverage_dir = os.path.join(root_dir, "_all_coverage_files/")
 
 
-def install_coverage():
-    install_cmd_arry = [sys.executable, "-m", "pip", "install", "coverage==4.5.4"]
-    run_check_call(install_cmd_arry, root_dir)
-
-
 def collect_tox_coverage_files():
     coverage_version_cmd = [sys.executable, "-m", "coverage", "--version"]
     run_check_call(coverage_version_cmd, root_dir)

@@ -15,8 +15,14 @@ parameters:
 
 jobs:
   - job: Publish_Code_Coverage
+    Pool: azsdk-pool-mms-ubuntu-1804-general
+    OSVmImage: MMSUbuntu18.04
 
     steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.7'
+
       # Download all existing artifacts (most of the time, it's whatever was uploaded before)
       - pwsh: |
           New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
