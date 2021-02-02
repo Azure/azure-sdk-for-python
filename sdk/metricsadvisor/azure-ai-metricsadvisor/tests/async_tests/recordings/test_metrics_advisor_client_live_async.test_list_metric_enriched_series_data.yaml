@@ -17,14 +17,14 @@ interactions:
     body:
       string: '{"value":[{"series":{"dimension":{"dimension_name":"Los Angeles"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
     headers:
-      apim-request-id: fc8c87c1-150e-4d95-a59c-327a200c7b42
+      apim-request-id: ce86928d-75a7-4ce0-969f-9e2b228d9581
       content-length: '197'
       content-type: application/json; charset=utf-8
-      date: Fri, 22 Jan 2021 01:10:10 GMT
+      date: Tue, 02 Feb 2021 22:28:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '218'
-      x-request-id: fc8c87c1-150e-4d95-a59c-327a200c7b42
+      x-envoy-upstream-service-time: '545'
+      x-request-id: ce86928d-75a7-4ce0-969f-9e2b228d9581
     status:
       code: 200
       message: OK

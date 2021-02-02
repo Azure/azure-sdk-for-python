@@ -51,7 +51,7 @@ def sample_create_data_feed():
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    data_feed = client.create_data_feed(
+    data_feed_id = client.create_data_feed(
         name="My data feed",
         source=SQLServerDataFeed(
             connection_string=sql_server_connection_string,
@@ -84,7 +84,7 @@ def sample_create_data_feed():
         )
     )
 
-    return data_feed
+    return client.get_data_feed(data_feed_id)
 
     # [END create_data_feed]
 
@@ -167,12 +167,13 @@ def sample_update_data_feed(data_feed):
     data_feed.name = "updated name"
     data_feed.options.data_feed_description = "updated description for data feed"
 
-    updated_data_feed = client.update_data_feed(
+    client.update_data_feed(
         data_feed,
         access_mode="Public",
         fill_type="CustomValue",
         custom_fill_value=1
     )
+    updated_data_feed = client.get_data_feed(data_feed.id)
 
     print("Updated name: {}".format(updated_data_feed.name))
     print("Updated description: {}".format(updated_data_feed.options.data_feed_description))

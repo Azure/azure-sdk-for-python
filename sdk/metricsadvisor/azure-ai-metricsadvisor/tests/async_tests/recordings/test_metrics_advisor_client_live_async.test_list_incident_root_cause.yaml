@@ -10,18 +10,18 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
   response:
     body:
-      string: '{"value":[{"rootCause":{"dimension":{"category":"Electronics (Consumer)","dimension_name":"Karachi"}},"path":["dimension_name"],"score":0.34265262137636504,"description":"Increase
+      string: '{"value":[{"rootCause":{"dimension":{"category":"Electronics (Consumer)","dimension_name":"Karachi"}},"path":["dimension_name"],"score":0.34265262137636493,"description":"Increase
         on category = Electronics (Consumer) | dimension_name = Karachi contributes
         the most to current incident."}]}'
     headers:
-      apim-request-id: 7f2af741-5563-4ccc-9baa-a61ea1e4fb27
+      apim-request-id: 305c6a88-58a4-4a29-a204-de85eac45fa9
       content-length: '259'
       content-type: application/json; charset=utf-8
-      date: Fri, 22 Jan 2021 01:10:08 GMT
+      date: Tue, 02 Feb 2021 22:28:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '309'
-      x-request-id: 7f2af741-5563-4ccc-9baa-a61ea1e4fb27
+      x-envoy-upstream-service-time: '586'
+      x-request-id: 305c6a88-58a4-4a29-a204-de85eac45fa9
     status:
       code: 200
       message: OK

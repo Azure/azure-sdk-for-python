@@ -41,7 +41,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_create_simple_data_feed(self):
         data_feed_name = self.create_random_name("testfeed")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=data_feed_name,
                 source=SQLServerDataFeed(
                     connection_string=self.sql_server_connection_string,
@@ -51,7 +51,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 schema=["cost", "revenue"],
                 ingestion_settings=datetime.datetime(2019, 10, 1)
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -64,13 +64,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
                              datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_from_sql_server(self):
 
         data_feed_name = self.create_random_name("testfeed")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=data_feed_name,
                 source=SQLServerDataFeed(
                     connection_string=self.sql_server_connection_string,
@@ -113,6 +113,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 )
 
             )
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -150,16 +151,16 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(data_feed.metric_ids)
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_data_feed(data_feed.id)
+                self.admin_client.get_data_feed(data_feed_id)
 
     def test_create_data_feed_from_sql_server_with_custom_values(self):
 
         data_feed_name = self.create_random_name("testfeed")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=data_feed_name,
                 source=SQLServerDataFeed(
                     connection_string=self.sql_server_connection_string,
@@ -205,6 +206,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 )
 
             )
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -244,15 +246,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(data_feed.metric_ids)
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_data_feed(data_feed.id)
+                self.admin_client.get_data_feed(data_feed_id)
 
     def test_create_data_feed_with_azure_table(self):
         name = self.create_random_name("tablefeed")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=AzureTableDataFeed(
                     connection_string=self.azure_table_connection_string,
@@ -277,7 +279,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -286,12 +288,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.table, "adsample")
             self.assertEqual(data_feed.source.query, "PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'")
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_azure_blob(self):
         name = self.create_random_name("blobfeed")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=AzureBlobDataFeed(
                     connection_string=self.azure_blob_connection_string,
@@ -316,7 +318,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -325,12 +327,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.container, "adsample")
             self.assertEqual(data_feed.source.blob_template, "%Y/%m/%d/%h/JsonFormatV2.json")
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_azure_cosmos_db(self):
         name = self.create_random_name("cosmosfeed")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=AzureCosmosDBDataFeed(
                     connection_string=self.azure_cosmosdb_connection_string,
@@ -356,7 +358,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -366,12 +368,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.collection_id, "adsample")
             self.assertEqual(data_feed.source.sql_query, "'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'")
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_http_request_get(self):
         name = self.create_random_name("httprequestfeedget")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=HttpRequestDataFeed(
                     url=self.http_request_get_url,
@@ -395,7 +397,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -403,12 +405,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(data_feed.source.url)
             self.assertEqual(data_feed.source.http_method, "GET")
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_http_request_post(self):
         name = self.create_random_name("httprequestfeedpost")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=HttpRequestDataFeed(
                     url=self.http_request_post_url,
@@ -433,7 +435,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -442,7 +444,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.http_method, "POST")
             self.assertEqual(data_feed.source.payload, "{'startTime': '@StartTime'}")
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_application_insights(self):
         name = self.create_random_name("applicationinsights")
@@ -451,7 +453,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
                 "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
                 "duration_max_ms = max(duration) by resultCode"
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=AzureApplicationInsightsDataFeed(
                     azure_cloud="Azure",
@@ -477,7 +479,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -487,14 +489,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(data_feed.source.query)
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_data_explorer(self):
         name = self.create_random_name("azuredataexplorer")
         try:
             query = "let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime + 1d; " \
                     "adsample | where Timestamp >= StartDateTime and Timestamp < EndDateTime"
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=AzureDataExplorerDataFeed(
                     connection_string=self.azure_data_explorer_connection_string,
@@ -518,7 +520,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -527,12 +529,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.query, query)
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_influxdb(self):
         name = self.create_random_name("influxdb")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=InfluxDBDataFeed(
                     connection_string=self.influxdb_connection_string,
@@ -559,7 +561,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -571,12 +573,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.user_name, "adreadonly")
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_datalake(self):
         name = self.create_random_name("datalake")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=AzureDataLakeStorageGen2DataFeed(
                     account_name="adsampledatalakegen2",
@@ -603,7 +605,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -615,12 +617,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.file_template, "adsample.json")
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_mongodb(self):
         name = self.create_random_name("mongodb")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=MongoDBDataFeed(
                     connection_string=self.mongodb_connection_string,
@@ -645,7 +647,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -655,12 +657,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.command, '{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}')
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_mysql(self):
         name = self.create_random_name("mysql")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=MySqlDataFeed(
                     connection_string=self.mysql_connection_string,
@@ -684,7 +686,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -693,12 +695,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_postgresql(self):
         name = self.create_random_name("postgresql")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=PostgreSqlDataFeed(
                     connection_string=self.postgresql_connection_string,
@@ -722,7 +724,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -731,12 +733,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_create_data_feed_with_elasticsearch(self):
         name = self.create_random_name("elastic")
         try:
-            data_feed = self.admin_client.create_data_feed(
+            data_feed_id = self.admin_client.create_data_feed(
                 name=name,
                 source=ElasticsearchDataFeed(
                     host="ad-sample-es.westus2.cloudapp.azure.com",
@@ -762,7 +764,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
 
             )
-
+            data_feed = self.admin_client.get_data_feed(data_feed_id)
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
             self.assertIsNotNone(data_feed.name)
@@ -773,7 +775,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.query, "'select * from adsample where timestamp = @StartTime'")
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(data_feed_id)
 
     def test_list_data_feeds(self):
         feeds = self.admin_client.list_data_feeds()
@@ -827,7 +829,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed.source.connection_string = "updated"
             data_feed.source.query = "get data"
 
-            updated = self.admin_client.update_data_feed(data_feed)
+            self.admin_client.update_data_feed(data_feed)
+            updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.options.data_feed_description, "updated")
             self.assertEqual(updated.schema.timestamp_column, "time")
@@ -857,7 +860,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
         data_feed = self._create_data_feed_for_update("update")
         try:
-            updated = self.admin_client.update_data_feed(
+            self.admin_client.update_data_feed(
                 data_feed.id,
                 name="update",
                 data_feed_description="updated",
@@ -882,6 +885,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     query="get data"
                 )
             )
+            updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.options.data_feed_description, "updated")
             self.assertEqual(updated.schema.timestamp_column, "time")
@@ -932,7 +936,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed.source.connection_string = "don't update me"
             data_feed.source.query = "don't update me"
 
-            updated = self.admin_client.update_data_feed(
+            self.admin_client.update_data_feed(
                 data_feed,
                 timestamp_column="time",
                 ingestion_begin_time=datetime.datetime(2020, 12, 10),
@@ -955,6 +959,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     query="get data"
                 )
             )
+            updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "updateMe")
             self.assertEqual(updated.options.data_feed_description, "updateMe")
             self.assertEqual(updated.schema.timestamp_column, "time")
@@ -984,7 +989,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
         data_feed = self._create_data_feed_for_update("update")
         try:
-            updated = self.admin_client.update_data_feed(
+            self.admin_client.update_data_feed(
                 data_feed.id,
                 name="update",
                 data_feed_description=None,
@@ -1004,6 +1009,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 status=None,
                 action_link_template=None,
             )
+            updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
             # self.assertEqual(updated.options.data_feed_description, "")  # doesn't currently clear
             # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear

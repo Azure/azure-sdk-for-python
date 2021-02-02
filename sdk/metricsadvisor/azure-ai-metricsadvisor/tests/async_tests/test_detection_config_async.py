@@ -30,7 +30,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 detection_config_name = self.create_random_name("testdetectionconfigasync")
-                config = await self.admin_client.create_detection_configuration(
+                config_id = await self.admin_client.create_detection_configuration(
                     name=detection_config_name,
                     metric_id=data_feed.metric_ids[0],
                     description="My test metric anomaly detection configuration",
@@ -65,6 +65,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     )
                 )
+                config = await self.admin_client.get_detection_configuration(config_id)
                 self.assertIsNotNone(config.id)
                 self.assertEqual(config.metric_id, data_feed.metric_ids[0])
                 self.assertEqual(config.description, "My test metric anomaly detection configuration")
@@ -97,10 +98,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(
                     config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 50)
 
-                await self.admin_client.delete_detection_configuration(config.id)
+                await self.admin_client.delete_detection_configuration(config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_detection_configuration(config.id)
+                    await self.admin_client.get_detection_configuration(config_id)
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
@@ -110,7 +111,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 detection_config_name = self.create_random_name("testdetectionconfigetasync")
-                detection_config = await self.admin_client.create_detection_configuration(
+                detection_config_id = await self.admin_client.create_detection_configuration(
                     name=detection_config_name,
                     metric_id=data_feed.metric_ids[0],
                     description="My test metric anomaly detection configuration",
@@ -167,7 +168,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     )]
                 )
-
+                detection_config = await self.admin_client.get_detection_configuration(detection_config_id)
                 self.assertIsNotNone(detection_config.id)
                 self.assertEqual(detection_config.metric_id, data_feed.metric_ids[0])
                 self.assertEqual(detection_config.description, "My test metric anomaly detection configuration")
@@ -227,7 +228,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 detection_config_name = self.create_random_name("multipledetectionconfigsasync")
-                detection_config = await self.admin_client.create_detection_configuration(
+                detection_config_id = await self.admin_client.create_detection_configuration(
                     name=detection_config_name,
                     metric_id=data_feed.metric_ids[0],
                     description="My test metric anomaly detection configuration",
@@ -352,7 +353,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-
+                detection_config = await self.admin_client.get_detection_configuration(detection_config_id)
                 self.assertIsNotNone(detection_config.id)
                 self.assertEqual(detection_config.metric_id, data_feed.metric_ids[0])
                 self.assertEqual(detection_config.description, "My test metric anomaly detection configuration")
@@ -524,8 +525,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 detection_config.whole_series_detection_condition.change_threshold_condition = change_threshold_condition
                 detection_config.whole_series_detection_condition.cross_conditions_operator = "OR"
 
-                updated = await self.admin_client.update_detection_configuration(detection_config)
-
+                await self.admin_client.update_detection_configuration(detection_config)
+                updated = await self.admin_client.get_detection_configuration(detection_config.id)
                 self.assertEqual(updated.name, "updated")
                 self.assertEqual(updated.description, "updated")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
@@ -609,7 +610,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         min_ratio=2
                     )
                 )
-                updated = await self.admin_client.update_detection_configuration(
+                await self.admin_client.update_detection_configuration(
                     detection_config.id,
                     name="updated",
                     description="updated",
@@ -634,7 +635,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         change_threshold_condition=change_threshold_condition
                     )]
                 )
-
+                updated = await self.admin_client.get_detection_configuration(detection_config.id)
                 self.assertEqual(updated.name, "updated")
                 self.assertEqual(updated.description, "updated")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
@@ -723,7 +724,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 detection_config.name = "updateMe"
                 detection_config.description = "updateMe"
-                updated = await self.admin_client.update_detection_configuration(
+                await self.admin_client.update_detection_configuration(
                     detection_config,
                     whole_series_detection_condition=MetricDetectionCondition(
                         cross_conditions_operator="OR",
@@ -746,7 +747,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         change_threshold_condition=change_threshold_condition
                     )]
                 )
-
+                updated = await self.admin_client.get_detection_configuration(detection_config.id)
                 self.assertEqual(updated.name, "updateMe")
                 self.assertEqual(updated.description, "updateMe")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
@@ -807,14 +808,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 detection_config, data_feed = await self._create_detection_config_for_update("updatedetection")
 
-                updated = await self.admin_client.update_detection_configuration(
+                await self.admin_client.update_detection_configuration(
                     detection_config.id,
                     name="reset",
                     description="",
                     # series_detection_conditions=None,
                     # series_group_detection_conditions=None
                 )
-
+                updated = await self.admin_client.get_detection_configuration(detection_config.id)
                 self.assertEqual(updated.name, "reset")
                 self.assertEqual(updated.description, "")  # currently won't update with None
 

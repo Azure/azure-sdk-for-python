@@ -48,7 +48,7 @@ def sample_create_alert_config():
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    alert_config = client.create_alert_configuration(
+    alert_config_id = client.create_alert_configuration(
         name="my alert config",
         description="alert config description",
         cross_metrics_operator="AND",
@@ -91,7 +91,7 @@ def sample_create_alert_config():
         hook_ids=[hook_id]
     )
 
-    return alert_config
+    return client.get_alert_configuration(alert_config_id)
     # [END create_alert_config]
 
 
@@ -254,11 +254,12 @@ def sample_update_alert_config(alert_config):
     )
     alert_config.metric_alert_configurations.append(additional_alert)
 
-    updated = client.update_alert_configuration(
+    client.update_alert_configuration(
         alert_config,
         cross_metrics_operator="OR",
         description="updated alert config"
     )
+    updated = client.get_alert_configuration(alert_config.id)
 
     print("Updated alert name: {}".format(updated.name))
     print("Updated alert description: {}".format(updated.description))

@@ -40,7 +40,7 @@ async def sample_create_hook_async():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     async with client:
-        hook = await client.create_hook(
+        hook_id = await client.create_hook(
             hook=EmailNotificationHook(
                 name="email hook",
                 description="my email hook",
@@ -48,6 +48,7 @@ async def sample_create_hook_async():
                 external_link="https://docs.microsoft.com/en-us/azure/cognitive-services/metrics-advisor/how-tos/alerts"
             )
         )
+        hook = await client.get_hook(hook_id)
 
         return hook
     # [END create_hook_async]
@@ -114,10 +115,11 @@ async def sample_update_hook_async(hook):
     hook.description = "updated hook description"
 
     async with client:
-        updated = await client.update_hook(
+        await client.update_hook(
             hook,
             emails_to_alert=["newemail@alertme.com"]
         )
+        updated = await client.get_hook(hook.id)
         print("Updated name: {}".format(updated.name))
         print("Updated description: {}".format(updated.description))
         print("Updated emails: {}".format(updated.emails_to_alert))

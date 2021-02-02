@@ -27,7 +27,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -52,6 +52,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -74,10 +75,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -88,7 +89,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -112,6 +113,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -134,10 +136,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -148,7 +150,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -172,6 +174,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -194,10 +197,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -208,7 +211,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -231,6 +234,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -247,10 +251,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -261,7 +265,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -283,6 +287,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -300,10 +305,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope, "Metric")
             self.assertTrue(
                 alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive)
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -314,7 +319,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("wholeseries")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -334,6 +339,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -352,10 +358,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -366,7 +372,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("wholeseries")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -385,6 +391,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -403,10 +410,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -417,7 +424,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("wholeseries")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -436,6 +443,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -454,10 +462,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -468,7 +476,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -486,6 +494,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -498,10 +507,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -512,7 +521,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("seriesgroup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -533,6 +542,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -552,10 +562,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -566,7 +576,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("seriesgroup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -586,6 +596,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -605,10 +616,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -619,7 +630,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("seriesgroup")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -639,6 +650,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -658,10 +670,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertFalse(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -672,7 +684,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("seriesgroupsev")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -691,6 +703,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -704,10 +717,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -718,7 +731,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         detection_config, data_feed = self._create_data_feed_and_detection_config("multiple")
         alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
+            alert_config_id = self.admin_client.create_alert_configuration(
                 name=alert_config_name,
                 cross_metrics_operator="AND",
                 metric_alert_configurations=[
@@ -769,6 +782,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
+            alert_config = self.admin_client.get_alert_configuration(alert_config_id)
             self.assertEqual(alert_config.cross_metrics_operator, "AND")
             self.assertIsNotNone(alert_config.id)
             self.assertIsNotNone(alert_config.name)
@@ -801,10 +815,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(
                 alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity, "High")
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.admin_client.delete_alert_configuration(alert_config_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(alert_config_id)
 
         finally:
             self.admin_client.delete_detection_configuration(detection_config.id)
@@ -839,7 +853,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     lower=1
                 )
 
-            updated = self.admin_client.update_alert_configuration(alert_config)
+            self.admin_client.update_alert_configuration(alert_config)
+            updated = self.admin_client.get_alert_configuration(alert_config.id)
 
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update description")
@@ -859,7 +874,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_update_alert_config_with_kwargs(self):
         try:
             alert_config, data_feed, detection_config = self._create_alert_config_for_update("alertupdate")
-            updated = self.admin_client.update_alert_configuration(
+            self.admin_client.update_alert_configuration(
                 alert_config.id,
                 name="update",
                 description="update description",
@@ -922,7 +937,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-
+            updated = self.admin_client.get_alert_configuration(alert_config.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update description")
             self.assertEqual(updated.cross_metrics_operator, "OR")
@@ -949,7 +964,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             alert_config.metric_alert_configurations[1].alert_conditions.metric_boundary_condition = None
             alert_config.metric_alert_configurations[2].alert_conditions.metric_boundary_condition = None
 
-            updated = self.admin_client.update_alert_configuration(
+            self.admin_client.update_alert_configuration(
                 alert_config,
                 cross_metrics_operator="OR",
                 metric_alert_configurations=[
@@ -1010,7 +1025,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-
+            updated = self.admin_client.get_alert_configuration(alert_config.id)
             self.assertEqual(updated.name, "updateMe")
             self.assertEqual(updated.description, "updateMe")
             self.assertEqual(updated.cross_metrics_operator, "OR")
@@ -1029,7 +1044,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_update_anomaly_alert_by_resetting_properties(self):
         try:
             alert_config, data_feed, detection_config = self._create_alert_config_for_update("alertupdate")
-            updated = self.admin_client.update_alert_configuration(
+            self.admin_client.update_alert_configuration(
                 alert_config.id,
                 name="reset",
                 description="",  # can't pass None currently, bug says description is required
@@ -1048,7 +1063,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-
+            updated = self.admin_client.get_alert_configuration(alert_config.id)
             self.assertEqual(updated.name, "reset")
             self.assertEqual(updated.description, "")
             self.assertEqual(updated.cross_metrics_operator, None)

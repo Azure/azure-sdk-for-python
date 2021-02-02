@@ -51,7 +51,7 @@ async def sample_create_alert_config_async():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     async with client:
-        alert_config = await client.create_alert_configuration(
+        alert_config_id = await client.create_alert_configuration(
             name="my alert config",
             description="alert config description",
             cross_metrics_operator="AND",
@@ -93,6 +93,7 @@ async def sample_create_alert_config_async():
             ],
             hook_ids=[hook_id]
         )
+        alert_config = await client.get_alert_configuration(alert_config_id)
 
         return alert_config
     # [END create_alert_config_async]
@@ -267,11 +268,12 @@ async def sample_update_alert_config_async(alert_config):
     alert_config.metric_alert_configurations.append(additional_alert)
 
     async with client:
-        updated = await client.update_alert_configuration(
+        await client.update_alert_configuration(
             alert_config,
             cross_metrics_operator="OR",
             description="updated alert config"
         )
+        updated = await client.get_alert_configuration(alert_config.id)
 
         print("Updated alert name: {}".format(updated.name))
         print("Updated alert description: {}".format(updated.description))

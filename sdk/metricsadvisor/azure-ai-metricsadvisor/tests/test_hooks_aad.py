@@ -20,7 +20,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_create_email_hook(self):
         email_hook_name = self.create_random_name("testemailhook")
         try:
-            email_hook = self.admin_client.create_hook(
+            hook_id = self.admin_client.create_hook(
                 hook=EmailNotificationHook(
                     name=email_hook_name,
                     emails_to_alert=["yournamehere@microsoft.com"],
@@ -28,6 +28,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     external_link="external link"
                 )
             )
+            email_hook = self.admin_client.get_hook(hook_id)
             self.assertIsNotNone(email_hook.id)
             self.assertIsNotNone(email_hook.name)
             self.assertIsNotNone(email_hook.admin_emails)
@@ -36,15 +37,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(email_hook.external_link, "external link")
             self.assertEqual(email_hook.hook_type, "Email")
         finally:
-            self.admin_client.delete_hook(email_hook.id)
+            self.admin_client.delete_hook(hook_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_hook(email_hook.id)
+                self.admin_client.get_hook(hook_id)
 
     def test_create_web_hook(self):
         web_hook_name = self.create_random_name("testwebhook")
         try:
-            web_hook = self.admin_client.create_hook(
+            hook_id = self.admin_client.create_hook(
                 hook=WebNotificationHook(
                     name=web_hook_name,
                     endpoint="https://httpbin.org/post",
@@ -52,6 +53,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     external_link="external link"
                 )
             )
+            web_hook = self.admin_client.get_hook(hook_id)
             self.assertIsNotNone(web_hook.id)
             self.assertIsNotNone(web_hook.name)
             self.assertIsNotNone(web_hook.admin_emails)
@@ -60,10 +62,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(web_hook.external_link, "external link")
             self.assertEqual(web_hook.hook_type, "Webhook")
         finally:
-            self.admin_client.delete_hook(web_hook.id)
+            self.admin_client.delete_hook(hook_id)
 
             with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_hook(web_hook.id)
+                self.admin_client.get_hook(hook_id)
 
     def test_list_hooks(self):
         hooks = self.admin_client.list_hooks()
@@ -78,8 +80,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             hook.external_link = "update"
             hook.emails_to_alert = ["myemail@m.com"]
 
-            updated = self.admin_client.update_hook(hook)
-
+            self.admin_client.update_hook(hook)
+            updated = self.admin_client.get_hook(hook.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
@@ -92,7 +94,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("testhook")
         try:
             hook = self._create_email_hook_for_update(name)
-            updated = self.admin_client.update_hook(
+            self.admin_client.update_hook(
                 hook.id,
                 hook_type="Email",
                 name="update",
@@ -100,7 +102,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 external_link="update",
                 emails_to_alert=["myemail@m.com"]
             )
-
+            updated = self.admin_client.get_hook(hook.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
@@ -117,7 +119,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             hook.name = "don't update me"
             hook.description = "don't update me"
             hook.emails_to_alert = []
-            updated = self.admin_client.update_hook(
+            self.admin_client.update_hook(
                 hook,
                 hook_type="Email",
                 name="update",
@@ -125,7 +127,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 external_link="update",
                 emails_to_alert=["myemail@m.com"]
             )
-
+            updated = self.admin_client.get_hook(hook.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
@@ -138,14 +140,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("testhook")
         try:
             hook = self._create_email_hook_for_update(name)
-            updated = self.admin_client.update_hook(
+            self.admin_client.update_hook(
                 hook.id,
                 hook_type="Email",
                 name="reset",
                 description=None,
                 external_link=None,
             )
-
+            updated = self.admin_client.get_hook(hook.id)
             self.assertEqual(updated.name, "reset")
 
             # sending null, but not clearing properties
@@ -165,8 +167,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             hook.username = "myusername"
             hook.password = "password"
 
-            updated = self.admin_client.update_hook(hook)
-
+            self.admin_client.update_hook(hook)
+            updated = self.admin_client.get_hook(hook.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
@@ -180,7 +182,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("testwebhook")
         try:
             hook = self._create_web_hook_for_update(name)
-            updated = self.admin_client.update_hook(
+            self.admin_client.update_hook(
                 hook.id,
                 hook_type="Web",
                 endpoint="https://httpbin.org/post",
@@ -190,7 +192,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 username="myusername",
                 password="password"
             )
-
+            updated = self.admin_client.get_hook(hook.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
@@ -210,7 +212,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             hook.username = "don't update me"
             hook.password = "don't update me"
             hook.endpoint = "don't update me"
-            updated = self.admin_client.update_hook(
+            self.admin_client.update_hook(
                 hook,
                 hook_type="Web",
                 endpoint="https://httpbin.org/post",
@@ -219,7 +221,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 username="myusername",
                 password="password"
             )
-
+            updated = self.admin_client.get_hook(hook.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "updateMe")
             self.assertEqual(updated.external_link, "update")
@@ -233,7 +235,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("testhook")
         try:
             hook = self._create_web_hook_for_update(name)
-            updated = self.admin_client.update_hook(
+            self.admin_client.update_hook(
                 hook.id,
                 hook_type="Web",
                 name="reset",
@@ -243,7 +245,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 username="myusername",
                 password=None
             )
-
+            updated = self.admin_client.get_hook(hook.id)
             self.assertEqual(updated.name, "reset")
             self.assertEqual(updated.password, "")
 

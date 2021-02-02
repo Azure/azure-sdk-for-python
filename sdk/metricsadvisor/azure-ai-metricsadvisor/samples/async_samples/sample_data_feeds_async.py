@@ -53,7 +53,7 @@ async def sample_create_data_feed_async():
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
     async with client:
-        data_feed = await client.create_data_feed(
+        data_feed_id = await client.create_data_feed(
             name="My data feed",
             source=SQLServerDataFeed(
                 connection_string=sql_server_connection_string,
@@ -85,6 +85,7 @@ async def sample_create_data_feed_async():
                 access_mode="Private"
             )
         )
+        data_feed = await client.get_data_feed(data_feed_id)
 
         return data_feed
 
@@ -175,12 +176,13 @@ async def sample_update_data_feed_async(data_feed):
     data_feed.options.data_feed_description = "updated description for data feed"
 
     async with client:
-        updated_data_feed = await client.update_data_feed(
+        await client.update_data_feed(
             data_feed,
             access_mode="Public",
             fill_type="CustomValue",
             custom_fill_value=1
         )
+        updated_data_feed = await client.get_data_feed(data_feed.id)
 
         print("Updated name: {}".format(updated_data_feed.name))
         print("Updated description: {}".format(updated_data_feed.options.data_feed_description))

@@ -75,7 +75,7 @@ async def sample_create_detection_config_async():
     )
 
     async with client:
-        detection_config = await client.create_detection_configuration(
+        detection_config_id = await client.create_detection_configuration(
             name="my_detection_config",
             metric_id=metric_id,
             description="anomaly detection config for metric",
@@ -86,6 +86,7 @@ async def sample_create_detection_config_async():
                 smart_detection_condition=smart_detection_condition
             )
         )
+        detection_config = await client.get_detection_configuration(detection_config_id)
 
         return detection_config
     # [END create_detection_config_async]
@@ -199,7 +200,7 @@ async def sample_update_detection_config_async(detection_config):
     )
 
     async with client:
-        updated = await client.update_detection_configuration(
+        await client.update_detection_configuration(
             detection_config,
             series_group_detection_conditions=[
                 MetricSeriesGroupDetectionCondition(
@@ -214,6 +215,7 @@ async def sample_update_detection_config_async(detection_config):
                 )
             ]
         )
+        updated = await client.get_detection_configuration(detection_config.id)
         print("Updated detection name: {}".format(updated.name))
         print("Updated detection description: {}".format(updated.description))
         print("Updated detection condition for series group: {}".format(

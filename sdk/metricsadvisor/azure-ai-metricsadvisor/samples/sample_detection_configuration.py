@@ -72,7 +72,7 @@ def sample_create_detection_config():
         )
     )
 
-    detection_config = client.create_detection_configuration(
+    detection_config_id = client.create_detection_configuration(
         name="my_detection_config",
         metric_id=metric_id,
         description="anomaly detection config for metric",
@@ -84,7 +84,7 @@ def sample_create_detection_config():
         )
     )
 
-    return detection_config
+    return client.get_detection_configuration(detection_config_id)
     # [END create_detection_config]
 
 
@@ -190,7 +190,7 @@ def sample_update_detection_config(detection_config):
         )
     )
 
-    updated = client.update_detection_configuration(
+    client.update_detection_configuration(
         detection_config,
         series_group_detection_conditions=[
             MetricSeriesGroupDetectionCondition(
@@ -205,6 +205,7 @@ def sample_update_detection_config(detection_config):
             )
         ]
     )
+    updated = client.get_detection_configuration(detection_config.id)
     print("Updated detection name: {}".format(updated.name))
     print("Updated detection description: {}".format(updated.description))
     print("Updated detection condition for series group: {}".format(

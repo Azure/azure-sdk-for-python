@@ -14,24 +14,24 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionProgress
   response:
     body:
-      string: '{"latestSuccessTimestamp":"2021-01-21T00:00:00Z","latestActiveTimestamp":"2021-01-21T00:00:00Z"}'
+      string: '{"latestSuccessTimestamp":"2021-02-01T00:00:00Z","latestActiveTimestamp":"2021-02-01T00:00:00Z"}'
     headers:
       apim-request-id:
-      - 912905fc-6720-496a-aae5-92fff33fc5f8
+      - ae3ab3d5-e1d3-4fca-8c15-95290252fc67
       content-length:
       - '96'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 00:56:40 GMT
+      - Tue, 02 Feb 2021 22:02:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '219'
+      - '481'
       x-request-id:
-      - 912905fc-6720-496a-aae5-92fff33fc5f8
+      - ae3ab3d5-e1d3-4fca-8c15-95290252fc67
     status:
       code: 200
       message: OK

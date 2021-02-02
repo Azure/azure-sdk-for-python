@@ -173,7 +173,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_data_feed(self, name):
         name = create_random_name(name)
-        _data_feed = self.admin_client.create_data_feed(
+        data_feed_id = self.admin_client.create_data_feed(
             name=name,
             source=SQLServerDataFeed(
                 connection_string=self.sql_server_connection_string,
@@ -192,12 +192,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             ),
             ingestion_settings="2019-10-01T00:00:00Z",
         )
-        return self.admin_client.get_data_feed(data_feed_id=_data_feed.id)
+        return self.admin_client.get_data_feed(data_feed_id=data_feed_id)
 
     def _create_data_feed_and_detection_config(self, name):
         data_feed = self._create_data_feed(name)
         detection_config_name = create_random_name(name)
-        detection_config = self.admin_client.create_detection_configuration(
+        detection_config_id = self.admin_client.create_detection_configuration(
             name=detection_config_name,
             metric_id=data_feed.metric_ids[0],
             description="testing",
@@ -212,11 +212,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 )
             )
         )
+        detection_config = self.admin_client.get_detection_configuration(detection_config_id)
         return detection_config, data_feed
 
     def _create_data_feed_for_update(self, name):
         data_feed_name = create_random_name(name)
-        return self.admin_client.create_data_feed(
+        data_feed_id = self.admin_client.create_data_feed(
             name=data_feed_name,
             source=SQLServerDataFeed(
                 connection_string=self.sql_server_connection_string,
@@ -257,13 +258,13 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 access_mode="Private",
                 action_link_template="action link template"
             )
-
         )
+        return self.admin_client.get_data_feed(data_feed_id)
 
     def _create_alert_config_for_update(self, name):
         detection_config, data_feed = self._create_data_feed_and_detection_config(name)
         alert_config_name = create_random_name(name)
-        alert_config = self.admin_client.create_alert_configuration(
+        alert_config_id = self.admin_client.create_alert_configuration(
             name=alert_config_name,
             cross_metrics_operator="AND",
             metric_alert_configurations=[
@@ -314,12 +315,13 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             ],
             hook_ids=[]
         )
+        alert_config = self.admin_client.get_alert_configuration(alert_config_id)
         return alert_config, data_feed, detection_config
 
     def _create_detection_config_for_update(self, name):
         data_feed = self._create_data_feed(name)
         detection_config_name = create_random_name("testupdated")
-        detection_config = self.admin_client.create_detection_configuration(
+        detection_config_id = self.admin_client.create_detection_configuration(
             name=detection_config_name,
             metric_id=data_feed.metric_ids[0],
             description="My test metric anomaly detection configuration",
@@ -376,10 +378,11 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 )
             )]
         )
+        detection_config = self.admin_client.get_detection_configuration(detection_config_id)
         return detection_config, data_feed
 
     def _create_email_hook_for_update(self, name):
-        return self.admin_client.create_hook(
+        hook_id = self.admin_client.create_hook(
             hook=EmailNotificationHook(
                 name=name,
                 emails_to_alert=["yournamehere@microsoft.com"],
@@ -387,9 +390,10 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 external_link="external link"
             )
         )
+        return self.admin_client.get_hook(hook_id)
 
     def _create_web_hook_for_update(self, name):
-        return self.admin_client.create_hook(
+        hook_id = self.admin_client.create_hook(
             hook=WebNotificationHook(
                 name=name,
                 endpoint="https://httpbin.org/post",
@@ -399,6 +403,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 password="123"
             )
         )
+        return self.admin_client.get_hook(hook_id)
 
 
 class TestMetricsAdvisorClientBase(AzureTestCase):

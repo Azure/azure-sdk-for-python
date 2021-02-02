@@ -29,7 +29,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -54,6 +54,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -76,10 +77,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -92,7 +93,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -116,6 +117,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -138,10 +140,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -154,7 +156,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -178,6 +180,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -200,10 +203,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -216,7 +219,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -239,6 +242,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -255,10 +259,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(
                     alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -271,7 +275,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -293,6 +297,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -310,10 +315,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope, "Metric")
                 self.assertTrue(
                     alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive)
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -326,7 +331,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -346,6 +351,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -364,10 +370,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -380,7 +386,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -399,6 +405,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -417,10 +424,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -433,7 +440,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -452,6 +459,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -470,10 +478,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -486,7 +494,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -504,6 +512,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -516,10 +525,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(
                     alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -532,7 +541,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -553,6 +562,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -572,10 +582,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -588,7 +598,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -608,6 +618,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -627,10 +638,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -643,7 +654,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -663,6 +674,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -682,10 +694,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertFalse(
                     alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -698,7 +710,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -717,6 +729,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -730,10 +743,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(
                     alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -746,7 +759,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         alert_config_name = self.create_random_name("testalert")
         async with self.admin_client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
+                alert_config_id = await self.admin_client.create_alert_configuration(
                     name=alert_config_name,
                     cross_metrics_operator="AND",
                     metric_alert_configurations=[
@@ -797,6 +810,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ],
                     hook_ids=[]
                 )
+                alert_config = await self.admin_client.get_alert_configuration(alert_config_id)
                 self.assertEqual(alert_config.cross_metrics_operator, "AND")
                 self.assertIsNotNone(alert_config.id)
                 self.assertIsNotNone(alert_config.name)
@@ -829,10 +843,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(
                     alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity, "High")
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                await self.admin_client.delete_alert_configuration(alert_config_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await self.admin_client.get_alert_configuration(alert_config_id)
 
             finally:
                 await self.admin_client.delete_detection_configuration(detection_config.id)
@@ -873,7 +887,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         lower=1
                     )
 
-                updated = await self.admin_client.update_alert_configuration(alert_config)
+                await self.admin_client.update_alert_configuration(alert_config)
+                updated = await self.admin_client.get_alert_configuration(alert_config.id)
 
                 self.assertEqual(updated.name, "update")
                 self.assertEqual(updated.description, "update description")
@@ -895,7 +910,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config, data_feed, detection_config = await self._create_alert_config_for_update("alertupdate")
-                updated = await self.admin_client.update_alert_configuration(
+                await self.admin_client.update_alert_configuration(
                     alert_config.id,
                     name="update",
                     description="update description",
@@ -958,7 +973,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-
+                updated = await self.admin_client.get_alert_configuration(alert_config.id)
                 self.assertEqual(updated.name, "update")
                 self.assertEqual(updated.description, "update description")
                 self.assertEqual(updated.cross_metrics_operator, "OR")
@@ -987,7 +1002,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 alert_config.metric_alert_configurations[1].alert_conditions.metric_boundary_condition = None
                 alert_config.metric_alert_configurations[2].alert_conditions.metric_boundary_condition = None
 
-                updated = await self.admin_client.update_alert_configuration(
+                await self.admin_client.update_alert_configuration(
                     alert_config,
                     cross_metrics_operator="OR",
                     metric_alert_configurations=[
@@ -1048,7 +1063,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-
+                updated = await self.admin_client.get_alert_configuration(alert_config.id)
                 self.assertEqual(updated.name, "updateMe")
                 self.assertEqual(updated.description, "updateMe")
                 self.assertEqual(updated.cross_metrics_operator, "OR")
@@ -1069,7 +1084,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config, data_feed, detection_config = await self._create_alert_config_for_update("alertupdate")
-                updated = await self.admin_client.update_alert_configuration(
+                await self.admin_client.update_alert_configuration(
                     alert_config.id,
                     name="reset",
                     description="",  # can't pass None currently, bug says description is required
@@ -1088,7 +1103,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-
+                updated = await self.admin_client.get_alert_configuration(alert_config.id)
                 self.assertEqual(updated.name, "reset")
                 self.assertEqual(updated.description, "")
                 self.assertEqual(updated.cross_metrics_operator, None)

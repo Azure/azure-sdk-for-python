@@ -37,7 +37,7 @@ def sample_create_hook():
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    hook = client.create_hook(
+    hook_id = client.create_hook(
         hook=EmailNotificationHook(
             name="email hook",
             description="my email hook",
@@ -46,7 +46,7 @@ def sample_create_hook():
         )
     )
 
-    return hook
+    return client.get_hook(hook_id)
     # [END create_hook]
 
 
@@ -106,10 +106,11 @@ def sample_update_hook(hook):
     hook.name = "updated hook name"
     hook.description = "updated hook description"
 
-    updated = client.update_hook(
+    client.update_hook(
         hook,
         emails_to_alert=["newemail@alertme.com"]
     )
+    updated = client.get_hook(hook.id)
     print("Updated name: {}".format(updated.name))
     print("Updated description: {}".format(updated.description))
     print("Updated emails: {}".format(updated.emails_to_alert))

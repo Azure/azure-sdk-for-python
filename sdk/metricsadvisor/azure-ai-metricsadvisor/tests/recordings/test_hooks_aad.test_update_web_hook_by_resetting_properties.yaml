@@ -23,21 +23,21 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - bf1d4669-7c60-4e01-b9fd-7a178eaadff6
+      - 96609341-1823-42e2-8395-31650ad10e64
       content-length:
       - '0'
       date:
-      - Fri, 22 Jan 2021 01:00:16 GMT
+      - Tue, 02 Feb 2021 22:07:06 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e3089740-cad3-4a03-9ad4-f5f69220f3c0
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/5be9172a-17d2-49fd-ac29-17e246df62ad
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5638'
+      - '922'
       x-request-id:
-      - bf1d4669-7c60-4e01-b9fd-7a178eaadff6
+      - 96609341-1823-42e2-8395-31650ad10e64
     status:
       code: 201
       message: Created
@@ -53,28 +53,28 @@ interactions:
       User-Agent:
       - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e3089740-cad3-4a03-9ad4-f5f69220f3c0
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/5be9172a-17d2-49fd-ac29-17e246df62ad
   response:
     body:
-      string: '{"hookId":"e3089740-cad3-4a03-9ad4-f5f69220f3c0","hookName":"testhookd56a1860","hookType":"Webhook","externalLink":"external
+      string: '{"hookId":"5be9172a-17d2-49fd-ac29-17e246df62ad","hookName":"testhookd56a1860","hookType":"Webhook","externalLink":"external
         link","description":"my web hook","admins":["f850650c-1fcf-4489-b46f-71af2e30d360"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"krista","password":"123","headers":{},"certificateKey":"","certificatePassword":""}}'
     headers:
       apim-request-id:
-      - b9440057-e8ee-4b12-a7da-403fa1487ca9
+      - 87503cd6-c645-4580-a7e9-6eafb7a99f7a
       content-length:
       - '360'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 01:00:16 GMT
+      - Tue, 02 Feb 2021 22:07:06 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '110'
+      - '184'
       x-request-id:
-      - b9440057-e8ee-4b12-a7da-403fa1487ca9
+      - 87503cd6-c645-4580-a7e9-6eafb7a99f7a
     status:
       code: 200
       message: OK
@@ -96,25 +96,25 @@ interactions:
       User-Agent:
       - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e3089740-cad3-4a03-9ad4-f5f69220f3c0
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/5be9172a-17d2-49fd-ac29-17e246df62ad
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 99079c05-29f6-41e4-b43b-0ee4f3347f1e
+      - ffcd82dd-5057-45da-b988-23bd8793a8f8
       content-length:
       - '0'
       date:
-      - Fri, 22 Jan 2021 01:00:17 GMT
+      - Tue, 02 Feb 2021 22:07:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '770'
+      - '579'
       x-request-id:
-      - 99079c05-29f6-41e4-b43b-0ee4f3347f1e
+      - ffcd82dd-5057-45da-b988-23bd8793a8f8
     status:
       code: 204
       message: No Content
@@ -130,28 +130,28 @@ interactions:
       User-Agent:
       - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e3089740-cad3-4a03-9ad4-f5f69220f3c0
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/5be9172a-17d2-49fd-ac29-17e246df62ad
   response:
     body:
-      string: '{"hookId":"e3089740-cad3-4a03-9ad4-f5f69220f3c0","hookName":"reset","hookType":"Webhook","externalLink":"external
+      string: '{"hookId":"5be9172a-17d2-49fd-ac29-17e246df62ad","hookName":"reset","hookType":"Webhook","externalLink":"external
         link","description":"my web hook","admins":["f850650c-1fcf-4489-b46f-71af2e30d360"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"myusername","password":"","headers":{},"certificateKey":"","certificatePassword":""}}'
     headers:
       apim-request-id:
-      - 2c632ef8-fc0d-4911-8ad2-fa51e1fff1db
+      - 1b58b5c4-65f5-4443-a7c1-a5e279b9ddca
       content-length:
       - '350'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 01:00:17 GMT
+      - Tue, 02 Feb 2021 22:07:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '94'
+      - '220'
       x-request-id:
-      - 2c632ef8-fc0d-4911-8ad2-fa51e1fff1db
+      - 1b58b5c4-65f5-4443-a7c1-a5e279b9ddca
     status:
       code: 200
       message: OK
@@ -169,25 +169,25 @@ interactions:
       User-Agent:
       - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/e3089740-cad3-4a03-9ad4-f5f69220f3c0
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/5be9172a-17d2-49fd-ac29-17e246df62ad
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - e924d577-96c3-4ed2-b2f8-e65244598380
+      - 2d4c0fad-3e06-4937-8200-3b3871277fd8
       content-length:
       - '0'
       date:
-      - Fri, 22 Jan 2021 01:00:17 GMT
+      - Tue, 02 Feb 2021 22:07:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '118'
+      - '332'
       x-request-id:
-      - e924d577-96c3-4ed2-b2f8-e65244598380
+      - 2d4c0fad-3e06-4937-8200-3b3871277fd8
     status:
       code: 204
       message: No Content

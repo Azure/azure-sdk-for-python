@@ -17,14 +17,14 @@ interactions:
       string: '{"value":["Abidjan","Ahmadabad","Alexandria","Ankara","Atlanta","Baghdad","Bangkok","Barcelona","Beijing","Belo
         Horizonte","Bengaluru","Bogota","Boston","Brasilia","Buenos Aires","Cairo","Chengdu","Chennai","Chicago","Chittagong"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20"}'
     headers:
-      apim-request-id: e66e6d14-dc7a-44a3-a1e6-db282bbcf924
+      apim-request-id: b089df2f-eff7-475b-85aa-2c5932d0742d
       content-length: '402'
       content-type: application/json; charset=utf-8
-      date: Fri, 22 Jan 2021 01:10:10 GMT
+      date: Tue, 02 Feb 2021 22:28:15 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '114'
-      x-request-id: e66e6d14-dc7a-44a3-a1e6-db282bbcf924
+      x-envoy-upstream-service-time: '812'
+      x-request-id: b089df2f-eff7-475b-85aa-2c5932d0742d
     status:
       code: 200
       message: OK
@@ -47,14 +47,14 @@ interactions:
       string: '{"value":["Chongqing","Dallas","Delhi","Dhaka","Dongguan","Guadalajara","Guangzhou","Hanoi","Haora","Hechi","Ho
         Chi Minh City","Hong Kong","Houston","Hyderabad","Istanbul","Jakarta","Karachi","Khartoum","Kinshasa","Kolkata"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=40"}'
     headers:
-      apim-request-id: 784136f5-db13-41e2-b443-e43bba81c8a9
+      apim-request-id: dc074ed0-1a7d-4138-9573-ffc2a69bf41c
       content-length: '396'
       content-type: application/json; charset=utf-8
-      date: Fri, 22 Jan 2021 01:10:10 GMT
+      date: Tue, 02 Feb 2021 22:28:15 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '108'
-      x-request-id: 784136f5-db13-41e2-b443-e43bba81c8a9
+      x-envoy-upstream-service-time: '187'
+      x-request-id: dc074ed0-1a7d-4138-9573-ffc2a69bf41c
     status:
       code: 200
       message: OK
@@ -78,14 +78,14 @@ interactions:
         City","Miami","Monterrey","Moscow","Mumbai","New York","Osaka","Paris","Philadelphia","Phoenix","Porto
         Alegre"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=60"}'
     headers:
-      apim-request-id: b752fdf8-71dc-4c2b-8dd9-474449b0b98b
+      apim-request-id: dbbb4c6a-1f87-4c12-a15b-7b88a8c92b31
       content-length: '387'
       content-type: application/json; charset=utf-8
-      date: Fri, 22 Jan 2021 01:10:10 GMT
+      date: Tue, 02 Feb 2021 22:28:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '98'
-      x-request-id: b752fdf8-71dc-4c2b-8dd9-474449b0b98b
+      x-envoy-upstream-service-time: '276'
+      x-request-id: dbbb4c6a-1f87-4c12-a15b-7b88a8c92b31
     status:
       code: 200
       message: OK
@@ -108,14 +108,14 @@ interactions:
       string: '{"value":["Pune","Rangoon","Rio de Janeiro","Riyadh","Saint Petersburg","Santiago","Sao
         Paulo","Seoul","Shanghai","Shenyang","Shenzhen","Singapore","__SUM__","Surat","Sydney","Taipei","Tehran","Tianjin","Tokyo","Toronto"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=80"}'
     headers:
-      apim-request-id: f6e76a6c-0a11-40a4-b183-6618605dbead
+      apim-request-id: f5e494e5-9d87-4a59-a297-e4975f9d0665
       content-length: '393'
       content-type: application/json; charset=utf-8
-      date: Fri, 22 Jan 2021 01:10:10 GMT
+      date: Tue, 02 Feb 2021 22:28:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '113'
-      x-request-id: f6e76a6c-0a11-40a4-b183-6618605dbead
+      x-envoy-upstream-service-time: '244'
+      x-request-id: f5e494e5-9d87-4a59-a297-e4975f9d0665
     status:
       code: 200
       message: OK
@@ -137,14 +137,14 @@ interactions:
     body:
       string: '{"value":["Washington","Wuhan","Xi''an","Yokohama"],"@nextLink":null}'
     headers:
-      apim-request-id: b37c07d1-f065-4652-8356-d3b09cfdc057
+      apim-request-id: 28077714-0b33-4ed3-97d3-ad426c9d7423
       content-length: '68'
       content-type: application/json; charset=utf-8
-      date: Fri, 22 Jan 2021 01:10:10 GMT
+      date: Tue, 02 Feb 2021 22:28:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '118'
-      x-request-id: b37c07d1-f065-4652-8356-d3b09cfdc057
+      x-envoy-upstream-service-time: '201'
+      x-request-id: 28077714-0b33-4ed3-97d3-ad426c9d7423
     status:
       code: 200
       message: OK

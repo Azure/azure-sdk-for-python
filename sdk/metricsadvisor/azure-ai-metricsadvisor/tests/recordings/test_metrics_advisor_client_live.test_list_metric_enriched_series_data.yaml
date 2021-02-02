@@ -22,21 +22,21 @@ interactions:
       string: '{"value":[{"series":{"dimension":{"dimension_name":"Los Angeles"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
     headers:
       apim-request-id:
-      - f943e76c-0b65-4bb2-b13a-18c1c9ecf1b6
+      - c0d2af0d-077a-49b8-ab25-e0cc66b5c2dc
       content-length:
       - '197'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 01:03:29 GMT
+      - Tue, 02 Feb 2021 22:14:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '209'
+      - '1004'
       x-request-id:
-      - f943e76c-0b65-4bb2-b13a-18c1c9ecf1b6
+      - c0d2af0d-077a-49b8-ab25-e0cc66b5c2dc
     status:
       code: 200
       message: OK

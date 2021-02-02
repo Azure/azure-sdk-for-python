@@ -840,21 +840,21 @@ interactions:
         Products"},"property":{"anomalySeverity":"Medium"}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Guangzhou","category":"Handmade"},"property":{"anomalySeverity":"Low"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query?$top=1000&$skip=1000"}'
     headers:
       apim-request-id:
-      - 092417cf-bb24-4145-a38f-e67ed9ff11d7
+      - 144b861b-0f53-41ec-8ce7-a96268174b3a
       content-length:
       - '138739'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 01:00:38 GMT
+      - Tue, 02 Feb 2021 22:07:27 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '93'
+      - '223'
       x-request-id:
-      - 092417cf-bb24-4145-a38f-e67ed9ff11d7
+      - 144b861b-0f53-41ec-8ce7-a96268174b3a
     status:
       code: 200
       message: OK
@@ -1128,21 +1128,21 @@ interactions:
         Handbags & Sunglasses"},"property":{"anomalySeverity":"High"}}],"@nextLink":null}'
     headers:
       apim-request-id:
-      - f84af39e-4fd6-478f-90b5-74e9695adaa2
+      - be43b532-f40c-49c0-87fb-495b28ca4ace
       content-length:
       - '39554'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 01:00:38 GMT
+      - Tue, 02 Feb 2021 22:07:27 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '73'
+      - '174'
       x-request-id:
-      - f84af39e-4fd6-478f-90b5-74e9695adaa2
+      - be43b532-f40c-49c0-87fb-495b28ca4ace
     status:
       code: 200
       message: OK

@@ -43,7 +43,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         data_feed_name = self.create_random_name("testfeed")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=data_feed_name,
                     source=SQLServerDataFeed(
                         connection_string=self.sql_server_connection_string,
@@ -53,7 +53,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     schema=["cost", "revenue"],
                     ingestion_settings=datetime.datetime(2019, 10, 1)
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -66,7 +66,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
                                  datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_from_sql_server(self):
@@ -74,7 +74,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         data_feed_name = self.create_random_name("testfeedasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=data_feed_name,
                     source=SQLServerDataFeed(
                         connection_string=self.sql_server_connection_string,
@@ -115,8 +115,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         access_mode="Private",
                         action_link_template="action link template"
                     )
-
                 )
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -154,10 +154,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.metric_ids)
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_data_feed(data_feed.id)
+                    await self.admin_client.get_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_from_sql_server_with_custom_values(self):
@@ -165,7 +165,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         data_feed_name = self.create_random_name("testfeedasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=data_feed_name,
                     source=SQLServerDataFeed(
                         connection_string=self.sql_server_connection_string,
@@ -209,8 +209,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         access_mode="Private",
                         action_link_template="action link template"
                     )
-
                 )
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -250,17 +250,17 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.metric_ids)
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
                 with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_data_feed(data_feed.id)
+                    await self.admin_client.get_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_table(self):
         name = self.create_random_name("tablefeedasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=AzureTableDataFeed(
                         connection_string=self.azure_table_connection_string,
@@ -285,7 +285,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -294,14 +294,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.table, "adsample")
                 self.assertEqual(data_feed.source.query, "PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'")
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_blob(self):
         name = self.create_random_name("blobfeedasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=AzureBlobDataFeed(
                         connection_string=self.azure_blob_connection_string,
@@ -326,7 +326,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -335,14 +335,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.container, "adsample")
                 self.assertEqual(data_feed.source.blob_template, "%Y/%m/%d/%h/JsonFormatV2.json")
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_cosmos_db(self):
         name = self.create_random_name("cosmosfeedasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=AzureCosmosDBDataFeed(
                         connection_string=self.azure_cosmosdb_connection_string,
@@ -368,7 +368,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -378,14 +378,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.collection_id, "adsample")
                 self.assertEqual(data_feed.source.sql_query, "'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'")
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_http_request_get(self):
         name = self.create_random_name("httprequestfeedgetasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=HttpRequestDataFeed(
                         url=self.http_request_get_url,
@@ -407,9 +407,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 10, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -418,14 +417,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.http_method, "GET")
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_http_request_post(self):
         name = self.create_random_name("httprequestfeedpostasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=HttpRequestDataFeed(
                         url=self.http_request_post_url,
@@ -448,9 +447,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 10, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -459,7 +457,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.http_method, "POST")
                 self.assertEqual(data_feed.source.payload, "{'startTime': '@StartTime'}")
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_application_insights(self):
@@ -470,7 +468,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
                     "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
                     "duration_max_ms = max(duration) by resultCode"
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=AzureApplicationInsightsDataFeed(
                         azure_cloud="Azure",
@@ -494,9 +492,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2020, 7, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -506,7 +503,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.source.query)
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_data_explorer(self):
@@ -515,7 +512,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 query = "let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime + 1d; " \
                         "adsample | where Timestamp >= StartDateTime and Timestamp < EndDateTime"
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=AzureDataExplorerDataFeed(
                         connection_string=self.azure_data_explorer_connection_string,
@@ -537,9 +534,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 1, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -548,14 +544,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.query, query)
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_influxdb(self):
         name = self.create_random_name("influxdbasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=InfluxDBDataFeed(
                         connection_string=self.influxdb_connection_string,
@@ -580,9 +576,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 1, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -594,14 +589,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.user_name, "adreadonly")
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_datalake(self):
         name = self.create_random_name("datalakeasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=AzureDataLakeStorageGen2DataFeed(
                         account_name="adsampledatalakegen2",
@@ -626,9 +621,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 1, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -640,14 +634,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.file_template, "adsample.json")
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_mongodb(self):
         name = self.create_random_name("mongodbasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=MongoDBDataFeed(
                         connection_string=self.mongodb_connection_string,
@@ -670,9 +664,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 1, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -682,14 +675,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.command, '{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}')
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_mysql(self):
         name = self.create_random_name("mysqlasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=MySqlDataFeed(
                         connection_string=self.mysql_connection_string,
@@ -711,9 +704,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 1, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -722,14 +714,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_postgresql(self):
         name = self.create_random_name("postgresqlasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=PostgreSqlDataFeed(
                         connection_string=self.postgresql_connection_string,
@@ -751,9 +743,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 1, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -762,14 +753,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_elasticsearch(self):
         name = self.create_random_name("elasticasync")
         async with self.admin_client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
+                data_feed_id = await self.admin_client.create_data_feed(
                     name=name,
                     source=ElasticsearchDataFeed(
                         host="ad-sample-es.westus2.cloudapp.azure.com",
@@ -793,9 +784,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=DataFeedIngestionSettings(
                         ingestion_begin_time=datetime.datetime(2019, 1, 1),
                     ),
-
                 )
-
+                data_feed = await self.admin_client.get_data_feed(data_feed_id)
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
@@ -806,7 +796,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.query, "'select * from adsample where timestamp = @StartTime'")
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.admin_client.delete_data_feed(data_feed_id)
 
     @AzureTestCase.await_prepared_test
     async def test_list_data_feeds(self):
@@ -892,7 +882,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.source.connection_string = "updated"
                 data_feed.source.query = "get data"
 
-                updated = await self.admin_client.update_data_feed(data_feed)
+                await self.admin_client.update_data_feed(data_feed)
+                updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "update")
                 self.assertEqual(updated.options.data_feed_description, "updated")
                 self.assertEqual(updated.schema.timestamp_column, "time")
@@ -923,7 +914,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
             try:
-                updated = await self.admin_client.update_data_feed(
+                await self.admin_client.update_data_feed(
                     data_feed.id,
                     name="update",
                     data_feed_description="updated",
@@ -948,6 +939,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         query="get data"
                     )
                 )
+                updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "update")
                 self.assertEqual(updated.options.data_feed_description, "updated")
                 self.assertEqual(updated.schema.timestamp_column, "time")
@@ -999,7 +991,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.source.connection_string = "don't update me"
                 data_feed.source.query = "don't update me"
 
-                updated = await self.admin_client.update_data_feed(
+                await self.admin_client.update_data_feed(
                     data_feed,
                     timestamp_column="time",
                     ingestion_begin_time=datetime.datetime(2020, 12, 10),
@@ -1022,6 +1014,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         query="get data"
                     )
                 )
+                updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "updateMe")
                 self.assertEqual(updated.options.data_feed_description, "updateMe")
                 self.assertEqual(updated.schema.timestamp_column, "time")
@@ -1052,7 +1045,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
             try:
-                updated = await self.admin_client.update_data_feed(
+                await self.admin_client.update_data_feed(
                     data_feed.id,
                     name="update",
                     data_feed_description=None,
@@ -1072,6 +1065,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     status=None,
                     action_link_template=None,
                 )
+                updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "update")
                 # self.assertEqual(updated.options.data_feed_description, "")  # doesn't currently clear
                 # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear

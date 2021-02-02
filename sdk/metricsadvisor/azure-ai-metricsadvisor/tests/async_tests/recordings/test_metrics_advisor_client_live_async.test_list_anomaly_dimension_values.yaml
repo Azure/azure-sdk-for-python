@@ -15,21 +15,21 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
   response:
     body:
-      string: '{"value":["Karachi","__SUM__","Los Angeles","Delhi","Manila","Seoul","Mumbai","New
+      string: '{"value":["__SUM__","Karachi","Los Angeles","Delhi","Manila","Seoul","Mumbai","New
         York","Miami","Mexico City","Philadelphia","Osaka","Tianjin","Istanbul","Taipei","Madrid","Moscow","Kolkata","Shenzhen","Rio
         de Janeiro","Belo Horizonte","Lahore","Beijing","Dallas","Jakarta","Hyderabad","Wuhan","Lima","Shanghai","Bangkok","Bogota","Houston","Buenos
         Aires","Kinshasa","Santiago","London","Bengaluru","Chennai","Tokyo","Sao Paulo","Lagos","Hong
         Kong","Cairo","Chongqing","Guangzhou","Chicago","Tehran","Dhaka","Paris","Ho
         Chi Minh City","Barcelona","Washington","Pune","Shenyang","Luanda","Baghdad","Guadalajara","Haora","Singapore","Toronto"],"@nextLink":null}'
     headers:
-      apim-request-id: 85c96da4-1a39-4ac2-9c95-876bce6bb00e
+      apim-request-id: 88983da9-a2d1-41d8-b0b6-be2745ba4b87
       content-length: '660'
       content-type: application/json; charset=utf-8
-      date: Fri, 22 Jan 2021 01:09:01 GMT
+      date: Tue, 02 Feb 2021 22:25:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '246'
-      x-request-id: 85c96da4-1a39-4ac2-9c95-876bce6bb00e
+      x-envoy-upstream-service-time: '551'
+      x-request-id: 88983da9-a2d1-41d8-b0b6-be2745ba4b87
     status:
       code: 200
       message: OK
