@@ -201,7 +201,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
     @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    def test_rename_container_with_container_client(
+    async def test_rename_container_with_container_client(
             self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         old_name1 = self._get_container_reference(prefix="oldcontainer1")
