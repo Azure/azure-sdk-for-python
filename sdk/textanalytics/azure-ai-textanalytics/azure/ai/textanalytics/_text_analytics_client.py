@@ -699,7 +699,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: Union[List[RecognizeEntitiesAction], List[RecognizePiiEntitiesAction], List[ExtractKeyPhrasesAction]]
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]]
         **kwargs  # type: Any
     ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeBatchActionsResult]]
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
@@ -731,7 +731,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             object to return a pageable heterogeneous list of the action results in the order
             the actions were sent in this method.
         :rtype:
-            LROPoller[ItemPaged[]
+            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
                 list[
                     ~azure.ai.textanalytics.RecognizeEntitiesActionResult or
                     ~azure.ai.textanalytics.RecognizePiiEntitiesActionResult or
@@ -781,7 +781,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 tasks=analyze_tasks,
                 analysis_input=docs
             )
-            poller = self._client.begin_analyze(
+            return self._client.begin_analyze(
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats)),
                 polling=AnalyzeBatchActionsLROPollingMethod(
@@ -793,7 +793,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-            return AnalyzeBatchActionsLROPoller.from_lro_poller(poller)
 
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):

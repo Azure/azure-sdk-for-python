@@ -7,7 +7,6 @@ import json
 from six.moves.urllib.parse import urlencode
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling, OperationFailed, BadStatus
-from ._generated.v3_1_preview_3.models import JobMetadata
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallysucceeded"])
@@ -95,6 +94,7 @@ class AnalyzeBatchActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
+        from ._generated.v3_1_preview_3.models import JobMetadata
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -187,12 +187,3 @@ class AnalyzeBatchActionsLROPoller(LROPoller):
     @property
     def id(self):
         return self._polling_method.id
-
-    @classmethod
-    def from_lro_poller(cls, lro_poller):
-        return cls(
-            client=lro_poller._polling_method._client,
-            initial_response=lro_poller._polling_method._initial_response,
-            deserialization_callback=lro_poller._polling_method._deserialization_callback,
-            polling_method=lro_poller._polling_method,
-        )
