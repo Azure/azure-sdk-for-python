@@ -149,8 +149,7 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create ec key
         ec_key_name = self.get_resource_name("crud-ec-key")
-        is_hsm = False  # TODO: conditionally set this when running tests on KV and MHSM
-        self._create_ec_key(client, key_name=ec_key_name, hsm=is_hsm)
+        self._create_ec_key(client, key_name=ec_key_name, hsm=True)
         # create ec with curve
         ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
         created_ec_key_curve = client.create_ec_key(name=ec_key_curve_name, curve="P-256")
