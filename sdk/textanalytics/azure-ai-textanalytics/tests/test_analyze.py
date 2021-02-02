@@ -41,7 +41,6 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.begin_analyze_batch_actions("hello world", actions=[], polling_interval=self._interval())
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_dict_key_phrase_task(self, client):
@@ -70,13 +69,14 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertIsNotNone(doc.id)
             #self.assertIsNotNone(doc.statistics)
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_dict_entities_task(self, client):
-        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
-                {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
-                {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
+    def test_all_successful_passing_text_document_input_entities_task(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975", language="en"),
+            TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.", language="es"),
+            TextDocumentInput(id="3", text="Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.", language="de"),
+        ]
 
         response = client.begin_analyze_batch_actions(
             docs,
@@ -106,11 +106,12 @@ class TestAnalyze(TextAnalyticsTest):
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_dict_pii_entities_task(self, client):
+    def test_all_successful_passing_string_pii_entities_task(self, client):
 
-        docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
-                {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
-                {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
+        docs = ["My SSN is 859-98-0987.",
+                "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
+                "Is 998.214.865-68 your Brazilian CPF number?"
+        ]
 
         response = client.begin_analyze_batch_actions(
             docs,
@@ -141,62 +142,6 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_text_document_input_key_phrase_task(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen", language="en"),
-            TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen", language="es")
-        ]
-
-        response = client.begin_analyze_batch_actions(
-            docs,
-            actions=[ExtractKeyPhrasesAction()],
-            polling_interval=self._interval(),
-        ).result()
-
-        action_results = list(response)
-
-        assert len(action_results) == 1
-        action_result = action_results[0]
-
-        assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-        assert len(action_result.document_results) == len(docs)
-
-        for doc in action_result.document_results:
-            self.assertIn("Paul Allen", doc.key_phrases)
-            self.assertIn("Bill Gates", doc.key_phrases)
-            self.assertIn("Microsoft", doc.key_phrases)
-            self.assertIsNotNone(doc.id)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_passing_only_string_key_phrase_task(self, client):
-        docs = [
-            u"Microsoft was founded by Bill Gates and Paul Allen",
-            u"Microsoft fue fundado por Bill Gates y Paul Allen"
-        ]
-
-        response = client.begin_analyze_batch_actions(
-            docs,
-            actions=[ExtractKeyPhrasesAction()],
-            polling_interval=self._interval(),
-        ).result()
-
-        action_results = list(response)
-
-        assert len(action_results) == 1
-        action_result = action_results[0]
-
-        assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-        assert len(action_result.document_results) == len(docs)
-
-        self.assertIn("Paul Allen", action_result.document_results[0].key_phrases)
-        self.assertIn("Bill Gates", action_result.document_results[0].key_phrases)
-        self.assertIn("Microsoft", action_result.document_results[0].key_phrases)
-        self.assertIsNotNone(action_result.document_results[0].id)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -257,7 +202,6 @@ class TestAnalyze(TextAnalyticsTest):
             for idx, doc in enumerate(action_result.document_results):
                 self.assertEqual(str(idx + 1), doc.id)
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "text_analytics_account_key": "",
@@ -274,7 +218,6 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "text_analytics_account_key": "xxxxxxxxxxxx",
@@ -291,7 +234,6 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_document_input(self, client):
@@ -361,10 +303,14 @@ class TestAnalyze(TextAnalyticsTest):
             for idx, resp in enumerate(action_result.document_results):
                 self.assertEqual(resp.id, in_order[idx])
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_show_stats_and_model_version_multiple_tasks(self, client):
+
+        def callback(resp):
+            if resp.raw_response:
+                a = "b"
+
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
@@ -379,19 +325,12 @@ class TestAnalyze(TextAnalyticsTest):
             ],
             show_stats=True,
             polling_interval=self._interval(),
+            raw_response_hook=callback,
         )
 
         response = poller.result()
 
-        assert isinstance(poller.created_on, datetime.datetime)
-        poller._polling_method.display_name
-        assert isinstance(poller.expires_on, datetime.datetime)
-        assert poller.actions_failed_count == 0
-        assert poller.actions_in_progress_count == 0
-        assert poller.actions_succeeded_count == 3
-        assert isinstance(poller.last_modified_on, datetime.datetime)
-        assert poller.total_actions_count == 3
-        assert poller.id
+        # assert response.statistics
 
         action_results = list(response)
         assert len(action_results) == 3
@@ -401,87 +340,104 @@ class TestAnalyze(TextAnalyticsTest):
 
         assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
 
-        # for result_type in result_types:
-        #     results = getattr(results_pages[0], result_type)
-        #     self.assertEqual(len(results), len(docs))
-
-        #     # self.assertEqual(results.statistics.document_count, 5)
-        #     # self.assertEqual(results.statistics.transaction_count, 4)
-        #     # self.assertEqual(results.statistics.valid_document_count, 4)
-        #     # self.assertEqual(results.statistics.erroneous_document_count, 1)
+        # for action_result in action_results:
+        #     for doc in action_result.document_results:
+        #         assert doc.statistics
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_whole_batch_language_hint(self, client):
-        docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
-        ]
+    def test_poller_metadata(self, client):
+        docs = [{"id": "56", "text": ":)"}]
 
-        response = list(client.begin_analyze_batch_actions(
+        poller = client.begin_analyze_batch_actions(
             docs,
             actions=[
-                RecognizeEntitiesAction(),
-                ExtractKeyPhrasesAction(),
-                RecognizePiiEntitiesAction()
+                RecognizeEntitiesAction(model_version="latest")
             ],
-            language="en",
+            show_stats=True,
             polling_interval=self._interval(),
-        ).result())
+        )
 
-        for action_result in response:
-            for doc in action_result.document_results:
-                self.assertFalse(doc.is_error)
+        response = poller.result()
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="en"),
-            TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="en"),
-            TextDocumentInput(id="3", text="猫は幸せ"),
-        ]
+        assert isinstance(poller.created_on, datetime.datetime)
+        poller._polling_method.display_name
+        assert isinstance(poller.expires_on, datetime.datetime)
+        assert poller.actions_failed_count == 0
+        assert poller.actions_in_progress_count == 0
+        assert poller.actions_succeeded_count == 1
+        assert isinstance(poller.last_modified_on, datetime.datetime)
+        assert poller.total_actions_count == 1
+        assert poller.id
 
-        response = list(client.begin_analyze_batch_actions(
-            docs,
-            actions=[
-                RecognizeEntitiesAction(),
-                ExtractKeyPhrasesAction(),
-                RecognizePiiEntitiesAction()
-            ],
-            language="en",
-            polling_interval=self._interval(),
-        ).result())
+    ### TODO: Commenting out language tests. Right now analyze only supports language 'en', so no point to these tests yet
 
-        for action_result in response:
-            for doc in action_result.document_results:
-                assert not doc.is_error
+    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsClientPreparer()
+    # def test_whole_batch_language_hint(self, client):
+    #     def callback(resp):
+    #         language_str = "\"language\": \"fr\""
+    #         if resp.http_request.body:
+    #             language = resp.http_request.body.count(language_str)
+    #             self.assertEqual(language, 3)
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "default_language": "en"
-    })
-    def test_client_passed_default_language_hint(self, client):
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+    #     docs = [
+    #         u"This was the best day of my life.",
+    #         u"I did not like the hotel we stayed at. It was too expensive.",
+    #         u"The restaurant was not as good as I hoped."
+    #     ]
 
-        response = client.begin_analyze_batch_actions(
-            docs,
-            actions=[
-                RecognizeEntitiesAction(),
-                ExtractKeyPhrasesAction(),
-                RecognizePiiEntitiesAction()
-            ],
-            polling_interval=self._interval()
-        ).result()
+    #     response = list(client.begin_analyze_batch_actions(
+    #         docs,
+    #         actions=[
+    #             RecognizeEntitiesAction(),
+    #             ExtractKeyPhrasesAction(),
+    #             RecognizePiiEntitiesAction()
+    #         ],
+    #         language="fr",
+    #         polling_interval=self._interval(),
+    #         raw_response_hook=callback
+    #     ).result())
 
-        action_results = list(response)
-        self.assertEqual(len(action_results), 3)
+    #     for action_result in response:
+    #         for doc in action_result.document_results:
+    #             self.assertFalse(doc.is_error)
 
-        assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
+    # @pytest.mark.playback_test_only
+    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsClientPreparer(client_kwargs={
+    #     "default_language": "en"
+    # })
+    # def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
+    #     def callback(resp):
+    #         pass
+    #         # if resp.http_request.body:
+    #         #     language_str = "\"language\": \"es\""
+    #         #     language = resp.http_request.body.count(language_str)
+    #         #     self.assertEqual(language, 2)
+    #         #     language_str = "\"language\": \"en\""
+    #         #     language = resp.http_request.body.count(language_str)
+    #         #     self.assertEqual(language, 1)
+
+    #     docs = [
+    #         TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
+    #         TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="es"),
+    #         TextDocumentInput(id="3", text="猫は幸せ"),
+    #     ]
+
+    #     response = list(client.begin_analyze_batch_actions(
+    #         docs,
+    #         actions=[
+    #             RecognizeEntitiesAction(),
+    #             ExtractKeyPhrasesAction(),
+    #             RecognizePiiEntitiesAction()
+    #         ],
+    #         polling_interval=self._interval(),
+    #     ).result())
+
+    #     for action_result in response:
+    #         for doc in action_result.document_results:
+    #             assert not doc.is_error
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -515,8 +471,6 @@ class TestAnalyze(TextAnalyticsTest):
             docs,
             actions=[
                 RecognizeEntitiesAction(),
-                ExtractKeyPhrasesAction(),
-                RecognizePiiEntitiesAction()
             ],
             polling_interval=self._interval(),
         ).result()
@@ -529,8 +483,6 @@ class TestAnalyze(TextAnalyticsTest):
                 docs,
                 actions=[
                     RecognizeEntitiesAction(),
-                    ExtractKeyPhrasesAction(),
-                    RecognizePiiEntitiesAction()
                 ],
                 polling_interval=self._interval(),
             ).result()
@@ -540,8 +492,6 @@ class TestAnalyze(TextAnalyticsTest):
             docs,
             actions=[
                 RecognizeEntitiesAction(),
-                ExtractKeyPhrasesAction(),
-                RecognizePiiEntitiesAction()
             ],
             polling_interval=self._interval(),
         ).result()
@@ -564,8 +514,6 @@ class TestAnalyze(TextAnalyticsTest):
             docs,
             actions=[
                 RecognizeEntitiesAction(),
-                ExtractKeyPhrasesAction(),
-                RecognizePiiEntitiesAction()
             ],
             polling_interval=self._interval(),
         )
@@ -577,22 +525,6 @@ class TestAnalyze(TextAnalyticsTest):
 
         poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_empty_document_failure(self, client):
-        docs = [{"id": "1", "text": ""}]
-
-        with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze_batch_actions(
-                docs,
-                actions=[
-                    RecognizeEntitiesAction(),
-                ],
-                polling_interval=self._interval(),
-            )
-
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_model_version_error_single_task(self, client):  # TODO: verify behavior of service
@@ -607,7 +539,6 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             ).result()
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
@@ -630,7 +561,6 @@ class TestAnalyze(TextAnalyticsTest):
             # This is not the optimal way to represent this failure.  We are discussing a solution with the service team.
             assert all(doc for doc in action_result.document_results if doc.is_error)
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
@@ -704,7 +634,6 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             ).result()
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_pass_cls(self, client):
@@ -714,8 +643,6 @@ class TestAnalyze(TextAnalyticsTest):
             documents=["Test passing cls to endpoint"],
             actions=[
                 RecognizeEntitiesAction(),
-                ExtractKeyPhrasesAction(),
-                RecognizePiiEntitiesAction(),
             ],
             cls=callback,
             polling_interval=self._interval(),
