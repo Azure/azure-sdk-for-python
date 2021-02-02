@@ -12,6 +12,7 @@
 - `list_dimension_values` has been renamed to `list_anomaly_dimension_values`
 - create methods now return id instead of entire object
 - update methods now return None
+- Updated DataFeed.metric_ids to be a dict rather than a list
 
 ## 1.0.0b2 (2020-11-10)
 

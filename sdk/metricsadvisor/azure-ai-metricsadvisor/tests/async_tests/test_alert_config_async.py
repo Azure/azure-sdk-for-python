@@ -45,7 +45,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -109,7 +109,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                 )
                             )
@@ -172,7 +172,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     upper=5.0,
                                 )
                             )
@@ -342,7 +342,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -397,7 +397,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                 )
                             )
@@ -451,7 +451,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     upper=5.0,
                                 )
                             )
@@ -553,7 +553,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -610,7 +610,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                 )
                             )
@@ -666,7 +666,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     upper=5.0,
                                 )
                             )
@@ -776,7 +776,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -929,7 +929,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 ),
@@ -1019,7 +1019,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 ),

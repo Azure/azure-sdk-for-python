@@ -203,7 +203,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
         detection_config_name = create_random_name(name)
         detection_config_id = await self.admin_client.create_detection_configuration(
             name=detection_config_name,
-            metric_id=data_feed.metric_ids[0],
+            metric_id=data_feed.metric_ids['cost'],
             description="testing",
             whole_series_detection_condition=MetricDetectionCondition(
                 smart_detection_condition=SmartDetectionCondition(
@@ -285,7 +285,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                     alert_conditions=MetricAnomalyAlertConditions(
                         metric_boundary_condition=MetricBoundaryCondition(
                             direction="Both",
-                            companion_metric_id=data_feed.metric_ids[0],
+                            companion_metric_id=data_feed.metric_ids['cost'],
                             lower=1.0,
                             upper=5.0
                         )
@@ -327,7 +327,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
         detection_config_name = create_random_name("testupdated")
         detection_config_id = await self.admin_client.create_detection_configuration(
             name=detection_config_name,
-            metric_id=data_feed.metric_ids[0],
+            metric_id=data_feed.metric_ids['cost'],
             description="My test metric anomaly detection configuration",
             whole_series_detection_condition=MetricDetectionCondition(
                 cross_conditions_operator="AND",

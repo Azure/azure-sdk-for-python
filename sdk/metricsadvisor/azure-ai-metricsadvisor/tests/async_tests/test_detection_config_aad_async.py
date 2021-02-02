@@ -32,7 +32,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 detection_config_name = self.create_random_name("testdetectionconfigasync")
                 config_id = await self.admin_client.create_detection_configuration(
                     name=detection_config_name,
-                    metric_id=data_feed.metric_ids[0],
+                    metric_id=data_feed.metric_ids['cost'],
                     description="My test metric anomaly detection configuration",
                     whole_series_detection_condition=MetricDetectionCondition(
                         cross_conditions_operator="OR",
@@ -67,7 +67,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 config = await self.admin_client.get_detection_configuration(config_id)
                 self.assertIsNotNone(config.id)
-                self.assertEqual(config.metric_id, data_feed.metric_ids[0])
+                self.assertEqual(config.metric_id, data_feed.metric_ids['cost'])
                 self.assertEqual(config.description, "My test metric anomaly detection configuration")
                 self.assertIsNotNone(config.name)
                 self.assertIsNone(config.series_detection_conditions)
@@ -113,7 +113,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 detection_config_name = self.create_random_name("testdetectionconfigetasync")
                 detection_config_id = await self.admin_client.create_detection_configuration(
                     name=detection_config_name,
-                    metric_id=data_feed.metric_ids[0],
+                    metric_id=data_feed.metric_ids['cost'],
                     description="My test metric anomaly detection configuration",
                     whole_series_detection_condition=MetricDetectionCondition(
                         cross_conditions_operator="AND",
@@ -170,7 +170,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 detection_config = await self.admin_client.get_detection_configuration(detection_config_id)
                 self.assertIsNotNone(detection_config.id)
-                self.assertEqual(detection_config.metric_id, data_feed.metric_ids[0])
+                self.assertEqual(detection_config.metric_id, data_feed.metric_ids['cost'])
                 self.assertEqual(detection_config.description, "My test metric anomaly detection configuration")
                 self.assertIsNotNone(detection_config.name)
                 self.assertEqual(detection_config.whole_series_detection_condition.cross_conditions_operator, "AND")
@@ -230,7 +230,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 detection_config_name = self.create_random_name("multipledetectionconfigsasync")
                 detection_config_id = await self.admin_client.create_detection_configuration(
                     name=detection_config_name,
-                    metric_id=data_feed.metric_ids[0],
+                    metric_id=data_feed.metric_ids['cost'],
                     description="My test metric anomaly detection configuration",
                     whole_series_detection_condition=MetricDetectionCondition(
                         cross_conditions_operator="AND",
@@ -355,7 +355,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 detection_config = await self.admin_client.get_detection_configuration(detection_config_id)
                 self.assertIsNotNone(detection_config.id)
-                self.assertEqual(detection_config.metric_id, data_feed.metric_ids[0])
+                self.assertEqual(detection_config.metric_id, data_feed.metric_ids['cost'])
                 self.assertEqual(detection_config.description, "My test metric anomaly detection configuration")
                 self.assertIsNotNone(detection_config.name)
 
