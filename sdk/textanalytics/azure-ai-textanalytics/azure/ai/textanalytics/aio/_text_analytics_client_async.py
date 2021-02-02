@@ -656,7 +656,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         doc_id_order = [doc.get("id") for doc in docs]
 
         try:
-            poller = await self._client.begin_health(
+            return await self._client.begin_health(
                 docs,
                 model_version=model_version,
                 string_index_type=string_index_type,
@@ -670,8 +670,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-
-            return AnalyzeHealthcareEntitiesAsyncLROPoller.from_lro_poller(poller)
 
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
@@ -708,9 +706,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", 5)
 
         terminal_states = ["cancelled", "cancelling", "failed", "succeeded", "partiallyCompleted", "rejected"]
-        await analyze_healthcare_entities_poller.update_status()
+        await analyze_healthcare_entities_poller._polling_method.update_status()
 
-        if analyze_healthcare_entities_poller.status() in terminal_states:
+        if analyze_healthcare_entities_poller._polling_method.status() in terminal_states:
             print("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
                 % analyze_healthcare_entities_poller.id)
             return

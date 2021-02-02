@@ -8,6 +8,7 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
+from ....._async_lro import AnalyzeHealthcareEntitiesAsyncLROPoller, AnalyzeHealthcareEntitiesAsyncLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
@@ -401,8 +402,8 @@ class TextAnalyticsClientOperationsMixin:
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
         **kwargs
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+    ) -> Optional["_models.HealthcareJobState"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.HealthcareJobState"]]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -442,16 +443,22 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
+        return deserialized
     _health_initial.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
     async def begin_health(
@@ -460,7 +467,7 @@ class TextAnalyticsClientOperationsMixin:
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
         **kwargs
-    ) -> AsyncLROPoller[None]:
+    ) -> AnalyzeHealthcareEntitiesAsyncLROPoller["_models.HealthcareJobState"]:
         """Submit healthcare analysis job.
 
         Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions,
@@ -477,16 +484,16 @@ class TextAnalyticsClientOperationsMixin:
         :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+        :keyword polling: Pass in True if you'd like the AnalyzeHealthcareEntitiesAsyncLROPollingMethod polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AnalyzeHealthcareEntitiesAsyncLROPoller that returns either HealthcareJobState or the result of cls(response)
+        :rtype: ~....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthcareJobState"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -505,25 +512,28 @@ class TextAnalyticsClientOperationsMixin:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AnalyzeHealthcareEntitiesAsyncLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AnalyzeHealthcareEntitiesAsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AnalyzeHealthcareEntitiesAsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_health.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
     async def entities_recognition_general(

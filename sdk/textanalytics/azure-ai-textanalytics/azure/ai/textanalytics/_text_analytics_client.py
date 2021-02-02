@@ -34,6 +34,7 @@ from ._response_handlers import (
 )
 from ._lro import (
     TextAnalyticsOperationResourcePolling,
+    TextAnalyticsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPoller
 )
@@ -499,7 +500,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         doc_id_order = [doc.get("id") for doc in docs]
 
         try:
-            poller = self._client.begin_health(
+            return self._client.begin_health(
                 docs,
                 model_version=model_version,
                 string_index_type=string_index_type,
@@ -513,7 +514,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-            return AnalyzeHealthcareEntitiesLROPoller.from_lro_poller(poller)
 
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
@@ -526,7 +526,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def begin_cancel_analyze_healthcare_entities_operation(  # type: ignore
+    def begin_cancel_analyze_healthcare_entities(  # type: ignore
         self,
         analyze_healthcare_entities_poller, # type: AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
         **kwargs
@@ -552,9 +552,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", 5)
 
         terminal_states = ["cancelled", "cancelling", "failed", "succeeded", "partiallyCompleted", "rejected"]
-        analyze_healthcare_entities_poller.update_status()
+        analyze_healthcare_entities_poller._thread.join() # Join so we no longer have to await the result of this poller
+        analyze_healthcare_entities_poller._polling_method.update_status()
 
-        if analyze_healthcare_entities_poller.status() in terminal_states:
+        if analyze_healthcare_entities_poller._polling_method.status() in terminal_states:
             print("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
                 % analyze_healthcare_entities_poller.id)
             return

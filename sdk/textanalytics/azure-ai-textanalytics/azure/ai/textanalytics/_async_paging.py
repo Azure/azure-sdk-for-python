@@ -11,7 +11,7 @@ class AnalyzeHealthcareEntitiesResultAsync(AsyncItemPaged):
     def __init__(self, *args, **kwargs):
         self.model_version = kwargs.pop('model_version')
         self.statistics = kwargs.pop('statistics')
-        super(AnalyzeHealthcareResultEntitiesAsync, self).__init__(*args, **kwargs)
+        super(AnalyzeHealthcareEntitiesResultAsync, self).__init__(*args, **kwargs)
 
 
 class AnalyzeResultAsync(AsyncItemPaged):

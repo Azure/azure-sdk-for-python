@@ -7,7 +7,7 @@
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from ._generated.v3_1_preview_3.models import JobMetadata
+from azure.core.polling._async_poller import PollingReturnType
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallysucceeded"])
@@ -80,6 +80,7 @@ class AnalyzeHealthcareEntitiesAsyncLROPollingMethod(TextAnalyticsAsyncLROPollin
 
     @property
     def _current_body(self):
+        from ._generated.v3_1_preview_3.models import JobMetadata
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -106,15 +107,8 @@ class AnalyzeHealthcareEntitiesAsyncLROPollingMethod(TextAnalyticsAsyncLROPollin
             return None
         return self._current_body.job_id
 
-    @property
-    def status(self):
-        if not self._current_body:
-            return None
-        
-        return self._current_body.status
 
-
-class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller):
+class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller[PollingReturnType]):
 
     @property
     def created_on(self):
@@ -132,15 +126,4 @@ class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller):
     def id(self):
         return self._polling_method.id
 
-    @property
-    def status(self):
-        return self._polling_method.status
 
-    @classmethod
-    def from_lro_poller(cls, lro_poller):
-        return cls(
-            client=lro_poller._polling_method._client,
-            initial_response=lro_poller._polling_method._initial_response,
-            deserialization_callback=lro_poller._polling_method._deserialization_callback,
-            polling_method=lro_poller._polling_method,
-        )

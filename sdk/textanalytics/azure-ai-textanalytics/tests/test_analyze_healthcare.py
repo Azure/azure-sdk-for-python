@@ -293,8 +293,7 @@ class TestHealth(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = client.begin_analyze_healthcare_entities(docs, language="", polling_interval=self._interval()).result()
-        #response = list(response)
+        response = list(client.begin_analyze_healthcare_entities(docs, language="", polling_interval=self._interval()).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -606,16 +605,15 @@ class TestHealth(TextAnalyticsTest):
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
 
         poller = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-        cancellation_result = client.begin_cancel_analyze_healthcare(poller, polling_interval=self._interval()).result()
+        cancellation_poller = client.begin_cancel_analyze_healthcare_entities(poller, polling_interval=self._interval())
 
-        self.assertIsNone(cancellation_result)
-
-        poller.wait()
+        if cancellation_poller is not None:
+            self.assertIsNone(cancellation_poller.result())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_default_string_index_type_is_UnicodeCodePoint(self, client):
-        poller = client.begin_analyze_healthcare(documents=["Hello world"])
+        poller = client.begin_analyze_healthcare_entities(documents=["Hello world"])
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
         poller.result()
@@ -623,7 +621,7 @@ class TestHealth(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_explicit_set_string_index_type(self, client):
-        poller = client.begin_analyze_healthcare(
+        poller = client.begin_analyze_healthcare_entities(
             documents=["Hello world"],
             string_index_type="TextElements_v8"
         )
