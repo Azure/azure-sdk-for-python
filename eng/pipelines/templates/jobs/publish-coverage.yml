@@ -29,10 +29,12 @@ jobs:
           source: current
           path: '$(Build.SourcesDirectory)/_all_coverage_files'
 
-      - pwsh: |
-          pip install -r $(Build.SourcesDirectory)/eng/ci_tools.txt
-          pip list
-        displayName: Install coverage
+      - script: |
+          python -m pip install pip==20.1
+          pip install -r eng/ci_tools.txt
+          pip --version
+          pip freeze
+        displayName: 'Prep Environment'
 
       - pwsh: |
           Get-ChildItem -Recurse .\_all_coverage_files\ |
