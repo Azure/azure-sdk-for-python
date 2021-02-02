@@ -9,6 +9,7 @@
 import argparse
 import os
 import glob
+import sys
 from subprocess import check_call
 
 
@@ -19,8 +20,8 @@ def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
     absdirs = [os.path.dirname(package) for package in (glob.glob('{}/setup.py'.format(name)) + glob.glob('sdk/*/{}/setup.py'.format(name)))]
 
     absdirpath = os.path.abspath(absdirs[0])
-    check_call(['python', 'setup.py', 'bdist_wheel', '-d', dest_folder], cwd=absdirpath)
-    check_call(['python', 'setup.py', "sdist", "--format", "zip", '-d', dest_folder], cwd=absdirpath)
+    check_call([sys.executable, 'setup.py', 'bdist_wheel', '-d', dest_folder], cwd=absdirpath)
+    check_call([sys.executable, 'setup.py', "sdist", "--format", "zip", '-d', dest_folder], cwd=absdirpath)
 
 
 if __name__ == '__main__':

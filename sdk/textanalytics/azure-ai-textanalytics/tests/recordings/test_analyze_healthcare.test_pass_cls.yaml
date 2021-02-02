@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
@@ -22,11 +22,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 12ba7253-7854-4d0b-8daf-e42ee35d13a5
+      - c07ac2f4-e95d-4d93-806f-f948f33c32f3
       date:
-      - Thu, 19 Nov 2020 21:28:46 GMT
+      - Wed, 27 Jan 2021 02:22:52 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/a0ed50b5-15ff-4499-a9d2-c34155d35fc0
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/4fe36fab-d4af-4a0b-b81e-c5047c03e855
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '61'
+      - '84'
     status:
       code: 202
       message: Accepted
@@ -48,19 +48,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/a0ed50b5-15ff-4499-a9d2-c34155d35fc0
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/4fe36fab-d4af-4a0b-b81e-c5047c03e855
   response:
     body:
-      string: '{"jobId":"a0ed50b5-15ff-4499-a9d2-c34155d35fc0","lastUpdateDateTime":"2020-11-19T21:28:46Z","createdDateTime":"2020-11-19T21:28:46Z","expirationDateTime":"2020-11-20T21:28:46Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":13,"length":3,"text":"cls","category":"Diagnosis","confidenceScore":1.0,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0265252"},{"dataSource":"CHV","id":"0000025867"},{"dataSource":"JABL","id":"238"},{"dataSource":"MDR","id":"10081806"},{"dataSource":"MEDCIN","id":"311935"},{"dataSource":"MSH","id":"D038921"},{"dataSource":"NCI","id":"C84643"},{"dataSource":"OMIM","id":"303600"},{"dataSource":"RCD","id":"Xa0Zc"},{"dataSource":"SNM","id":"D-5122"},{"dataSource":"SNMI","id":"D4-00811"},{"dataSource":"SNOMEDCT_US","id":"15182000"}]}],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+      string: '{"jobId":"4fe36fab-d4af-4a0b-b81e-c5047c03e855","lastUpdateDateTime":"2021-01-27T02:22:55Z","createdDateTime":"2021-01-27T02:22:52Z","expirationDateTime":"2021-01-28T02:22:52Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":13,"length":3,"text":"cls","category":"Diagnosis","confidenceScore":1.0,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0265252"},{"dataSource":"CHV","id":"0000025867"},{"dataSource":"JABL","id":"238"},{"dataSource":"MDR","id":"10081806"},{"dataSource":"MEDCIN","id":"311935"},{"dataSource":"MSH","id":"D038921"},{"dataSource":"NCI","id":"C84643"},{"dataSource":"OMIM","id":"303600"},{"dataSource":"RCD","id":"Xa0Zc"},{"dataSource":"SNM","id":"D-5122"},{"dataSource":"SNMI","id":"D4-00811"},{"dataSource":"SNOMEDCT_US","id":"15182000"}]}],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
     headers:
       apim-request-id:
-      - 5263854b-0f79-4de4-aa69-87ddb5c823ac
+      - 9e072cb2-d154-4aed-91e7-ed85f5c1bd2b
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:28:51 GMT
+      - Wed, 27 Jan 2021 02:22:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -68,7 +68,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '31'
+      - '29'
     status:
       code: 200
       message: OK
