@@ -189,3 +189,4 @@ opentelemetry-sdk==0.16b1
 #override azure-core-tracing-opentelemetry opentelemetry-api==0.13b0
 #override azure-identity six>=1.12.0
 #override azure-ai-formrecognizer six>=1.11.0
+#override azure-ai-metricsadvisor six>=1.11.0
