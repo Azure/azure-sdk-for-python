@@ -32,8 +32,11 @@ from ._response_handlers import (
     analyze_paged_result,
     _get_deserialize
 )
-from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPollingMethod
-from ._models import AnalyzeHealthcareEntitiesOperation
+from ._lro import (
+    TextAnalyticsOperationResourcePolling,
+    AnalyzeHealthcareEntitiesLROPollingMethod,
+    AnalyzeHealthcareEntitiesLROPoller
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -410,7 +413,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesOperation[ItemPaged[AnalyzeHealthcareResultItem]]
+    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -433,7 +436,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :return: An instance of an AnalyzeHealthcareEntitiesOperation. Call `get_result()` on the this
+        :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
             object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`].
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
@@ -462,7 +465,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsLROPollingMethod(
+                polling=AnalyzeHealthcareEntitiesLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
@@ -471,7 +474,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-            return AnalyzeHealthcareEntitiesOperation(poller=poller)
+            return AnalyzeHealthcareEntitiesLROPoller.from_lro_poller(poller)
 
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
@@ -486,13 +489,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def begin_cancel_analyze_healthcare_entities_operation(  # type: ignore
         self,
-        healthcare_operation, # type: AnalyzeHealthcareEntitiesOperation[ItemPaged[AnalyzeHealthcareResultItem]]
+        analyze_healthcare_entities_poller, # type: AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
         **kwargs
     ):
         # type: (...) -> Union[None, LROPoller[None]]
         """Cancel an existing health operation.
 
-        :param healthcare_operation: The operation to cancel.
+        :param analyze_healthcare_entities_poller: The poller for the operation to cancel.
         :return: If the operation is already in a terminal state returns None, otherwise returns an instance
             of an LROPoller that returns None.
         :rtype: Union[None, ~azure.core.polling.LROPoller[None]]
@@ -510,16 +513,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", 5)
 
         terminal_states = ["cancelled", "cancelling", "failed", "succeeded", "partiallyCompleted", "rejected"]
-        healthcare_operation.update_status()
+        analyze_healthcare_entities_poller.update_status()
 
-        if healthcare_operation.status in terminal_states:
+        if analyze_healthcare_entities_poller.status() in terminal_states:
             print("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
-                % healthcare_operation.id)
+                % analyze_healthcare_entities_poller.id)
             return
 
         try:
             return self._client.begin_cancel_health_job(
-                healthcare_operation.id,
+                analyze_healthcare_entities_poller.id,
                 polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
             )
 

@@ -183,34 +183,6 @@ class RecognizePiiEntitiesResult(DictMixin):
             )[:1024]
 
 
-class AnalyzeHealthcareEntitiesOperation(DictMixin):
-    """TODO
-    """
-    def __init__(self, **kwargs):
-        self._poller = kwargs.get("poller", None)
-        self._initial_response = getattr(self._poller._polling_method, "_initial_response") # pylint: disable=protected-access       
-        self.id = self._poller.resource().job_id
-        self.created_date_time = None
-        self.expiration_date_time = None
-        self.last_update_date_time = None
-        self.status = None
-        self.continuation_token = self._poller.get_continuation_token()
-        self.update_status()
-
-    def get_result(self):
-        result = self._poller.result()
-        self.update_status()
-        return result
-
-    def update_status(self):
-        self._poller.update_status()
-        job_metadata = self._poller.resource()
-        self.created_date_time = job_metadata.created_date_time
-        self.expiration_date_time = job_metadata.expiration_date_time
-        self.last_update_date_time = job_metadata.last_update_date_time
-        self.status = job_metadata.status
-
-
 class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     """
     AnalyzeHealthcareEntitiesResultItem contains the Healthcare entities and relations from a

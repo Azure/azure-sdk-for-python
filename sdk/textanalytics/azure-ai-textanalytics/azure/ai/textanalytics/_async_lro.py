@@ -4,8 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from ._generated.v3_1_preview_3.models import JobMetadata
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallysucceeded"])
@@ -73,3 +75,72 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
             TextAnalyticsAsyncLROPollingMethod._raise_if_bad_http_status_and_method(
                 self._pipeline_response.http_response
             )
+
+class AnalyzeHealthcareEntitiesAsyncLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
+
+    @property
+    def _current_body(self):
+        return JobMetadata.deserialize(self._pipeline_response)
+
+    @property
+    def created_on(self):
+        if not self._current_body:
+            return None
+        return self._current_body.created_date_time
+
+    @property
+    def expires_on(self):
+        if not self._current_body:
+            return None
+        return self._current_body.expiration_date_time
+
+    @property
+    def last_modified_on(self):
+        if not self._current_body:
+            return None
+        return self._current_body.last_update_date_time
+
+    @property
+    def id(self):
+        if not self._current_body:
+            return None
+        return self._current_body.job_id
+
+    @property
+    def status(self):
+        if not self._current_body:
+            return None
+        
+        return self._current_body.status
+
+
+class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller):
+
+    @property
+    def created_on(self):
+        return self._polling_method.created_on
+
+    @property
+    def expires_on(self):
+        return self._polling_method.expires_on
+
+    @property
+    def last_modified_on(self):
+        return self._polling_method.last_modified_on
+
+    @property
+    def id(self):
+        return self._polling_method.id
+
+    @property
+    def status(self):
+        return self._polling_method.status
+
+    @classmethod
+    def from_lro_poller(cls, lro_poller):
+        return cls(
+            client=lro_poller._polling_method._client,
+            initial_response=lro_poller._polling_method._initial_response,
+            deserialization_callback=lro_poller._polling_method._deserialization_callback,
+            polling_method=lro_poller._polling_method,
+        )
