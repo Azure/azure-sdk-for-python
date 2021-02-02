@@ -24,11 +24,10 @@
 #
 # --------------------------------------------------------------------------
 
-from ._internal.aio._search_client_async import AsyncSearchItemPaged, SearchClient
-from ._internal.aio._search_indexing_buffered_sender_async import SearchIndexingBufferedSender
+from .._internal.aio._search_index_client import SearchIndexClient
+from .._internal.aio._search_indexer_client import SearchIndexerClient
 
 __all__ = (
-    "AsyncSearchItemPaged",
-    "SearchClient",
-    "SearchIndexingBufferedSender",
+    "SearchIndexClient",
+    "SearchIndexerClient",
 )

@@ -31,7 +31,7 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         self._auto_flush_interval = kwargs.pop('auto_flush_interval', self._DEFAULT_AUTO_FLUSH_INTERVAL)
         if self._auto_flush_interval <= 0:
             self._auto_flush_interval = 86400
-        self._max_retries = kwargs.pop('max_retries', self._DEFAULT_MAX_RETRIES)
+        self._max_retries_per_action = kwargs.pop('max_retries_per_action ', self._DEFAULT_MAX_RETRIES)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._index_key = None
