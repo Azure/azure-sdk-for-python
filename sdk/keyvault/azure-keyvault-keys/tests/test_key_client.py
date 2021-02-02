@@ -18,8 +18,7 @@ from _shared.test_case import KeyVaultTestCase
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,
     "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net",
-    azure_managedhsm_url="https://mhsmname.managedhsm.azure.net"
+    azure_keyvault_url="https://vaultname.vault.azure.net"
 )
 
 # used for logging tests
@@ -144,13 +143,13 @@ class KeyClientTests(KeyVaultTestCase):
         return imported_key
 
     @KeyVaultPreparer()
-    def test_key_crud_operations(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_key_crud_operations(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create ec key
         ec_key_name = self.get_resource_name("crud-ec-key")
-        is_hsm = not (azure_managedhsm_url is None)
+        is_hsm = False  # TODO: conditionally set this when running tests on KV and MHSM
         self._create_ec_key(client, key_name=ec_key_name, hsm=is_hsm)
         # create ec with curve
         ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
@@ -197,7 +196,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(created_rsa_key.id, deleted_key.id)
 
     @KeyVaultPreparer()
-    def test_backup_restore(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_backup_restore(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -224,7 +223,7 @@ class KeyClientTests(KeyVaultTestCase):
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
     @KeyVaultPreparer()
-    def test_key_list(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_key_list(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -246,7 +245,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @KeyVaultPreparer()
-    def test_list_versions(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_list_versions(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -271,7 +270,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(0, len(expected))
 
     @KeyVaultPreparer()
-    def test_list_deleted_keys(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_list_deleted_keys(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -301,7 +300,7 @@ class KeyClientTests(KeyVaultTestCase):
                 del expected[key.name]
 
     @KeyVaultPreparer()
-    def test_recover(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_recover(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -326,7 +325,7 @@ class KeyClientTests(KeyVaultTestCase):
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
     @KeyVaultPreparer()
-    def test_purge(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_purge(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -356,7 +355,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(not any(s in deleted for s in key_names))
 
     @KeyVaultPreparer()
-    def test_logging_enabled(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_logging_enabled(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url, logging_enable=True)
         mock_handler = MockHandler()
 
@@ -380,7 +379,7 @@ class KeyClientTests(KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @KeyVaultPreparer()
-    def test_logging_disabled(self, azure_keyvault_url, azure_managedhsm_url=None, **kwargs):
+    def test_logging_disabled(self, azure_keyvault_url, **kwargs):
         client = self.create_kv_client(azure_keyvault_url, logging_enable=False)
         mock_handler = MockHandler()
 
