@@ -93,7 +93,12 @@ def find_sdist(dist_dir, pkg_name, pkg_version):
         return
 
     pkg_name_format = "{0}-{1}.zip".format(pkg_name, pkg_version)
-    packages = [os.path.relpath(w, dist_dir) for w in glob.glob(os.path.join(dist_dir, "**", pkg_name_format), recursive=True)]
+    packages = []
+    for root, dirnames, filenames in os.walk(dist_dir):
+        for filename in fnmatch.filter(filenames, pkg_name_format):
+            packages.append(os.path.join(root, filename))
+
+    packages = [os.path.relpath(w, dist_dir) for w in packages]
 
     if not packages:
         logging.error("No sdist is found in directory %s with package name format %s", dist_dir, pkg_name_format)
@@ -113,7 +118,13 @@ def find_whl(whl_dir, pkg_name, pkg_version):
 
 
     pkg_name_format = "{0}-{1}-*.whl".format(pkg_name.replace("-", "_"), pkg_version)
-    whls = [os.path.relpath(w, whl_dir) for w in glob.glob(os.path.join(whl_dir, "**", pkg_name_format), recursive=True)]
+    whls = []
+    for root, dirnames, filenames in os.walk(whl_dir):
+        for filename in fnmatch.filter(filenames, pkg_name_format):
+            whls.append(os.path.join(root, filename))
+
+    whls = [os.path.relpath(w, whl_dir) for w in whls]
+    
     if not whls:
         logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
         logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
