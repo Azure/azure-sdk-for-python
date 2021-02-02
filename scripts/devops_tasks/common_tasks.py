@@ -32,6 +32,7 @@ from packaging.version import parse
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
+TRACK2_IDENTIFIER_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -461,3 +462,9 @@ def get_installed_packages(paths = None):
     ws = WorkingSet(paths) if paths else working_set  
     return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
 
+def get_package_properties(setup_py_path):
+    """Parse setup.py and return package details like package name, version, whether it's track1 or track2
+    """
+    pkgName, version, _, requires = parse_setup(setup_py_path)
+    is_track2_pkg = pkgName in TRACK2_IDENTIFIER_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in TRACK2_IDENTIFIER_REQ_PACKAGES), requires))
+    return pkgName, version, is_track2_pkg
