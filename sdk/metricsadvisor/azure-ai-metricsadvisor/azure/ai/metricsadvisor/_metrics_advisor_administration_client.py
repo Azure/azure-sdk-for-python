@@ -65,7 +65,6 @@ from ._helpers import (
 )
 from .models._models import (
     DataFeed,
-    NotificationHook,
     EmailNotificationHook,
     WebNotificationHook,
     AnomalyAlertConfiguration,
