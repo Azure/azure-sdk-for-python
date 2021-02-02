@@ -48,7 +48,7 @@ from .._models import (
     AnalyzeBatchActionsType,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._async_lro import TextAnalyticsAsyncLROPollingMethod
+from .._async_lro import AsyncAnalyzeBatchActionsLROPollingMethod
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -779,7 +779,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return await self._client.begin_analyze(
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats)),
-                polling=TextAnalyticsAsyncLROPollingMethod(
+                polling=AsyncAnalyzeBatchActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)

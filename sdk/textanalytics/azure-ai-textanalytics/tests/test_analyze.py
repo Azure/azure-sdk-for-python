@@ -516,6 +516,7 @@ class TestAnalyze(TextAnalyticsTest):
                 RecognizeEntitiesAction(),
             ],
             polling_interval=self._interval(),
+            raw_response_hook=callback
         )
 
         self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -563,11 +564,11 @@ class TestAnalyze(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
+    async def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze_batch_actions(
+            response = await client.begin_analyze_batch_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="bad"),
