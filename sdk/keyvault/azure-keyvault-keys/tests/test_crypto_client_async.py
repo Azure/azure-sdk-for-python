@@ -181,7 +181,8 @@ class CryptoClientTests(KeyVaultTestCase):
         key = await key_client.create_rsa_key("encrypt-local", size=4096)
         crypto_client = CryptographyClient(key, credential)
 
-        for encrypt_algorithm in EncryptionAlgorithm:
+        rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
+        for encrypt_algorithm in rsa_encrypt_algorithms:
             result = await crypto_client.encrypt(encrypt_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
@@ -197,7 +198,7 @@ class CryptoClientTests(KeyVaultTestCase):
         key = await key_client.create_rsa_key("wrap-local", size=4096)
         crypto_client = CryptographyClient(key, credential)
 
-        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.value.startswith("RSA")):
+        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
             result = await crypto_client.wrap_key(wrap_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
@@ -277,21 +278,24 @@ class CryptoClientTests(KeyVaultTestCase):
         the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
 
         rsa_wrap_algorithms = [algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")]
-        not_yet_valid_key = await key_client.create_rsa_key("rsa-not-yet-valid", not_before=the_year_3000)
-        await test_operations(not_yet_valid_key, [str(the_year_3000)], EncryptionAlgorithm, rsa_wrap_algorithms)
+        rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
+        key_name = self.get_resource_name("rsa-not-yet-valid")
+        not_yet_valid_key = await key_client.create_rsa_key(key_name, not_before=the_year_3000)
+        await test_operations(not_yet_valid_key, [str(the_year_3000)], rsa_encrypt_algorithms, rsa_wrap_algorithms)
 
         # nor should they succeed with a key whose exp has passed
         the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
 
-        expired_key = await key_client.create_rsa_key("rsa-expired", expires_on=the_year_2000)
-        await test_operations(expired_key, [str(the_year_2000)], EncryptionAlgorithm, rsa_wrap_algorithms)
+        key_name = self.get_resource_name("rsa-expired")
+        expired_key = await key_client.create_rsa_key(key_name, expires_on=the_year_2000)
+        await test_operations(expired_key, [str(the_year_2000)], rsa_encrypt_algorithms, rsa_wrap_algorithms)
 
         # when exp and nbf are set, error messages should contain both
         the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
 
         valid_key = await key_client.create_rsa_key("rsa-valid", not_before=the_year_3000, expires_on=the_year_3001)
         await test_operations(
-            valid_key, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms
+            valid_key, (str(the_year_3000), str(the_year_3001)), rsa_encrypt_algorithms, rsa_wrap_algorithms
         )
 
 
