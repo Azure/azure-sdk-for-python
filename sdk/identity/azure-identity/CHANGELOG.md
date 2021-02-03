@@ -1,7 +1,7 @@
 # Release History
 
 ## 1.5.1 (Unreleased)
-
+- Bumped `six` requirement from `1.6` to `1.12.0`.
 
 ## 1.5.0 (2020-11-11)
 ### Breaking Changes
