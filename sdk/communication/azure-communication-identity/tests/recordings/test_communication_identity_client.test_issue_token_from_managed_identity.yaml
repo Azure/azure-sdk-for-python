@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: null
+    body: '{}'
     headers:
       Accept:
       - application/json
@@ -9,32 +9,34 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '0'
+      - '2'
+      Content-Type:
+      - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"id": "sanitized"}'
+      string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Dec 2020 18:32:41 GMT
+      - Fri, 29 Jan 2021 22:26:36 GMT
       ms-cv:
-      - NcQPodkL5UOzC+AtKJcXvw.0
+      - sIImdgIO6kSSfNEh18vBHQ.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 501ms
+      - 203ms
     status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -49,27 +51,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-12-23T18:32:41.3736569+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-01-30T22:26:35.9312051+00:00"}'
     headers:
       api-supported-versions:
-      - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Dec 2020 18:32:41 GMT
+      - Fri, 29 Jan 2021 22:26:36 GMT
       ms-cv:
-      - W4rjQkxkvUSQqyJk5dUwCA.0
+      - JPBOQWSIBUWpPLVKMVZSTw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 27ms
+      - 30ms
     status:
       code: 200
       message: OK

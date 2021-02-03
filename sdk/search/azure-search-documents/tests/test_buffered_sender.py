@@ -20,7 +20,7 @@ class TestSearchBatchingClient(object):
     def test_search_indexing_buffered_sender_kwargs(self):
         with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, window=100) as client:
             assert client._batch_action_count == 512
-            assert client._max_retries == 3
+            assert client._max_retries_per_action == 3
             assert client._auto_flush_interval == 60
             assert client._auto_flush
 
@@ -39,7 +39,7 @@ class TestSearchBatchingClient(object):
             actions = client._index_documents_batch.dequeue_actions()
             assert len(client.actions) == 0
             for action in actions:
-                client._index_documents_batch.enqueue_action(action)
+                client._index_documents_batch.enqueue_actions(action)
             assert len(client.actions) == 7
 
 
