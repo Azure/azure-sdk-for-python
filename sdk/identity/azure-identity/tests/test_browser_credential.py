@@ -40,7 +40,7 @@ WEBBROWSER_OPEN = InteractiveBrowserCredential.__module__ + ".webbrowser.open"
 def test_browser_credential():
     transport = Mock(wraps=RequestsTransport())
     credential = InteractiveBrowserCredential(transport=transport)
-    scope = "https://vault.azure.net/.default"
+    scope = "https://management.azure.com/.default"  # N.B. this is valid only in Public Cloud
 
     record = credential.authenticate(scopes=(scope,))
     assert record.authority
